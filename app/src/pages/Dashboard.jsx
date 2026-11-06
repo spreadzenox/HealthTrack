@@ -92,16 +92,19 @@ export default function Dashboard() {
   const tiles = useMemo(() => measureTiles(todaySummary, entries, new Date(), yesterdaySummary),
     [todaySummary, yesterdaySummary, entries])
 
+  const head = headerLine()
+
   return (
     <section className="dashboard">
       <header className="today-head">
-        <p className="today-dateline">{headerLine()}</p>
+        <p className="today-dateline">{head.date}</p>
+        <p className="today-hello">{head.hello}</p>
         <h2 className="today-title">{daySummaryTitle(wellbeing?.est)}</h2>
       </header>
       <PaymentIssueCard />
       <LaunchEndCard />
-      {/* Présentation utile au premier lancement seulement, en une phrase (VC-26) : la ligne des mesures propose
-          déjà d'ajouter une source. */}
+      {/* Présentation utile au premier lancement seulement, en une phrase (VC-26) ; les sources se branchent pendant
+          l'accueil et restent dans l'onglet Sources. */}
       {!loading && !error && empty && (
         <p className="dashboard-intro">
           Notez {focus === 'gut' ? 'vos repas et votre ventre' : 'vos repas'} en un geste : {APP_NAME} vous aide à

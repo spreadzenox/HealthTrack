@@ -14,6 +14,12 @@
   color: var(--text-muted);
 }
 
+.today-hello {
+  margin: 2px 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 .today-title {
   margin: 4px 0 0;
   font-size: 1.6rem;
@@ -128,25 +134,8 @@
   overflow-wrap: anywhere;
 }
 
-.today-tiles-hint {
-  margin: 6px 2px 0;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
 
-.today-tiles-empty {
-  margin: 0;
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: var(--color-surface);
-  font-size: 0.85rem;
-  line-height: 1.4;
-}
 
-.today-tiles-hint a {
-  color: var(--accent);
-  font-weight: 600;
-}
 
 /* Carte pêche « Votre ventre » */
 .gut-card {
@@ -679,7 +668,3 @@
   color: var(--peach-label);
 }
 
-/* « (6 dernières semaines) » ne se coupe pas en fin de ligne (revue du 06/11) */
-.pistes-count-window {
-  white-space: nowrap;
-}

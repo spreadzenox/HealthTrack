@@ -762,12 +762,12 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
  */
 const COUNTDOWN_TEXT = {
   wellbeing: {
-    title: 'Vos pistes du bien-être arrivent dans',
+    title: 'Vos analyses du bien-être arrivent dans',
     count: 'jours avec une note de bien-être',
     how: 'Notez votre bien-être depuis',
   },
   gut: {
-    title: 'Vos pistes du ventre arrivent dans',
+    title: 'Vos analyses du ventre arrivent dans',
     count: 'jours avec une note du ventre',
     how: 'Notez votre ventre depuis',
   },

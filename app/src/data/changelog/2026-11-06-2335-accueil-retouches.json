@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-06",
+  "kind": "amélioration",
+  "title": "Accueil plus simple",
+  "items": [
+    "La date et « Bonjour » sont chacun sur leur ligne.",
+    "Sans mesure du jour, l'Accueil n'affiche plus de phrase sur les sources : elles se branchent dans Sources.",
+    "« Vos pistes arrivent dans N jours » devient « Vos analyses arrivent dans N jours », sans détail technique."
+  ]
+}

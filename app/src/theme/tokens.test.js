@@ -60,7 +60,7 @@ describe('tokens de design', () => {
     })
 
     it(`dessinent un rail de progression lilas visible (thème ${name})`, () => {
-      // La barre « Vos pistes arrivent dans N jours » est vide au jour 1 : seul son rail se voit.
+      // La barre « Vos analyses arrivent dans N jours » est vide au jour 1 : seul son rail se voit.
       expect(theme['lilac-track']).toBeDefined()
       expect(contrast(theme['lilac-track'], theme['lilac-bg'])).toBeGreaterThanOrEqual(1.4)
       expect(contrast(theme['lilac-bar'], theme['lilac-track'])).toBeGreaterThanOrEqual(3)

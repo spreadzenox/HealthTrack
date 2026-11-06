@@ -27,14 +27,9 @@ describe('MeasureTiles', () => {
     expect(screen.getByText('aucune source')).toBeInTheDocument()
   })
 
-  it('rien de mesuré : une seule ligne au lieu de trois tuiles « — » (VC-26)', () => {
-    wrap(<MeasureTiles tiles={tiles.map((t) => ({ ...t, value: null }))} />)
-    expect(screen.getByRole('link', { name: 'Ajouter une source' })).toHaveAttribute('href', '/connectors')
-    // Pas de montre supposée (POL-PLAY-2) : le téléphone peut donner pas et nuits
-    expect(screen.getByText(/peuvent venir de votre téléphone/)).toBeInTheDocument()
-    expect(screen.queryByText(/votre montre/)).not.toBeInTheDocument()
-    expect(screen.queryByText('—')).not.toBeInTheDocument()
-    expect(screen.queryByRole('list')).not.toBeInTheDocument()
+  it('rien de mesuré : ni tuiles « — » ni phrase sur les sources, branchées pendant l’accueil (testeur du 06/11)', () => {
+    const { container } = wrap(<MeasureTiles tiles={tiles.map((t) => ({ ...t, value: null }))} />)
+    expect(container).toBeEmptyDOMElement()
   })
 })
 
@@ -292,13 +287,13 @@ describe('PistesTeaser', () => {
   it('sans aucune piste dans le résumé : le compte à rebours habituel', async () => {
     remember({ gut: [], levers: [] })
     wrap(<PistesTeaser read={async () => [day(0)]} />)
-    expect(await screen.findByText('Vos pistes du ventre arrivent dans 28 jours')).toBeInTheDocument()
+    expect(await screen.findByText('Vos analyses du ventre arrivent dans 28 jours')).toBeInTheDocument()
   })
 
   it('dans Analyses, la carte ne s’annonce jamais elle-même', async () => {
     remember({ gut: [], levers: ['Marcher davantage'] })
     wrap(<PistesTeaser read={async () => [day(0)]} onPistesPage />)
-    expect(await screen.findByText('Vos pistes du ventre arrivent dans 28 jours')).toBeInTheDocument()
+    expect(await screen.findByText('Vos analyses du ventre arrivent dans 28 jours')).toBeInTheDocument()
   })
 
   const gut = (back) => ({ ...day(back), type: 'gut' })
@@ -306,33 +301,34 @@ describe('PistesTeaser', () => {
   it('carte ventre montrée : le même compte à rebours que l’onglet Ventre (notes du ventre), dès le premier jour', async () => {
     // Revue du 06/11 : l'Accueil disait « 21 jours » (repas ou notes) et l'onglet Ventre « 28 jours » (notes)
     wrap(<PistesTeaser read={async () => [day(0), day(1), day(1), day(3), gut(0), gut(2)]} />)
-    expect(await screen.findByText('Vos pistes du ventre arrivent dans 26 jours')).toBeInTheDocument()
+    expect(await screen.findByText('Vos analyses du ventre arrivent dans 26 jours')).toBeInTheDocument()
     expect(screen.getByRole('progressbar', { name: 'Jours de notes du ventre' })).toHaveAttribute('aria-valuenow', '2')
     const count = document.querySelector('.pistes-count')
-    expect(count).toHaveTextContent('2/28 jours avec une note du ventre (6 dernières semaines)')
+    expect(count).toHaveTextContent('2/28 jours avec une note du ventre')
     // POL-PLAY-47 : le chiffre en mono, la phrase en Figtree
     expect(count).not.toHaveClass('mono')
     expect(count.querySelector('.mono')).toHaveTextContent(/^2\/28$/)
-    expect(screen.getByText('Avec moins de jours, les résultats seraient surtout dus au hasard.')).toBeInTheDocument()
+    // Plus de détail technique (« 6 dernières semaines », « surtout du hasard ») : retours du testeur du 06/11
+    expect(screen.queryByText(/hasard|semaines/)).not.toBeInTheDocument()
     expect(screen.queryByText(/21/)).not.toBeInTheDocument()
   })
 
   it('carte ventre masquée (autre objectif) : les jours avec un repas, sans parler du ventre', async () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ goal: 'all' }))
     wrap(<PistesTeaser read={async () => [day(0), day(1), day(1), day(3)]} details onToggleDetails={() => {}} />)
-    expect(await screen.findByText('Vos pistes arrivent dans 18 jours')).toBeInTheDocument()
+    expect(await screen.findByText('Vos analyses arrivent dans 18 jours')).toBeInTheDocument()
     expect(screen.getByRole('progressbar', { name: 'Jours suivis' })).toHaveAttribute('aria-valuenow', '3')
-    expect(document.querySelector('.pistes-count')).toHaveTextContent('3/21 jours avec un repas (6 dernières semaines)')
+    expect(document.querySelector('.pistes-count')).toHaveTextContent('3/21 jours avec un repas')
     expect(screen.queryByText(/ventre/)).not.toBeInTheDocument()
   })
 
   it('beaucoup de repas mais peu de notes du ventre : le compte à rebours des notes, pas « assez de jours »', async () => {
     const entries = [...Array.from({ length: 25 }, (_, i) => day(i)), ...Array.from({ length: 10 }, (_, i) => gut(i))]
     wrap(<PistesTeaser read={async () => entries} />)
-    expect(await screen.findByText('Vos pistes du ventre arrivent dans 18 jours')).toBeInTheDocument()
+    expect(await screen.findByText('Vos analyses du ventre arrivent dans 18 jours')).toBeInTheDocument()
     expect(screen.getByRole('progressbar', { name: 'Jours de notes du ventre' })).toHaveAttribute('aria-valuenow', '10')
-    expect(document.querySelector('.pistes-count')).toHaveTextContent('10/28 jours avec une note du ventre (6 dernières semaines)')
-    expect(screen.getByText('Avec moins de jours, les résultats seraient surtout dus au hasard.')).toBeInTheDocument()
+    expect(document.querySelector('.pistes-count')).toHaveTextContent('10/28 jours avec une note du ventre')
+    expect(screen.queryByText(/hasard/)).not.toBeInTheDocument()
     expect(screen.queryByText(/Assez de jours/)).not.toBeInTheDocument()
   })
 
@@ -356,8 +352,8 @@ describe('PistesTeaser', () => {
       { type: 'face_burst', at: ago(2, 9) },
     ]
     wrap(<PistesTeaser focus="energy" read={async () => entries} details onToggleDetails={() => {}} />)
-    expect(await screen.findByText('Vos pistes arrivent dans 20 jours')).toBeInTheDocument()
-    expect(document.querySelector('.pistes-count')).toHaveTextContent('1/21 nuits suivies d’une mesure du bien-être (6 dernières semaines)')
+    expect(await screen.findByText('Vos analyses arrivent dans 20 jours')).toBeInTheDocument()
+    expect(document.querySelector('.pistes-count')).toHaveTextContent('1/21 nuits suivies d’une mesure du bien-être')
     expect(screen.getByText(/pistes sommeil → bien-être/)).toBeInTheDocument()
   })
 })

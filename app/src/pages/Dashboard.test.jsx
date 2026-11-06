@@ -64,6 +64,9 @@ function renderDashboard() {
   )
 }
 
+// Fin du chargement : sans mesure du jour, il n'y a plus de bloc « Mesures du jour » à attendre (testeur du 06/11)
+const loaded = () => waitFor(() => expect(screen.queryByText('Chargement des données…')).not.toBeInTheDocument())
+
 describe('Dashboard', () => {
   beforeEach(async () => {
     const { listEntries, countEntries } = await import('../storage/localHealthStorage')
@@ -73,12 +76,14 @@ describe('Dashboard', () => {
 
   it('renders the « Aujourd’hui » header and, without any data, the introduction', async () => {
     renderDashboard()
-    expect(screen.getByText(/· Bonjour$/)).toBeInTheDocument()
+    // Date et « Bonjour » sur deux lignes, sans « · » (retours du testeur du 06/11)
+    expect(screen.getByText('Bonjour')).toHaveClass('today-hello')
+    expect(document.querySelector('.today-dateline').textContent).not.toMatch(/·|Bonjour/)
     expect(screen.getByRole('heading', { level: 2, name: 'Votre journée' })).toBeInTheDocument()
     const intro = await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)
-    // Une seule phrase (VC-26) : la ligne des mesures propose déjà « Ajouter une source »
+    // Une seule phrase (VC-26) ; les sources se branchent pendant l'accueil, plus de ligne « Pas et nuits… »
     expect(intro.textContent.match(/[.!?](\s|$)/g)).toHaveLength(1)
-    expect(screen.getByRole('link', { name: 'Ajouter une source' })).toHaveAttribute('href', '/connectors')
+    expect(screen.queryByText(/Pas et nuits/)).not.toBeInTheDocument()
   })
 
   it('sans aucune donnée : pas de liens « … dans le Journal » (VC-26)', async () => {
@@ -144,7 +149,7 @@ describe('Dashboard', () => {
       { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } },
     ])
     renderDashboard()
-    await screen.findByRole('region', { name: 'Mesures du jour' })
+    await loaded()
     expect(screen.queryByText(/ce qui va avec vos bons et mauvais jours/i)).not.toBeInTheDocument()
   })
 
@@ -154,7 +159,7 @@ describe('Dashboard', () => {
       { id: 1, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } },
     ])
     renderDashboard()
-    await screen.findByRole('region', { name: 'Mesures du jour' })
+    await loaded()
     expect(screen.queryByRole('link', { name: /dans le Journal/ })).not.toBeInTheDocument()
     expect(document.querySelector('.day-list')).not.toBeInTheDocument()
     expect(screen.queryByTestId('wellbeing-charts')).not.toBeInTheDocument()
@@ -163,7 +168,7 @@ describe('Dashboard', () => {
   it('relit les tuiles du jour quand une saisie arrive', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     renderDashboard()
-    await screen.findByRole('region', { name: 'Mesures du jour' })
+    await loaded()
     const reads = () => listEntries.mock.calls.filter(([o]) => !o?.type).length
     const before = reads()
     window.dispatchEvent(new CustomEvent('health-entries-updated'))
