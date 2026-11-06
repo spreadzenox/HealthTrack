@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-06",
+  "kind": "amélioration",
+  "title": "Analyses, onglet Ventre : vos semaines en un coup d’œil",
+  "items": [
+    "En bas de l’onglet Ventre, une colonne par semaine montre vos jours calmes, de gêne et de douleur, d’après vos notes.",
+    "Un jour noté plusieurs fois compte avec sa note la plus forte, comme dans le rapport PDF. Les jours sans note restent vides."
+  ]
+}
