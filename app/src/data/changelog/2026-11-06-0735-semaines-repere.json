@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-06",
+  "kind": "amélioration",
+  "title": "Bien-être par semaine : un repère plus clair",
+  "items": [
+    "Dans Analyses → Bien-être, « Sur quelques semaines » marque le milieu de l’échelle (2,5 sur 5) d’un trait plein, comme l’historique du bien-être. Le pointillé y veut dire « moyenne » : les deux graphiques se lisent maintenant de la même façon."
+  ]
+}
