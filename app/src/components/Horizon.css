@@ -31,3 +31,30 @@
   color: var(--lilac-text);
   text-decoration: none;
 }
+
+/* ANALYSES-ONGLETS-5 : bien-être dans les heures après un repas */
+.horizon-hours {
+  margin: 0 0 22px;
+}
+
+.horizon-line {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: var(--mint-bg);
+  color: var(--mint-text);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.horizon-line--soon {
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.horizon-num {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}

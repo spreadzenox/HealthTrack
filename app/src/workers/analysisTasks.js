@@ -16,6 +16,7 @@ import { computeLaggedEffects } from '../services/laggedEffects'
 import { computeFaceMoodCorrelations } from '../services/mood/faceMoodDays'
 import { summarizeGutLinks } from '../services/gutLinks'
 import { gutWeeks } from '../services/gutWeeks'
+import { mealHoursEffect } from '../services/mood/mealHours'
 
 export const ANALYSIS_TASKS = {
   /** Accueil — « Prédiction du jour ». */
@@ -33,6 +34,8 @@ export const ANALYSIS_TASKS = {
       gut: summarizeGutLinks(entries),
       // Ventre, « Sur quelques semaines » : jours calmes, de gêne et de douleur par semaine (description seulement).
       gutWeeks: gutWeeks(entries),
+      // Bien-être « dans les heures » : lectures du visage après un repas comparées au reste du jour (ANALYSES-ONGLETS-5).
+      mealHours: mealHoursEffect(entries),
       totalDays: countTotalDataDays(entries),
     }
   },

@@ -4,7 +4,7 @@ import SoonList from '../components/SoonList'
 import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { rememberPistesSummary } from '../services/pistesSummary'
-import { HorizonHeading, WeeksHorizon } from '../components/Horizon'
+import { HorizonHeading, MealHoursHorizon, WeeksHorizon } from '../components/Horizon'
 import DomainTag from '../components/DomainTag'
 import { getHiddenLinks, gutLinkKey, hideLink, unhideAllLinks } from '../settings/hiddenLinks'
 import {
@@ -694,6 +694,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
         <SoonSection
           lines={soon.filter((l) => l.id === 'face' || l.id.startsWith('tag:'))}
         />
+        <MealHoursHorizon result={analysis.mealHours} />
         <WeeksHorizon />
         <MethodFooter analysis={analysis} advanced={advanced} onOpenAdvanced={onOpenAdvanced} />
       </div>
@@ -711,6 +712,9 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
           Données exploratoires : continuez à noter votre bien-être (objectif : 10 jours).
         </p>
       )}
+
+      {/* ANALYSES-ONGLETS-5 : à l'échelle des heures, les lectures du visage autour des repas */}
+      <MealHoursHorizon result={analysis.mealHours} />
 
       {/* ANALYSES-ONGLETS-3 : pistes et liens du bien-être comparent le jour même ou 1 à 3 jours de délai */}
       <HorizonHeading id="days" />
