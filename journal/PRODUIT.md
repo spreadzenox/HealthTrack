@@ -137,6 +137,13 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 4. Actions du propriétaire (jamais faites par la routine) — la plus débloquante d'abord
 
+- **P47 (06/11 07:40, 🚨 BLOQUANT : GitHub Actions arrêté)** : depuis le 06/11 ~06:40 UTC, GitHub refuse de lancer
+  tout job du dépôt : « The job was not started because your account is locked due to a billing issue ». Plus aucun
+  test, aucune release, aucun envoi sur Alpha ni déploiement du relais tant que ce n'est pas réglé. Geste : sur
+  github.com, photo de profil → **Settings → Billing and licensing** (ou https://github.com/settings/billing) :
+  régler le paiement en échec ou la limite de dépense signalée en haut de la page (mettre à jour la carte, ou
+  relever le « spending limit » d'Actions à une valeur que vous acceptez). Puis dites « P47 fait » à la routine : le
+  run suivant relance les checks de la PR en attente (#748) et vérifie que main repart.
 - **P37 (01/11 22:33, simplifiée le 03/11 18:35, pour garder Gold après la période de lancement, GOLD-a3)** : le
   relais a lu une seule installation Android au jeton accepté, `5e4a69f72ffb`. Sur votre téléphone, Halcya →
   Paramètres (roue en haut à droite) → descendre tout en bas → toucher 7 fois « Version … » → sous « Mode diagnostic »,
@@ -206,6 +213,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 - **06/11 04:35** — **POL-PLAY-VENTRE-BIENTOT** (revue C1) : onglet Ventre sans note, le rapport PDF n'est plus un bloc « Bientôt » en mono mais une phrase discrète (« Le rapport PDF pour votre médecin arrive avec votre première note du ventre. »), clair et sombre vérifiés.
 - **06/11 06:35** — **COUNTDOWN-LIEN** (C1) : « la carte de l'Accueil » du compte à rebours des onglets Bien-être et Ventre est un lien ; #746 (VISUAL-FLAKY-1) mergée.
+- **06/11 07:35** — **WEEKS-MIDLINE** (C1, données de démo) : repère 2,5 / 5 de « Sur quelques semaines » en trait plein, comme l'historique (le pointillé y est la moyenne).
 - **06/11 05:35** — **VISUAL-FLAKY-1** (outillage) : le banc de captures n'attend plus « networkidle » (≈ 1 échec sur 4) mais le chargement et le rendu, avec un nouvel essai ; rien de visible dans l'app.
 - **06/11 03:35** — **PISTES-UN-COMPTE** (revue de la version play sur données vierges, critère C1) : la carte lilas de l'Accueil comptait 21 « jours avec un repas ou une note du ventre » puis passait aux notes du ventre, alors que l'onglet Ventre annonçait d'emblée 28 jours de notes : deux chiffres pour la même attente. Les pistes repas → ventre ne dépendent que des notes du ventre (chaque jour noté est un jour suivi) : avec la carte ventre, l'Accueil compte directement les jours de notes (même seuil `GUT_PISTES_MIN_NOTE_DAYS`, même chiffre que l'onglet en démo : 9/28) ; carte ventre masquée (autre objectif), les jours avec un repas, sans mot sur le ventre (retour (3)). PR #743 mergée.
 - **06/11 02:35** — **BE-SEMAINES** (retour (4) du 04/11 : chaque horizon lisible) : l'onglet Bien-être renvoyait « Sur quelques semaines » vers Tendances (14 jours seulement, sous-onglet voisin). Il a maintenant son graphique : une colonne par semaine (8 au plus, à partir de la première lue ou notée), barre = bien-être estimé moyen (note du jour de `faceMoodDays`, la même partout), point = moyenne de vos notes, jamais mêlés ; « Arrive après 2 semaines de bien-être estimé ou noté » sinon. Description seulement (D5, règle 6). Les deux onglets ont leurs trois horizons sans renvoi.

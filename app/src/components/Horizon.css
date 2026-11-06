@@ -85,14 +85,13 @@
 }
 
 .wb-weeks-track::before {
-  /* repère du milieu de l'échelle (2,5 sur 5) */
+  /* repère du milieu de l'échelle (2,5 sur 5) : trait plein comme dans l'historique, où le pointillé est la moyenne */
   content: '';
   position: absolute;
   left: 0;
   right: 0;
   bottom: 50%;
-  border-top: 1px dashed var(--chart-ref);
-  opacity: 0.5;
+  border-top: 1px solid var(--chart-bar-2);
 }
 
 .wb-weeks-bar {
