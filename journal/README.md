@@ -8,6 +8,14 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 🧑‍🔬 **Retours de votre premier testeur iPhone (06/11 22:35) : pris en compte.** Le résumé anonyme est dans
+> [`RETOURS-TESTEURS.md`](RETOURS-TESTEURS.md) et découpé en 17 étapes (TESTEUR-*) en tête de `BACKLOG.md` ; elles
+> passent devant le reste des runs de code. Le point (5) propre à l'iPhone (mention Android dans la source Santé, source
+> « iOS 26.4 ou plus ») est transmis à la routine iOS. Première étape livrée ce soir : Journal → Repas vide n'affiche
+> plus qu'un bouton, « Ajouter mon premier repas », qui ouvre l'appareil photo. Prochaines : les petites retouches de
+> l'Accueil (date et « Bonjour » sur deux lignes, plus de « · », « analyses » au lieu de « pistes »), puis une
+> maquette du nouvel écran Aujourd'hui. Rien à faire de votre côté.
+
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
 > jobs (« account is locked due to a billing issue »). À 07:33 UTC, le run de 08:35 a relancé les checks de la PR #748 :
 > ils ont tous démarré et sont **verts** (11 sur 11). Rien à faire, sauf si vous recevez un e-mail de GitHub sur un
@@ -123,6 +131,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 06/11 22:35 — [Retours du testeur iPhone ; premier repas](runs/2026-11-06-2235-premier-repas.md) | 🎨 | Retours de votre premier testeur iPhone résumés (sans nom) dans `RETOURS-TESTEURS.md` et découpés en étapes ; le point propre à l'iPhone part à la routine iOS. Première étape : Journal → Repas vide montre « Aucun repas enregistré pour l'instant » et un seul bouton, « Ajouter mon premier repas », qui ouvre l'appareil photo. Alpha : 100841 en examen chez Google. Rien à faire de votre côté |
 | 06/11 21:35 — [Premier écran en très grande police](runs/2026-11-06-2135-onboarding-reperes.md) | 🎨 | Revue de la version Play sur un téléphone neuf, petit écran et très grande police (17 pages, rien de cassé). Au premier écran, les trois repères (0 Mo, 2–48 h, 1 geste) s'écrivaient un mot par ligne : ils passent l'un sous l'autre, le chiffre à gauche (inchangé sur un écran normal). Alpha : 100841 en examen chez Google, prochain envoi possible demain vers 17:12. Gold offert sur iPhone se termine ce soir à minuit, comme prévu. Rien à faire de votre côté |
 | 06/11 20:35 — [Idées : premiers utilisateurs sans publicité](runs/2026-11-06-2035-idees-acquisition.md) | 💡 | Plan pour trouver les premiers utilisateurs atteints du SII après l'ouverture de la production, sans publicité : fiche du Store, diététiciennes (une page « Pour les professionnels » sera préparée), l'APSSII (message de présentation prêt dans `IDEES.md` I224, à envoyer par vous après la production ; la semaine du SII est en avril), Reddit et Product Hunt plus tard. Deux règles notées : jamais d'avantage contre un avis sur le Store (votre « merci » aux testeurs, P44, n'en dépendra pas), et « Collaboration commerciale » si un créateur reçoit Gold. Rien à faire de votre côté |
 | 06/11 19:35 — [Carte ventre en très grande police](runs/2026-11-06-1935-ventre-colonne.md) | 🎨 | Sur un petit téléphone en grande police, « Douleur » dépassait de son bouton sur la carte « Votre ventre » : les trois choix passent alors l'un sous l'autre, pleine largeur (inchangé sur un écran plus large). « Noter moi-même » ne se coupe plus au trait d'union. Alpha : 100841 en examen chez Google, prochain envoi possible demain vers 17:12. Gold offert sur iPhone se termine ce soir à minuit (date fixée le 02/11). Rien à faire de votre côté |

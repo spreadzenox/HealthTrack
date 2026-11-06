@@ -21,6 +21,50 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🧑‍🔬 Retours du premier testeur iPhone du 06/11 au soir — PRIORITÉ DES RUNS DE CODE (seule une CI cassée passe avant)
+
+Résumé anonyme : [`RETOURS-TESTEURS.md`](RETOURS-TESTEURS.md). Code partagé : ce qui est corrigé ici part aussi sur
+iPhone. Un run = une étape testable, captures avant et après (clair et sombre, vierge et démo). Règle durable : même
+apparence = même type d'information ; moins de texte ; jamais le problème dans une carte et la solution dans une autre.
+
+**(4) Journal et repas** (le plus court, commencé en premier)
+- [x] TESTEUR-4a — Repas vierges : « Aucun repas enregistré pour l'instant » et un bouton « Ajouter mon premier repas »
+  qui ouvre l'appareil photo, sans les trois étapes de texte (06/11 22:35).
+- [ ] TESTEUR-4b — « Photographier un repas » de l'Accueil et de Nutrition ouvre directement l'appareil photo (sans
+  passer par la page Repas) ; test du champ `capture` sur les deux points d'entrée.
+- [ ] TESTEUR-4c — « Vos derniers jours… » en une phrase simple.
+- [ ] TESTEUR-4d — Nutrition : sous-titres (« estimé d'après vos pas des 14 derniers jours », « modérément actif sans
+  montre ») au toucher seulement ; problème et solution dans la même carte.
+
+**(1) Aujourd'hui, à refaire** (plusieurs runs ; un run « idées » prépare la maquette)
+- [ ] TESTEUR-1a — Petites retouches : date et « Bonjour » sur deux lignes ; plus de séparateurs « · » ; retirer
+  « Pas et nuits peuvent venir de votre téléphone ; une montre ajoute le cœur » ; « Vos pistes arrivent dans N jours »
+  devient « Vos analyses arrivent dans N jours ».
+- [ ] TESTEUR-1b — Maquette (run idées) : statut du jour en tête (« Votre journée : plutôt moyenne » et d'où il vient),
+  animation chaleureuse originale, puis l'explication, puis les données du jour par source, puis « Noter ».
+- [ ] TESTEUR-1c — Statut du jour en tête de l'Accueil (composant + tests, sans casser les cartes existantes).
+- [ ] TESTEUR-1d — Données du jour regroupées par source (montre, téléphone, noté par vous).
+- [ ] TESTEUR-1e — Petite animation (CSS, respecte « réduire les animations »).
+
+**(2) Note de bien-être**
+- [ ] TESTEUR-2a — Échelle 1 à 5 avec un milieu : migration des anciennes notes 0–5 sans perte (fonction pure,
+  testée sur toutes les valeurs, export/import d'anciens fichiers), estimateur et graphiques recalés.
+- [ ] TESTEUR-2b — La note d'abord, puis précisions pré-remplies (stress, alcool, café, repas tardif, écran tard) et
+  une phrase libre (précisions = facteurs X, jamais entrées de l'estimateur : règle 5).
+- [ ] TESTEUR-2c — Notification du soir : deux choix « Remplir maintenant » / « Recevoir un rappel » (heure réglable) ;
+  moins de texte (« encore quelques jours de lecture… », « un jour sur trois »).
+
+**(3) Analyses**
+- [ ] TESTEUR-3a — Retirer « sur les 6 dernières semaines », « sinon surtout du hasard » ; garder « encore N nuits ».
+- [ ] TESTEUR-3b — Bien-être et Tendances : fusionner ou différencier (proposition en run idées d'abord).
+- [ ] TESTEUR-3c — Plus d'interrupteur dans un interrupteur (calcul du modèle qui prédit le bien-être).
+
+**(5) Sources et accueil**
+- [ ] TESTEUR-5a — Toutes les autorisations pendant l'accueil (Santé et son historique, position approximative pour
+  la météo, caméra), chacune avec sa divulgation, refus respecté.
+- [ ] TESTEUR-5b — iPhone : mention propre à Android dans la source Santé ; source « iOS 26.4 ou plus » masquée ou
+  expliquée (transmis à la routine iOS le 06/11 22:35 ; vérifier ici les textes du code partagé).
+
 ## 🥇 Silver et Gold — décision du propriétaire du 31/10 vers 22:45 (bascule vers Gemini 3.8 Flash, sans banc préalable)
 Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du 31/10 vers 21:35) → (b) produits et écrans → (c) plus tard.
 - [x] **GOLD-a** (31/10 22:33, `relay/src/costs.js`, `server.js`, `vertex.js`, `config.js`, `relay-deploy.yml`) Le relais
