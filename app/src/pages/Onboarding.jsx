@@ -8,6 +8,7 @@ import { FEATURES } from '../config/distribution'
 import Premium from './Premium'
 import { AHA_DAYS, runFirstImport, summarizeImport } from '../services/firstImport'
 import useDisclosure from '../hooks/useDisclosure'
+import { useNarrowBox } from '../hooks/useNarrowBox'
 import { getFaceSenseStatus, isAppOpenMode, isFaceSenseAvailable, isFaceSenseEnabled, startFaceUnlock } from '../services/faceSense'
 import { runFaceTrial } from '../services/faceTrial'
 import { CHANGELOG } from '../data/changelog'
@@ -80,7 +81,11 @@ function Choice({ type, name, checked, onChange, label, hint, index }) {
   )
 }
 
+/** Sous 16 rem de large (320 px en police ×1,3), les trois repères passent l'un sous l'autre. */
+const TILES_MIN_REM = 16
+
 function GoalStep({ goal, onGoal }) {
+  const [tilesRef, tilesNarrow] = useNarrowBox(TILES_MIN_REM)
   return (
     <>
       <div className="onb-illustration" aria-hidden>
@@ -91,7 +96,7 @@ function GoalStep({ goal, onGoal }) {
       </div>
       <h1 className="onb-title">Comprenez ce qui va avec vos bons et mauvais jours</h1>
       <p className="onb-lead">Repas, sommeil, montres et bien-être, analysés sur votre téléphone.</p>
-      <ul className="onb-tiles">
+      <ul ref={tilesRef} className={`onb-tiles${tilesNarrow ? ' onb-tiles--stacked' : ''}`}>
         <li>
           <span className="onb-tile-num">0 Mo</span> envoyé à {APP_NAME} sans votre accord
         </li>

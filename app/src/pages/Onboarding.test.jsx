@@ -37,6 +37,24 @@ describe('Onboarding (jalon 4a)', () => {
     expect(cont()).toBeDisabled()
   })
 
+  it('grande police sur petit écran : les trois repères passent l’un sous l’autre (REVUE-320-VIERGE)', () => {
+    const spy = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(280)
+    document.documentElement.style.fontSize = '20.8px'
+    try {
+      renderAt()
+      const tiles = screen.getByText(/envoyé à .* sans votre accord/).closest('ul')
+      expect(tiles).toHaveClass('onb-tiles--stacked')
+    } finally {
+      spy.mockRestore()
+      document.documentElement.style.fontSize = ''
+    }
+  })
+
+  it('police normale : les repères restent en trois colonnes', () => {
+    renderAt()
+    expect(screen.getByText(/envoyé à .* sans votre accord/).closest('ul')).not.toHaveClass('onb-tiles--stacked')
+  })
+
   it('installation neuve : l’historique des nouveautés est déjà « lu » (VC-5)', () => {
     renderAt()
     expect(getLastSeenId()).toBe(CHANGELOG[0].id)
