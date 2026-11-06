@@ -13,7 +13,7 @@ import { frDecimal } from '../services/today'
 import { appLocale } from '../i18n/locale.js'
 import { faceModelTag } from '../services/mood/modelName'
 import { PERIODS, habitShifts, viewEnd } from '../services/mood/wellbeingHistory'
-import { keepSegments } from '../utils/keepWhole'
+import { keepSegments, keepWhole } from '../utils/keepWhole'
 
 const PERIOD_TABS = [
   { id: 'day', label: 'Jour' },
@@ -440,7 +440,7 @@ export default function WellbeingHistory({ now: givenNow, features }) {
           </ul>}
           <button type="button" className="mood-manual" onClick={() => setNoteOpen(true)}>
             <LineIcon name="plus" size={16} />
-            Noter moi-même
+            <span>{keepWhole('Noter moi-même')}</span>
           </button>
         </article>
       )}
