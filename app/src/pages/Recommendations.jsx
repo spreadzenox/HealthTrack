@@ -532,16 +532,8 @@ function FaceMoodMethod() {
  * Une ligne discrète par bloc qui n'a pas encore assez de données (POL-7) : jamais une carte presque vide.
  * Rien n'est calculé ici, seuls les compteurs déjà rendus par les analyses sont repris.
  */
-function soonLines({ faceMood, tagEffects, laggedEffects, gut } = {}, showGut = false, tagLines = []) {
+function soonLines({ faceMood, tagEffects, laggedEffects } = {}, tagLines = []) {
   const lines = []
-  // Aucune note du ventre : la carte lilas suffit (un seul seuil visible, VC-12)
-  if (showGut && gut?.status === 'too_early') {
-    lines.push({ id: 'gut', label: 'Votre ventre et vos repas', progress: `${Math.min(gut.noteDays, gut.minDays)}/${gut.minDays} jours` })
-  }
-  // Aucune note du ventre : pas de rapport vide (ni de « Débloquer » pour rien), une ligne discrète à la place
-  if (showGut && gut?.status === 'no_notes') {
-    lines.push({ id: 'report', label: 'Rapport PDF pour mon médecin', progress: 'dès votre 1re note du ventre' })
-  }
   if (faceMood && faceMood.status !== 'ok' && faceMood.status !== 'no_face') {
     lines.push({
       id: 'face',
@@ -679,7 +671,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
   const shownLevers = levers.filter((l) => !hidden.includes(l.variable))
   const hiddenCount = (levers.length - shownLevers.length) + allLinks.filter((l) => hidden.includes(l.key)).length
   const hiddenLine = <HiddenLine count={hiddenCount} onUnhide={onUnhide} />
-  const soon = soonLines(analysis, false, tagLines)
+  const soon = soonLines(analysis, tagLines)
 
   if (result.status === 'not_enough_data') {
     return (
@@ -825,8 +817,6 @@ function GutView({ analysis, showGut }) {
   const gut = analysis.gut
   const gutLinks = gut?.status === 'links' ? gut.links : []
   const hiddenCount = new Set(gutLinks.map(gutLinkKey).filter((k) => hidden.includes(k))).size
-  // Le compte des notes du ventre a sa carte : pas de ligne « Votre ventre et vos repas » en plus
-  const lines = soonLines({ gut }, true).filter((l) => l.id !== 'gut')
   const waiting = !gut || gut.status === 'no_notes' || gut.status === 'too_early'
   return (
     <div className="reco-tab-content" data-testid="reco-gut-view">
@@ -835,9 +825,15 @@ function GutView({ analysis, showGut }) {
       <GutLinks gut={gut} hidden={hidden} onHide={onHide} />
       <ReintroductionEntry />
       <HiddenLine count={hiddenCount} onUnhide={onUnhide} />
-      <SoonSection lines={lines} />
       <GutWeeks weeks={analysis.gutWeeks} />
-      {gut && gut.status !== 'no_notes' && <DoctorReportCard />}
+      {/* Aucune note du ventre : ni rapport vide, ni « Débloquer », ni bloc « Bientôt », une phrase (POL-PLAY-VENTRE-BIENTOT) */}
+      {gut && gut.status !== 'no_notes' ? (
+        <DoctorReportCard />
+      ) : (
+        <p className="reco-report-later" data-testid="reco-report-later">
+          Le rapport PDF pour votre médecin arrive avec votre première note du ventre.
+        </p>
+      )}
     </div>
   )
 }

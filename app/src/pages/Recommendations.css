@@ -632,3 +632,13 @@
 .reco-countdown .domain-tag {
   margin-bottom: 6px;
 }
+
+/* Rapport PDF sans note du ventre : une phrase discrète (POL-PLAY-VENTRE-BIENTOT, 06/11) */
+.reco-report-later {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 8px 0 18px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}

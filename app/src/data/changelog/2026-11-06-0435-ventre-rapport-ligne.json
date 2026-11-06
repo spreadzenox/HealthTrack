@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-06",
+  "kind": "correctif",
+  "title": "Onglet Ventre : une phrase pour le rapport PDF",
+  "items": [
+    "Avant votre première note du ventre, l’onglet Ventre d’Analyses dit simplement que le rapport PDF pour votre médecin arrivera avec cette note, au lieu d’un bloc « Bientôt »."
+  ]
+}
