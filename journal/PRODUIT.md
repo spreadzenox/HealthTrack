@@ -212,6 +212,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 ## 5. Historique
 
 - **06/11 15:35** — **REVUE-320** (revue C1, play démo, clair, 320 px, 17 pages) : sous-onglets d'Analyses sur une ligne (débordaient de 24 px) ; l'outil de captures nomme le coupable d'un débordement. Prochain : CD-ALPHA-6 vers 16:30 UTC, TEST-ALPHA-1 (07–08/11).
+- **06/11 17:35** — **REVUE-320-SOMBRE-2** (C1, play vierge) : l'entrée « fuseau du jour » n'est plus écrite deux fois ni comptée comme une saisie dans Données ; Journal vierge réordonné. CD-ALPHA-6 vu : 100841 sur l'alpha depuis 16:12 UTC.
 - **06/11 16:35** — **REVUE-320-SOMBRE** (revue C1, play vierge, sombre, 320 px, 17 pages) : liens du paywall sans « · » orphelin, « 1 geste » sur une ligne à l'onboarding ; REVUE-320-SOMBRE-2 noté. Prochain : CD-ALPHA-6 au passage qui suit ce merge.
 - **06/11 14:35** — **GUT-STACK** (revue C1, play vierge, clair, 360 px, police ×1,3, 17 pages ok) : Calme / Gêne / Douleur décidés en bloc (rond au-dessus pour les trois dès qu'un libellé ne tient pas ; aussi à 320 px en police normale). Prochain : CD-ALPHA-6 vers 16:30 UTC, TEST-ALPHA-1 (07–08/11).
 - **06/11 13:35** — **KEEP-SEGMENTS** (revue C1, play démo, sombre, 360 px, police ×1,3, 17 pages ok) : rond radio des choix à taille fixe (Paramètres, paywall) ; lignes mono de l'historique du bien-être et d'Analyses coupées aux seuls points médians ; « 1 jour noté ». Prochain : CD-ALPHA-6 vers 16:30 UTC, TEST-ALPHA-1 (07–08/11).

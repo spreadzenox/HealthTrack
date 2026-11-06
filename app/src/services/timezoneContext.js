@@ -33,6 +33,9 @@ export function timezoneContextEntry(now = new Date(), tz = currentZone()) {
 }
 
 let lastRecorded = null
+// Clé en cours d'écriture : l'Accueil et la synchro appellent au même moment ; sans ce verrou, les deux lisent la
+// base avant que l'un n'écrive et la même entrée est écrite deux fois (REVUE-320-SOMBRE-2).
+let pendingKey = null
 
 /**
  * Note le fuseau du jour (à l'ouverture et au retour dans l'app) ; une seule écriture par jour et par fuseau.
@@ -42,12 +45,15 @@ export async function recordTimezoneContext(now = new Date(), tz = currentZone()
   const entry = timezoneContextEntry(now, tz)
   if (!entry) return false
   const key = `${entry.payload.date}|${entry.payload.tz}`
-  if (key === lastRecorded) return false
+  if (key === lastRecorded || key === pendingKey) return false
+  pendingKey = key
   try {
     const { inserted } = await upsertEntries([entry])
     lastRecorded = key
     return inserted > 0
   } catch {
     return false
+  } finally {
+    if (pendingKey === key) pendingKey = null
   }
 }

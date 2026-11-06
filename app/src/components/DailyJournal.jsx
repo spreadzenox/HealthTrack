@@ -418,7 +418,8 @@ export default function DailyJournal() {
     <section className="daily-journal" aria-labelledby="daily-journal-title">
       <h2 id="daily-journal-title" className="page-title">Vos derniers jours</h2>
       <p className="page-intro">Chaque jour, ce que vos sources ont mesuré et ce que vous avez noté.</p>
-      {stoolPhoto && <StoolPhotoLine />}
+      {/* Journal vierge : « Rien de noté » d'abord, la photo des selles ensuite (REVUE-320-SOMBRE-2). */}
+      {stoolPhoto && days.length > 0 && <StoolPhotoLine />}
       <WellbeingPrompt
         open={editingWellbeing !== null}
         entry={editingWellbeing}
@@ -432,7 +433,10 @@ export default function DailyJournal() {
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}
       {!loading && !error && (days.length === 0 ? (
-        <JournalEmpty />
+        <>
+          <JournalEmpty />
+          {stoolPhoto && <StoolPhotoLine />}
+        </>
       ) : (
         <>
           <ul className="day-list">

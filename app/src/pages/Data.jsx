@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { exportToJson, importFromJson, parseBackup, countAllEntries } from '../storage/localHealthStorage'
+import { exportToJson, importFromJson, parseBackup, countAllEntries, countEntries } from '../storage/localHealthStorage'
 import { compactWatchSpo2Once } from '../services/spo2Slots'
 import { fixWatchKcalOnce } from '../services/watchKcalFix'
 import { deleteAllMyData } from '../services/deleteAllData'
@@ -73,8 +73,10 @@ export default function Data() {
   const [entryCount, setEntryCount] = useState(null)
   const refreshCount = useCallback(() => {
     Promise.resolve()
-      .then(() => countAllEntries())
-      .then((n) => setEntryCount(typeof n === 'number' ? n : null), () => setEntryCount(null))
+      // Le fuseau horaire du jour (entrée `context`, notée seule par l'app) n'est pas une saisie : il part dans
+      // la sauvegarde mais ne compte pas, sinon une installation vierge affiche « 1 entrée » (REVUE-320-SOMBRE-2).
+      .then(() => Promise.all([countAllEntries(), Promise.resolve(countEntries({ type: 'context' })).catch(() => 0)]))
+      .then(([n, auto]) => setEntryCount(typeof n === 'number' ? Math.max(0, n - (Number(auto) || 0)) : null), () => setEntryCount(null))
   }, [])
   useEffect(() => {
     refreshCount()
