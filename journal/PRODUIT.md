@@ -137,7 +137,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 4. Actions du propriétaire (jamais faites par la routine) — la plus débloquante d'abord
 
-- **P47 (06/11 07:40, 🚨 BLOQUANT : GitHub Actions arrêté)** : depuis le 06/11 ~06:40 UTC, GitHub refuse de lancer
+- ~~**P47 (06/11 07:40, 🚨 BLOQUANT : GitHub Actions arrêté)**~~ **levée le 06/11 vers 07:30 UTC** (checks de #748 relancés à 07:33, tous verts ; rien à faire sauf e-mail de GitHub sur un paiement en échec). Énoncé d'origine : depuis le 06/11 ~06:40 UTC, GitHub refuse de lancer
   tout job du dépôt : « The job was not started because your account is locked due to a billing issue ». Plus aucun
   test, aucune release, aucun envoi sur Alpha ni déploiement du relais tant que ce n'est pas réglé. Geste : sur
   github.com, photo de profil → **Settings → Billing and licensing** (ou https://github.com/settings/billing) :
