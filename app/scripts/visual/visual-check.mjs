@@ -136,6 +136,7 @@ import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { generateDemoEntries } from './demoData.mjs'
+import { gotoRoute } from './navigate.mjs'
 import { encodeFrame } from '../../src/devices/huawei/protocol.js'
 
 // Même fuseau que le navigateur simulé, pour que les heures des données de démo soient cohérentes.
@@ -1219,7 +1220,7 @@ async function main() {
     for (const [path, name] of routes) {
       current = { path, name, console: [], pageErrors: [] }
       try {
-        await page.goto(baseUrl + path, { waitUntil: 'networkidle', timeout: 20000 })
+        await gotoRoute(page, baseUrl + path)
         await page.waitForTimeout(700)
         if (args.onboarding === 'aha' && path === '/bienvenue') {
           await page.locator('.onb-facts, .onb-note').first().waitFor({ timeout: 10000 })
