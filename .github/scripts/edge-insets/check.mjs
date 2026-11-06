@@ -163,24 +163,50 @@ let ok = true
 const sdk = shell('getprop ro.build.version.sdk').trim()
 lines.push(`### Bord à bord (Android API ${sdk}, POL-PLAY-9)`, '')
 
-shell(`am force-stop ${PKG}`)
-shell('logcat -c')
-shell(`monkey -p ${PKG} -c android.intent.category.LAUNCHER 1`)
-if (!(await connect())) {
-  lines.push('- ❌ WebView inaccessible (protocole DevTools)')
-  ok = false
-} else {
+// Lancement à froid puis lecture des encarts. Échecs du 03/11 au 06/11 (≈ 1 exécution sur 4) : DevTools sans
+// réponse (« WebView inaccessible », « lecture ?/5 ») ou 0 px sur les 5 lectures, alors que les logs natifs
+// HalcyaInsets donnaient les bonnes hauteurs. On relance donc l'app jusqu'à 3 fois avant de conclure (EDGE-FLAKE) :
+// une vraie régression reste à 0 px à chaque lancement et le job reste rouge.
+const LAUNCHES = 3
+async function launchAndRead(launch) {
+  try {
+    cdp?.close()
+  } catch {
+    /* déjà fermée */
+  }
+  cdp = null
+  shell(`am force-stop ${PKG}`)
+  shell('logcat -c')
+  shell(`monkey -p ${PKG} -c android.intent.category.LAUNCHER 1`)
+  if (!(await connect())) return { connected: false, launch }
   await sleep(6000)
-  shot('accueil-6s')
+  shot(`accueil-6s-lancement${launch}`)
   await sleep(10000)
   const rest = await readInsetsSettled()
-  shot('accueil')
-  const statusFrame = shell('dumpsys window | grep -m3 -iE "statusBars|status_bar.*frame"').trim()
-  lines.push('```', statusFrame, shell('logcat -d -s HalcyaInsets').trim().split('\n').slice(-6).join('\n'), '```')
+  shot(`accueil-lancement${launch}`)
+  return { connected: true, launch, rest }
+}
+
+let run
+const tries = []
+for (let launch = 1; launch <= LAUNCHES; launch++) {
+  run = await launchAndRead(launch)
+  tries.push(run.connected ? `${launch} : haut ${run.rest?.top} px, bas ${run.rest?.bottom} px` : `${launch} : WebView inaccessible`)
+  if (run.connected && insetsOk(run.rest)) break
+  shell('am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS')
+}
+const statusFrame = shell('dumpsys window | grep -m3 -iE "statusBars|status_bar.*frame"').trim()
+lines.push('```', statusFrame, shell('logcat -d -s HalcyaInsets').trim().split('\n').slice(-6).join('\n'), '```')
+if (tries.length > 1) lines.push(`- lancements : ${tries.join(' ; ')}`)
+if (!run.connected) {
+  lines.push(`- ❌ WebView inaccessible (protocole DevTools) après ${LAUNCHES} lancements`)
+  ok = false
+} else {
+  const rest = run.rest
   // Haut : barre d'état + encoche, jamais plus de 64 dp sur un téléphone (105 = barre de titre en trop)
   const restOk = insetsOk(rest)
   ok &&= restOk
-  lines.push(`- ${restOk ? '✅' : '❌'} encarts au repos : haut ${rest?.top} px, bas ${rest?.bottom} px (attendu 20–64 et ≥ 16 ; lecture ${rest?.attempt ?? '?'}/5)`)
+  lines.push(`- ${restOk ? '✅' : '❌'} encarts au repos : haut ${rest?.top} px, bas ${rest?.bottom} px (attendu 20–64 et ≥ 16 ; lancement ${run.launch}/${LAUNCHES}, lecture ${rest?.attempt ?? '?'}/5)`)
   lines.push(`- page lue : ${pageInfo}`)
 
   // Clavier : premier champ de saisie visible, touché par un vrai appui (s'il existe sur l'écran affiché)
