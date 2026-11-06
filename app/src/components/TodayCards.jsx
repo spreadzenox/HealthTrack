@@ -28,6 +28,7 @@ import { readPistesSummary } from '../services/pistesSummary'
 import GutEveningReminder from './GutEveningReminder'
 import StoolLine from './StoolLine'
 import LineIcon from './LineIcon'
+import { keepWhole } from '../utils/keepWhole'
 import './TodayCards.css'
 import { appLocale, localeDate } from '../i18n/locale.js'
 
@@ -317,7 +318,7 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
   return (
     <section className="today-card pistes-card" aria-labelledby="pistes-card-title">
       <div className="today-card-head">
-        <h3 id="pistes-card-title" className="today-card-title">{title}</h3>
+        <h3 id="pistes-card-title" className="today-card-title">{keepWhole(title)}</h3>
         <DetailsToggle on={details} onToggle={onToggleDetails} />
       </div>
       <div

@@ -27,6 +27,7 @@ import { LAGS, MIN_LAG_PAIRS } from '../services/laggedEffects'
 import { FACE_MOOD_MIN_DAYS, FACE_MOOD_MIN_READINGS } from '../services/mood/faceMoodDays'
 import { isDebugModeEnabled } from '../settings/debugMode'
 import { formatSigned, evidenceLabel } from '../utils/format'
+import { keepWhole } from '../utils/keepWhole'
 import { correlationStrength } from '../services/statistics'
 import { useAutoSync } from '../hooks/useAutoSync'
 import DetailsToggle from '../components/DetailsToggle'
@@ -780,7 +781,7 @@ export function AnalysisCountdown({ domain, days, target }) {
     <section className="today-card pistes-card reco-countdown" data-testid={`reco-countdown-${domain}`} aria-labelledby={`reco-countdown-${domain}-title`}>
       <DomainTag domain={domain} />
       <h3 id={`reco-countdown-${domain}-title`} className="today-card-title">
-        {text.title} {remaining} jour{remaining > 1 ? 's' : ''}
+        {keepWhole(`${text.title} ${remaining} jour${remaining > 1 ? 's' : ''}`)}
       </h3>
       <div className="pistes-progress" role="progressbar" aria-valuemin={0} aria-valuemax={target} aria-valuenow={done} aria-label={text.count}>
         <div className="pistes-progress-bar" style={{ width: `${(done / target) * 100}%` }} />
