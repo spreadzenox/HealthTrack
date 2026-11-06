@@ -275,7 +275,8 @@ test('crédits : la première analyse d\'une installation inconnue du registre e
     assert.equal((await post(url, { kind: 'text', description: 'une poire' })).status, 200)
     const first = logs.filter((l) => l.event === 'first_credit')
     assert.equal(first.length, 1)
-    assert.deepEqual(Object.keys(first[0]).sort(), ['event', 'plan', 'testenv'])
+    assert.deepEqual(Object.keys(first[0]).sort(), ['event', 'plan', 'testenv', 'testnet'])
+    assert.equal(first[0].testnet, false)
     assert.equal(first[0].testenv, 'none')
   })
   // L'analyse de test du workflow de déploiement n'est pas une vraie installation
@@ -289,6 +290,15 @@ test('crédits : la première analyse d\'une installation inconnue du registre e
     const res = await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': 'robot-de-test-google-1', 'X-Test-Device': '1' })
     assert.equal(res.status, 200)
     assert.deepEqual(logs.filter((l) => l.event === 'first_credit').map((l) => l.testlab), [true])
+  })
+  // Réseau de test de Google (INSTALLS-21c-1) : seulement un booléen, jamais l'adresse ; le dernier élément de
+  // X-Forwarded-For (ajouté par Cloud Run) compte, pas ce que le client y a mis
+  await withServer({ vertex: okVertex(), credits: createCredits({ store }) }, async (url, logs) => {
+    await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': 'robot-reseau-test-1-aaaa', 'X-Forwarded-For': '108.177.6.20' })
+    await post(url, { kind: 'text', description: 'une pomme' }, { 'X-Install-Id': 'robot-reseau-test-2-aaaa', 'X-Forwarded-For': '108.177.6.20, 90.12.34.56' })
+    assert.deepEqual(logs.filter((l) => l.event === 'first_credit').map((l) => l.testnet), [true, false])
+    const text = JSON.stringify(logs)
+    assert.ok(!text.includes('108.177.6.20') && !text.includes('90.12.34.56'))
   })
   // Comment l'app a lu le réglage de Test Lab (INSTALLS-21b) : journalisé borné avec le premier crédit
   await withServer({ vertex: okVertex(), credits: createCredits({ store }) }, async (url, logs) => {

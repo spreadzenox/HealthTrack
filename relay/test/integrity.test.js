@@ -130,6 +130,14 @@ test('appareil de test de Google (rapport de pré-lancement) : signalé par l\'a
   assert.deepEqual(logs.map((e) => [e.status, e.testlab]), [['missing', true], ['missing', false], ['passed', true]])
 })
 
+test('réseau de test de Google (INSTALLS-21c-1) : booléen testnet journalisé, rien de bloqué en observe', async () => {
+  const { g, logs } = guard({ mode: 'observe' })
+  assert.equal((await g.check('sans-jeton-installation-1', undefined, { clientStatus: 'error:-9', testnet: true })).ok, true)
+  await g.check('sans-jeton-installation-2', undefined, { clientStatus: 'timeout' })
+  await g.check(INSTALL, TOKEN, { testnet: true })
+  assert.deepEqual(logs.map((e) => [e.status, e.testnet]), [['missing', true], ['missing', false], ['passed', true]])
+})
+
 test('jeton présent : origine CI journalisée aussi avec le verdict', async () => {
   const { g, logs } = guard({ mode: 'observe' })
   await g.check(INSTALL, TOKEN)
