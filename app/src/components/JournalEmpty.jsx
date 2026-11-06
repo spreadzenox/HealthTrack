@@ -12,7 +12,7 @@ export default function JournalEmpty() {
   const [noteOpen, setNoteOpen] = useState(false)
   const gut = gutCardMode() === 'show'
   const tiles = [
-    { to: '/food', theme: 'peach', icon: 'camera', label: 'Photographier un repas' },
+    { mealPhoto: true, theme: 'peach', icon: 'camera', label: 'Photographier un repas' },
     gut
       ? { to: '/', theme: 'peach', icon: 'pen', label: 'Noter votre ventre' }
       : { onClick: () => setNoteOpen(true), theme: 'mint', icon: 'pen', label: 'Noter votre bien-être' },

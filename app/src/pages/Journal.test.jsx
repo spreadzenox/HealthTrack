@@ -140,7 +140,8 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     renderJournal()
     await screen.findByText(/Vos derniers jours/i)
     expect(await screen.findByText('Rien de noté pour l’instant')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Photographier un repas/i })).toHaveAttribute('href', '/food')
+    const photo = screen.getByRole('button', { name: /Photographier un repas/i })
+    expect(document.getElementById(photo.getAttribute('for'))).toHaveAttribute('capture', 'environment')
   })
 
   async function renderEntries(entries) {

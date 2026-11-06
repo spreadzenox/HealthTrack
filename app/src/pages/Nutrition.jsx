@@ -9,7 +9,7 @@ import ciqualMeta from '../data/ciqualMeta.json'
 import './Nutrition.css'
 
 // POL-PLAY-49 : semaine sans repas → tuile pêche (repas), comme le Journal vierge.
-const EMPTY_TILES = [{ to: '/food', theme: 'peach', icon: 'camera', label: 'Photographier un repas' }]
+const EMPTY_TILES = [{ mealPhoto: true, theme: 'peach', icon: 'camera', label: 'Photographier un repas' }]
 
 const STATUS_TEXT = {
   ok: 'atteint',

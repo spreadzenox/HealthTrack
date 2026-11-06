@@ -15,8 +15,10 @@
 > plus qu'un bouton, « Ajouter mon premier repas », qui ouvre l'appareil photo. Deuxième étape (23:35) : sur
 > l'Accueil, la date et « Bonjour » sont sur deux lignes, les « · » ont disparu, la phrase « Pas et nuits peuvent venir
 > de votre téléphone… » aussi, et « Vos pistes arrivent dans N jours » devient « Vos analyses arrivent dans N jours »,
-> sans « 6 dernières semaines » ni « surtout du hasard ». Prochaines : la photo du repas qui ouvre directement
-> l'appareil photo, puis une maquette du nouvel écran Aujourd'hui. Rien à faire de votre côté.
+> sans « 6 dernières semaines » ni « surtout du hasard ». Troisième (07/11 00:35) : « Photo du repas » sur l'Accueil, et
+> « Photographier un repas » dans Nutrition et le Journal vide, ouvrent directement l'appareil photo ; la photo
+> s'affiche dans Repas, prête à analyser. Prochaines : la phrase « hasard » de l'onglet Analyses, puis une maquette
+> du nouvel écran Aujourd'hui. Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
 > jobs (« account is locked due to a billing issue »). À 07:33 UTC, le run de 08:35 a relancé les checks de la PR #748 :
@@ -133,6 +135,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 00:35 — [Photo du repas en un geste](runs/2026-11-07-0035-photo-directe.md) | 🎨 | « Photo du repas » (Accueil) et « Photographier un repas » (Nutrition, Journal vide) ouvrent directement l'appareil photo ; la photo arrive dans Repas, prête à analyser (avant : il fallait passer par la page Repas et toucher un second bouton). Rien à faire de votre côté |
 | 06/11 23:35 — [Accueil : petites retouches du testeur](runs/2026-11-06-2335-accueil-retouches.md) | 🎨 | Sur l'Accueil : la date et « Bonjour » chacun sur sa ligne, plus de « · », plus de phrase grise sur les sources quand rien n'est mesuré, et « Vos analyses arrivent dans N jours » (aussi dans Analyses) sans détail technique. La PR #764 du run précédent (premier repas en un bouton) est mergée. Rien à faire de votre côté |
 | 06/11 22:35 — [Retours du testeur iPhone ; premier repas](runs/2026-11-06-2235-premier-repas.md) | 🎨 | Retours de votre premier testeur iPhone résumés (sans nom) dans `RETOURS-TESTEURS.md` et découpés en étapes ; le point propre à l'iPhone part à la routine iOS. Première étape : Journal → Repas vide montre « Aucun repas enregistré pour l'instant » et un seul bouton, « Ajouter mon premier repas », qui ouvre l'appareil photo. PR #764 mergée au run suivant (23:35). Alpha : 100841 en examen chez Google. Rien à faire de votre côté |
 | 06/11 21:35 — [Premier écran en très grande police](runs/2026-11-06-2135-onboarding-reperes.md) | 🎨 | Revue de la version Play sur un téléphone neuf, petit écran et très grande police (17 pages, rien de cassé). Au premier écran, les trois repères (0 Mo, 2–48 h, 1 geste) s'écrivaient un mot par ligne : ils passent l'un sous l'autre, le chiffre à gauche (inchangé sur un écran normal). Alpha : 100841 en examen chez Google, prochain envoi possible demain vers 17:12. Gold offert sur iPhone se termine ce soir à minuit, comme prévu. Rien à faire de votre côté |

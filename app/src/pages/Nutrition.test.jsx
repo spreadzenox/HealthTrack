@@ -154,8 +154,9 @@ describe('Nutrition page', () => {
       expect(screen.getByText(/aucun repas/i)).toBeInTheDocument()
     })
     // POL-PLAY-49 : tuile pêche vers Repas plutôt qu'une phrase grise et un second bouton plein.
-    const tile = screen.getByRole('link', { name: 'Photographier un repas' })
-    expect(tile).toHaveAttribute('href', '/food')
+    // TESTEUR-4b : la tuile ouvre directement l'appareil photo.
+    const tile = screen.getByRole('button', { name: 'Photographier un repas' })
+    expect(document.getElementById(tile.getAttribute('for'))).toHaveAttribute('capture', 'environment')
     expect(tile).toHaveAttribute('data-theme', 'peach')
     expect(document.querySelector('.nutrition-empty .btn')).toBeNull()
   })

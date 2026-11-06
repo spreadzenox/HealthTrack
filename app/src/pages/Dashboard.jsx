@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
@@ -16,6 +15,7 @@ import { daySummaryTitle, headerLine, measureTiles } from '../services/today'
 import { APP_NAME } from '../config/brand'
 import { homeFocus, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
+import MealPhotoButton from '../components/MealPhotoButton'
 import LineIcon from '../components/LineIcon'
 
 export default function Dashboard() {
@@ -24,7 +24,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [wellbeingOpen, setWellbeingOpen] = useState(false)
-  const navigate = useNavigate()
   const [details, toggleDetails] = useDetailsMode()
   // L'objectif choisi règle l'Accueil : la carte des pistes parle sommeil avec « énergie et sommeil » (I155), la
   // carte ventre n'apparaît qu'avec « Mon ventre » (POL-4 ; aucune note effacée)
@@ -122,10 +121,11 @@ export default function Dashboard() {
 
       {/* La note de bien-être manuelle est dans la carte « Bien-être estimé » (POL-3) : un seul geste ici. */}
       <div className="today-actions">
-        <button type="button" className="btn today-action-photo" onClick={() => navigate('/food')}>
+        {/* TESTEUR-4b : ouvre directement l'appareil photo ; la photo part ensuite vers la page Repas. */}
+        <MealPhotoButton className="btn today-action-photo">
           <LineIcon name="camera" size={22} />
           Photo du repas
-        </button>
+        </MealPhotoButton>
       </div>
       {!loading && shouldShowCigaretteCounter(entries) && (
         <div className="dashboard-actions"><CigaretteQuickAdd /></div>

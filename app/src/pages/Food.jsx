@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import JournalTabs from '../components/JournalTabs'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { takePendingMealPhoto } from '../services/mealPhotoHandoff'
 import '../Food.css'
 import { listEntries, createEntry } from '../storage/localHealthStorage'
 import AiCreditsHint from '../components/AiCreditsHint'
@@ -135,6 +136,12 @@ export default function Food() {
     reader.onload = () => setPreview(reader.result)
     reader.readAsDataURL(f)
   }
+
+  // TESTEUR-4b : photo prise depuis l'Accueil, Nutrition ou le Journal vierge, reprise une seule fois.
+  useEffect(() => {
+    const f = takePendingMealPhoto()
+    if (f) handleFile(f)
+  }, [])
 
   const onInputChange = (e) => {
     const f = e.target.files?.[0]

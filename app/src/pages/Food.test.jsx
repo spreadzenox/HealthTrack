@@ -30,6 +30,15 @@ describe('Food', () => {
     listEntries.mockResolvedValue([])
   })
 
+  it('reprend la photo prise depuis l’Accueil, prête à analyser (TESTEUR-4b)', async () => {
+    const { setPendingMealPhoto, takePendingMealPhoto } = await import('../services/mealPhotoHandoff')
+    setPendingMealPhoto(new File(['x'], 'repas.jpg', { type: 'image/jpeg' }))
+    render(<MemoryRouter><Food /></MemoryRouter>)
+    expect(await screen.findByAltText('Aperçu')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Analyser les ingrédients/ })).toBeInTheDocument()
+    expect(takePendingMealPhoto()).toBeNull()
+  })
+
   it('renders food page title', () => {
     render(
       <BrowserRouter>

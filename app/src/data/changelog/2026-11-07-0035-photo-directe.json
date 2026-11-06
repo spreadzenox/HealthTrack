@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "Photo du repas en un geste",
+  "items": [
+    "« Photo du repas » sur l'Accueil ouvre directement l'appareil photo. La photo prise s'affiche dans Repas, prête à analyser.",
+    "Même chose pour « Photographier un repas » dans Nutrition et dans le Journal vide."
+  ]
+}

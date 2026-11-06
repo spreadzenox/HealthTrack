@@ -92,7 +92,7 @@ describe('Dashboard', () => {
     expect(screen.queryByRole('link', { name: /dans le Journal/ })).not.toBeInTheDocument()
   })
 
-  it('montre les tuiles du jour, la carte ventre, la carte pistes et « Photo du repas » mène aux repas', async () => {
+  it('montre les tuiles du jour, la carte ventre, la carte pistes et « Photo du repas » ouvre l’appareil photo puis les repas', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([
       { id: 1, type: 'steps', source: 'health_connect', at: new Date().toISOString(), payload: { value: 4321, period: 'day' } },
@@ -103,8 +103,16 @@ describe('Dashboard', () => {
     expect(screen.getByText('VFC nuit')).toBeInTheDocument()
     expect(screen.getByTestId('gut-card')).toBeInTheDocument()
     expect(screen.getByTestId('pistes-card')).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Photo du repas' }))
+    // TESTEUR-4b : le bouton est le libellé d'un champ photo arrière ; la photo prise part vers Repas.
+    const photo = screen.getByRole('button', { name: 'Photo du repas' })
+    const input = document.getElementById(photo.getAttribute('for'))
+    expect(input).toHaveAttribute('capture', 'environment')
+    expect(navigateMock).not.toHaveBeenCalled()
+    const file = new File(['x'], 'repas.jpg', { type: 'image/jpeg' })
+    fireEvent.change(input, { target: { files: [file] } })
     expect(navigateMock).toHaveBeenCalledWith('/food')
+    const { takePendingMealPhoto } = await import('../services/mealPhotoHandoff')
+    expect(takePendingMealPhoto()).toBe(file)
   })
 
   it('objectif « énergie et sommeil » : pas de carte ventre (POL-4), la carte des pistes parle sommeil (I155)', async () => {
