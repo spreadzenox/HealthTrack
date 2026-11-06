@@ -118,7 +118,10 @@ describe('Recommendations page', () => {
   it('shows the same lilac card as the home page when there is no data, without tabs nor jargon', async () => {
     const { container } = renderPage()
     // ANALYSES-ONGLETS-2 : l'onglet Bien-être compte les jours de bien-être, plus les repas ni le ventre
-    expect(await screen.findByText(/Vos pistes du bien-être arrivent dans 5 jours/i)).toBeInTheDocument()
+    const title = await screen.findByRole('heading', { name: /Vos pistes du bien-être arrivent dans 5 jours/i })
+    // KEEP-WHOLE : « bien-être » ne se coupe pas au trait d'union à 360 px
+    expect(title.querySelector('span')).toHaveTextContent('bien-être')
+    expect(title.querySelector('span').style.whiteSpace).toBe('nowrap')
     expect(container.querySelector('.pistes-count')).toHaveTextContent(/0\/5 jours avec une note de bien-être/)
     expect(container.textContent).not.toMatch(/ventre/)
     expect(screen.getByText(/résultats seraient surtout dus au hasard/)).toBeInTheDocument()
@@ -147,7 +150,7 @@ describe('Recommendations page', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(2))
     const { container } = renderPage()
-    expect(await screen.findByText(/Vos pistes du bien-être arrivent dans 3 jours/i)).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /Vos pistes du bien-être arrivent dans 3 jours/i })).toBeInTheDocument()
     expect(container.querySelector('.pistes-count')).toHaveTextContent('2/5 jours avec une note de bien-être')
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '2')
     expect(screen.getByText('Bien-être', { selector: '.domain-tag' })).toBeInTheDocument()
@@ -215,7 +218,7 @@ describe('Recommendations page', () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue([])
     renderPage()
-    await screen.findByText(/Vos pistes du bien-être arrivent dans/i)
+    await screen.findByRole('heading', { name: /Vos pistes du bien-être arrivent dans/i })
 
     const callsBefore = listEntriesForAnalysis.mock.calls.length
 

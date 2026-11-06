@@ -211,6 +211,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 
 ## 5. Historique
 
+- **06/11 10:35** — **KEEP-WHOLE** (revue C1, play vierge, sombre, 360 px) : « bien-être » ne se coupe plus au trait d'union dans le titre du compte à rebours d'Analyses et de la carte lilas de l'Accueil (`utils/keepWhole.jsx`, texte inchangé). Prochain : CD-ALPHA-6 vers 16:30, TEST-ALPHA-1 (07–08/11).
 - **06/11 04:35** — **POL-PLAY-VENTRE-BIENTOT** (revue C1) : onglet Ventre sans note, le rapport PDF n'est plus un bloc « Bientôt » en mono mais une phrase discrète (« Le rapport PDF pour votre médecin arrive avec votre première note du ventre. »), clair et sombre vérifiés.
 - **06/11 06:35** — **COUNTDOWN-LIEN** (C1) : « la carte de l'Accueil » du compte à rebours des onglets Bien-être et Ventre est un lien ; #746 (VISUAL-FLAKY-1) mergée.
 - **06/11 09:35** — **INSTALLS-21c-1** (relais, coulisses) : requêtes venues des blocs d'adresses publiés de Firebase Test Lab marquées `testnet` (booléen seul, adresse jamais écrite ; dernier élément de `X-Forwarded-For`) dans les journaux `first_credit` et `integrity` et dans le bilan du déploiement ; phrase ajoutée à la confidentialité. Aucun droit changé ; lecture 21c-2 vers le 08–09/11. #748 et #749 mergées.
