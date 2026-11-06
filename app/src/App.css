@@ -965,3 +965,6 @@ button.pastel-tile { width: 100%; border: 0; font: inherit; font-weight: 700; te
 .meals-empty-title { margin: 0 0 12px; font-weight: 700; color: var(--peach-label); }
 .meals-empty-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border-radius: 999px; background: var(--peach-label); color: var(--peach-bg); font-weight: 700; cursor: pointer; }
 .meals-empty-btn svg { flex: none; }
+/* Champ photo caché derrière un bouton (TESTEUR-4b, MealPhotoButton). */
+.visually-hidden-input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; pointer-events: none; }
+label.pastel-tile { cursor: pointer; }

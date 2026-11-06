@@ -13,8 +13,9 @@ describe('JournalEmpty (Journal vierge en couleur, POL-PLAY-46)', () => {
     saveOnboarding({ goal: 'gut' })
     renderEmpty()
     expect(screen.getByText('Rien de noté pour l’instant')).toBeInTheDocument()
-    const meal = screen.getByRole('link', { name: /Photographier un repas/ })
-    expect(meal).toHaveAttribute('href', '/food')
+    // TESTEUR-4b : la tuile ouvre directement l'appareil photo.
+    const meal = screen.getByRole('button', { name: /Photographier un repas/ })
+    expect(document.getElementById(meal.getAttribute('for'))).toHaveAttribute('capture', 'environment')
     expect(meal).toHaveAttribute('data-theme', 'peach')
     expect(screen.getByRole('link', { name: /Noter votre ventre/ })).toHaveAttribute('href', '/')
     const source = screen.getByRole('link', { name: /Ajouter une source/ })

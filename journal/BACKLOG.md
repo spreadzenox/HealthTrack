@@ -30,8 +30,10 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
 **(4) Journal et repas** (le plus court, commencé en premier)
 - [x] TESTEUR-4a — Repas vierges : « Aucun repas enregistré pour l'instant » et un bouton « Ajouter mon premier repas »
   qui ouvre l'appareil photo, sans les trois étapes de texte (06/11 22:35).
-- [ ] TESTEUR-4b — « Photographier un repas » de l'Accueil et de Nutrition ouvre directement l'appareil photo (sans
-  passer par la page Repas) ; test du champ `capture` sur les deux points d'entrée.
+- [x] TESTEUR-4b — « Photographier un repas » de l'Accueil et de Nutrition ouvre directement l'appareil photo (sans
+  passer par la page Repas) ; test du champ `capture` sur les deux points d'entrée (07/11 00:35 : `MealPhotoButton`,
+  libellé d'un champ `capture="environment"` ; la photo passe en mémoire à Repas, reprise une fois ; aussi la tuile du
+  Journal vide).
 - [ ] TESTEUR-4c — « Vos derniers jours… » en une phrase simple.
 - [ ] TESTEUR-4d — Nutrition : sous-titres (« estimé d'après vos pas des 14 derniers jours », « modérément actif sans
   montre ») au toucher seulement ; problème et solution dans la même carte.
