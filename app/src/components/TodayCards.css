@@ -273,24 +273,24 @@
   font-size: 0.9rem;
 }
 
-/* Carte lilas des pistes */
+/* Carte des analyses : la couleur de son thème (data-tone : menthe = bien-être, pêche = digestion ; AUJ-8) */
 .pistes-card {
-  background: var(--lilac-bg);
-  color: var(--lilac-text);
+  background: var(--tone-bg, var(--mint-bg));
+  color: var(--tone-text, var(--mint-text));
 }
 
 .pistes-progress {
   height: 8px;
   margin-top: 12px;
   border-radius: var(--radius-pill);
-  background: var(--lilac-track);
+  background: var(--tone-track, var(--mint-track));
   overflow: hidden;
 }
 
 .pistes-progress-bar {
   height: 100%;
   border-radius: var(--radius-pill);
-  background: var(--lilac-bar);
+  background: var(--tone-label, var(--mint-label));
 }
 
 .pistes-count {
@@ -495,20 +495,20 @@
 .pistes-card-chevron {
   font-size: 1.5rem;
   line-height: 1;
-  color: var(--lilac-bar);
+  color: var(--tone-label, var(--mint-label));
 }
 
 .pistes-first {
   margin: 10px 0 0;
   font-weight: 700;
   font-size: 1.05rem;
-  color: var(--lilac-text);
+  color: var(--tone-text, var(--mint-text));
 }
 
 .pistes-today {
   margin: 4px 0 0;
   font-size: 0.95rem;
-  color: var(--lilac-text);
+  color: var(--tone-text, var(--mint-text));
 }
 
 .pistes-first--locked {

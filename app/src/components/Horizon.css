@@ -1,6 +1,6 @@
 /* ANALYSES-ONGLETS-3 : horizons d'effet (heures, jours, semaines) */
 .horizon-heading {
-  border-left: 3px solid var(--lilac-bar);
+  border-left: 3px solid var(--tone-label, var(--mint-label));
   padding-left: 10px;
   margin: 4px 0 10px;
 }

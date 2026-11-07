@@ -337,7 +337,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
       { type: 'phone_usage', source: 'phone', at: '2026-04-10T23:00:00', payload: { screenMinutes: 120 } },
     ])
     const themeOf = (label) => screen.getByText(label, { selector: 'dt' }).parentElement.dataset.theme
-    expect(themeOf('Sommeil')).toBe('mint')
+    expect(themeOf('Sommeil')).toBe('night')
     expect(themeOf('Pas')).toBe('lilac')
     expect(themeOf('Repas')).toBe('peach')
     expect(document.querySelector('.entry-card[data-type="food"]')).toBeInTheDocument()

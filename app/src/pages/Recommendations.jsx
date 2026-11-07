@@ -795,7 +795,7 @@ export function AnalysisCountdown({ domain, days, target }) {
   const done = Math.min(Math.max(days || 0, 0), target)
   const remaining = target - done
   return (
-    <section className="today-card pistes-card reco-countdown" data-testid={`reco-countdown-${domain}`} aria-labelledby={`reco-countdown-${domain}-title`}>
+    <section className="today-card pistes-card reco-countdown" data-tone={domain === 'gut' ? 'peach' : 'mint'} data-testid={`reco-countdown-${domain}`} aria-labelledby={`reco-countdown-${domain}-title`}>
       <DomainTag domain={domain} />
       <h3 id={`reco-countdown-${domain}-title`} className="today-card-title">
         {keepWhole(`${text.title} ${remaining} jour${remaining > 1 ? 's' : ''}`)}
@@ -1182,7 +1182,7 @@ export default function Recommendations({ view = 'wellbeing' }) {
   const meta = gutView ? null : analysisMetaLine(current)
 
   return (
-    <section className="reco-page">
+    <section className="reco-page" data-tone={gutView ? 'peach' : 'mint'}>
       <AnalysesTabs />
       {meta && <p className="reco-meta-line">{meta}</p>}
       <h2 className="page-title">Vos analyses</h2>

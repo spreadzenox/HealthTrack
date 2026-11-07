@@ -4,11 +4,11 @@ import MealPhotoButton from './MealPhotoButton'
 
 /**
  * Gestes d'un état vide en tuiles pastel (POL-PLAY-46, POL-PLAY-48) : plus visuel qu'une phrase grise.
- * Pastel du thème (DESIGN) : menthe = bien-être, pêche = ventre et repas, lilas = sources.
+ * Pastel du thème (DESIGN) : menthe = bien-être, pêche = digestion et repas, gris = sources (AUJ-8).
  * Avec `onClick` au lieu de `to`, la tuile est un bouton qui agit sur place (POL-PLAY-87 : ouvrir la note de
  * bien-être plutôt que renvoyer à l'Accueil, où il fallait la chercher).
  * Avec `mealPhoto`, la tuile ouvre directement l'appareil photo (TESTEUR-4b).
- * @param {{ tiles: { to?: string, mealPhoto?: boolean, onClick?: () => void, theme: 'mint'|'peach'|'lilac', icon: string, label: string }[] }} props
+ * @param {{ tiles: { to?: string, mealPhoto?: boolean, onClick?: () => void, theme: 'mint'|'peach'|'lilac'|'stone', icon: string, label: string }[] }} props
  */
 export default function PastelTiles({ tiles }) {
   return (

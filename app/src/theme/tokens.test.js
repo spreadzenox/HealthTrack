@@ -35,7 +35,13 @@ const TEXT_ON = {
   'mint-bg': ['mint-text', 'mint-label', 'color-ink', 'color-ink-2'],
   'peach-bg': ['peach-text', 'peach-label', 'color-ink', 'color-ink-2'],
   'lilac-bg': ['lilac-text', 'lilac-bar', 'color-ink', 'color-ink-2'],
+  'night-bg': ['night-text', 'night-label', 'color-ink', 'color-ink-2'],
+  'rose-bg': ['rose-text', 'rose-label', 'color-ink', 'color-ink-2'],
+  'stone-bg': ['stone-text', 'stone-label', 'color-ink', 'color-ink-2'],
 }
+
+/** Les six thèmes de la leçon 12 (AUJ-8) : fond, texte, étiquette (ou barre) et rail. */
+const THEMES = { mint: 'label', peach: 'label', lilac: 'bar', night: 'label', rose: 'label', stone: 'label' }
 
 describe('tokens de design', () => {
   it('reprennent les couleurs validées par le propriétaire', () => {
@@ -57,6 +63,14 @@ describe('tokens de design', () => {
         }
       }
       expect(faibles).toEqual([])
+    })
+
+    it(`donnent à chaque thème un rail visible et une barre lisible dessus (thème ${name})`, () => {
+      for (const [t, strong] of Object.entries(THEMES)) {
+        expect(theme[`${t}-track`], t).toBeDefined()
+        expect(contrast(theme[`${t}-track`], theme[`${t}-bg`]), t).toBeGreaterThanOrEqual(1.4)
+        expect(contrast(theme[`${t}-${strong}`], theme[`${t}-track`]), t).toBeGreaterThanOrEqual(3)
+      }
     })
 
     it(`dessinent un rail de progression lilas visible (thème ${name})`, () => {

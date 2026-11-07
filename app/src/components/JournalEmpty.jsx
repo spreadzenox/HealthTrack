@@ -16,7 +16,7 @@ export default function JournalEmpty() {
     gut
       ? { to: '/', theme: 'peach', icon: 'pen', label: 'Noter votre digestion' }
       : { onClick: () => setNoteOpen(true), theme: 'mint', icon: 'pen', label: 'Noter votre bien-être' },
-    { to: '/connectors', theme: 'lilac', icon: 'plus', label: 'Ajouter une source' },
+    { to: '/connectors', theme: 'stone', icon: 'plus', label: 'Ajouter une source' },
   ]
   return (
     <div className="journal-empty">

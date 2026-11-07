@@ -25,17 +25,31 @@
   --ink-2-rgb: 74, 94, 87;
   --brand-rgb: 11, 122, 94;
 
-  /* Un pastel par thème, constant dans toute l'app */
-  --mint-bg: #e3f5ee; /* bien-être */
+  /* Une couleur par thème, partout (leçon 12, journal/DESIGN.md § 9) : fond, texte, étiquette / trait, rail */
+  --mint-bg: #e3f5ee; /* vert = bien-être */
   --mint-text: #3b5249;
   --mint-label: #0b6b53;
-  --peach-bg: #ffebdd; /* ventre */
+  --mint-track: #9cd4bf;
+  --peach-bg: #ffebdd; /* orange = digestion et nutrition */
   --peach-text: #5a4033;
   --peach-label: #8a3a12;
-  --lilac-bg: #ece9ff; /* pistes */
+  --peach-track: #f2bb93;
+  --lilac-bg: #ece9ff; /* lilas = activité et sport */
   --lilac-text: #3e3870;
   --lilac-bar: #4b3fc9;
   --lilac-track: #c6bff5; /* rail de la barre de progression (≥ 1,4:1 sur lilas) */
+  --night-bg: #e4eaf7; /* bleu nuit = sommeil */
+  --night-text: #26324f;
+  --night-label: #2c3f7a;
+  --night-track: #b4c2e6;
+  --rose-bg: #fbe6ee; /* rose framboise = corps (FC, VFC, respiration, température, stress) */
+  --rose-text: #5c2f40;
+  --rose-label: #a3214f;
+  --rose-track: #f0b3c8;
+  --stone-bg: #eef0ef; /* gris neutre = contexte (écran, météo) */
+  --stone-text: #3d4744;
+  --stone-label: #4a5550;
+  --stone-track: #c2c9c6;
 
   /* Badges et accents graphiques (ambre et menthe vive : jamais pour du texte) */
   --color-badge: #c2410c;
@@ -114,6 +128,20 @@
   --lilac-text: #dcd8ff;
   --lilac-bar: #a99fff;
   --lilac-track: #48428a;
+  --mint-track: #2c6b56;
+  --peach-track: #6e4630;
+  --night-bg: #1c2540;
+  --night-text: #d6def5;
+  --night-label: #9fb4ff;
+  --night-track: #34416c;
+  --rose-bg: #3d1f2b;
+  --rose-text: #f5d5e1;
+  --rose-label: #ff8fb5;
+  --rose-track: #6b3549;
+  --stone-bg: #222b28;
+  --stone-text: #dbe3df;
+  --stone-label: #b9c5c0;
+  --stone-track: #3d4844;
   --color-badge: #c2410c;
   --color-on-badge: #ffffff;
   --chart-bar-2: #2f5a4b;
@@ -135,3 +163,14 @@
   --shadow: rgba(0, 0, 0, 0.35);
   --toggle-thumb: #e8f0ec;
 }
+
+/*
+ * Pastel d'un élément selon son thème (AUJ-8) : `data-tone="night"` pose --tone-bg, --tone-text, --tone-label et
+ * --tone-track, que les composants lisent (var(--tone-bg, var(--mint-bg))).
+ */
+[data-tone='mint'] { --tone-bg: var(--mint-bg); --tone-text: var(--mint-text); --tone-label: var(--mint-label); --tone-track: var(--mint-track); }
+[data-tone='peach'] { --tone-bg: var(--peach-bg); --tone-text: var(--peach-text); --tone-label: var(--peach-label); --tone-track: var(--peach-track); }
+[data-tone='lilac'] { --tone-bg: var(--lilac-bg); --tone-text: var(--lilac-text); --tone-label: var(--lilac-bar); --tone-track: var(--lilac-track); }
+[data-tone='night'] { --tone-bg: var(--night-bg); --tone-text: var(--night-text); --tone-label: var(--night-label); --tone-track: var(--night-track); }
+[data-tone='rose'] { --tone-bg: var(--rose-bg); --tone-text: var(--rose-text); --tone-label: var(--rose-label); --tone-track: var(--rose-track); }
+[data-tone='stone'] { --tone-bg: var(--stone-bg); --tone-text: var(--stone-text); --tone-label: var(--stone-label); --tone-track: var(--stone-track); }

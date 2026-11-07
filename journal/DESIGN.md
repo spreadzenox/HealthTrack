@@ -15,7 +15,8 @@ rigueur d'un labo de données pour qui la demande.
 1. **Simple par défaut, détails sur demande** : un bouton « détails » révèle IC 95 %, n, moyenne, sources, modèles.
 2. **Chaque chiffre dit d'où il vient** (montre, téléphone, estimation).
 3. On dit **« piste »**, jamais « cause » ; ni diagnostic ni traitement ; on préfère attendre que se tromper.
-4. **Un pastel par thème**, constant dans toute l'app : **menthe = bien-être**, **pêche = ventre**, **lilas = pistes**.
+4. **Un pastel par thème**, constant dans toute l'app (leçon 12, § 9) : **menthe = bien-être**, **pêche = digestion et
+   nutrition**, **lilas = activité et sport**, **bleu nuit = sommeil**, **rose framboise = corps**, **gris = contexte**.
 
 **Ton** : vouvoiement, phrases courtes, chaleureuses et concrètes (« Plutôt une bonne journée », « On préfère
 attendre plutôt que de vous montrer de faux suspects »).
@@ -33,8 +34,16 @@ Tous les couples texte / fond listés ont un contraste **≥ 4,5:1** (vérifié 
 | Texte secondaire (gris vert) | `#4A5E57` | `--color-ink-2` |
 | Action / marque émeraude (texte blanc dessus) | `#0B7A5E` | `--color-brand` |
 | Menthe — bien-être (fond / texte / étiquette) | `#E3F5EE` / `#3B5249` / `#0B6B53` | `--mint-bg`, `--mint-text`, `--mint-label` |
-| Pêche — ventre | `#FFEBDD` / `#5A4033` / `#8A3A12` | `--peach-bg`, `--peach-text`, `--peach-label` |
-| Lilas — pistes (fond / texte / barre) | `#ECE9FF` / `#3E3870` / `#4B3FC9` | `--lilac-bg`, `--lilac-text`, `--lilac-bar` |
+| Pêche — digestion et nutrition | `#FFEBDD` / `#5A4033` / `#8A3A12` | `--peach-bg`, `--peach-text`, `--peach-label` |
+| Lilas — activité et sport (fond / texte / barre) | `#ECE9FF` / `#3E3870` / `#4B3FC9` | `--lilac-bg`, `--lilac-text`, `--lilac-bar` |
+| Bleu nuit — sommeil | `#E4EAF7` / `#26324F` / `#2C3F7A` | `--night-bg`, `--night-text`, `--night-label` |
+| Rose framboise — corps (FC, VFC, respiration, température, stress) | `#FBE6EE` / `#5C2F40` / `#A3214F` | `--rose-bg`, `--rose-text`, `--rose-label` |
+| Gris — contexte (écran, météo, sources, abonnement) | `#EEF0EF` / `#3D4744` / `#4A5550` | `--stone-bg`, `--stone-text`, `--stone-label` |
+| Rail des barres de chaque thème | — | `--mint-track`, `--peach-track`, `--lilac-track`, `--night-track`, `--rose-track`, `--stone-track` |
+
+Thème d'une mesure : `src/theme/themes.js` (`measureTone`) ; un bloc reçoit sa couleur par `data-tone="night"`, qui pose
+`--tone-bg`, `--tone-text`, `--tone-label`, `--tone-track` (AUJ-8). Les analyses prennent la couleur de leur thème
+(bien-être en menthe, digestion et réintroduction FODMAP en pêche).
 | Orange (badges, texte blanc) | `#C2410C` | `--color-badge` |
 | Ambre, menthe vive (accents graphiques, points de mesure — **jamais du texte**) | `#FFB84D`, `#5EE0B5` | `--accent-amber`, `--accent-mint` |
 | Graphiques : barres secondaires, ligne de référence | `#B9DCCD`, `#6FA893` | `--chart-bar-2`, `--chart-ref` |

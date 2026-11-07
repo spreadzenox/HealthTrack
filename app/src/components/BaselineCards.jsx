@@ -126,7 +126,7 @@ export default function BaselineCards({ onStatus }) {
             Avec une montre, après 3 semaines de mesures, {APP_NAME} compare votre FC au repos et votre VFC à{' '}
             <em>vos</em> valeurs habituelles.
           </p>
-          <PastelTiles tiles={[{ to: '/connectors', theme: 'lilac', icon: 'plus', label: 'Ajouter une montre' }]} />
+          <PastelTiles tiles={[{ to: '/connectors', theme: 'stone', icon: 'plus', label: 'Ajouter une montre' }]} />
         </>
       ) : (
         <>

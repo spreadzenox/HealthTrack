@@ -17,8 +17,8 @@
   font-size: 12px;
   padding: 4px 10px;
   border-radius: var(--radius-tag);
-  background: var(--lilac-bg);
-  color: var(--lilac-text);
+  background: var(--stone-bg);
+  color: var(--stone-text);
 }
 
 .paywall-close {
@@ -54,8 +54,8 @@
   flex-direction: column;
   gap: 14px;
   border-radius: var(--radius-card);
-  background: var(--lilac-bg);
-  color: var(--lilac-text);
+  background: var(--stone-bg);
+  color: var(--stone-text);
 }
 
 .paywall-benefits {
@@ -94,7 +94,7 @@
   content: '✓';
   position: absolute;
   left: 0;
-  color: var(--lilac-bar);
+  color: var(--stone-label);
   font-weight: 800;
 }
 
@@ -242,7 +242,7 @@
 .paywall-timeline-day {
   font-family: var(--font-mono);
   min-width: 96px;
-  color: var(--lilac-text);
+  color: var(--stone-text);
 }
 
 .paywall-cta {

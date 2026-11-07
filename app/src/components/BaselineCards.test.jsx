@@ -38,12 +38,12 @@ describe('BaselineCards', () => {
     expect([...listEntries.mock.calls[0][0].subtypes].sort()).toEqual(['heartRateVariability', 'restingHeartRate'])
   })
 
-  it('invites to connect a watch when there is no heart data at all, with a lilac tile (POL-PLAY-48)', async () => {
+  it('invites to connect a watch when there is no heart data at all, with a neutral tile (AUJ-8) (POL-PLAY-48)', async () => {
     listEntries.mockResolvedValue([])
     renderCards()
     const tile = await screen.findByRole('link', { name: /Ajouter une montre/ })
     expect(tile).toHaveAttribute('href', '/connectors')
-    expect(tile).toHaveAttribute('data-theme', 'lilac')
+    expect(tile).toHaveAttribute('data-theme', 'stone')
     expect(screen.getByText(/après 3 semaines de mesures/i)).toBeInTheDocument()
   })
 
