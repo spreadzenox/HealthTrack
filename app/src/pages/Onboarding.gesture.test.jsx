@@ -51,7 +51,7 @@ describe('Onboarding (jalon 4c) : premier geste et paywall passable', () => {
   it('objectif ventre : Calme / Gêne / Douleur, horodaté, premier jour de suivi', async () => {
     saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
     renderAt()
-    expect(screen.getByRole('heading', { name: 'Comment va votre ventre ?' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Comment va votre digestion ?' })).toBeInTheDocument()
     expect(screen.getByText('05/05')).toBeInTheDocument()
     // Facultatif : on peut continuer sans répondre
     expect(cont()).toBeEnabled()

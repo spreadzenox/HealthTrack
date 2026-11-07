@@ -424,7 +424,7 @@ export function testReadingEstimate(entries, { now = new Date() } = {}) {
 const fmt = (v) => v.toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 const hour = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 
-const GUT_WORDS = { discomfort: 'gêne au ventre', pain: 'douleur au ventre' }
+const GUT_WORDS = { discomfort: 'gêne digestive', pain: 'douleur digestive' }
 const DUO_WORDS = { accord: 'deux modèles d’accord', partiel: 'deux modèles à peu près d’accord', 'désaccord': 'deux modèles en désaccord' }
 
 /** Phrases pour la carte (et le tableau de bord). Toujours une estimation, jamais un diagnostic. */
@@ -454,7 +454,7 @@ export function describeFaceMood(est, { features } = {}) {
     parts.push('aucune lecture aujourd’hui')
   }
   if (est.duo) parts.push(DUO_WORDS[est.duo.agreement])
-  parts.push(est.day?.gut ? `visage, et votre note du ventre (${GUT_WORDS[est.day.gut.level]}) qui compte un peu` : 'un seul signal (visage)')
+  parts.push(est.day?.gut ? `visage, et votre note digestive (${GUT_WORDS[est.day.gut.level]}) qui compte un peu` : 'un seul signal (visage)')
   lines.push(`Confiance ${est.confidence} : ${parts.join(', ')}.`)
   const habit = est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''
   const notes = est.offsetDays ? `recalé sur vos notes de ${est.offsetDays} jours, que d’autres notes affineront` : 'vos notes, facultatives, l’affineront'

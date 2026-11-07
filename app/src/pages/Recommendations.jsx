@@ -784,9 +784,9 @@ const COUNTDOWN_TEXT = {
     how: 'Notez votre bien-être depuis',
   },
   gut: {
-    title: 'Vos analyses du ventre arrivent dans',
-    count: 'jours avec une note du ventre',
-    how: 'Notez votre ventre depuis',
+    title: 'Vos analyses digestives arrivent dans',
+    count: 'jours avec une note digestive',
+    how: 'Notez votre digestion depuis',
   },
 }
 
@@ -823,7 +823,7 @@ function GutView({ analysis, showGut }) {
   if (!showGut) {
     return (
       <p className="reco-intro" data-testid="gut-off">
-        Le suivi du ventre est masqué. Pour le retrouver : Paramètres → <Link to="/settings">Ce qui vous amène</Link>.
+        Le suivi digestif est masqué. Pour le retrouver : Paramètres → <Link to="/settings">Ce qui vous amène</Link>.
       </p>
     )
   }
@@ -841,7 +841,7 @@ function GutView({ analysis, showGut }) {
   const waiting = !gut || gut.status === 'no_notes' || gut.status === 'too_early'
   return (
     <div className="reco-tab-content" data-testid="reco-gut-view">
-      <p className="reco-intro reco-intro--gut">Ce qui va avec vos jours de gêne ou de douleur, d’après vos notes du ventre et vos repas.</p>
+      <p className="reco-intro reco-intro--gut">Ce qui va avec vos jours de gêne ou de douleur, d’après vos notes digestives et vos repas.</p>
       {waiting && <AnalysisCountdown domain="gut" days={gut?.noteDays ?? 0} target={gut?.minDays ?? GUT_LINKS_MIN_DAYS} />}
       <GutLinks gut={gut} hidden={hidden} onHide={onHide} />
       <ReintroductionEntry />
@@ -852,7 +852,7 @@ function GutView({ analysis, showGut }) {
         <DoctorReportCard />
       ) : (
         <p className="reco-report-later" data-testid="reco-report-later">
-          Le rapport PDF pour votre médecin arrive avec votre première note du ventre.
+          Le rapport PDF pour votre médecin arrive avec votre première note digestive.
         </p>
       )}
     </div>

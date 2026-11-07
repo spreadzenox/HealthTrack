@@ -10,7 +10,7 @@ describe('horizons d’effet (ANALYSES-ONGLETS-3)', () => {
     }
   })
 
-  it('une piste repas → ventre dans les 24 h est « dans les heures »', () => {
+  it('une piste repas → digestion dans les 24 h est « dans les heures »', () => {
     expect(gutLinkHorizon({ kind: 'window', when: '0-4' })).toBe('hours')
     expect(gutLinkHorizon({ kind: 'window', when: '4-24' })).toBe('hours')
   })

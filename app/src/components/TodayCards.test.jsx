@@ -35,7 +35,7 @@ describe('GutCard', () => {
     const morning = new Date()
     morning.setHours(9, 0, 0, 0)
     wrap(<GutCard read={async () => []} now={morning} />)
-    const group = await screen.findByRole('group', { name: 'Comment va votre ventre ?' })
+    const group = await screen.findByRole('group', { name: 'Comment va votre digestion ?' })
     expect(group).toHaveClass('gut-choices')
     expect(group).not.toHaveClass('gut-choices--stacked')
     const labels = [...group.querySelectorAll('.gut-choice .choice-label')].map((el) => el.textContent)
@@ -108,7 +108,7 @@ describe('GutCard — bilan du soir (I170)', () => {
     const now = new Date()
     now.setHours(20, 30, 0, 0)
     wrap(<GutCard read={async () => []} now={now} />)
-    expect(await screen.findByText('Et votre ventre aujourd’hui, dans l’ensemble ?')).toBeInTheDocument()
+    expect(await screen.findByText('Et votre digestion aujourd’hui, dans l’ensemble ?')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Journée : Calme' }))
     await waitFor(() => expect(createEntry).toHaveBeenCalledWith({ type: 'gut', source: 'app_gut', payload: { level: 'calm', scope: 'day' } }))
   })
@@ -118,20 +118,20 @@ describe('GutCard — bilan du soir (I170)', () => {
     const now = new Date()
     now.setHours(20, 30, 0, 0)
     wrap(<GutCard read={async () => []} now={now} />)
-    await screen.findByText('Et votre ventre aujourd’hui, dans l’ensemble ?')
+    await screen.findByText('Et votre digestion aujourd’hui, dans l’ensemble ?')
     expect(screen.queryByRole('button', { name: 'Gêne' })).not.toBeInTheDocument()
     expect(screen.queryByText(/Un geste suffit/)).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Noter un moment précis' }))
     fireEvent.click(screen.getByRole('button', { name: 'Gêne' }))
     await waitFor(() => expect(createEntry).toHaveBeenCalledWith({ type: 'gut', source: 'app_gut', payload: { level: 'discomfort' } }))
-    expect(screen.getByText('Et votre ventre aujourd’hui, dans l’ensemble ?')).toBeInTheDocument()
+    expect(screen.getByText('Et votre digestion aujourd’hui, dans l’ensemble ?')).toBeInTheDocument()
   })
 
   it('le soir, « Noter un moment précis » et « Selles » sur une même ligne d’actions (POL-PLAY-29)', async () => {
     const now = new Date()
     now.setHours(20, 30, 0, 0)
     const { container } = wrap(<GutCard read={async () => []} now={now} />)
-    await screen.findByText('Et votre ventre aujourd’hui, dans l’ensemble ?')
+    await screen.findByText('Et votre digestion aujourd’hui, dans l’ensemble ?')
     const row = container.querySelector('.gut-card-actions')
     expect(row).not.toBeNull()
     expect(within(row).getByRole('button', { name: 'Noter un moment précis' })).toBeInTheDocument()
@@ -228,12 +228,12 @@ describe('GutCard onlyIfUsed (aucun objectif choisi, POL-4)', () => {
   it('reste affichée pour qui note son ventre', async () => {
     const read = async () => [{ type: 'gut', source: 'app_gut', at: new Date().toISOString(), payload: { level: 'calm' } }]
     wrap(<GutCard read={read} onlyIfUsed />)
-    expect(await screen.findByRole('heading', { name: 'Votre ventre' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Votre digestion' })).toBeInTheDocument()
   })
 
-  it('titre « Mon ventre » dans la section « Noter » de l’Accueil (TESTEUR-1d)', async () => {
-    wrap(<GutCard read={async () => []} title="Mon ventre" />)
-    expect(await screen.findByRole('heading', { name: 'Mon ventre' })).toBeInTheDocument()
+  it('titre « Ma digestion » dans la section « Noter » de l’Accueil (TESTEUR-1d)', async () => {
+    wrap(<GutCard read={async () => []} title="Ma digestion" />)
+    expect(await screen.findByRole('heading', { name: 'Ma digestion' })).toBeInTheDocument()
   })
 })
 
@@ -279,11 +279,11 @@ describe('PistesTeaser', () => {
     expect(screen.queryByText(/^Aujourd’hui :/)).not.toBeInTheDocument()
   })
 
-  it('les pistes du ventre comptent tant que la carte ventre est montrée', async () => {
-    remember({ gut: ['Oignon → ventre'], levers: [] })
+  it('les pistes digestives comptent tant que la carte ventre est montrée', async () => {
+    remember({ gut: ['Oignon → digestion'], levers: [] })
     wrap(<PistesTeaser read={async () => [day(0)]} />)
     expect(await screen.findByText('1 piste repérée')).toBeInTheDocument()
-    expect(screen.getByText('Oignon → ventre')).toBeInTheDocument()
+    expect(screen.getByText('Oignon → digestion')).toBeInTheDocument()
     // Retours du 04/11 (4) : la première piste porte sur le ventre, la carte ouvre le sous-onglet « Ventre »
     expect(screen.getByText('1 piste repérée').closest('a')).toHaveAttribute('href', '/recommendations/ventre')
   })
@@ -291,24 +291,24 @@ describe('PistesTeaser', () => {
   it('sans aucune piste dans le résumé : le compte à rebours habituel', async () => {
     remember({ gut: [], levers: [] })
     wrap(<PistesTeaser read={async () => [day(0)]} />)
-    expect(await screen.findByText('Vos analyses du ventre arrivent dans 28 jours')).toBeInTheDocument()
+    expect(await screen.findByText('Vos analyses digestives arrivent dans 28 jours')).toBeInTheDocument()
   })
 
   it('dans Analyses, la carte ne s’annonce jamais elle-même', async () => {
     remember({ gut: [], levers: ['Marcher davantage'] })
     wrap(<PistesTeaser read={async () => [day(0)]} onPistesPage />)
-    expect(await screen.findByText('Vos analyses du ventre arrivent dans 28 jours')).toBeInTheDocument()
+    expect(await screen.findByText('Vos analyses digestives arrivent dans 28 jours')).toBeInTheDocument()
   })
 
   const gut = (back) => ({ ...day(back), type: 'gut' })
 
-  it('carte ventre montrée : le même compte à rebours que l’onglet Ventre (notes du ventre), dès le premier jour', async () => {
+  it('carte ventre montrée : le même compte à rebours que l’onglet Ventre (notes digestives), dès le premier jour', async () => {
     // Revue du 06/11 : l'Accueil disait « 21 jours » (repas ou notes) et l'onglet Ventre « 28 jours » (notes)
     wrap(<PistesTeaser read={async () => [day(0), day(1), day(1), day(3), gut(0), gut(2)]} />)
-    expect(await screen.findByText('Vos analyses du ventre arrivent dans 26 jours')).toBeInTheDocument()
-    expect(screen.getByRole('progressbar', { name: 'Jours de notes du ventre' })).toHaveAttribute('aria-valuenow', '2')
+    expect(await screen.findByText('Vos analyses digestives arrivent dans 26 jours')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Jours de notes digestives' })).toHaveAttribute('aria-valuenow', '2')
     const count = document.querySelector('.pistes-count')
-    expect(count).toHaveTextContent('2/28 jours avec une note du ventre')
+    expect(count).toHaveTextContent('2/28 jours avec une note digestive')
     // POL-PLAY-47 : le chiffre en mono, la phrase en Figtree
     expect(count).not.toHaveClass('mono')
     expect(count.querySelector('.mono')).toHaveTextContent(/^2\/28$/)
@@ -316,7 +316,7 @@ describe('PistesTeaser', () => {
     expect(screen.queryByText(/hasard|semaines/)).not.toBeInTheDocument()
     expect(screen.queryByText(/21/)).not.toBeInTheDocument()
     // TESTEUR-1d-2 : ce que les analyses cherchent, en une phrase, propre au ventre
-    expect(screen.getByText('Halcya cherchera quels repas reviennent avant vos gênes au ventre.')).toBeInTheDocument()
+    expect(screen.getByText('Halcya cherchera quels repas reviennent avant vos gênes digestives.')).toBeInTheDocument()
   })
 
   it('carte ventre masquée (autre objectif) : les jours avec un repas, sans parler du ventre', async () => {
@@ -329,12 +329,12 @@ describe('PistesTeaser', () => {
     expect(screen.queryByText(/ventre/)).not.toBeInTheDocument()
   })
 
-  it('beaucoup de repas mais peu de notes du ventre : le compte à rebours des notes, pas « assez de jours »', async () => {
+  it('beaucoup de repas mais peu de notes digestives : le compte à rebours des notes, pas « assez de jours »', async () => {
     const entries = [...Array.from({ length: 25 }, (_, i) => day(i)), ...Array.from({ length: 10 }, (_, i) => gut(i))]
     wrap(<PistesTeaser read={async () => entries} />)
-    expect(await screen.findByText('Vos analyses du ventre arrivent dans 18 jours')).toBeInTheDocument()
-    expect(screen.getByRole('progressbar', { name: 'Jours de notes du ventre' })).toHaveAttribute('aria-valuenow', '10')
-    expect(document.querySelector('.pistes-count')).toHaveTextContent('10/28 jours avec une note du ventre')
+    expect(await screen.findByText('Vos analyses digestives arrivent dans 18 jours')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Jours de notes digestives' })).toHaveAttribute('aria-valuenow', '10')
+    expect(document.querySelector('.pistes-count')).toHaveTextContent('10/28 jours avec une note digestive')
     expect(screen.queryByText(/hasard/)).not.toBeInTheDocument()
     expect(screen.queryByText(/Assez de jours/)).not.toBeInTheDocument()
   })
@@ -342,9 +342,9 @@ describe('PistesTeaser', () => {
   it('dit les délais et la correction en mode détails, sans promettre plus que l’existant une fois prêt', async () => {
     wrap(<PistesTeaser read={async () => Array.from({ length: 30 }, (_, i) => gut(i))} details onToggleDetails={() => {}} />)
     expect(await screen.findByText('Assez de jours pour chercher des pistes')).toBeInTheDocument()
-    expect(screen.getByText(/Aucune piste pour l’instant : elles se précisent à chaque note du ventre/)).toBeInTheDocument()
+    expect(screen.getByText(/Aucune piste pour l’instant : elles se précisent à chaque note digestive/)).toBeInTheDocument()
     expect(screen.getByText(/Délais testés : 0–4 h, 4–24 h, 24–48 h/)).toBeInTheDocument()
-    expect(screen.getByText(/minimum 28 jours de notes du ventre/)).toBeInTheDocument()
+    expect(screen.getByText(/minimum 28 jours de notes digestives/)).toBeInTheDocument()
   })
 
   it('objectif énergie : compte les nuits avec une mesure du bien-être et parle sommeil → bien-être', async () => {

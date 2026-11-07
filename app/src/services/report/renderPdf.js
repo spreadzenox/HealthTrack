@@ -175,10 +175,10 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
   }
   y -= 8
 
-  heading('Ventre')
+  heading('Digestion')
   const g = report.gut
   if (!g.notedDays) {
-    para('Aucune note du ventre sur la période.', { color: C.muted })
+    para('Aucune note digestive sur la période.', { color: C.muted })
   } else {
     const bar = 14
     let x = M
@@ -248,11 +248,11 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
     if (report.challenges.length > shown.length) para(`… et ${report.challenges.length - shown.length} autres tests.`, { size: 8.5, color: C.muted })
   }
 
-  heading('Pistes repas › ventre')
+  heading('Pistes repas › digestion')
   const L = report.links
   if (L.status !== 'links' || !L.items.length) {
-    const why = L.status === 'no_notes' ? 'Aucune note du ventre.'
-      : L.status === 'too_early' ? `Pas encore assez de notes du ventre (${L.noteDays}/${L.minDays} jours) pour repérer un lien.`
+    const why = L.status === 'no_notes' ? 'Aucune note digestive.'
+      : L.status === 'too_early' ? `Pas encore assez de notes digestives (${L.noteDays}/${L.minDays} jours) pour repérer un lien.`
         : 'Aucun lien n’a passé toutes les vérifications.'
     para(why, { color: C.muted })
   } else {
@@ -262,7 +262,7 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
       const tw = width(tag, 'mono', 8) + 12
       rect(M, y - 4, tw, 14, C.peach)
       text(tag, M + 6, y, { font: 'mono', size: 8, color: C.peachLabel })
-      text(`${l.label} › ventre · ${l.when}`, M + tw + 8, y, { font: 'bold', size: 9.5 })
+      text(`${l.label} › digestion · ${l.when}`, M + tw + 8, y, { font: 'bold', size: 9.5 })
       y -= 13
       text(`gêne ou douleur ${l.exposed.symptoms} fois sur ${l.exposed.n} ; les autres fois, ${l.unexposed.symptoms} sur ${l.unexposed.n}`, M + tw + 8, y, { font: 'mono', size: 8, color: C.muted })
       y -= 16
@@ -288,7 +288,7 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
 
   // ── Page 2 : Détail ─────────────────────────────────────────────────────────────────────────────────────
   newPage('Détail')
-  heading('Calendrier du ventre')
+  heading('Calendrier digestif')
   const cal = report.calendar
   const lead = weekdayIndex(cal[0].date)
   const rows = Math.ceil((lead + cal.length) / 7)

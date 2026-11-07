@@ -213,9 +213,9 @@ export default function Settings() {
           ))}
         </div>
         <p className="hint">
-          L’Accueil montre la carte «&nbsp;Votre ventre&nbsp;» avec «&nbsp;Mon ventre&nbsp;»
+          L’Accueil montre la carte «&nbsp;Votre digestion&nbsp;» avec «&nbsp;Ma digestion&nbsp;»
           {goal ? '' : gutCardMode(loadOnboarding()) === 'used'
-            ? ', ou si vous avez noté votre ventre ces 7 derniers jours'
+            ? ', ou si vous avez noté votre digestion ces 7 derniers jours'
             : ', ou tant que rien n’est choisi'}. Vos notes sont gardées, quel que soit votre choix.
         </p>
         {gutCardMode({ ...loadOnboarding(), goal }) !== 'hide' && <GutEveningReminder variant="setting" />}

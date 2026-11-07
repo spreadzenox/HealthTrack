@@ -3,7 +3,7 @@ import { gutCardMode } from '../settings/onboarding'
 
 const ITEMS = [
   { to: '/recommendations', label: 'Bien-être', exact: true },
-  { to: '/recommendations/ventre', label: 'Ventre', gut: true },
+  { to: '/recommendations/ventre', label: 'Digestion', gut: true },
   { to: '/reintroduction', label: 'FODMAP', gut: true },
   { to: '/tendances', label: 'Tendances' },
 ]

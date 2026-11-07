@@ -43,12 +43,12 @@ describe('DoctorReportCard', () => {
   it('rien de noté : pas de rapport vide, une phrase dit quand il se remplit', async () => {
     const count = vi.fn(async () => 0)
     renderCard({ count })
-    await waitFor(() => expect(screen.getByText(/se remplit dès votre première note du ventre/)).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText(/se remplit dès votre première note digestive/)).toBeInTheDocument())
     expect(screen.queryByRole('button', { name: 'Préparer le rapport' })).not.toBeInTheDocument()
     expect(count).toHaveBeenCalled()
   })
 
-  it('une note du ventre ou un repas suffit pour préparer le rapport', async () => {
+  it('une note digestive ou un repas suffit pour préparer le rapport', async () => {
     renderCard({ count: async () => 1 })
     expect(await screen.findByRole('button', { name: 'Préparer le rapport' })).toBeInTheDocument()
     expect(screen.queryByText(/se remplit dès/)).not.toBeInTheDocument()
@@ -88,7 +88,7 @@ describe('DoctorReportCard', () => {
   it('play sans premium et rien de noté : pas de « Débloquer » pour un rapport vide (POL-PLAY-79)', async () => {
     dist.play = true
     renderCard({ count: async () => 0 })
-    await waitFor(() => expect(screen.getByText(/se remplit dès votre première note du ventre/)).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText(/se remplit dès votre première note digestive/)).toBeInTheDocument())
     expect(screen.queryByRole('link', { name: 'Débloquer' })).not.toBeInTheDocument()
     expect(screen.getByText('premium')).toBeInTheDocument()
   })

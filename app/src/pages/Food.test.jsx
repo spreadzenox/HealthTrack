@@ -353,7 +353,7 @@ describe('Food — modifier un repas enregistré', () => {
     expect(updateEntry).not.toHaveBeenCalled()
   })
 
-  it('carte d’un repas : FODMAP par sous-groupe avec l’objectif « Mon ventre », rien avec « énergie » (N4)', async () => {
+  it('carte d’un repas : FODMAP par sous-groupe avec l’objectif « Ma digestion », rien avec « énergie » (N4)', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     const { saveOnboarding } = await import('../settings/onboarding')
     const onion = { id: 2, at: '2026-10-07T12:00:00Z', type: 'food', source: 'manual',
@@ -370,7 +370,7 @@ describe('Food — modifier un repas enregistré', () => {
     saveOnboarding({ goal: null })
   })
 
-  it('éditeurs d’un repas (Modifier, Refaire) : FODMAP en direct avec l’objectif « Mon ventre » (N4)', async () => {
+  it('éditeurs d’un repas (Modifier, Refaire) : FODMAP en direct avec l’objectif « Ma digestion » (N4)', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     const { saveOnboarding } = await import('../settings/onboarding')
     const onion = { id: 3, at: '2026-10-07T12:00:00Z', type: 'food', source: 'app_food',

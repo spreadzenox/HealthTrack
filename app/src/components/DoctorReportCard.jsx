@@ -62,7 +62,7 @@ export default function DoctorReportCard({ create = createReportPdf, save = save
       {!premium && <span className="fodmap-tag mono">premium</span>}
       {!premium && !empty && <Link to="/premium" className="btn fodmap-cta">Débloquer</Link>}
       {empty && (
-        <p className="fodmap-note">Le rapport se remplit dès votre première note du ventre ou votre premier repas.</p>
+        <p className="fodmap-note">Le rapport se remplit dès votre première note digestive ou votre premier repas.</p>
       )}
       {premium && !empty && !open && (
         <button type="button" className="btn btn-secondary fodmap-cta" onClick={() => setOpen(true)}>

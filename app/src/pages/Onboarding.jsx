@@ -106,7 +106,7 @@ function GoalStep({ goal, onGoal }) {
           <span className="onb-tile-num">0 Mo</span> envoyé à {APP_NAME} sans votre accord
         </li>
         <li>
-          <span className="onb-tile-num">2–48 h</span> de délai entre repas et ventre
+          <span className="onb-tile-num">2–48 h</span> de délai entre repas et digestion
         </li>
         <li>
           <span className="onb-tile-num">1 geste</span> pour tout exporter
@@ -355,7 +355,7 @@ function AhaStep({ imported, onImported, onReady }) {
             ))}
           </ul>
           {sharedSource && <p className="onb-facts-source">D’après {sharedSource}</p>}
-          <p className="onb-lead">Vos chiffres de départ. L’app les comparera à votre ventre et à votre bien-être.</p>
+          <p className="onb-lead">Vos chiffres de départ. L’app les comparera à votre digestion et à votre bien-être.</p>
         </>
       ) : (
         <p className="onb-note" role="status">
@@ -613,14 +613,14 @@ function GestureStep({ goal, gesture, onGesture }) {
 
   return (
     <>
-      <h1 className="onb-title">{gut ? 'Comment va votre ventre ?' : 'Comment vous sentez-vous ?'}</h1>
+      <h1 className="onb-title">{gut ? 'Comment va votre digestion ?' : 'Comment vous sentez-vous ?'}</h1>
       <p className="onb-lead">
         {gut
           ? 'Notez-le d’un geste. Les pistes viennent de ces notes, comparées à vos repas.'
           : 'Une note de 1 à 5. Elle s’ajoute au bien-être estimé.'}
       </p>
       {gut ? (
-        <div className="onb-gesture" role="group" aria-label="Comment va votre ventre ?">
+        <div className="onb-gesture" role="group" aria-label="Comment va votre digestion ?">
           {GUT_LEVELS.map((l) => (
             <button
               key={l.id}

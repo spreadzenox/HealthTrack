@@ -38,7 +38,7 @@ function GutLinkCard({ link, onHide }) {
       <div className="gut-link-content">
         <DomainTag domain="gut" />
         <p className="gut-link-title">
-          {link.label} → ventre <span className="gut-link-when">{link.whenLabel}</span>
+          {link.label} → digestion <span className="gut-link-when">{link.whenLabel}</span>
         </p>
         <p className="gut-link-text">{linkSentence(link)}</p>
         {link.together.length > 1 && (
@@ -88,7 +88,7 @@ function LockedGutLinks({ count }) {
   return (
     <div className="gut-links-locked">
       <p className="gut-links-locked-title">
-        {count} {count > 1 ? 'pistes repérées' : 'piste repérée'} entre vos repas et votre ventre
+        {count} {count > 1 ? 'pistes repérées' : 'piste repérée'} entre vos repas et votre digestion
       </p>
       <div className="gut-links-preview" aria-hidden="true" data-testid="gut-links-preview">
         {Array.from({ length: Math.min(count, 3) }, (_, i) => (
@@ -118,9 +118,9 @@ export default function GutLinks({ gut, hidden = [], onHide }) {
   const locked = shown.length > 0 && FEATURES.billing && !ent.premium
   return (
     <section className="reco-section gut-links" data-testid="gut-links">
-      <h3 className="reco-section-title">Votre ventre et vos repas</h3>
+      <h3 className="reco-section-title">Votre digestion et vos repas</h3>
       <p className="gut-links-meta">
-        {gut.noteDays} jours de notes du ventre · {gut.tested} comparaisons · délais 0–48 h
+        {gut.noteDays} jours de notes digestives · {gut.tested} comparaisons · délais 0–48 h
       </p>
       {locked ? (
         <LockedGutLinks count={shown.length} />
@@ -137,7 +137,7 @@ export default function GutLinks({ gut, hidden = [], onHide }) {
           </div>
         ))
       ) : gut.status === 'links' ? (
-        <p className="gut-links-empty">Vous avez masqué toutes les pistes du ventre.</p>
+        <p className="gut-links-empty">Vous avez masqué toutes les pistes digestives.</p>
       ) : (
         <p className="gut-links-empty">
           Aucun aliment ne ressort nettement pour l’instant.

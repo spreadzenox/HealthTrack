@@ -87,8 +87,8 @@ final class GutEveningNotice {
     private static NotificationManager channel(Context context) {
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (nm == null || !nm.areNotificationsEnabled()) return null;
-        NotificationChannel ch = new NotificationChannel(CHANNEL, "Bilan du ventre", NotificationManager.IMPORTANCE_LOW);
-        ch.setDescription("Le bilan du ventre du soir, d'un geste, sans ouvrir l'app.");
+        NotificationChannel ch = new NotificationChannel(CHANNEL, "Bilan digestif", NotificationManager.IMPORTANCE_LOW);
+        ch.setDescription("Le bilan digestif du soir, d'un geste, sans ouvrir l'app.");
         nm.createNotificationChannel(ch);
         return nm;
     }
@@ -103,7 +103,7 @@ final class GutEveningNotice {
                     PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Builder b = new NotificationCompat.Builder(context, CHANNEL)
                     .setSmallIcon(R.drawable.ic_stat_healthtrack)
-                    .setContentTitle("Et votre ventre aujourd'hui ?")
+                    .setContentTitle("Et votre digestion aujourd'hui ?")
                     .setContentText("Dans l'ensemble, d'un geste.")
                     .setPriority(NotificationCompat.PRIORITY_LOW)
                     .setOnlyAlertOnce(true)

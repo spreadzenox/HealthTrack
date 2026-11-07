@@ -165,7 +165,7 @@ describe('fiche française du dépôt (app/store/listing/fr-FR)', () => {
   })
 
   it('porte le nom de l’app et le titre décidé par le propriétaire', () => {
-    expect(fr.title).toBe(`${APP_NAME} — ventre et bien-être`)
+    expect(fr.title).toBe(`${APP_NAME} — digestion & bien-être`)
   })
 
   it('respecte le vocabulaire (ni « humeur », ni « 100 % privé », ni affirmation médicale)', () => {

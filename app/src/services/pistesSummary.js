@@ -9,7 +9,7 @@ import { getHiddenLinks, gutLinkKey } from '../settings/hiddenLinks'
 export const PISTES_SUMMARY_KEY = 'healthtrack_pistes_summary'
 
 /** Titre d'une piste repas → ventre, comme dans Analyses (« Oignon → ventre »). */
-const gutTitle = (link) => `${link.label} → ventre`
+const gutTitle = (link) => `${link.label} → digestion`
 
 /**
  * Ce que montre Analyses, réduit aux titres : pistes repas → ventre (si l'analyse du ventre en a) puis pistes à

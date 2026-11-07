@@ -252,7 +252,7 @@ function ExpressionMatrix({ mix }) {
 
 /** Détail du point touché (BE-HISTO-DETAIL, retour (6) du 04/11) : ce que les modèles ont lu, jamais un diagnostic. */
 /** VENTRE-BE-2 : une note du ventre du jour a un peu compté dans la note (poids faible). */
-const GUT_LINE = { discomfort: 'Gêne au ventre notée', pain: 'Douleur au ventre notée' }
+const GUT_LINE = { discomfort: 'Gêne digestive notée', pain: 'Douleur digestive notée' }
 
 export function ReadingDetail({ point, period, onClose }) {
   const title = pointTitle(point, period)

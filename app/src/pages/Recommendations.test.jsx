@@ -1152,7 +1152,7 @@ describe('Analyses — humeur estimée par le visage (sans aucune note)', () => 
 })
 
 // Jalon 5 : pistes repas → ventre (notes par fenêtre et bilans du soir), seulement pour qui suit son ventre
-describe('Recommendations — votre ventre et vos repas', () => {
+describe('Recommendations — votre digestion et vos repas', () => {
   const gutEntries = async () => {
     const { simulateRealistic } = await import('../services/gutWindows.sim')
     // Effet net « le jour même » (seed vérifiée dans gutLinks.test.js) + quelques jours de bien-être
@@ -1163,15 +1163,15 @@ describe('Recommendations — votre ventre et vos repas', () => {
     ]
   }
 
-  it('shows each kept link as « aliment → ventre », with the counts and an expectation note in details', async () => {
+  it('shows each kept link as « aliment → digestion », with the counts and an expectation note in details', async () => {
     const { saveOnboarding } = await import('../settings/onboarding')
     saveOnboarding({ goal: 'gut' })
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(await gutEntries())
     renderPage({ view: 'gut' })
     const section = await screen.findByTestId('gut-links')
-    expect(within(section).getByText('Votre ventre et vos repas')).toBeInTheDocument()
-    expect(within(section).getByText(/Oignon → ventre/)).toBeInTheDocument()
+    expect(within(section).getByText('Votre digestion et vos repas')).toBeInTheDocument()
+    expect(within(section).getByText(/Oignon → digestion/)).toBeInTheDocument()
     expect(within(section).getByText(/Les jours où vous en avez mangé, gêne ou douleur \d+ fois sur \d+/)).toBeInTheDocument()
     expect(within(section).getByText('À confirmer')).toBeInTheDocument()
     expect(section.textContent).not.toMatch(/cause|intolérance|diagnostic/i)
@@ -1191,15 +1191,15 @@ describe('Recommendations — votre ventre et vos repas', () => {
     listEntriesForAnalysis.mockResolvedValue(await gutEntries())
     renderPage({ view: 'gut' })
     const section = await screen.findByTestId('gut-links')
-    const card = within(section).getByText(/Oignon → ventre/).closest('li')
+    const card = within(section).getByText(/Oignon → digestion/).closest('li')
     fireEvent.click(within(card).getByRole('button', { name: /détails/i }))
     fireEvent.click(within(card).getByRole('button', { name: 'Masquer cette piste' }))
-    expect(within(section).queryByText(/Oignon → ventre/)).toBeNull()
+    expect(within(section).queryByText(/Oignon → digestion/)).toBeNull()
     expect(JSON.parse(localStorage.getItem('healthtrack_hidden_links'))).toEqual(['gut:oignon'])
     expect(screen.getByTestId('reco-hidden-line')).toHaveTextContent('1 lien masqué')
-    expect(JSON.parse(localStorage.getItem('healthtrack_pistes_summary')).gut).not.toContain('Oignon → ventre')
+    expect(JSON.parse(localStorage.getItem('healthtrack_pistes_summary')).gut).not.toContain('Oignon → digestion')
     fireEvent.click(screen.getByRole('button', { name: 'Tout réafficher' }))
-    expect(within(screen.getByTestId('gut-links')).getByText(/Oignon → ventre/)).toBeInTheDocument()
+    expect(within(screen.getByTestId('gut-links')).getByText(/Oignon → digestion/)).toBeInTheDocument()
   })
 
   it('counts the days of gut notes in the gut tab card while it is too early (ANALYSES-ONGLETS-2)', async () => {
@@ -1214,7 +1214,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
     const card = await screen.findByTestId('reco-countdown-gut')
     expect(within(card).getByText(/arrivent dans 27 jours/)).toBeInTheDocument()
     expect(within(card).getByText('1/28')).toBeInTheDocument()
-    expect(screen.queryByText('Votre ventre et vos repas')).toBeNull()
+    expect(screen.queryByText('Votre digestion et vos repas')).toBeNull()
     expect(screen.queryByTestId('gut-links')).toBeNull()
   })
 
@@ -1225,7 +1225,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
     listEntriesForAnalysis.mockResolvedValue(makeEntries(5))
     renderPage({ view: 'gut' })
     const line = await screen.findByTestId('reco-report-later')
-    expect(line).toHaveTextContent('Le rapport PDF pour votre médecin arrive avec votre première note du ventre.')
+    expect(line).toHaveTextContent('Le rapport PDF pour votre médecin arrive avec votre première note digestive.')
     expect(line.tagName).toBe('P')
     expect(screen.queryByTestId('reco-soon')).toBeNull()
     expect(screen.queryByText('Bientôt')).toBeNull()
@@ -1240,7 +1240,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
     listEntriesForAnalysis.mockResolvedValue(await gutEntries())
     renderPage()
     await screen.findByText(/Pistes à tester/)
-    expect(screen.getByRole('link', { name: 'Ventre' })).toHaveAttribute('href', '/recommendations/ventre')
+    expect(screen.getByRole('link', { name: 'Digestion' })).toHaveAttribute('href', '/recommendations/ventre')
     expect(screen.queryByTestId('gut-links')).toBeNull()
     expect(screen.queryByTestId('reintro-entry')).toBeNull()
     expect(screen.queryByTestId('doctor-report')).toBeNull()
@@ -1253,8 +1253,8 @@ describe('Recommendations — votre ventre et vos repas', () => {
     listEntriesForAnalysis.mockResolvedValue(await gutEntries())
     renderPage({ view: 'gut' })
     await screen.findByTestId('gut-links')
-    expect(screen.getByRole('link', { name: 'Ventre' })).toBeInTheDocument()
-    expect(screen.getByText(/vos notes du ventre et vos repas/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Digestion' })).toBeInTheDocument()
+    expect(screen.getByText(/vos notes digestives et vos repas/)).toBeInTheDocument()
     expect(screen.queryByText('Pistes à tester')).toBeNull()
     expect(screen.queryByTestId('reco-links')).toBeNull()
     expect(screen.queryByText('Comment c’est calculé')).toBeNull()
@@ -1268,14 +1268,14 @@ describe('Recommendations — votre ventre et vos repas', () => {
     renderPage({ view: 'gut' })
     // ANALYSES-ONGLETS-2 : le compte des notes du ventre a sa carte, l'intro est en pêche
     const card = await screen.findByTestId('reco-countdown-gut')
-    expect(within(card).getByText(/Vos analyses du ventre arrivent dans 28 jours/)).toBeInTheDocument()
-    expect(within(card).getByText('jours avec une note du ventre', { exact: false })).toBeInTheDocument()
-    expect(within(card).getByText('Ventre', { selector: '.domain-tag' })).toBeInTheDocument()
+    expect(within(card).getByText(/Vos analyses digestives arrivent dans 28 jours/)).toBeInTheDocument()
+    expect(within(card).getByText('jours avec une note digestive', { exact: false })).toBeInTheDocument()
+    expect(within(card).getByText('Digestion', { selector: '.domain-tag' })).toBeInTheDocument()
     expect(within(card).getByRole('link', { name: 'la carte de l’Accueil' })).toHaveAttribute('href', '/')
-    expect(screen.getByText(/vos notes du ventre et vos repas/)).toHaveClass('reco-intro--gut')
-    expect(screen.queryByText('Votre ventre et vos repas')).toBeNull()
+    expect(screen.getByText(/vos notes digestives et vos repas/)).toHaveClass('reco-intro--gut')
+    expect(screen.queryByText('Votre digestion et vos repas')).toBeNull()
     expect(screen.queryByTestId('reco-soon')).toBeNull()
-    expect(screen.getByTestId('reco-report-later')).toHaveTextContent(/première note du ventre/)
+    expect(screen.getByTestId('reco-report-later')).toHaveTextContent(/première note digestive/)
     expect(screen.queryByTestId('reco-basic-waiting')).toBeNull()
   })
 
@@ -1297,7 +1297,7 @@ describe('Recommendations — votre ventre et vos repas', () => {
     renderPage()
     await screen.findByText(/Pistes à tester/)
     expect(screen.queryByTestId('gut-links')).toBeNull()
-    expect(screen.queryByText('Votre ventre et vos repas')).toBeNull()
+    expect(screen.queryByText('Votre digestion et vos repas')).toBeNull()
     expect(screen.queryByTestId('reintro-entry')).toBeNull()
     expect(screen.queryByTestId('doctor-report')).toBeNull()
   })
@@ -1347,7 +1347,7 @@ describe('Recommendations — trois horizons d’effet (ANALYSES-ONGLETS-3)', ()
     await screen.findByTestId('reco-gut-view')
     const weeks = screen.getByTestId('gut-weeks')
     expect(within(weeks).getByText(/jours calmes, de gêne et de douleur/)).toBeInTheDocument()
-    expect(within(weeks).getByText(/Arrive après 2 semaines de notes du ventre/)).toBeInTheDocument()
+    expect(within(weeks).getByText(/Arrive après 2 semaines de notes digestives/)).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /Voir vos tendances/ })).toBeNull()
   })
 

@@ -33,7 +33,7 @@ describe('TodayBySource (TESTEUR-1d-b)', () => {
     expect(screen.getByRole('link', { name: /Ajouter une montre/ })).toHaveAttribute('href', '/connectors')
   })
 
-  it('« Noté par vous » : bien-être en menthe, ventre en pêche seulement avec « Mon ventre »', () => {
+  it('« Noté par vous » : bien-être en menthe, ventre en pêche seulement avec « Ma digestion »', () => {
     const entries = [
       { type: 'wellbeing', at: at(9), payload: { score: 5 } },
       { type: 'gut', at: at(10), payload: { level: 'pain' } },

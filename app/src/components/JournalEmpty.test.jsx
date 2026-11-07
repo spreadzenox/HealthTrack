@@ -17,7 +17,7 @@ describe('JournalEmpty (Journal vierge en couleur, POL-PLAY-46)', () => {
     const meal = screen.getByRole('button', { name: /Photographier un repas/ })
     expect(document.getElementById(meal.getAttribute('for'))).toHaveAttribute('capture', 'environment')
     expect(meal).toHaveAttribute('data-theme', 'peach')
-    expect(screen.getByRole('link', { name: /Noter votre ventre/ })).toHaveAttribute('href', '/')
+    expect(screen.getByRole('link', { name: /Noter votre digestion/ })).toHaveAttribute('href', '/')
     const source = screen.getByRole('link', { name: /Ajouter une source/ })
     expect(source).toHaveAttribute('href', '/connectors')
     expect(source).toHaveAttribute('data-theme', 'lilac')

@@ -177,12 +177,12 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(titles[0]).toMatch(/^Samedi/)
   })
 
-  it('liste une note du ventre avec son niveau, supprimable', async () => {
+  it('liste une note digestive avec son niveau, supprimable', async () => {
     await renderEntries([{ type: 'gut', source: 'app_gut', at: '2026-04-11T10:00:00', payload: { level: 'discomfort' } }])
-    expect(screen.getByText('Ventre')).toBeInTheDocument()
+    expect(screen.getByText('Digestion')).toBeInTheDocument()
     expect(screen.getByText('Gêne')).toBeInTheDocument()
     openActions()
-    expect(screen.getByRole('button', { name: /Supprimer cette note du ventre/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Supprimer cette note digestive/i })).toBeInTheDocument()
   })
 
   it('liste une note des selles avec sa forme (et son type), supprimable (I176)', async () => {
@@ -198,7 +198,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(screen.getByText('Normales · type 4 · photo')).toBeInTheDocument()
   })
 
-  it('SELLES-PHOTO-2 : « estimer la forme avec une photo » seulement avec l’objectif « Mon ventre », jamais ailleurs', async () => {
+  it('SELLES-PHOTO-2 : « estimer la forme avec une photo » seulement avec l’objectif « Ma digestion », jamais ailleurs', async () => {
     localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ done: true, goal: 'gut' }))
     const { unmount } = renderJournal()
     expect(await screen.findByRole('button', { name: /Selles : estimer la forme avec une photo/ })).toBeInTheDocument()
@@ -577,7 +577,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(screen.getByRole('button', { name: 'Refaire ce repas' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Supprimer ce repas' })).toBeInTheDocument()
     // Seule la saisie touchée s'ouvre
-    expect(screen.queryByRole('button', { name: /Supprimer cette note du ventre/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Supprimer cette note digestive/ })).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Fermer les actions de ce repas' }))
     expect(screen.queryByRole('button', { name: 'Refaire ce repas' })).not.toBeInTheDocument()
   })

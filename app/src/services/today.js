@@ -24,7 +24,7 @@ export const GUT_SOURCE = 'app_gut'
  * par les données (ce serait une détection, donc une fonction médicale), jamais en rouge.
  */
 export const WHEN_TO_SEE_DOCTOR =
-  'Sang dans les selles, perte de poids sans raison, fièvre, réveils la nuit à cause du ventre, symptômes nouveaux après 50 ans, ou un proche (parent, frère, sœur) qui a eu un cancer du côlon ou une maladie inflammatoire de l’intestin : parlez-en rapidement à votre médecin.'
+  'Sang dans les selles, perte de poids sans raison, fièvre, réveils la nuit à cause de douleurs digestives, symptômes nouveaux après 50 ans, ou un proche (parent, frère, sœur) qui a eu un cancer du côlon ou une maladie inflammatoire de l’intestin : parlez-en rapidement à votre médecin.'
 
 /** Les trois niveaux, dans l'ordre affiché. */
 export const GUT_LEVELS = [
@@ -190,7 +190,7 @@ export const SOURCE_LABELS = {
   app_food: 'Alimentation (app)',
   app_wellbeing: 'Bien-être (app)',
   app_cigarette: 'Tabac (app)',
-  app_gut: 'Ventre (app)',
+  app_gut: 'Digestion (app)',
   app_stool: 'Selles (app)',
   samsung_watch: 'Montre Samsung',
   health_connect: 'Health Connect',
@@ -331,7 +331,7 @@ export function todayBySource({ tiles = [], summary = null, entries = [], now = 
   const wb = lastOfDay(entries, 'wellbeing', day, (e) => isNum(e.payload?.score))
   if (wb) noted.push({ key: 'wellbeing', label: 'Bien-être', value: `${formatNote(wb.payload.score)}/5`, when: `à ${hhmm(wb.at)}`, theme: 'mint' })
   const gut = showGut ? lastOfDay(entries, GUT_TYPE, day, (e) => !isGutDayNote(e) && gutLevelLabel(e.payload?.level)) : null
-  if (gut) noted.push({ key: 'gut', label: 'Ventre', value: gutLevelLabel(gut.payload.level), when: `à ${hhmm(gut.at)}`, theme: 'peach' })
+  if (gut) noted.push({ key: 'gut', label: 'Digestion', value: gutLevelLabel(gut.payload.level), when: `à ${hhmm(gut.at)}`, theme: 'peach' })
   if (s.meals > 0) noted.push({ key: 'meals', label: 'Repas', value: String(s.meals), when: null })
   if (s.cigarettes > 0) noted.push({ key: 'cigarettes', label: s.cigarettes > 1 ? 'Cigarettes' : 'Cigarette', value: String(s.cigarettes), when: null })
 

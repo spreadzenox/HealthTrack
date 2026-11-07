@@ -91,7 +91,7 @@ const readGut = () => listEntries({ type: GUT_TYPE, since: new Date(Date.now() -
  * `onlyIfUsed` : rien n'est affiché tant qu'aucune note des 7 derniers jours n'existe (voir gutCardMode).
  */
 export function GutCard({
-  details, onToggleDetails, read = readGut, onlyIfUsed = false, now = null, title = 'Votre ventre',
+  details, onToggleDetails, read = readGut, onlyIfUsed = false, now = null, title = 'Votre digestion',
 }) {
   const entries = useEntries(read)
   const [saving, setSaving] = useState(false)
@@ -126,7 +126,7 @@ export function GutCard({
       </div>
       {eveningFirst && (
         <div className="gut-evening gut-evening-first" role="group" aria-labelledby="gut-evening-title">
-          <p id="gut-evening-title" className="gut-evening-title">Et votre ventre aujourd’hui, dans l’ensemble ?</p>
+          <p id="gut-evening-title" className="gut-evening-title">Et votre digestion aujourd’hui, dans l’ensemble ?</p>
           <GutChoiceRow>
             {GUT_LEVELS.map((l) => (
               <button
@@ -148,7 +148,7 @@ export function GutCard({
       {showMoment && (
         <>
           {eveningFirst && <p className="gut-moment-title">À l’instant</p>}
-          <GutChoiceRow role="group" aria-label="Comment va votre ventre ?">
+          <GutChoiceRow role="group" aria-label="Comment va votre digestion ?">
             {GUT_LEVELS.map((l) => (
               <button
                 key={l.id}
@@ -219,13 +219,13 @@ const readTrackedEnergy = async () => {
 const PISTES_TEXT = {
   // Carte ventre montrée : le compte des notes du ventre, celui de l'onglet Ventre (revue du 06/11)
   gut: {
-    title: 'Vos analyses du ventre arrivent dans',
-    explain: `${APP_NAME} cherchera quels repas reviennent avant vos gênes au ventre.`,
-    count: 'jours avec une note du ventre',
-    bar: 'Jours de notes du ventre',
-    ready: 'Aucune piste pour l’instant : elles se précisent à chaque note du ventre',
+    title: 'Vos analyses digestives arrivent dans',
+    explain: `${APP_NAME} cherchera quels repas reviennent avant vos gênes digestives.`,
+    count: 'jours avec une note digestive',
+    bar: 'Jours de notes digestives',
+    ready: 'Aucune piste pour l’instant : elles se précisent à chaque note digestive',
     details: 'Délais testés : 0–4 h, 4–24 h, 24–48 h après le repas ; le jour même ou la veille pour le bilan du soir',
-    minimum: `minimum ${GUT_PISTES_MIN_NOTE_DAYS} jours de notes du ventre`,
+    minimum: `minimum ${GUT_PISTES_MIN_NOTE_DAYS} jours de notes digestives`,
   },
   // Carte ventre masquée (autre objectif) : les repas seuls, sans parler du ventre
   meals: {

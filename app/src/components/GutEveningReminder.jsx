@@ -53,13 +53,13 @@ export default function GutEveningReminder({ variant = 'offer' }) {
     return (
       <>
         <div className="debug-toggle-row">
-          <label className="connector-toggle" aria-label="Rappel du bilan du ventre, le soir">
+          <label className="connector-toggle" aria-label="Rappel du bilan digestif, le soir">
             <input type="checkbox" checked={wanted} onChange={() => toggle(!wanted)} aria-checked={wanted} />
             <span className="toggle-track">
               <span className="toggle-thumb" />
             </span>
           </label>
-          <span className="debug-toggle-label">Bilan du ventre le soir, d’un geste depuis une notification</span>
+          <span className="debug-toggle-label">Bilan digestif le soir, d’un geste depuis une notification</span>
         </div>
         <p className="hint">Vers {time}, seulement si le bilan du jour n’est pas déjà fait.</p>
         {hint && <p className="hint" role="alert">{hint}</p>}

@@ -9,7 +9,7 @@ const prop = (selector, name) => rule(selector).match(new RegExp(`${name}:\\s*([
 
 // Audit Accueil vierge sombre du 31/10 (POL-PLAY-90) : « Votre ventre » et la question du soir avaient la même
 // couleur d'étiquette et presque le même poids : deux titres empilés. Seul le titre garde la couleur d'étiquette.
-describe('carte « Votre ventre » : un seul titre (POL-PLAY-90)', () => {
+describe('carte « Votre digestion » : un seul titre (POL-PLAY-90)', () => {
   it('la question du soir prend le texte de la carte, pas la couleur du titre', () => {
     expect(prop('.gut-card .today-card-title', 'color')).toBe('var(--peach-label)')
     expect(prop('.gut-evening-title', 'color')).toBe('var(--peach-text)')

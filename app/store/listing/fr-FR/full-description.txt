@@ -1,6 +1,6 @@
-Halcya réunit vos repas, votre ventre, votre sommeil, votre activité et votre bien-être dans un journal, sur votre téléphone. Vous voyez ce qui va avec vos bons et vos mauvais jours.
+Halcya réunit vos repas, votre digestion, votre sommeil, votre activité et votre bien-être dans un journal, sur votre téléphone. Vous voyez ce qui va avec vos bons et vos mauvais jours.
 
-Elle est pensée d'abord pour les personnes qui ont le ventre sensible : ballonnements, syndrome de l'intestin irritable ou côlon irritable (SII). Elle sert aussi à suivre son énergie et ses nuits.
+Elle est pensée d'abord pour les personnes qui ont une digestion sensible : ballonnements, syndrome de l'intestin irritable ou côlon irritable (SII). Elle sert aussi à suivre son énergie et ses nuits.
 
 ★ Vos montres et capteurs, sans ressaisie
 • Health Connect : sommeil, fréquence cardiaque, VFC, pas, dépense, séances, respiration, SpO₂… des montres, bagues et applis qui y écrivent.
@@ -9,12 +9,12 @@ Elle est pensée d'abord pour les personnes qui ont le ventre sensible : ballonn
 • Temps d'écran du téléphone, si vous l'autorisez.
 
 ★ Notez en un geste
-• Votre ventre : Calme, Gêne ou Douleur, horodaté en une touche. Le soir, un bilan rapide, même depuis la notification.
+• Votre digestion : Calme, Gêne ou Douleur, horodaté en une touche. Le soir, un bilan rapide, même depuis la notification.
 • Vos repas : un journal alimentaire horodaté, à partir d'une photo, d'une image de la galerie ou de quelques mots. L'analyse par IA des ingrédients est facultative et ne part que si vous la lancez.
 • Les FODMAP de chaque repas, groupe par groupe, par exemple « riche en fructanes : oignon ». Les teneurs viennent de la table Ciqual de l'Anses et de mesures publiées. Une teneur jamais mesurée est marquée « inconnue ».
 
 ★ Des pistes qui tiennent compte des délais
-• Le ventre réagit parfois des heures après un repas. Halcya compare chaque repas à votre ventre dans les 48 h qui suivent, à nuit comparable.
+• La digestion réagit parfois des heures après un repas. Halcya compare chaque repas à votre digestion dans les 48 h qui suivent, à nuit comparable.
 • Une piste n'apparaît qu'avec assez de jours pour comparer : en général trois à quatre semaines de notes.
 • Les repères FODMAP généraux servent de point de départ. Dès que vos propres données suffisent, ce sont elles qui comptent.
 
@@ -27,11 +27,11 @@ Si vous l'activez, une lecture du visage de quelques secondes estime votre bien-
 
 ★ Comprendre vos tendances
 • Tendances : votre forme comparée à vos propres semaines habituelles.
-• Analyses : ce qui va de pair avec votre ventre et votre bien-être, calculé sur le téléphone.
+• Analyses : ce qui va de pair avec votre digestion et votre bien-être, calculé sur le téléphone.
 
 ★ Sans abonnement, avec Silver ou Gold
 • Sans abonnement : journal, saisie en un geste, imports des montres, bien-être estimé, graphiques, export de vos données, et des analyses IA de repas offertes chaque mois.
-• Silver : vos pistes repas → ventre en détail, la réintroduction guidée, le rapport PDF et l'analyse IA des repas jusqu'à 10 par jour.
+• Silver : vos pistes repas → digestion en détail, la réintroduction guidée, le rapport PDF et l'analyse IA des repas jusqu'à 10 par jour.
 • Gold : tout Silver, avec l'analyse IA des repas jusqu'à 20 par jour. Gold estime mieux les quantités.
 Prix et essai affichés dans l'app avant tout achat.
 
