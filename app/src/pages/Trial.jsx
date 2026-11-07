@@ -12,6 +12,10 @@ import { THEME_TONE } from '../services/resultsView'
 import { toDisplay } from '../services/mood/wellbeingScale'
 import { appLocale } from '../i18n/locale.js'
 import TrialDots from '../components/TrialDots'
+import { getAnalysis } from '../services/analysisRunner'
+import { crossingChanges } from '../services/method/changes'
+
+const readChanges = () => getAnalysis('changes').catch(() => null)
 
 const fr1 = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: 1, minimumFractionDigits: 1 })
 const signed = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${fr1(Math.abs(v))}`
@@ -59,9 +63,17 @@ function DiffBar({ result, scaleDelta }) {
   )
 }
 
-export default function Trial({ read = readTrialsData, now }) {
+export default function Trial({ read = readTrialsData, readTrialChanges = readChanges, now }) {
   const { id } = useParams()
   const [state, setState] = useState(undefined)
+  const [changes, setChanges] = useState(null)
+  useEffect(() => {
+    let alive = true
+    readTrialChanges().then((c) => alive && setChanges(c))
+    return () => {
+      alive = false
+    }
+  }, [readTrialChanges])
   const load = useCallback(() => {
     read()
       .then((data) => {
@@ -88,6 +100,8 @@ export default function Trial({ read = readTrialsData, now }) {
   const scale = outcomeId === 'wellbeing' ? (v) => toDisplay(v) : (v) => v
   const scaleDelta = outcomeId === 'wellbeing' ? (d) => toDisplay(d) - toDisplay(0) : (d) => d
   const what = outcomeId === 'digestion' ? 'votre confort digestif' : 'votre bien-être'
+  // TS-2 : un changement durable du résultat suivi pendant l'essai fausse la comparaison ; on le dit
+  const crossed = crossingChanges(changes?.[outcomeId], t.schedule[0].date, t.schedule[t.schedule.length - 1].date)
   const answer = (held) => saveTrial(entry.id, { ...t, answers: { ...t.answers, [s.ask.date]: held } })
   const keep = () => saveTrial(entry.id, { ...t, kept: true, endedAt: t.endedAt ?? at.toISOString() })
   const stop = () => saveTrial(entry.id, { ...t, endedAt: at.toISOString() })
@@ -128,6 +142,11 @@ export default function Trial({ read = readTrialsData, now }) {
           ? <DiffBar result={s.result} scaleDelta={scaleDelta} />
           : <p className="act-card-detail">L’écart s’affiche dès {RESULT_MIN_EACH} lendemains de chaque sorte.</p>}
         <p className="act-card-detail">Chaque point : {what} le lendemain d’un jour avec ou sans.</p>
+        {crossed.length > 0 && (
+          <p className="trial-crossed" role="note">
+            {what.charAt(0).toUpperCase() + what.slice(1)} a changé de niveau pendant l’essai : l’écart est à lire avec prudence.
+          </p>
+        )}
       </article>
       {s.done && !t.kept && (
         <button type="button" className="reco-cta" onClick={keep}>Garder cette habitude</button>

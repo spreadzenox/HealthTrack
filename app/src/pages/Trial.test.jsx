@@ -10,10 +10,10 @@ import { saveTrial } from '../services/trialsData'
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30 } }
 const payload = { ...createTrial(sleep, { now: new Date(2026, 10, 1, 9) }), schedule: [...Array(14)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 })) }
 
-const renderTrial = (now, extra = {}) => render(
+const renderTrial = (now, extra = {}, changes = null) => render(
   <MemoryRouter initialEntries={['/agir/essai/7']}>
     <Routes>
-      <Route path="/agir/essai/:id" element={<Trial now={now} read={async () => ({
+      <Route path="/agir/essai/:id" element={<Trial now={now} readTrialChanges={async () => changes} read={async () => ({
         trials: [{ id: 7, type: 'trial', payload: { ...payload, ...extra } }],
         summaries: new Map([['2026-11-01', { sleepMinutes: 470 }]]),
         outcomes: { wellbeing: new Map([['2026-11-02', 3.5], ['2026-11-03', 2]]), digestion: new Map() },
@@ -40,5 +40,10 @@ describe('Un essai (ORG-8)', () => {
     expect(await screen.findByRole('heading', { name: 'Pas d’effet net' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Garder cette habitude' }))
     expect(saveTrial).toHaveBeenCalledWith(7, expect.objectContaining({ kept: true }))
+  })
+
+  it('TS-2 : un changement durable pendant l’essai est signalé', async () => {
+    renderTrial(new Date(2026, 10, 9, 10), {}, { wellbeing: [{ date: '2026-11-06', before: 3, after: 2 }] })
+    expect(await screen.findByRole('note')).toHaveTextContent('Votre bien-être a changé de niveau pendant l’essai')
   })
 })
