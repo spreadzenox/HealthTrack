@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Trends from './Trends'
 
@@ -27,10 +27,13 @@ const contributions = { wellbeing: { '2026-11-05': [
   { key: 'steps', label: 'Pas', theme: 'activity', horizon: 'short', points: 0.2, value: 9000, usual: 7000 },
 ] } }
 
+const changes = { wellbeing: [{ date: '2026-10-25', before: 3, after: 2, shift: -1, size: 1, t: 5, confirmedOn: '2026-11-01' }], sleepMinutes: [{ date: '2026-10-27', before: 450, after: 390, shift: -60, size: 1, t: 5, confirmedOn: '2026-11-03' }] }
+
 const renderAt = (path) => render(
   <MemoryRouter initialEntries={[path]}>
     <Trends now={NOW} readDays={async () => days} readDayStates={async () => states}
-      readFaceEntries={async () => face} readDayContributions={async () => contributions} />
+      readFaceEntries={async () => face} readDayContributions={async () => contributions}
+      readDayChanges={async () => changes} />
   </MemoryRouter>,
 )
 
@@ -77,10 +80,24 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(detail).toHaveTextContent('Plus de tristesse')
     expect(within(detail).getByRole('img', { name: 'Humeur et éveil : 2 lectures' })).toBeInTheDocument()
     expect(detail).toHaveTextContent('Éveil plutôt calme, moins que d’habitude')
-    const weigh = within(detail).getByRole('region', { name: 'Ce qui a pu peser ce jour-là' })
+    // contributions lues au premier jour touché (budget de lectures)
+    const weigh = await within(detail).findByRole('region', { name: 'Ce qui a pu peser ce jour-là' })
     expect(within(weigh).getByText('Sommeil').closest('li')).toHaveAttribute('data-tone', 'night')
     expect(weigh).toHaveTextContent('−0,4')
     expect(detail.textContent).not.toMatch(/diagnostic|cause/i)
+  })
+
+  it('TS-2 : vue Mois, repère « changement » avec niveau avant et après et « Au même moment », jamais de cause', async () => {
+    renderAt('/tendances')
+    fireEvent.click(await screen.findByRole('button', { name: 'Mois' }))
+    // changements lus à la première vue Mois (budget de lectures)
+    await waitFor(() => expect(document.querySelectorAll('.trends-change')).toHaveLength(1))
+    fireEvent.click(screen.getByRole('button', { name: 'dimanche 25 octobre' }))
+    const detail = screen.getByRole('group', { name: /Détail du dimanche 25 octobre/ })
+    expect(detail).toHaveTextContent('Changement durable : bien-être')
+    expect(detail).toHaveTextContent(/Niveau avant 3,4 \/5, après 2,6 \/5/)
+    expect(detail).toHaveTextContent('Au même moment : sommeil')
+    expect(detail.textContent).not.toMatch(/cause|à cause|parce que/i)
   })
 
   it('?mesure=sommeil inconnue → bien-être ; ?vue=jour ouvre l’historique du jour (ORG-3b)', async () => {

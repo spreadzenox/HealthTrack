@@ -49,10 +49,10 @@ describe('Onboarding (jalon 4c) : premier geste et paywall passable', () => {
   })
 
   it('objectif ventre : Calme / Gêne / Douleur, horodaté, premier jour de suivi', async () => {
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
     renderAt()
     expect(screen.getByRole('heading', { name: 'Comment va votre digestion ?' })).toBeInTheDocument()
-    expect(screen.getByText('05/05')).toBeInTheDocument()
+    expect(screen.getByText('06/07')).toBeInTheDocument()
     // Facultatif : on peut continuer sans répondre
     expect(cont()).toBeEnabled()
     fireEvent.click(screen.getByRole('button', { name: 'Gêne' }))
@@ -71,7 +71,7 @@ describe('Onboarding (jalon 4c) : premier geste et paywall passable', () => {
   })
 
   it('objectif énergie : « Comment vous sentez-vous ? » de 1 à 5, stockée comme une note saisie (TESTEUR-2a)', async () => {
-    saveOnboarding({ goal: 'energy', watch: 'none', step: 4 })
+    saveOnboarding({ goal: 'energy', watch: 'none', step: 5 })
     renderAt()
     expect(screen.getByRole('heading', { name: 'Comment vous sentez-vous ?' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: '0 sur 5' })).not.toBeInTheDocument()
@@ -88,7 +88,7 @@ describe('Onboarding (jalon 4c) : premier geste et paywall passable', () => {
   })
 
   it('variante sideload : pas d’écran d’abonnement, l’onboarding finit sur le premier geste', async () => {
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
     renderAt()
     fireEvent.click(cont())
     expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
@@ -97,12 +97,12 @@ describe('Onboarding (jalon 4c) : premier geste et paywall passable', () => {
 
   it('variante play : paywall soft en dernier, « Continuer gratuitement » termine l’onboarding', async () => {
     variant.name = 'play'
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
     renderAt()
-    expect(screen.getByText('05/06')).toBeInTheDocument()
+    expect(screen.getByText('06/08')).toBeInTheDocument()
     fireEvent.click(cont())
     expect(await screen.findByRole('heading', { name: /bons et mauvais jours/ })).toBeInTheDocument()
-    expect(screen.getByText('06/06')).toBeInTheDocument()
+    expect(screen.getByText('07/08')).toBeInTheDocument()
     expect(screen.getByText(/Vos pistes arriveront vers le/)).toBeInTheDocument()
     // Le bouton « Continuer » de l'onboarding laisse la place à celui du paywall
     expect(screen.queryByRole('button', { name: 'Continuer' })).not.toBeInTheDocument()
@@ -115,7 +115,7 @@ describe('Onboarding (jalon 4c) : premier geste et paywall passable', () => {
 
   it('variante play : la croix du paywall termine aussi l’onboarding', async () => {
     variant.name = 'play'
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 6 })
     renderAt()
     fireEvent.click(await screen.findByRole('button', { name: 'Fermer' }))
     expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()

@@ -6,7 +6,7 @@
  * jour ouvre son détail ; un jour futur montre l'attendu et sa fourchette, jamais un « attendu » sur le passé.
  */
 import { useMemo, useState } from 'react'
-import { buildTrendSeries, canAdd, trendMeasure, unitsOf } from '../services/trendsData'
+import { buildTrendSeries, canAdd, changeMarks, trendMeasure, unitsOf } from '../services/trendsData'
 import { appLocale } from '../i18n/locale.js'
 import LineIcon from './LineIcon'
 import TrendsDayDetail from './TrendsDayDetail'
@@ -31,7 +31,7 @@ function domainOf(unit, values) {
   return [Math.max(0, lo - pad), hi + pad]
 }
 
-function Chart({ data, keys, selected, onSelect }) {
+function Chart({ data, keys, selected, onSelect, marks = [] }) {
   const { dates, today, series } = data
   const units = unitsOf(keys)
   const x = (date) => PAD.l + (dates.indexOf(date) / Math.max(1, dates.length - 1)) * (W - PAD.l - PAD.r)
@@ -62,7 +62,7 @@ function Chart({ data, keys, selected, onSelect }) {
           <text x={x(today)} y={H - 6} textAnchor="middle">auj.</text>
         </g>
       )}
-      {dates.map((d, i) => (i % step === 0 && d !== today ? (
+      {dates.map((d, i) => (i % step === 0 && Math.abs(i - dates.indexOf(today)) >= Math.max(1, Math.ceil(step / 2)) ? (
         <text key={d} className="trends-axis mono" x={x(d)} y={H - 6} textAnchor="middle">{shortDay(d)}</text>
       ) : null))}
       {keys.map((k) => {
@@ -92,6 +92,12 @@ function Chart({ data, keys, selected, onSelect }) {
           </g>
         )
       })}
+      {marks.map((c) => (
+        <g key={`${c.key}-${c.date}`} className="trends-change" data-tone={c.tone}>
+          <line x1={x(c.date)} x2={x(c.date)} y1={PAD.t} y2={H - PAD.b} />
+          <path d={`M${x(c.date) - 5},${PAD.t - 8}h10l-5,7z`} />
+        </g>
+      ))}
       {selected && <line className="trends-selected" x1={x(selected)} x2={x(selected)} y1={PAD.t - 4} y2={H - PAD.b} />}
       {dates.map((d) => (
         <rect key={d} className="trends-hit" x={x(d) - colW / 2} y={0} width={colW} height={H}
@@ -101,7 +107,7 @@ function Chart({ data, keys, selected, onSelect }) {
   )
 }
 
-function DayDetail({ data, keys, date, onClose, extra = null }) {
+function DayDetail({ data, keys, date, onClose, extra = null, marks = [] }) {
   const future = date > data.today
   const face = !future ? extra?.face ?? null : null
   return (
@@ -142,6 +148,13 @@ function DayDetail({ data, keys, date, onClose, extra = null }) {
           )
         })}
       </ul>
+      {marks.filter((c) => c.date === date).map((c) => (
+        <div key={c.key} className="trends-change-detail" data-tone={c.tone}>
+          <p className="trends-detail-title">Changement durable : {c.label.toLowerCase()}</p>
+          <p className="trends-detail-note">Niveau avant <span className="mono">{c.before}</span>, après <span className="mono">{c.after}</span></p>
+          {c.sameTime.length > 0 && <p className="trends-detail-note">Au même moment : {c.sameTime.join(', ').toLowerCase()}</p>}
+        </div>
+      ))}
       {!future && extra && <TrendsDayDetail face={keys.includes('wellbeing') ? face : null} contributions={extra.contributions} />}
     </div>
   )
@@ -155,7 +168,7 @@ function DayDetail({ data, keys, date, onClose, extra = null }) {
  * `dayExtra(date)` : ce qu'on sait d'un jour passé au-delà des courbes (visage, contributions), ou null.
  */
 export default function TrendsViewer({
-  states, days, now, initialKeys = ['wellbeing'], period, onPeriod, dayView = null, dayExtra = null,
+  states, days, now, initialKeys = ['wellbeing'], period, onPeriod, dayView = null, dayExtra = null, changes = null,
 }) {
   const [keys, setKeys] = useState(initialKeys)
   const [adding, setAdding] = useState(false)
@@ -166,6 +179,8 @@ export default function TrendsViewer({
   )
   const shown = keys.filter((k) => data.available.includes(k))
   const addable = data.available.filter((k) => canAdd(shown, k))
+  // TS-2 : repères « changement » en vue Mois
+  const marks = period === 'month' ? changeMarks(changes, shown, data.dates) : []
   return (
     <article className="today-card trends-card">
       <div className="trends-controls">
@@ -218,9 +233,9 @@ export default function TrendsViewer({
       )}
       {period === 'day' ? dayView : shown.length ? (
         <>
-          <Chart data={data} keys={shown} selected={selected} onSelect={setSelected} />
+          <Chart data={data} keys={shown} selected={selected} onSelect={setSelected} marks={marks} />
           {selected
-            ? <DayDetail data={data} keys={shown} date={selected} onClose={() => setSelected(null)} extra={dayExtra?.(selected, shown) ?? null} />
+            ? <DayDetail data={data} keys={shown} date={selected} onClose={() => setSelected(null)} extra={dayExtra?.(selected, shown) ?? null} marks={marks} />
             : <p className="trends-hint">Touchez un jour pour son détail.</p>}
         </>
       ) : (
