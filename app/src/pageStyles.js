@@ -30,6 +30,8 @@ import './pages/Onboarding.css'
 import './pages/WellbeingHistory.css'
 // Réintroduction guidée (jalon 7b, 26/10)
 import './pages/Reintroduction.css'
+// Onglet Agir (ORG-1, 07/11)
+import './pages/Act.css'
 // Ligne « Bientôt » partagée par Analyses et Tendances (POL-6, 25/10)
 import './components/SoonList.css'
 // Pistes repas → ventre dans Analyses (jalon 5, 26/10)
