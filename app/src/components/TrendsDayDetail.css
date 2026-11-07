@@ -1,0 +1,120 @@
+/* Détail d'un jour de Tendances (ORG-3c). Le jour en couleur pleine (bien-être = menthe), l'habitude en gris. */
+.tdd-block {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.tdd-title {
+  margin: 0 0 6px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.tdd-text {
+  margin: 6px 0 0;
+  font-size: 0.88rem;
+}
+
+.tdd-star,
+.tdd-map {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.tdd-star-axis,
+.tdd-map-axis {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.tdd-star-day {
+  fill: var(--mint-label);
+  fill-opacity: 0.35;
+  stroke: var(--mint-label);
+  stroke-width: 1.5;
+}
+
+.tdd-star-habit,
+.tdd-map-habit {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.2;
+  stroke-opacity: 0.7;
+}
+
+.tdd-star-label {
+  font-size: 9px;
+  fill: var(--text);
+}
+
+.tdd-star-pct {
+  font-family: var(--font-mono);
+  fill: var(--text-muted);
+}
+
+.tdd-map-frame {
+  fill: var(--color-surface);
+  stroke: var(--border);
+}
+
+.tdd-map-dot {
+  fill: var(--mint-label);
+  fill-opacity: 0.45;
+}
+
+.tdd-map-mean {
+  fill: var(--mint-label);
+  stroke: var(--color-bg);
+  stroke-width: 2;
+}
+
+.tdd-map-corner {
+  font-size: 9px;
+  fill: var(--text-muted);
+}
+
+.tdd-map-edge {
+  font-size: 8px;
+  fill: var(--text-muted);
+}
+
+.tdd-contrib {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tdd-contrib li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.85rem;
+}
+
+.tdd-contrib-track {
+  position: relative;
+  height: 10px;
+}
+
+.tdd-contrib-zero {
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  bottom: -3px;
+  border-left: 1px solid var(--text-muted);
+}
+
+.tdd-contrib-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+  background: var(--tone-label, var(--text-muted));
+}

@@ -175,7 +175,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 > Complète ORG-1, ORG-3 et ORG-3b. Chantier du soir (07/11) : session « interface » (ORG-1b, ORG-3c, ORG-8) et session
 > « méthode » (TS-1, TS-2) en parallèle.
 
-- [ ] ORG-3c — **Tendances** : les sous-onglets du Journal deviennent des onglets soulignés sur toute la largeur ; les
+- [x] ORG-3c — **Tendances** : les sous-onglets du Journal deviennent des onglets soulignés sur toute la largeur ; les
   réglages de la courbe (puces de mesure avec leur point de couleur, « + » pour ajouter une mesure, sélecteur compact
   Jour / Semaine / Mois) sont petits, dans la carte du graphique, jamais au niveau visuel des onglets. Chaque jour : une
   ligne et sa fourchette, un point plein seulement les jours notés, repère « auj. ». Aucun attendu sur le passé :
@@ -189,6 +189,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   « Ce qui a pu peser ce jour-là » : les 3 plus grandes contributions du modèle d'ORG-5 ce jour-là (coefficient × écart
   du facteur), barres de part et d'autre de zéro, couleur du thème. Toucher un jour futur : l'attendu et sa fourchette.
   L'attendu, la fourchette et la courbe digestive estimée se branchent sur TS-1 ; d'ici là, seul ce qui existe s'affiche.
+  (07/11 20:40 : `TrendsDayDetail`, `services/trendsDay.js` ; contributions du contrat `analysisResults`)
 - [x] ORG-1b — **Agir** (complète ORG-1) : En cours (plusieurs essais à la fois, progression, consigne du jour), Mes
   habitudes, Proposés par vos analyses (« Commencer »), Terminés ; en bas « Tous vos essais, vérifiés ou non, figurent
   dans votre rapport médecin » (par défaut, sans bouton). (07/11 19:00 : sections sur les tests FODMAP existants ;

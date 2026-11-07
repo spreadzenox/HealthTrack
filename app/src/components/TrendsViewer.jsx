@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react'
 import { buildTrendSeries, canAdd, trendMeasure, unitsOf } from '../services/trendsData'
 import { appLocale } from '../i18n/locale.js'
 import LineIcon from './LineIcon'
+import TrendsDayDetail from './TrendsDayDetail'
 
 const W = 340
 const H = 190
@@ -100,8 +101,9 @@ function Chart({ data, keys, selected, onSelect }) {
   )
 }
 
-function DayDetail({ data, keys, date, onClose }) {
+function DayDetail({ data, keys, date, onClose, extra = null }) {
   const future = date > data.today
+  const face = !future ? extra?.face ?? null : null
   return (
     <div className="trends-detail" role="group" aria-label={`Détail du ${longDay(date)}`}>
       <div className="trends-detail-head">
@@ -111,6 +113,13 @@ function DayDetail({ data, keys, date, onClose }) {
         </button>
       </div>
       {future && <p className="trends-detail-note">D’après vos habitudes</p>}
+      {face && (face.readings > 0 || face.note != null) && (
+        <p className="trends-detail-note">
+          {face.readings > 0 && `${face.readings} ${face.readings > 1 ? 'lectures' : 'lecture'} du visage`}
+          {face.readings > 0 && face.note != null && ', '}
+          {face.note != null && <>note <span className="mono">{face.note.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} /5</span></>}
+        </p>
+      )}
       <ul className="trends-detail-list">
         {keys.map((k) => {
           const m = trendMeasure(k)
@@ -124,11 +133,16 @@ function DayDetail({ data, keys, date, onClose }) {
               {future && Number.isFinite(p.low) && (
                 <span className="trends-detail-range mono">{m.fmt(p.low)} à {m.fmt(p.high)}</span>
               )}
-              {!future && m.state && <span className="trends-detail-range">{p.observed ? 'noté' : 'estimé'}</span>}
+              {!future && m.state && (
+                <span className="trends-detail-range">
+                  {k === 'digestion' && face?.gut ? `noté « ${face.gut} »` : p.observed ? 'noté' : 'estimé'}
+                </span>
+              )}
             </li>
           )
         })}
       </ul>
+      {!future && extra && <TrendsDayDetail face={keys.includes('wellbeing') ? face : null} contributions={extra.contributions} />}
     </div>
   )
 }
@@ -137,7 +151,12 @@ function DayDetail({ data, keys, date, onClose }) {
  * @param {{ states: object | null, days: object[], now?: Date, initialKeys?: string[],
  *   period: 'week'|'month', onPeriod: (p: string) => void, dayView?: import('react').ReactNode }} props
  */
-export default function TrendsViewer({ states, days, now, initialKeys = ['wellbeing'], period, onPeriod, dayView = null }) {
+/**
+ * `dayExtra(date)` : ce qu'on sait d'un jour passé au-delà des courbes (visage, contributions), ou null.
+ */
+export default function TrendsViewer({
+  states, days, now, initialKeys = ['wellbeing'], period, onPeriod, dayView = null, dayExtra = null,
+}) {
   const [keys, setKeys] = useState(initialKeys)
   const [adding, setAdding] = useState(false)
   const [selected, setSelected] = useState(null)
@@ -201,7 +220,7 @@ export default function TrendsViewer({ states, days, now, initialKeys = ['wellbe
         <>
           <Chart data={data} keys={shown} selected={selected} onSelect={setSelected} />
           {selected
-            ? <DayDetail data={data} keys={shown} date={selected} onClose={() => setSelected(null)} />
+            ? <DayDetail data={data} keys={shown} date={selected} onClose={() => setSelected(null)} extra={dayExtra?.(selected, shown) ?? null} />
             : <p className="trends-hint">Touchez un jour pour son détail.</p>}
         </>
       ) : (

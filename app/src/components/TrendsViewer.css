@@ -264,3 +264,7 @@ button.trends-chip {
 .trends-card .wbh-page {
   margin-top: 10px;
 }
+
+.trends-hit:focus {
+  outline: none;
+}

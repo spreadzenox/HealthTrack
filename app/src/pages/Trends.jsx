@@ -13,6 +13,8 @@ import { getAnalysis } from '../services/analysisRunner'
 import { buildDailyJournal } from '../services/dailyJournal'
 import { listEntries } from '../storage/localHealthStorage'
 import { trendMeasure } from '../services/trendsData'
+import { dayFaceDetail } from '../services/trendsDay'
+import { loadFaceMoodEntries } from '../services/mood/faceMoodData'
 
 const DAY_MS = 86_400_000
 
@@ -30,23 +32,33 @@ async function readMeasureDays(now = new Date()) {
 }
 
 const readStates = () => getAnalysis('dayStates').catch(() => null)
+// Détail d'un jour (ORG-3c) : lectures du visage et notes, contributions du modèle d'Analyses (ORG-5, contrat)
+const readFace = () => loadFaceMoodEntries().then(({ bursts, notes }) => [...bursts, ...notes]).catch(() => [])
+const readContributions = () => getAnalysis('analysisResults').then((r) => r?.contributions ?? null).catch(() => null)
 
-export default function Trends({ readDays = readMeasureDays, readDayStates = readStates, now }) {
+export default function Trends({
+  readDays = readMeasureDays, readDayStates = readStates, readFaceEntries = readFace, readDayContributions = readContributions, now,
+}) {
   const [params] = useSearchParams()
   const asked = params.get('mesure')
   const [period, setPeriod] = useState(params.get('vue') === 'jour' ? 'day' : 'week')
   const [data, setData] = useState(null)
   useEffect(() => {
     let alive = true
-    const load = () => Promise.all([readDayStates(), readDays().catch(() => [])])
-      .then(([states, days]) => alive && setData({ states, days }))
+    const load = () => Promise.all([readDayStates(), readDays().catch(() => []), readFaceEntries(), readDayContributions()])
+      .then(([states, days, face, contributions]) => alive && setData({ states, days, face, contributions }))
     load()
     window.addEventListener('health-entries-updated', load)
     return () => {
       alive = false
       window.removeEventListener('health-entries-updated', load)
     }
-  }, [readDays, readDayStates])
+  }, [readDays, readDayStates, readFaceEntries, readDayContributions])
+  // Le confort digestif seul affiché : ses contributions ; sinon celles du bien-être
+  const dayExtra = (date, keys) => ({
+    face: dayFaceDetail(data?.face ?? [], date),
+    contributions: data?.contributions?.[keys.includes('wellbeing') || !keys.includes('digestion') ? 'wellbeing' : 'digestion']?.[date] ?? null,
+  })
   return (
     <section className="journal-page">
       <JournalTabs />
@@ -59,6 +71,7 @@ export default function Trends({ readDays = readMeasureDays, readDayStates = rea
           period={period}
           onPeriod={setPeriod}
           dayView={<WellbeingHistory embedded initialPeriod="day" now={now} />}
+          dayExtra={dayExtra}
         />
       ) : (
         <div className="loading"><div className="spinner" aria-hidden /></div>
