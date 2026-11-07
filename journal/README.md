@@ -46,7 +46,10 @@
 > aujourd'hui », ou votre note du jour s'il n'y a pas eu de lecture), avec de petites étiquettes (nombre de lectures,
 > votre note, une gêne au ventre comptée). Toucher la carte ouvre l'historique, où sont passés la courbe et les
 > détails. Sans rien aujourd'hui : « Pas encore d'avis » et un seul bouton, « Noter comment je me sens ».
-> Prochaines : les données du jour par source et un seul endroit « Noter » (1d), puis « Ce qui change aujourd'hui » (1d-2).
+> **Un seul endroit pour noter (10:35)** : plus bas sur l'Accueil, la section « Noter » réunit « Photo du repas »,
+> « Mon bien-être » (la note de 1 à 5, en menthe) et, avec l'objectif ventre, « Mon ventre » (en pêche) ; la cigarette
+> passe dans « Autre chose ». La carte « Votre journée » ne porte plus de bouton.
+> Prochaines : vos données du jour rangées par source (1d-b), puis « Ce qui change aujourd'hui » (1d-2).
 > Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
@@ -164,6 +167,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 10:35 — [Un seul endroit pour noter](runs/2026-11-07-1035-noter.md) | 🎨 | TESTEUR-1d-a : section « Noter » sur l'Accueil (Photo du repas, « Mon bien-être », « Mon ventre » avec l'objectif ventre, « Autre chose ») ; la carte « Votre journée » n'a plus de bouton. Rien à faire de votre côté |
 | 07/11 09:35 — [Votre journée](runs/2026-11-07-0935-votre-journee.md) | 🎨 | TESTEUR-1c : carte « Votre journée » en tête de l'Accueil (titre, échelle 1 à 5, d'où il vient, étiquettes), à la place du titre et de la carte « Bien-être estimé » ; toucher → historique ; « Pas encore d'avis » avec un seul bouton. |
 | 07/11 08:35 — [Maquette d'Aujourd'hui](runs/2026-11-07-0835-maquette-aujourdhui.md) | 💡 | TESTEUR-1b : maquette du nouvel écran Aujourd'hui (statut du jour en tête et d'où il vient, ce qui change, données par source, un seul endroit pour noter, animation), captures claires, sombres et premier jour ; découpée en 4 runs de code. Rien à faire de votre côté, sauf un avis si la maquette ne vous va pas |
 | 07/11 07:35 — [La météo dès l'accueil](runs/2026-11-07-0735-meteo-accueil.md) | 🎨 | TESTEUR-5a-1 : écran « La météo de votre ville » dans l'accueil (position approximative après divulgation, refus respecté) ; premier geste de l'accueil de 1 à 5 (il était resté sur 0 à 5). |

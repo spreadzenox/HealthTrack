@@ -2,13 +2,13 @@
  * Statut du jour en tête de l'Accueil (TESTEUR-1c, retours du testeur iPhone du 06/11, maquette
  * journal/maquettes/aujourdhui) : « Votre journée » et un titre en deux mots, la place du jour sur l'échelle 1 à 5,
  * d'où il vient en une phrase et des étiquettes. Carte menthe : c'est du bien-être (règle de sens constant).
- * Toucher le haut de la carte ouvre l'historique du bien-être. Sans lecture ni note du jour : « Pas encore d'avis »
- * et un seul bouton pour noter.
+ * Toucher le haut de la carte ouvre l'historique du bien-être. Sans lecture ni note du jour : « Pas encore d'avis ».
+ * On note dans la section « Noter » plus bas (TESTEUR-1d) ; seule la calibration de départ garde son bouton ici.
  */
 import { Link } from 'react-router-dom'
 import { dayStatus } from '../services/today'
 import { NOTE_CHOICES } from '../services/mood/wellbeingScale'
-import { StartCalibration, UnlockReminder, ManualNoteButton } from './MoodEstimateCard'
+import { StartCalibration, UnlockReminder } from './MoodEstimateCard'
 import LineIcon from './LineIcon'
 import './MoodEstimateCard.css'
 import './DayStatusCard.css'
@@ -50,21 +50,15 @@ export default function DayStatusCard({
         {reminder || (
           <p className="day-status-from">
             {est
-              ? 'Pas encore de lecture du visage aujourd’hui. Dites comment vous vous sentez.'
-              : <>Dites comment vous vous sentez, ou laissez la caméra lire votre visage :{' '}
+              ? 'Pas encore de lecture du visage aujourd’hui. Notez votre bien-être plus bas.'
+              : <>Notez votre bien-être plus bas, ou laissez la caméra lire votre visage :{' '}
                 <Link to="/connectors">à activer dans Sources</Link>.</>}
           </p>
-        )}
-        {onAddManual && (
-          <button type="button" className="btn btn-secondary day-status-note" onClick={onAddManual}>
-            Noter comment je me sens
-          </button>
         )}
       </section>
     )
   }
 
-  const asking = Boolean(est?.startCalibration && !est.startCalibration.notedToday && onAddManual)
   return (
     <section className={`today-card mood-estimate day-status is-${status.level}`} aria-labelledby="day-status-title">
       <Link to="/bien-etre" className="day-status-main" aria-describedby="day-status-from">
@@ -82,7 +76,6 @@ export default function DayStatusCard({
       )}
       {est?.startCalibration && <StartCalibration cal={est.startCalibration} onAddManual={onAddManual} />}
       {reminder}
-      <ManualNoteButton onClick={asking ? null : onAddManual} />
     </section>
   )
 }
