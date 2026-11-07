@@ -19,8 +19,10 @@
 > « Photographier un repas » dans Nutrition et le Journal vide, ouvrent directement l'appareil photo ; la photo
 > s'affiche dans Repas, prête à analyser. Quatrième (01:35) : l'onglet Analyses ne parle plus de « hasard » ni de
 > « données exploratoires » ; il dit seulement ce qui manque (« Encore 4 jours de notes pour des résultats plus
-> sûrs ») ; et « Vos derniers jours » s'explique en une phrase. Prochaines : sous-titres de Nutrition au toucher, puis
-> une maquette du nouvel écran Aujourd'hui. Rien à faire de votre côté.
+> sûrs ») ; et « Vos derniers jours » s'explique en une phrase. Cinquième (02:35) : dans Nutrition, la carte « Votre profil »
+> n'affiche plus d'où vient chaque valeur (« ≈ 8 000 pas/jour sur 14 jours », « Withings ») : on le voit en touchant la
+> valeur ; « À compléter… » ouvre directement le formulaire. Prochaines : l'interrupteur dans un interrupteur
+> d'Analyses, puis une maquette du nouvel écran Aujourd'hui (run idées de 08:35). Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
 > jobs (« account is locked due to a billing issue »). À 07:33 UTC, le run de 08:35 a relancé les checks de la PR #748 :
@@ -137,6 +139,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 02:35 — [Nutrition : provenance au toucher](runs/2026-11-07-0235-profil-toucher.md) | 🎨 | Carte « Votre profil » de Nutrition : d'où vient une valeur (pas des 14 derniers jours, Withings, par défaut) s'affiche en touchant cette valeur ; « À compléter… » ouvre le formulaire dans la même carte ; dans le formulaire, l'explication du niveau d'activité n'apparaît qu'après un choix. Rien à faire de votre côté |
 | 07/11 01:35 — [Analyses : moins de détails techniques](runs/2026-11-07-0135-analyses-texte.md) | 🎨 | Analyses ne parle plus de « hasard » ni de « données exploratoires » : seulement ce qui manque (« Encore N jours de notes… », « Après un repas : encore N jours de lectures du visage ») ; la méthode reste tout en bas dans « Comment c'est calculé ». Journal : « Ce qui a été mesuré et noté, jour par jour. » Rien à faire de votre côté |
 | 07/11 00:35 — [Photo du repas en un geste](runs/2026-11-07-0035-photo-directe.md) | 🎨 | « Photo du repas » (Accueil) et « Photographier un repas » (Nutrition, Journal vide) ouvrent directement l'appareil photo ; la photo arrive dans Repas, prête à analyser (avant : il fallait passer par la page Repas et toucher un second bouton). Rien à faire de votre côté |
 | 06/11 23:35 — [Accueil : petites retouches du testeur](runs/2026-11-06-2335-accueil-retouches.md) | 🎨 | Sur l'Accueil : la date et « Bonjour » chacun sur sa ligne, plus de « · », plus de phrase grise sur les sources quand rien n'est mesuré, et « Vos analyses arrivent dans N jours » (aussi dans Analyses) sans détail technique. La PR #764 du run précédent (premier repas en un bouton) est mergée. Rien à faire de votre côté |

@@ -48,6 +48,23 @@ function Hint({ children }) {
   return <span className="nutrition-profile-hint-inline"> {children}</span>
 }
 
+/**
+ * Valeur dont la provenance (Withings, pas des 14 jours, par défaut…) ne s'affiche qu'au toucher (TESTEUR-4d) :
+ * la carte reste lisible d'un coup d'œil, le détail est là pour qui le cherche.
+ */
+function Sourced({ value, hint }) {
+  const [open, setOpen] = useState(false)
+  if (!hint) return value
+  return (
+    <>
+      <button type="button" className="nutrition-profile-sourced" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        {value}
+      </button>
+      {open && <Hint>{hint}</Hint>}
+    </>
+  )
+}
+
 function ProfileForm({ profile, onCancel, onSaved }) {
   const manual = getBodySettings()
   const { origins } = profile
@@ -56,6 +73,8 @@ function ProfileForm({ profile, onCancel, onSaved }) {
   const [height, setHeight] = useState(origins.height === 'default' ? '' : String(profile.heightCm))
   const [weight, setWeight] = useState(origins.weight === 'default' ? '' : formatNumber(profile.weightKg))
   const [activity, setActivity] = useState(manual.activity ?? '')
+  // L'explication du niveau d'activité n'apparaît qu'après un choix (TESTEUR-4d).
+  const [activityTouched, setActivityTouched] = useState(false)
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
   const thisYear = new Date().getFullYear()
@@ -128,15 +147,17 @@ function ProfileForm({ profile, onCancel, onSaved }) {
         <legend className="input-label">Niveau d’activité</legend>
         {[{ id: '', label: 'Automatique' }, ...ACTIVITY_LEVELS].map((l) => (
           <label key={l.id || 'auto'} className={`nutrition-sex-option${activity === l.id ? ' selected' : ''}`}>
-            <input type="radio" name="activity" value={l.id} checked={activity === l.id} onChange={() => setActivity(l.id)} />
+            <input type="radio" name="activity" value={l.id} checked={activity === l.id} onChange={() => { setActivity(l.id); setActivityTouched(true) }} />
             {l.label}
           </label>
         ))}
-        <p className="nutrition-profile-hint">
-          {activity
-            ? `${activityLevel(activity).label} : ${activityLevel(activity).hint}.`
-            : 'Automatique : estimé d’après vos pas des 14 derniers jours (modérément actif sans montre).'}
-        </p>
+        {activityTouched && (
+          <p className="nutrition-profile-hint">
+            {activity
+              ? `${activityLevel(activity).label} : ${activityLevel(activity).hint}.`
+              : 'Automatique : estimé d’après vos pas des 14 derniers jours.'}
+          </p>
+        )}
       </fieldset>
       <p className="nutrition-profile-hint">
         Un nouveau poids compte comme la pesée du jour.
@@ -204,7 +225,7 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
           Complétez votre profil pour des repères ajustés à vous.
         </p>
         {compositionLine.length > 0 && (
-          <p className="nutrition-profile-line">{compositionLine.join(SEP)}<Hint>(Withings)</Hint></p>
+          <p className="nutrition-profile-line"><Sourced value={compositionLine.join(SEP)} hint="(Withings)" /></p>
         )}
       </div>
     )
@@ -215,19 +236,20 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
     : `(saisi le ${formatDayMonth(profile.weightAt)})`)
   const join = (parts) => parts.filter(Boolean).map((p, i) => <span key={i}>{i > 0 && SEP}{p}</span>)
   const bodyParts = join([
-    known('weight') && <><span>{formatNumber(profile.weightKg)} kg</span><Hint>{weightHint()}</Hint></>,
-    known('height') && <><span>{profile.heightCm} cm</span>{origins.height === 'withings' && <Hint>(Withings)</Hint>}</>,
+    known('weight') && <Sourced value={`${formatNumber(profile.weightKg)} kg`} hint={weightHint()} />,
+    known('height') && <Sourced value={`${profile.heightCm} cm`} hint={origins.height === 'withings' ? '(Withings)' : null} />,
     details && bmi != null && <span>IMC{'\u00a0'}{formatNumber(bmi)}</span>,
   ])
   const energyParts = join([
     known('sex') && <span>{SEX_LABEL[profile.sex]}</span>,
     known('age') && <span>{profile.age} ans</span>,
     <span className="nutrition-profile-activity">
-      <span>{activityLevel(profile.activity).label}</span>
-      {origins.activity === 'steps' && (
-        <Hint>(≈ {formatInt(profile.meanSteps)} pas/jour sur {profile.stepsDays} jours)</Hint>
-      )}
-      {origins.activity === 'default' && <Hint>(par défaut)</Hint>}
+      <Sourced
+        value={activityLevel(profile.activity).label}
+        hint={origins.activity === 'steps'
+          ? `(≈ ${formatInt(profile.meanSteps)} pas/jour sur ${profile.stepsDays} jours)`
+          : origins.activity === 'default' ? '(par défaut)' : null}
+      />
     </span>,
     details && dailyKcal != null && <strong>~{formatNumber(dailyKcal)} kcal/jour</strong>,
   ])
@@ -238,15 +260,18 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
       {head}
       {bodyParts.length > 0 && <p className="nutrition-profile-line">{bodyParts}</p>}
       {compositionLine.length > 0 && (
-        <p className="nutrition-profile-line">{compositionLine.join(SEP)}<Hint>(Withings)</Hint></p>
+        <p className="nutrition-profile-line"><Sourced value={compositionLine.join(SEP)} hint="(Withings)" /></p>
       )}
       <p className="nutrition-profile-line">{energyParts}</p>
       {missing.length > 0 && (
         <p className="nutrition-profile-hint">
-          À compléter pour ajuster vos repères : {missing.join(', ')}
+          {/* Le manque et sa solution dans la même carte (TESTEUR-4d) : le toucher ouvre le formulaire. */}
+          <button type="button" className="nutrition-profile-missing" onClick={() => setEditing(true)}>
+            À compléter pour ajuster vos repères : {missing.join(', ')}
+          </button>
           {!known('weight') && !known('height') && (
             <> (ou connectez une balance <Link to="/connectors">Withings</Link>)</>
-          )}.
+          )}
         </p>
       )}
     </div>

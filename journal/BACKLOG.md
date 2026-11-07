@@ -36,8 +36,11 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   Journal vide).
 - [x] TESTEUR-4c — « Vos derniers jours… » en une phrase simple (07/11 01:35 : « Ce qui a été mesuré et noté, jour par
   jour. »).
-- [ ] TESTEUR-4d — Nutrition : sous-titres (« estimé d'après vos pas des 14 derniers jours », « modérément actif sans
-  montre ») au toucher seulement ; problème et solution dans la même carte.
+- [x] TESTEUR-4d — Nutrition : sous-titres (« estimé d'après vos pas des 14 derniers jours », « modérément actif sans
+  montre ») au toucher seulement ; problème et solution dans la même carte (07/11 02:35 : `BodyProfileCard`, chaque
+  valeur à provenance est un bouton souligné en pointillés qui l'affiche ; « À compléter… » ouvre le formulaire ;
+  dans le formulaire, l'explication du niveau d'activité n'apparaît qu'après un choix, sans « modérément actif sans
+  montre » ; cibles de 44 px).
 
 **(1) Aujourd'hui, à refaire** (plusieurs runs ; un run « idées » prépare la maquette)
 - [x] TESTEUR-1a — Petites retouches : date et « Bonjour » sur deux lignes ; plus de séparateurs « · » ; retirer
