@@ -15,6 +15,22 @@
 > groupe « Testeurs Halcya » et à l'examen bêta, par la CI ; si sa clé n'a pas ce droit, elle vous écrira le geste exact).
 > Rien à faire de votre côté. Au passage à l'heure d'été (fin mars), l'heure de l'envoi sera recalée par la routine.
 
+> 🌙 **Chantier du soir (07/11) — voie « méthode »** (session « méthode », en parallèle de la session « interface »).
+> **Livré ce soir** (services testés, aucun écran touché ; l'interface s'y branche) : le contrat des résultats
+> d'Analyses (#786 : par résultat × horizon, effet en points pour une variation habituelle, fourchette, « net », thème,
+> agir ; contributions du jour) ; ORG-5a, le banc avec vérité connue (#790 : il a trouvé que l'ancienne méthode laissait
+> passer des faux liens dans jusqu'à 60 % des jeux simulés ; corrigé, désormais 0 à 3,5 %) ; TS-1, un seul modèle à
+> espace d'états pour le bien-être et le confort digestif (#792 : estimation du jour, fourchette, attendu des 7 jours,
+> courbe digestive montrée seulement si elle prédit vos notes, note demandée seulement les jours incertains) ; ORG-5b
+> (#795 : la méthode prend cette estimation, jours notés plus pesants, FODMAP par sous-groupe, jours malade ou en voyage
+> mis à part) ; ORG-5c (modèle régularisé, un lien « net » doit tenir dans 85 % des rééchantillonnages, « Ce qui pèse »
+> seulement s'il prévoit mieux que « demain = aujourd'hui ») ; ORG-5d (branché dans le calcul en arrière-plan) ; les
+> contributions du jour sur ce modèle ; TS-2 et TS-2b (changements durables : 0,26 fausse alerte par courbe et par
+> semestre au banc ; un lien doit tenir à l'intérieur des périodes) ; ORG-7 (sources classées, `PRODUIT.md` § 3 bis).
+> Numéros des PR et état final : voir le tableau des runs. **Reste à faire** : la norme des écarts du jour qui repart
+> du dernier changement (`normStart` dans `dayDeviations.js`, que la session interface modifiait ce soir) ; remplacer
+> VENTRE-BE-2 à l'affichage par l'estimation TS-1 (côté interface : tâche `dayStates`).
+
 > 🧑‍🔬 **Retours de votre premier testeur iPhone (06/11 22:35) : pris en compte.** Le résumé anonyme est dans
 > [`RETOURS-TESTEURS.md`](RETOURS-TESTEURS.md) et découpé en 17 étapes (TESTEUR-*) en tête de `BACKLOG.md` ; elles
 > passent devant le reste des runs de code. Le point (5) propre à l'iPhone (mention Android dans la source Santé, source
