@@ -90,8 +90,8 @@ describe('WellbeingCharts — bien-être estimé (signalement du 05/11)', () => 
     computeTodayPrediction.mockReturnValue({ dateKey: 'x', predicted: 3.1, actual: 3, assumedTypical: ['steps'] })
     seed([burst(at(0, 9)), note(at(0, 10), 3)])
     const { container } = renderAt()
-    expect(await screen.findByText('3,1 / 5')).toBeInTheDocument()
-    expect(container.querySelector('.wellbeing-chart-pred-legend')).toHaveTextContent(/votre note du jour : 3,0/)
+    expect(await screen.findByText('3,5 / 5')).toBeInTheDocument()
+    expect(container.querySelector('.wellbeing-chart-pred-legend')).toHaveTextContent(/votre note du jour : 3,4/)
     expect(screen.getByText(/jours notés à la main laissent attendre/)).toBeInTheDocument()
     expect(screen.getByText(/compte comme une journée habituelle/)).toBeInTheDocument()
     expect(screen.queryByText(/réel/)).toBeNull()
@@ -101,7 +101,7 @@ describe('WellbeingCharts — bien-être estimé (signalement du 05/11)', () => 
     computeTodayPrediction.mockReturnValue({ dateKey: 'x', predicted: 2.6, actual: null, assumedTypical: [] })
     seed([burst(at(0, 9))])
     renderAt()
-    expect(await screen.findByText('2,6 / 5')).toBeInTheDocument()
+    expect(await screen.findByText('3,1 / 5')).toBeInTheDocument()
     expect(screen.getByText(/Notez votre journée pour comparer/)).toBeInTheDocument()
   })
 })
@@ -157,26 +157,26 @@ describe('WellbeingCharts — prédiction en cache (perf D2)', () => {
   it('ne recalcule pas la prédiction tant que les données ne changent pas', async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 2.6, actual: null, assumedTypical: [] })
     const first = render(<WellbeingCharts />, { wrapper: MemoryRouter })
-    expect(await screen.findByText('2,6 / 5')).toBeInTheDocument()
+    expect(await screen.findByText('3,1 / 5')).toBeInTheDocument()
     first.unmount()
     _resetAnalysisRunner() // relance de l'app : seul le cache persistant reste
 
     render(<WellbeingCharts />, { wrapper: MemoryRouter })
     // Servie par le cache, sans recalcul
-    expect(await screen.findByText('2,6 / 5')).toBeInTheDocument()
+    expect(await screen.findByText('3,1 / 5')).toBeInTheDocument()
     expect(computeTodayPrediction).toHaveBeenCalledTimes(1)
   })
 
   it('recalcule après une écriture dans la base', async () => {
     computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 2.6, actual: null, assumedTypical: [] })
     const first = render(<WellbeingCharts />, { wrapper: MemoryRouter })
-    expect(await screen.findByText('2,6 / 5')).toBeInTheDocument()
+    expect(await screen.findByText('3,1 / 5')).toBeInTheDocument()
     first.unmount()
 
     bumpDataRevision()
     computeTodayPrediction.mockReturnValue({ dateKey: '2026-10-10', predicted: 3.4, actual: null, assumedTypical: [] })
     render(<WellbeingCharts />, { wrapper: MemoryRouter })
-    expect(await screen.findByText('3,4 / 5')).toBeInTheDocument()
+    expect(await screen.findByText('3,7 / 5')).toBeInTheDocument()
     expect(computeTodayPrediction).toHaveBeenCalledTimes(2)
   })
 })

@@ -54,8 +54,10 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
 - [ ] TESTEUR-1e — Petite animation (CSS, respecte « réduire les animations »).
 
 **(2) Note de bien-être**
-- [ ] TESTEUR-2a — Échelle 1 à 5 avec un milieu : migration des anciennes notes 0–5 sans perte (fonction pure,
-  testée sur toutes les valeurs, export/import d'anciens fichiers), estimateur et graphiques recalés.
+- [x] TESTEUR-2a — Échelle 1 à 5 avec un milieu : migration des anciennes notes 0–5 sans perte (fonction pure,
+  testée sur toutes les valeurs, export/import d'anciens fichiers), estimateur et graphiques recalés. (07/11 04:35 :
+  stockage inchangé sur 0–5, aucune donnée réécrite ; `mood/wellbeingScale.js`, affiché = 1 + 0,8 × interne,
+  réversible ; saisie à cinq choix stockés 0 / 1,25 / 2,5 / 3,75 / 5 ; tous les affichages convertis.)
 - [ ] TESTEUR-2b — La note d'abord, puis précisions pré-remplies (stress, alcool, café, repas tardif, écran tard) et
   une phrase libre (précisions = facteurs X, jamais entrées de l'estimateur : règle 5).
 - [ ] TESTEUR-2c — Notification du soir : deux choix « Remplir maintenant » / « Recevoir un rappel » (heure réglable) ;

@@ -23,8 +23,8 @@ import {
 } from '../services/eveningNote'
 import { APP_NAME } from '../config/brand'
 import LineIcon from './LineIcon'
+import { NOTE_CHOICES, choiceToScore, scoreToChoice } from '../services/mood/wellbeingScale'
 
-const SCORES = [0, 1, 2, 3, 4, 5]
 
 /** Séances et repas relus sur cette période : au-delà, la source n'est sans doute plus utilisée. */
 const CAPTURE_DAYS = 14
@@ -92,8 +92,7 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
   // Reset (or prefill with the edited note) whenever the dialog opens
   useEffect(() => {
     if (open) {
-      const score = entry?.payload?.score
-      setSelected(typeof score === 'number' ? score : null)
+      setSelected(scoreToChoice(entry?.payload?.score))
       setTags(Array.isArray(entry?.payload?.tags) ? entry.payload.tags : [])
       setPhrase('')
       setError(null)
@@ -118,7 +117,8 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
 
   // I119 : la phrase ne fait que proposer (lexiques disjoints ressenti / contexte) ; elle n'est jamais enregistrée.
   const read = phrase.trim() ? readPhrase(phrase) : null
-  const proposedScore = read?.score != null && read.score !== selected ? read.score : null
+  const readChoice = read?.score != null ? scoreToChoice(read.score) : null
+  const proposedScore = readChoice !== null && readChoice !== selected ? readChoice : null
   const proposedTags = read ? shownTags.filter((t) => read.tags.includes(t.id) && !tags.includes(t.id)) : []
 
   const close = () => onClose?.()
@@ -146,19 +146,24 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
 
   const handleSave = async () => {
     if (selected === null) {
-      setError('Choisissez une note de 0 à 5.')
+      setError('Choisissez une note de 1 à 5.')
       return
     }
+    // Choix inchangé en modifiant une ancienne note : la valeur stockée reste exactement la même (aucune perte).
+    const score =
+      entry && typeof entry.payload?.score === 'number' && scoreToChoice(entry.payload.score) === selected
+        ? entry.payload.score
+        : choiceToScore(selected)
     setSaving(true)
     setError(null)
     try {
       if (entry) {
-        await updateEntry(entry.id, { payload: withTags({ ...entry.payload, score: selected }, tags) })
+        await updateEntry(entry.id, { payload: withTags({ ...entry.payload, score }, tags) })
       } else {
         await createEntry({
           type: 'wellbeing',
           source: 'app_wellbeing',
-          payload: withTags({ score: selected }, tags),
+          payload: withTags({ score }, tags),
         })
       }
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
@@ -187,11 +192,11 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
         <p id="wellbeing-modal-desc" className="wellbeing-modal-desc">
           {entry
             ? 'Corrigez la note ou les tags ; l’heure de la note ne change pas.'
-            : '0 = très bas, 5 = très bien.'}
+            : '1 = très bas, 3 = moyen, 5 = très bien.'}
         </p>
 
-        <div className="wellbeing-circles" role="group" aria-label="Note de bien-être de 0 à 5">
-          {SCORES.map((n) => (
+        <div className="wellbeing-circles" role="group" aria-label="Note de bien-être de 1 à 5">
+          {NOTE_CHOICES.map((n) => (
             <button
               key={n}
               type="button"

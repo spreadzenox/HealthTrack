@@ -1,3 +1,4 @@
+import { toDisplay } from './mood/wellbeingScale'
 import { weatherSummaryParts } from './weather'
 import { formatScreenMinutes } from './phoneUsage'
 import { formatDuration } from '../utils/format'
@@ -60,7 +61,7 @@ export function summaryChips(s) {
   }
   if (s.burnedKcal != null) chips.push(['Dépense', `${fr(s.burnedKcal)} kcal`])
   // Une seule note, ou des cigarettes : déjà lisibles dans les lignes du jour, juste en dessous
-  if (s.wellbeing?.count > 1) chips.push(['Bien-être', `${frNumber(s.wellbeing.average)} / 5`])
+  if (s.wellbeing?.count > 1) chips.push(['Bien-être', `${frNumber(Math.round(toDisplay(s.wellbeing.average) * 10) / 10)} / 5`])
   if (s.meals > 0) {
     // Le nombre passe dans le titre (« 3 repas ») : la valeur tient sur une ligne (POL-PLAY-8)
     if (s.mealKcal > 0) chips.push([s.meals > 1 ? `${s.meals} repas` : 'Repas', `≈\u00a0${fr(s.mealKcal)}\u00a0kcal`])

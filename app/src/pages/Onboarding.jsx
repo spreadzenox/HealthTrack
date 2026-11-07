@@ -1,3 +1,4 @@
+import { toDisplay } from '../services/mood/wellbeingScale'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GOALS, TRACKS, defaultTracks, loadOnboarding, saveOnboarding, finishOnboarding, markScreenSeen } from '../settings/onboarding'
@@ -465,8 +466,8 @@ function FaceStep({ face, onFace, onPitch, onLater }) {
       )}
       {!busy && face === 'on' && estimate && (
         <p className="onb-note onb-note-ok" role="status">
-          Lecture faite : {estimate.label}, ≈ <span className="mono">{fmt1(estimate.note)} / 5</span> (entre{' '}
-          <span className="mono">{fmt1(estimate.low)}</span> et <span className="mono">{fmt1(estimate.high)}</span>). Cet
+          Lecture faite : {estimate.label}, ≈ <span className="mono">{fmt1(toDisplay(estimate.note))} / 5</span> (entre{' '}
+          <span className="mono">{fmt1(toDisplay(estimate.low))}</span> et <span className="mono">{fmt1(toDisplay(estimate.high))}</span>). Cet
           essai ne compte pas. Les prochaines lectures se feront {shownWhen}.
         </p>
       )}

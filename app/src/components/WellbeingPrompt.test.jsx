@@ -25,7 +25,7 @@ describe('WellbeingPrompt (ouverte par l’appelant)', () => {
 
   it('says the scale in one line, without the privacy sentence', async () => {
     render(<WellbeingPrompt open onClose={vi.fn()} />)
-    expect(await screen.findByText('0 = très bas, 5 = très bien.')).toBeInTheDocument()
+    expect(await screen.findByText('1 = très bas, 3 = moyen, 5 = très bien.')).toBeInTheDocument()
     expect(screen.queryByText(/restent sur cet appareil/i)).not.toBeInTheDocument()
   })
 
@@ -46,7 +46,7 @@ describe('WellbeingPrompt (ouverte par l’appelant)', () => {
     expect(createEntry).toHaveBeenCalledWith({
       type: 'wellbeing',
       source: 'app_wellbeing',
-      payload: { score: 3 },
+      payload: { score: 2.5 },
     })
     await waitFor(() => expect(onClose).toHaveBeenCalled())
   })
@@ -79,7 +79,7 @@ describe('WellbeingPrompt — behaviour tags', () => {
     expect(createEntry).toHaveBeenCalledWith({
       type: 'wellbeing',
       source: 'app_wellbeing',
-      payload: { score: 2, tags: ['late_screen', 'stress'] },
+      payload: { score: 1.25, tags: ['late_screen', 'stress'] },
     })
   })
 
@@ -210,7 +210,7 @@ describe('WellbeingPrompt (controlled)', () => {
     expect(createEntry).toHaveBeenCalledWith({
       type: 'wellbeing',
       source: 'app_wellbeing',
-      payload: { score: 4 },
+      payload: { score: 3.75 },
     })
     await waitFor(() => {
       expect(onClose).toHaveBeenCalled()
@@ -240,7 +240,7 @@ describe('WellbeingPrompt — modifier une note enregistrée', () => {
   it('pré-remplit la note et les tags', () => {
     render(<WellbeingPrompt open={true} onClose={vi.fn()} entry={entry} />)
     expect(screen.getByRole('heading', { name: /Modifier votre note/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Note 2 sur 5/i })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /Note 3 sur 5/i })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('button', { name: /Stress/i })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('button', { name: /Alcool/i })).toHaveAttribute('aria-pressed', 'false')
   })
@@ -255,10 +255,10 @@ describe('WellbeingPrompt — modifier une note enregistrée', () => {
     fireEvent.click(screen.getByRole('button', { name: /Enregistrer/i }))
     await waitFor(() => expect(onClose).toHaveBeenCalled())
     expect(createEntry).not.toHaveBeenCalled()
-    expect(updateEntry).toHaveBeenCalledWith(7, { payload: { score: 4, tags: ['alcohol'], extra: 'gardé' } })
+    expect(updateEntry).toHaveBeenCalledWith(7, { payload: { score: 3.75, tags: ['alcohol'], extra: 'gardé' } })
   })
 
-  it('retire la clé tags quand plus aucun tag n’est coché', async () => {
+  it('retire la clé tags quand plus aucun tag n’est coché (ancienne note 2 gardée telle quelle, sans perte)', async () => {
     const { updateEntry } = await import('../storage/localHealthStorage')
     render(<WellbeingPrompt open={true} onClose={vi.fn()} entry={entry} />)
     fireEvent.click(screen.getByRole('button', { name: /Stress/i }))

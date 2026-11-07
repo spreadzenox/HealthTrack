@@ -61,7 +61,7 @@ describe('wellbeingWeeks — bien-être semaine par semaine (onglet Bien-être)'
 
   it('libellé pour le lecteur d’écran', () => {
     expect(wellbeingWeekLabel({ from: '2026-10-26', estDays: 6, est: 3.4, noteDays: 1, note: 4 }))
-      .toBe('Semaine du 26 oct. : estimé 3,4 sur 5 (6 jours), vos notes 4 sur 5 (1 jour)')
+      .toBe('Semaine du 26 oct. : estimé 3,7 sur 5 (6 jours), vos notes 4,2 sur 5 (1 jour)')
     expect(wellbeingWeekLabel({ from: '2026-10-26', estDays: 0, est: null, noteDays: 0, note: null }))
       .toBe('Semaine du 26 oct. : rien de lu ni de noté')
   })

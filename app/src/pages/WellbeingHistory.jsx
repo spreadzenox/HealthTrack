@@ -10,6 +10,7 @@ import WellbeingPrompt from '../components/WellbeingPrompt'
 import LineIcon from '../components/LineIcon'
 import { loadWellbeingHistory } from '../services/mood/faceMoodData'
 import { frDecimal } from '../services/today'
+import { toDisplay, gapToDisplay } from '../services/mood/wellbeingScale'
 import { appLocale } from '../i18n/locale.js'
 import { faceModelTag } from '../services/mood/modelName'
 import { PERIODS, habitShifts, viewEnd } from '../services/mood/wellbeingHistory'
@@ -116,7 +117,7 @@ export function HistoryChart({ history, now, selected = null, onSelect }) {
       {[0, 2.5, 5].map((g) => (
         <g key={g}>
           <line className="wbh-grid" x1={PAD.left} x2={W - PAD.right} y1={y(g)} y2={y(g)} />
-          <text className="wbh-axis" x={PAD.left - 6} y={y(g) + 3} textAnchor="end">{frDecimal(g)}</text>
+          <text className="wbh-axis" x={PAD.left - 6} y={y(g) + 3} textAnchor="end">{toDisplay(g)}</text>
         </g>
       ))}
       {mean != null && points.length > 1 && (
@@ -154,7 +155,7 @@ export function HistoryChart({ history, now, selected = null, onSelect }) {
         return (
           <rect key={`hit${p.at}`} className="wbh-hit" data-scrub="" x={left} y={PAD.top} width={Math.max(1, right - left)}
             height={H - PAD.top - PAD.bottom} role="button" tabIndex={0} aria-pressed={selected === p.at}
-            aria-label={`${pointTitle(p, period)} : ${frDecimal(p.note)} sur 5`}
+            aria-label={`${pointTitle(p, period)} : ${frDecimal(toDisplay(p.note))} sur 5`}
             onClick={toggle}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -266,12 +267,12 @@ export function ReadingDetail({ point, period, onClose }) {
         </button>
       </div>
       <p className="wbh-figure">
-        <span className="wbh-detail-note">{frDecimal(point.note)}</span>
+        <span className="wbh-detail-note">{frDecimal(toDisplay(point.note))}</span>
         <span className="wbh-figure-scale"> / 5</span>
-        {hasRange && <span className="wbh-detail-range mono"> entre {frDecimal(point.low)} et {frDecimal(point.high)}</span>}
+        {hasRange && <span className="wbh-detail-range mono"> entre {frDecimal(toDisplay(point.low))} et {frDecimal(toDisplay(point.high))}</span>}
       </p>
       <p className="wbh-figure-sub mono">{readingsLine(d)}</p>
-      {d.gut && <p className="wbh-gut">{GUT_LINE[d.gut.level]} ce jour-là : la note baisse de {frDecimal(-d.gut.shift)}.</p>}
+      {d.gut && <p className="wbh-gut">{GUT_LINE[d.gut.level]} ce jour-là : la note baisse de {frDecimal(gapToDisplay(-d.gut.shift))}.</p>}
       {d.valence != null && <BipolarBar label="Valence" value={d.valence} left="désagréable" right="agréable" />}
       {d.arousal != null && <BipolarBar label="Éveil" value={d.arousal} left="calme" right="animé" />}
       {d.expressions
@@ -289,10 +290,11 @@ function Reliability({ agreement }) {
   if (!agreement) {
     return <p className="wbh-reliability">Fiabilité mesurée dès 3 jours notés : elle compare vos notes à ces lectures.</p>
   }
-  const pts = agreement.gap > 1 ? 'points' : 'point'
+  const gap = gapToDisplay(agreement.gap)
+  const pts = gap > 1 ? 'points' : 'point'
   return (
     <p className="wbh-reliability">
-      Écart moyen avec vos notes : <span className="mono">{frDecimal(agreement.gap)} {pts} sur 5</span>, mesuré sur
+      Écart moyen avec vos notes : <span className="mono">{frDecimal(gap)} {pts} sur 5</span>, mesuré sur
       {' '}{agreement.days} jours notés.
     </p>
   )
@@ -399,7 +401,7 @@ export default function WellbeingHistory({ now: givenNow, features }) {
           <p className="wbh-figure">
             {history.mean != null ? (
               <>
-                <span className="wbh-figure-note">{frDecimal(history.mean)}</span>
+                <span className="wbh-figure-note">{frDecimal(toDisplay(history.mean))}</span>
                 <span className="wbh-figure-scale"> / 5 en moyenne</span>
               </>
             ) : (

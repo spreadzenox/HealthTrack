@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { toDisplay, gapToDisplay } from '../services/mood/wellbeingScale'
 import { Link } from 'react-router-dom'
 import SoonList from '../components/SoonList'
 import { listEntriesForAnalysis, countAllEntries } from '../storage/localHealthStorage'
@@ -145,7 +146,7 @@ function LeverCard({ rank, lever, lag, onHide }) {
         {open && lag && (
           <p className="reco-advice-stats">
             {lag.when}, {lag.sdText} de plus que d’habitude → bien-être {frDiff(lag.effectPerSd)}{' '}
-            point{Math.abs(lag.effectPerSd) >= 2 ? 's' : ''} ({evidenceLabel(lag.evidence).toLowerCase()})
+            {pointWord(lag.effectPerSd)} ({evidenceLabel(lag.evidence).toLowerCase()})
           </p>
         )}
         {open && onHide && <HideButton label="Masquer cette piste" onHide={onHide} />}
@@ -157,12 +158,19 @@ function LeverCard({ rank, lever, lag, onHide }) {
 
 // ─── Behaviour tags (« jours avec / sans ») ──────────────────────────────────
 
+/** Moyenne de bien-être (interne 0–5) affichée sur l'échelle 1 à 5 (TESTEUR-2a). */
 function frScore(v, digits = 1) {
-  return v.toFixed(digits).replace('.', decimalMark())
+  return toDisplay(v).toFixed(digits).replace('.', decimalMark())
 }
 
+/** Écart de bien-être (en points internes) affiché en points de l'échelle 1 à 5. */
 function frDiff(v) {
-  return formatSigned(v, 1)
+  return formatSigned(gapToDisplay(v), 1)
+}
+
+/** « point » ou « points » pour un écart interne, compté sur l'échelle affichée. */
+function pointWord(v) {
+  return Math.abs(gapToDisplay(v)) >= 2 ? 'points' : 'point'
 }
 
 // Show the week-end-controlled difference only when it really differs from the raw one.
@@ -181,7 +189,9 @@ function round1(v) {
   return Math.round(v * 10) / 10
 }
 
-function Delta({ value }) {
+/** Écart de bien-être ; `displayed` : déjà sur l'échelle 1 à 5, sinon en points internes. */
+function Delta({ value: raw, displayed = false }) {
+  const value = displayed ? raw : gapToDisplay(raw)
   return (
     <strong className={value < 0 ? 'reco-tag-diff-neg' : 'reco-tag-diff-pos'}>
       {formatSigned(value, 1)} point{Math.abs(value) >= 2 ? 's' : ''}
@@ -224,7 +234,7 @@ function LinkCard({ kind, name, children, meta, evidence, extra, onHide }) {
 function TagEffectCard({ effect, measure = 'bien-être', extra, onHide }) {
   const when = effect.effectDay === 'next' ? 'Le lendemain' : 'Le jour même'
   // Écart des moyennes affichées : les chiffres collent toujours à une décimale.
-  const shown = round1(round1(effect.meanWith) - round1(effect.meanWithout))
+  const shown = round1(round1(toDisplay(effect.meanWith)) - round1(toDisplay(effect.meanWithout)))
   const weekendShift = Math.abs(effect.diff - (effect.diffRaw ?? effect.diff)) >= TAG_WEEKEND_SHIFT
   const meta = [
     `${effect.nWith} jour${effect.nWith > 1 ? 's' : ''} avec · ${effect.nWithout} sans`,
@@ -235,7 +245,7 @@ function TagEffectCard({ effect, measure = 'bien-être', extra, onHide }) {
     <LinkCard kind="tag" name={effect.label} meta={meta} evidence={effect.evidence} extra={extra} onHide={onHide}>
       <p className="reco-link-text">
         {when} : {keepWhole(measure)} {frScore(effect.meanWith)} / 5 contre {frScore(effect.meanWithout)} sans{' '}
-        <Delta value={shown} />
+        <Delta value={shown} displayed />
       </p>
     </LinkCard>
   )
@@ -926,7 +936,7 @@ function AdvancedTab({ analysis }) {
                 {Math.abs(modelInfo.weekendEffect) < 0.05
                   ? <>votre bien-être n’est <strong>pas différent le week-end</strong>.</>
                   : <>votre bien-être est estimé à <strong>{frDiff(modelInfo.weekendEffect)}{' '}
-                    point{Math.abs(modelInfo.weekendEffect) >= 2 ? 's' : ''} le week-end</strong> par rapport à la semaine.</>}
+                    {pointWord(modelInfo.weekendEffect)} le week-end</strong> par rapport à la semaine.</>}
                 {' '}Cet effet n’est attribué à aucune habitude (sinon une habitude plus fréquente le samedi
                 récupérerait le bien-être propre au week-end).
               </>

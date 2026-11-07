@@ -1,3 +1,4 @@
+import { formatNote } from '../services/mood/wellbeingScale'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import WellbeingPrompt from './WellbeingPrompt'
@@ -274,7 +275,7 @@ function EntryItem({ e, measuredScreen, onEdit, editingMealId, onEditMeal, onRed
           <span className="entry-kcal">≈ {mealKcal(e.payload.items).toLocaleString(appLocale())} kcal</span>
         )}
         {e.type === 'wellbeing' && typeof e.payload?.score === 'number' && (
-          <span className="entry-kcal entry-score"><strong>{e.payload.score}</strong> / 5</span>
+          <span className="entry-kcal entry-score"><strong>{formatNote(e.payload.score)}</strong> / 5</span>
         )}
         {e.type === 'gut' && gutLevelLabel(e.payload?.level) && (
           <span className="entry-kcal entry-score">{gutLevelLabel(e.payload.level)}</span>
