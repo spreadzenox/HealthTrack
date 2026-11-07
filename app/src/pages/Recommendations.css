@@ -660,3 +660,197 @@
   padding-top: 8px;
   border-top: 1px solid var(--border);
 }
+
+/* ORG-4, ORG-6 (07/11) : Analyses sur le contrat de la méthode. Couleur du résultat (data-tone de la page), barres
+   dans la couleur du thème de chaque facteur. */
+.reco-countdown {
+  background: var(--tone-bg, var(--mint-bg));
+  color: var(--tone-text, var(--mint-text));
+}
+
+.reco-cta {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 12px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--color-on-brand);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.reco-cta.is-secondary {
+  margin-top: 8px;
+  border: 2px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+}
+
+.reco-block {
+  margin: 0 0 20px;
+}
+
+.reco-pistes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.reco-piste {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  background: var(--tone-bg, var(--color-surface));
+  color: var(--tone-text, var(--text));
+}
+
+.reco-piste-title {
+  font-weight: 700;
+  font-size: 1.02rem;
+}
+
+.reco-piste-text {
+  font-size: 0.88rem;
+}
+
+.reco-piste-try {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  font-weight: 700;
+  color: var(--tone-label, var(--accent));
+}
+
+.reco-horizon {
+  margin: 0 0 12px;
+}
+
+.reco-horizon-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+
+.reco-horizon-window {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.reco-effects {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reco-effect {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) 1.4fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.reco-effect-label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.reco-effect-for {
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.reco-effect-track {
+  position: relative;
+  height: 14px;
+}
+
+.reco-effect-zero {
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  bottom: -4px;
+  border-left: 1px solid var(--text-muted);
+}
+
+.reco-effect-range {
+  position: absolute;
+  top: 6px;
+  height: 2px;
+  background: var(--tone-label, var(--text-muted));
+  opacity: 0.45;
+}
+
+.reco-effect-bar {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  border-radius: 4px;
+  background: var(--tone-label, var(--text-muted));
+}
+
+.reco-effect.is-unsure .reco-effect-bar {
+  background: repeating-linear-gradient(135deg, var(--tone-label, var(--text-muted)) 0 3px, transparent 3px 6px);
+  border: 1px solid var(--tone-label, var(--text-muted));
+}
+
+.reco-effect-value {
+  font-size: 0.85rem;
+  min-width: 3.2em;
+  text-align: right;
+}
+
+.reco-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.reco-legend-unsure {
+  width: 18px;
+  height: 8px;
+  border: 1px solid var(--text-muted);
+  border-radius: 3px;
+  background: repeating-linear-gradient(135deg, var(--text-muted) 0 2px, transparent 2px 4px);
+}
+
+.reco-next {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.reco-how {
+  margin-top: 18px;
+}
+
+.reco-how-link {
+  min-height: var(--tap-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.reco-how-text {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
