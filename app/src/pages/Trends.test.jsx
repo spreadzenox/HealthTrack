@@ -27,10 +27,13 @@ const contributions = { wellbeing: { '2026-11-05': [
   { key: 'steps', label: 'Pas', theme: 'activity', horizon: 'short', points: 0.2, value: 9000, usual: 7000 },
 ] } }
 
+const changes = { wellbeing: [{ date: '2026-10-25', before: 3, after: 2, shift: -1, size: 1, t: 5, confirmedOn: '2026-11-01' }], sleepMinutes: [{ date: '2026-10-27', before: 450, after: 390, shift: -60, size: 1, t: 5, confirmedOn: '2026-11-03' }] }
+
 const renderAt = (path) => render(
   <MemoryRouter initialEntries={[path]}>
     <Trends now={NOW} readDays={async () => days} readDayStates={async () => states}
-      readFaceEntries={async () => face} readDayContributions={async () => contributions} />
+      readFaceEntries={async () => face} readDayContributions={async () => contributions}
+      readDayChanges={async () => changes} />
   </MemoryRouter>,
 )
 
@@ -81,6 +84,18 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(within(weigh).getByText('Sommeil').closest('li')).toHaveAttribute('data-tone', 'night')
     expect(weigh).toHaveTextContent('−0,4')
     expect(detail.textContent).not.toMatch(/diagnostic|cause/i)
+  })
+
+  it('TS-2 : vue Mois, repère « changement » avec niveau avant et après et « Au même moment », jamais de cause', async () => {
+    renderAt('/tendances')
+    fireEvent.click(await screen.findByRole('button', { name: 'Mois' }))
+    expect(document.querySelectorAll('.trends-change')).toHaveLength(1)
+    fireEvent.click(screen.getByRole('button', { name: 'dimanche 25 octobre' }))
+    const detail = screen.getByRole('group', { name: /Détail du dimanche 25 octobre/ })
+    expect(detail).toHaveTextContent('Changement durable : bien-être')
+    expect(detail).toHaveTextContent(/Niveau avant 3,4 \/5, après 2,6 \/5/)
+    expect(detail).toHaveTextContent('Au même moment : sommeil')
+    expect(detail.textContent).not.toMatch(/cause|à cause|parce que/i)
   })
 
   it('?mesure=sommeil inconnue → bien-être ; ?vue=jour ouvre l’historique du jour (ORG-3b)', async () => {
