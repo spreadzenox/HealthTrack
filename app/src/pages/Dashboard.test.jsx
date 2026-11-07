@@ -106,10 +106,10 @@ describe('Dashboard', () => {
       { id: 1, type: 'steps', source: 'health_connect', at: new Date().toISOString(), payload: { value: 4321, period: 'day' } },
     ])
     renderDashboard()
-    // TESTEUR-1d-b : les données du jour par source ; une source sans chiffre (montre) ne s'affiche pas
+    // AUJ-3 : les données du jour en un bloc ; les sources une fois, en bas (ici, le téléphone seul)
     expect(await screen.findByRole('heading', { name: 'Vos données du jour' })).toBeInTheDocument()
-    expect(screen.getByRole('region', { name: 'Téléphone' })).toHaveTextContent('Pas')
-    expect(screen.queryByRole('region', { name: 'Montre' })).toBeNull()
+    expect(screen.getByText('Pas').closest('li')).toHaveAttribute('data-tone', 'lilac')
+    expect(screen.getByText('D’après votre téléphone.')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Ajouter une montre/ })).toHaveAttribute('href', '/connectors')
     expect(screen.getByTestId('pistes-card')).toBeInTheDocument()
     // TESTEUR-4b : le bouton est le libellé d'un champ photo arrière ; la photo prise part vers Repas.

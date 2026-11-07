@@ -41,9 +41,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   propriétaire, « Remplir maintenant » et « Recevoir un rappel » (bouton large) ; lié à (5) du 04/11. (07/11 18:40 :
   `StartCalibration`, « Recevoir un rappel » seulement quand la notification du soir existe ; `WellbeingPrompt`
   `initialMode`)
-- [ ] AUJ-3 — « Vos données du jour » en un seul bloc : une icône par mesure, l'écart à vos 14 derniers jours sur la
+- [x] AUJ-3 — « Vos données du jour » en un seul bloc : une icône par mesure, l'écart à vos 14 derniers jours sur la
   mesure elle-même, sources en petit en bas (jamais un nom d'appareil ou d'app technique) ; `DayChanges` (« Ce qui
-  change aujourd'hui ») disparaît.
+  change aujourd'hui ») disparaît. (07/11 19:05 : `TodayBySource` en un bloc, `measureNorms`, icônes par mesure,
+  « D'après votre montre et votre téléphone. »)
 - [ ] AUJ-3b — Même logique d'écart sur la mesure dans le Journal.
 - [ ] AUJ-4 — Bloc digestif : « Vos analyses digestives arrivent dans N jours », « Halcya cherchera quels facteurs sont
   statistiquement liés à votre confort digestif. », « N/28 jours avec une note digestive », bouton « Noter ma
@@ -64,7 +65,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   gardée, résultat modifiable, jamais un diagnostic ; retours (7) du 04/11) et un petit « + » dans le bloc digestif.
 - [ ] AUJ-4b — Bloc digestif : « Vos apports jusqu'ici » après le premier repas du jour, sans rouge ni alerte ; un
   toucher ouvre Journal › Nutrition.
-- [ ] AUJ-3 (précision) — l'écart à votre norme sur chaque mesure dès 7 jours d'historique, en reprenant l'affichage
+- [x] AUJ-3 (précision) — l'écart à votre norme sur chaque mesure dès 7 jours d'historique, en reprenant l'affichage
   de « Ce qui change aujourd'hui » (identité visuelle intacte).
 - [ ] AUJ-9 — Toucher la courbe du bien-être ou le graphique digestif ouvre Journal › Tendances réglé sur cette mesure
   (après ORG-3 ; d'ici là la courbe ouvre l'historique du bien-être).

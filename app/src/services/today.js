@@ -341,6 +341,16 @@ export function todayBySource({ tiles = [], summary = null, entries = [], now = 
     { id: 'noted', title: 'Noté par vous', items: noted },
   ].filter((g) => g.items.length)
 }
+const SOURCE_FROM = { watch: 'votre montre', phone: 'votre téléphone', noted: 'vos notes' }
+
+/** « D'après votre montre, votre téléphone et vos notes. » (AUJ-3 : sources en petit, sans nom d'appareil ni d'app) */
+export function sourcesSentence(groupIds) {
+  const parts = groupIds.map((id) => SOURCE_FROM[id]).filter(Boolean)
+  if (!parts.length) return ''
+  const list = parts.length === 1 ? parts[0] : `${parts.slice(0, -1).join(', ')} et ${parts[parts.length - 1]}`
+  return `D’après ${list}.`
+}
+
 todayBySource.hasWatch = (groups) => (groups || []).some((g) => g.id === 'watch')
 
 /**

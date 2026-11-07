@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "Vos données du jour en un seul bloc",
+  "items": [
+    "Sur l'Accueil, chaque mesure du jour a sa ligne, son icône et la couleur de son thème.",
+    "Après 7 jours, chaque mesure dit aussi votre habitude (« d'habitude 7 h 10 »), avec une flèche quand le jour s'en écarte nettement. « Ce qui change aujourd'hui » disparaît : c'est sur la mesure elle-même."
+  ]
+}
