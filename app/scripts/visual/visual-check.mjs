@@ -163,6 +163,7 @@ const DEFAULT_ROUTES = [
   ['/premium', 'premium'],
   ['/bien-etre', 'bien-etre'],
   ['/reintroduction', 'reintroduction'],
+  ['/agir', 'agir'],
   ['/licences', 'licences'],
   ['/bienvenue', 'bienvenue'],
 ]

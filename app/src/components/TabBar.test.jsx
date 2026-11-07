@@ -14,7 +14,7 @@ function renderAt(path) {
 describe('TabBar', () => {
   beforeEach(() => localStorage.clear())
 
-  it('shows the four tabs of the validated mock-up (Aujourd’hui, Journal, Pistes, Sources)', () => {
+  it('shows the five tabs (ORG-1 : Aujourd’hui, Journal, Analyses, Agir, Sources)', () => {
     renderAt('/')
     const nav = screen.getByRole('navigation', { name: 'Principal' })
     const links = within(nav).getAllByRole('link')
@@ -22,6 +22,7 @@ describe('TabBar', () => {
       ['Aujourd’hui', '/'],
       ['Journal', '/journal'],
       ['Analyses', '/recommendations'],
+      ['Agir', '/agir'],
       ['Sources', '/connectors'],
     ])
   })
@@ -43,7 +44,7 @@ describe('TabBar', () => {
   })
 
   it.each([
-    ['/reintroduction', 'Analyses'],
+    ['/reintroduction', 'Agir'],
     ['/recommendations/ventre', 'Analyses'],
     ['/tendances', 'Analyses'],
     ['/montre', 'Sources'],
