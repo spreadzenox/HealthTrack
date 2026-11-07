@@ -9,6 +9,9 @@
  * - moyen : 2 à 6 jours avant ;
  * - long : 7 à 27 jours avant.
  *
+ * Échelle : les points sont ceux de l'échelle interne de 0 à 5 (comme le stockage) ; à l'écran (1 à 5), un écart se
+ * convertit par `gapToDisplay` (mood/wellbeingScale.js), une valeur par `toDisplay`.
+ *
  * Pour chaque facteur : effet en points (sur 5) pour une variation habituelle du facteur (« pour 50 min de sommeil de
  * plus »), sa fourchette à 95 %, s'il est « net », son thème (couleur) et si l'on peut agir dessus.
  * `dayContributions` rend, pour un jour donné, les 3 plus grandes contributions (coefficient × écart du facteur ce
@@ -32,6 +35,7 @@ import { fodmapGroupOf, mealFactors } from './gutWindows'
 import { measuredTagsByDay } from './behaviorTags'
 import { estimateStates, observationsFromEntries } from './method/stateSpace'
 import { STABILITY_MIN, fitOutcomeModel } from './method/ridgeModel'
+import { detectChanges } from './method/changes'
 import { GUT_TYPE } from './today'
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
@@ -99,6 +103,7 @@ export const CONTRACT_VERSION = 1
  * @property {string} computedFor   jour local (AAAA-MM-JJ) du calcul
  * @property {Record<OutcomeId, OutcomeResult>} outcomes
  */
+/** @typedef {OutcomeResult & { changes?: string[] }} OutcomeWithChanges  `changes` : dates des changements durables du résultat (TS-2), contrôlés */
 
 /**
  * @typedef {object} DayContribution
@@ -439,7 +444,7 @@ export function tCritical95(df) {
  */
 export const blockDays = (horizon) => Math.max(7, horizon.to - horizon.from + 1)
 
-function fitOne(series, days, f, horizon, weights) {
+function fitOne(series, days, f, horizon, weights, changeDates = []) {
   const pts = []
   for (const [dk, y] of series) {
     const num = dayNum(dk)
@@ -455,6 +460,7 @@ function fitOne(series, days, f, horizon, weights) {
   const covs = [pts.map((p) => (isWeekendKey(p.dk) ? 1 : 0)), pts.map((p) => p.num)]
   const disrupted = pts.map((p) => (days.get(p.dk)?._disrupted ? 1 : 0))
   if (disrupted.some(Boolean) && !disrupted.every(Boolean)) covs.push(disrupted)
+  for (const c of changeDates) covs.push(pts.map((p) => (p.dk >= c ? 1 : 0)))
   // Moindres carrés pondérés : tout est multiplié par √poids (l'intercept aussi), puis résidualisé sans intercept.
   const sw = pts.map((p) => Math.sqrt(p.w))
   const design = [sw, ...covs.map((c) => c.map((v, i) => v * sw[i]))]
@@ -496,7 +502,7 @@ function fitOne(series, days, f, horizon, weights) {
 }
 
 /** Modèle régularisé d'un résultat (ORG-5c) sur les facteurs × horizons triés. */
-function fitModel(ys, days, fitted, weights) {
+function fitModel(ys, days, fitted, weights, changeDates = []) {
   const nums = [...ys.keys()].map(dayNum)
   const first = Math.min(...nums)
   const keys = [...ys.keys()]
@@ -507,7 +513,10 @@ function fitModel(ys, days, fitted, weights) {
     num: dayNum(dk),
     y: ys.get(dk),
     w: weights?.get(dk) ?? 1,
-    controls: [isWeekendKey(dk) ? 1 : 0, (dayNum(dk) - first) / 100, ...(withDisrupted ? [disrupted[i]] : [])],
+    controls: [
+      isWeekendKey(dk) ? 1 : 0, (dayNum(dk) - first) / 100, ...(withDisrupted ? [disrupted[i]] : []),
+      ...changeDates.map((c) => (dk >= c ? 1 : 0)),
+    ],
   }))
   const byId = new Map(HORIZONS.map((h) => [h.id, h]))
   const valueOf = (id, dk) => {
@@ -584,19 +593,22 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
     const symptomOk = def.id !== 'digestion' || series.symptomDays >= DIGESTION_MIN_SYMPTOM_DAYS
     const horizons = {}
     const fitted = []
+    // TS-2 : un lien doit tenir à l'intérieur des périodes : chaque changement durable du résultat devient un contrôle
+    // (niveau propre à chaque période), comme la semaine et la tendance.
+    const changeDates = daysHave >= 2 * UNLOCK_DAYS[def.id].short ? detectChanges(ys).map((c) => c.date) : []
     for (const h of HORIZONS) {
       const daysNeeded = UNLOCK_DAYS[def.id][h.id]
       const ready = symptomOk && daysHave >= daysNeeded
       horizons[h.id] = { id: h.id, label: h.label, window: h.window, status: ready ? 'ready' : 'locked', daysHave, daysNeeded, factors: [] }
       if (!ready) continue
       for (const f of factors) {
-        const fit = fitOne(ys, days, f, h, series.weights?.[def.id])
+        const fit = fitOne(ys, days, f, h, series.weights?.[def.id], changeDates)
         if (fit) { fit.outcome = def.id; fitted.push(fit) }
       }
     }
     const qs = holm(fitted.map((f) => f._p))
     // ORG-5c : les candidats entrent ensemble dans un modèle régularisé ; « net » exige aussi la stabilité.
-    const model = fitted.length ? fitModel(ys, days, fitted, series.weights?.[def.id]) : null
+    const model = fitted.length ? fitModel(ys, days, fitted, series.weights?.[def.id], changeDates) : null
     fitted.forEach((f, i) => {
       const passed = qs[i] <= NET_MAX_P && (f.low > 0 || f.high < 0)
       const c = model?.coef.get(`${f.key}|${f.horizon}`)
@@ -627,6 +639,7 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
       daysToFirst: Math.max(0, first - daysHave),
       ...(def.id === 'digestion' ? { symptomDays: series.symptomDays, symptomDaysNeeded: DIGESTION_MIN_SYMPTOM_DAYS } : {}),
       beatsPersistence: model ? model.beatsPersistence : null,
+      changes: changeDates,
       horizons,
     }
   }

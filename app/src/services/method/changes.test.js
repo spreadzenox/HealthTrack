@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
-  CHANGE_T, MIN_SIDE_DAYS, changesFromEntries, crossingChanges, deseasonalize, detectChanges, normStart, periods, sameTime,
+  CHANGE_T, MIN_SIDE_DAYS, crossingChanges, deseasonalize, detectChanges, normStart, periods, sameTime,
 } from './changes'
+import { changesFromEntries } from './changeSeries'
 import { gaussian, rng, simDayKey } from './simulate'
 
 /**

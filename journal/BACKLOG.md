@@ -235,8 +235,10 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   confirmé par les médianes des 7 jours avant et après, deux changements à ≥ 14 jours. Banc (200 courbes de 6 mois) :
   0,26 fausse alerte par courbe et par semestre (0,69 sur des courbes plus lissées) ; saut de 2 variations habituelles
   retrouvé 79 %. Bien-être et digestion sur l'estimation TS-1 (digestion sans le bien-être). Reste à l'interface : le
-  repère dans Tendances et le rapport ; à la méthode (plus tard) : appliquer `periods` aux liens d'Analyses et
-  `normStart` aux écarts du jour.
+  repère dans Tendances et le rapport. TS-2b ✅ 07/11 : les liens d'Analyses tiennent à l'intérieur des périodes (chaque
+  changement durable du résultat devient un contrôle de niveau ; `outcomes[x].changes`) ; un saut commun d'un facteur
+  et du résultat n'est plus un lien (test). Reste : `normStart` dans la norme des écarts du jour (`dayDeviations.js`,
+  touché par la session interface ce soir : à faire quand elle n'y travaille plus).
 - [x] TESTEUR-4a — Repas vierges : « Aucun repas enregistré pour l'instant » et un bouton « Ajouter mon premier repas »
   qui ouvre l'appareil photo, sans les trois étapes de texte (06/11 22:35).
 - [x] TESTEUR-4b — « Photographier un repas » de l'Accueil et de Nutrition ouvre directement l'appareil photo (sans

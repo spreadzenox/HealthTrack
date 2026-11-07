@@ -20,7 +20,7 @@ import { mealHoursEffect } from '../services/mood/mealHours'
 import { wellbeingWeeks } from '../services/mood/wellbeingWeeks'
 import { computeAnalysisResults, contributionsByDay } from '../services/analysisResults'
 import { estimateStatesFromEntries } from '../services/method/stateSpace'
-import { changesFromEntries } from '../services/method/changes'
+import { changesFromEntries } from '../services/method/changeSeries'
 
 export const ANALYSIS_TASKS = {
   /** Accueil — « Prédiction du jour ». */
