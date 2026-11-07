@@ -196,7 +196,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   habitudes, Proposés par vos analyses (« Commencer »), Terminés ; en bas « Tous vos essais, vérifiés ou non, figurent
   dans votre rapport médecin » (par défaut, sans bouton). (07/11 19:00 : sections sur les tests FODMAP existants ;
   « Mes habitudes » et les essais viennent avec ORG-8)
-- [ ] ORG-8 — **Un essai dans Agir** : jours tirés au sort avec / sans (14 jours, ou semaines alternées), calendrier de
+- [x] ORG-8 — **Un essai dans Agir** : jours tirés au sort avec / sans (14 jours, ou semaines alternées), calendrier de
   pastilles (pleine = avec, contour = sans, ✓ tenu, – pas tenu), « Pourquoi des jours tirés au sort ? », « Ce qui est
   mesuré ». Le respect de la consigne vient des données (montre, téléphone) ; la question (« Le coucher était-il avant
   23 h ? ») n'apparaît que si elles manquent, sous « Nous n'avons pas reçu vos données de sommeil pour hier soir. ».
@@ -205,7 +205,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   graphique, « Garder cette habitude ». Mes habitudes : les 14 dernières pastilles de tenue ; si la personne s'en
   éloigne (9 jours sur 14), « Vous vous éloignez de cette habitude » avec « Relancer le test » et « Supprimer cette
   habitude », au plus une fois par mois et par habitude, effacé dès qu'elle reprend. Les essais vont dans le rapport
-  médecin.
+  médecin. (07/11 21:45 : `services/trials.js`, `pages/Trial.jsx`,
+  `TrialDots`, type d'entrée `trial`, section « Essais personnels » du rapport PDF)
 - [x] TS-1 — **Un seul modèle à espace d'états** pour le bien-être et le confort digestif (avant ORG-5d : les analyses
   prennent l'estimation du jour et sa fourchette) : deux états cachés par jour, chacun = tendance lente + rythme de la
   semaine + écart du jour ; écarts corrélés entre les deux (lien appris sur les jours où les deux sont connus, rétréci

@@ -25,6 +25,7 @@ const WatchData = lazy(() => import('./pages/WatchData'))
 const Premium = lazy(() => import('./pages/Premium'))
 const Reintroduction = lazy(() => import('./pages/Reintroduction'))
 const Act = lazy(() => import('./pages/Act'))
+const Trial = lazy(() => import('./pages/Trial'))
 const Licences = lazy(() => import('./pages/Licences'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
 
@@ -60,6 +61,7 @@ export default function App() {
             <Route path="bien-etre" element={<Navigate to="/tendances?vue=jour" replace />} />
             <Route path="reintroduction" element={<Reintroduction />} />
             <Route path="agir" element={<Act />} />
+            <Route path="agir/essai/:id" element={<Trial />} />
             <Route path="licences" element={<Licences />} />
             <Route path="connectors/withings/callback" element={<WithingsCallback />} />
             {/* Adresse inconnue (ancienne notification, lien périmé) : l'Accueil plutôt qu'une page blanche. */}

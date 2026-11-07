@@ -248,6 +248,19 @@ export async function renderReportPdf(report, { fonts, onText } = {}) {
     if (report.challenges.length > shown.length) para(`… et ${report.challenges.length - shown.length} autres tests.`, { size: 8.5, color: C.muted })
   }
 
+  heading('Essais personnels')
+  if (!report.trials?.length) {
+    para('Aucun essai fait dans l’app.', { color: C.muted })
+  } else {
+    for (const t of report.trials.slice(0, 8)) {
+      text(t.label, M, y, { font: 'bold', size: 9.5 })
+      const s = `${t.instruction}, jours tirés au sort ; ${t.outcome} le lendemain : ${t.state} (${t.withDays} lendemains avec, ${t.withoutDays} sans).`
+      const lines = wrap(s, CW - 90, 'regular', 9.5)
+      lines.forEach((l, i) => text(l, M + 90, y - i * 12.5, { size: 9.5 }))
+      y -= Math.max(1, lines.length) * 12.5 + 2
+    }
+  }
+
   heading('Pistes repas › digestion')
   const L = report.links
   if (L.status !== 'links' || !L.items.length) {
