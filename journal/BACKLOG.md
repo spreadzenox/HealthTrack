@@ -337,7 +337,8 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   (06/11 23:35 carte du compte à rebours ; 07/11 01:35 : plus aucun « hasard » visible, « Données exploratoires »
   devient « Encore N jours de notes pour des résultats plus sûrs », « Après un repas : encore N jours de lectures du
   visage » ; la méthode reste dans « Comment c'est calculé ». Reste le séparateur « · » de la ligne d'en-tête, avec 3b.)
-- [ ] TESTEUR-3b — Bien-être et Tendances : fusionner ou différencier (proposition en run idées d'abord).
+- [x] TESTEUR-3b — Bien-être et Tendances : fusionner ou différencier (proposition en run idées d'abord). (07/11 :
+  résolu par ORG-3 / ORG-3b, l'historique du bien-être est la vue Jour de Journal › Tendances)
 - [x] TESTEUR-3c — Plus d'interrupteur dans un interrupteur (calcul du modèle qui prédit le bien-être). (07/11 03:35 :
   le modèle est un second dépliant à côté de « Comment c’est calculé », « Comment fonctionne ce modèle » une section
   titrée ; test : aucun `details details` dans le pied de page.)
@@ -351,11 +352,12 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
     déjà activée : rien à redemander. `services/approxPosition.js` partagé avec la carte Météo de Sources ; garde de
     divulgation étendue à l'onboarding. Correctif lié à 2a : le premier geste « Comment vous sentez-vous ? » proposait
     encore 0 à 5 et stockait le chiffre brut : il propose 1 à 5, stockés par `choiceToScore`.
-  - [ ] 5a-2 : Health Connect proposé aussi sans montre (le téléphone y écrit pas et sommeil), avec l'historique
+  - [x] 5a-2 : Health Connect proposé aussi sans montre (le téléphone y écrit pas et sommeil), avec l'historique
     (READ_HEALTH_DATA_HISTORY déjà demandé ?) ; vérifier l'ordre des écrans (Santé, météo, caméra) et le compteur.
   - [ ] 5a-3 : Sources sans doublon de demande une fois tout accordé à l'accueil (vérif. en captures vierges).
 - [ ] TESTEUR-5b — iPhone : mention propre à Android dans la source Santé ; source « iOS 26.4 ou plus » masquée ou
-  expliquée (transmis à la routine iOS le 06/11 22:35 ; vérifier ici les textes du code partagé).
+  expliquée (transmis à la routine iOS le 06/11 22:35 ; vérifier ici les textes du code partagé). (07/11 : aucun texte
+  « iOS 26.4 » ni mention Android dans le code partagé de Sources ; reste côté routine iOS)
 
 ## 🥇 Silver et Gold — décision du propriétaire du 31/10 vers 22:45 (bascule vers Gemini 3.8 Flash, sans banc préalable)
 Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du 31/10 vers 21:35) → (b) produits et écrans → (c) plus tard.

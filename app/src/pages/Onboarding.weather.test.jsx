@@ -32,7 +32,7 @@ describe('Onboarding : la météo pendant l’accueil (TESTEUR-5a)', () => {
     geo.getApproxPosition.mockResolvedValue({ lat: 45.7641, lon: 4.8357 })
     weather.syncWeather.mockResolvedValue({})
     // Sans montre : objectif, suivis, montre, puis la météo
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
   })
 
   it('facultatif : on peut continuer sans rien autoriser', () => {
