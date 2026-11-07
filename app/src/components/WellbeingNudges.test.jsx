@@ -20,18 +20,28 @@ describe('UnlockReminder (POL-PLAY-84)', () => {
   })
 })
 
-describe('StartCalibration (BE-BIAIS-2)', () => {
+describe('StartCalibration (BE-BIAIS-2, AUJ-2b)', () => {
   it('demande la note du jour, avec la progression, tant que 3 jours ne sont pas notés', () => {
     const add = vi.fn()
-    wrap(<StartCalibration cal={{ done: 1, needed: 3, notedToday: false }} onAddManual={add} />)
-    expect(screen.getByText('Réglage sur vous : 1 jour sur 3')).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Noter mon bien-être du jour' }))
+    const remind = vi.fn()
+    wrap(<StartCalibration cal={{ done: 0, needed: 3, notedToday: false }} onAddManual={add} onReminder={remind} />)
+    expect(screen.getByText('Calibration du bien-être : 0 jour sur 3')).toBeInTheDocument()
+    expect(screen.getByRole('note')).toHaveTextContent('Notez votre bien-être chaque jour pendant 3 jours')
+    fireEvent.click(screen.getByRole('button', { name: 'Remplir maintenant' }))
     expect(add).toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'Recevoir un rappel' }))
+    expect(remind).toHaveBeenCalled()
+  })
+
+  it('sans rappel possible (pas de notification du soir), seulement « Remplir maintenant »', () => {
+    wrap(<StartCalibration cal={{ done: 1, needed: 3, notedToday: false }} onAddManual={vi.fn()} />)
+    expect(screen.getByRole('button', { name: 'Remplir maintenant' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Recevoir un rappel' })).toBeNull()
   })
 
   it('une fois la note du jour donnée, rendez-vous demain', () => {
     wrap(<StartCalibration cal={{ done: 2, needed: 3, notedToday: true }} onAddManual={vi.fn()} />)
-    expect(screen.getByText('Réglage sur vous : 2 jours sur 3. Prochaine note demain.')).toBeInTheDocument()
+    expect(screen.getByText('Calibration du bien-être : 2 jours sur 3. Prochaine note demain.')).toBeInTheDocument()
     expect(screen.queryByRole('button')).toBeNull()
   })
 })

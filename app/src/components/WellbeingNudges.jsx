@@ -4,6 +4,7 @@
  * supprimée avec TESTEUR-1d-b (courbe et détails sont dans l'historique du bien-être).
  */
 import { Link } from 'react-router-dom'
+import { APP_NAME } from '../config/brand'
 import './WellbeingNudges.css'
 
 /**
@@ -28,31 +29,36 @@ export function UnlockReminder({ onDismiss }) {
 const jours = (n) => `${n} ${n > 1 ? 'jours' : 'jour'}`
 
 /**
- * Calibration de départ (BE-BIAIS-2, retour (5) du 04/11) : tant que 3 jours n'ont pas à la fois une note et une
- * lecture, la carte demande la note du jour, avec la progression. Jamais bloquant ; une fois la note du jour donnée,
- * une ligne discrète suffit.
+ * Calibration de départ (BE-BIAIS-2, retour (5) du 04/11 ; AUJ-2b, revue du 07/11) : tant que 3 jours n'ont pas à la
+ * fois une note et une lecture, le bloc demande la note du jour, avec la progression, et deux gestes : « Remplir
+ * maintenant » (bouton plein, l'action principale) et « Recevoir un rappel » le soir. Jamais bloquant ; une fois la
+ * note du jour donnée, une ligne discrète suffit.
  */
-export function StartCalibration({ cal, onAddManual }) {
+export function StartCalibration({ cal, onAddManual, onReminder }) {
   const steps = (
     <span className="mood-calib-steps" aria-hidden="true">
       {Array.from({ length: cal.needed }, (_, i) => <span key={i} className={i < cal.done ? 'is-on' : ''} />)}
     </span>
   )
+  const title = `Calibration du bien-être : ${jours(cal.done)} sur ${cal.needed}`
   if (cal.notedToday || !onAddManual) {
     return (
       <p className="mood-calib is-quiet">
         {steps}
-        Réglage sur vous : {jours(cal.done)} sur {cal.needed}. Prochaine note demain.
+        {title}. Prochaine note demain.
       </p>
     )
   }
   return (
     <div className="mood-calib" role="note">
-      <p className="mood-calib-title">{steps}Réglage sur vous : {jours(cal.done)} sur {cal.needed}</p>
+      <p className="mood-calib-title">{steps}{title}</p>
       <p className="mood-calib-text">
-        Chaque visage se lit un peu différemment. Une note par jour pendant {cal.needed} jours cale l’estimation sur vous.
+        Notez votre bien-être chaque jour pendant {cal.needed} jours : {APP_NAME} règle la lecture de votre visage sur vous.
       </p>
-      <button type="button" className="mood-calib-button" onClick={onAddManual}>Noter mon bien-être du jour</button>
+      <button type="button" className="mood-calib-button" onClick={onAddManual}>Remplir maintenant</button>
+      {onReminder && (
+        <button type="button" className="mood-calib-button is-secondary" onClick={onReminder}>Recevoir un rappel</button>
+      )}
     </div>
   )
 }

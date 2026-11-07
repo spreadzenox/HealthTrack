@@ -380,6 +380,18 @@ describe('WellbeingPrompt — note du soir d’un geste (I113)', () => {
     }
   })
 
+  it('AUJ-2b : ouverte depuis « Recevoir un rappel » de la calibration, elle montre directement le rappel', async () => {
+    window.__healthtrackFakeEveningNote = fakePlugin()
+    try {
+      render(<WellbeingPrompt open={true} initialMode="reminder" onClose={vi.fn()} />)
+      expect(await screen.findByLabelText('Heure du rappel')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Recevoir un rappel' })).toHaveAttribute('aria-pressed', 'true')
+      expect(screen.queryByRole('button', { name: 'Note 3 sur 5' })).not.toBeInTheDocument()
+    } finally {
+      delete window.__healthtrackFakeEveningNote
+    }
+  })
+
   it('« Recevoir un rappel » : heure réglable, programmé d’un geste puis fermé', async () => {
     const plugin = fakePlugin()
     window.__healthtrackFakeEveningNote = plugin

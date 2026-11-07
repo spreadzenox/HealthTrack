@@ -37,8 +37,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   l'historique, sans légende, à partir de 3 points) ; sans lecture, les notes du jour ; toucher → historique. Plus de
   verdict, d'échelle à segments, d'« estimation prudente » ni d'horizon qui respire (`DayBreath` supprimé) ; phrase
   d'intro du premier lancement retirée (leçon 2). (07/11 16:35)
-- [ ] AUJ-2b — Calibration de départ dans ce bloc : « Calibration du bien-être : 0 jour sur 3 », phrase du
-  propriétaire, « Remplir maintenant » et « Recevoir un rappel » (bouton large) ; lié à (5) du 04/11.
+- [x] AUJ-2b — Calibration de départ dans ce bloc : « Calibration du bien-être : 0 jour sur 3 », phrase du
+  propriétaire, « Remplir maintenant » et « Recevoir un rappel » (bouton large) ; lié à (5) du 04/11. (07/11 18:40 :
+  `StartCalibration`, « Recevoir un rappel » seulement quand la notification du soir existe ; `WellbeingPrompt`
+  `initialMode`)
 - [ ] AUJ-3 — « Vos données du jour » en un seul bloc : une icône par mesure, l'écart à vos 14 derniers jours sur la
   mesure elle-même, sources en petit en bas (jamais un nom d'appareil ou d'app technique) ; `DayChanges` (« Ce qui
   change aujourd'hui ») disparaît.
