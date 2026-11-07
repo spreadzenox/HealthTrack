@@ -96,7 +96,8 @@
  *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer"  # écrans suivants de l'onboarding
  *                                          (sans --onboarding, il est noté « fait » pour que les autres pages s'affichent)
  *   npm run visual -- --routes=/bienvenue --onboarding=aha   # « Vos 30 derniers jours » (jalon 4b), données de démo
- *   npm run visual -- --routes=/bienvenue --onboarding=gesture   # premier geste (jalon 4c ; gesture-energy : 0 à 5)
+ *   npm run visual -- --routes=/bienvenue --onboarding=gesture   # premier geste (jalon 4c ; gesture-energy : 1 à 5)
+ *   npm run visual -- --routes=/bienvenue --onboarding=weather   # météo par la position approximative (TESTEUR-5a)
  *   npm run visual -- --face=on --routes=/bienvenue --onboarding=face   # lecture du visage facultative (jalon 4c-2)
  *   npm run visual -- --play --routes=/bienvenue --onboarding=premium   # paywall soft en fin d'onboarding (play)
  *   npm run visual -- --play --routes=/bienvenue --onboarding=health    # « Autoriser Health Connect » (jalon 4b)
@@ -685,11 +686,13 @@ async function main() {
     // Health Connect), premier geste et paywall soft (jalon 4c ; ce dernier avec --play).
     const ONBOARDING_AT = {
       aha: { goal: 'energy', watch: 'health_connect', health: 'granted', imported: true, step: 4 },
-      gesture: { goal: 'gut', watch: 'none', step: 3, maxStep: 3 },
-      'gesture-energy': { goal: 'energy', watch: 'none', step: 3, maxStep: 3 },
+      // Météo par la position approximative (TESTEUR-5a), juste après la montre
+      weather: { goal: 'gut', watch: 'none', step: 3, maxStep: 3 },
+      gesture: { goal: 'gut', watch: 'none', step: 4, maxStep: 4 },
+      'gesture-energy': { goal: 'energy', watch: 'none', step: 4, maxStep: 4 },
       // Lecture du visage facultative (jalon 4c-2) : seulement avec --face (sinon le téléphone « ne sait pas lire »)
-      face: { goal: 'gut', watch: 'none', step: 3, maxStep: 3 },
-      premium: { goal: 'gut', watch: 'none', step: 4, maxStep: 4 },
+      face: { goal: 'gut', watch: 'none', step: 4, maxStep: 4 },
+      premium: { goal: 'gut', watch: 'none', step: 5, maxStep: 5 },
       // Écran « Autoriser Health Connect » (jalon 4b) : montre Health Connect choisie
       health: { goal: 'energy', watch: 'health_connect', step: 3, maxStep: 3 },
     }

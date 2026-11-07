@@ -9,27 +9,14 @@ import { getWeatherSettings, enableWeather, disableWeather, syncWeather, searchP
 import { weatherSummaryParts } from '../services/weather'
 import { formatAgo } from '../utils/timeAgo'
 import useDisclosure from '../hooks/useDisclosure'
+import { getApproxPosition } from '../services/approxPosition'
 import './MyDevices.css'
 import './WeatherCard.css'
-
-function defaultGetPosition() {
-  return new Promise((resolve, reject) => {
-    if (typeof navigator === 'undefined' || !navigator.geolocation) {
-      reject(new Error('unavailable'))
-      return
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      reject,
-      { enableHighAccuracy: false, timeout: 20000, maximumAge: 3600 * 1000 },
-    )
-  })
-}
 
 /**
  * @param {{ sync?: Function, getPosition?: () => Promise<{lat, lon}>, search?: (q: string) => Promise<object[]>, now?: Date }} props
  */
-export default function WeatherCard({ sync = syncWeather, getPosition = defaultGetPosition, search = searchPlaces, now }) {
+export default function WeatherCard({ sync = syncWeather, getPosition = getApproxPosition, search = searchPlaces, now }) {
   const [settings, setSettings] = useState(getWeatherSettings)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState(null)

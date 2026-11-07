@@ -60,10 +60,10 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
   })
 
   it('placée après la montre et avant le premier geste ; facultative', () => {
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
     renderAt()
     expect(heading()).toBeInTheDocument()
-    expect(screen.getByText('04/05')).toBeInTheDocument()
+    expect(screen.getByText('05/06')).toBeInTheDocument()
     expect(screen.getByText(/Il ne remplace pas l’avis d’un médecin/)).toBeInTheDocument()
     expect(screen.getByText(/quand vous déverrouillez le téléphone/)).toBeInTheDocument()
     expect(cont()).toBeEnabled()
@@ -73,14 +73,14 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
 
   it('absente quand le téléphone ne sait pas lire le visage', () => {
     face.available = false
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
     renderAt()
     expect(screen.getByRole('heading', { name: 'Comment va votre ventre ?' })).toBeInTheDocument()
-    expect(screen.getByText('04/04')).toBeInTheDocument()
+    expect(screen.getByText('05/05')).toBeInTheDocument()
   })
 
   it('« Plus tard » ne demande rien', () => {
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
     renderAt()
     fireEvent.click(screen.getByRole('button', { name: 'Plus tard' }))
     expect(trial.runFaceTrial).not.toHaveBeenCalled()
@@ -90,7 +90,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
   })
 
   it('« Essayer maintenant » : divulgation puis lecture d’essai et son estimation', async () => {
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
     renderAt()
     fireEvent.click(screen.getByRole('button', { name: 'Essayer maintenant' }))
     expect(screen.getByText('Avant d’autoriser la caméra')).toBeInTheDocument()
@@ -104,7 +104,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
   })
 
   it('« Pas maintenant » dans la divulgation : rien n’est demandé à Android', async () => {
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
     renderAt()
     fireEvent.click(screen.getByRole('button', { name: 'Essayer maintenant' }))
     fireEvent.click(screen.getByRole('button', { name: 'Pas maintenant' }))
@@ -114,7 +114,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
 
   it('caméra refusée : le dit, rien d’activé, on peut réessayer', async () => {
     trial.runFaceTrial.mockResolvedValue({ outcome: 'denied', estimate: null })
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
     renderAt()
     fireEvent.click(screen.getByRole('button', { name: 'Essayer maintenant' }))
     fireEvent.click(screen.getByRole('button', { name: 'J’accepte, autoriser la caméra' }))
@@ -124,7 +124,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
 
   it('variante play : divulgation « à l’ouverture de l’app »', async () => {
     variant.name = 'play'
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
     renderAt()
     expect(screen.getByText(/quand vous ouvrez l’app/)).toBeInTheDocument()
     fireEvent.click(await screen.findByRole('button', { name: 'Essayer maintenant' }))
@@ -133,7 +133,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
 
   it('déjà activée : le dit sans redemander', () => {
     face.enabled = true
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
+    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
     renderAt()
     expect(screen.getByText('La lecture du visage est déjà activée.')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Essayer maintenant' })).not.toBeInTheDocument()
@@ -143,7 +143,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
     beforeEach(() => {
       variant.name = 'play'
       face.status = { mode: 'app_open', unlockAvailable: true, unlock: false }
-      saveOnboarding({ goal: 'gut', watch: 'none', step: 3 })
+      saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
     })
 
     it('met le déverrouillage en avant : « Activer » principal, « Plus tard » bien visible, rien de précoché', async () => {

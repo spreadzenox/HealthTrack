@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "La météo s'active dès le premier lancement",
+  "items": [
+    "Au premier lancement, un écran propose d'utiliser votre position approximative pour la météo de votre ville. C'est facultatif : vous pourrez aussi choisir une ville dans Sources.",
+    "La première note de bien-être du premier lancement va de 1 à 5, comme partout dans l'app."
+  ]
+}

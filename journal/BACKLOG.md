@@ -85,6 +85,15 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
 **(5) Sources et accueil**
 - [ ] TESTEUR-5a — Toutes les autorisations pendant l'accueil (Santé et son historique, position approximative pour
   la météo, caméra), chacune avec sa divulgation, refus respecté.
+  - [x] 5a-1 (07/11 07:35) : écran « La météo de votre ville » après la montre (et Health Connect), pour tous :
+    « Utiliser ma position approximative » → divulgation `location` → position lue une fois, arrondie (≈ 10 km), météo
+    activée, synchronisation en arrière-plan ; refus ou position indisponible : « choisir une ville dans Sources » ;
+    déjà activée : rien à redemander. `services/approxPosition.js` partagé avec la carte Météo de Sources ; garde de
+    divulgation étendue à l'onboarding. Correctif lié à 2a : le premier geste « Comment vous sentez-vous ? » proposait
+    encore 0 à 5 et stockait le chiffre brut : il propose 1 à 5, stockés par `choiceToScore`.
+  - [ ] 5a-2 : Health Connect proposé aussi sans montre (le téléphone y écrit pas et sommeil), avec l'historique
+    (READ_HEALTH_DATA_HISTORY déjà demandé ?) ; vérifier l'ordre des écrans (Santé, météo, caméra) et le compteur.
+  - [ ] 5a-3 : Sources sans doublon de demande une fois tout accordé à l'accueil (vérif. en captures vierges).
 - [ ] TESTEUR-5b — iPhone : mention propre à Android dans la source Santé ; source « iOS 26.4 ou plus » masquée ou
   expliquée (transmis à la routine iOS le 06/11 22:35 ; vérifier ici les textes du code partagé).
 

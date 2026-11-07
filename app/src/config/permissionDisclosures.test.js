@@ -46,7 +46,8 @@ describe('divulgations avant les autorisations sensibles', () => {
   const GUARDED = [
     ['src/components/FaceSenseCard.jsx', /startFaceSense\(/, /askConsent\(appOpen \? 'camera_app_open' : 'camera'\)/],
     ['src/components/FaceSenseCard.jsx', /startFaceUnlock\(/, "askConsent('camera_unlock')"],
-    ['src/components/WeatherCard.jsx', /getCurrentPosition\(/, "askConsent('location')"],
+    ['src/components/WeatherCard.jsx', /getPosition\(\)/, "askConsent('location')"],
+    ['src/pages/Onboarding.jsx', /getApproxPosition\(\)/, "askConsent('location')"],
     ['src/components/PhoneUsageCard.jsx', /openSettings\(\)/, "askConsent('usage')"],
     ['src/pages/Food.jsx', /analyzeMealPhoto\(/, "askConsent('ai_meal')"],
     ['src/components/NewMealForm.jsx', /analyzeMealDescription\(/, "askConsent('ai_meal')"],
@@ -68,7 +69,7 @@ describe('divulgations avant les autorisations sensibles', () => {
       if (d.isDirectory()) return walk(p)
       if (!/\.jsx?$/.test(d.name) || /\.test\./.test(d.name)) return
       const code = fs.readFileSync(p, 'utf8')
-      if (/getCurrentPosition\(|startFaceSense\(|openPhoneUsageAccessSettings\(/.test(code) && !/askConsent\(/.test(code)
+      if (/getCurrentPosition\(|getApproxPosition\(|startFaceSense\(|openPhoneUsageAccessSettings\(/.test(code) && !/askConsent\(/.test(code)
         && !/^src\/services\//.test(path.relative(path.resolve(), p))) offenders.push(path.relative(path.resolve(), p))
     })
     walk(path.resolve('src'))
