@@ -12,6 +12,7 @@ import { buildDailyJournal } from '../services/dailyJournal'
 import { dayDeviations, measureNorms, readDeviationEntries } from '../services/dayDeviations'
 import { measureTone } from '../theme/themes'
 import LineIcon from './LineIcon'
+import StripPlus from './StripPlus'
 import './TodayBySource.css'
 
 const ICONS = {
@@ -84,6 +85,7 @@ export default function TodayBySource({
           })}
         </ul>
         <p className="today-data-from">{sourcesSentence(groups.map((g) => g.id))}</p>
+        <StripPlus />
       </div>
       {!todayBySource.hasWatch(groups) && (
         <Link to="/connectors" className="today-sources-add">

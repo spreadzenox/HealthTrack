@@ -53,8 +53,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   digestion » ouvre la fenêtre du bandeau ; analyses prêtes → une ligne vers Analyses › Digestion)
 - [x] AUJ-5 — « Mes repas du jour » : la liste, ou « Aucun repas aujourd'hui » et un bouton. (07/11 19:00 :
   `TodayMeals`, chaque repas ouvre Journal › Repas ; « Photographier un repas » ouvre l'appareil photo)
-- [ ] AUJ-6 — Sous chaque bloc, un petit « + » qui remonte au bandeau ; bouton plus large pour un bloc qui attend la
-  personne (calibration, analyses, repas vides).
+- [x] AUJ-6 — Sous chaque bloc, un petit « + » qui remonte au bandeau ; bouton plus large pour un bloc qui attend la
+  personne (calibration, analyses, repas vides). (07/11 19:15 : `StripPlus`, remonte au bandeau et y met le focus)
 - [x] AUJ-7 — « Ventre » devient « digestif » dans tous les textes visibles (« Ma digestion », sous-onglet
   d'Analyses, PDF, fiche) ; données et identifiants inchangés ; test de non-régression des libellés. (07/11 17:45 :
   app, notification du soir, pages légales, fiche « Halcya — digestion & bien-être » ; `digestifWording.test.js`)

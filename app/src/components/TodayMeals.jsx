@@ -9,6 +9,7 @@ import { mealKcal, mealTitle } from '../services/mealEditing'
 import { appLocale } from '../i18n/locale.js'
 import MealPhotoButton from './MealPhotoButton'
 import LineIcon from './LineIcon'
+import StripPlus from './StripPlus'
 import './TodayMeals.css'
 
 const hhmm = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
@@ -40,7 +41,8 @@ export default function TodayMeals({ entries, now }) {
             )
           })}
         </ul>
-      ) : (
+      ) : null}
+      {meals.length ? <StripPlus label="Ajouter un repas" /> : (
         <>
           <p className="today-meals-empty">Aucun repas aujourd’hui</p>
           <MealPhotoButton className="today-meals-add">

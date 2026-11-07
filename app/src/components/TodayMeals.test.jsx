@@ -21,6 +21,8 @@ describe('TodayMeals — « Mes repas du jour » (AUJ-5)', () => {
     expect(links[1]).toHaveTextContent('Soupe')
     expect(links[0]).toHaveAttribute('href', '/food')
     expect(screen.queryByText('Hier')).toBeNull()
+    // AUJ-6 : un petit « + » qui remonte au bandeau
+    expect(screen.getByRole('button', { name: 'Ajouter un repas' })).toBeInTheDocument()
   })
 
   it('sans repas : « Aucun repas aujourd’hui » et un bouton qui ouvre l’appareil photo', () => {
@@ -28,6 +30,8 @@ describe('TodayMeals — « Mes repas du jour » (AUJ-5)', () => {
     expect(screen.getByText('Aucun repas aujourd’hui')).toBeInTheDocument()
     const btn = screen.getByRole('button', { name: 'Photographier un repas' })
     expect(document.getElementById(btn.getAttribute('for'))).toHaveAttribute('capture', 'environment')
+    // un bloc qui attend la personne a son bouton large, pas de « + »
+    expect(screen.queryByRole('button', { name: 'Ajouter un repas' })).toBeNull()
   })
 
   it('le titre d’un repas : le plat, sinon ses aliments, sinon « Repas »', () => {
