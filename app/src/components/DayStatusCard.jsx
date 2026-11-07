@@ -42,11 +42,11 @@ function DayCurve({ points, trend }) {
 
 /**
  * @param {{ data: undefined | null | { est: object | null, today?: object }, entries?: object[],
- *   onAddManual?: () => void, unlockReminder?: boolean, onDismissReminder?: () => void, now?: Date }} props
+ *   onAddManual?: () => void, onReminder?: () => void, unlockReminder?: boolean, onDismissReminder?: () => void, now?: Date }} props
  *   `data` : undefined pendant la lecture du visage, null sans aucune lecture.
  */
 export default function DayStatusCard({
-  data, entries = [], onAddManual, unlockReminder = false, onDismissReminder, now,
+  data, entries = [], onAddManual, onReminder, unlockReminder = false, onDismissReminder, now,
 }) {
   if (data === undefined) return null
   const est = data?.est ?? null
@@ -66,7 +66,7 @@ export default function DayStatusCard({
                 <Link to="/connectors">à activer dans Sources</Link>.</>}
           </p>
         )}
-        {est?.startCalibration && <StartCalibration cal={est.startCalibration} onAddManual={onAddManual} />}
+        {est?.startCalibration && <StartCalibration cal={est.startCalibration} onAddManual={onAddManual} onReminder={onReminder} />}
       </section>
     )
   }
@@ -88,7 +88,7 @@ export default function DayStatusCard({
         </div>
         <DayCurve points={w.points} trend={w.trend} />
       </Link>
-      {est?.startCalibration && <StartCalibration cal={est.startCalibration} onAddManual={onAddManual} />}
+      {est?.startCalibration && <StartCalibration cal={est.startCalibration} onAddManual={onAddManual} onReminder={onReminder} />}
       {reminder}
     </section>
   )
