@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
-  CONTRACT_VERSION, DIGESTION_MIN_SYMPTOM_DAYS, FACTORS, FACTOR_KEYS_KNOWN, HORIZONS, OUTCOMES, UNLOCK_DAYS,
-  computeAnalysisResults, dayContributions, outcomeSeries,
+  CONTRACT_VERSION, DIGESTION_MIN_SYMPTOM_DAYS, FACTORS, factorKeysKnown, HORIZONS, OUTCOMES, UNLOCK_DAYS,
+  computeAnalysisResults, contributionsByDay, dayContributions, outcomeSeries,
 } from './analysisResults'
 import { isEstimatorInput } from './mood/estimatorInputs'
 
@@ -49,7 +49,7 @@ describe('contrat des résultats d’Analyses', () => {
     const { entries, now } = world({ days: 10 })
     const res = computeAnalysisResults(entries, { now })
     expect(res.contractVersion).toBe(CONTRACT_VERSION)
-    expect(res.method).toBe('provisional')
+    expect(res.method).toBe('org5')
     expect(Object.keys(res.outcomes)).toEqual(OUTCOMES.map((o) => o.id))
     for (const o of Object.values(res.outcomes)) {
       expect(Object.keys(o.horizons)).toEqual(HORIZONS.map((h) => h.id))
@@ -144,7 +144,7 @@ describe('contrat des résultats d’Analyses', () => {
   }, 120_000)
 
   it('aucun facteur n’est le bien-être, le ventre ou une entrée de l’estimateur', () => {
-    expect(FACTOR_KEYS_KNOWN).toBe(true)
+    expect(factorKeysKnown()).toBe(true)
     for (const f of FACTORS) {
       expect(isEstimatorInput(f.key)).toBe(false)
       expect(f.key).not.toMatch(/wellbeing|gut|mood/)
@@ -166,6 +166,37 @@ describe('contrat des résultats d’Analyses', () => {
     const down = dayContributions(res, entries, dk(lo)).find((c) => c.key === 'steps')
     expect(down.points).toBeLessThan(0)
     for (let i = 1; i < top.length; i += 1) expect(Math.abs(top[i - 1].points)).toBeGreaterThanOrEqual(Math.abs(top[i].points))
+  })
+
+  it('contributions sur le modèle : une barre par facteur, seulement les termes du modèle, tous les jours', () => {
+    const { entries, steps, now } = world({ days: 70 })
+    const res = computeAnalysisResults(entries, { now })
+    const inModel = new Set(Object.values(res.outcomes.wellbeing.horizons).flatMap((h) => h.factors.filter((f) => f.inModel).map((f) => f.key)))
+    const all = contributionsByDay(res, entries)
+    const hi = dk(steps.indexOf(Math.max(...steps)))
+    expect(all.wellbeing[hi]).toEqual(dayContributions(res, entries, hi))
+    for (const list of Object.values(all.wellbeing)) {
+      expect(new Set(list.map((c) => c.key)).size).toBe(list.length)
+      for (const c of list) expect(inModel.has(c.key)).toBe(true)
+    }
+    expect(JSON.parse(JSON.stringify(all))).toStrictEqual(all)
+  })
+
+  it('TS-2 : un lien doit tenir à l’intérieur des périodes (un saut commun n’en fait pas un lien)', () => {
+    const r = rng(11)
+    const entries = []
+    for (let i = 0; i < 90; i += 1) {
+      const after = i >= 45
+      // Les pas montent d'un coup en même temps que le bien-être, mais au jour le jour ils ne jouent pas.
+      const s = Math.round((after ? 9000 : 5000) + 800 * gauss(r))
+      entries.push({ type: 'steps', at: at(i, '12'), source: 'health_connect', payload: { value: s, period: 'day' } })
+      const y = (after ? 3.8 : 2.2) + 0.3 * gauss(r)
+      entries.push({ type: 'wellbeing', at: at(i, '21'), payload: { score: Math.round(y * 10) / 10 } })
+    }
+    const res = computeAnalysisResults(entries, { now: new Date(START + 89 * 86_400_000 + 22 * 3_600_000) })
+    const wb = res.outcomes.wellbeing
+    expect(wb.changes.length).toBeGreaterThanOrEqual(1)
+    for (const h of Object.values(wb.horizons)) expect(h.factors.some((f) => f.key === 'steps' && f.net)).toBe(false)
   })
 
   it('contributions : rien tant que le résultat est verrouillé', () => {

@@ -31,12 +31,21 @@ function Sheet({ title, onClose, children }) {
  * @param {{
  *   onWellbeing: () => void,
  *   digestion?: import('react').ReactNode,
+ *   stool?: import('react').ReactNode,
  *   cigarette?: import('react').ReactNode,
  *   cigaretteInStrip?: boolean,
+ *   open?: null | 'digestion' | 'stool' | 'other',
+ *   onOpenChange?: (open: null | 'digestion' | 'stool' | 'other') => void,
  * }} props
+ *   `open` / `onOpenChange` : fenêtre ouverte, pilotable de l'extérieur (« Noter ma digestion » du bloc digestif,
+ *   AUJ-4 : le même geste que le bouton du bandeau).
  */
-export default function AddStrip({ onWellbeing, digestion = null, cigarette = null, cigaretteInStrip = false }) {
-  const [open, setOpen] = useState(null)
+export default function AddStrip({
+  onWellbeing, digestion = null, stool = null, cigarette = null, cigaretteInStrip = false, open: openProp, onOpenChange,
+}) {
+  const [innerOpen, setInnerOpen] = useState(null)
+  const open = openProp !== undefined ? openProp : innerOpen
+  const setOpen = onOpenChange ?? setInnerOpen
   const close = () => setOpen(null)
   return (
     <section id="today-add" className="add-strip" aria-label="Ajouter">
@@ -55,6 +64,13 @@ export default function AddStrip({ onWellbeing, digestion = null, cigarette = nu
             <span>Digestion</span>
           </button>
         )}
+        {/* AUJ-1b : la photo des selles, geste explicite ; la fenêtre dit ce qui part avant d'ouvrir l'appareil photo */}
+        {stool && (
+          <button type="button" className="add-chip is-digestion" onClick={() => setOpen('stool')}>
+            <LineIcon name="camera" size={22} />
+            <span>Selles</span>
+          </button>
+        )}
         {cigarette && cigaretteInStrip && <div className="add-chip-slot">{cigarette}</div>}
         <button type="button" className="add-chip" onClick={() => setOpen('other')}>
           <LineIcon name="dots" size={22} />
@@ -63,6 +79,7 @@ export default function AddStrip({ onWellbeing, digestion = null, cigarette = nu
       </div>
 
       {open === 'digestion' && <Sheet title="Ma digestion" onClose={close}>{digestion}</Sheet>}
+      {open === 'stool' && <Sheet title="Photo des selles" onClose={close}>{stool}</Sheet>}
       {open === 'other' && (
         <Sheet title="Autre chose" onClose={close}>
           <div className="add-sheet-list">

@@ -18,6 +18,9 @@ import { summarizeGutLinks } from '../services/gutLinks'
 import { gutWeeks } from '../services/gutWeeks'
 import { mealHoursEffect } from '../services/mood/mealHours'
 import { wellbeingWeeks } from '../services/mood/wellbeingWeeks'
+import { computeAnalysisResults, contributionsByDay } from '../services/analysisResults'
+import { estimateStatesFromEntries } from '../services/method/stateSpace'
+import { changesFromEntries } from '../services/method/changeSeries'
 
 export const ANALYSIS_TASKS = {
   /** Accueil — « Prédiction du jour ». */
@@ -42,6 +45,26 @@ export const ANALYSIS_TASKS = {
       totalDays: countTotalDataDays(entries),
     }
   },
+  /**
+   * ORG-5d — Analyses (Bien-être, Digestion) : le contrat des résultats (services/analysisResults.js), seuils de
+   * déblocage compris. Forme stable, sérialisable.
+   */
+  analysisResults: async () => {
+    const entries = await listEntriesForAnalysis()
+    const results = computeAnalysisResults(entries)
+    // « Ce qui a pu peser ce jour-là » (Tendances) : les 3 plus grandes contributions de chaque jour, sur le modèle.
+    return { ...results, contributions: contributionsByDay(results, entries) }
+  },
+  /**
+   * TS-1 — Tendances et Aujourd'hui : estimation de chaque jour (bien-être, confort digestif), fourchette, attendu des
+   * 7 jours à venir, courbe digestive montrée ou non, note à demander ou non.
+   */
+  dayStates: async () => estimateStatesFromEntries(await listEntriesForAnalysis()),
+  /**
+   * TS-2 — Changements durables par courbe (Tendances, vue Mois ; rapport médecin) : date, niveaux avant et après.
+   * « Au même moment » : `sameTime` ; norme des écarts : `normStart` (services/method/changes.js).
+   */
+  changes: async () => changesFromEntries(await listEntriesForAnalysis()),
   /** Analyses — onglet « Analyse avancée ». */
   advancedAnalysis: async () => {
     const entries = await listEntriesForAnalysis()

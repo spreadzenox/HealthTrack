@@ -198,12 +198,8 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(screen.getByText('Normales · type 4 · photo')).toBeInTheDocument()
   })
 
-  it('SELLES-PHOTO-2 : « estimer la forme avec une photo » seulement avec l’objectif « Ma digestion », jamais ailleurs', async () => {
+  it('AUJ-1b : la photo des selles quitte le Journal (elle est dans le bandeau d’ajout de l’Accueil)', async () => {
     localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ done: true, goal: 'gut' }))
-    const { unmount } = renderJournal()
-    expect(await screen.findByRole('button', { name: /Selles : estimer la forme avec une photo/ })).toBeInTheDocument()
-    unmount()
-    localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ done: true, goal: 'energy' }))
     renderJournal()
     await screen.findByText('Vos derniers jours')
     expect(screen.queryByRole('button', { name: /estimer la forme avec une photo/ })).toBeNull()

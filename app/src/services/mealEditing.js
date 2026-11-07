@@ -154,6 +154,15 @@ export function itemKcal(item) {
   return Math.round(((p100.energy_kcal || 0) * grams) / 100)
 }
 
+/** Ce que l'on montre d'un repas : le plat, sinon ses aliments, sinon « Repas ». */
+export function mealTitle(e) {
+  const p = e?.payload || {}
+  if (p.dish) return p.dish
+  const names = (p.items || []).map((i) => i?.name || i?.ingredient).filter(Boolean)
+  if (names.length) return names.slice(0, 3).join(', ') + (names.length > 3 ? '…' : '')
+  return p.description || 'Repas'
+}
+
 /** Total des kcal connues du repas. */
 export function mealKcal(items) {
   return (items || []).reduce((sum, it) => sum + (itemKcal(it) ?? 0), 0)

@@ -1,0 +1,131 @@
+/* Bloc digestif de l'Accueil (AUJ-4) : couleur du thème digestion (pêche). */
+.digest-block {
+  background: var(--peach-bg);
+  color: var(--peach-text);
+}
+
+.digest-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--peach-text);
+}
+
+.digest-ready {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: var(--tap-min);
+  color: inherit;
+  text-decoration: none;
+}
+
+.digest-chevron {
+  transform: rotate(-90deg);
+  color: var(--peach-label);
+}
+
+.digest-text {
+  margin: 6px 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.digest-progress {
+  height: 8px;
+  margin-top: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--peach-track);
+  overflow: hidden;
+}
+
+.digest-progress-bar {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--peach-label);
+}
+
+.digest-count {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+}
+
+.digest-day {
+  position: relative;
+  height: 40px;
+  margin: 14px 4px 0;
+}
+
+.digest-day-axis {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed var(--peach-track);
+}
+
+.digest-day-dot {
+  position: absolute;
+  top: 5px;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  border: 2px solid var(--peach-bg);
+}
+
+.digest-day-dot.is-calm { background: var(--chart-bar-2); }
+.digest-day-dot.is-discomfort { background: var(--accent-amber); }
+.digest-day-dot.is-pain { background: var(--color-badge); }
+
+.digest-day-tick {
+  position: absolute;
+  bottom: 0;
+  font-size: 0.65rem;
+  opacity: 0.8;
+}
+
+.digest-note-button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--color-on-brand);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* « Vos apports jusqu'ici » (AUJ-4b) : des chiffres, sans couleur de jugement ; un toucher ouvre Nutrition. */
+.digest-intake {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: var(--radius-choice);
+  background: rgba(var(--bg-rgb), 0.55);
+  color: inherit;
+  text-decoration: none;
+}
+
+.digest-intake-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.digest-intake .digest-chevron {
+  grid-row: 1 / 3;
+  grid-column: 2;
+}
+
+.digest-intake-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  font-size: 0.82rem;
+}

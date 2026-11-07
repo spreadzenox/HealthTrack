@@ -15,6 +15,22 @@
 > groupe « Testeurs Halcya » et à l'examen bêta, par la CI ; si sa clé n'a pas ce droit, elle vous écrira le geste exact).
 > Rien à faire de votre côté. Au passage à l'heure d'été (fin mars), l'heure de l'envoi sera recalée par la routine.
 
+> 🌙 **Chantier du soir (07/11) — voie « méthode »** (session « méthode », en parallèle de la session « interface »).
+> **Livré ce soir** (services testés, aucun écran touché ; l'interface s'y branche) : le contrat des résultats
+> d'Analyses (#786 : par résultat × horizon, effet en points pour une variation habituelle, fourchette, « net », thème,
+> agir ; contributions du jour) ; ORG-5a, le banc avec vérité connue (#790 : il a trouvé que l'ancienne méthode laissait
+> passer des faux liens dans jusqu'à 60 % des jeux simulés ; corrigé, désormais 0 à 3,5 %) ; TS-1, un seul modèle à
+> espace d'états pour le bien-être et le confort digestif (#792 : estimation du jour, fourchette, attendu des 7 jours,
+> courbe digestive montrée seulement si elle prédit vos notes, note demandée seulement les jours incertains) ; ORG-5b
+> (#795 : la méthode prend cette estimation, jours notés plus pesants, FODMAP par sous-groupe, jours malade ou en voyage
+> mis à part) ; ORG-5c (modèle régularisé, un lien « net » doit tenir dans 85 % des rééchantillonnages, « Ce qui pèse »
+> seulement s'il prévoit mieux que « demain = aujourd'hui ») ; ORG-5d (branché dans le calcul en arrière-plan) ; les
+> contributions du jour sur ce modèle ; TS-2 et TS-2b (changements durables : 0,26 fausse alerte par courbe et par
+> semestre au banc ; un lien doit tenir à l'intérieur des périodes) ; ORG-7 (sources classées, `PRODUIT.md` § 3 bis).
+> Numéros des PR et état final : voir le tableau des runs. **Reste à faire** : la norme des écarts du jour qui repart
+> du dernier changement (`normStart` dans `dayDeviations.js`, que la session interface modifiait ce soir) ; remplacer
+> VENTRE-BE-2 à l'affichage par l'estimation TS-1 (côté interface : tâche `dayStates`).
+
 > 🧑‍🔬 **Retours de votre premier testeur iPhone (06/11 22:35) : pris en compte.** Le résumé anonyme est dans
 > [`RETOURS-TESTEURS.md`](RETOURS-TESTEURS.md) et découpé en 17 étapes (TESTEUR-*) en tête de `BACKLOG.md` ; elles
 > passent devant le reste des runs de code. Le point (5) propre à l'iPhone (mention Android dans la source Santé, source
@@ -206,6 +222,8 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 18:50 — [Chantier du soir, méthode (2/2)](runs/2026-11-07-1850-methode-soir-2.md) | 🧮 | ORG-5c (#797), ORG-5d (#799), contributions du jour (#801), TS-2 et TS-2b (#802), ORG-7. Rien de visible : la session interface s'y branche. Rien à faire de votre côté |
+| 07/11 17:20 — [Chantier du soir, méthode (1/2)](runs/2026-11-07-1720-methode-soir.md) | 🧮 | Contrat des résultats d'Analyses (#786), banc ORG-5a (#790), TS-1 (#792), ORG-5b (#795). Rien de visible. Rien à faire de votre côté |
 | 07/11 17:35 — [Publication quotidienne](runs/2026-11-07-1735-publication-quotidienne.md) | 🔧 | CD-ALPHA-6 : Alpha reçoit chaque soir à 23:45 la dernière version de main prête (plus à chaque merge, plus de délai de 24 h) ; décision iPhone (soumission quotidienne à l'examen bêta) transmise à la routine iOS. Rien à faire de votre côté |
 | 07/11 16:35 — [Bien-être du jour](runs/2026-11-07-1635-bien-etre-du-jour.md) | 🎨 | Revue de 16:30 consignée (leçons 13 à 17, ORG-1 à ORG-7, compléments AUJ) ; AUJ-2 : le bloc « Bien-être aujourd'hui » montre la valeur sur 5, le nombre de lectures et la courbe du jour, sans verdict ; phrase d'intro retirée. Rien à faire de votre côté |
 | 07/11 15:35 — [Bandeau d'ajout](runs/2026-11-07-1535-bandeau-ajout.md) | 🎨 | Revue design du 07/11 consignée (leçons, AUJ-1 à 8, iOS) ; AUJ-1 : la date seule et le bandeau Repas / Bien-être / Digestion / Autre chose en haut de l'Accueil ; section « Noter » retirée. Rien à faire de votre côté |
