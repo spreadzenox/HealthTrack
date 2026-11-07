@@ -21,6 +21,29 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 📦 Publication quotidienne aux testeurs (décision du propriétaire du 07/11 vers 17:30)
+
+> « Chaque modification arrive aux testeurs au fur et à mesure, une fois par jour, sur Android comme sur iPhone ; ce
+> soir, la version qui contient le chantier du soir part vers les testeurs des deux plateformes, et de même demain soir. »
+
+- [x] ✅ 07/11 17:35 **CD-ALPHA-6** (Android) : « Play — Alpha (livraison continue) » envoie chaque soir à **23:45,
+  heure de Paris** (cron `45 22 * * *` en UTC, heure d'hiver ; **à recaler en `45 21 * * *` le 28/03/2027** au
+  passage à l'heure d'été) la plus récente version de main dont « Build & Release » (et Tests, émulateurs, Play — AAB)
+  a réussi, si elle a changé depuis le dernier envoi ; une version pas prête cède la place à la précédente prête
+  (`decideNightly`, 7 tests dans `alphaGate.test.mjs`). Plus d'envoi à chaque merge ni à 07:13 ; plus d'espacement de
+  24 h (CD-ALPHA-2 remplacé : le rythme quotidien en tient lieu) ; gel (`review-freeze.json`) et `ALPHA_AUTO` gardés ;
+  `workflow_dispatch` gardé. Le test interne reçoit toujours chaque version.
+- [ ] **CD-ALPHA-7** (suite de CD-ALPHA-6) : la porte de 24 h de la fiche (07:23 UTC) et des abonnements (07:33 UTC)
+  compte encore l'envoi d'Alpha de la veille (≈ 8 h 40 avant) : avec un envoi Alpha chaque soir, leurs changements ne
+  partiraient plus. À régler : les faire partir dans le même créneau du soir que l'alpha (juste avant 23:45), ou ne
+  compter pour eux que leurs propres envois. Vérifier le premier soir (07/11 22:45 UTC) le bilan du workflow.
+- [ ] **CD-ALPHA-8** : veiller à ce que les merges du soir aient fini « Build & Release », les émulateurs et
+  « Play — AAB » avant 22:45 UTC (sinon c'est la version prête précédente qui part ; la suivante part le lendemain).
+- [x] ✅ 07/11 17:35 **IOS-QUOTIDIEN** (relais) : décision transmise en tête de `POUR-IOS.md` (soumission quotidienne
+  de la dernière build TestFlight au groupe externe « Testeurs Halcya » et à l'examen bêta d'Apple, par la CI ; jamais
+  la version de l'App Store ni la build 844.344 ; question du numéro de version constant). Suivi : `POUR-ORCHESTRATEUR.md`
+  du dépôt iOS.
+
 ## 🏠 Nouvel écran Aujourd'hui (revue design du propriétaire du 07/11 vers 15:00) — PRIORITÉ DES RUNS DE CODE
 
 > Remplace TESTEUR-1 (1a à 1e) et les points (3) à (5) du 24/10 15:00. La PR #781 (carte lilas) était déjà mergée à
@@ -116,6 +139,17 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     (200 jeux) : faux liens 0 à 3,5 % selon le scénario ; effet fort court terme retrouvé 60 % à 70 jours, ≥ 80 % à 120 ;
     moyen terme 26 % à 70 jours ; long terme 3 % (il faut des mois) ; digestion forte 75 % à 90 jours ; règle 5 vérifiée
     (un facteur du seul bien-être ne sort pas en digestion). Porte d'ORG-5c : faire mieux en puissance sans dépasser 5 %.
+  - [x] ORG-5b (07/11, chantier du soir) : matrice d'une ligne par jour. Résultat du jour = estimation TS-1 (bien-être :
+    notes et visage ; digestion : `digestionOwn`, sans rien du bien-être), pesée par sa précision (jours notés plus
+    pesants, poids bornés à [1/4, 4]) ; FODMAP par sous-groupe comme facteurs (`fodmap_fructans`… : repas du jour
+    au-dessus du repère) ; contrôle « journée à part » (malade ou voyage, déclaré ou fuseau changé) avec la semaine et la
+    tendance ; moindres carrés pondérés.
+  - [x] ORG-5c (07/11, chantier du soir) : modèle linéaire régularisé par résultat (`services/method/ridgeModel.js`) :
+    courte liste par personne (les candidats les plus nets, ≤ 1 pour 8 jours et ≤ 12, sans doublons corrélés à > 0,9),
+    ridge pondérée avec contrôles non pénalisés, λ par validation croisée par semaines ; stabilité par bootstrap des
+    semaines (« net » = Holm et signe tenu dans ≥ 85 % des rééchantillonnages ; fourchette 2,5–97,5 %) ;
+    `beatsPersistence` (prévision des semaines mises de côté contre « demain = aujourd'hui »). Banc (100 jeux) : faux
+    liens 0 à 3 % ; fort court terme 65 % à 70 j, 90 % à 120 j ; moyen terme 57 % à 120 j ; digestion forte 72 % à 90 j.
 - [ ] ORG-6 — Résultats d'Analyses : « Pistes à tester » (2 ou 3 liens nets sur ce qu'on peut changer, « Essayer dans
   Agir ») puis « Ce qui pèse sur votre bien-être » : Court / Moyen / Long terme, barres de part et d'autre de zéro en
   points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,
@@ -156,7 +190,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   éloigne (9 jours sur 14), « Vous vous éloignez de cette habitude » avec « Relancer le test » et « Supprimer cette
   habitude », au plus une fois par mois et par habitude, effacé dès qu'elle reprend. Les essais vont dans le rapport
   médecin.
-- [ ] TS-1 — **Un seul modèle à espace d'états** pour le bien-être et le confort digestif (avant ORG-5d : les analyses
+- [x] TS-1 — **Un seul modèle à espace d'états** pour le bien-être et le confort digestif (avant ORG-5d : les analyses
   prennent l'estimation du jour et sa fourchette) : deux états cachés par jour, chacun = tendance lente + rythme de la
   semaine + écart du jour ; écarts corrélés entre les deux (lien appris sur les jours où les deux sont connus, rétréci
   vers une valeur prudente commune) ; observations : notes de bien-être et lectures du visage (le même objet, précisions
@@ -168,6 +202,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   n'apprennent que de l'information digestive ; le banc vérifie qu'un facteur qui ne touche que le bien-être ne devient
   pas un facteur digestif. Aucun texte visible ne dit qu'une estimation est « dégradée » ou moins bonne faute de notes.
   (Session méthode.)
+  ✅ 07/11 (chantier du soir) : `services/method/stateSpace.js` (`estimateStates`, `estimateStatesFromEntries`) :
+  filtre de Kalman + lissage RTS sur 4 états (tendances et écarts du jour liés), paramètres appris par personne
+  (précision du visage, écarts du jour, lien rétréci vers 0,3 sur 20 jours), rythme de la semaine dès 21 jours ;
+  fourchette à 80 % ; attendu des 7 jours à venir ; `digestionOwn` (sans rien du bien-être, seule série digestive des
+  analyses) ; `showDigestiveCurve` (validation par blocs d'une semaine contre la moyenne) ; `noteRequest` (jours parmi
+  les 30 % plus incertains des 4 dernières semaines). Banc : 9 à 10 sur 10 mieux que le visage seul, couverture de la
+  fourchette entre 65 et 95 %, règle 5 ≤ 5 %. VENTRE-BE-2 reste en place dans l'affichage du jour jusqu'à ce que
+  l'interface prenne l'estimation TS-1 (ORG-5d branche déjà les analyses dessus).
 - [ ] TS-2 — **Changements durables** : bien-être, confort digestif, sommeil, VFC, FC au repos, pas, écran, une fois le
   rythme de la semaine retiré ; un saut de niveau, au moins 7 jours de chaque côté, au moins une demi-variation
   habituelle, confirmé 7 jours après ; seuil calé sur le banc (moins d'une fausse alerte par courbe et par semestre).
@@ -473,7 +515,7 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   (`Process: fr.jpesquet.sante` / `com.healthtrack.app` dans le bloc AndroidRuntime) dans `.github/scripts/old-webview/check.sh`.
 - [x] ✅ 05/11 21:35 **CD-ALPHA-5** (run idées du 05/11 20:35, I222 ; aide Google : délai d'examen compté depuis le dernier changement
   envoyé pour **l'app**) : la porte de 24 h tient compte aussi des derniers `play-listing` et `play-subscriptions` réussis,
-  et ces deux workflows attendent eux aussi 24 h après un envoi examiné (report au passage de 07:13 UTC) ; rien envoyé
+  et ces deux workflows attendent eux aussi 24 h après un envoi examiné (report au passage de 07:13 UTC ; alpha à 23:45 Paris depuis CD-ALPHA-6 du 07/11, voir « Publication quotidienne ») ; rien envoyé
   pendant l'examen de la demande de production (P30). Tests dans `alphaGate.test.mjs`.
   → Livré : `reviewGate.mjs` (décision pure, 8 tests) + `reviewIo.mjs` + `review-gate-cli.mjs` ; l'alpha compte les
   derniers envois réussis de la fiche et des abonnements (étape d'envoi réussie, API Actions) ; fiche et abonnements
