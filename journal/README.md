@@ -37,7 +37,8 @@
 >   regarder, pas à changer » (ORG-4, ORG-6, #807).
 > - **Testeur du 06/11** : Health Connect proposé aussi sans montre à l'accueil (5a-2, #811) ; (2) et (4) étaient faits.
 > - **Correctif** : de #806 à #809, le contrôle « Budget de lectures » était rouge sur main (Tendances lançait trois
->   calculs à l'ouverture) ; corrigé par #813 (les détails se calculent à la demande).
+>   calculs à l'ouverture) ; corrigé par #813 (les détails se calculent à la demande). Nettoyage du code laissé par la
+>   réorganisation et pointillé réservé à l'attendu du futur (#816).
 > **Reste à faire** : la norme des écarts du jour qui repart du dernier changement durable (TS-2, `normStart`) et la
 > valeur du jour de l'Accueil sur l'estimation TS-1 (à la place de VENTRE-BE-2) : tous deux ajoutent un calcul lourd à
 > l'Accueil, à faire en vérifiant le budget de lectures ; TESTEUR-5a-3 (Sources sans double demande, à vérifier sur
@@ -252,7 +253,11 @@
 
 | Run | Type | Résultat |
 |---|---|---|
-| 07/11 17:15 → 20:26 — [Chantier du soir, interface](runs/2026-11-07-1715-chantier-soir-interface.md) | 🎨 | AUJ-7, AUJ-8, AUJ-2b, AUJ-3, AUJ-4, AUJ-5, AUJ-6, AUJ-1b, AUJ-4b, AUJ-9, ORG-1, ORG-1b, ORG-2, AUJ-3b, ORG-3, ORG-3b, ORG-3c, ORG-4, ORG-6, ORG-8, TS-2 (affichage), TESTEUR-5a-2, correctif du budget de lectures (#784 à #814). Rien à faire de votre côté |
+<<<<<<< HEAD
+| 07/11 17:15 → 20:26 — [Chantier du soir, interface](runs/2026-11-07-1715-chantier-soir-interface.md) | 🎨 | AUJ-7, AUJ-8, AUJ-2b, AUJ-3, AUJ-4, AUJ-5, AUJ-6, AUJ-1b, AUJ-4b, AUJ-9, ORG-1, ORG-1b, ORG-2, AUJ-3b, ORG-3, ORG-3b, ORG-3c, ORG-4, ORG-6, ORG-8, TS-2 (affichage), TESTEUR-5a-2, correctif du budget de lectures, nettoyage (#784 à #816). Rien à faire de votre côté |
+=======
+| 07/11 20:10 — [Relais iOS : même numéro de version](runs/2026-11-07-2010-relais-ios-version.md) | 🔧 | Votre décision de 19:35 (même numéro de version pour les builds TestFlight pendant un cycle, build qui suit Android, 844.344 inchangée) transmise en tête de `POUR-IOS.md`, appliquée par la routine iOS dès la build de cette nuit. Rien à faire de votre côté |
+>>>>>>> origin/main
 | 07/11 18:50 — [Chantier du soir, méthode (2/2)](runs/2026-11-07-1850-methode-soir-2.md) | 🧮 | ORG-5c (#797), ORG-5d (#799), contributions du jour (#801), TS-2 et TS-2b (#802), ORG-7. Rien de visible : la session interface s'y branche. Rien à faire de votre côté |
 | 07/11 17:20 — [Chantier du soir, méthode (1/2)](runs/2026-11-07-1720-methode-soir.md) | 🧮 | Contrat des résultats d'Analyses (#786), banc ORG-5a (#790), TS-1 (#792), ORG-5b (#795). Rien de visible. Rien à faire de votre côté |
 | 07/11 17:35 — [Publication quotidienne](runs/2026-11-07-1735-publication-quotidienne.md) | 🔧 | CD-ALPHA-6 : Alpha reçoit chaque soir à 23:45 la dernière version de main prête (plus à chaque merge, plus de délai de 24 h) ; décision iPhone (soumission quotidienne à l'examen bêta) transmise à la routine iOS. Rien à faire de votre côté |

@@ -275,3 +275,11 @@ button.act-card-action {
   font-weight: 600;
   cursor: pointer;
 }
+
+.trial-crossed {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: var(--radius-choice);
+  background: var(--color-bg);
+  font-size: 0.85rem;
+}

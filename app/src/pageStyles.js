@@ -5,7 +5,6 @@
  * `bundleGuard.test.js` vérifie que tout fichier CSS de `src/` est atteint d'emblée.
  */
 // Avant le 21/10 18:30, arrivaient par l'accueil (forme et courbes, désormais dans Journal → Tendances) : même rang
-import './components/WellbeingCharts.css'
 import './components/HealthRadar.css'
 import './components/BaselineCards.css'
 import './components/MethodNote.css'
@@ -35,13 +34,9 @@ import './components/TrendsDayDetail.css'
 import './pages/Reintroduction.css'
 // Onglet Agir (ORG-1, 07/11)
 import './pages/Act.css'
-// Ligne « Bientôt » partagée par Analyses et Tendances (POL-6, 25/10)
 import './components/SoonList.css'
+// Ligne « Bientôt » partagée par Analyses et Tendances (POL-6, 25/10)
 // Pistes repas → ventre dans Analyses (jalon 5, 26/10)
-import './components/DomainTag.css'
-import './components/GutLinks.css'
-import './components/Horizon.css'
-import './components/GutWeeks.css'
 // FODMAP par sous-groupe sur la carte d'un repas (N4, 26/10)
 import './components/MealFodmapLine.css'
 // Licences des composants de tiers (LICENCES-TIERCES, 02/11)

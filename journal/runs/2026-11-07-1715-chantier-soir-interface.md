@@ -21,7 +21,9 @@ TS-1, ORG-5a à 5d et les contributions du jour.
 | ORG-8 essais et habitudes, rapport PDF | #809 | mergée |
 | Correctif budget de lectures + TS-2 (repères) | #813 (remplace #810) | mergée |
 | TESTEUR-5a-2 Health Connect sans montre | #811 | mergée |
-| TS-2 côté Agir (essai traversé) | #814 | voir la PR |
+| TS-2 côté Agir (essai traversé) | #814 | mergée |
+| Nettoyage (composants retirés, pointillé réservé au futur) | #816 | mergée |
+| Bilan (journal) | #815 | mergée |
 
 ## Vérifications
 Chaque étape : tests Vitest (3 270 → 3 336), lint 0 erreur, `npm run visual` sur les pages touchées (clair, sombre,
@@ -44,5 +46,4 @@ TS-1 entre-temps : suite complète relancée sur main, verte.
 
 ## Suite
 `normStart` (norme des écarts après un changement durable) et la valeur du jour de l'Accueil sur TS-1, en vérifiant le
-budget de lectures de l'Accueil ; TESTEUR-5a-3 ; nettoyage du code mort (anciens composants d'Analyses : `GutLinks`,
-`Horizon`, `GutWeeks`, `SoonList`, `ReintroductionEntry`, `PistesTeaser`, `FormeSection` sur Tendances).
+budget de lectures de l'Accueil ; TESTEUR-5a-3 .
