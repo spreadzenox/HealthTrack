@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "Mes repas du jour",
+  "items": [
+    "En bas de l'Accueil, vos repas du jour avec l'heure et les kcal estimées ; un toucher ouvre vos repas.",
+    "Sans repas : « Aucun repas aujourd'hui » et un bouton qui ouvre directement l'appareil photo."
+  ]
+}

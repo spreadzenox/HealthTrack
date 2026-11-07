@@ -13,8 +13,11 @@ import { listEntries } from '../storage/localHealthStorage'
 import { GUT_TYPE, gutLevelLabel, gutNotesProgress, isGutDayNote } from '../services/today'
 import { localDateKey } from '../services/analysisEngine'
 import { readPistesSummary } from '../services/pistesSummary'
+import { computeTotalsFromItems } from '../services/nutritionKPIs'
+import { appLocale } from '../i18n/locale.js'
 import GutEveningReminder from './GutEveningReminder'
 import LineIcon from './LineIcon'
+import StripPlus from './StripPlus'
 import { keepWhole } from '../utils/keepWhole'
 import './DigestBlock.css'
 
@@ -48,11 +51,49 @@ function DayNotes({ notes }) {
   )
 }
 
+const INTAKE = [
+  ['energy_kcal', 'kcal'],
+  ['protein_g', 'protéines', 'g'],
+  ['carbohydrates_g', 'glucides', 'g'],
+  ['fat_g', 'lipides', 'g'],
+  ['fiber_g', 'fibres', 'g'],
+]
+
+/**
+ * Apports du jour, d'après les repas notés (AUJ-4b) : après le premier repas, sans rouge ni alerte ni objectif ;
+ * un toucher ouvre Journal › Nutrition. Rien si la table nutritionnelle n'est pas encore chargée.
+ */
+function TodayIntake({ meals }) {
+  if (!meals.length) return null
+  let totals
+  try {
+    totals = computeTotalsFromItems(meals.flatMap((m) => m.payload?.items || []))
+  } catch {
+    return null
+  }
+  if (!(totals.energy_kcal > 0)) return null
+  const fmt = (v) => Math.round(v).toLocaleString(appLocale())
+  return (
+    <Link to="/nutrition" className="digest-intake">
+      <span className="digest-intake-title">Vos apports jusqu’ici</span>
+      <span className="digest-intake-values">
+        {INTAKE.map(([k, label, unit]) => (
+          <span key={k} className="digest-intake-value">
+            <span className="mono">{fmt(totals[k])}{unit ? `\u00a0${unit}` : ''}</span> {label}
+          </span>
+        ))}
+      </span>
+      <LineIcon name="chevron" size={18} className="digest-chevron" />
+    </Link>
+  )
+}
+
 /**
  * @param {{ onNote: () => void, read?: () => Promise<object[]>, summary?: object | null, now?: Date }} props
  *   `summary` : résumé des pistes mémorisé par Analyses (par défaut, lu au montage).
+ *   `meals` : les repas du jour (entrées `food`), pour « Vos apports jusqu'ici ».
  */
-export default function DigestBlock({ onNote, read = readGutNotes, summary: summaryProp, now }) {
+export default function DigestBlock({ onNote, read = readGutNotes, summary: summaryProp, now, meals = [] }) {
   const [entries, setEntries] = useState(null)
   const [summary] = useState(() => (summaryProp !== undefined ? summaryProp : readPistesSummary()))
   const refresh = useCallback(async () => {
@@ -102,8 +143,10 @@ export default function DigestBlock({ onNote, read = readGutNotes, summary: summ
         </>
       )}
       <DayNotes notes={todayNotes} />
+      <TodayIntake meals={meals} />
       <button type="button" className="digest-note-button" onClick={onNote}>Noter ma digestion</button>
       <GutEveningReminder />
+      <StripPlus label="Ajouter une note digestive ou une photo des selles" />
     </section>
   )
 }
