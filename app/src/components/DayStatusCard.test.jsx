@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import DayStatusCard from './DayStatusCard'
 
@@ -26,7 +26,8 @@ describe('DayStatusCard (TESTEUR-1c)', () => {
     expect(screen.getByText('D’après votre visage aujourd’hui.')).toBeInTheDocument()
     expect(screen.getByText('3 lectures du visage')).toBeInTheDocument()
     expect(screen.queryByText(/ventre/)).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Noter moi-même' })).toBeInTheDocument()
+    // TESTEUR-1d : on note dans la section « Noter », plus dans la carte
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
   it('le ventre n’apparaît que s’il a été compté (VENTRE-BE-2)', () => {
@@ -42,13 +43,11 @@ describe('DayStatusCard (TESTEUR-1c)', () => {
     expect(screen.getByText(/^D’après votre note de 09:00\.$/)).toBeInTheDocument()
   })
 
-  it('pas encore d’avis : une phrase, un seul bouton, pas de lien vers l’historique', () => {
-    const onAddManual = vi.fn()
-    view({ data: null, onAddManual })
+  it('pas encore d’avis : une phrase qui renvoie vers « Noter », aucun bouton, pas de lien vers l’historique', () => {
+    view({ data: null, onAddManual: vi.fn() })
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Pas encore d’avis')
-    expect(screen.getAllByRole('button')).toHaveLength(1)
-    fireEvent.click(screen.getByRole('button', { name: 'Noter comment je me sens' }))
-    expect(onAddManual).toHaveBeenCalled()
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+    expect(screen.getByText(/Notez votre bien-être plus bas/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'à activer dans Sources' })).toHaveAttribute('href', '/connectors')
     expect(screen.queryByRole('link', { name: /Votre journée/ })).not.toBeInTheDocument()
   })
@@ -62,6 +61,6 @@ describe('DayStatusCard (TESTEUR-1c)', () => {
   it('le rappel discret de la lecture au déverrouillage remplace la phrase', () => {
     view({ data: null, onAddManual: () => {}, unlockReminder: true, onDismissReminder: () => {} })
     expect(screen.getByRole('note')).toHaveTextContent(/À chaque déverrouillage/)
-    expect(screen.queryByText(/Dites comment/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Notez votre bien-être/)).not.toBeInTheDocument()
   })
 })

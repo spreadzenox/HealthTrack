@@ -253,6 +253,11 @@ describe('GutCard onlyIfUsed (aucun objectif choisi, POL-4)', () => {
     wrap(<GutCard read={read} onlyIfUsed />)
     expect(await screen.findByRole('heading', { name: 'Votre ventre' })).toBeInTheDocument()
   })
+
+  it('titre « Mon ventre » dans la section « Noter » de l’Accueil (TESTEUR-1d)', async () => {
+    wrap(<GutCard read={async () => []} title="Mon ventre" />)
+    expect(await screen.findByRole('heading', { name: 'Mon ventre' })).toBeInTheDocument()
+  })
 })
 
 describe('PistesTeaser', () => {

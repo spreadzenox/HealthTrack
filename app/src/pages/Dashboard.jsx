@@ -15,8 +15,7 @@ import { headerLine, measureTiles } from '../services/today'
 import { APP_NAME } from '../config/brand'
 import { homeFocus, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
-import MealPhotoButton from '../components/MealPhotoButton'
-import LineIcon from '../components/LineIcon'
+import NoteSection from '../components/NoteSection'
 
 export default function Dashboard() {
   // Entrées des derniers jours : tuiles du jour et compteur de cigarettes (le journal des jours est dans l'onglet Journal)
@@ -114,24 +113,18 @@ export default function Dashboard() {
       <DayStatusCard data={loading ? undefined : wellbeing} entries={entries}
         onAddManual={() => setWellbeingOpen(true)} unlockReminder={unlockReminder}
         onDismissReminder={closeUnlockReminder} />
-      {!loading && !error && <MeasureTiles tiles={tiles} details={details} />}
-      {gutMode !== 'hide' && (
-        <GutCard details={details} onToggleDetails={toggleDetails} onlyIfUsed={gutMode === 'used'} />
-      )}
-
-      {/* La note de bien-être manuelle est dans la carte « Bien-être estimé » (POL-3) : un seul geste ici. */}
-      <div className="today-actions">
-        {/* TESTEUR-4b : ouvre directement l'appareil photo ; la photo part ensuite vers la page Repas. */}
-        <MealPhotoButton className="btn today-action-photo">
-          <LineIcon name="camera" size={22} />
-          Photo du repas
-        </MealPhotoButton>
-      </div>
-      {!loading && shouldShowCigaretteCounter(entries) && (
-        <div className="dashboard-actions"><CigaretteQuickAdd /></div>
-      )}
-
+      {/* Ordre de la maquette du 07/11 : statut, analyses, données du jour, puis un seul endroit pour noter (TESTEUR-1d). */}
       <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} />
+      {!loading && !error && <MeasureTiles tiles={tiles} details={details} />}
+
+      <NoteSection
+        onWellbeing={() => setWellbeingOpen(true)}
+        gut={gutMode !== 'hide' && (
+          <GutCard title="Mon ventre" details={details} onToggleDetails={toggleDetails}
+            onlyIfUsed={gutMode === 'used'} />
+        )}
+        other={!loading && shouldShowCigaretteCounter(entries) && <CigaretteQuickAdd />}
+      />
 
       <WellbeingPrompt open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />
 

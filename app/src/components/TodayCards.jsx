@@ -109,9 +109,12 @@ const readGut = () => listEntries({ type: GUT_TYPE, since: new Date(Date.now() -
 
 /**
  * Carte pêche « Votre ventre » : Calme / Gêne / Douleur en un geste, horodaté.
+ * `title` : « Mon ventre » dans la section « Noter » de l'Accueil (TESTEUR-1d).
  * `onlyIfUsed` : rien n'est affiché tant qu'aucune note des 7 derniers jours n'existe (voir gutCardMode).
  */
-export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed = false, now = null }) {
+export function GutCard({
+  details, onToggleDetails, read = readGut, onlyIfUsed = false, now = null, title = 'Votre ventre',
+}) {
   const entries = useEntries(read)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
@@ -140,7 +143,7 @@ export function GutCard({ details, onToggleDetails, read = readGut, onlyIfUsed =
   return (
     <section className="today-card gut-card" aria-labelledby="gut-card-title">
       <div className="today-card-head">
-        <h3 id="gut-card-title" className="today-card-title">Votre ventre</h3>
+        <h3 id="gut-card-title" className="today-card-title">{title}</h3>
         <DetailsToggle on={details} onToggle={onToggleDetails} />
       </div>
       {eveningFirst && (

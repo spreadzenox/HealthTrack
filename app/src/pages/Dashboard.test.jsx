@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Dashboard from './Dashboard'
 
@@ -79,9 +79,11 @@ describe('Dashboard', () => {
     // Date et « Bonjour » sur deux lignes, sans « · » (retours du testeur du 06/11)
     expect(screen.getByText('Bonjour')).toHaveClass('today-hello')
     expect(document.querySelector('.today-dateline').textContent).not.toMatch(/·|Bonjour/)
-    // TESTEUR-1c : sans lecture ni note, « Votre journée : pas encore d'avis » et un seul bouton pour noter
+    // TESTEUR-1c : sans lecture ni note, « Votre journée : pas encore d'avis » ; on note dans « Noter » (TESTEUR-1d)
     expect(await screen.findByRole('heading', { level: 2, name: /Votre journée.*Pas encore d’avis/ })).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Noter comment je me sens' }))
+    expect(screen.queryByRole('button', { name: 'Noter comment je me sens' })).not.toBeInTheDocument()
+    const noter = screen.getByRole('region', { name: 'Noter' })
+    fireEvent.click(within(noter).getByRole('button', { name: /Mon bien-être/ }))
     expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
     const intro = await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)
     // Une seule phrase (VC-26) ; les sources se branchent pendant l'accueil, plus de ligne « Pas et nuits… »
@@ -135,14 +137,15 @@ describe('Dashboard', () => {
     localStorage.removeItem('healthtrack_onboarding')
   })
 
-  it('objectif « Mon ventre » : la carte ventre, toujours, avant les pistes', async () => {
+  it('objectif « Mon ventre » : la carte ventre, toujours, dans « Noter » après les pistes (TESTEUR-1d)', async () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
     renderDashboard()
     const pistes = await screen.findByTestId('pistes-card')
     const gut = screen.getByTestId('gut-card')
     expect(pistes).toHaveAttribute('data-focus', 'gut')
     expect(gut).toHaveAttribute('data-only-if-used', 'false')
-    expect(pistes.compareDocumentPosition(gut) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
+    expect(screen.getByRole('region', { name: 'Noter' })).toContainElement(gut)
+    expect(pistes.compareDocumentPosition(gut) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     localStorage.removeItem('healthtrack_onboarding')
   })
 
@@ -197,9 +200,9 @@ describe('Dashboard', () => {
     expect(screen.queryByRole('button', { name: 'Ajouter une note' })).not.toBeInTheDocument()
   })
 
-  it('sans avis du jour, « Noter comment je me sens » ouvre la note manuelle', async () => {
+  it('« Mon bien-être » (section Noter) ouvre la note manuelle (TESTEUR-1d)', async () => {
     renderDashboard()
-    fireEvent.click(await screen.findByRole('button', { name: 'Noter comment je me sens' }))
+    fireEvent.click(await screen.findByRole('button', { name: /Mon bien-être/ }))
     expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
   })
 
@@ -228,7 +231,7 @@ describe('Dashboard', () => {
 
   it('la note manuelle s’ouvre vierge et se ferme', async () => {
     renderDashboard()
-    fireEvent.click(await screen.findByRole('button', { name: 'Noter comment je me sens' }))
+    fireEvent.click(await screen.findByRole('button', { name: /Mon bien-être/ }))
     expect(screen.getByRole('dialog')).not.toHaveTextContent('Édition')
     fireEvent.click(screen.getByRole('button', { name: /Fermer/i }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()

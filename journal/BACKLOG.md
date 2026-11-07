@@ -62,9 +62,15 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   jusqu'à 1d (section « Noter ») ; vide : bouton contour « Noter comment je me sens » pour ne pas doubler le bouton
   plein « Photo du repas ». Courbe 14 j, écart à la moyenne et détails quittent l'Accueil (ils sont dans
   l'historique) ; `MoodEstimateCard` n'est plus monté que dans ses tests : à supprimer avec 1d.)
-- [ ] TESTEUR-1d — « Vos données du jour » par source (Montre, Téléphone, Noté par vous ; source absente masquée,
-  « Ajouter une montre › » sinon) et section « Noter » unique (Photo du repas, Mon bien-être, Mon ventre si « Mon
-  ventre », Autre chose : selles, cigarette, note libre) ; la carte ventre pêche et les boutons épars disparaissent.
+- [x] TESTEUR-1d-a — Section « Noter » unique (07/11 10:35 : `components/NoteSection.jsx` : titre `h2` « Noter »,
+  « Photo du repas » en bouton plein, tuile menthe « Mon bien-être » (note 1 à 5), carte ventre pêche retitrée « Mon
+  ventre » à l'intérieur (même règle POL-4, un geste reste un geste), « Autre chose » en surface neutre (cigarette si le
+  compteur est actif). `DayStatusCard` n'a plus de bouton (sauf calibration de départ) ; vide : « Notez votre bien-être
+  plus bas… ». Ordre de l'Accueil : statut, carte lilas des analyses, tuiles du jour, Noter. Les selles restent dans
+  la carte ventre (thème pêche) ; aucune « note libre » n'existe encore sur l'Accueil.)
+- [ ] TESTEUR-1d-b — « Vos données du jour » par source (Montre, Téléphone, Noté par vous ; source absente masquée,
+  « Ajouter une montre › » sinon), dernière note du ventre et du bien-être dans « Noté par vous » ; supprimer
+  `MoodEstimateCard` (déplacer `StartCalibration` et `UnlockReminder`).
 - [ ] TESTEUR-1d-2 — « Ce qui change aujourd'hui » : `dayDeviations` (médiane 14 j, 3 écarts au plus, aucune couleur
   de jugement, règle 6) + carte lilas qui explique les analyses (« Halcya cherchera ce qui revient avant vos bons et
   vos mauvais jours »).
