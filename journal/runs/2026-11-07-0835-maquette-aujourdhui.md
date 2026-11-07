@@ -24,7 +24,7 @@ Type : 💡 run idées (08:35 Paris), sans code produit. Étape prévue par le r
 
 ## Vérifications
 - Captures relues une à une (titres longs qui chevauchaient le halo et « 9 h » coupé : corrigés avant le rendu final).
-- `npm run test` lancé avant merge (seul le journal change).
+- `npm run test` : vert (3 240 passés, 44 ignorés). Seul le journal change (build et visuel non concernés).
 
 ## Suite
 - TESTEUR-1c au prochain run de code : `DayStatusCard`.
