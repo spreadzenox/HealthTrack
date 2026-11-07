@@ -8,13 +8,6 @@
 
 .food-page .page-intro,
 .journal-page .page-intro,
-.dashboard-intro {
-  margin: 0 0 20px;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-
 .section-title {
   margin: 24px 0 12px;
   font-size: 1rem;

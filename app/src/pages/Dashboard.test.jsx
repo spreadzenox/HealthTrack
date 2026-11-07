@@ -74,7 +74,7 @@ describe('Dashboard', () => {
     countEntries.mockResolvedValue(0)
   })
 
-  it('renders the « Aujourd’hui » header and, without any data, the introduction', async () => {
+  it('renders the « Aujourd’hui » header and, without any data, no filler sentence (AUJ-2, leçon 2)', async () => {
     renderDashboard()
     // Nouvel écran du 07/11 : la date seule, sans « Bonjour », puis le bandeau d'ajout juste dessous
     const date = screen.getByRole('heading', { level: 1 })
@@ -82,21 +82,21 @@ describe('Dashboard', () => {
     expect(screen.queryByText(/Bonjour/)).toBeNull()
     const strip = screen.getByRole('region', { name: 'Ajouter' })
     expect(date.compareDocumentPosition(strip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    // TESTEUR-1c : sans lecture ni note, « Votre journée : pas encore d'avis » ; on ajoute dans le bandeau
-    expect(await screen.findByRole('heading', { level: 2, name: /Votre journée.*Pas encore d’avis/ })).toBeInTheDocument()
+    // AUJ-2 : sans lecture ni note, le bloc « Bien-être aujourd'hui » renvoie au bandeau, sans verdict
+    expect(await screen.findByRole('heading', { level: 2, name: 'Bien-être aujourd’hui' })).toBeInTheDocument()
+    expect(screen.queryByText(/Pas encore d’avis|Votre journée/)).toBeNull()
     expect(screen.queryByRole('button', { name: 'Noter comment je me sens' })).not.toBeInTheDocument()
     expect(screen.queryByRole('region', { name: 'Noter' })).toBeNull()
     fireEvent.click(within(strip).getByRole('button', { name: 'Bien-être' }))
     expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
-    const intro = await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)
-    // Une seule phrase (VC-26) ; les sources se branchent pendant l'accueil, plus de ligne « Pas et nuits… »
-    expect(intro.textContent.match(/[.!?](\s|$)/g)).toHaveLength(1)
+    // Plus de phrase de présentation (leçon 2 : aucun texte de remplissage)
+    expect(screen.queryByText(/ce qui va avec vos bons et mauvais jours/i)).toBeNull()
     expect(screen.queryByText(/Pas et nuits/)).not.toBeInTheDocument()
   })
 
   it('sans aucune donnée : pas de liens « … dans le Journal » (VC-26)', async () => {
     renderDashboard()
-    await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)
+    await screen.findByRole('heading', { level: 2, name: 'Bien-être aujourd’hui' })
     expect(screen.queryByRole('link', { name: /dans le Journal/ })).not.toBeInTheDocument()
   })
 
@@ -247,7 +247,7 @@ describe('Dashboard', () => {
       saveOnboarding({ done: true, doneAt, face: 'later', unlockLater: true })
       faceStatus.value = { mode: 'app_open', unlockAvailable: true, unlock: true, running: true }
       renderDashboard()
-      await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)
+      await screen.findByRole('heading', { level: 2, name: 'Bien-être aujourd’hui' })
       await waitFor(() => expect(screen.queryByRole('note')).toBeNull())
     })
   })

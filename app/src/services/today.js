@@ -13,7 +13,7 @@ import { isDaytimeHrv } from './hrv'
 import { appLocale, localeDate } from '../i18n/locale.js'
 import { faceModelTag } from './mood/modelName'
 import { FEATURES } from '../config/distribution'
-import { toDisplay, formatNote } from './mood/wellbeingScale'
+import { formatNote } from './mood/wellbeingScale'
 
 export const GUT_TYPE = 'gut'
 export const GUT_SOURCE = 'app_gut'
@@ -97,72 +97,56 @@ export function daySummaryTitle(est) {
   return 'Une journée moyenne'
 }
 
-const DAY_LEVELS = {
-  good: 'Plutôt bonne',
-  medium: 'Plutôt moyenne',
-  hard: 'Plus difficile',
-}
-
-/** Niveau du jour sur l'échelle interne 0–5 : mêmes seuils que daySummaryTitle (> 3,4 et < 2,6 sur l'échelle 1 à 5). */
-function dayLevel(note) {
-  if (note > 3) return 'good'
-  if (note < 2) return 'hard'
-  return 'medium'
-}
-
 const hhmm = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 const plural = (n, one, many) => `${n} ${n > 1 ? many : one}`
 
 /**
- * Statut du jour en tête de l'Accueil (TESTEUR-1c, maquette journal/maquettes/aujourdhui) : « Votre journée » et un
- * titre en deux mots, la position sur l'échelle 1 à 5, d'où il vient en une phrase et des étiquettes.
+ * Bloc « Bien-être aujourd'hui » de l'Accueil (AUJ-2, revue design du 07/11 : montrer la donnée, pas un verdict) :
+ * la valeur du jour sur 1 à 5, d'où elle vient, et les points de la courbe du jour.
  *
- * Le statut ne parle que du bien-être (Y) : le visage du jour d'abord (faceMoodEstimate, où une gêne ou une douleur du
- * ventre compte un peu, VENTRE-BE-2) ; sans lecture du jour, la dernière note manuelle du jour ; sinon pas d'avis.
- * La note manuelle n'entre pas dans l'estimation du visage du jour : quand les deux existent, elle reste une étiquette.
+ * Le bloc ne parle que du bien-être (Y) : le visage du jour d'abord (faceMoodEstimate, où une gêne ou une douleur
+ * digestive compte un peu, VENTRE-BE-2, dit en toutes lettres) ; sans lecture du jour, les notes du jour ; sinon rien.
+ * La note manuelle n'entre pas dans l'estimation du visage du jour.
  *
- * @param {object | null | undefined} est  sortie de faceMoodEstimate
+ * @param {{ est?: object | null, today?: { points?: object[], trend?: object[] } } | null | undefined} data
+ *   sortie de loadWellbeingToday (estimation et historique du jour)
  * @param {object[]} entries  entrées récentes (notes `wellbeing`, payload.score sur 0–5)
- * @returns {{ level: 'good'|'medium'|'hard'|null, title: string, segment: number | null, from: string | null,
- *   chips: string[], source: 'face'|'note'|null }}
+ * @returns {{ source: 'face'|'note'|null, value: string | null, from: string | null,
+ *   points: { at: string, note: number }[], trend: { at: string, note: number }[] }}
+ *   `value` sur l'échelle affichée 1 à 5 (« 3,6 ») ; `note` des points sur l'échelle interne 0–5.
  */
-export function dayStatus(est, entries = [], now = new Date()) {
+export function dayWellbeing(data, entries = [], now = new Date()) {
   const today = localDateKey(now.toISOString())
+  const isToday = (iso) => typeof iso === 'string' && localDateKey(iso) === today
   const notes = (entries || [])
-    .filter((e) => e?.type === 'wellbeing' && typeof e.payload?.score === 'number' && localDateKey(e.at) === today)
+    .filter((e) => e?.type === 'wellbeing' && typeof e.payload?.score === 'number' && isToday(e.at))
     .sort((a, b) => (a.at < b.at ? -1 : 1))
-  const lastNote = notes[notes.length - 1] ?? null
-  const segment = (score) => Math.min(5, Math.max(1, Math.round(toDisplay(score))))
-  const noteChip = lastNote ? `votre note : ${segment(lastNote.payload.score)}/5` : null
-
-  const day = est?.day
+  const day = data?.est?.day
   if (day && typeof day.note === 'number') {
-    const level = dayLevel(day.note)
-    const chips = [plural(day.readings, 'lecture du visage', 'lectures du visage')]
-    if (noteChip) chips.push(noteChip)
-    if (day.gut) chips.push(`ventre : ${day.gut.level === 'pain' ? 'douleur' : 'gêne'} comptée`)
-    if (est.confidence === 'faible') chips.push('estimation prudente')
+    const points = (data.today?.points || []).filter((p) => isToday(p.at) && typeof p.note === 'number')
+    const trend = (data.today?.trend || []).filter((p) => isToday(p.at) && typeof p.note === 'number')
+    const gut = day.gut ? ` et votre ${day.gut.level === 'pain' ? 'douleur' : 'gêne'} digestive` : ''
     return {
-      level,
-      title: DAY_LEVELS[level],
-      segment: segment(day.note),
-      from: 'D’après votre visage aujourd’hui.',
-      chips,
       source: 'face',
+      value: formatNote(day.note),
+      from: `D’après ${plural(day.readings, 'lecture', 'lectures')} du visage${gut}`,
+      points: points.map((p) => ({ at: p.at, note: p.note })),
+      trend: trend.map((p) => ({ at: p.at, note: p.note })),
     }
   }
-  if (lastNote) {
-    const level = dayLevel(lastNote.payload.score)
+  if (notes.length) {
+    const last = notes[notes.length - 1]
     return {
-      level,
-      title: DAY_LEVELS[level],
-      segment: segment(lastNote.payload.score),
-      from: `D’après votre note de ${hhmm(lastNote.at)}.`,
-      chips: [],
       source: 'note',
+      value: formatNote(last.payload.score),
+      from: notes.length > 1
+        ? `Votre dernière note, à ${hhmm(last.at)}`
+        : `Votre note de ${hhmm(last.at)}`,
+      points: notes.map((e) => ({ at: e.at, note: e.payload.score })),
+      trend: [],
     }
   }
-  return { level: null, title: 'Pas encore d’avis', segment: null, from: null, chips: [], source: null }
+  return { source: null, value: null, from: null, points: [], trend: [] }
 }
 
 /**

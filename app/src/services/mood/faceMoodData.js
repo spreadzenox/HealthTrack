@@ -32,7 +32,12 @@ export async function loadWellbeingToday({ list = listEntries, now = new Date() 
   const { bursts, notes } = await loadFaceMoodEntries({ list })
   if (!bursts.length) return null
   const entries = [...bursts, ...notes]
-  return { est: faceMoodEstimate(entries, { now }), days: faceMoodDays(entries) }
+  // AUJ-2 : la courbe du jour de l'Accueil, les mêmes points que la vue Jour de l'historique.
+  return {
+    est: faceMoodEstimate(entries, { now }),
+    days: faceMoodDays(entries),
+    today: wellbeingHistory(entries, { period: 'day', now }),
+  }
 }
 
 /**

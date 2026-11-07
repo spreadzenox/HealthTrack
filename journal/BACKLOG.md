@@ -32,9 +32,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   digestion »), cigarette si le compteur est actif (sinon dans « Autre chose »), Autre chose (« Décrire un repas »,
   cigarette). Section « Noter » du bas supprimée ; la carte « Mon ventre » n'est plus sur l'écran (dans la fenêtre
   Digestion). (07/11 15:35)
-- [ ] AUJ-2 — Bloc bien-être du jour : courbe du jour de l'historique simplifiée (points et tendance, sans légende),
-  moyenne sur 5 et nombre de lectures, toucher → historique ; sans lecture, les notes du jour ; plus de verdict
-  (« Plus difficile ») ni « estimation prudente » ; l'horizon qui respire (`DayBreath`) part avec le verdict.
+- [x] AUJ-2 — Bloc « Bien-être aujourd'hui » : la valeur du jour sur 5 (police mono), « D'après N lectures du visage »
+  (et « votre gêne digestive » quand elle compte, VENTRE-BE-2), la courbe du jour (points et tendance de la vue Jour de
+  l'historique, sans légende, à partir de 3 points) ; sans lecture, les notes du jour ; toucher → historique. Plus de
+  verdict, d'échelle à segments, d'« estimation prudente » ni d'horizon qui respire (`DayBreath` supprimé) ; phrase
+  d'intro du premier lancement retirée (leçon 2). (07/11 16:35)
 - [ ] AUJ-2b — Calibration de départ dans ce bloc : « Calibration du bien-être : 0 jour sur 3 », phrase du
   propriétaire, « Remplir maintenant » et « Recevoir un rappel » (bouton large) ; lié à (5) du 04/11.
 - [ ] AUJ-3 — « Vos données du jour » en un seul bloc : une icône par mesure, l'écart à vos 14 derniers jours sur la
@@ -52,6 +54,52 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   d'Analyses, PDF, fiche) ; données et identifiants inchangés ; test de non-régression des libellés.
 - [ ] AUJ-8 — Couleurs par thème (leçon 12) : vert = bien-être, orange = digestion, lilas = activité et sport, bleu
   nuit = sommeil ; tokens, contrastes testés, une analyse prend la couleur de son thème.
+
+**Compléments du propriétaire (07/11 vers 16:30)**, à intégrer aux étapes ci-dessus :
+- [ ] AUJ-1b — Photo des selles dans le bandeau d'ajout (geste explicite, analyse IA comme les repas, aucune photo
+  gardée, résultat modifiable, jamais un diagnostic ; retours (7) du 04/11) et un petit « + » dans le bloc digestif.
+- [ ] AUJ-4b — Bloc digestif : « Vos apports jusqu'ici » après le premier repas du jour, sans rouge ni alerte ; un
+  toucher ouvre Journal › Nutrition.
+- [ ] AUJ-3 (précision) — l'écart à votre norme sur chaque mesure dès 7 jours d'historique, en reprenant l'affichage
+  de « Ce qui change aujourd'hui » (identité visuelle intacte).
+- [ ] AUJ-9 — Toucher la courbe du bien-être ou le graphique digestif ouvre Journal › Tendances réglé sur cette mesure
+  (après ORG-3 ; d'ici là la courbe ouvre l'historique du bien-être).
+
+## 🗂️ Nouvelle organisation (revue design du propriétaire du 07/11 vers 16:30) — après le nouvel écran Aujourd'hui
+
+> Remplace les anciennes consignes sur Journal, Analyses, Tendances et FODMAP (dont ANALYSES-ONGLETS et TESTEUR-3b).
+> Onglets : Aujourd'hui, Journal, Analyses, Agir (nouveau), Sources. Leçons 13 à 17 : `DESIGN.md` § 9.
+> Un run = une étape, captures avant / après.
+
+- [ ] ORG-1 — Barre d'onglets : Aujourd'hui, Journal, Analyses, Agir, Sources ; Agir visible dès le début avec un état
+  vide simple ; la réintroduction FODMAP quitte Analyses pour Agir (code gardé), proposée seulement quand une analyse
+  digestive repère un groupe FODMAP.
+- [ ] ORG-2 — Journal › Jours : retirer « Ce qui a été mesuré et noté, jour par jour », la photo des selles et « Vous
+  avez corrigé N estimations » ; cartes jour par jour gardées, une icône par mesure, couleurs par thème, écart à la
+  norme ; ni source dans un libellé (« Stress montre ») ni « · ».
+- [ ] ORG-3 — Journal › Tendances (quitte Analyses) devient un visualiseur : jour, semaine ou mois ; une ou plusieurs
+  mesures superposables (un axe par unité) ; une mesure proposée à partir de 3 points ; toute mesure disponible.
+  « Votre forme », radar (code gardé) et comptes à rebours en texte retirés.
+- [ ] ORG-3b — L'historique du bien-être fusionne dans Tendances (vue Jour, détail de chaque lecture au toucher :
+  matrice des émotions, valence, éveil, qualité ; on descend aussi loin qu'on veut).
+- [ ] ORG-4 — Analyses = Bien-être et Digestion, même structure : retirer l'historique, « Sur quelques semaines »,
+  « Autres liens repérés », « Bientôt » et l'analyse « dans les heures » ; « Comment c'est calculé » en lien discret en
+  bas ; avant les résultats un seul compte à rebours (« Vos premiers résultats arrivent dans N jours », phrase du
+  propriétaire, « Noter maintenant », « Recevoir un rappel »).
+- [ ] ORG-5 — Méthode (remplace le modèle actuel) : une ligne par jour ; fenêtres court (le jour même avant la mesure et
+  la veille), moyen (2 à 6 jours avant), long (7 à 27 jours avant) ; un modèle linéaire régularisé par résultat, avec
+  contrôles (jour de la semaine, maladie ou voyage, tendance) et intervalles ; tests par blocs d'une semaine, correction
+  sur facteurs × horizons, lien net seulement s'il tient dans ≥ 85 % des rééchantillonnages ; pas de « Ce qui pèse »
+  sans prévision meilleure que « demain = aujourd'hui » hors échantillon ; courte liste de facteurs par personne ; jours
+  notés plus pesants. Banc de simulation avec vérité connue (faux liens ≤ 5 %, effets forts retrouvés). Plusieurs
+  runs : ORG-5a banc, ORG-5b fenêtres et matrice, ORG-5c modèle et stabilité, ORG-5d branchement.
+- [ ] ORG-6 — Résultats d'Analyses : « Pistes à tester » (2 ou 3 liens nets sur ce qu'on peut changer, « Essayer dans
+  Agir ») puis « Ce qui pèse sur votre bien-être » : Court / Moyen / Long terme, barres de part et d'autre de zéro en
+  points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,
+  hachurées si pas assez net ; à part « À regarder, pas à changer » (corps, contexte). Déblocage : bien-être 14 / 21 /
+  42 jours, digestion 28 / 35 / 56 jours et au moins 5 jours de gêne ou douleur.
+- [ ] ORG-7 — Sources de données classées dans `PRODUIT.md` (fréquence, rôle, possibilité d'agir) ; à venir : bilans
+  sanguins (rares) et son ambiant (niveaux seulement, jamais d'audio).
 
 ## 🧑‍🔬 Retours du premier testeur iPhone du 06/11 au soir — PRIORITÉ DES RUNS DE CODE (seule une CI cassée passe avant)
 

@@ -1,4 +1,4 @@
-/* Statut du jour (TESTEUR-1c) : carte menthe en tête de l'Accueil. Couleurs : WellbeingNudges.css (.mood-estimate). */
+/* Bien-être aujourd'hui (AUJ-2) : carte menthe en tête de l'Accueil. Couleurs : WellbeingNudges.css (.mood-estimate). */
 .day-status-main {
   display: block;
   color: inherit;
@@ -8,83 +8,84 @@
 
 .day-status-top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
 
-.day-status-heading {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
-
 .day-status-label {
+  margin: 0;
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--mint-label);
 }
 
-.day-status-title {
-  margin-top: 2px;
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1.1;
-  color: var(--color-ink);
-}
-
 .day-status-chevron {
   flex: none;
-  margin-top: 4px;
   color: var(--mint-label);
   transform: rotate(-90deg);
 }
 
-.day-status-scale {
-  margin: 16px 0 0;
-}
-
-.day-status-segments {
+.day-status-body {
   display: flex;
-  gap: 6px;
-}
-
-.day-status-segments span {
-  flex: 1;
-  height: 8px;
-  border-radius: 4px;
-  background: rgba(var(--ink-2-rgb), 0.18);
-}
-
-.day-status-segments span.is-on {
-  background: var(--mint-label);
-}
-
-.day-status-legend {
-  display: flex;
-  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
   margin-top: 6px;
-  font-size: 0.72rem;
+}
+
+.day-status-value {
+  margin: 0;
+  color: var(--color-ink);
+}
+
+.day-status-number {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.day-status-max {
+  margin-left: 2px;
+  font-size: 1rem;
+  color: var(--mint-label);
 }
 
 .day-status-from {
-  margin: 12px 0 0;
+  margin: 0;
   font-size: 0.95rem;
   line-height: 1.4;
 }
 
-.day-status-note {
+.is-empty .day-status-from {
+  margin-top: 10px;
+}
+
+.day-curve {
+  display: block;
   width: 100%;
-  margin-top: 14px;
+  height: auto;
+  margin-top: 12px;
+  overflow: visible;
 }
 
-.day-status-foot {
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
+.day-curve-mid {
+  stroke: rgba(var(--ink-2-rgb), 0.25);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  vector-effect: non-scaling-stroke;
 }
 
-.day-status-foot-text {
-  flex: 1;
-  min-width: 0;
+.day-curve-trend {
+  fill: none;
+  stroke: var(--mint-label);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.day-curve-dot {
+  fill: var(--mint-label);
+  opacity: 0.45;
 }
