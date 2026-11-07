@@ -94,7 +94,7 @@ function withTags(payload, tags) {
  * du propriétaire du 24/10 : la lecture du visage estime déjà le bien-être). Avec `entry`, elle modifie cette note :
  * la note et les tags changent, l'heure et les autres champs restent.
  */
-export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
+export default function WellbeingPrompt({ open = false, onClose, entry, initialMode = 'now' } = {}) {
   const [selected, setSelected] = useState(null)
   const [tags, setTags] = useState([])
   const [saving, setSaving] = useState(false)
@@ -123,7 +123,7 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
     let alive = true
     recentCaptures().then((v) => alive && setCaptures(v))
     setEveningHint(null)
-    setMode('now')
+    setMode(initialMode)
     if (eveningNotePlugin()) {
       getEveningNoteStatus().then((v) => {
         if (!alive) return
@@ -134,7 +134,7 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
     return () => {
       alive = false
     }
-  }, [open])
+  }, [open, initialMode])
 
   // Never ask for what the app already measures (an old note keeps its tag visible, to remove it).
   const autoIds = open ? autoDetectedTagIds({ phoneUsage: getPhoneUsageSettings().enabled, ...captures }) : []

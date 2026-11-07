@@ -37,8 +37,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   l'historique, sans légende, à partir de 3 points) ; sans lecture, les notes du jour ; toucher → historique. Plus de
   verdict, d'échelle à segments, d'« estimation prudente » ni d'horizon qui respire (`DayBreath` supprimé) ; phrase
   d'intro du premier lancement retirée (leçon 2). (07/11 16:35)
-- [ ] AUJ-2b — Calibration de départ dans ce bloc : « Calibration du bien-être : 0 jour sur 3 », phrase du
-  propriétaire, « Remplir maintenant » et « Recevoir un rappel » (bouton large) ; lié à (5) du 04/11.
+- [x] AUJ-2b — Calibration de départ dans ce bloc : « Calibration du bien-être : 0 jour sur 3 », phrase du
+  propriétaire, « Remplir maintenant » et « Recevoir un rappel » (bouton large) ; lié à (5) du 04/11. (07/11 18:40 :
+  `StartCalibration`, « Recevoir un rappel » seulement quand la notification du soir existe ; `WellbeingPrompt`
+  `initialMode`)
 - [x] AUJ-3 — « Vos données du jour » en un seul bloc : une icône par mesure, l'écart à vos 14 derniers jours sur la
   mesure elle-même, sources en petit en bas (jamais un nom d'appareil ou d'app technique) ; `DayChanges` (« Ce qui
   change aujourd'hui ») disparaît. (07/11 19:05 : `TodayBySource` en un bloc, `measureNorms`, icônes par mesure,
@@ -102,6 +104,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     pour une variation habituelle, fourchette à 95 %, « net », thème, possibilité d'agir ; seuils de déblocage d'ORG-6 ;
     contributions du jour (coefficient × écart). Méthode provisoire (pente contrôlée semaine / week-end et tendance,
     échantillon effectif, BH) ; ORG-5c la remplace sans changer la forme. La session interface s'y branche.
+  - [x] ORG-5a (07/11, chantier du soir) : banc de simulation avec vérité connue (`services/method/simulate.js`,
+    `bench.js`, `bench.test.js`) : facteurs autocorrélés, rythme de la semaine, tendance, jours manquants, digestion
+    en échelle ordonnée ; mesure la part des jeux avec au moins un faux lien « net » et la puissance par effet vrai.
+    Le banc a montré que la méthode provisoire laissait passer jusqu'à 60 % de jeux avec un faux lien (BH + échantillon
+    effectif sur la seule veille) : corrigée (Bartlett, Student, Holm, facteur de prudence 1,4 calé au banc). Mesures
+    (200 jeux) : faux liens 0 à 3,5 % selon le scénario ; effet fort court terme retrouvé 60 % à 70 jours, ≥ 80 % à 120 ;
+    moyen terme 26 % à 70 jours ; long terme 3 % (il faut des mois) ; digestion forte 75 % à 90 jours ; règle 5 vérifiée
+    (un facteur du seul bien-être ne sort pas en digestion). Porte d'ORG-5c : faire mieux en puissance sans dépasser 5 %.
 - [ ] ORG-6 — Résultats d'Analyses : « Pistes à tester » (2 ou 3 liens nets sur ce qu'on peut changer, « Essayer dans
   Agir ») puis « Ce qui pèse sur votre bien-être » : Court / Moyen / Long terme, barres de part et d'autre de zéro en
   points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,

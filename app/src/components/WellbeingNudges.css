@@ -117,6 +117,13 @@
   cursor: pointer;
 }
 
+.mood-calib-button.is-secondary {
+  margin-top: 8px;
+  border: 2px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+}
+
 .mood-calib.is-quiet {
   display: flex;
   align-items: center;

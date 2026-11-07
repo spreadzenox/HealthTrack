@@ -15,8 +15,9 @@
  * jour-là à sa valeur habituelle), pour « Ce qui a pu peser ce jour-là » de Tendances.
  *
  * Méthode actuelle (`method: 'provisional'`) : pente simple par facteur et par horizon, contrôlée pour le jour de la
- * semaine (semaine / week-end) et la tendance, taille d'échantillon effective (autocorrélation), Benjamini-Hochberg sur
- * facteurs × horizons d'un même résultat ; « net » = q ≤ 0,1 et fourchette qui ne touche pas zéro. ORG-5c la remplace
+ * semaine (semaine / week-end) et la tendance, échantillon effectif de Bartlett (autocorrélations positives), erreur
+ * élargie d'un facteur calé au banc, Student, Holm sur facteurs × horizons d'un même résultat ; « net » = p de Holm
+ * ≤ 0,05 et fourchette qui ne touche pas zéro (banc ORG-5a : `method/bench.test.js`). ORG-5c la remplace
  * par un modèle régularisé avec stabilité par rééchantillonnage ; la forme ne bouge pas.
  *
  * Règles de data science (5 et 6) : le bien-être n'est jamais un facteur, ni la digestion ; les analyses digestives
@@ -24,7 +25,7 @@
  * de l'estimateur du bien-être (`isEstimatorInput`) ; aucun sens « bon » ou « mauvais » n'est supposé.
  */
 import { buildDailyDataset, localDateKey, VARIABLE_META } from './analysisEngine'
-import { benjaminiHochberg, effectiveSampleSize, isWeekendKey, normalCdf, residualize } from './statistics'
+import { isWeekendKey, residualize } from './statistics'
 import { faceMoodDays } from './mood/faceMoodDays'
 import { GUT_TYPE } from './today'
 import { formatDuration } from '../utils/format'
@@ -123,8 +124,25 @@ export const UNLOCK_DAYS = {
 /** Digestion : au moins 5 jours de gêne ou de douleur (sans eux, rien à expliquer). */
 export const DIGESTION_MIN_SYMPTOM_DAYS = 5
 
-/** Un lien est « net » sous ce q (Benjamini-Hochberg sur facteurs × horizons d'un résultat). */
-export const NET_MAX_Q = 0.1
+/**
+ * Un lien est « net » si sa p corrigée par Holm sur facteurs × horizons d'un résultat reste sous ce seuil : la chance
+ * qu'un seul faux lien apparaisse sur tout un résultat reste sous 5 % (banc ORG-5a). Benjamini-Hochberg contrôlait
+ * seulement la part de faux liens et en laissait passer dès qu'un vrai lien fort était là.
+ */
+export const NET_MAX_P = 0.05
+
+/** p corrigées de Holm (même ordre que l'entrée). */
+export function holm(pValues) {
+  const m = pValues.length
+  const order = pValues.map((p, i) => [p, i]).sort((a, b) => a[0] - b[0])
+  const out = new Array(m)
+  let run = 0
+  order.forEach(([p, i], k) => {
+    run = Math.max(run, Math.min(1, (m - k) * p))
+    out[i] = run
+  })
+  return out
+}
 /** Un facteur n'entre que s'il est connu au moins ces jours-là (part des jours du résultat). */
 export const FACTOR_MIN_COVERAGE = 0.5
 
@@ -257,6 +275,105 @@ const niceAmount = (sd, step) => Math.max(step, Math.round(sd / step) * step)
 
 // ─── Calcul ──────────────────────────────────────────────────────────────────
 
+function logGamma(x) {
+  const c = [76.180091729, -86.505320329, 24.014098241, -1.231739572, 0.001208651, -0.000005395]
+  let y = x
+  const tmp = x + 5.5 - (x + 0.5) * Math.log(x + 5.5)
+  let ser = 1.00000000019
+  for (const k of c) ser += k / ++y
+  return -tmp + Math.log((2.5066282746 * ser) / x)
+}
+
+/** Fonction bêta incomplète régularisée (fraction continue de Lentz). */
+function betaInc(a, b, x) {
+  if (x <= 0) return 0
+  if (x >= 1) return 1
+  const front = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1 - x))
+  const cf = (aa, bb, xx) => {
+    let c = 1
+    let d = 1 - ((aa + bb) * xx) / (aa + 1)
+    if (Math.abs(d) < 1e-30) d = 1e-30
+    d = 1 / d
+    let h = d
+    for (let m = 1; m <= 200; m += 1) {
+      const m2 = 2 * m
+      let num = (m * (bb - m) * xx) / ((aa + m2 - 1) * (aa + m2))
+      d = 1 + num * d; if (Math.abs(d) < 1e-30) d = 1e-30
+      c = 1 + num / c; if (Math.abs(c) < 1e-30) c = 1e-30
+      d = 1 / d; h *= d * c
+      num = (-(aa + m) * (aa + bb + m) * xx) / ((aa + m2) * (aa + m2 + 1))
+      d = 1 + num * d; if (Math.abs(d) < 1e-30) d = 1e-30
+      c = 1 + num / c; if (Math.abs(c) < 1e-30) c = 1e-30
+      d = 1 / d
+      const del = d * c
+      h *= del
+      if (Math.abs(del - 1) < 1e-10) break
+    }
+    return h
+  }
+  return x < (a + 1) / (a + b + 2) ? (front * cf(a, b, x)) / a : 1 - (front * cf(b, a, 1 - x)) / b
+}
+
+function autocorrelations(v, maxLag) {
+  const n = v.length
+  const m = v.reduce((s, x) => s + x, 0) / n
+  const d = v.map((x) => x - m)
+  const den = d.reduce((s, x) => s + x * x, 0)
+  const out = []
+  for (let k = 1; k <= maxLag; k += 1) {
+    let num = 0
+    for (let i = k; i < n; i += 1) num += d[i] * d[i - k]
+    out.push(den > 0 ? num / den : 0)
+  }
+  return out
+}
+
+/**
+ * Échantillon effectif d'une pente (Bartlett) : n / (1 + 2 Σ ρx(k) ρe(k)), sommé tant que les deux autocorrélations
+ * restent positives (jusqu'à n/4). Entre 3 et n.
+ */
+export function bartlettN(x, e) {
+  const n = x.length
+  const maxLag = Math.max(1, Math.floor(n / 4))
+  const ax = autocorrelations(x, maxLag)
+  const ae = autocorrelations(e, maxLag)
+  let sum = 0
+  for (let k = 0; k < maxLag; k += 1) {
+    if (!(ax[k] > 0 && ae[k] > 0)) break
+    sum += ax[k] * ae[k]
+  }
+  return Math.max(3, Math.min(n, n / (1 + 2 * sum)))
+}
+
+/**
+ * Prudence calée au banc (ORG-5a, method/bench.test.js) : sur quelques semaines, l'autocorrélation estimée laisse
+ * l'erreur de la pente 10 à 20 % trop petite ; sans ce facteur, des faux liens passent la correction de Holm.
+ */
+export const SE_INFLATION = 1.4
+
+/** p bilatérale d'un t de Student à `df` degrés de liberté. */
+export function tTwoSidedP(t, df) {
+  return betaInc(df / 2, 0.5, df / (df + t * t))
+}
+
+/** Quantile bilatéral à 95 % du t de Student (par dichotomie). */
+export function tCritical95(df) {
+  let lo = 0
+  let hi = 100
+  for (let i = 0; i < 60; i += 1) {
+    const mid = (lo + hi) / 2
+    if (tTwoSidedP(mid, df) > 0.05) lo = mid
+    else hi = mid
+  }
+  return (lo + hi) / 2
+}
+
+/**
+ * Longueur des blocs pour l'erreur de la pente (moyennes par blocs) : au moins une semaine, et au moins la fenêtre
+ * de l'horizon (une moyenne sur 21 jours reste corrélée à elle-même pendant des semaines).
+ */
+export const blockDays = (horizon) => Math.max(7, horizon.to - horizon.from + 1)
+
 function fitOne(series, days, f, horizon) {
   const pts = []
   for (const [dk, y] of series) {
@@ -277,15 +394,18 @@ function fitOne(series, days, f, horizon) {
   if (!(sxx > 1e-9)) return null
   const slope = rx.residuals.reduce((s, v, i) => s + v * ry[i], 0) / sxx
   const n = pts.length
-  const nEff = Math.max(3, Math.min(n, effectiveSampleSize(rx.residuals, ry)))
-  const df = Math.max(1, nEff - 2 - rx.used)
-  const rss = ry.reduce((s, v, i) => s + (v - slope * rx.residuals[i]) ** 2, 0)
-  // Variance de la pente sur l'échantillon effectif (sxx ramené à nEff jours).
-  const se = Math.sqrt(rss / df / (sxx * (nEff / n)))
+  // Échantillon effectif (Bartlett) d'après l'autocorrélation du facteur et du résultat (sans la part du facteur
+  // qui agit), sommée tant que les deux restent positives : au-delà, les autocorrélations estimées sur quelques
+  // semaines ne sont que du bruit et les additionner rend la fourchette faussement étroite.
+  const errors = ry.map((v, i) => v - slope * rx.residuals[i])
+  const nEff = bartlettN(rx.residuals, errors)
+  const df = Math.max(1, Math.round(nEff) - 2 - rx.used)
+  const rss = errors.reduce((s, v) => s + v * v, 0)
+  const se = SE_INFLATION * Math.sqrt(rss / Math.max(1, n - 2 - rx.used) / (sxx * (nEff / n)))
+  const tc = tCritical95(df)
   const sd = Math.sqrt(sxx / n)
   const amount = niceAmount(sd, f.step)
-  const z = se > 0 ? Math.abs(slope / se) : 0
-  const p = 2 * (1 - normalCdf(z))
+  const p = se > 0 ? tTwoSidedP(Math.abs(slope / se), df) : 1
   const r = (v) => Math.round(v * 100) / 100
   return {
     key: f.key,
@@ -294,8 +414,8 @@ function fitOne(series, days, f, horizon) {
     actionable: f.actionable,
     horizon: horizon.id,
     effect: r(slope * amount),
-    low: r((slope - 1.96 * se) * amount),
-    high: r((slope + 1.96 * se) * amount),
+    low: r((slope - tc * se) * amount),
+    high: r((slope + tc * se) * amount),
     net: false,
     usualChange: { amount, unit: f.unit, text: f.text(amount) },
     perUnit: slope,
@@ -312,12 +432,27 @@ function fitOne(series, days, f, horizon) {
  * @returns {AnalysisResults}
  */
 export function computeAnalysisResults(entries, { now = new Date() } = {}) {
-  const today = localDateKey(now.toISOString())
-  const series = outcomeSeries(entries)
-  const days = factorDays(entries)
+  return analyzeMatrix(buildAnalysisMatrix(entries), { today: localDateKey(now.toISOString()) })
+}
+
+/**
+ * La matrice quotidienne qu'analyse la méthode : séries des résultats et valeurs des facteurs par jour. Le banc de
+ * simulation (method/simulate.js) fabrique directement des matrices de même forme.
+ * @returns {{ series: { wellbeing: Map<string, number>, digestion: Map<string, number>, symptomDays: number },
+ *   days: Map<string, Record<string, number|null>> }}
+ */
+export function buildAnalysisMatrix(entries) {
+  return { series: outcomeSeries(entries), days: factorDays(entries) }
+}
+
+/**
+ * Analyse d'une matrice quotidienne (voir buildAnalysisMatrix) jusqu'au jour `today` inclus.
+ * @returns {AnalysisResults}
+ */
+export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {}) {
   const outcomes = {}
   for (const def of OUTCOMES) {
-    const ys = new Map([...series[def.id]].filter(([dk]) => dk <= today))
+    const ys = new Map([...series[def.id]].filter(([dk]) => !today || dk <= today))
     const daysHave = ys.size
     const symptomOk = def.id !== 'digestion' || series.symptomDays >= DIGESTION_MIN_SYMPTOM_DAYS
     const horizons = {}
@@ -327,14 +462,14 @@ export function computeAnalysisResults(entries, { now = new Date() } = {}) {
       const ready = symptomOk && daysHave >= daysNeeded
       horizons[h.id] = { id: h.id, label: h.label, window: h.window, status: ready ? 'ready' : 'locked', daysHave, daysNeeded, factors: [] }
       if (!ready) continue
-      for (const f of FACTORS) {
+      for (const f of factors) {
         const fit = fitOne(ys, days, f, h)
         if (fit) { fit.outcome = def.id; fitted.push(fit) }
       }
     }
-    const qs = benjaminiHochberg(fitted.map((f) => f._p))
+    const qs = holm(fitted.map((f) => f._p))
     fitted.forEach((f, i) => {
-      f.net = qs[i] <= NET_MAX_Q && (f.low > 0 || f.high < 0)
+      f.net = qs[i] <= NET_MAX_P && (f.low > 0 || f.high < 0)
       delete f._p
       horizons[f.horizon].factors.push(f)
     })
@@ -353,7 +488,7 @@ export function computeAnalysisResults(entries, { now = new Date() } = {}) {
       horizons,
     }
   }
-  return { contractVersion: CONTRACT_VERSION, method: 'provisional', computedFor: today, outcomes }
+  return { contractVersion: CONTRACT_VERSION, method: 'provisional', computedFor: today ?? null, outcomes }
 }
 
 /**
@@ -365,7 +500,7 @@ export function computeAnalysisResults(entries, { now = new Date() } = {}) {
  * @param {{ outcome?: OutcomeId, max?: number }} [options]
  * @returns {DayContribution[]}
  */
-export function dayContributions(results, entries, dateKey, { outcome = 'wellbeing', max = 3 } = {}) {
+export function dayContributions(results, entries, dateKey, { outcome = 'wellbeing', max = 3, days: givenDays } = {}) {
   const out = results?.outcomes?.[outcome]
   if (!out) return []
   const best = new Map()
@@ -377,7 +512,7 @@ export function dayContributions(results, entries, dateKey, { outcome = 'wellbei
     }
   }
   if (!best.size) return []
-  const days = factorDays(entries)
+  const days = givenDays ?? factorDays(entries)
   const num = dayNum(dateKey)
   const list = []
   for (const { f } of best.values()) {

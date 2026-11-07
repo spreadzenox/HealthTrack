@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import { eveningNotePlugin } from '../services/eveningNote'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
@@ -108,7 +109,8 @@ export default function Dashboard() {
       <LaunchEndCard />
       {/* AUJ-2 : le bien-être du jour (valeur, lectures, courbe) ; détails dans l'historique. */}
       <DayStatusCard data={loading ? undefined : wellbeing} entries={entries}
-        onAddManual={() => setWellbeingOpen(true)} unlockReminder={unlockReminder}
+        onAddManual={() => setWellbeingOpen(true)} onReminder={eveningNotePlugin() ? () => setWellbeingOpen('reminder') : undefined}
+        unlockReminder={unlockReminder}
         onDismissReminder={closeUnlockReminder} />
       {/* AUJ-3 : vos données du jour, un bloc, l'écart à votre norme sur chaque mesure ; puis les analyses. */}
       {!loading && !error && (
@@ -118,7 +120,8 @@ export default function Dashboard() {
       <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} todayChanges={dayChanges} />
 
 
-      <WellbeingPrompt open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />
+      <WellbeingPrompt open={!!wellbeingOpen} initialMode={wellbeingOpen === 'reminder' ? 'reminder' : 'now'}
+        onClose={() => setWellbeingOpen(false)} />
 
       {loading && (
         <div className="loading">
