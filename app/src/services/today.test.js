@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   daySummaryTitle,
+  dayStatus,
   entrySourceLabel,
   formatDelta,
   gutEveningCheck,
@@ -37,6 +38,39 @@ describe('daySummaryTitle', () => {
   it('reste neutre sans lecture aujourd’hui (une lecture d’hier ne décrit pas aujourd’hui)', () => {
     expect(daySummaryTitle(null)).toBe('Votre journée')
     expect(daySummaryTitle({ day: null, moment: { note: 4.5 } })).toBe('Votre journée')
+  })
+})
+
+describe('dayStatus (TESTEUR-1c)', () => {
+  const now = new Date(2026, 10, 7, 12, 0)
+  const at = (h, m = 0) => new Date(2026, 10, 7, h, m).toISOString()
+  const note = (score, iso) => ({ type: 'wellbeing', at: iso, payload: { score } })
+
+  it('trois titres, mêmes seuils que daySummaryTitle, et le segment de l’échelle 1 à 5', () => {
+    const s = (n) => dayStatus({ day: { note: n, readings: 4 }, confidence: 'bonne' }, [], now)
+    expect(s(3.4)).toMatchObject({ level: 'good', title: 'Plutôt bonne', segment: 4, source: 'face' })
+    expect(s(2.5)).toMatchObject({ level: 'medium', title: 'Plutôt moyenne', segment: 3 })
+    expect(s(1.5)).toMatchObject({ level: 'hard', title: 'Plus difficile', segment: 2 })
+    expect(s(0)).toMatchObject({ segment: 1 })
+    expect(s(5)).toMatchObject({ segment: 5 })
+    expect(s(2.5).from).toBe('D’après votre visage aujourd’hui.')
+    expect(s(2.5).chips).toEqual(['4 lectures du visage'])
+  })
+
+  it('étiquettes : une lecture, la note du jour, le ventre seulement s’il a été compté, la prudence', () => {
+    const est = { day: { note: 2.5, readings: 1, gut: { level: 'pain' } }, confidence: 'faible' }
+    const s = dayStatus(est, [note(3.75, at(9)), note(0, at(8, 0))], now)
+    expect(s.chips).toEqual(['1 lecture du visage', 'votre note : 4/5', 'ventre : douleur comptée', 'estimation prudente'])
+    const noGut = dayStatus({ day: { note: 2.5, readings: 2, gut: null }, confidence: 'moyenne' }, [], now)
+    expect(noGut.chips.join(' ')).not.toMatch(/ventre|prudente/)
+  })
+
+  it('sans lecture du jour : la dernière note du jour, jamais une note d’hier', () => {
+    const s = dayStatus({ day: null, moment: { note: 4.5 } }, [note(1.25, at(9, 5)), note(5, at(7))], now)
+    expect(s).toMatchObject({ level: 'hard', title: 'Plus difficile', segment: 2, source: 'note', chips: [] })
+    expect(s.from).toMatch(/^D’après votre note de 09:05\.$/)
+    const yesterday = note(5, new Date(2026, 10, 6, 20).toISOString())
+    expect(dayStatus(null, [yesterday], now)).toMatchObject({ level: null, title: 'Pas encore d’avis', segment: null })
   })
 })
 

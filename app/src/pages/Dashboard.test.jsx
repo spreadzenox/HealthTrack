@@ -79,7 +79,10 @@ describe('Dashboard', () => {
     // Date et « Bonjour » sur deux lignes, sans « · » (retours du testeur du 06/11)
     expect(screen.getByText('Bonjour')).toHaveClass('today-hello')
     expect(document.querySelector('.today-dateline').textContent).not.toMatch(/·|Bonjour/)
-    expect(screen.getByRole('heading', { level: 2, name: 'Votre journée' })).toBeInTheDocument()
+    // TESTEUR-1c : sans lecture ni note, « Votre journée : pas encore d'avis » et un seul bouton pour noter
+    expect(await screen.findByRole('heading', { level: 2, name: /Votre journée.*Pas encore d’avis/ })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Noter comment je me sens' }))
+    expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
     const intro = await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)
     // Une seule phrase (VC-26) ; les sources se branchent pendant l'accueil, plus de ligne « Pas et nuits… »
     expect(intro.textContent.match(/[.!?](\s|$)/g)).toHaveLength(1)
@@ -194,9 +197,9 @@ describe('Dashboard', () => {
     expect(screen.queryByRole('button', { name: 'Ajouter une note' })).not.toBeInTheDocument()
   })
 
-  it('« Noter moi-même » de la carte bien-être ouvre la note manuelle', async () => {
+  it('sans avis du jour, « Noter comment je me sens » ouvre la note manuelle', async () => {
     renderDashboard()
-    fireEvent.click(await screen.findByRole('button', { name: 'Noter moi-même' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Noter comment je me sens' }))
     expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
   })
 
@@ -225,7 +228,7 @@ describe('Dashboard', () => {
 
   it('la note manuelle s’ouvre vierge et se ferme', async () => {
     renderDashboard()
-    fireEvent.click(await screen.findByRole('button', { name: 'Noter moi-même' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Noter comment je me sens' }))
     expect(screen.getByRole('dialog')).not.toHaveTextContent('Édition')
     fireEvent.click(screen.getByRole('button', { name: /Fermer/i }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()

@@ -41,7 +41,12 @@
 > cherchent ; puis vos données du jour par source (montre, téléphone, noté par vous) ; enfin un seul endroit
 > « Noter ». Animation : un « horizon qui respire » dont la pente suit la journée. Si quelque chose vous déplaît
 > dans la maquette, dites-le avant les runs de code qui suivent.
-> Prochaines : le statut du jour dans l'app (1c), puis les données par source et « Noter » (1d).
+> **Votre journée (09:35)** : en haut de l'Accueil, la carte menthe dit maintenant « Votre journée : Plutôt moyenne »
+> (ou plutôt bonne, plus difficile), la place du jour sur l'échelle 1 à 5, et d'où ça vient (« D'après votre visage
+> aujourd'hui », ou votre note du jour s'il n'y a pas eu de lecture), avec de petites étiquettes (nombre de lectures,
+> votre note, une gêne au ventre comptée). Toucher la carte ouvre l'historique, où sont passés la courbe et les
+> détails. Sans rien aujourd'hui : « Pas encore d'avis » et un seul bouton, « Noter comment je me sens ».
+> Prochaines : les données du jour par source et un seul endroit « Noter » (1d), puis « Ce qui change aujourd'hui » (1d-2).
 > Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
@@ -159,6 +164,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 09:35 — [Votre journée](runs/2026-11-07-0935-votre-journee.md) | 🎨 | TESTEUR-1c : carte « Votre journée » en tête de l'Accueil (titre, échelle 1 à 5, d'où il vient, étiquettes), à la place du titre et de la carte « Bien-être estimé » ; toucher → historique ; « Pas encore d'avis » avec un seul bouton. |
 | 07/11 08:35 — [Maquette d'Aujourd'hui](runs/2026-11-07-0835-maquette-aujourdhui.md) | 💡 | TESTEUR-1b : maquette du nouvel écran Aujourd'hui (statut du jour en tête et d'où il vient, ce qui change, données par source, un seul endroit pour noter, animation), captures claires, sombres et premier jour ; découpée en 4 runs de code. Rien à faire de votre côté, sauf un avis si la maquette ne vous va pas |
 | 07/11 07:35 — [La météo dès l'accueil](runs/2026-11-07-0735-meteo-accueil.md) | 🎨 | TESTEUR-5a-1 : écran « La météo de votre ville » dans l'accueil (position approximative après divulgation, refus respecté) ; premier geste de l'accueil de 1 à 5 (il était resté sur 0 à 5). |
 | 07/11 06:35 — [Remplir maintenant ou plus tard](runs/2026-11-07-0635-rappel-du-soir.md) | 🎨 | En notant son bien-être, deux choix : « Remplir maintenant » ou « Recevoir un rappel » à l'heure voulue (18 h à 23 h), qui s'arrête d'un geste ; la notification du soir passe aux notes 1 à 5, comme l'app. **À tester** : programmez un rappel proche et notez depuis la notification |

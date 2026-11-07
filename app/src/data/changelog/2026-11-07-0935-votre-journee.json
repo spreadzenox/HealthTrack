@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "Votre journée, en tête de l'Accueil",
+  "items": [
+    "En haut de l'Accueil, une seule carte dit comment se passe votre journée, sur l'échelle de 1 à 5, et d'où vient cet avis : votre visage, ou votre note du jour.",
+    "Touchez la carte pour ouvrir l'historique de votre bien-être. Sans lecture ni note du jour, un bouton suffit pour dire comment vous vous sentez."
+  ]
+}
