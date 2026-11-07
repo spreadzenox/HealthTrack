@@ -60,7 +60,11 @@
 > rien d'inhabituel : « Une journée comme les autres pour vos mesures. » Masqué avant 7 jours de mesures. Les pas et
 > l'écran ne sont dits « en moins » qu'après 21 h (la journée n'est pas finie). La carte des analyses dit enfin ce
 > qu'elles cherchent (« Halcya cherchera quels repas reviennent avant vos gênes au ventre. »).
-> Prochaine : l'animation (1e).
+> **Une petite animation (13:35)** : en bas à droite de « Votre journée », un « horizon qui respire » : deux disques
+> menthe qui gonflent lentement, une ligne dont la pente suit la journée (monte si plutôt bonne, plate si moyenne,
+> descend si plus difficile) et un point ambre qui flotte dessus. Immobile si le téléphone demande de réduire les
+> animations ; absente tant qu'il n'y a pas d'avis sur la journée.
+> Prochaine : la carte des analyses, une fois prêtes, citera la piste qui touche une mesure du jour (1d-3).
 > Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
@@ -178,6 +182,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 13:35 — [Un horizon qui respire](runs/2026-11-07-1335-horizon-respire.md) | 🎨 | TESTEUR-1e : petite animation en bas de la carte « Votre journée » (pente selon la journée, immobile avec « réduire les animations »). Rien à faire de votre côté |
 | 07/11 12:35 — [Ce qui change aujourd'hui](runs/2026-11-07-1235-ce-qui-change.md) | 🎨 | TESTEUR-1d-2 : section « Ce qui change aujourd'hui » sur l'Accueil (au plus 3 écarts à votre médiane des 14 jours, sans jugement) ; phrase « Halcya cherchera… » dans la carte des analyses. Rien à faire de votre côté |
 | 07/11 11:35 — [Vos données du jour](runs/2026-11-07-1135-donnees-du-jour.md) | 🎨 | TESTEUR-1d-b : « Vos données du jour » par source (Montre, Téléphone, Noté par vous) sur l'Accueil ; ancienne carte « Bien-être estimé » supprimée. Rien à faire de votre côté |
 | 07/11 10:35 — [Un seul endroit pour noter](runs/2026-11-07-1035-noter.md) | 🎨 | TESTEUR-1d-a : section « Noter » sur l'Accueil (Photo du repas, « Mon bien-être », « Mon ventre » avec l'objectif ventre, « Autre chose ») ; la carte « Votre journée » n'a plus de bouton. Rien à faire de votre côté |

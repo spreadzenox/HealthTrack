@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "Un horizon qui respire",
+  "items": [
+    "Dans « Votre journée », une petite animation : la ligne monte, reste plate ou descend selon votre journée.",
+    "Elle reste immobile si votre téléphone demande de réduire les animations."
+  ]
+}

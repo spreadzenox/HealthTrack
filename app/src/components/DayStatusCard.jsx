@@ -10,6 +10,7 @@ import { dayStatus } from '../services/today'
 import { NOTE_CHOICES } from '../services/mood/wellbeingScale'
 import { StartCalibration, UnlockReminder } from './WellbeingNudges'
 import LineIcon from './LineIcon'
+import DayBreath from './DayBreath'
 import './DayStatusCard.css'
 
 function Scale({ segment }) {
@@ -67,12 +68,17 @@ export default function DayStatusCard({
         </div>
         <Scale segment={status.segment} />
       </Link>
-      <p id="day-status-from" className="day-status-from">{status.from}</p>
-      {status.chips.length > 0 && (
-        <div className="mood-chips">
-          {status.chips.map((c) => <span key={c} className="mood-chip">{c}</span>)}
+      <div className="day-status-foot">
+        <div className="day-status-foot-text">
+          <p id="day-status-from" className="day-status-from">{status.from}</p>
+          {status.chips.length > 0 && (
+            <div className="mood-chips">
+              {status.chips.map((c) => <span key={c} className="mood-chip">{c}</span>)}
+            </div>
+          )}
         </div>
-      )}
+        <DayBreath level={status.level} />
+      </div>
       {est?.startCalibration && <StartCalibration cal={est.startCalibration} onAddManual={onAddManual} />}
       {reminder}
     </section>

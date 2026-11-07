@@ -83,8 +83,9 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   « en moins » seulement après 21 h ; phrase lilas propre à l'objectif ; 548 lectures à l'Accueil sur 3 ans.)
 - [ ] TESTEUR-1d-3 — Carte lilas, analyses prêtes : la piste la plus solide qui touche une mesure du jour (« Les nuits
   courtes vont souvent avec… », à confirmer), lien vers Analyses.
-- [ ] TESTEUR-1e — Animation « horizon qui respire » (CSS, pente selon le statut, immobile avec « réduire les
-  animations », `aria-hidden`).
+- [x] TESTEUR-1e — Animation « horizon qui respire » (CSS, pente selon le statut, immobile avec « réduire les
+  animations », `aria-hidden`). (07/11 13:35 : `components/DayBreath.{jsx,css}`, en bas à droite de la carte, à côté
+  de « D'après… » : en haut à droite, elle faisait passer « Plutôt moyenne » sur deux lignes.)
 
 **(2) Note de bien-être**
 - [x] TESTEUR-2a — Échelle 1 à 5 avec un milieu : migration des anciennes notes 0–5 sans perte (fonction pure,
