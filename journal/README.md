@@ -26,8 +26,12 @@
 > chacun. Septième (04:35) : la note de bien-être va de 1 à 5, avec 3 au milieu ; vos anciennes notes ne sont pas
 > modifiées, elles s'affichent sur la même échelle (une ancienne 3 se lit 3,4), comme le bien-être estimé partout dans
 > l'app. Huitième (05:35) : en notant son bien-être, on ne voit d'abord que les cinq notes ; les précisions (stress,
-> alcool, café, repas tardif, écran tard, puis les autres) et la phrase apparaissent une fois la note choisie.
-> Prochaines : une maquette du nouvel écran Aujourd'hui (run idées de 08:35), puis le rappel du soir en deux choix.
+> alcool, café, repas tardif, écran tard, puis les autres) et la phrase apparaissent une fois la note choisie. Neuvième (06:35) : la même fenêtre propose d'abord
+> « Remplir maintenant » ou « Recevoir un rappel » ; le rappel du soir se règle à l'heure voulue (18 h à 23 h) et
+> s'arrête d'un geste. La notification du soir propose maintenant les notes 1 à 5, comme l'app (elle était restée sur 0 à 5).
+> **À tester** sur votre Galaxy : Accueil → « Noter moi-même » → « Recevoir un rappel », choisissez une heure proche,
+> puis touchez une note dans la notification ; elle apparaît dans l'historique à la prochaine ouverture.
+> Prochaines : une maquette du nouvel écran Aujourd'hui (run idées de 08:35), puis son statut du jour (1c).
 > Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
@@ -145,6 +149,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 06:35 — [Remplir maintenant ou plus tard](runs/2026-11-07-0635-rappel-du-soir.md) | 🎨 | En notant son bien-être, deux choix : « Remplir maintenant » ou « Recevoir un rappel » à l'heure voulue (18 h à 23 h), qui s'arrête d'un geste ; la notification du soir passe aux notes 1 à 5, comme l'app. **À tester** : programmez un rappel proche et notez depuis la notification |
 | 07/11 05:35 — [La note d'abord](runs/2026-11-07-0535-note-dabord.md) | 🎨 | En notant son bien-être, on ne voit d'abord que les cinq notes ; précisions (stress, alcool, café, repas tardif, écran tard en tête) et phrase apparaissent une fois la note choisie ; la ligne sur la phrase dictée tient en une phrase. Rien à faire de votre côté |
 | 07/11 04:35 — [Note de bien-être de 1 à 5](runs/2026-11-07-0435-note-1-a-5.md) | 🎨 | La note de bien-être se donne de 1 à 5, avec 3 au milieu (retour du testeur). Aucune note n'est réécrite : les anciennes s'affichent sur la même échelle (0 → 1, 3 → 3,4, 5 → 5), comme le bien-être estimé dans toute l'app. Rien à faire de votre côté |
 | 07/11 03:35 — [Analyses : le modèle à part](runs/2026-11-07-0335-modele-a-cote.md) | 🎨 | En bas d'Analyses, « Le modèle qui prédit votre bien-être » n'est plus un dépliant caché dans « Comment c'est calculé » (lui-même avec un troisième dépliant dedans) : deux lignes l'une sous l'autre, un geste chacune. Rien à faire de votre côté |

@@ -18,13 +18,21 @@ import {
   DEFAULT_MINUTE,
   eveningNotePlugin,
   formatMinute,
+  getEveningNoteMinute,
   getEveningNoteStatus,
   setEveningNoteEnabled,
+  setEveningNoteMinute,
 } from '../services/eveningNote'
 import { APP_NAME } from '../config/brand'
 import LineIcon from './LineIcon'
 import { NOTE_CHOICES, choiceToScore, scoreToChoice } from '../services/mood/wellbeingScale'
 
+
+const minuteToTime = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+const timeToMinute = (t) => {
+  const [h, m] = String(t).split(':').map(Number)
+  return Number.isInteger(h) && Number.isInteger(m) ? h * 60 + m : null
+}
 
 /** Séances et repas relus sur cette période : au-delà, la source n'est sans doute plus utilisée. */
 const CAPTURE_DAYS = 14
@@ -94,6 +102,10 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
   const [captures, setCaptures] = useState({ workouts: false, meals: false, travelToday: false })
   const [evening, setEvening] = useState(null)
   const [eveningHint, setEveningHint] = useState(null)
+  // TESTEUR-2c : « Remplir maintenant » (la note) ou « Recevoir un rappel » (le soir, heure réglable).
+  const [mode, setMode] = useState('now')
+  const [reminderTime, setReminderTime] = useState(minuteToTime(DEFAULT_MINUTE))
+  const [scheduling, setScheduling] = useState(false)
   const [phrase, setPhrase] = useState('')
 
   // Reset (or prefill with the edited note) whenever the dialog opens
@@ -111,7 +123,14 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
     let alive = true
     recentCaptures().then((v) => alive && setCaptures(v))
     setEveningHint(null)
-    if (eveningNotePlugin()) getEveningNoteStatus().then((v) => alive && setEvening(v))
+    setMode('now')
+    if (eveningNotePlugin()) {
+      getEveningNoteStatus().then((v) => {
+        if (!alive) return
+        setEvening(v)
+        setReminderTime(minuteToTime(getEveningNoteMinute() ?? v?.minuteOfDay ?? DEFAULT_MINUTE))
+      })
+    }
     return () => {
       alive = false
     }
@@ -130,6 +149,9 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
 
   // TESTEUR-2b : la note d'abord ; précisions, phrase et rappel du soir apparaissent une fois la note choisie.
   const showDetails = selected !== null
+  // Le choix du rappel n'a de sens qu'avant de noter, pour une nouvelle note, là où le téléphone sait le programmer.
+  const offerReminder = !!evening && !entry && selected === null
+  const reminderMode = offerReminder && mode === 'reminder'
 
   const close = () => onClose?.()
 
@@ -137,15 +159,22 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
     setTags((prev) => (prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]))
   }
 
-  const toggleEvening = async () => {
-    const on = !evening?.enabled
-    setEvening((prev) => ({ ...prev, enabled: on }))
+  const scheduleReminder = async (on) => {
+    setScheduling(true)
+    setEveningHint(null)
     try {
+      if (on) setEveningNoteMinute(timeToMinute(reminderTime))
       const res = await setEveningNoteEnabled(on)
-      setEveningHint(res.blocked ? `Notifications refusées : autorisez-les pour ${APP_NAME} dans les réglages Android.` : null)
       setEvening(await getEveningNoteStatus())
+      if (res.blocked) {
+        setEveningHint(`Notifications refusées : autorisez-les pour ${APP_NAME} dans les réglages Android.`)
+      } else if (on) {
+        close()
+      }
     } catch {
-      setEvening((prev) => ({ ...prev, enabled: !on }))
+      setEveningHint('Rappel impossible à programmer pour l’instant.')
+    } finally {
+      setScheduling(false)
     }
   }
 
@@ -202,9 +231,59 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
         <p id="wellbeing-modal-desc" className="wellbeing-modal-desc">
           {entry
             ? 'Corrigez la note ou les tags ; l’heure de la note ne change pas.'
-            : '1 = très bas, 3 = moyen, 5 = très bien.'}
+            : reminderMode
+              ? 'Une notification le soir, pour noter d’un geste.'
+              : '1 = très bas, 3 = moyen, 5 = très bien.'}
         </p>
 
+        {offerReminder && (
+          <div className="wellbeing-when" role="group" aria-label="Quand noter">
+            {[
+              ['now', 'Remplir maintenant'],
+              ['reminder', 'Recevoir un rappel'],
+            ].map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                className={'wellbeing-when-choice' + (mode === id ? ' wellbeing-when-selected' : '')}
+                aria-pressed={mode === id}
+                onClick={() => {
+                  setMode(id)
+                  setEveningHint(null)
+                  setError(null)
+                }}
+              >
+                {id === 'reminder' && <LineIcon name="bell" size={16} />} {label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {reminderMode ? (
+          <div className="wellbeing-reminder">
+            <label className="wellbeing-reminder-time">
+              <span>Chaque soir à</span>
+              <input
+                type="time"
+                aria-label="Heure du rappel"
+                min="18:00"
+                max="23:00"
+                step="300"
+                value={reminderTime}
+                onChange={(e) => setReminderTime(e.target.value)}
+              />
+            </label>
+            {evening?.enabled && (
+              <p className="wellbeing-tags-hint">
+                Rappel prévu vers {formatMinute(evening.minuteOfDay ?? DEFAULT_MINUTE)}, sauf si vous avez déjà noté.{' '}
+                <button type="button" className="wellbeing-reminder-stop" onClick={() => scheduleReminder(false)} disabled={scheduling}>
+                  Arrêter le rappel
+                </button>
+              </p>
+            )}
+            {eveningHint && <p className="wellbeing-tags-hint">{eveningHint}</p>}
+          </div>
+        ) : (
         <div className="wellbeing-circles" role="group" aria-label="Note de bien-être de 1 à 5">
           {NOTE_CHOICES.map((n) => (
             <button
@@ -225,6 +304,7 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
             </button>
           ))}
         </div>
+        )}
 
         {showDetails && (
           <div className="wellbeing-details">
@@ -298,20 +378,6 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
             </p>
           )}
 
-          {evening && (
-            <>
-              <button
-                type="button"
-                className={'wellbeing-evening' + (evening.enabled ? ' wellbeing-evening-on' : '')}
-                aria-pressed={!!evening.enabled}
-                onClick={toggleEvening}
-              >
-                <LineIcon name="bell" size={18} /> Me la demander le soir, d’un geste depuis une notification
-                {evening.enabled ? ` (vers ${formatMinute(evening.minuteOfDay ?? DEFAULT_MINUTE)})` : ''}
-              </button>
-              {eveningHint && <p className="wellbeing-tags-hint">{eveningHint}</p>}
-            </>
-          )}
           </div>
         )}
 
@@ -325,9 +391,15 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
           <button type="button" className="btn btn-secondary" onClick={handleSkip} disabled={saving}>
             Annuler
           </button>
-          <button type="button" className="btn" onClick={handleSave} disabled={saving}>
-            {saving ? 'Enregistrement…' : 'Enregistrer'}
-          </button>
+          {reminderMode ? (
+            <button type="button" className="btn" onClick={() => scheduleReminder(true)} disabled={scheduling || !reminderTime}>
+              {evening?.enabled ? 'Changer l’heure' : 'Programmer le rappel'}
+            </button>
+          ) : (
+            <button type="button" className="btn" onClick={handleSave} disabled={saving}>
+              {saving ? 'Enregistrement…' : 'Enregistrer'}
+            </button>
+          )}
         </div>
       </div>
     </div>

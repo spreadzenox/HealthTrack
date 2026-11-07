@@ -360,40 +360,88 @@ describe('WellbeingPrompt — note du soir d’un geste (I113)', () => {
   it('absent hors de l’app Android', () => {
     delete window.__healthtrackFakeEveningNote
     render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
-    expect(screen.queryByRole('button', { name: /Me la demander le soir/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Recevoir un rappel' })).not.toBeInTheDocument()
   })
 
-  it('s’allume d’un geste et dit l’heure prévue', async () => {
+  it('TESTEUR-2c : deux choix, « Remplir maintenant » par défaut, plus de long texte', async () => {
+    window.__healthtrackFakeEveningNote = fakePlugin()
+    try {
+      render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+      const now = await screen.findByRole('button', { name: 'Remplir maintenant' })
+      expect(now).toHaveAttribute('aria-pressed', 'true')
+      expect(screen.getByRole('button', { name: 'Recevoir un rappel' })).toHaveAttribute('aria-pressed', 'false')
+      expect(screen.getByRole('button', { name: 'Note 3 sur 5' })).toBeInTheDocument()
+      expect(screen.queryByText(/d’un geste depuis une notification/)).not.toBeInTheDocument()
+      pickNote()
+      // une fois la note choisie, on remplit : le choix du rappel s'efface
+      expect(screen.queryByRole('button', { name: 'Recevoir un rappel' })).not.toBeInTheDocument()
+    } finally {
+      delete window.__healthtrackFakeEveningNote
+    }
+  })
+
+  it('« Recevoir un rappel » : heure réglable, programmé d’un geste puis fermé', async () => {
     const plugin = fakePlugin()
     window.__healthtrackFakeEveningNote = plugin
+    const onClose = vi.fn()
     try {
-      render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
-      pickNote()
-      const toggle = await screen.findByRole('button', { name: /Me la demander le soir/ })
-      expect(toggle).toHaveAttribute('aria-pressed', 'false')
-      fireEvent.click(toggle)
-      await waitFor(() => expect(plugin.configure).toHaveBeenCalledWith(expect.objectContaining({ enabled: true })))
+      render(<WellbeingPrompt open={true} onClose={onClose} />)
+      fireEvent.click(await screen.findByRole('button', { name: 'Recevoir un rappel' }))
+      expect(screen.queryByRole('button', { name: 'Note 3 sur 5' })).not.toBeInTheDocument()
+      const time = screen.getByLabelText('Heure du rappel')
+      expect(time).toHaveValue('21:00')
+      fireEvent.change(time, { target: { value: '20:30' } })
+      fireEvent.click(screen.getByRole('button', { name: 'Programmer le rappel' }))
+      await waitFor(() => expect(plugin.configure).toHaveBeenCalledWith(expect.objectContaining({ enabled: true, minuteOfDay: 20 * 60 + 30 })))
       expect(plugin.requestNotifications).toHaveBeenCalled()
-      await waitFor(() => expect(screen.getByRole('button', { name: /Me la demander le soir/ })).toHaveAttribute('aria-pressed', 'true'))
-      expect(screen.getByRole('button', { name: /Me la demander le soir/ })).toHaveTextContent('vers 21 h')
+      await waitFor(() => expect(onClose).toHaveBeenCalled())
     } finally {
       delete window.__healthtrackFakeEveningNote
+      localStorage.removeItem('healthtrack_evening_note_minute')
     }
   })
 
-  it('notifications refusées : explique où les autoriser', async () => {
-    const plugin = fakePlugin({ notifications: false })
+  it('rappel déjà programmé : le dit, l’heure se change, il s’arrête d’un geste', async () => {
+    const plugin = fakePlugin({ enabled: true, minuteOfDay: 22 * 60 })
     window.__healthtrackFakeEveningNote = plugin
     try {
       render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
-      pickNote()
-      fireEvent.click(await screen.findByRole('button', { name: /Me la demander le soir/ }))
-      expect(await screen.findByText(new RegExp(`autorisez-les pour ${APP_NAME} dans les réglages Android`))).toBeInTheDocument()
+      fireEvent.click(await screen.findByRole('button', { name: 'Recevoir un rappel' }))
+      expect(screen.getByLabelText('Heure du rappel')).toHaveValue('22:00')
+      expect(screen.getByRole('button', { name: 'Changer l’heure' })).toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'Arrêter le rappel' }))
+      await waitFor(() => expect(plugin.configure).toHaveBeenCalledWith({ enabled: false }))
     } finally {
       delete window.__healthtrackFakeEveningNote
     }
   })
 
+  it('notifications refusées : explique où les autoriser, sans fermer', async () => {
+    const plugin = fakePlugin({ notifications: false })
+    window.__healthtrackFakeEveningNote = plugin
+    const onClose = vi.fn()
+    try {
+      render(<WellbeingPrompt open={true} onClose={onClose} />)
+      fireEvent.click(await screen.findByRole('button', { name: 'Recevoir un rappel' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Programmer le rappel' }))
+      expect(await screen.findByText(new RegExp(`autorisez-les pour ${APP_NAME} dans les réglages Android`))).toBeInTheDocument()
+      expect(onClose).not.toHaveBeenCalled()
+    } finally {
+      delete window.__healthtrackFakeEveningNote
+      localStorage.removeItem('healthtrack_evening_note_minute')
+    }
+  })
+
+  it('en modifiant une note : pas de choix du rappel', async () => {
+    window.__healthtrackFakeEveningNote = fakePlugin()
+    try {
+      render(<WellbeingPrompt open={true} onClose={vi.fn()} entry={{ id: 'e1', at: new Date().toISOString(), type: 'wellbeing', payload: { score: 2.5 } }} />)
+      await screen.findByRole('button', { name: 'Note 3 sur 5' })
+      expect(screen.queryByRole('button', { name: 'Recevoir un rappel' })).not.toBeInTheDocument()
+    } finally {
+      delete window.__healthtrackFakeEveningNote
+    }
+  })
 })
 
 describe('WellbeingPrompt — votre journée en une phrase (I119)', () => {

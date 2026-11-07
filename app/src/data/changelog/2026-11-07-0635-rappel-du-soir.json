@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "Bien-être : remplir maintenant ou plus tard",
+  "variants": ["play", "sideload"],
+  "items": [
+    "En notant votre bien-être, deux choix : « Remplir maintenant » ou « Recevoir un rappel ». Vous réglez l'heure du rappel du soir, entre 18 h et 23 h.",
+    "La notification du soir propose les mêmes notes que l'app, de 1 à 5."
+  ]
+}

@@ -38,8 +38,8 @@ final class EveningNoteNotice {
     static final long TIMEOUT_MS = 4 * 60 * 60_000L;
 
     private static final int[] BUTTONS = {
-        R.id.evening_note_0, R.id.evening_note_1, R.id.evening_note_2,
-        R.id.evening_note_3, R.id.evening_note_4, R.id.evening_note_5,
+        R.id.evening_note_1, R.id.evening_note_2, R.id.evening_note_3,
+        R.id.evening_note_4, R.id.evening_note_5,
     };
 
     private EveningNoteNotice() {
@@ -100,9 +100,10 @@ final class EveningNoteNotice {
 
     private static RemoteViews buttons(Context context, int layout) {
         RemoteViews v = new RemoteViews(context.getPackageName(), layout);
-        for (int score = 0; score < BUTTONS.length; score++) {
+        for (int k = 0; k < BUTTONS.length; k++) {
+            int score = EveningNote.MIN_SCORE + k; // note affichée, 1 à 5
             Intent i = new Intent(context, EveningNoteReceiver.class).setAction(ACTION_ANSWER).putExtra(EXTRA_SCORE, score);
-            v.setOnClickPendingIntent(BUTTONS[score], PendingIntent.getBroadcast(context, 100 + score, i,
+            v.setOnClickPendingIntent(BUTTONS[k], PendingIntent.getBroadcast(context, 100 + score, i,
                     PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
         }
         return v;
