@@ -67,7 +67,9 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   devient « Encore N jours de notes pour des résultats plus sûrs », « Après un repas : encore N jours de lectures du
   visage » ; la méthode reste dans « Comment c'est calculé ». Reste le séparateur « · » de la ligne d'en-tête, avec 3b.)
 - [ ] TESTEUR-3b — Bien-être et Tendances : fusionner ou différencier (proposition en run idées d'abord).
-- [ ] TESTEUR-3c — Plus d'interrupteur dans un interrupteur (calcul du modèle qui prédit le bien-être).
+- [x] TESTEUR-3c — Plus d'interrupteur dans un interrupteur (calcul du modèle qui prédit le bien-être). (07/11 03:35 :
+  le modèle est un second dépliant à côté de « Comment c’est calculé », « Comment fonctionne ce modèle » une section
+  titrée ; test : aucun `details details` dans le pied de page.)
 
 **(5) Sources et accueil**
 - [ ] TESTEUR-5a — Toutes les autorisations pendant l'accueil (Santé et son historique, position approximative pour

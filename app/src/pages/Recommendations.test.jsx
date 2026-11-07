@@ -1013,6 +1013,18 @@ describe('Recommendations — explanations grouped (D1)', () => {
       expect(hint.textContent.length).toBeLessThan(110)
     }
   })
+  // TESTEUR-3c : plus de dépliant dans un dépliant (le modèle est à côté de « Comment c’est calculé », pas dedans)
+  it('never nests a disclosure inside another one in the footer', async () => {
+    const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
+    listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
+    renderPage()
+    await openModel()
+    await screen.findByText(/Comment fonctionne ce modèle/)
+    const footer = screen.getByText('Comment c’est calculé').closest('footer')
+    expect(footer.querySelectorAll('details details')).toHaveLength(0)
+    const model = screen.getByText('Le modèle qui prédit votre bien-être').closest('details')
+    expect(model.parentElement).toBe(footer)
+  })
   it('advanced tab: one short summary line, model details folded in one note', async () => {
     const { listEntriesForAnalysis } = await import('../storage/localHealthStorage')
     listEntriesForAnalysis.mockResolvedValue(makeEntries(20))
@@ -1020,7 +1032,7 @@ describe('Recommendations — explanations grouped (D1)', () => {
     await openModel()
     const meta = await screen.findByText(/Analyse sur/i)
     expect(meta.closest('p').textContent).not.toMatch(/R²|Variables retenues|Régression/)
-    const note = screen.getByText(/Comment fonctionne ce modèle/).closest('details')
+    const note = screen.getByText(/Comment fonctionne ce modèle/).closest('section')
     expect(note).toHaveTextContent(/Régression linéaire multiple|Corrélation de Pearson/)
     expect(note).toHaveTextContent(/Variables redondantes écartées/)
     // Chaque notion expliquée une seule fois (le modèle, la sélection des variables, le week-end, les R²).
