@@ -196,7 +196,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   habitudes, Proposés par vos analyses (« Commencer »), Terminés ; en bas « Tous vos essais, vérifiés ou non, figurent
   dans votre rapport médecin » (par défaut, sans bouton). (07/11 19:00 : sections sur les tests FODMAP existants ;
   « Mes habitudes » et les essais viennent avec ORG-8)
-- [ ] ORG-8 — **Un essai dans Agir** : jours tirés au sort avec / sans (14 jours, ou semaines alternées), calendrier de
+- [x] ORG-8 — **Un essai dans Agir** : jours tirés au sort avec / sans (14 jours, ou semaines alternées), calendrier de
   pastilles (pleine = avec, contour = sans, ✓ tenu, – pas tenu), « Pourquoi des jours tirés au sort ? », « Ce qui est
   mesuré ». Le respect de la consigne vient des données (montre, téléphone) ; la question (« Le coucher était-il avant
   23 h ? ») n'apparaît que si elles manquent, sous « Nous n'avons pas reçu vos données de sommeil pour hier soir. ».

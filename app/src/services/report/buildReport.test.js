@@ -168,3 +168,14 @@ describe('buildReport — forme des selles (I176)', () => {
     expect(r.sources).toContain('Saisi à la main')
   })
 })
+
+describe('rapport : essais d’Agir (ORG-8)', () => {
+  it('liste tous les essais, vérifiés ou non, avec leur consigne et leur état', async () => {
+    const { createTrial } = await import('../trials')
+    const { reportTrials } = await import('./buildReport')
+    const payload = createTrial({ key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30 } }, { now: new Date(2026, 10, 1, 9) })
+    const rows = reportTrials([{ type: 'trial', at: payload.startedAt, payload }], new Date(2026, 10, 3, 10))
+    expect(rows).toEqual([expect.objectContaining({ label: 'Sommeil', instruction: 'Dormir au moins 7 h 30', state: 'en cours', outcome: 'bien-être' })])
+    expect(reportTrials([], new Date())).toEqual([])
+  })
+})

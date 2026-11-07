@@ -26,6 +26,34 @@ import { nightlySleep } from '../radar'
 import { computeSleepRegularity } from '../sleepRegularity'
 import { STOOL_TYPE, stoolCounts } from '../stool'
 import { GUT_LEVELS, GUT_TYPE, SOURCE_LABELS, WHEN_TO_SEE_DOCTOR, entrySourceLabel } from '../today'
+import { TRIAL_TYPE, instruction, trialStatus } from '../trials'
+import { buildDailyJournal } from '../dailyJournal'
+import { outcomeSeries } from '../analysisResults'
+
+/**
+ * Essais d'Agir (ORG-8) : tous, vérifiés ou non (« Tous vos essais, vérifiés ou non, figurent dans votre rapport
+ * médecin »), avec la consigne, l'état et l'écart mesuré quand il existe.
+ */
+export function reportTrials(list, now = new Date()) {
+  const trials = (list || []).filter((e) => e?.type === TRIAL_TYPE && e.payload?.factor && !e.payload.removedAt)
+  if (!trials.length) return []
+  const summaries = new Map(buildDailyJournal(list).map((d) => [d.dateKey, d.summary]))
+  const series = outcomeSeries(list)
+  return trials.map((e) => {
+    const t = e.payload
+    const s = trialStatus(t, { summaries, outcome: series[t.factor.outcome === 'digestion' ? 'digestion' : 'wellbeing'], now })
+    const state = !s.done ? 'en cours' : s.verdict === 'verified' ? 'vérifié par l’essai' : 'pas d’effet net'
+    return {
+      label: t.factor.label,
+      outcome: t.factor.outcome === 'digestion' ? 'confort digestif' : 'bien-être',
+      instruction: instruction(t),
+      startedAt: t.startedAt,
+      state: t.kept ? `${state}, gardé comme habitude` : state,
+      withDays: s.result.with.length,
+      withoutDays: s.result.without.length,
+    }
+  })
+}
 
 export const REPORT_PERIODS = [2, 4, 12]
 export const REPORT_DEFAULT_WEEKS = 4
@@ -209,6 +237,7 @@ export function buildReport(entries, { now = new Date(), weeks = REPORT_DEFAULT_
     weekly,
     fodmapGroups,
     challenges,
+    trials: reportTrials(list, now),
     links,
     sleep,
     calendar,
