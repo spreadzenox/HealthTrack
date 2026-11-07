@@ -111,6 +111,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     (200 jeux) : faux liens 0 à 3,5 % selon le scénario ; effet fort court terme retrouvé 60 % à 70 jours, ≥ 80 % à 120 ;
     moyen terme 26 % à 70 jours ; long terme 3 % (il faut des mois) ; digestion forte 75 % à 90 jours ; règle 5 vérifiée
     (un facteur du seul bien-être ne sort pas en digestion). Porte d'ORG-5c : faire mieux en puissance sans dépasser 5 %.
+  - [x] ORG-5b (07/11, chantier du soir) : matrice d'une ligne par jour. Résultat du jour = estimation TS-1 (bien-être :
+    notes et visage ; digestion : `digestionOwn`, sans rien du bien-être), pesée par sa précision (jours notés plus
+    pesants, poids bornés à [1/4, 4]) ; FODMAP par sous-groupe comme facteurs (`fodmap_fructans`… : repas du jour
+    au-dessus du repère) ; contrôle « journée à part » (malade ou voyage, déclaré ou fuseau changé) avec la semaine et la
+    tendance ; moindres carrés pondérés.
 - [ ] ORG-6 — Résultats d'Analyses : « Pistes à tester » (2 ou 3 liens nets sur ce qu'on peut changer, « Essayer dans
   Agir ») puis « Ce qui pèse sur votre bien-être » : Court / Moyen / Long terme, barres de part et d'autre de zéro en
   points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,
