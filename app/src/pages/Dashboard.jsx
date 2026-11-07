@@ -122,7 +122,8 @@ export default function Dashboard() {
         <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} />
       )}
       {/* AUJ-4 : le bloc digestif ; les résultats des analyses n'ont qu'une maison, l'onglet Analyses (leçon 16). */}
-      {!loading && gutMode !== 'hide' && <DigestBlock onNote={() => setAddOpen('digestion')} />}
+      {!loading && gutMode !== 'hide' && <DigestBlock onNote={() => setAddOpen('digestion')}
+        meals={entries.filter((e) => e.type === 'food' && e.at && localDateKey(e.at) === todayKey)} />}
       {/* AUJ-5 : les repas du jour, ou un bouton qui ouvre l'appareil photo. */}
       {!loading && !error && <TodayMeals entries={entries} />}
 
