@@ -246,7 +246,28 @@ describe('Nutrition page', () => {
     localStorage.setItem('healthtrack_body_profile', JSON.stringify({ heightCm: 165 }))
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
         expect(await screen.findByText('Modérément actif')).toBeInTheDocument()
+    // TESTEUR-4d : la provenance n'apparaît qu'au toucher de la valeur.
+    expect(screen.queryByText(/\(par défaut\)/)).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Modérément actif' }))
     expect(screen.getByText(/\(par défaut\)/, { selector: '.nutrition-profile-activity *' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Modérément actif' })).toHaveAttribute('aria-expanded', 'true')
+  })
+
+  it('ce qui manque ouvre le formulaire dans la même carte (TESTEUR-4d)', async () => {
+    localStorage.setItem('healthtrack_body_profile', JSON.stringify({ heightCm: 165 }))
+    render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    fireEvent.click(await screen.findByRole('button', { name: /À compléter pour ajuster vos repères/ }))
+    expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeInTheDocument()
+  })
+
+  it('formulaire : l’explication du niveau d’activité n’apparaît qu’après un choix (TESTEUR-4d)', async () => {
+    render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    fireEvent.click(await screen.findByRole('button', { name: /compléter mon profil/i }))
+    expect(screen.queryByText(/estimé d’après vos pas/)).toBeNull()
+    fireEvent.click(screen.getByRole('radio', { name: 'Sédentaire' }))
+    expect(screen.getByText(/^Sédentaire : /)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('radio', { name: 'Automatique' }))
+    expect(screen.getByText(/estimé d’après vos pas/)).toBeInTheDocument()
   })
 
   it('estime le niveau d\'activité d\'après les pas des 14 derniers jours', async () => {
@@ -260,6 +281,7 @@ describe('Nutrition page', () => {
     localStorage.setItem('healthtrack_body_profile', JSON.stringify({ heightCm: 165 }))
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
     expect(await screen.findByText('Très actif')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Très actif' }))
     expect(screen.getByText(/11\s000 pas\/jour sur 10 jours/)).toBeInTheDocument()
     loadNutritionEntries.mockResolvedValue([])
   })

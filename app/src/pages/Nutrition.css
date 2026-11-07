@@ -285,3 +285,26 @@
   margin-top: 20px;
 }
 
+
+/* TESTEUR-4d : valeur dont la provenance s'ouvre au toucher, et « À compléter » qui ouvre le formulaire. */
+.nutrition-profile-sourced,
+.nutrition-profile-missing {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--text-muted);
+  text-underline-offset: 3px;
+  /* Cible tactile de 44 px (DESIGN.md) sans grossir le texte. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.nutrition-profile-missing {
+  color: var(--accent);
+}
