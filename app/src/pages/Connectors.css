@@ -556,6 +556,11 @@
   --source-accent: var(--lilac-bar);
 }
 
+.source-tint-stone {
+  --source-bg: var(--stone-bg);
+  --source-accent: var(--stone-label);
+}
+
 .source-tint > .weather-card,
 .source-tint .connector-card {
   background: var(--source-bg);

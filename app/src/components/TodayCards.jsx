@@ -260,7 +260,7 @@ function PistesFound({ gut, levers, locked, today = null }) {
   // Retours du 04/11 (4) : la carte ouvre le sous-onglet de la piste annoncée (ventre ou bien-être)
   const to = gut.length > 0 && (first === gut[0] || !levers.length) ? '/recommendations/ventre' : '/recommendations'
   return (
-    <Link to={to} className="today-card pistes-card pistes-card--found" aria-labelledby="pistes-card-title">
+    <Link to={to} className="today-card pistes-card pistes-card--found" data-tone={to === '/recommendations' ? 'mint' : 'peach'} aria-labelledby="pistes-card-title">
       <div className="today-card-head">
         <h3 id="pistes-card-title" className="today-card-title">
           {count} {count > 1 ? 'pistes repérées' : 'piste repérée'}
@@ -312,7 +312,7 @@ export function PistesTeaser({
     ? 'Assez de jours pour chercher des pistes'
     : `${text.title} ${bar.remaining} jour${bar.remaining > 1 ? 's' : ''}`
   return (
-    <section className="today-card pistes-card" aria-labelledby="pistes-card-title">
+    <section className="today-card pistes-card" data-tone={kind === 'energy' ? 'mint' : 'peach'} aria-labelledby="pistes-card-title">
       <div className="today-card-head">
         <h3 id="pistes-card-title" className="today-card-title">{keepWhole(title)}</h3>
         <DetailsToggle on={details} onToggle={onToggleDetails} />

@@ -79,8 +79,8 @@ describe('sourceTone (couleur des cartes de Sources)', () => {
     expect(sourceTone('face')).toBe('mint')
     expect(sourceTone('health_connect')).toBe('mint')
     expect(sourceTone('withings')).toBe('mint')
-    expect(sourceTone('weather')).toBe('lilac')
-    expect(sourceTone('phone')).toBe('lilac')
+    expect(sourceTone('weather')).toBe('stone')
+    expect(sourceTone('phone')).toBe('stone')
   })
 
   it('aucune teinte pour les blocs sans carte', () => {

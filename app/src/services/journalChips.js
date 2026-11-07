@@ -3,25 +3,42 @@ import { weatherSummaryParts } from './weather'
 import { formatScreenMinutes } from './phoneUsage'
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
+import { measureTone } from '../theme/themes'
 
 const frNumber = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: 1 })
 
 /**
- * Pastel de chaque mesure du résumé (POL-6, palette de journal/DESIGN.md) : menthe = corps et bien-être, pêche = repas
- * (le ventre), lilas = ce qu'on fait et ce qui entoure la journée (pas, dépense, écran, météo : une tuile neutre
- * paraissait noire en thème sombre, POL-PLAY-27).
+ * Pastel de chaque mesure du résumé : la couleur de son thème, la même partout (leçon 12, AUJ-8 ; src/theme/themes.js).
+ * Menthe = bien-être, pêche = digestion et repas, lilas = activité, bleu nuit = sommeil, rose framboise = corps,
+ * gris = contexte (écran, météo).
  */
-const CHIP_THEMES = {
-  Pas: 'lilac',
-  Dépense: 'lilac',
-  Écran: 'lilac',
-  'Réseaux sociaux': 'lilac',
-  Repas: 'peach',
-  Météo: 'lilac',
+const CHIP_KEYS = {
+  Sommeil: 'sleepMinutes',
+  'Sommeil (estimé)': 'sleepMinutes',
+  'Score montre': 'watchSleepScore',
+  'FC nuit': 'sleepHr',
+  Pas: 'steps',
+  'FC au repos': 'restingHr',
+  'VFC nuit': 'hrv',
+  'VFC jour': 'hrvDay',
+  'SpO₂': 'spo2',
+  Respiration: 'respiratoryRate',
+  Température: 'temperatureC',
+  'Temp. peau': 'skinTempC',
+  'Stress montre': 'watchStress',
+  Tension: 'bloodPressure',
+  Glycémie: 'glucoseMgDl',
+  FC: 'heartRate',
+  Dépense: 'burnedKcal',
+  'Bien-être': 'wellbeing',
+  Repas: 'meals',
+  Écran: 'screenMinutes',
+  'Réseaux sociaux': 'socialMinutes',
+  Météo: 'weather',
 }
 
 export function chipTheme(label) {
-  return CHIP_THEMES[label] || (/ repas$/.test(label) ? 'peach' : 'mint')
+  return measureTone(CHIP_KEYS[label] ?? (/ repas$/.test(label) ? 'meals' : null))
 }
 
 /**

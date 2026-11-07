@@ -63,8 +63,8 @@
   min-height: var(--tap-min);
   padding: 14px 16px;
   text-align: left;
-  background: var(--lilac-bg);
-  color: var(--lilac-text);
+  background: var(--peach-bg);
+  color: var(--peach-text);
   border: 2px solid transparent;
   border-radius: var(--radius-choice);
   font: inherit;
@@ -83,17 +83,17 @@ button.fodmap-group {
   right: 14px;
   display: flex;
   transform: translateY(-50%) rotate(-90deg);
-  color: var(--lilac-bar);
+  color: var(--peach-label);
 }
 
 /* N5 : groupe ouvert depuis une piste du ventre */
 .is-focus > .fodmap-group {
-  border-color: var(--lilac-bar);
+  border-color: var(--peach-label);
 }
 
 button.fodmap-group:focus-visible,
 .fodmap-food:focus-visible {
-  border-color: var(--lilac-bar);
+  border-color: var(--peach-label);
   outline: none;
 }
 
@@ -143,22 +143,22 @@ button.fodmap-group:focus-visible,
   min-height: var(--tap-min);
   padding: 0 18px;
   border-radius: var(--radius-pill);
-  border: 2px solid var(--lilac-bar);
+  border: 2px solid var(--peach-label);
   background: var(--color-bg);
-  color: var(--lilac-text);
+  color: var(--peach-text);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
 }
 
 .fodmap-card {
-  background: var(--lilac-bg);
-  color: var(--lilac-text);
+  background: var(--peach-bg);
+  color: var(--peach-text);
 }
 
 .fodmap-card .today-card-title,
 .fodmap-card .today-card-text {
-  color: var(--lilac-text);
+  color: var(--peach-text);
 }
 
 .fodmap-kicker {
@@ -262,12 +262,12 @@ button.fodmap-group:focus-visible,
 }
 
 .fodmap-step.is-done {
-  background: var(--lilac-bar);
-  color: var(--lilac-bg);
+  background: var(--peach-label);
+  color: var(--peach-bg);
 }
 
 .fodmap-step.is-now {
-  outline: 2px solid var(--lilac-bar);
+  outline: 2px solid var(--peach-label);
   outline-offset: -2px;
   background: var(--color-bg);
 }
@@ -420,15 +420,15 @@ button.fodmap-group:focus-visible,
   min-height: var(--tap-min);
   padding: 0 16px;
   border-radius: var(--radius-pill);
-  border: 2px solid var(--lilac-bar);
+  border: 2px solid var(--peach-label);
   background: var(--color-bg);
-  color: var(--lilac-text);
+  color: var(--peach-text);
   font-weight: 600;
   cursor: pointer;
 }
 
 .report-period.is-on {
-  background: var(--lilac-bar);
+  background: var(--peach-label);
   color: var(--color-bg);
 }
 

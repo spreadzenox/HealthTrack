@@ -53,8 +53,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [x] AUJ-7 — « Ventre » devient « digestif » dans tous les textes visibles (« Ma digestion », sous-onglet
   d'Analyses, PDF, fiche) ; données et identifiants inchangés ; test de non-régression des libellés. (07/11 17:45 :
   app, notification du soir, pages légales, fiche « Halcya — digestion & bien-être » ; `digestifWording.test.js`)
-- [ ] AUJ-8 — Couleurs par thème (leçon 12) : vert = bien-être, orange = digestion, lilas = activité et sport, bleu
-  nuit = sommeil ; tokens, contrastes testés, une analyse prend la couleur de son thème.
+- [x] AUJ-8 — Couleurs par thème (leçon 12) : vert = bien-être, orange = digestion, lilas = activité et sport, bleu
+  nuit = sommeil ; tokens, contrastes testés, une analyse prend la couleur de son thème. (07/11 18:15 : rose framboise
+  et gris compris ; `src/theme/themes.js`, `data-tone`, Journal, Sources, Analyses, réintroduction, abonnement)
 
 **Compléments du propriétaire (07/11 vers 16:30)**, à intégrer aux étapes ci-dessus :
 - [ ] AUJ-1b — Photo des selles dans le bandeau d'ajout (geste explicite, analyse IA comme les repas, aucune photo

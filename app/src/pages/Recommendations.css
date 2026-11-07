@@ -4,8 +4,8 @@
 
 .reco-intro {
   font-size: 0.88rem;
-  background: var(--lilac-bg);
-  color: var(--lilac-text);
+  background: var(--tone-bg, var(--mint-bg));
+  color: var(--tone-text, var(--mint-text));
   border-radius: 18px;
   padding: 10px 14px;
   line-height: 1.5;
@@ -277,10 +277,10 @@
   min-width: 2px;
 }
 
-/* POL-7b (D6) : même lilas dans les deux sens ; ↑ / ↓ dans la valeur dit le sens, jamais vert / rouge */
+/* POL-7b (D6), AUJ-8 : la couleur du thème dans les deux sens ; ↑ / ↓ dans la valeur dit le sens, jamais vert / rouge */
 .reco-corr-up,
 .reco-corr-down {
-  background: var(--lilac-bar);
+  background: var(--tone-label, var(--mint-label));
 }
 
 .reco-corr-value {

@@ -17,10 +17,19 @@ describe('summaryChips — repas', () => {
   })
 
   it('donne un pastel à chaque tuile, météo comprise (POL-PLAY-27 : la tuile Météo restait sans couleur)', () => {
-    expect(chipTheme('Météo')).toBe('lilac')
+    expect(chipTheme('Météo')).toBe('stone')
     for (const label of ['Sommeil', 'Pas', 'VFC nuit', 'Repas', 'Écran', 'Météo', 'Stress montre']) {
-      expect(['mint', 'peach', 'lilac']).toContain(chipTheme(label))
+      expect(['mint', 'peach', 'lilac', 'night', 'rose', 'stone']).toContain(chipTheme(label))
     }
+  })
+
+  it('prend la couleur du thème de chaque mesure (AUJ-8)', () => {
+    expect(chipTheme('Sommeil')).toBe('night')
+    expect(chipTheme('VFC nuit')).toBe('rose')
+    expect(chipTheme('FC au repos')).toBe('rose')
+    expect(chipTheme('Pas')).toBe('lilac')
+    expect(chipTheme('Écran')).toBe('stone')
+    expect(chipTheme('Bien-être')).toBe('mint')
   })
 })
 
@@ -28,7 +37,7 @@ describe('summaryChips — nuit de la montre (MONTRE-SCORE, I200)', () => {
   it('montre le score de la montre et la FC de la nuit juste après le sommeil', () => {
     const chips = summaryChips({ sleepMinutes: 441, watchSleepScore: 82, sleepHr: 57, steps: 4000 })
     expect(chips.slice(0, 3)).toEqual([['Sommeil', '7 h 21'], ['Score montre', '82 / 100'], ['FC nuit', '57 bpm']])
-    expect(chipTheme('Score montre')).toBe('mint')
+    expect(chipTheme('Score montre')).toBe('night')
   })
 
   it('n’ajoute rien sans montre', () => {

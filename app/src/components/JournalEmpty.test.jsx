@@ -20,7 +20,7 @@ describe('JournalEmpty (Journal vierge en couleur, POL-PLAY-46)', () => {
     expect(screen.getByRole('link', { name: /Noter votre digestion/ })).toHaveAttribute('href', '/')
     const source = screen.getByRole('link', { name: /Ajouter une source/ })
     expect(source).toHaveAttribute('href', '/connectors')
-    expect(source).toHaveAttribute('data-theme', 'lilac')
+    expect(source).toHaveAttribute('data-theme', 'stone')
   })
 
   it('without the gut card on Today, points to the well-being note instead of the belly', () => {
