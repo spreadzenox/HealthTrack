@@ -93,6 +93,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   sans prévision meilleure que « demain = aujourd'hui » hors échantillon ; courte liste de facteurs par personne ; jours
   notés plus pesants. Banc de simulation avec vérité connue (faux liens ≤ 5 %, effets forts retrouvés). Plusieurs
   runs : ORG-5a banc, ORG-5b fenêtres et matrice, ORG-5c modèle et stabilité, ORG-5d branchement.
+  - [x] ORG-5-contrat (07/11, chantier du soir, session « méthode ») : contrat des résultats d'Analyses,
+    `app/src/services/analysisResults.js` (`computeAnalysisResults`, `dayContributions`, typedefs documentés,
+    `CONTRACT_VERSION` 1). Par résultat (bien-être, digestion) et horizon (court, moyen, long) : effet en points sur 5
+    pour une variation habituelle, fourchette à 95 %, « net », thème, possibilité d'agir ; seuils de déblocage d'ORG-6 ;
+    contributions du jour (coefficient × écart). Méthode provisoire (pente contrôlée semaine / week-end et tendance,
+    échantillon effectif, BH) ; ORG-5c la remplace sans changer la forme. La session interface s'y branche.
 - [ ] ORG-6 — Résultats d'Analyses : « Pistes à tester » (2 ou 3 liens nets sur ce qu'on peut changer, « Essayer dans
   Agir ») puis « Ce qui pèse sur votre bien-être » : Court / Moyen / Long terme, barres de part et d'autre de zéro en
   points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,
