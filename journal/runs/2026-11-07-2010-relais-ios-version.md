@@ -18,6 +18,10 @@ travaillent dans `app/src/` jusqu'à 23:30 : aucun fichier de `app/` touché.
 - Aucun code, aucune Nouveauté (rien de visible dans l'app). BACKLOG et PRODUIT non touchés : pas de changement de
   priorité ni de livraison côté Android.
 
+- **Check « Budget de lectures (perf) » rouge, déjà sur main** (6df55ce, #809) : « /tendances lit 31983
+  enregistrements, Worker des analyses compris (max 17500) ». Il ne vient pas de cette PR (journal seul) ;
+  à reprendre par le chantier du soir ou le premier run qui suit (ce check ne fait pas partie des garde-fous du merge).
+
 ## Suite
 Au prochain run horaire, regarder dans `POUR-ORCHESTRATEUR.md` du dépôt iOS si la build de la nuit est partie avec le
 numéro de version fixe et si l'examen bêta a été évité.
