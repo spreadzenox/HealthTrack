@@ -10,11 +10,12 @@ import { loadWellbeingToday } from '../services/mood/faceMoodData'
 import { loadJournalEntries } from '../services/journalEntries'
 import { buildDailyJournal } from '../services/dailyJournal'
 import { localDateKey } from '../services/analysisEngine'
-import { GutCard, PistesTeaser } from '../components/TodayCards'
+import { GutCard } from '../components/TodayCards'
+import DigestBlock from '../components/DigestBlock'
 import TodayBySource from '../components/TodayBySource'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { headerLine, measureTiles } from '../services/today'
-import { homeFocus, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
+import { gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
 import AddStrip from '../components/AddStrip'
 
@@ -25,11 +26,10 @@ export default function Dashboard() {
   const [error, setError] = useState(null)
   const [wellbeingOpen, setWellbeingOpen] = useState(false)
   // Écarts de « Ce qui change aujourd'hui », relus par la carte des analyses (TESTEUR-1d-3)
-  const [dayChanges, setDayChanges] = useState(null)
+  const [addOpen, setAddOpen] = useState(null)
   const [details, toggleDetails] = useDetailsMode()
   // L'objectif choisi règle l'Accueil : la carte des pistes parle sommeil avec « énergie et sommeil » (I155), la
   // carte ventre n'apparaît qu'avec « Mon ventre » (POL-4 ; aucune note effacée)
-  const [focus] = useState(() => homeFocus())
   const [gutMode] = useState(() => gutCardMode())
   // Bien-être estimé (visage) : undefined pendant la lecture, null sans aucune lecture avec un visage
   const [wellbeing, setWellbeing] = useState(undefined)
@@ -100,6 +100,8 @@ export default function Dashboard() {
       </header>
       {/* Nouvel écran Aujourd'hui (07/11, AUJ-1) : le seul vrai endroit pour ajouter, juste sous la date. */}
       <AddStrip
+        open={addOpen}
+        onOpenChange={setAddOpen}
         onWellbeing={() => setWellbeingOpen(true)}
         digestion={<GutCard title="Ma digestion" details={details} onToggleDetails={toggleDetails} />}
         cigarette={!loading && <CigaretteQuickAdd />}
@@ -114,10 +116,10 @@ export default function Dashboard() {
         onDismissReminder={closeUnlockReminder} />
       {/* AUJ-3 : vos données du jour, un bloc, l'écart à votre norme sur chaque mesure ; puis les analyses. */}
       {!loading && !error && (
-        <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} showGut={gutMode !== 'hide'}
-          onItems={setDayChanges} />
+        <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} />
       )}
-      <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} todayChanges={dayChanges} />
+      {/* AUJ-4 : le bloc digestif ; les résultats des analyses n'ont qu'une maison, l'onglet Analyses (leçon 16). */}
+      {!loading && gutMode !== 'hide' && <DigestBlock onNote={() => setAddOpen('digestion')} />}
 
 
       <WellbeingPrompt open={!!wellbeingOpen} initialMode={wellbeingOpen === 'reminder' ? 'reminder' : 'now'}

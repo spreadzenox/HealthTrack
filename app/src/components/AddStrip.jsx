@@ -33,10 +33,18 @@ function Sheet({ title, onClose, children }) {
  *   digestion?: import('react').ReactNode,
  *   cigarette?: import('react').ReactNode,
  *   cigaretteInStrip?: boolean,
+ *   open?: null | 'digestion' | 'other',
+ *   onOpenChange?: (open: null | 'digestion' | 'other') => void,
  * }} props
+ *   `open` / `onOpenChange` : fenêtre ouverte, pilotable de l'extérieur (« Noter ma digestion » du bloc digestif,
+ *   AUJ-4 : le même geste que le bouton du bandeau).
  */
-export default function AddStrip({ onWellbeing, digestion = null, cigarette = null, cigaretteInStrip = false }) {
-  const [open, setOpen] = useState(null)
+export default function AddStrip({
+  onWellbeing, digestion = null, cigarette = null, cigaretteInStrip = false, open: openProp, onOpenChange,
+}) {
+  const [innerOpen, setInnerOpen] = useState(null)
+  const open = openProp !== undefined ? openProp : innerOpen
+  const setOpen = onOpenChange ?? setInnerOpen
   const close = () => setOpen(null)
   return (
     <section id="today-add" className="add-strip" aria-label="Ajouter">
