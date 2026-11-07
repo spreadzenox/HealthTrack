@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   CONTRACT_VERSION, DIGESTION_MIN_SYMPTOM_DAYS, FACTORS, factorKeysKnown, HORIZONS, OUTCOMES, UNLOCK_DAYS,
-  computeAnalysisResults, dayContributions, outcomeSeries,
+  computeAnalysisResults, contributionsByDay, dayContributions, outcomeSeries,
 } from './analysisResults'
 import { isEstimatorInput } from './mood/estimatorInputs'
 
@@ -166,6 +166,20 @@ describe('contrat des résultats d’Analyses', () => {
     const down = dayContributions(res, entries, dk(lo)).find((c) => c.key === 'steps')
     expect(down.points).toBeLessThan(0)
     for (let i = 1; i < top.length; i += 1) expect(Math.abs(top[i - 1].points)).toBeGreaterThanOrEqual(Math.abs(top[i].points))
+  })
+
+  it('contributions sur le modèle : une barre par facteur, seulement les termes du modèle, tous les jours', () => {
+    const { entries, steps, now } = world({ days: 70 })
+    const res = computeAnalysisResults(entries, { now })
+    const inModel = new Set(Object.values(res.outcomes.wellbeing.horizons).flatMap((h) => h.factors.filter((f) => f.inModel).map((f) => f.key)))
+    const all = contributionsByDay(res, entries)
+    const hi = dk(steps.indexOf(Math.max(...steps)))
+    expect(all.wellbeing[hi]).toEqual(dayContributions(res, entries, hi))
+    for (const list of Object.values(all.wellbeing)) {
+      expect(new Set(list.map((c) => c.key)).size).toBe(list.length)
+      for (const c of list) expect(inModel.has(c.key)).toBe(true)
+    }
+    expect(JSON.parse(JSON.stringify(all))).toStrictEqual(all)
   })
 
   it('contributions : rien tant que le résultat est verrouillé', () => {

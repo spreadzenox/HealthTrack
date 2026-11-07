@@ -154,6 +154,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     d'analyse `analysisResults` (contrat, seuils de déblocage d'ORG-6) et `dayStates` (TS-1 : estimation, fourchette,
     attendu, courbe digestive, note à demander), en cache comme les autres (fidélité JSON vérifiée). Pour l'interface :
     `getAnalysis('analysisResults')`, `getAnalysis('dayStates')` (`services/analysisRunner.js`).
+  - [x] Contributions du jour sur le vrai modèle (07/11, chantier du soir) : `dayContributions` ne prend que les termes
+    du modèle régularisé (coefficient à autres facteurs égaux × écart à la valeur habituelle), horizons d'un même
+    facteur additionnés (une barre par facteur) ; `contributionsByDay` les calcule pour chaque jour, rendues par la
+    tâche `analysisResults` (champ `contributions[outcome][jour]`) pour « Ce qui a pu peser ce jour-là » de Tendances.
 - [ ] ORG-6 — Résultats d'Analyses : « Pistes à tester » (2 ou 3 liens nets sur ce qu'on peut changer, « Essayer dans
   Agir ») puis « Ce qui pèse sur votre bien-être » : Court / Moyen / Long terme, barres de part et d'autre de zéro en
   points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,

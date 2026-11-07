@@ -635,38 +635,64 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
 }
 
 /**
- * Les plus grandes contributions d'un jour (« Ce qui a pu peser ce jour-là ») : pour chaque facteur, son horizon le
- * plus net (sinon le plus fort), contribution = perUnit × (valeur du jour − valeur habituelle). Triées par |points|.
+ * Les plus grandes contributions d'un jour (« Ce qui a pu peser ce jour-là ») sur le modèle régularisé (ORG-5c) :
+ * pour chaque terme du modèle (facteur × horizon), coefficient × (valeur du facteur sur la fenêtre ce jour-là −
+ * valeur habituelle) ; les horizons d'un même facteur sont additionnés (une barre par facteur). Seuls les termes du
+ * modèle comptent : un facteur n'est jamais compté deux fois à travers ses voisins. Triées par |points|.
  * @param {AnalysisResults} results
  * @param {object[]} entries
  * @param {string} dateKey   AAAA-MM-JJ
- * @param {{ outcome?: OutcomeId, max?: number }} [options]
- * @returns {DayContribution[]}
+ * @param {{ outcome?: OutcomeId, max?: number, days?: Map }} [options]
+ * @returns {DayContribution[]}  `horizon` = l'horizon qui pèse le plus pour ce facteur ce jour-là
  */
 export function dayContributions(results, entries, dateKey, { outcome = 'wellbeing', max = 3, days: givenDays } = {}) {
   const out = results?.outcomes?.[outcome]
   if (!out) return []
-  const best = new Map()
-  for (const h of Object.values(out.horizons)) {
-    for (const f of h.factors) {
-      const cur = best.get(f.key)
-      const score = (f.net ? 1000 : 0) + Math.abs(f.effect)
-      if (!cur || score > cur.score) best.set(f.key, { f, score })
-    }
-  }
-  if (!best.size) return []
+  const terms = Object.values(out.horizons).flatMap((h) => h.factors.filter((f) => f.inModel))
+  if (!terms.length) return []
   const days = givenDays ?? factorDays(entries)
   const num = dayNum(dateKey)
-  const list = []
-  for (const { f } of best.values()) {
+  const byKey = new Map()
+  for (const f of terms) {
     const horizon = HORIZONS.find((h) => h.id === f.horizon)
     const value = windowValue(days, f.key, num, horizon)
     if (value === null) continue
-    const points = Math.round(f.perUnit * (value - f.center) * 100) / 100 + 0
+    const pts = f.perUnit * (value - f.center)
+    const cur = byKey.get(f.key)
+    if (!cur) byKey.set(f.key, { f, total: pts, top: { pts, horizon: f.horizon, value, usual: f.center } })
+    else {
+      cur.total += pts
+      if (Math.abs(pts) > Math.abs(cur.top.pts)) cur.top = { pts, horizon: f.horizon, value, usual: f.center }
+    }
+  }
+  const list = []
+  for (const { f, total, top } of byKey.values()) {
+    const points = Math.round(total * 100) / 100 + 0
     if (points === 0) continue
-    list.push({ key: f.key, label: f.label, theme: f.theme, horizon: f.horizon, points, value, usual: f.center })
+    list.push({ key: f.key, label: f.label, theme: f.theme, horizon: top.horizon, points, value: top.value, usual: top.usual })
   }
   return list.sort((a, b) => Math.abs(b.points) - Math.abs(a.points)).slice(0, max)
+}
+
+/**
+ * Contributions de chaque jour connu d'un résultat (pour Tendances : toucher un jour), calculées une fois.
+ * @returns {Record<OutcomeId, Record<string, DayContribution[]>>}
+ */
+export function contributionsByDay(results, entries, { max = 3 } = {}) {
+  const days = factorDays(entries)
+  const series = outcomeSeries(entries)
+  const out = {}
+  for (const def of OUTCOMES) {
+    const map = {}
+    const keys = new Set([...series[def.id].keys(), ...(def.id === 'wellbeing' ? days.keys() : [])])
+    for (const dk of [...keys].sort()) {
+      if (results?.computedFor && dk > results.computedFor) continue
+      const list = dayContributions(results, entries, dk, { outcome: def.id, max, days })
+      if (list.length) map[dk] = list
+    }
+    out[def.id] = map
+  }
+  return out
 }
 
 /** Métadonnées d'un facteur (libellé, thème, possibilité d'agir), ou null. */
