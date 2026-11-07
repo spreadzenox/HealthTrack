@@ -15,6 +15,36 @@
 > groupe « Testeurs Halcya » et à l'examen bêta, par la CI ; si sa clé n'a pas ce droit, elle vous écrira le geste exact).
 > Rien à faire de votre côté. Au passage à l'heure d'été (fin mars), l'heure de l'envoi sera recalée par la routine.
 
+> 🌙 **Chantier du soir (07/11) — voie « interface »** (tout ce qui se voit ; session « interface », de 17:15 à 21:00).
+> **Livré ce soir** (une étape = une PR mergée, tests, build, captures et budget de lectures verts) :
+> - **Aujourd'hui** : « ventre » devient « digestion » partout, fiche du Store comprise (AUJ-7, #785) ; une couleur par
+>   thème, bleu nuit pour le sommeil, rose framboise pour le corps, gris pour le contexte (AUJ-8, #788) ; calibration
+>   « 1 jour sur 3 » avec « Remplir maintenant » / « Recevoir un rappel » (AUJ-2b, #789) ; « Vos données du jour » en un
+>   bloc, une icône par mesure et « d'habitude 7 h 10 » sur la mesure (AUJ-3, #791) ; le bloc digestif (AUJ-4, #793) ;
+>   « Mes repas du jour », le petit « + », « Selles » en photo dans le bandeau, « Vos apports jusqu'ici » (AUJ-5, AUJ-6,
+>   AUJ-1b, AUJ-4b, #800) ; toucher la courbe du bien-être ou les notes digestives ouvre Tendances (AUJ-9).
+> - **Agir** (nouvel onglet) : En cours, Mes habitudes, Proposés par vos analyses, Terminés ; la réintroduction FODMAP y
+>   passe (ORG-1, ORG-1b, #803) ; les essais de 14 jours tirés au sort, consigne du jour, tenue d'après vos données,
+>   résultat en cours, verdict, « Garder cette habitude », et les essais dans le rapport médecin (ORG-8, #809) ; un essai
+>   traversé par un changement durable le signale (#814).
+> - **Journal** : Tendances y revient, en visualiseur (mesures superposables, Jour / Semaine / Mois, fourchette, attendu
+>   du futur en pointillés, détail d'un jour avec l'étoile des expressions, « Humeur et éveil » et « Ce qui a pu peser ce
+>   jour-là ») ; l'historique du bien-être est sa vue Jour ; onglets soulignés (ORG-3, ORG-3b, ORG-3c, #806) ; repères des
+>   changements durables en vue Mois (TS-2, #813) ; Jours : une icône par mesure, l'écart à votre norme, plus de « · »
+>   (ORG-2, AUJ-3b, #808).
+> - **Analyses** : Bien-être et Digestion sur le nouveau calcul ; un seul compte à rebours avant les résultats, puis
+>   « Pistes à tester », « Ce qui pèse » par horizon (barres en points sur 5, fourchette, hachuré si pas net) et « À
+>   regarder, pas à changer » (ORG-4, ORG-6, #807).
+> - **Testeur du 06/11** : Health Connect proposé aussi sans montre à l'accueil (5a-2, #811) ; (2) et (4) étaient faits.
+> - **Correctif** : de #806 à #809, le contrôle « Budget de lectures » était rouge sur main (Tendances lançait trois
+>   calculs à l'ouverture) ; corrigé par #813 (les détails se calculent à la demande).
+> **Reste à faire** : la norme des écarts du jour qui repart du dernier changement durable (TS-2, `normStart`) et la
+> valeur du jour de l'Accueil sur l'estimation TS-1 (à la place de VENTRE-BE-2) : tous deux ajoutent un calcul lourd à
+> l'Accueil, à faire en vérifiant le budget de lectures ; TESTEUR-5a-3 (Sources sans double demande, à vérifier sur
+> téléphone) ; le point (5b) iPhone, côté routine iOS. **À tester sur votre Galaxy** (version de ce soir sur Alpha à
+> 23:45) : l'Accueil de haut en bas, l'onglet Agir, Journal › Tendances (touchez un jour), Analyses. Rien à faire de
+> votre côté.
+
 > 🌙 **Chantier du soir (07/11) — voie « méthode »** (session « méthode », en parallèle de la session « interface »).
 > **Livré ce soir** (services testés, aucun écran touché ; l'interface s'y branche) : le contrat des résultats
 > d'Analyses (#786 : par résultat × horizon, effet en points pour une variation habituelle, fourchette, « net », thème,
@@ -222,6 +252,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 17:15 → 21:00 — [Chantier du soir, interface](runs/2026-11-07-1715-chantier-soir-interface.md) | 🎨 | AUJ-7, AUJ-8, AUJ-2b, AUJ-3, AUJ-4, AUJ-5, AUJ-6, AUJ-1b, AUJ-4b, AUJ-9, ORG-1, ORG-1b, ORG-2, AUJ-3b, ORG-3, ORG-3b, ORG-3c, ORG-4, ORG-6, ORG-8, TS-2 (affichage), TESTEUR-5a-2, correctif du budget de lectures (#784 à #814). Rien à faire de votre côté |
 | 07/11 18:50 — [Chantier du soir, méthode (2/2)](runs/2026-11-07-1850-methode-soir-2.md) | 🧮 | ORG-5c (#797), ORG-5d (#799), contributions du jour (#801), TS-2 et TS-2b (#802), ORG-7. Rien de visible : la session interface s'y branche. Rien à faire de votre côté |
 | 07/11 17:20 — [Chantier du soir, méthode (1/2)](runs/2026-11-07-1720-methode-soir.md) | 🧮 | Contrat des résultats d'Analyses (#786), banc ORG-5a (#790), TS-1 (#792), ORG-5b (#795). Rien de visible. Rien à faire de votre côté |
 | 07/11 17:35 — [Publication quotidienne](runs/2026-11-07-1735-publication-quotidienne.md) | 🔧 | CD-ALPHA-6 : Alpha reçoit chaque soir à 23:45 la dernière version de main prête (plus à chaque merge, plus de délai de 24 h) ; décision iPhone (soumission quotidienne à l'examen bêta) transmise à la routine iOS. Rien à faire de votre côté |
