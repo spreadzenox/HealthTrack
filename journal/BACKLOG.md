@@ -101,6 +101,58 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] ORG-7 — Sources de données classées dans `PRODUIT.md` (fréquence, rôle, possibilité d'agir) ; à venir : bilans
   sanguins (rares) et son ambiant (niveaux seulement, jamais d'audio).
 
+### Agir, Tendances et séries temporelles (revue design du 07/11 vers 17:00, maquette validée) — fait foi
+
+> Complète ORG-1, ORG-3 et ORG-3b. Chantier du soir (07/11) : session « interface » (ORG-1b, ORG-3c, ORG-8) et session
+> « méthode » (TS-1, TS-2) en parallèle.
+
+- [ ] ORG-3c — **Tendances** : les sous-onglets du Journal deviennent des onglets soulignés sur toute la largeur ; les
+  réglages de la courbe (puces de mesure avec leur point de couleur, « + » pour ajouter une mesure, sélecteur compact
+  Jour / Semaine / Mois) sont petits, dans la carte du graphique, jamais au niveau visuel des onglets. Chaque jour : une
+  ligne et sa fourchette, un point plein seulement les jours notés, repère « auj. ». Aucun attendu sur le passé :
+  l'attendu d'après vos habitudes prolonge seulement le futur, en pointillés (le pointillé ne sert qu'à ça), avec une
+  fourchette qui s'élargit (Semaine : 3 jours, Mois : 7). Toucher un jour : date, nombre de lectures (et la note), valeur
+  sur 5, confort digestif s'il est affiché (« noté « gêne » » le cas échéant), jamais d'« attendu » ; « Expressions du
+  visage » en étoile à 8 branches (rayon en racine carrée, pourcentage sous chaque nom, le jour en couleur pleine,
+  l'habitude des 28 jours en trait gris, « Plus de tristesse, moins de joie que d'habitude » dès 5 points d'écart) ;
+  « Humeur et éveil » : carte valence × éveil (désagréable / agréable, calme / animé ; coins tendu, enjoué, las, détendu),
+  un point par lecture, la moyenne du jour, l'habitude en ellipse grise, « Éveil plutôt calme, moins que d'habitude » ;
+  « Ce qui a pu peser ce jour-là » : les 3 plus grandes contributions du modèle d'ORG-5 ce jour-là (coefficient × écart
+  du facteur), barres de part et d'autre de zéro, couleur du thème. Toucher un jour futur : l'attendu et sa fourchette.
+  L'attendu, la fourchette et la courbe digestive estimée se branchent sur TS-1 ; d'ici là, seul ce qui existe s'affiche.
+- [ ] ORG-1b — **Agir** (complète ORG-1) : En cours (plusieurs essais à la fois, progression, consigne du jour), Mes
+  habitudes, Proposés par vos analyses (« Commencer »), Terminés ; en bas « Tous vos essais, vérifiés ou non, figurent
+  dans votre rapport médecin » (par défaut, sans bouton).
+- [ ] ORG-8 — **Un essai dans Agir** : jours tirés au sort avec / sans (14 jours, ou semaines alternées), calendrier de
+  pastilles (pleine = avec, contour = sans, ✓ tenu, – pas tenu), « Pourquoi des jours tirés au sort ? », « Ce qui est
+  mesuré ». Le respect de la consigne vient des données (montre, téléphone) ; la question (« Le coucher était-il avant
+  23 h ? ») n'apparaît que si elles manquent, sous « Nous n'avons pas reçu vos données de sommeil pour hier soir. ».
+  « Résultat en cours » se dessine chaque jour : points Avec / Sans du lendemain, moyennes, barre « Écart » avec
+  fourchette dès 3 lendemains de chaque sorte. À la fin : « Vérifié par votre essai » ou « pas d'effet net », même
+  graphique, « Garder cette habitude ». Mes habitudes : les 14 dernières pastilles de tenue ; si la personne s'en
+  éloigne (9 jours sur 14), « Vous vous éloignez de cette habitude » avec « Relancer le test » et « Supprimer cette
+  habitude », au plus une fois par mois et par habitude, effacé dès qu'elle reprend. Les essais vont dans le rapport
+  médecin.
+- [ ] TS-1 — **Un seul modèle à espace d'états** pour le bien-être et le confort digestif (avant ORG-5d : les analyses
+  prennent l'estimation du jour et sa fourchette) : deux états cachés par jour, chacun = tendance lente + rythme de la
+  semaine + écart du jour ; écarts corrélés entre les deux (lien appris sur les jours où les deux sont connus, rétréci
+  vers une valeur prudente commune) ; observations : notes de bien-être et lectures du visage (le même objet, précisions
+  différentes, calibration par personne), notes digestives (échelle ordonnée), type de Bristol ; filtre de Kalman et
+  lissage sur l'appareil → estimation du jour, fourchette, attendu des jours à venir. Remplace VENTRE-BE-2. Confort
+  digestif affiché sur 5 ; sans note digestive il s'estime par le bien-être, et sa courbe n'apparaît que si elle prédit
+  les notes mises de côté (validation par blocs) mieux que la moyenne. Ne demander une note que les jours où
+  l'estimation est la plus incertaine. Règle 5 : le bien-être n'est jamais un facteur des analyses digestives, qui
+  n'apprennent que de l'information digestive ; le banc vérifie qu'un facteur qui ne touche que le bien-être ne devient
+  pas un facteur digestif. Aucun texte visible ne dit qu'une estimation est « dégradée » ou moins bonne faute de notes.
+  (Session méthode.)
+- [ ] TS-2 — **Changements durables** : bien-être, confort digestif, sommeil, VFC, FC au repos, pas, écran, une fois le
+  rythme de la semaine retiré ; un saut de niveau, au moins 7 jours de chaque côté, au moins une demi-variation
+  habituelle, confirmé 7 jours après ; seuil calé sur le banc (moins d'une fausse alerte par courbe et par semestre).
+  Repère « changement » dans Tendances (vue Mois) : niveau avant et après, « Au même moment » (autres changements à ±
+  5 jours), jamais de cause ; aussi dans le rapport médecin. La norme des écarts du jour repart du nouveau niveau ; un
+  lien d'Analyses doit tenir à l'intérieur des périodes ; un essai traversé par un changement le signale. (Session
+  méthode.)
+
 ## 🧑‍🔬 Retours du premier testeur iPhone du 06/11 au soir — PRIORITÉ DES RUNS DE CODE (seule une CI cassée passe avant)
 
 Résumé anonyme : [`RETOURS-TESTEURS.md`](RETOURS-TESTEURS.md). Code partagé : ce qui est corrigé ici part aussi sur
