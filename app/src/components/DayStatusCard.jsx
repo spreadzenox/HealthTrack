@@ -9,6 +9,7 @@ import { dayWellbeing } from '../services/today'
 import { toDisplay } from '../services/mood/wellbeingScale'
 import { StartCalibration, UnlockReminder } from './WellbeingNudges'
 import LineIcon from './LineIcon'
+import StripPlus from './StripPlus'
 import './DayStatusCard.css'
 
 /** Un graphique à partir de 3 points (leçon 17). */
@@ -90,6 +91,7 @@ export default function DayStatusCard({
       </Link>
       {est?.startCalibration && <StartCalibration cal={est.startCalibration} onAddManual={onAddManual} onReminder={onReminder} />}
       {reminder}
+      {!(est?.startCalibration && !est.startCalibration.notedToday) && <StripPlus label="Ajouter une note de bien-être" />}
     </section>
   )
 }

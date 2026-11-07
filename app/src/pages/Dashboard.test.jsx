@@ -154,6 +154,20 @@ describe('Dashboard', () => {
     localStorage.removeItem('healthtrack_onboarding')
   })
 
+  it('AUJ-1b : « Selles » (bandeau) ouvre la photo des selles avec l’objectif digestion, jamais ailleurs', async () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
+    const { unmount } = renderDashboard()
+    fireEvent.click(await screen.findByRole('button', { name: 'Selles' }))
+    const dialog = screen.getByRole('dialog', { name: 'Photo des selles' })
+    expect(within(dialog).getByRole('button', { name: /Selles : estimer la forme avec une photo/ })).toBeInTheDocument()
+    unmount()
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'energy' }))
+    renderDashboard()
+    await screen.findByRole('button', { name: 'Digestion' })
+    expect(screen.queryByRole('button', { name: 'Selles' })).toBeNull()
+    localStorage.removeItem('healthtrack_onboarding')
+  })
+
   it("masque l'introduction dès que des données existent (le contenu commence plus haut)", async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([

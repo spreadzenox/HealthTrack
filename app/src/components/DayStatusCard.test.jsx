@@ -32,7 +32,8 @@ describe('Bloc bien-être du jour (AUJ-2)', () => {
     // Plus de verdict, d’échelle à segments, d’« estimation prudente » ni d’horizon qui respire
     expect(screen.queryByText(/Plutôt|difficile|prudente|Votre journée/)).not.toBeInTheDocument()
     expect(document.querySelector('.day-breath')).toBeNull()
-    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+    // AUJ-6 : un seul bouton, le petit « + » qui remonte au bandeau
+    expect(screen.getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Ajouter une note de bien-être'])
   })
 
   it('une gêne digestive comptée est dite (VENTRE-BE-2)', () => {

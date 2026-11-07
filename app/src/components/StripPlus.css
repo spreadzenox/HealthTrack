@@ -1,0 +1,37 @@
+/* « + » sous un bloc de l'Accueil (AUJ-6) : petit, discret, à droite ; même signe partout (leçon 13). */
+.strip-plus-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.strip-plus {
+  display: grid;
+  place-items: center;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--tone-label, var(--text-muted));
+  cursor: pointer;
+}
+
+.strip-plus .line-icon {
+  padding: 4px;
+  border-radius: 50%;
+  background: rgba(var(--tint-rgb), 0.06);
+  box-sizing: content-box;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .add-strip.is-called .add-strip-row {
+    animation: strip-called 0.9s ease-out;
+  }
+}
+
+@keyframes strip-called {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}

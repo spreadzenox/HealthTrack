@@ -48,4 +48,18 @@ describe('DigestBlock (AUJ-4)', () => {
     expect(screen.queryByText('Oignon → digestion')).toBeNull()
     expect(screen.queryByRole('progressbar')).toBeNull()
   })
+
+  it('AUJ-4b : « Vos apports jusqu’ici » après le premier repas, sans couleur d’alerte ; un toucher ouvre Nutrition', async () => {
+    const meals = [{ type: 'food', at: dayAt(0, 12), payload: { items: [{ ingredient: 'Abat, cuit (aliment moyen)', quantity_g: 100 }] } }]
+    const { unmount } = wrap({ read: async () => [], meals })
+    const link = await screen.findByRole('link', { name: /Vos apports jusqu’ici/ })
+    expect(link).toHaveAttribute('href', '/nutrition')
+    expect(link).toHaveTextContent(/kcal/)
+    expect(link).toHaveTextContent(/protéines/)
+    expect(link.textContent).not.toMatch(/trop|excès|attention/i)
+    unmount()
+    wrap({ read: async () => [], meals: [] })
+    await screen.findByRole('heading')
+    expect(screen.queryByText('Vos apports jusqu’ici')).toBeNull()
+  })
 })

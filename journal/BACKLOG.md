@@ -74,9 +74,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   digestion », rappel du soir, petit graphique du jour s'il y a des notes ; ni délais, ni Benjamini-Hochberg, ni
   minimum ; la carte lilas des pistes (`PistesTeaser`) quitte l'Accueil. (07/11 19:30 : `DigestBlock`, « Noter ma
   digestion » ouvre la fenêtre du bandeau ; analyses prêtes → une ligne vers Analyses › Digestion)
-- [ ] AUJ-5 — « Mes repas du jour » : la liste, ou « Aucun repas aujourd'hui » et un bouton.
-- [ ] AUJ-6 — Sous chaque bloc, un petit « + » qui remonte au bandeau ; bouton plus large pour un bloc qui attend la
-  personne (calibration, analyses, repas vides).
+- [x] AUJ-5 — « Mes repas du jour » : la liste, ou « Aucun repas aujourd'hui » et un bouton. (07/11 19:00 :
+  `TodayMeals`, chaque repas ouvre Journal › Repas ; « Photographier un repas » ouvre l'appareil photo)
+- [x] AUJ-6 — Sous chaque bloc, un petit « + » qui remonte au bandeau ; bouton plus large pour un bloc qui attend la
+  personne (calibration, analyses, repas vides). (07/11 19:15 : `StripPlus`, remonte au bandeau et y met le focus)
 - [x] AUJ-7 — « Ventre » devient « digestif » dans tous les textes visibles (« Ma digestion », sous-onglet
   d'Analyses, PDF, fiche) ; données et identifiants inchangés ; test de non-régression des libellés. (07/11 17:45 :
   app, notification du soir, pages légales, fiche « Halcya — digestion & bien-être » ; `digestifWording.test.js`)
@@ -85,10 +86,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   et gris compris ; `src/theme/themes.js`, `data-tone`, Journal, Sources, Analyses, réintroduction, abonnement)
 
 **Compléments du propriétaire (07/11 vers 16:30)**, à intégrer aux étapes ci-dessus :
-- [ ] AUJ-1b — Photo des selles dans le bandeau d'ajout (geste explicite, analyse IA comme les repas, aucune photo
+- [x] AUJ-1b — Photo des selles dans le bandeau d'ajout (geste explicite, analyse IA comme les repas, aucune photo
   gardée, résultat modifiable, jamais un diagnostic ; retours (7) du 04/11) et un petit « + » dans le bloc digestif.
-- [ ] AUJ-4b — Bloc digestif : « Vos apports jusqu'ici » après le premier repas du jour, sans rouge ni alerte ; un
-  toucher ouvre Journal › Nutrition.
+  (07/11 19:45 : bouton « Selles » → fenêtre « Photo des selles » (`StoolPhotoLine`, divulgation inchangée) ; la ligne
+  quitte le Journal ; bandeau défilant au-delà de 5 gestes)
+- [x] AUJ-4b — Bloc digestif : « Vos apports jusqu'ici » après le premier repas du jour, sans rouge ni alerte ; un
+  toucher ouvre Journal › Nutrition. (07/11 20:00 : kcal, protéines, glucides, lipides, fibres des repas du jour)
 - [x] AUJ-3 (précision) — l'écart à votre norme sur chaque mesure dès 7 jours d'historique, en reprenant l'affichage
   de « Ce qui change aujourd'hui » (identité visuelle intacte).
 - [ ] AUJ-9 — Toucher la courbe du bien-être ou le graphique digestif ouvre Journal › Tendances réglé sur cette mesure
@@ -160,8 +163,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,
   hachurées si pas assez net ; à part « À regarder, pas à changer » (corps, contexte). Déblocage : bien-être 14 / 21 /
   42 jours, digestion 28 / 35 / 56 jours et au moins 5 jours de gêne ou douleur.
-- [ ] ORG-7 — Sources de données classées dans `PRODUIT.md` (fréquence, rôle, possibilité d'agir) ; à venir : bilans
-  sanguins (rares) et son ambiant (niveaux seulement, jamais d'audio).
+- [x] ORG-7 — Sources de données classées dans `PRODUIT.md` (fréquence, rôle, possibilité d'agir) ; à venir : bilans
+  sanguins (rares) et son ambiant (niveaux seulement, jamais d'audio). ✅ 07/11 (chantier du soir) : `PRODUIT.md` § 3 bis, tableau source / fréquence / rôle (résultat, facteur, contrôle,
+  affichage) / agir / thème.
 
 ### Agir, Tendances et séries temporelles (revue design du 07/11 vers 17:00, maquette validée) — fait foi
 
@@ -215,7 +219,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   les 30 % plus incertains des 4 dernières semaines). Banc : 9 à 10 sur 10 mieux que le visage seul, couverture de la
   fourchette entre 65 et 95 %, règle 5 ≤ 5 %. VENTRE-BE-2 reste en place dans l'affichage du jour jusqu'à ce que
   l'interface prenne l'estimation TS-1 (ORG-5d branche déjà les analyses dessus).
-- [ ] TS-2 — **Changements durables** : bien-être, confort digestif, sommeil, VFC, FC au repos, pas, écran, une fois le
+- [x] TS-2 — **Changements durables** : bien-être, confort digestif, sommeil, VFC, FC au repos, pas, écran, une fois le
   rythme de la semaine retiré ; un saut de niveau, au moins 7 jours de chaque côté, au moins une demi-variation
   habituelle, confirmé 7 jours après ; seuil calé sur le banc (moins d'une fausse alerte par courbe et par semestre).
   Repère « changement » dans Tendances (vue Mois) : niveau avant et après, « Au même moment » (autres changements à ±
@@ -230,6 +234,16 @@ iPhone. Un run = une étape testable, captures avant et après (clair et sombre,
 apparence = même type d'information ; moins de texte ; jamais le problème dans une carte et la solution dans une autre.
 
 **(4) Journal et repas** (le plus court, commencé en premier)
+  ✅ 07/11 (chantier du soir) : `services/method/changes.js` (`detectChanges`, `changesFromEntries`, `normStart`,
+  `periods`, `crossingChanges`, `sameTime`) et tâche `changes` du worker. Rythme de la semaine retiré, variation
+  habituelle robuste, t corrigé de l'autocorrélation ≥ 4, saut ≥ 0,5 variation habituelle, ≥ 7 jours de chaque côté,
+  confirmé par les médianes des 7 jours avant et après, deux changements à ≥ 14 jours. Banc (200 courbes de 6 mois) :
+  0,26 fausse alerte par courbe et par semestre (0,69 sur des courbes plus lissées) ; saut de 2 variations habituelles
+  retrouvé 79 %. Bien-être et digestion sur l'estimation TS-1 (digestion sans le bien-être). Reste à l'interface : le
+  repère dans Tendances et le rapport. TS-2b ✅ 07/11 : les liens d'Analyses tiennent à l'intérieur des périodes (chaque
+  changement durable du résultat devient un contrôle de niveau ; `outcomes[x].changes`) ; un saut commun d'un facteur
+  et du résultat n'est plus un lien (test). Reste : `normStart` dans la norme des écarts du jour (`dayDeviations.js`,
+  touché par la session interface ce soir : à faire quand elle n'y travaille plus).
 - [x] TESTEUR-4a — Repas vierges : « Aucun repas enregistré pour l'instant » et un bouton « Ajouter mon premier repas »
   qui ouvre l'appareil photo, sans les trois étapes de texte (06/11 22:35).
 - [x] TESTEUR-4b — « Photographier un repas » de l'Accueil et de Nutrition ouvre directement l'appareil photo (sans
