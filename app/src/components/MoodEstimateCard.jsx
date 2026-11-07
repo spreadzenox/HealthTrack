@@ -67,7 +67,7 @@ export function ConfidenceBadge({ level }) {
   )
 }
 
-function ManualNoteButton({ onClick }) {
+export function ManualNoteButton({ onClick }) {
   if (!onClick) return null
   return (
     <button type="button" className="mood-manual" onClick={onClick}>
@@ -92,7 +92,7 @@ function HistoryLink() {
  * dans l'onboarding. Le lien mène à Sources, où l'activation reste derrière sa divulgation ; la croix le ferme pour
  * de bon. Aucun chiffre de précision.
  */
-function UnlockReminder({ onDismiss }) {
+export function UnlockReminder({ onDismiss }) {
   return (
     <div className="mood-unlock-reminder" role="note">
       <p>
@@ -113,7 +113,7 @@ const jours = (n) => `${n} ${n > 1 ? 'jours' : 'jour'}`
  * lecture, la carte demande la note du jour, avec la progression. Jamais bloquant ; une fois la note du jour donnée,
  * une ligne discrète suffit.
  */
-function StartCalibration({ cal, onAddManual }) {
+export function StartCalibration({ cal, onAddManual }) {
   const steps = (
     <span className="mood-calib-steps" aria-hidden="true">
       {Array.from({ length: cal.needed }, (_, i) => <span key={i} className={i < cal.done ? 'is-on' : ''} />)}

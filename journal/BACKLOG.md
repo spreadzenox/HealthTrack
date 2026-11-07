@@ -51,9 +51,17 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   animation chaleureuse originale, puis l'explication, puis les données du jour par source, puis « Noter ».
   (07/11 08:35 : [`maquettes/aujourdhui/`](maquettes/aujourdhui/README.md), HTML aux tokens de l'app, captures
   avant / après, clair, sombre, premier jour, bonne et difficile ; règle de sens constant écrite ; découpage ci-dessous.)
-- [ ] TESTEUR-1c — `DayStatusCard` en tête de l'Accueil : « Votre journée » + titre (seuils de `daySummaryTitle`),
+- [x] TESTEUR-1c — `DayStatusCard` en tête de l'Accueil : « Votre journée » + titre (seuils de `daySummaryTitle`),
   échelle 1 à 5, « D'après… » + étiquettes (lectures, note, ventre si VENTRE-BE-2 l'a compté), « Pas encore d'avis »
   avec un seul bouton ; remplace le titre et la carte « Bien-être estimé » ; toucher → historique.
+  (07/11 09:35 : `components/DayStatusCard.jsx` + `dayStatus()` dans `services/today.js`. Le statut vient du visage du
+  jour, sinon de la dernière note du jour (jamais d'hier) ; la note manuelle n'entre pas dans l'estimation du visage,
+  elle reste une étiquette ; « Plutôt bonne / moyenne / Plus difficile » ; étiquettes « N lectures du visage »,
+  « votre note : X/5 », « ventre : gêne comptée » seulement si VENTRE-BE-2 l'a compté, « estimation prudente » si la
+  confiance est faible. Le haut de la carte est un lien vers `/bien-etre`. « Noter moi-même » reste dans la carte
+  jusqu'à 1d (section « Noter ») ; vide : bouton contour « Noter comment je me sens » pour ne pas doubler le bouton
+  plein « Photo du repas ». Courbe 14 j, écart à la moyenne et détails quittent l'Accueil (ils sont dans
+  l'historique) ; `MoodEstimateCard` n'est plus monté que dans ses tests : à supprimer avec 1d.)
 - [ ] TESTEUR-1d — « Vos données du jour » par source (Montre, Téléphone, Noté par vous ; source absente masquée,
   « Ajouter une montre › » sinon) et section « Noter » unique (Photo du repas, Mon bien-être, Mon ventre si « Mon
   ventre », Autre chose : selles, cigarette, note libre) ; la carte ventre pêche et les boutons épars disparaissent.

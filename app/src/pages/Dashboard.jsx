@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
 import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
-import MoodEstimateCard from '../components/MoodEstimateCard'
+import DayStatusCard from '../components/DayStatusCard'
 import PaymentIssueCard from '../components/PaymentIssueCard'
 import LaunchEndCard from '../components/LaunchEndCard'
 import { loadWellbeingToday } from '../services/mood/faceMoodData'
@@ -11,7 +11,7 @@ import { buildDailyJournal } from '../services/dailyJournal'
 import { localDateKey } from '../services/analysisEngine'
 import { MeasureTiles, GutCard, PistesTeaser } from '../components/TodayCards'
 import { useDetailsMode } from '../hooks/useDetailsMode'
-import { daySummaryTitle, headerLine, measureTiles } from '../services/today'
+import { headerLine, measureTiles } from '../services/today'
 import { APP_NAME } from '../config/brand'
 import { homeFocus, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
@@ -98,7 +98,6 @@ export default function Dashboard() {
       <header className="today-head">
         <p className="today-dateline">{head.date}</p>
         <p className="today-hello">{head.hello}</p>
-        <h2 className="today-title">{daySummaryTitle(wellbeing?.est)}</h2>
       </header>
       <PaymentIssueCard />
       <LaunchEndCard />
@@ -111,7 +110,8 @@ export default function Dashboard() {
         </p>
       )}
 
-      <MoodEstimateCard data={wellbeing} details={details} onToggleDetails={toggleDetails}
+      {/* TESTEUR-1c : le statut du jour remplace le titre et la carte « Bien-être estimé » (détails dans l'historique). */}
+      <DayStatusCard data={loading ? undefined : wellbeing} entries={entries}
         onAddManual={() => setWellbeingOpen(true)} unlockReminder={unlockReminder}
         onDismissReminder={closeUnlockReminder} />
       {!loading && !error && <MeasureTiles tiles={tiles} details={details} />}
