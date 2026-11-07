@@ -97,6 +97,11 @@ describe('Onboarding (jalon 4a)', () => {
     expect(cont()).toBeDisabled()
     fireEvent.click(screen.getByRole('radio', { name: /Pas de montre/ }))
     fireEvent.click(cont())
+    // TESTEUR-5a-2 : Health Connect aussi sans montre (le téléphone y écrit les pas)
+    expect(screen.getByRole('heading', { name: 'Vos données Health Connect' })).toBeInTheDocument()
+    expect(screen.getByText(/Votre téléphone compte vos pas/)).toBeInTheDocument()
+    await waitFor(() => expect(cont()).toBeEnabled())
+    fireEvent.click(cont())
     expect(screen.getByRole('heading', { name: 'La météo de votre ville' })).toBeInTheDocument()
     fireEvent.click(cont())
     expect(screen.getByRole('heading', { name: 'Comment va votre digestion ?' })).toBeInTheDocument()
@@ -108,7 +113,7 @@ describe('Onboarding (jalon 4a)', () => {
       goal: 'gut',
       watch: 'none',
       tracks: ['gut', 'meals', 'sleep', 'wellbeing'],
-      maxStep: 4,
+      maxStep: 5,
     })
   })
 
@@ -136,8 +141,8 @@ describe('Onboarding (jalon 4a)', () => {
     renderAt()
     expect(screen.getByText('03/07')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('radio', { name: /Pas de montre/ }))
-    expect(screen.getByText('03/05')).toBeInTheDocument()
-    expect(screen.getByRole('progressbar', { name: 'Avancement' })).toHaveAttribute('aria-valuemax', '5')
+    expect(screen.getByText('03/07')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Avancement' })).toHaveAttribute('aria-valuemax', '7')
   })
 
   it('« Passer » termine l’onboarding sans rien demander', async () => {
