@@ -34,11 +34,13 @@ describe('DigestBlock (AUJ-4)', () => {
 
   it('les notes du jour sur un petit graphique, rien sans note du jour', async () => {
     const { unmount } = wrap({ read: async () => [note(0, 'calm', 9), note(0, 'discomfort', 14), note(2)] })
-    expect(await screen.findByRole('img', { name: 'Vos notes du jour : Calme, Gêne' })).toBeInTheDocument()
+    const chart = await screen.findByRole('link', { name: /Vos notes du jour : Calme, Gêne/ })
+    // AUJ-9 : il ouvre Journal › Tendances sur le confort digestif
+    expect(chart).toHaveAttribute('href', '/tendances?mesure=digestion')
     unmount()
     wrap({ read: async () => [note(2)] })
     await screen.findByRole('heading')
-    expect(screen.queryByRole('img')).toBeNull()
+    expect(screen.queryByRole('link', { name: /Vos notes du jour/ })).toBeNull()
   })
 
   it('analyses prêtes : une ligne qui ouvre Analyses › Digestion, sans résultat recopié ici', async () => {

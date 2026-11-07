@@ -39,15 +39,16 @@ function DayNotes({ notes }) {
   const end = Math.max(23, Math.ceil(Math.max(...hours)))
   const left = (n) => `${((hourOf(n.at) - start) / (end - start)) * 100}%`
   const label = notes.map((n) => gutLevelLabel(n.payload.level)).join(', ')
+  // AUJ-9 : toucher le graphique ouvre Journal › Tendances réglé sur le confort digestif
   return (
-    <div className="digest-day" role="img" aria-label={`Vos notes du jour : ${label}`}>
+    <Link to="/tendances?mesure=digestion" className="digest-day" aria-label={`Vos notes du jour : ${label}. Voir les tendances`}>
       <div className="digest-day-axis" />
       {notes.map((n) => (
         <span key={n.at} className={`digest-day-dot is-${n.payload.level}`} style={{ left: left(n) }} />
       ))}
       <span className="digest-day-tick mono" style={{ left: 0 }}>{start} h</span>
       <span className="digest-day-tick mono" style={{ right: 0 }}>{end} h</span>
-    </div>
+    </Link>
   )
 }
 

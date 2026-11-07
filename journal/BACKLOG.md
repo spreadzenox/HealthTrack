@@ -94,8 +94,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   toucher ouvre Journal › Nutrition. (07/11 20:00 : kcal, protéines, glucides, lipides, fibres des repas du jour)
 - [x] AUJ-3 (précision) — l'écart à votre norme sur chaque mesure dès 7 jours d'historique, en reprenant l'affichage
   de « Ce qui change aujourd'hui » (identité visuelle intacte).
-- [ ] AUJ-9 — Toucher la courbe du bien-être ou le graphique digestif ouvre Journal › Tendances réglé sur cette mesure
-  (après ORG-3 ; d'ici là la courbe ouvre l'historique du bien-être).
+- [x] AUJ-9 — Toucher la courbe du bien-être ou le graphique digestif ouvre Journal › Tendances réglé sur cette mesure
+  (après ORG-3 ; d'ici là la courbe ouvre l'historique du bien-être). (07/11 20:15 : `?mesure=wellbeing`,
+  `?mesure=digestion` ; `/bien-etre` → vue Jour)
 
 ## 🗂️ Nouvelle organisation (revue design du propriétaire du 07/11 vers 16:30) — après le nouvel écran Aujourd'hui
 
@@ -103,16 +104,18 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 > Onglets : Aujourd'hui, Journal, Analyses, Agir (nouveau), Sources. Leçons 13 à 17 : `DESIGN.md` § 9.
 > Un run = une étape, captures avant / après.
 
-- [ ] ORG-1 — Barre d'onglets : Aujourd'hui, Journal, Analyses, Agir, Sources ; Agir visible dès le début avec un état
+- [x] ORG-1 — Barre d'onglets : Aujourd'hui, Journal, Analyses, Agir, Sources ; Agir visible dès le début avec un état
   vide simple ; la réintroduction FODMAP quitte Analyses pour Agir (code gardé), proposée seulement quand une analyse
-  digestive repère un groupe FODMAP.
+  digestive repère un groupe FODMAP. (07/11 19:00 : `pages/Act.jsx`, `services/act.js`, 5e onglet ; FODMAP retiré des
+  sous-onglets et de l'onglet Digestion d'Analyses)
 - [ ] ORG-2 — Journal › Jours : retirer « Ce qui a été mesuré et noté, jour par jour », la photo des selles et « Vous
   avez corrigé N estimations » ; cartes jour par jour gardées, une icône par mesure, couleurs par thème, écart à la
   norme ; ni source dans un libellé (« Stress montre ») ni « · ».
-- [ ] ORG-3 — Journal › Tendances (quitte Analyses) devient un visualiseur : jour, semaine ou mois ; une ou plusieurs
+- [x] ORG-3 — Journal › Tendances (quitte Analyses) devient un visualiseur : jour, semaine ou mois ; une ou plusieurs
   mesures superposables (un axe par unité) ; une mesure proposée à partir de 3 points ; toute mesure disponible.
-  « Votre forme », radar (code gardé) et comptes à rebours en texte retirés.
-- [ ] ORG-3b — L'historique du bien-être fusionne dans Tendances (vue Jour, détail de chaque lecture au toucher :
+  « Votre forme », radar (code gardé) et comptes à rebours en texte retirés. (07/11 20:15 : `TrendsViewer`,
+  `services/trendsData.js` sur TS-1 ; sous-onglets soulignés pleine largeur)
+- [x] ORG-3b — L'historique du bien-être fusionne dans Tendances (vue Jour, détail de chaque lecture au toucher :
   matrice des émotions, valence, éveil, qualité ; on descend aussi loin qu'on veut).
 - [ ] ORG-4 — Analyses = Bien-être et Digestion, même structure : retirer l'historique, « Sur quelques semaines »,
   « Autres liens repérés », « Bientôt » et l'analyse « dans les heures » ; « Comment c'est calculé » en lien discret en
@@ -186,9 +189,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   « Ce qui a pu peser ce jour-là » : les 3 plus grandes contributions du modèle d'ORG-5 ce jour-là (coefficient × écart
   du facteur), barres de part et d'autre de zéro, couleur du thème. Toucher un jour futur : l'attendu et sa fourchette.
   L'attendu, la fourchette et la courbe digestive estimée se branchent sur TS-1 ; d'ici là, seul ce qui existe s'affiche.
-- [ ] ORG-1b — **Agir** (complète ORG-1) : En cours (plusieurs essais à la fois, progression, consigne du jour), Mes
+- [x] ORG-1b — **Agir** (complète ORG-1) : En cours (plusieurs essais à la fois, progression, consigne du jour), Mes
   habitudes, Proposés par vos analyses (« Commencer »), Terminés ; en bas « Tous vos essais, vérifiés ou non, figurent
-  dans votre rapport médecin » (par défaut, sans bouton).
+  dans votre rapport médecin » (par défaut, sans bouton). (07/11 19:00 : sections sur les tests FODMAP existants ;
+  « Mes habitudes » et les essais viennent avec ORG-8)
 - [ ] ORG-8 — **Un essai dans Agir** : jours tirés au sort avec / sans (14 jours, ou semaines alternées), calendrier de
   pastilles (pleine = avec, contour = sans, ✓ tenu, – pas tenu), « Pourquoi des jours tirés au sort ? », « Ce qui est
   mesuré ». Le respect de la consigne vient des données (montre, téléphone) ; la question (« Le coucher était-il avant

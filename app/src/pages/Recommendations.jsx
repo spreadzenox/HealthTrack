@@ -34,7 +34,6 @@ import { useAutoSync } from '../hooks/useAutoSync'
 import DetailsToggle from '../components/DetailsToggle'
 import GutLinks from '../components/GutLinks'
 import { GUT_LINKS_MIN_DAYS } from '../services/gutLinks'
-import ReintroductionEntry from '../components/ReintroductionEntry'
 import DoctorReportCard from '../components/DoctorReportCard'
 import GutWeeks from '../components/GutWeeks'
 import AnalysesTabs from '../components/AnalysesTabs'
@@ -844,7 +843,6 @@ function GutView({ analysis, showGut }) {
       <p className="reco-intro reco-intro--gut">Ce qui va avec vos jours de gêne ou de douleur, d’après vos notes digestives et vos repas.</p>
       {waiting && <AnalysisCountdown domain="gut" days={gut?.noteDays ?? 0} target={gut?.minDays ?? GUT_LINKS_MIN_DAYS} />}
       <GutLinks gut={gut} hidden={hidden} onHide={onHide} />
-      <ReintroductionEntry />
       <HiddenLine count={hiddenCount} onUnhide={onUnhide} />
       <GutWeeks weeks={analysis.gutWeeks} />
       {/* Aucune note du ventre : ni rapport vide, ni « Débloquer », ni bloc « Bientôt », une phrase (POL-PLAY-VENTRE-BIENTOT) */}

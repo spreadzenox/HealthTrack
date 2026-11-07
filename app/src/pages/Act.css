@@ -1,0 +1,84 @@
+/* Onglet « Agir » (ORG-1, ORG-1b). Les essais prennent la couleur de leur thème (FODMAP = digestion, pêche). */
+.act-page {
+  padding-bottom: 32px;
+}
+
+.act-section {
+  margin: 0 0 18px;
+}
+
+.act-section-title {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.act-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.act-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  background: var(--tone-bg, var(--color-surface));
+  color: var(--tone-text, var(--text));
+  text-decoration: none;
+}
+
+.act-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.act-card-title {
+  font-weight: 700;
+}
+
+.act-card-detail {
+  font-size: 0.88rem;
+}
+
+.act-card-action {
+  flex: none;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--color-on-brand);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.act-chevron {
+  flex: none;
+  transform: rotate(-90deg);
+  color: var(--tone-label, var(--text-muted));
+}
+
+.act-empty {
+  background: var(--color-surface);
+}
+
+.act-empty-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.act-empty-text {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+}
+
+.act-report {
+  margin: 18px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}

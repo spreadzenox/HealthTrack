@@ -15,6 +15,14 @@ const ICONS = {
     </>
   ),
   pistes: <path d="M3 3v18h18M7 15l4-4 3 3 6-7" />,
+  // Agir (ORG-1) : une cible
+  act: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="4.5" />
+      <circle className="tabbar-dot" cx="12" cy="12" r="1.2" />
+    </>
+  ),
   sources: (
     <>
       <rect x="7" y="6" width="10" height="12" rx="3" />
@@ -24,15 +32,16 @@ const ICONS = {
 }
 
 /**
- * Navigation en 4 onglets de la maquette validée (jalon 2c). Les réglages (Données, Paramètres,
+ * Navigation en 5 onglets (jalon 2c, puis ORG-1 du 07/11 : Aujourd'hui, Journal, Analyses, Agir, Sources). Les réglages (Données, Paramètres,
  * Nouveautés) passent par le bouton en haut à droite (SettingsButton) : aucun onglet n'y est actif.
- * `paths` : préfixes de pages rangées sous l'onglet (Repas et Nutrition sous Journal, Ventre, Réintroduction et Tendances sous Analyses,
+ * `paths` : préfixes de pages rangées sous l'onglet (Repas et Nutrition sous Journal, Digestion et Tendances sous Analyses, la réintroduction FODMAP sous Agir,
  * données de la montre et retour Withings sous Sources, historique du bien-être sous Aujourd'hui — POL-PLAY-82).
  */
 const TABS = [
   { to: '/', label: 'Aujourd’hui', icon: 'today', end: true },
   { to: '/journal', label: 'Journal', icon: 'journal', paths: ['/journal', '/food', '/nutrition', '/tendances', '/bien-etre'] },
-  { to: '/recommendations', label: 'Analyses', icon: 'pistes', paths: ['/recommendations', '/reintroduction'] },
+  { to: '/recommendations', label: 'Analyses', icon: 'pistes', paths: ['/recommendations'] },
+  { to: '/agir', label: 'Agir', icon: 'act', paths: ['/agir', '/reintroduction'] },
   { to: '/connectors', label: 'Sources', icon: 'sources', paths: ['/connectors', '/montre'] },
 ]
 

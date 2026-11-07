@@ -1180,7 +1180,8 @@ describe('Recommendations — votre digestion et vos repas', () => {
     expect(within(section).queryByText(/L’attente joue aussi/)).toBeNull()
     expect(within(section).getAllByText(/Vérifier avec une réintroduction guidée/).length).toBeGreaterThan(0)
     expect(within(section).getByText(/RR = .* · q = /)).toBeInTheDocument()
-    expect(screen.getByTestId('reintro-entry')).toHaveAttribute('href', '/reintroduction')
+    // ORG-1 : la réintroduction FODMAP est dans Agir
+    expect(screen.queryByTestId('reintro-entry')).toBeNull()
     expect(screen.getByTestId('doctor-report')).toHaveTextContent('Rapport PDF pour mon médecin')
   })
 
