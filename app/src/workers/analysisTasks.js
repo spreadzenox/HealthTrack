@@ -18,7 +18,7 @@ import { summarizeGutLinks } from '../services/gutLinks'
 import { gutWeeks } from '../services/gutWeeks'
 import { mealHoursEffect } from '../services/mood/mealHours'
 import { wellbeingWeeks } from '../services/mood/wellbeingWeeks'
-import { computeAnalysisResults } from '../services/analysisResults'
+import { computeAnalysisResults, contributionsByDay } from '../services/analysisResults'
 import { estimateStatesFromEntries } from '../services/method/stateSpace'
 
 export const ANALYSIS_TASKS = {
@@ -48,7 +48,12 @@ export const ANALYSIS_TASKS = {
    * ORG-5d — Analyses (Bien-être, Digestion) : le contrat des résultats (services/analysisResults.js), seuils de
    * déblocage compris. Forme stable, sérialisable.
    */
-  analysisResults: async () => computeAnalysisResults(await listEntriesForAnalysis()),
+  analysisResults: async () => {
+    const entries = await listEntriesForAnalysis()
+    const results = computeAnalysisResults(entries)
+    // « Ce qui a pu peser ce jour-là » (Tendances) : les 3 plus grandes contributions de chaque jour, sur le modèle.
+    return { ...results, contributions: contributionsByDay(results, entries) }
+  },
   /**
    * TS-1 — Tendances et Aujourd'hui : estimation de chaque jour (bien-être, confort digestif), fourchette, attendu des
    * 7 jours à venir, courbe digestive montrée ou non, note à demander ou non.
