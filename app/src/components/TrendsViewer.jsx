@@ -200,7 +200,7 @@ export default function TrendsViewer({
               </li>
             )
           })}
-          {addable.length > 0 && period !== 'day' && (
+          {addable.length > 0 && period !== 'day' && shown.length > 0 && (
             <li>
               <button type="button" className="trends-add" aria-label="Ajouter une mesure" aria-expanded={adding}
                 onClick={() => setAdding(!adding)}>
@@ -238,12 +238,25 @@ export default function TrendsViewer({
             ? <DayDetail data={data} keys={shown} date={selected} onClose={() => setSelected(null)} extra={dayExtra?.(selected, shown) ?? null} marks={marks} />
             : <p className="trends-hint">Touchez un jour pour son détail.</p>}
         </>
+      ) : data.available.length ? (
+        // T1 : aucune mesure choisie → les courbes disponibles en grandes puces, bien visibles
+        <div className="trends-pick">
+          <p className="trends-pick-title">Choisissez une courbe</p>
+          <ul className="trends-pick-list" aria-label="Courbes disponibles">
+            {data.available.map((k) => {
+              const m = trendMeasure(k)
+              return (
+                <li key={k}>
+                  <button type="button" className="trends-chip trends-pick-chip" data-tone={m.tone} onClick={() => setKeys([k])}>
+                    <span className="trends-chip-dot" aria-hidden="true" />{m.label}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
       ) : (
-        <p className="trends-empty">
-          {data.available.length
-            ? 'Choisissez une mesure avec « + ».'
-            : 'Vos courbes apparaîtront après 3 jours de mesures.'}
-        </p>
+        <p className="trends-empty">Vos courbes apparaîtront après 3 jours de mesures.</p>
       )}
     </article>
   )

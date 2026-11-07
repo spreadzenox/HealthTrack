@@ -193,6 +193,13 @@ fera adapter l'icône : ne pas l'anticiper.
 17. Une fonction n'apparaît que quand elle sert (FODMAP seulement si une analyse le justifie ; un graphique à partir de
     3 points).
 
+18. La navigation et les réglages ne se ressemblent jamais (07/11 au soir).
+
+**Méta-leçons B — comment on conçoit** (validées le 07/11 au soir) : 7. Juger sur la vraie app, à jour. 8. Derrière
+chaque remarque, chercher la règle. 9. Maquette interactive avant le code pour tout changement de structure. 10. Mettre
+la méthode à l'épreuve par simulation, avec une vérité connue, avant de la construire. 11. Une hiérarchie claire,
+groupée par sens ; ne pas empiler les fonctions : une fonction sans place évidente dans l'arbre attend.
+
 (Leçons 13 à 17 ajoutées au run du 07/11 16:35, revue du 07/11 vers 16:30, avec la nouvelle organisation des onglets :
 `BACKLOG.md`, section « Nouvelle organisation ».)
 

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agir et Tendances</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Version 2 : quatre écrans (Tendances, Agir, un essai en cours, son résultat) puis ce qui tourne en coulisses. */
+:root {
+  --bg: #eef2f0;
+  --surface: #ffffff;
+  --surface-2: #f4f6f5;
+  --border: #e3e8e6;
+  --ink: #10231d;
+  --ink-2: #4a5e57;
+  --brand: #0b7a5e;
+  --on-brand: #ffffff;
+  --t-bienetre: #0b7a5e;
+  --t-digestion: #d4661f;
+  --t-activite: #5b4fd6;
+  --t-sommeil: #24407e;
+  --t-corps: #c2255c;
+  --t-contexte: #7d8b86;
+  --font-display: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c1613; --surface: #13211c; --surface-2: #1a2a24; --border: #2a3b35;
+    --ink: #e8f1ed; --ink-2: #a7bab3; --brand: #3fc79c; --on-brand: #06231a;
+    --t-bienetre: #3fc79c; --t-digestion: #f0954f; --t-activite: #9d92ff; --t-sommeil: #8fabef;
+    --t-corps: #f06a98; --t-contexte: #93a39d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c1613; --surface: #13211c; --surface-2: #1a2a24; --border: #2a3b35;
+  --ink: #e8f1ed; --ink-2: #a7bab3; --brand: #3fc79c; --on-brand: #06231a;
+  --t-bienetre: #3fc79c; --t-digestion: #f0954f; --t-activite: #9d92ff; --t-sommeil: #8fabef;
+  --t-corps: #f06a98; --t-contexte: #93a39d;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.45; }
+.wrap { max-width: 1560px; margin: 0 auto; padding: 24px 16px 48px; display: grid; gap: 20px; }
+.intro { max-width: 72ch; display: grid; gap: 6px; }
+.intro h1 { font-family: var(--font-display); font-size: 26px; font-weight: 800; margin: 0; text-wrap: balance; }
+.intro p { margin: 0; color: var(--ink-2); }
+.screens { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 20px; align-items: start; }
+.screen { display: grid; gap: 8px; }
+.cap { font-size: 14px; color: var(--ink-2); padding: 0 6px; min-height: 42px; }
+.cap b { color: var(--ink); }
+.phone { background: var(--surface); border: 1px solid var(--border); border-radius: 30px; overflow: hidden; display: flex; flex-direction: column; min-height: 760px; }
+.body { padding: 18px 16px 12px; display: grid; gap: 14px; align-content: start; flex: 1; min-width: 0; }
+.title { font-family: var(--font-display); font-size: 26px; font-weight: 800; margin: 0; }
+.back { color: var(--brand); font-weight: 600; font-size: 15px; }
+h3 { font-family: var(--font-display); font-size: 17px; margin: 0; text-wrap: balance; }
+h4 { font-size: 14px; margin: 0; font-weight: 700; }
+p { margin: 0; }
+.muted { color: var(--ink-2); font-size: 14px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.card { background: var(--surface-2); border-radius: 18px; padding: 14px; display: grid; gap: 8px; }
+.card.accent { border-left: 4px solid var(--c); }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.row.start { justify-content: flex-start; flex-wrap: wrap; }
+.btn { border: 0; border-radius: 999px; padding: 9px 16px; font: inherit; font-size: 15px; font-weight: 700; background: var(--c, var(--brand)); color: var(--on-brand); cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--c, var(--brand)); border: 1.5px solid var(--c, var(--brand)); }
+.btn.link { background: transparent; color: var(--ink-2); padding: 9px 4px; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+button:focus-visible, .hit:focus-visible, .flag:focus-visible, input:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.tag { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 9px; background: color-mix(in srgb, var(--c) 14%, transparent); color: var(--c); white-space: nowrap; }
+.nav { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--border); padding: 8px 4px 12px; }
+.nav span { text-align: center; font-size: 11.5px; color: var(--ink-2); display: grid; gap: 4px; justify-items: center; }
+.nav span i { width: 22px; height: 22px; border-radius: 7px; border: 1.8px solid currentColor; display: block; }
+.nav span.on { color: var(--brand); font-weight: 700; }
+.nav span.on i { background: color-mix(in srgb, var(--brand) 18%, transparent); }
+
+/* Navigation du Journal : un onglet souligné, sur toute la largeur. */
+.tabs { display: flex; border-bottom: 1px solid var(--border); margin: 0 -16px; padding: 0 8px; }
+.tabs span { flex: 1; text-align: center; padding: 6px 0 10px; font-weight: 600; font-size: 15px; color: var(--ink-2); border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.tabs span.on { color: var(--ink); border-bottom-color: var(--brand); }
+/* Réglages de la courbe : petits, dans la carte du graphique. */
+.chartcard { background: var(--surface-2); border-radius: 18px; padding: 12px 10px 10px; display: grid; gap: 10px; }
+.chartcard svg { display: block; width: 100%; height: auto; }
+.tools { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { border: 1.5px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 3px 10px 3px 8px; font: inherit; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.chip i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); border: 1.5px solid var(--c); }
+.chip[aria-pressed="false"] { color: var(--ink-2); }
+.chip[aria-pressed="false"] i { background: transparent; }
+.chip.add { border-style: dashed; color: var(--ink-2); padding-left: 10px; }
+.seg { display: inline-flex; background: color-mix(in srgb, var(--ink) 7%, transparent); border-radius: 10px; padding: 3px; }
+.seg button { border: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink-2); padding: 3px 10px; border-radius: 8px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(16, 35, 29, 0.14); }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-2); padding: 0 4px; }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+.lg-line { width: 16px; border-top: 2.5px solid var(--c); display: inline-block; }
+.lg-dash { width: 16px; border-top: 2.5px dashed var(--c); display: inline-block; }
+.lg-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c); display: inline-block; }
+.lg-band { width: 16px; height: 10px; border-radius: 3px; background: color-mix(in srgb, var(--c) 22%, transparent); display: inline-block; }
+.hit { cursor: pointer; }
+.flag { cursor: pointer; }
+.sheet { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px; display: grid; gap: 12px; box-shadow: 0 6px 18px rgba(16, 35, 29, 0.08); }
+.big { font-family: var(--font-display); font-size: 30px; font-weight: 800; line-height: 1; }
+.dig { font-family: var(--font-display); font-size: 22px; font-weight: 800; line-height: 1; color: var(--t-digestion); }
+.vals { display: flex; gap: 18px; align-items: flex-end; flex-wrap: wrap; }
+.vals small { color: var(--ink-2); font-size: 13px; }
+.sheet svg { display: block; width: 100%; height: auto; }
+.sub { display: grid; gap: 4px; }
+.contrib { display: grid; grid-template-columns: minmax(0, 1fr) 80px 64px; gap: 8px; align-items: center; font-size: 14px; }
+.ctrack { position: relative; height: 10px; }
+.ctrack::before { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--border); }
+.cbar { position: absolute; top: 1px; height: 8px; border-radius: 4px; background: var(--c); }
+.cval { text-align: right; white-space: nowrap; }
+.same { display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 8px; align-items: baseline; font-size: 14px; }
+.same i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); display: inline-block; }
+
+/* Agir */
+.ticks { display: grid; grid-template-columns: repeat(14, 1fr); gap: 3px; }
+.ticks i { height: 8px; border-radius: 3px; border: 1.5px solid var(--c); }
+.ticks i.on { background: var(--c); }
+.progress { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.progress i { display: block; height: 100%; background: var(--c); border-radius: 4px; }
+.warn { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; background: var(--surface); border: 1.5px solid var(--c); border-radius: 14px; padding: 10px 12px; }
+.warn .ic { width: 22px; height: 22px; border-radius: 50%; background: var(--c); color: var(--on-brand); display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+.warn > div { display: grid; gap: 6px; }
+.foot { display: flex; gap: 8px; align-items: center; color: var(--ink-2); font-size: 14px; }
+.foot svg { flex: none; }
+
+/* Essai */
+.sim { border: 1.5px dashed var(--border); border-radius: 14px; padding: 8px 12px; display: flex; gap: 8px 14px; flex-wrap: wrap; align-items: center; font-size: 13.5px; color: var(--ink-2); }
+.sim b { color: var(--ink); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+.sim label { display: inline-flex; gap: 8px; align-items: center; }
+.sim input[type="range"] { accent-color: var(--brand); width: 120px; }
+.strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.day { aspect-ratio: 1; border-radius: 12px; display: grid; place-items: center; font-size: 12px; font-weight: 700; position: relative; }
+.day.avec { background: var(--c); color: var(--on-brand); }
+.day.sans { border: 2px solid var(--c); color: var(--c); background: transparent; }
+.day.future { opacity: 0.4; }
+.day.today { outline: 3px solid var(--ink); outline-offset: 2px; }
+.day .mk { position: absolute; bottom: -4px; right: -4px; width: 17px; height: 17px; border-radius: 50%; background: var(--surface); border: 1.5px solid var(--border); font-size: 10px; display: grid; place-items: center; color: var(--ink); }
+.today-card { background: color-mix(in srgb, var(--c) 12%, var(--surface)); border-radius: 18px; padding: 14px; display: grid; gap: 10px; }
+.verdict { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; color: var(--t-bienetre); }
+.verdict::before { content: "✓"; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--t-bienetre); color: var(--on-brand); font-size: 13px; }
+.plot { background: var(--surface-2); border-radius: 18px; padding: 10px 8px 8px; display: grid; gap: 4px; }
+.plot svg { display: block; width: 100%; height: auto; }
+@media (prefers-reduced-motion: no-preference) {
+  .pop { animation: pop 0.6s ease-out; transform-box: fill-box; transform-origin: center; }
+  @keyframes pop { from { opacity: 0; transform: scale(0.2); } to { opacity: 1; transform: scale(1); } }
+}
+
+/* Coulisses */
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+.note { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 18px; display: grid; gap: 10px; align-content: start; }
+.note h2 { font-family: var(--font-display); font-size: 19px; margin: 0; text-wrap: balance; }
+.note ul { margin: 0; padding-left: 18px; display: grid; gap: 7px; }
+.note li { max-width: 70ch; }
+.kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <h1>Agir et Tendances, version 2</h1>
+    <p>Vos retours du 7 novembre sont appliqués. Les données sont inventées. Dans Tendances, touchez un jour ; en vue Mois, touchez « changement ». Au-dessus du 3<sup>e</sup> écran, le cadre en pointillés fait avancer l'essai.</p>
+  </header>
+
+  <div class="screens">
+    <!-- 1. Tendances -->
+    <section class="screen" aria-label="Journal, Tendances">
+      <div class="cap"><b>1. Journal › Tendances.</b> Les onglets du Journal sont soulignés ; les réglages de la courbe sont petits, dans la carte. L'attendu ne prolonge que le futur.</div>
+      <div class="phone">
+        <div class="body">
+          <h2 class="title">Journal</h2>
+          <nav class="tabs" aria-label="Journal"><span>Jours</span><span>Repas</span><span>Nutrition</span><span class="on">Tendances</span></nav>
+          <div class="chartcard">
+            <div class="tools">
+              <div class="chips">
+                <button class="chip" type="button" id="c-be" aria-pressed="true" style="--c:var(--t-bienetre)"><i></i>Bien-être</button>
+                <button class="chip" type="button" id="c-dig" aria-pressed="true" style="--c:var(--t-digestion)"><i></i>Confort digestif</button>
+                <button class="chip add" type="button" aria-label="Ajouter une courbe">+</button>
+              </div>
+              <div class="seg" role="group" aria-label="Période">
+                <button type="button" data-p="jour" aria-pressed="false">Jour</button>
+                <button type="button" data-p="semaine" aria-pressed="true">Semaine</button>
+                <button type="button" data-p="mois" aria-pressed="false">Mois</button>
+              </div>
+            </div>
+            <svg id="trend" viewBox="0 0 320 200" role="img" aria-label="Courbes de la période"></svg>
+            <div class="legend" id="legend"></div>
+          </div>
+          <div class="sheet" id="sheet" aria-live="polite"></div>
+        </div>
+        <nav class="nav"><span><i></i>Aujourd'hui</span><span class="on"><i></i>Journal</span><span><i></i>Analyses</span><span><i></i>Agir</span><span><i></i>Sources</span></nav>
+      </div>
+    </section>
+
+    <!-- 2. Agir -->
+    <section class="screen" aria-label="Onglet Agir">
+      <div class="cap"><b>2. Agir.</b> Plusieurs essais en cours, vos habitudes gardées, les essais proposés, ceux qui sont terminés.</div>
+      <div class="phone">
+        <div class="body">
+          <h2 class="title">Agir</h2>
+          <h3>En cours</h3>
+          <div class="card accent" style="--c:var(--t-sommeil)">
+            <div class="row"><b>Se coucher avant 23 h</b><span class="tag">Sommeil</span></div>
+            <div class="progress" aria-label="Jour 8 sur 14"><i style="width:57%"></i></div>
+            <p class="muted">Jour 8 sur 14. Ce soir : avant 23 h.</p>
+          </div>
+          <div class="card accent" style="--c:var(--t-activite)">
+            <div class="row"><b>Marcher 30 minutes le midi</b><span class="tag">Activité</span></div>
+            <div class="progress" aria-label="Semaine 2 sur 4"><i style="width:38%"></i></div>
+            <p class="muted">Semaine 2 sur 4. Cette semaine : avec marche.</p>
+          </div>
+
+          <h3>Mes habitudes</h3>
+          <div class="card accent" style="--c:var(--t-contexte)">
+            <div class="row"><b>Pas d'écran après 22 h</b><span class="tag">Écran</span></div>
+            <div class="ticks" aria-label="Tenue 4 soirs sur les 14 derniers"><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="warn" style="--c:var(--ink-2)">
+              <span class="ic" aria-hidden="true">!</span>
+              <div>
+                <p><b>Vous vous éloignez de cette habitude.</b> Écran après 22 h 10 soirs sur les 14 derniers.</p>
+                <div class="row start"><button class="btn ghost" type="button" style="--c:var(--ink)">Relancer le test</button><button class="btn link" type="button">Supprimer cette habitude</button></div>
+              </div>
+            </div>
+          </div>
+          <div class="card accent" style="--c:var(--t-digestion)">
+            <div class="row"><b>Dîner avant 20 h 30</b><span class="tag">Digestion</span></div>
+            <div class="ticks" aria-label="Tenue 12 soirs sur les 14 derniers"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+            <p class="muted">Tenue 12 soirs sur les 14 derniers. Vérifiée par votre essai d'octobre.</p>
+          </div>
+
+          <h3>Proposés par vos analyses</h3>
+          <div class="card accent" style="--c:var(--t-digestion)">
+            <div class="row"><b>Moins d'alcool en semaine</b><span class="tag">Alimentation</span></div>
+            <p class="muted">Lien repéré : −0,3 point de bien-être le lendemain d'un verre. 14 jours, un jour sur deux tiré au sort.</p>
+            <div><button class="btn" type="button" style="--c:var(--t-digestion)">Commencer</button></div>
+          </div>
+          <div class="card accent" style="--c:var(--t-digestion)">
+            <div class="row"><b>Réintroduction : les fructanes</b><span class="tag">Digestion</span></div>
+            <p class="muted">Vos analyses digestives repèrent les fructanes. 3 jours de portions croissantes.</p>
+            <div><button class="btn" type="button" style="--c:var(--t-digestion)">Commencer</button></div>
+          </div>
+
+          <h3>Terminés</h3>
+          <div class="card"><div class="row"><b>Café après 16 h</b><span class="muted">pas d'effet net</span></div><p class="muted">Du 12 au 26 octobre.</p></div>
+          <p class="foot"><svg width="16" height="18" viewBox="0 0 16 18" aria-hidden="true"><path d="M2 1h8l4 4v12H2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 9h6M5 12h6" stroke="currentColor" stroke-width="1.6"/></svg>Tous vos essais, vérifiés ou non, figurent dans votre rapport médecin.</p>
+        </div>
+        <nav class="nav"><span><i></i>Aujourd'hui</span><span><i></i>Journal</span><span><i></i>Analyses</span><span class="on"><i></i>Agir</span><span><i></i>Sources</span></nav>
+      </div>
+    </section>
+
+    <!-- 3. Essai en cours -->
+    <section class="screen" aria-label="Un essai en cours">
+      <div class="cap"><b>3. Un essai en cours.</b> Le résultat se dessine chaque jour. La question du coucher n'apparaît que si la montre n'a rien envoyé.</div>
+      <div class="sim" role="group" aria-label="Simulation de la maquette">
+        <b>Simuler</b>
+        <label>Jour <input type="range" id="t-day" min="2" max="14" value="8" aria-label="Jour de l'essai"> <span class="num" id="t-day-v">8</span> / 14</label>
+        <span class="seg" role="group" aria-label="Données d'hier soir">
+          <button type="button" id="t-ok" aria-pressed="true">Données reçues</button>
+          <button type="button" id="t-ko" aria-pressed="false">Pas reçues</button>
+        </span>
+      </div>
+      <div class="phone" style="--c:var(--t-sommeil)">
+        <div class="body">
+          <span class="back">‹ Agir</span>
+          <h2 class="title" style="font-size:24px">Se coucher avant 23 h</h2>
+          <p class="muted">Essai de 14 jours, commencé le 31 octobre.</p>
+          <div class="today-card" id="t-today" aria-live="polite"></div>
+          <h3>Résultat en cours</h3>
+          <div class="plot">
+            <svg id="t-dots" viewBox="0 0 320 120" role="img" aria-label="Bien-être des lendemains déjà mesurés, jours avec et jours sans"></svg>
+            <svg id="t-gap" viewBox="0 0 320 54" role="img" aria-label="Écart entre les jours avec et sans, avec sa fourchette"></svg>
+          </div>
+          <p class="muted" id="t-txt"></p>
+          <h3>Les 14 jours</h3>
+          <div class="strip" id="strip" aria-label="Calendrier de l'essai"></div>
+          <div class="legend" style="padding:0;--c:var(--t-sommeil)"><span><i class="lg-dot" style="border-radius:4px"></i>avant 23 h</span><span><i class="lg-dot" style="background:transparent;border:2px solid var(--t-sommeil);border-radius:4px"></i>comme d'habitude</span><span>✓ tenu · – pas tenu</span></div>
+          <div class="card">
+            <b>Pourquoi des jours tirés au sort ?</b>
+            <p class="muted">Pour comparer des jours qui ne diffèrent que par l'heure du coucher. Votre humeur ou votre semaine ne peuvent pas choisir à votre place.</p>
+          </div>
+          <div class="card">
+            <b>Ce qui est mesuré</b>
+            <p class="muted">Votre bien-être du lendemain, d'après vos lectures et vos notes. L'heure du coucher vient de votre montre.</p>
+          </div>
+        </div>
+        <nav class="nav"><span><i></i>Aujourd'hui</span><span><i></i>Journal</span><span><i></i>Analyses</span><span class="on"><i></i>Agir</span><span><i></i>Sources</span></nav>
+      </div>
+    </section>
+
+    <!-- 4. Résultat -->
+    <section class="screen" aria-label="Le résultat d'un essai">
+      <div class="cap"><b>4. Le résultat.</b> Le même graphique, terminé. Garder l'habitude l'ajoute à « Mes habitudes ».</div>
+      <div class="phone" style="--c:var(--t-sommeil)">
+        <div class="body">
+          <span class="back">‹ Agir</span>
+          <h2 class="title" style="font-size:24px">Se coucher avant 23 h</h2>
+          <span class="verdict">Vérifié par votre essai</span>
+          <p id="r-txt"></p>
+          <div class="plot">
+            <svg id="r-dots" viewBox="0 0 320 120" role="img" aria-label="Bien-être des lendemains, jours avec et jours sans"></svg>
+            <svg id="r-gap" viewBox="0 0 320 54" role="img" aria-label="Écart entre les jours avec et sans, avec sa fourchette"></svg>
+          </div>
+          <p class="muted" id="r-sub"></p>
+          <div class="row start"><button class="btn" type="button" id="keep">Garder cette habitude</button></div>
+          <p class="foot"><svg width="16" height="18" viewBox="0 0 16 18" aria-hidden="true"><path d="M2 1h8l4 4v12H2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 9h6M5 12h6" stroke="currentColor" stroke-width="1.6"/></svg>Figure dans votre rapport médecin, comme tous vos essais.</p>
+          <div class="card"><b>Et maintenant ?</b><p class="muted">Une habitude gardée rejoint la liste dans Agir. Halcya ne vous prévient que si vous vous en éloignez deux semaines de suite.</p></div>
+        </div>
+        <nav class="nav"><span><i></i>Aujourd'hui</span><span><i></i>Journal</span><span><i></i>Analyses</span><span class="on"><i></i>Agir</span><span><i></i>Sources</span></nav>
+      </div>
+    </section>
+  </div>
+
+  <section class="notes" aria-label="En coulisses">
+    <article class="note">
+      <span class="kicker">En coulisses · proposition</span>
+      <h2>Un seul modèle pour le bien-être et le confort digestif</h2>
+      <ul>
+        <li><b>Deux états cachés par jour</b> : votre bien-être et votre confort digestif. Tout ce qu'Halcya reçoit les observe. Vos notes et les lectures du visage mesurent le même bien-être, avec une précision différente. Les notes digestives et la photo des selles mesurent le confort digestif.</li>
+        <li><b>Chaque état se décompose</b> en tendance lente, rythme de la semaine et écart du jour (outil 1).</li>
+        <li><b>Les écarts du jour sont liés</b> : un mauvais jour digestif pèse souvent sur le bien-être, et l'inverse. Ce lien s'apprend sur vos jours où les deux sont connus. Tant qu'il y en a peu, il part d'une valeur prudente commune à tous.</li>
+        <li><b>Un filtre de Kalman combine tout</b> (outil 2). Une note pèse beaucoup, une lecture du visage moins, et un jour sans rien garde une fourchette plus large. Le même calcul donne l'attendu des jours à venir.</li>
+        <li><b>Sans note digestive</b>, le confort digestif est estimé à partir du bien-être lu sur le visage. La courbe n'apparaît que si elle prédit vos notes mises de côté mieux que votre moyenne. Sinon, seuls les jours notés s'affichent.</li>
+        <li><b>Moins de questions</b> : Halcya ne demande une note que les jours où l'estimation est la plus incertaine, par exemple quand le visage et l'habitude ne disent pas la même chose.</li>
+        <li><b>Garde-fou</b> : les analyses digestives n'apprennent que de l'information digestive. Sinon, le sommeil ou l'alcool pourraient sembler peser sur le ventre alors qu'ils ne touchent que le bien-être. Le banc de simulation le vérifie. Ce modèle remplace aussi la règle actuelle « la gêne tire la note du jour vers le bas ».</li>
+      </ul>
+    </article>
+    <article class="note">
+      <span class="kicker">En coulisses · proposition</span>
+      <h2>Repérer les changements durables</h2>
+      <ul>
+        <li><b>Où</b> : bien-être, confort digestif, sommeil, VFC, fréquence cardiaque au repos, pas, écran. On cherche une fois le rythme de la semaine retiré.</li>
+        <li><b>Quoi</b> : un saut de niveau qui dure, pas un mauvais jour. Il faut au moins 7 jours de chaque côté, un saut d'au moins une demi-variation habituelle, et le changement doit être toujours là 7 jours plus tard. Le seuil se règle sur simulation : moins d'une fausse alerte par courbe et par semestre.</li>
+        <li><b>Ce qu'on voit</b> : un repère dans Tendances (« changement », vue Mois). On y lit le niveau avant et après, et ce qui a changé au même moment, sans jamais parler de cause. Le changement figure aussi dans le rapport médecin.</li>
+        <li><b>Ce que ça change</b> : la norme des écarts du jour repart du nouveau niveau, pour ne pas signaler « plus bas que d'habitude » pendant des semaines. Un lien des Analyses doit tenir à l'intérieur des périodes, pas seulement de l'une à l'autre. Un essai traversé par un changement le mentionne dans son résultat.</li>
+      </ul>
+    </article>
+  </section>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function txt(parent, x, y, s, attrs) { var a = { x: x, y: y, 'font-size': 10, fill: 'var(--ink-2)', 'font-family': 'var(--font-mono)' }; for (var k in attrs) a[k] = attrs[k]; var t = el('text', a, parent); t.textContent = s; return t; }
+  function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
+  function fr(v, d) { return v.toFixed(d == null ? 1 : d).replace('.', ','); }
+  function sg(v, d) { return (v >= 0 ? '+' : '−') + fr(Math.abs(v), d); }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function hm(h) { var H = Math.floor(h), M = Math.round((h - H) * 60); if (M === 60) { H++; M = 0; } return (H % 24) + ' h ' + ('0' + M).slice(-2); }
+
+  // Tirage reproductible.
+  var seed = 11;
+  function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+  function gauss() { var u = rnd() || 1e-9, v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+  // ---------- Données inventées : 30 jours passés (09/10 → 07/11) et 7 à venir ----------
+  var N = 37, TODAY = 29, RUPT = 11;
+  var JOURS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+  var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  var EXPR = ['Joie', 'Neutre', 'Surprise', 'Tristesse', 'Colère', 'Peur', 'Dégoût', 'Mépris'];
+  function dd(d) { return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2); }
+  function longDate(d) { var s = JOURS[d.getDay()] + ' ' + d.getDate() + ' ' + MOIS[d.getMonth()]; return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  var D = [], lastSport = -3;
+  for (var i = 0; i < N; i++) {
+    var date = new Date(2026, 9, 9 + i), dow = date.getDay(), we = dow === 0 || dow === 6, after = i >= RUPT;
+    var sleepDev = (after ? -0.6 : 0) + (we ? 0.4 : 0) + 0.5 * gauss();
+    var alc = (dow === 6 || dow === 0) ? (rnd() < 0.6 ? (rnd() < 0.5 ? 1 : 2) : 0) : (rnd() < 0.12 ? 1 : 0);
+    if ((dow === 2 || dow === 4) && rnd() < 0.85) lastSport = i;
+    var ago = i - lastSport, screen = rnd() < 0.35;
+    var c = [];
+    c.push([sleepDev < -0.25 ? 'Nuit plus courte que d’habitude (' + hm(7.5 + sleepDev) + ')' : sleepDev > 0.25 ? 'Nuit plus longue que d’habitude (' + hm(7.5 + sleepDev) + ')' : 'Nuit habituelle (' + hm(7.5 + sleepDev) + ')', 'sommeil', 0.25 * sleepDev]);
+    if (alc) c.push(['Alcool la veille (' + alc + ' verre' + (alc > 1 ? 's' : '') + ')', 'digestion', -0.15 * alc]);
+    if (ago >= 2 && ago <= 4) c.push(['Sport il y a ' + ago + ' jours', 'activite', 0.1]);
+    if (we) c.push(['Week-end', 'contexte', 0.25]);
+    if (screen) c.push(['Écran tard la veille', 'contexte', -0.06]);
+    var level = after ? 3.05 : 3.45;
+    var sum = c.reduce(function (s, x) { return s + x[2]; }, 0);
+    var dev = sum + 0.22 * gauss();
+    var b = clamp(level + dev, 1.2, 4.8);
+    var reads = 6 + Math.floor(rnd() * 9);
+    var noted = rnd() < 0.4 ? clamp(Math.round(b + 0.3 * gauss()), 1, 5) : null;
+    var be = noted != null ? 0.55 * noted + 0.45 * b : b + 0.12 * gauss();
+    var bw = noted != null ? 0.12 : 0.12 + 0.6 / Math.sqrt(reads);
+    // Confort digestif : lié aux écarts du bien-être, et à l'alcool.
+    var g = clamp(3.75 + 0.6 * (dev - (we ? 0.25 : 0)) - 0.3 * alc + 0.3 * gauss(), 1.2, 4.8);
+    var gNote = rnd() < 0.33 ? (g >= 3.4 ? 'calme' : g >= 2.3 ? 'gêne' : 'douleur') : null;
+    var gv = gNote ? 0.5 * ({ calme: 4.3, 'gêne': 2.8, douleur: 1.6 })[gNote] + 0.5 * g : g + 0.2 * gauss();
+    // Visage : lectures (valence, éveil) et expressions.
+    var dayAr = -0.12 + 0.22 * gauss(), rd = [];
+    for (var k = 0; k < reads; k++) {
+      var h = 8 + 14 * (k + 0.5) / reads + 0.6 * (rnd() - 0.5);
+      var v = clamp(b + 0.45 * gauss(), 0.5, 5);
+      rd.push({ h: h, v: v, val: clamp((v - 2.5) / 2.5, -1, 1), ar: clamp(dayAr + 0.22 * gauss(), -1, 1) });
+    }
+    var vd = (b - 2.5) / 2.5;
+    var mix = [0.1 + 0.32 * Math.max(0, vd - 0.05) + 0.03 * rnd(), 0.4 - 0.12 * Math.abs(vd), 0.04 + 0.06 * Math.max(0, dayAr) + 0.02 * rnd(), 0.08 + 0.3 * Math.max(0, 0.25 - vd) + 0.02 * rnd(), 0.025 + 0.02 * rnd(), 0.02 + 0.01 * rnd(), 0.02 + 0.01 * rnd(), 0.07 + 0.02 * rnd()];
+    var tot = mix.reduce(function (s, x) { return s + x; }, 0);
+    mix = mix.map(function (x) { return x / tot; });
+    D.push({ date: date, we: we, sleepDev: sleepDev, contribs: c, b: b, be: be, bw: bw, reads: reads, noted: noted, g: g, gNote: gNote, gv: gv, rd: rd, mix: mix, ar: dayAr });
+  }
+  // Le mardi 3 novembre raconte une histoire nette : nuit courte, un verre la veille, une gêne notée.
+  (function () {
+    var s = D[TODAY - 4];
+    s.sleepDev = -1.15;
+    s.contribs = [['Nuit plus courte que d’habitude (' + hm(7.5 + s.sleepDev) + ')', 'sommeil', -0.29], ['Alcool la veille (1 verre)', 'digestion', -0.15], ['Écran tard la veille', 'contexte', -0.06]];
+    s.b = 3.05 - 0.5; s.be = s.b + 0.02; s.bw = 0.12 + 0.6 / Math.sqrt(11); s.reads = 11; s.noted = null;
+    s.g = 3.15; s.gNote = 'gêne'; s.gv = 0.5 * 2.8 + 0.5 * s.g;
+    s.ar = -0.4; s.rd = [];
+    for (var k = 0; k < 11; k++) {
+      var v = clamp(s.b + 0.4 * gauss(), 0.5, 5);
+      s.rd.push({ h: 8 + 14 * (k + 0.5) / 11 + 0.6 * (rnd() - 0.5), v: v, val: clamp((v - 2.5) / 2.5, -1, 1), ar: clamp(s.ar + 0.2 * gauss(), -1, 1) });
+    }
+    var m = [0.07, 0.38, 0.03, 0.24, 0.05, 0.03, 0.03, 0.08], t = m.reduce(function (a, x) { return a + x; }, 0);
+    s.mix = m.map(function (x) { return x / t; });
+  })();
+  // Fourchette du confort digestif : étroite près des jours notés.
+  D.forEach(function (d, i) {
+    var dist = 99;
+    D.forEach(function (o, j) { if (o.gNote && j <= TODAY) dist = Math.min(dist, Math.abs(i - j)); });
+    d.gw = d.gNote ? 0.2 : 0.3 + Math.min(0.5, 0.12 * dist);
+  });
+  // Attendu des jours à venir (tendance + rythme de la semaine + nuits plus courtes depuis le changement).
+  for (i = TODAY + 1; i < N; i++) {
+    var hz = i - TODAY, dw = D[i].we;
+    D[i].exp = 3.05 + (dw ? 0.25 : 0) + 0.25 * (-0.6 + (dw ? 0.4 : 0)) - 0.15 * (dw ? 0.9 : 0.12);
+    D[i].expW = 0.42 + 0.05 * hz;
+    D[i].gexp = 3.75 - 0.3 * (dw ? 0.9 : 0.12) - 0.1;
+    D[i].gexpW = 0.55 + 0.06 * hz;
+  }
+  // Aujourd'hui n'est pas fini : lectures jusqu'à 16 h 40.
+  D[TODAY].rd = D[TODAY].rd.filter(function (r) { return r.h < 16.67; });
+  D[TODAY].reads = D[TODAY].rd.length;
+  D[TODAY].noted = null; D[TODAY].gNote = null;
+  // Habitude du visage : 28 derniers jours.
+  var habMix = EXPR.map(function (_, k) { var s = 0; for (var j = TODAY - 27; j <= TODAY; j++) s += D[j].mix[k]; return s / 28; });
+  var allR = []; for (var j = TODAY - 27; j <= TODAY; j++) allR = allR.concat(D[j].rd);
+  function mean(a) { return a.reduce(function (s, x) { return s + x; }, 0) / a.length; }
+  function sd(a) { var m = mean(a); return Math.sqrt(a.reduce(function (s, x) { return s + (x - m) * (x - m); }, 0) / (a.length - 1)); }
+  var hab = { v: mean(allR.map(function (r) { return r.val; })), a: mean(allR.map(function (r) { return r.ar; })), sv: sd(allR.map(function (r) { return r.val; })), sa: sd(allR.map(function (r) { return r.ar; })) };
+  var before = D.slice(0, RUPT), since = D.slice(RUPT, TODAY + 1);
+  var lvl = { b0: mean(before.map(function (d) { return d.be; })), b1: mean(since.map(function (d) { return d.be; })), s0: 7.5 + mean(before.map(function (d) { return d.sleepDev; })), s1: 7.5 + mean(since.map(function (d) { return d.sleepDev; })) };
+
+  // ---------- Tendances ----------
+  var st = { period: 'semaine', sel: null, be: true, dig: true, rupt: false };
+  var svg = document.getElementById('trend');
+  var W = 320, H = 200, L = 24, R = 10, T = 18, B = 24;
+  function yv(v) { return T + (5 - v) / 4 * (H - T - B); }
+  function range() { return st.period === 'mois' ? [0, N - 1] : [TODAY - 6, TODAY + 3]; }
+  function band(xs, lo, hi, color, parent) {
+    var p = xs.map(function (x, k) { return x + ',' + yv(hi[k]); }).concat(xs.slice().reverse().map(function (x, k) { return x + ',' + yv(lo[lo.length - 1 - k]); }));
+    el('polygon', { points: p.join(' '), fill: 'color-mix(in srgb, ' + color + ' 16%, transparent)', stroke: 'none' }, parent);
+  }
+  function line(xs, ys, color, attrs, parent) {
+    var a = { points: xs.map(function (x, k) { return x + ',' + yv(ys[k]); }).join(' '), fill: 'none', stroke: color, 'stroke-width': 2.2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' };
+    for (var k in attrs) a[k] = attrs[k];
+    el('polyline', a, parent);
+  }
+  function grid() {
+    [1, 2, 3, 4, 5].forEach(function (v) {
+      el('line', { x1: L, x2: W - R, y1: yv(v), y2: yv(v), stroke: 'var(--border)', 'stroke-width': 1 }, svg);
+      txt(svg, L - 8, yv(v) + 3.5, String(v), { 'text-anchor': 'end' });
+    });
+  }
+  function render() {
+    clear(svg);
+    if (st.period === 'jour') return renderDay();
+    var r = range(), a = r[0], z = r[1], n = z - a + 1;
+    function x(i) { return L + (i - a) * (W - L - R) / (n - 1); }
+    grid();
+    // Futur : fond léger et repère « auj. »
+    el('rect', { x: x(TODAY), y: T - 4, width: W - R - x(TODAY), height: H - T - B + 4, fill: 'color-mix(in srgb, var(--ink) 4%, transparent)' }, svg);
+    el('line', { x1: x(TODAY), x2: x(TODAY), y1: T - 6, y2: H - B, stroke: 'var(--ink-2)', 'stroke-width': 1, opacity: 0.6 }, svg);
+    txt(svg, x(TODAY) + 3, T - 7, 'auj.', { 'font-family': 'var(--font-body)', 'font-weight': 600 });
+    var labs = st.period === 'mois' ? [a, RUPT, TODAY, z] : [a, TODAY, z];
+    labs.forEach(function (i) { txt(svg, x(i), H - 8, dd(D[i].date), { 'text-anchor': i === a ? 'start' : i === z ? 'end' : 'middle' }); });
+    var past = [], fut = [];
+    for (var i = a; i <= z; i++) (i <= TODAY ? past : fut).push(i);
+    var futX = [x(TODAY)].concat(fut.map(x));
+    // Changement durable (vue Mois)
+    var mois = st.period === 'mois';
+    if (mois && st.be) {
+      el('line', { x1: x(RUPT), x2: x(RUPT), y1: T + 12, y2: H - B, stroke: 'var(--ink)', 'stroke-width': 1.2, 'stroke-dasharray': '1 3', 'stroke-linecap': 'round' }, svg);
+    }
+    // Confort digestif
+    if (st.dig) {
+      var gc = 'var(--t-digestion)';
+      band(past.map(x), past.map(function (i) { return D[i].gv - D[i].gw; }), past.map(function (i) { return D[i].gv + D[i].gw; }), gc, svg);
+      band(futX, [D[TODAY].gv - D[TODAY].gw].concat(fut.map(function (i) { return D[i].gexp - D[i].gexpW; })), [D[TODAY].gv + D[TODAY].gw].concat(fut.map(function (i) { return D[i].gexp + D[i].gexpW; })), gc, svg);
+      line(past.map(x), past.map(function (i) { return D[i].gv; }), gc, { opacity: mois ? 0.55 : 0.85, 'stroke-width': 1.8 }, svg);
+      line(futX, [D[TODAY].gv].concat(fut.map(function (i) { return D[i].gexp; })), gc, { 'stroke-dasharray': '5 4', 'stroke-width': 1.8 }, svg);
+      past.forEach(function (i) { if (D[i].gNote) el('circle', { cx: x(i), cy: yv(D[i].gv), r: mois ? 2.8 : 3.6, fill: gc, stroke: 'var(--surface-2)', 'stroke-width': 1.2 }, svg); });
+    }
+    // Bien-être
+    if (st.be) {
+      var bc = 'var(--t-bienetre)';
+      band(past.map(x), past.map(function (i) { return D[i].be - D[i].bw; }), past.map(function (i) { return D[i].be + D[i].bw; }), bc, svg);
+      band(futX, [D[TODAY].be - D[TODAY].bw].concat(fut.map(function (i) { return D[i].exp - D[i].expW; })), [D[TODAY].be + D[TODAY].bw].concat(fut.map(function (i) { return D[i].exp + D[i].expW; })), bc, svg);
+      line(past.map(x), past.map(function (i) { return D[i].be; }), bc, mois ? { opacity: 0.55, 'stroke-width': 1.8 } : {}, svg);
+      line(futX, [D[TODAY].be].concat(fut.map(function (i) { return D[i].exp; })), bc, { 'stroke-dasharray': '5 4' }, svg);
+      past.forEach(function (i) { if (D[i].noted != null) el('circle', { cx: x(i), cy: yv(D[i].be), r: mois ? 2.8 : 3.6, fill: bc, stroke: 'var(--surface-2)', 'stroke-width': 1.2 }, svg); });
+      if (mois) {
+        // Niveau avant et après le changement, par-dessus les jours.
+        el('line', { x1: x(a), x2: x(RUPT) - 3, y1: yv(lvl.b0), y2: yv(lvl.b0), stroke: 'var(--t-bienetre)', 'stroke-width': 3.5, 'stroke-linecap': 'round' }, svg);
+        el('line', { x1: x(RUPT) + 3, x2: x(TODAY), y1: yv(lvl.b1), y2: yv(lvl.b1), stroke: 'var(--t-bienetre)', 'stroke-width': 3.5, 'stroke-linecap': 'round' }, svg);
+        txt(svg, x(a) + 2, yv(lvl.b0) - 7, fr(lvl.b0), { fill: 'var(--t-bienetre)', 'font-weight': 500 });
+        txt(svg, x(TODAY) - 2, yv(lvl.b1) + 14, fr(lvl.b1), { fill: 'var(--t-bienetre)', 'font-weight': 500, 'text-anchor': 'end' });
+      }
+    }
+    // Jour choisi
+    if (st.sel != null && !st.rupt && st.sel >= a && st.sel <= z) {
+      var s = st.sel, sx = x(s), futSel = s > TODAY;
+      el('line', { x1: sx, x2: sx, y1: T - 2, y2: H - B, stroke: 'var(--ink)', 'stroke-width': 1, opacity: 0.35 }, svg);
+      if (st.be) el('circle', { cx: sx, cy: yv(futSel ? D[s].exp : D[s].be), r: 6, fill: 'var(--surface)', stroke: 'var(--t-bienetre)', 'stroke-width': 3 }, svg);
+      if (st.dig) el('circle', { cx: sx, cy: yv(futSel ? D[s].gexp : D[s].gv), r: 5, fill: 'var(--surface)', stroke: 'var(--t-digestion)', 'stroke-width': 2.5 }, svg);
+    }
+    // Zones de toucher : une par jour, sur toute la hauteur.
+    var step = (W - L - R) / (n - 1);
+    for (i = a; i <= z; i++) (function (i) {
+      var g = el('rect', { x: x(i) - step / 2, y: T - 6, width: step, height: H - T - B + 6, fill: 'transparent', class: 'hit', tabindex: 0, role: 'button', 'aria-label': 'Voir le ' + dd(D[i].date) }, svg);
+      g.addEventListener('click', function () { st.sel = i; st.rupt = false; render(); });
+      g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); st.sel = i; st.rupt = false; render(); } });
+    })(i);
+    if (st.period === 'mois' && st.be) {
+      var fg = el('g', { class: 'flag', tabindex: 0, role: 'button', 'aria-label': 'Voir le changement du ' + dd(D[RUPT].date) }, svg);
+      el('rect', { x: x(RUPT) - 34, y: T - 6, width: 68, height: 16, rx: 8, fill: st.rupt ? 'var(--ink)' : 'var(--surface)', stroke: 'var(--ink)', 'stroke-width': 1.2 }, fg);
+      txt(fg, x(RUPT), T + 5.5, 'changement', { 'text-anchor': 'middle', 'font-family': 'var(--font-body)', 'font-weight': 700, 'font-size': 10, fill: st.rupt ? 'var(--surface)' : 'var(--ink)' });
+      fg.addEventListener('click', function () { st.rupt = true; render(); });
+      fg.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); st.rupt = true; render(); } });
+    }
+    legend();
+    sheet();
+  }
+  function renderDay() {
+    var d = D[st.sel], isT = st.sel === TODAY;
+    var x0 = L, x1 = W - R;
+    function x(h) { return x0 + (h - 6) / 18 * (x1 - x0); }
+    grid();
+    [6, 12, 18, 24].forEach(function (h) { txt(svg, x(h), H - 8, h + ' h', { 'text-anchor': h === 6 ? 'start' : h === 24 ? 'end' : 'middle' }); });
+    if (isT) {
+      el('rect', { x: x(16.67), y: T - 4, width: x1 - x(16.67), height: H - T - B + 4, fill: 'color-mix(in srgb, var(--ink) 4%, transparent)' }, svg);
+      txt(svg, x(16.67) + 3, T - 7, 'maintenant', { 'font-family': 'var(--font-body)', 'font-weight': 600 });
+    }
+    var bc = 'var(--t-bienetre)';
+    line(d.rd.map(function (r) { return x(r.h); }), d.rd.map(function (r) { return r.v; }), bc, { opacity: 0.4, 'stroke-width': 1.6 }, svg);
+    d.rd.forEach(function (r) { el('circle', { cx: x(r.h), cy: yv(r.v), r: 4, fill: bc, stroke: 'var(--surface-2)', 'stroke-width': 1.2 }, svg); });
+    if (d.noted != null) {
+      el('rect', { x: x(21.5) - 5.5, y: yv(d.noted) - 5.5, width: 11, height: 11, rx: 2, transform: 'rotate(45 ' + x(21.5) + ' ' + yv(d.noted) + ')', fill: 'var(--surface)', stroke: bc, 'stroke-width': 2.5 }, svg);
+    }
+    legend();
+    sheet();
+  }
+  function legend() {
+    var h = [];
+    if (st.period === 'jour') {
+      h.push('<span style="--c:var(--t-bienetre)"><i class="lg-dot"></i>une lecture du visage</span>');
+      if (D[st.sel].noted != null) h.push('<span><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="2.5" y="2.5" width="7" height="7" rx="1.5" transform="rotate(45 6 6)" fill="none" stroke="var(--t-bienetre)" stroke-width="2"/></svg>votre note du soir</span>');
+    } else {
+      h.push('<span style="--c:var(--ink-2)"><i class="lg-line"></i>chaque jour</span>');
+      h.push('<span style="--c:var(--ink-2)"><i class="lg-dot"></i>noté</span>');
+      h.push('<span style="--c:var(--ink-2)"><i class="lg-band"></i>fourchette</span>');
+      h.push('<span style="--c:var(--ink-2)"><i class="lg-dash"></i>attendu d’après vos habitudes</span>');
+    }
+    document.getElementById('legend').innerHTML = h.join('');
+  }
+
+  // Étoile des expressions : la journée (pleine) et votre habitude (trait).
+  function radarSvg(mix) {
+    var Wr = 270, Hr = 196, cx = 135, cy = 98, Rr = 62, n = 8;
+    function rr(p) { return Rr * Math.sqrt(Math.min(1, p / 0.5)); }
+    function pt(k, r) { var t = -Math.PI / 2 + k * 2 * Math.PI / n; return [cx + r * Math.cos(t), cy + r * Math.sin(t)]; }
+    var s = '<svg viewBox="0 0 ' + Wr + ' ' + Hr + '" role="img" aria-label="Expressions du visage ce jour-là, comparées à votre habitude">';
+    [0.05, 0.2, 0.5].forEach(function (p) { s += '<polygon points="' + EXPR.map(function (_, k) { return pt(k, rr(p)).join(','); }).join(' ') + '" fill="none" stroke="var(--border)" stroke-width="1"/>'; });
+    EXPR.forEach(function (_, k) { var p = pt(k, Rr); s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + p[0] + '" y2="' + p[1] + '" stroke="var(--border)" stroke-width="1"/>'; });
+    s += '<polygon points="' + habMix.map(function (p, k) { return pt(k, rr(p)).join(','); }).join(' ') + '" fill="none" stroke="var(--ink-2)" stroke-width="1.4" stroke-linejoin="round"/>';
+    s += '<polygon points="' + mix.map(function (p, k) { return pt(k, rr(p)).join(','); }).join(' ') + '" fill="color-mix(in srgb, var(--t-bienetre) 24%, transparent)" stroke="var(--t-bienetre)" stroke-width="2.2" stroke-linejoin="round"/>';
+    mix.forEach(function (p, k) { var q = pt(k, rr(p)); s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="2.6" fill="var(--t-bienetre)"/>'; });
+    EXPR.forEach(function (name, k) {
+      var t = -Math.PI / 2 + k * 2 * Math.PI / n, c = Math.cos(t), q = pt(k, Rr + 12);
+      var anchor = Math.abs(c) < 0.3 ? 'middle' : c > 0 ? 'start' : 'end';
+      var y = q[1] + (Math.sin(t) < -0.5 ? -8 : Math.sin(t) > 0.5 ? 6 : -2);
+      s += '<text x="' + q[0] + '" y="' + y + '" text-anchor="' + anchor + '" font-size="10.5" font-weight="600" fill="var(--ink)" font-family="var(--font-body)">' + name + '</text>';
+      s += '<text x="' + q[0] + '" y="' + (y + 11) + '" text-anchor="' + anchor + '" font-size="9.5" fill="var(--ink-2)" font-family="var(--font-mono)">' + Math.round(mix[k] * 100) + ' %</text>';
+    });
+    return s + '</svg>';
+  }
+  function shiftsText(mix) {
+    var sh = mix.map(function (p, k) { return { k: k, d: p - habMix[k] }; }).filter(function (o) { return Math.abs(o.d) >= 0.05; }).sort(function (a, b) { return Math.abs(b.d) - Math.abs(a.d); }).slice(0, 2);
+    if (!sh.length) return 'Proche de votre habitude.';
+    return sh.map(function (o, j) { var w = (o.d > 0 ? 'plus de ' : 'moins de ') + EXPR[o.k].toLowerCase(); return j === 0 ? w.charAt(0).toUpperCase() + w.slice(1) : w; }).join(', ') + ' que d’habitude.';
+  }
+  // Carte humeur × éveil : chaque lecture du jour, sa moyenne, votre zone habituelle.
+  function circSvg(d) {
+    var cx = 135, cy = 86, S = 64;
+    function X(v) { return cx + v * S; } function Y(a) { return cy - a * S; }
+    var s = '<svg viewBox="0 0 270 172" role="img" aria-label="Humeur et éveil de chaque lecture du jour">';
+    s += '<rect x="' + (cx - S) + '" y="' + (cy - S) + '" width="' + 2 * S + '" height="' + 2 * S + '" rx="14" fill="var(--surface-2)"/>';
+    s += '<line x1="' + (cx - S) + '" x2="' + (cx + S) + '" y1="' + cy + '" y2="' + cy + '" stroke="var(--border)"/><line x1="' + cx + '" x2="' + cx + '" y1="' + (cy - S) + '" y2="' + (cy + S) + '" stroke="var(--border)"/>';
+    s += '<ellipse cx="' + X(hab.v) + '" cy="' + Y(hab.a) + '" rx="' + hab.sv * S + '" ry="' + hab.sa * S + '" fill="color-mix(in srgb, var(--ink) 8%, transparent)" stroke="var(--ink-2)" stroke-width="1.2"/>';
+    [['tendu', cx - S + 6, cy - S + 14, 'start'], ['enjoué', cx + S - 6, cy - S + 14, 'end'], ['las', cx - S + 6, cy + S - 7, 'start'], ['détendu', cx + S - 6, cy + S - 7, 'end']].forEach(function (q) {
+      s += '<text x="' + q[1] + '" y="' + q[2] + '" text-anchor="' + q[3] + '" font-size="9.5" fill="var(--ink-2)" font-family="var(--font-body)" font-style="italic">' + q[0] + '</text>';
+    });
+    d.rd.forEach(function (r) { s += '<circle cx="' + X(r.val) + '" cy="' + Y(r.ar) + '" r="3.6" fill="var(--t-bienetre)" opacity="0.5"/>'; });
+    var mv = mean(d.rd.map(function (r) { return r.val; })), ma = mean(d.rd.map(function (r) { return r.ar; }));
+    s += '<circle cx="' + X(mv) + '" cy="' + Y(ma) + '" r="7" fill="var(--t-bienetre)" stroke="var(--surface)" stroke-width="2.5"/>';
+    s += '<text x="' + cx + '" y="' + (cy - S - 6) + '" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--ink)" font-family="var(--font-body)">animé</text>';
+    s += '<text x="' + cx + '" y="' + (cy + S + 14) + '" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--ink)" font-family="var(--font-body)">calme</text>';
+    s += '<text x="' + (cx - S - 6) + '" y="' + (cy + 4) + '" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--ink)" font-family="var(--font-body)">désagréable</text>';
+    s += '<text x="' + (cx + S + 6) + '" y="' + (cy + 4) + '" text-anchor="start" font-size="10.5" font-weight="600" fill="var(--ink)" font-family="var(--font-body)">agréable</text>';
+    return s + '</svg>';
+  }
+  function arousalText(d) {
+    var ma = mean(d.rd.map(function (r) { return r.ar; }));
+    var w = ma < -0.2 ? 'plutôt calme' : ma > 0.2 ? 'plutôt animé' : 'modéré';
+    var cmp = Math.abs(ma - hab.a) < 0.5 * hab.sa ? ', comme d’habitude' : ma > hab.a ? ', plus que d’habitude' : ', moins que d’habitude';
+    return 'Éveil ' + w + cmp + '. Chaque point est une lecture ; la zone grise, votre habitude.';
+  }
+  function contribRows(list) {
+    return list.map(function (c) {
+      var v = c[2], a = 50 + Math.min(0, v) / 0.3 * 50, b = 50 + Math.max(0, v) / 0.3 * 50;
+      return '<div class="contrib" style="--c:var(--t-' + c[1] + ')"><span>' + c[0] + '</span><span class="ctrack" aria-hidden="true"><span class="cbar" style="left:' + clamp(a, 0, 50) + '%;width:' + Math.max(2, clamp(b, 50, 100) - clamp(a, 0, 50)) + '%"></span></span><span class="cval num">' + sg(v, 2) + ' pt</span></div>';
+    }).join('');
+  }
+  function sheet() {
+    var sh = document.getElementById('sheet');
+    if (st.rupt) {
+      sh.innerHTML = '<div class="row"><b>Changement le ' + D[RUPT].date.getDate() + ' octobre</b><span class="tag" style="--c:var(--t-bienetre)">Bien-être</span></div>' +
+        '<div class="vals"><span><span class="big num">' + fr(lvl.b1) + '</span> <small>/ 5 en moyenne depuis</small></span><span><span class="num" style="font-size:20px;font-weight:700">' + fr(lvl.b0) + '</span> <small>avant</small></span></div>' +
+        '<div class="sub"><h4>Au même moment</h4>' +
+        '<div class="same" style="--c:var(--t-sommeil)"><i></i><span>Nuits plus courtes : ' + hm(lvl.s1) + ' en moyenne, contre ' + hm(lvl.s0) + ' avant.</span></div>' +
+        '<div class="same" style="--c:var(--t-corps)"><i></i><span>VFC plus basse depuis le 22/10 : <span class="num">38</span> ms, contre <span class="num">44</span> avant.</span></div></div>';
+      return;
+    }
+    var i = st.sel, d = D[i];
+    if (i > TODAY) {
+      sh.innerHTML = '<div class="row"><b>' + longDate(d.date) + '</b><span class="muted">dans ' + (i - TODAY) + ' jour' + (i - TODAY > 1 ? 's' : '') + '</span></div>' +
+        '<div class="vals">' + (st.be ? '<span><span class="big num">' + fr(d.exp) + '</span> <small>/ 5 attendu d’après vos habitudes</small></span>' : '') + '</div>' +
+        '<p class="muted">Entre <span class="num">' + fr(d.exp - d.expW) + '</span> et <span class="num">' + fr(d.exp + d.expW) + '</span>.' + (d.we ? ' Week-end, d’habitude meilleur.' : '') + ' Vos nuits sont plus courtes depuis le 20 octobre.</p>' +
+        (st.dig ? '<p class="muted">Confort digestif attendu : <span class="num">' + fr(d.gexp) + '</span> / 5.</p>' : '');
+      return;
+    }
+    var src = '<span class="num">' + d.reads + '</span> lecture' + (d.reads > 1 ? 's' : '') + (d.noted != null ? ' · note <span class="num">' + d.noted + '</span>/5' : '');
+    var top = d.contribs.slice().sort(function (a, b) { return Math.abs(b[2]) - Math.abs(a[2]); }).slice(0, 3);
+    sh.innerHTML =
+      '<div class="row"><b>' + longDate(d.date) + (i === TODAY ? ' (en cours)' : '') + '</b><span class="muted">' + src + '</span></div>' +
+      '<div class="vals">' + (st.be ? '<span><span class="big num">' + fr(d.be) + '</span> <small>/ 5 bien-être</small></span>' : '') +
+      (st.dig ? '<span><span class="dig num">' + fr(d.gv) + '</span> <small>/ 5 confort digestif' + (d.gNote ? ', noté « ' + d.gNote + ' »' : '') + '</small></span>' : '') + '</div>' +
+      '<div class="sub"><h4>Expressions du visage</h4>' + radarSvg(d.mix) + '<p class="muted">' + shiftsText(d.mix) + ' Le trait gris montre votre habitude.</p></div>' +
+      '<div class="sub"><h4>Humeur et éveil</h4>' + circSvg(d) + '<p class="muted">' + arousalText(d) + '</p></div>' +
+      '<div class="sub"><h4>Ce qui a pu peser ce jour-là</h4>' + contribRows(top) + '</div>';
+  }
+  // Choix par défaut : le jour le plus bas de la semaine passée.
+  (function () { var m = TODAY - 1; for (var k = TODAY - 6; k < TODAY; k++) if (D[k].be < D[m].be) m = k; st.sel = m; })();
+  document.querySelectorAll('.seg[aria-label="Période"] button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      st.period = b.getAttribute('data-p'); st.rupt = false;
+      document.querySelectorAll('.seg[aria-label="Période"] button').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+      if (st.period === 'semaine' && (st.sel < TODAY - 6 || st.sel > TODAY + 3)) st.sel = TODAY - 1;
+      if (st.period === 'jour' && st.sel > TODAY) st.sel = TODAY;
+      render();
+    });
+  });
+  [['c-be', 'be'], ['c-dig', 'dig']].forEach(function (p) {
+    var b = document.getElementById(p[0]);
+    b.addEventListener('click', function () {
+      var other = p[1] === 'be' ? 'dig' : 'be';
+      if (st[p[1]] && !st[other]) return; // au moins une courbe
+      st[p[1]] = !st[p[1]]; b.setAttribute('aria-pressed', String(st[p[1]])); if (!st.be) st.rupt = false; render();
+    });
+  });
+  render();
+
+  // ---------- Essai : 14 jours tirés au sort ----------
+  var PLAN = ['avec', 'sans', 'sans', 'avec', 'sans', 'avec', 'sans', 'avec', 'avec', 'sans', 'avec', 'sans', 'sans', 'avec'];
+  var BED = [22.6, 23.5, 23.3, 22.75, 23.6, 22.5, 23.6, 22.6, 22.7, 23.1, 23.33, 23.7, 23.45, 22.8];
+  var OUT = [3.4, 2.9, 3.2, 3.6, 3.0, 3.1, 2.7, null, 3.8, 3.3, 3.3, null, 3.1, 3.5];
+  var MIN_EACH = 3;
+  var TQ = [0, 12.71, 4.30, 3.18, 2.78, 2.57, 2.45, 2.36, 2.31, 2.26, 2.23, 2.20, 2.18, 2.16, 2.14, 2.13];
+  function stats(a) { var n = a.length, m = mean(a), v = n > 1 ? a.reduce(function (s, x) { return s + (x - m) * (x - m); }, 0) / (n - 1) : 0; return { n: n, m: m, v: v }; }
+  function welch(A, S) {
+    var a = stats(A), s = stats(S), qa = a.v / a.n, qs = s.v / s.n, se = Math.sqrt(qa + qs);
+    var df = (qa + qs) * (qa + qs) / (qa * qa / (a.n - 1) + qs * qs / (s.n - 1));
+    var t = TQ[Math.max(1, Math.min(TQ.length - 1, Math.floor(df)))] || 2.1, d = a.m - s.m;
+    return { d: d, lo: d - t * se, hi: d + t * se };
+  }
+  function split(upto) {
+    var A = [], S = [], last = -1;
+    for (var k = 0; k <= upto; k++) if (OUT[k] != null) { (PLAN[k] === 'avec' ? A : S).push({ v: OUT[k], k: k }); last = k; }
+    return { A: A, S: S, last: last };
+  }
+  function drawDots(svgEl, sp, animateK) {
+    clear(svgEl);
+    var X0 = 64, X1 = 306;
+    function dx(v) { return X0 + (v - 2.4) / 1.8 * (X1 - X0); }
+    [2.5, 3, 3.5, 4].forEach(function (v) {
+      el('line', { x1: dx(v), x2: dx(v), y1: 8, y2: 96, stroke: 'var(--border)' }, svgEl);
+      txt(svgEl, dx(v), 112, fr(v), { 'text-anchor': 'middle' });
+    });
+    [['Avec', sp.A, 30, true], ['Sans', sp.S, 74, false]].forEach(function (r) {
+      txt(svgEl, 6, r[2] + 4, r[0], { 'font-size': 13, 'font-weight': 700, fill: 'var(--ink)', 'font-family': 'var(--font-body)' });
+      r[1].forEach(function (o, j) {
+        el('circle', { cx: dx(o.v), cy: r[2] + (j % 2 ? 6 : -6), r: 6, fill: r[3] ? 'var(--t-sommeil)' : 'var(--surface)', stroke: 'var(--t-sommeil)', 'stroke-width': 2, class: o.k === animateK ? 'pop' : '' }, svgEl);
+      });
+      if (r[1].length) {
+        var m = mean(r[1].map(function (o) { return o.v; }));
+        el('line', { x1: dx(m), x2: dx(m), y1: r[2] - 16, y2: r[2] + 16, stroke: 'var(--ink)', 'stroke-width': 3, 'stroke-linecap': 'round' }, svgEl);
+      }
+    });
+  }
+  function drawGap(svgEl, sp) {
+    clear(svgEl);
+    var X0 = 64, X1 = 306;
+    function gx(v) { return X0 + (v + 1) / 2.5 * (X1 - X0); }
+    txt(svgEl, 6, 24, 'Écart', { 'font-size': 13, 'font-weight': 700, fill: 'var(--ink)', 'font-family': 'var(--font-body)' });
+    el('line', { x1: X0, x2: X1, y1: 20, y2: 20, stroke: 'var(--border)', 'stroke-width': 1 }, svgEl);
+    [-1, 0, 1].forEach(function (v) { txt(svgEl, gx(v), 46, (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v), { 'text-anchor': 'middle' }); });
+    el('line', { x1: gx(0), x2: gx(0), y1: 6, y2: 34, stroke: 'var(--ink-2)', 'stroke-width': 1.2 }, svgEl);
+    if (sp.A.length >= MIN_EACH && sp.S.length >= MIN_EACH) {
+      var w = welch(sp.A.map(function (o) { return o.v; }), sp.S.map(function (o) { return o.v; }));
+      var lo = clamp(w.lo, -1, 1.5), hi = clamp(w.hi, -1, 1.5);
+      el('rect', { x: gx(lo), y: 13, width: Math.max(2, gx(hi) - gx(lo)), height: 14, rx: 7, fill: 'color-mix(in srgb, var(--t-sommeil) 22%, transparent)' }, svgEl);
+      el('circle', { cx: gx(w.d), cy: 20, r: 6, fill: 'var(--t-sommeil)', stroke: 'var(--surface-2)', 'stroke-width': 2 }, svgEl);
+      return w;
+    }
+    return null;
+  }
+  // Calendrier, carte du jour, résultat en cours.
+  var tr = { day: 8, data: true, answer: null };
+  function trial() {
+    var today = tr.day - 1, y = today - 1;
+    document.getElementById('t-day-v').textContent = tr.day;
+    var strip = document.getElementById('strip'); clear(strip);
+    PLAN.forEach(function (p, k) {
+      var d = document.createElement('div');
+      d.className = 'day ' + p + (k > today ? ' future' : '') + (k === today ? ' today' : '');
+      var mk = '';
+      if (k < today) {
+        var known = !(k === y && !tr.data);
+        var before23 = known ? BED[k] < 23 : tr.answer;
+        if (!known && tr.answer == null) mk = '?';
+        else if (p === 'avec') mk = before23 ? '✓' : '–';
+      }
+      d.setAttribute('aria-label', 'Jour ' + (k + 1) + ', ' + (p === 'avec' ? 'avant 23 h' : 'comme d’habitude') + (k === today ? ', aujourd’hui' : '') + (mk === '✓' ? ', tenu' : mk === '–' ? ', pas tenu' : mk === '?' ? ', données manquantes' : ''));
+      d.innerHTML = '<span class="num">' + (k + 1) + '</span>' + (mk ? '<span class="mk">' + mk + '</span>' : '');
+      strip.appendChild(d);
+    });
+    var h = PLAN[today] === 'avec' ? '<b>Ce soir : couchez-vous avant 23 h.</b>' : '<b>Ce soir : comme d’habitude, sans consigne.</b>';
+    var yWas = PLAN[y] === 'avec' ? 'un jour avec consigne' : 'un jour sans consigne';
+    if (tr.data) {
+      h += '<p class="muted">Hier soir : coucher à ' + hm(BED[y]) + ', d’après votre montre.</p>';
+    } else if (tr.answer == null) {
+      h += '<div class="warn"><span class="ic" aria-hidden="true">!</span><div><p><b>Nous n’avons pas reçu vos données de sommeil pour hier soir.</b></p><p class="muted">C’était ' + yWas + '. Le coucher était-il avant 23 h ?</p><div class="row start"><button class="btn" type="button" data-a="1">Oui</button><button class="btn ghost" type="button" data-a="0">Non</button></div></div></div>';
+    } else {
+      h += '<p class="muted">Hier soir : coucher ' + (tr.answer ? 'avant' : 'après') + ' 23 h, d’après vous.</p>';
+    }
+    var tc = document.getElementById('t-today'); tc.innerHTML = h;
+    tc.querySelectorAll('button[data-a]').forEach(function (b) { b.addEventListener('click', function () { tr.answer = b.getAttribute('data-a') === '1'; trial(); }); });
+    var sp = split(today - 2);
+    drawDots(document.getElementById('t-dots'), sp, sp.last);
+    var w = drawGap(document.getElementById('t-gap'), sp);
+    var nb = sp.A.length + sp.S.length;
+    document.getElementById('t-txt').innerHTML = w
+      ? 'Après <span class="num">' + nb + '</span> lendemains : <span class="num">' + sg(w.d) + '</span> point, entre <span class="num">' + sg(w.lo) + '</span> et <span class="num">' + sg(w.hi) + '</span>. La fourchette se resserre chaque jour.'
+      : 'L’écart apparaît dès 3 lendemains avec et 3 sans. Pour l’instant : <span class="num">' + sp.A.length + '</span> avec, <span class="num">' + sp.S.length + '</span> sans.';
+  }
+  var range_ = document.getElementById('t-day');
+  range_.addEventListener('input', function () { tr.day = +range_.value; tr.answer = null; trial(); });
+  var ok = document.getElementById('t-ok'), ko = document.getElementById('t-ko');
+  function setData(v) { tr.data = v; tr.answer = null; ok.setAttribute('aria-pressed', String(v)); ko.setAttribute('aria-pressed', String(!v)); trial(); }
+  ok.addEventListener('click', function () { setData(true); });
+  ko.addEventListener('click', function () { setData(false); });
+  trial();
+
+  // ---------- Résultat : les 14 jours ----------
+  var fin = split(13);
+  drawDots(document.getElementById('r-dots'), fin, -1);
+  var wf = drawGap(document.getElementById('r-gap'), fin);
+  var nf = fin.A.length + fin.S.length;
+  document.getElementById('r-txt').innerHTML = 'Les lendemains d’un coucher avant 23 h, votre bien-être était plus haut de <b class="num">' + fr(wf.d) + '</b> point en moyenne.';
+  document.getElementById('r-sub').innerHTML = 'L’écart va probablement de <span class="num">' + sg(wf.lo) + '</span> à <span class="num">' + sg(wf.hi) + '</span> point. Un écart aussi grand sort rarement d’un simple tirage au sort. <span class="num">' + nf + '</span> jours sur 14 suivis.';
+  var keep = document.getElementById('keep');
+  keep.addEventListener('click', function () {
+    var on = keep.getAttribute('aria-pressed') === 'true';
+    keep.setAttribute('aria-pressed', String(!on));
+    keep.textContent = on ? 'Garder cette habitude' : '✓ Dans vos habitudes';
+    keep.className = on ? 'btn' : 'btn ghost';
+  });
+})();
+</script>
+</body>
+</html>

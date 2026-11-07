@@ -5,6 +5,42 @@
 > jour à chaque run : décisions, jalons et leur état, inventaire, **actions du propriétaire**.
 > En cas de contradiction, le prompt de la routine prime.
 
+## 0. Ce qu'on cherche (méta-leçons A, validées par le propriétaire le 07/11 au soir) — font foi
+
+1. Halcya est un outil de science personnelle : voir (Journal), comprendre (Analyses), agir et vérifier (Agir) ; la
+   valeur finale est une réponse vérifiée par un essai, pas une corrélation.
+2. Ne demander à la personne que ce que les données ne disent pas.
+3. Un même objet, une seule mesure (notes et visage forment un seul bien-être).
+4. L'incertitude se montre (fourchette), elle ne s'écrit pas ; jamais « dégradé ».
+5. Fait pour le médecin, sans jamais faire le médecin.
+6. Respecter l'attention : un rappel rare, jamais de culpabilisation.
+
+> Méta-leçons B (conception, 7 à 11, et leçon de design 18) : `DESIGN.md` § 9 ; C (travail de la routine, 12 à 17) :
+> charte de `README.md`.
+
+> **Décisions du propriétaire du 07/11 au soir** (inscrites au run du 08/11 00:35 ; détail et étapes dans `BACKLOG.md`,
+> section « Décisions du 07/11 au soir ») :
+> - **(A) Mode polish dès le 09/11** (Android et iPhone, à partir de la version des testeurs du 08/11 au soir) : plus de
+>   nouvelle fonction ; seulement bugs, polissage, textes en trop, retrait de ce qui ne sert pas. Une idée de fonction
+>   devient une proposition avec maquette visuelle (`journal/maquettes/`, lien en tête du résumé), jamais codée sans
+>   accord. Seule exception : (B). Le 08/11, ses corrections d'exploration passent avant tout.
+> - **(B) Intégrations**, dans l'ordre : 1) Garmin et Samsung ; 2) Withings ; 3) Huawei en direct sur Android (fin du
+>   signalement du 21/10) et Huawei Health Kit sur iPhone ; 4) Xiaomi. Health Connect / Santé d'abord, accès direct pour
+>   ce qui y manque ; pistes de rétro-ingénierie (comprendre, spécifier, réimplémenter). Garde-fous : coexistence avec
+>   l'app du fabricant, jamais le mot de passe d'un autre service, jamais de code décompilé ni de clé extraite, secrets
+>   d'API seulement sur le relais, relais de passage sans stockage, tout stockage HDS attend son accord. Comptes
+>   développeur, contrats, partenariats : ses gestes, préparés pas à pas en §4.
+> - **(C) Simulation de personas** : agent sans connaissance de l'app, accès visuel seul, persona + matériel (pondéré par
+>   les parts de marché) + moment (J1, J14, J45) ; 7 personas ; configurations dans l'artefact « Personas et matériel »
+>   (à recopier dans `PERSONAS.md`) ; deux simulations par jour (runs « idées ») et un passage complet avant chaque envoi
+>   aux testeurs ; rapports dans `simulations/`, constats en étapes de polish.
+> - **(D) Méta-leçons** : A ci-dessus, B dans `DESIGN.md` § 9, C dans la charte.
+> - **(E) Envoi quotidien aux testeurs** : Android à 23:45 (CD-ALPHA-6) ; iPhone, examen bêta quotidien (routine iOS).
+>   Envoi refusé : erreur exacte en tête du résumé, rien contourné.
+> - **Corrections Tendances (07/11 vers 23:50, v896)** : T1 à l'ouverture une courbe dès qu'une mesure le peut, grandes
+>   puces sinon ; T2 vue Jour comme la maquette « Agir et Tendances » (captures dans `maquettes/agir-tendances/`) ; T3
+>   captures en tête du résumé. T1 livré le 08/11 00:35.
+
 ## 1. Décisions (résumé fidèle)
 
 > **Signalement du 05/11 vers 11:45** : Analyses → Tendances, « Votre bien-être » ne montrait que les notes à la main ;
