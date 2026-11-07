@@ -323,8 +323,12 @@ function expressionsBase(n, total) {
   return total > n ? `sur ${n} des ${total} ${word(total)}` : `sur ${n} ${word(n)}`
 }
 
-export default function WellbeingHistory({ now: givenNow, features }) {
-  const [period, setPeriod] = useState('week')
+/**
+ * `embedded` (ORG-3b) : la vue Jour de Journal › Tendances ; ni retour, ni titre, ni choix de période (la carte de
+ * Tendances a le sien), période fixée à `initialPeriod`.
+ */
+export default function WellbeingHistory({ now: givenNow, features, embedded = false, initialPeriod = 'week' }) {
+  const [period, setPeriod] = useState(initialPeriod)
   const [history, setHistory] = useState(undefined)
   const [noteOpen, setNoteOpen] = useState(false)
   const [selected, setSelected] = useState(null)
@@ -367,17 +371,17 @@ export default function WellbeingHistory({ now: givenNow, features }) {
   const selectedPoint = history && selected ? history.points.find((p) => p.at === selected) : null
   return (
     <section className="wbh-page">
-      <p className="wbh-back"><Link to="/">← Aujourd’hui</Link></p>
-      <h2 className="page-title">Historique du bien-être</h2>
+      {!embedded && <p className="wbh-back"><Link to="/">← Aujourd’hui</Link></p>}
+      {!embedded && <h2 className="page-title">Historique du bien-être</h2>}
 
-      <div className="wbh-tabs" role="group" aria-label="Période">
+      {!embedded && <div className="wbh-tabs" role="group" aria-label="Période">
         {PERIOD_TABS.map((t) => (
           <button key={t.id} type="button" className={`wbh-tab${period === t.id ? ' is-on' : ''}`}
             aria-pressed={period === t.id} onClick={() => { setPeriod(t.id); setOffset(0); setSelected(null) }}>
             {t.label}
           </button>
         ))}
-      </div>
+      </div>}
 
       {history === undefined && <div className="loading"><div className="spinner" aria-hidden /></div>}
       {history === null && <p className="today-card-text">L’historique n’a pas pu être lu.</p>}

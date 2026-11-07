@@ -38,9 +38,9 @@ const ICONS = {
  * données de la montre et retour Withings sous Sources, historique du bien-être sous Aujourd'hui — POL-PLAY-82).
  */
 const TABS = [
-  { to: '/', label: 'Aujourd’hui', icon: 'today', end: true, paths: ['/bien-etre'] },
-  { to: '/journal', label: 'Journal', icon: 'journal', paths: ['/journal', '/food', '/nutrition'] },
-  { to: '/recommendations', label: 'Analyses', icon: 'pistes', paths: ['/recommendations', '/tendances'] },
+  { to: '/', label: 'Aujourd’hui', icon: 'today', end: true },
+  { to: '/journal', label: 'Journal', icon: 'journal', paths: ['/journal', '/food', '/nutrition', '/tendances', '/bien-etre'] },
+  { to: '/recommendations', label: 'Analyses', icon: 'pistes', paths: ['/recommendations'] },
   { to: '/agir', label: 'Agir', icon: 'act', paths: ['/agir', '/reintroduction'] },
   { to: '/connectors', label: 'Sources', icon: 'sources', paths: ['/connectors', '/montre'] },
 ]

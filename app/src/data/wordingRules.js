@@ -5,7 +5,8 @@
  * Hors des dossiers scannés par wording.test.js (sinon ces expressions se signaleraient elles-mêmes).
  */
 export const FORBIDDEN_WORDING = [
-  { re: /humeur/i, why: 'dire « bien-être »' },
+  // Seule exception : le titre « Humeur et éveil » de Tendances, choisi par le propriétaire (revue du 07/11, ORG-3c)
+  { re: /humeur(?!\s+et\s+éveil)/i, why: 'dire « bien-être »' },
   { re: /100\s*%\s*(privé|priv[ée]e|confidentiel|local)/i, why: '« local par défaut, IA optionnelle »' },
   // VC-22 : l'onglet s'appelle « Analyses » depuis POL-7 (un lien repéré reste une « piste » dans l'écran)
   { re: /\b[Vv]os Pistes\b|onglet « ?Pistes/, why: 'l’onglet s’appelle « Analyses »' },

@@ -26,7 +26,7 @@ describe('Bloc bien-être du jour (AUJ-2)', () => {
     expect(screen.getByText('3,6')).toBeInTheDocument()
     expect(screen.getByText('/5')).toBeInTheDocument()
     expect(screen.getByText('D’après 3 lectures du visage')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Bien-être aujourd’hui/ })).toHaveAttribute('href', '/bien-etre')
+    expect(screen.getByRole('link', { name: /Bien-être aujourd’hui/ })).toHaveAttribute('href', '/tendances?mesure=wellbeing')
     expect(document.querySelectorAll('.day-curve-dot')).toHaveLength(3)
     expect(document.querySelector('.day-curve-trend')).not.toBeNull()
     // Plus de verdict, d’échelle à segments, d’« estimation prudente » ni d’horizon qui respire

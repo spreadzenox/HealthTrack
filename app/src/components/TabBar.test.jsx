@@ -46,9 +46,9 @@ describe('TabBar', () => {
   it.each([
     ['/reintroduction', 'Agir'],
     ['/recommendations/ventre', 'Analyses'],
-    ['/tendances', 'Analyses'],
+    ['/tendances', 'Journal'],
     ['/montre', 'Sources'],
-    ['/bien-etre', 'Aujourd’hui'],
+    ['/bien-etre', 'Journal'],
   ])('keeps the parent tab active on the sub-page %s (POL-PLAY-82)', (path, tab) => {
     renderAt(path)
     expect(screen.getByRole('link', { name: tab })).toHaveAttribute('aria-current', 'page')

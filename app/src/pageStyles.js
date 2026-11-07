@@ -28,6 +28,9 @@ import './pages/Premium.css'
 import './pages/Onboarding.css'
 // Historique du bien-être (POL-2, 24/10)
 import './pages/WellbeingHistory.css'
+// Journal › Tendances, le visualiseur (ORG-3, 07/11)
+import './components/TrendsViewer.css'
+import './components/TrendsDayDetail.css'
 // Réintroduction guidée (jalon 7b, 26/10)
 import './pages/Reintroduction.css'
 // Onglet Agir (ORG-1, 07/11)

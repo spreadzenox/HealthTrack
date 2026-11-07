@@ -94,8 +94,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   toucher ouvre Journal › Nutrition. (07/11 20:00 : kcal, protéines, glucides, lipides, fibres des repas du jour)
 - [x] AUJ-3 (précision) — l'écart à votre norme sur chaque mesure dès 7 jours d'historique, en reprenant l'affichage
   de « Ce qui change aujourd'hui » (identité visuelle intacte).
-- [ ] AUJ-9 — Toucher la courbe du bien-être ou le graphique digestif ouvre Journal › Tendances réglé sur cette mesure
-  (après ORG-3 ; d'ici là la courbe ouvre l'historique du bien-être).
+- [x] AUJ-9 — Toucher la courbe du bien-être ou le graphique digestif ouvre Journal › Tendances réglé sur cette mesure
+  (après ORG-3 ; d'ici là la courbe ouvre l'historique du bien-être). (07/11 20:15 : `?mesure=wellbeing`,
+  `?mesure=digestion` ; `/bien-etre` → vue Jour)
 
 ## 🗂️ Nouvelle organisation (revue design du propriétaire du 07/11 vers 16:30) — après le nouvel écran Aujourd'hui
 
@@ -110,10 +111,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] ORG-2 — Journal › Jours : retirer « Ce qui a été mesuré et noté, jour par jour », la photo des selles et « Vous
   avez corrigé N estimations » ; cartes jour par jour gardées, une icône par mesure, couleurs par thème, écart à la
   norme ; ni source dans un libellé (« Stress montre ») ni « · ».
-- [ ] ORG-3 — Journal › Tendances (quitte Analyses) devient un visualiseur : jour, semaine ou mois ; une ou plusieurs
+- [x] ORG-3 — Journal › Tendances (quitte Analyses) devient un visualiseur : jour, semaine ou mois ; une ou plusieurs
   mesures superposables (un axe par unité) ; une mesure proposée à partir de 3 points ; toute mesure disponible.
-  « Votre forme », radar (code gardé) et comptes à rebours en texte retirés.
-- [ ] ORG-3b — L'historique du bien-être fusionne dans Tendances (vue Jour, détail de chaque lecture au toucher :
+  « Votre forme », radar (code gardé) et comptes à rebours en texte retirés. (07/11 20:15 : `TrendsViewer`,
+  `services/trendsData.js` sur TS-1 ; sous-onglets soulignés pleine largeur)
+- [x] ORG-3b — L'historique du bien-être fusionne dans Tendances (vue Jour, détail de chaque lecture au toucher :
   matrice des émotions, valence, éveil, qualité ; on descend aussi loin qu'on veut).
 - [ ] ORG-4 — Analyses = Bien-être et Digestion, même structure : retirer l'historique, « Sur quelques semaines »,
   « Autres liens repérés », « Bientôt » et l'analyse « dans les heures » ; « Comment c'est calculé » en lien discret en
@@ -173,7 +175,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 > Complète ORG-1, ORG-3 et ORG-3b. Chantier du soir (07/11) : session « interface » (ORG-1b, ORG-3c, ORG-8) et session
 > « méthode » (TS-1, TS-2) en parallèle.
 
-- [ ] ORG-3c — **Tendances** : les sous-onglets du Journal deviennent des onglets soulignés sur toute la largeur ; les
+- [x] ORG-3c — **Tendances** : les sous-onglets du Journal deviennent des onglets soulignés sur toute la largeur ; les
   réglages de la courbe (puces de mesure avec leur point de couleur, « + » pour ajouter une mesure, sélecteur compact
   Jour / Semaine / Mois) sont petits, dans la carte du graphique, jamais au niveau visuel des onglets. Chaque jour : une
   ligne et sa fourchette, un point plein seulement les jours notés, repère « auj. ». Aucun attendu sur le passé :
@@ -187,6 +189,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   « Ce qui a pu peser ce jour-là » : les 3 plus grandes contributions du modèle d'ORG-5 ce jour-là (coefficient × écart
   du facteur), barres de part et d'autre de zéro, couleur du thème. Toucher un jour futur : l'attendu et sa fourchette.
   L'attendu, la fourchette et la courbe digestive estimée se branchent sur TS-1 ; d'ici là, seul ce qui existe s'affiche.
+  (07/11 20:40 : `TrendsDayDetail`, `services/trendsDay.js` ; contributions du contrat `analysisResults`)
 - [x] ORG-1b — **Agir** (complète ORG-1) : En cours (plusieurs essais à la fois, progression, consigne du jour), Mes
   habitudes, Proposés par vos analyses (« Commencer »), Terminés ; en bas « Tous vos essais, vérifiés ou non, figurent
   dans votre rapport médecin » (par défaut, sans bouton). (07/11 19:00 : sections sur les tests FODMAP existants ;

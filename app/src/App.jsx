@@ -23,7 +23,6 @@ const WhatsNew = lazy(() => import('./pages/WhatsNew'))
 const More = lazy(() => import('./pages/More'))
 const WatchData = lazy(() => import('./pages/WatchData'))
 const Premium = lazy(() => import('./pages/Premium'))
-const WellbeingHistory = lazy(() => import('./pages/WellbeingHistory'))
 const Reintroduction = lazy(() => import('./pages/Reintroduction'))
 const Act = lazy(() => import('./pages/Act'))
 const Licences = lazy(() => import('./pages/Licences'))
@@ -57,7 +56,8 @@ export default function App() {
             <Route path="nouveautes" element={<WhatsNew />} />
             <Route path="montre" element={<WatchData />} />
             <Route path="premium" element={<Premium />} />
-            <Route path="bien-etre" element={<WellbeingHistory />} />
+            {/* ORG-3b : l'historique du bien-être est la vue Jour de Journal › Tendances */}
+            <Route path="bien-etre" element={<Navigate to="/tendances?vue=jour" replace />} />
             <Route path="reintroduction" element={<Reintroduction />} />
             <Route path="agir" element={<Act />} />
             <Route path="licences" element={<Licences />} />
