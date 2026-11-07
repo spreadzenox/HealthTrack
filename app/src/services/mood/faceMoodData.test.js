@@ -12,7 +12,7 @@ describe('loadFaceMoodEntries', () => {
     const bursts = [{ type: 'face_burst', at: '2026-10-18T09:00:00.000Z' }, { type: 'face_burst', at: '2026-10-10T15:00:00.000Z' }]
     const list = vi.fn(async (opts) => (opts.type === 'face_burst' ? bursts : [{ type: opts.type }]))
     const out = await loadFaceMoodEntries({ list })
-    // Notes de bien-être et du ventre (VENTRE-BE-2), lues depuis le même jour.
+    // Notes de bien-être et digestives, lues depuis le même jour (observations de TS-1).
     expect(out.notes.map((e) => e.type)).toEqual(['wellbeing', 'gut'])
     expect(list.mock.calls[2][0].since).toBe(list.mock.calls[1][0].since)
     const since = list.mock.calls[1][0].since
@@ -40,6 +40,32 @@ describe('loadWellbeingToday', () => {
     const r = await loadWellbeingToday({ list: async ({ type }) => (type === 'face_burst' ? bursts : []), now })
     expect(r.est.day.readings).toBe(3)
     expect(r.days.map((d) => d.date)).toEqual(['2026-10-20', '2026-10-21'])
+    // TS-1 : l'estimation du jour du modèle à espace d'états, calculée sur les entrées déjà lues
+    expect(Number.isFinite(r.state.mean)).toBe(true)
+    expect(r.state.low).toBeLessThanOrEqual(r.state.mean)
+  })
+
+  it('lit aussi les selles (TS-1) depuis la première lecture du visage', async () => {
+    const bursts = [{ type: 'face_burst', at: '2026-10-10T15:00:00.000Z' }]
+    const list = vi.fn(async (opts) => (opts.type === 'face_burst' ? bursts : []))
+    await loadFaceMoodEntries({ list, withStool: true })
+    expect(list.mock.calls.map((c) => c[0].type)).toEqual(['face_burst', 'wellbeing', 'gut', 'stool'])
+  })
+})
+
+describe('todayWellbeingState (TS-1 sur l’Accueil)', () => {
+  const now = new Date(2026, 9, 21, 12)
+  const day = (date, extra = {}) => ({ date, future: false, observed: { wellbeing: true }, wellbeing: { mean: 3.2, low: 2.6, high: 3.8 }, ...extra })
+  it('prend le calcul complet de Tendances s’il est en cache', async () => {
+    const { todayWellbeingState } = await import('./faceMoodData')
+    const cached = { hit: true, result: { days: [day('2026-10-20'), day('2026-10-21')] } }
+    expect(todayWellbeingState([], now, cached)).toEqual({ mean: 3.2, low: 2.6, high: 3.8 })
+  })
+  it('rien si le bien-être n’est pas observé aujourd’hui (jamais l’attendu)', async () => {
+    const { todayWellbeingState } = await import('./faceMoodData')
+    const cached = { hit: true, result: { days: [day('2026-10-21', { observed: { wellbeing: false } })] } }
+    expect(todayWellbeingState([], now, cached)).toBeNull()
+    expect(todayWellbeingState([], now, { hit: false })).toBeNull()
   })
 })
 

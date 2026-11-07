@@ -63,10 +63,17 @@ describe('dayWellbeing (AUJ-2)', () => {
     expect(JSON.stringify(w)).not.toMatch(/Plutôt|difficile|prudente/)
   })
 
-  it('une gêne ou une douleur digestive comptée est dite en toutes lettres (VENTRE-BE-2)', () => {
-    const w = (gut, readings = 1) => dayWellbeing({ est: { day: { note: 2.5, readings, gut } } }, [], now).from
-    expect(w({ level: 'pain' })).toBe('D’après 1 lecture du visage et votre douleur digestive')
-    expect(w({ level: 'discomfort' }, 3)).toBe('D’après 3 lectures du visage et votre gêne digestive')
+  it('TS-1 : la valeur du jour est l’estimation du modèle à espace d’états ; plus rien de VENTRE-BE-2', () => {
+    const data = { est: { day: { note: 2.5, readings: 3, gut: { level: 'pain' } } }, state: { mean: 3.75, low: 3, high: 4.5 } }
+    const w = dayWellbeing(data, [], now)
+    expect(w.value).toBe(dayWellbeing({ est: { day: { note: 3.75, readings: 3 } } }, [], now).value)
+    expect(w.from).toBe('D’après 3 lectures du visage')
+    // une note du jour entre dans l'estimation TS-1 : elle est dite
+    expect(dayWellbeing(data, [note(4, at(9))], now).from).toBe('D’après 3 lectures du visage et votre note')
+    // sans estimation TS-1 : la médiane des lectures du jour, sans mention de la digestion
+    const old = dayWellbeing({ est: { day: { note: 2.5, readings: 1, gut: { level: 'pain' } } } }, [], now)
+    expect(old.from).toBe('D’après 1 lecture du visage')
+    expect(old.value).toBe(dayWellbeing({ est: { day: { note: 2.5, readings: 1 } } }, [], now).value)
   })
 
   it('sans lecture du jour : les notes du jour en points, la dernière en valeur ; jamais une note d’hier', () => {

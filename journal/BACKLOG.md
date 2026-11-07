@@ -225,8 +225,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   fourchette à 80 % ; attendu des 7 jours à venir ; `digestionOwn` (sans rien du bien-être, seule série digestive des
   analyses) ; `showDigestiveCurve` (validation par blocs d'une semaine contre la moyenne) ; `noteRequest` (jours parmi
   les 30 % plus incertains des 4 dernières semaines). Banc : 9 à 10 sur 10 mieux que le visage seul, couverture de la
-  fourchette entre 65 et 95 %, règle 5 ≤ 5 %. VENTRE-BE-2 reste en place dans l'affichage du jour jusqu'à ce que
-  l'interface prenne l'estimation TS-1 (ORG-5d branche déjà les analyses dessus).
+  fourchette entre 65 et 95 %, règle 5 ≤ 5 %. ✅ 07/11 (reprise du soir) : VENTRE-BE-2 retiré. La valeur du jour de
+  l'Accueil vient de TS-1 (`todayWellbeingState` : le calcul `dayStates` s'il est en cache, sinon le même modèle sur
+  les entrées que l'Accueil lit déjà, selles comprises ; seulement si le bien-être est observé aujourd'hui) ;
+  `gutSelfReport.js` (`gutAdjust`) supprimé ; plus d'ajustement digestif dans `faceMood.js`, `faceMoodDays.js`,
+  `wellbeingHistory.js` ; « et votre gêne digestive » (Accueil) et « la note baisse de… » (détail d'une lecture)
+  retirés. Budget de lectures local : Accueil 402 enregistrements (max 1 500), aucune tâche longue.
 - [x] TS-2 — **Changements durables** : bien-être, confort digestif, sommeil, VFC, FC au repos, pas, écran, une fois le
   rythme de la semaine retiré ; un saut de niveau, au moins 7 jours de chaque côté, au moins une demi-variation
   habituelle, confirmé 7 jours après ; seuil calé sur le banc (moins d'une fausse alerte par courbe et par semestre).

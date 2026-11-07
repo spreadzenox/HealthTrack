@@ -23,7 +23,6 @@ import { localDateKey, computeBasicCorrelations } from '../analysisEngine'
 import { computeTagEffects } from '../behaviorTags'
 import { computeLaggedEffects } from '../laggedEffects'
 import { moodFaceBursts } from '../faceBursts'
-import { gutAdjust, gutLevelsByDay } from './gutSelfReport'
 import { estimateBurst, personalCalibration, personalNeutral, readingWeight, weightedMedian } from './faceMood'
 
 export const FACE_MOOD_MIN_READINGS = 3
@@ -31,12 +30,13 @@ export const FACE_MOOD_MIN_DAYS = 14
 
 /**
  * Bien-être estimé jour par jour : [{ date, note, readings, lastAt }], trié.
- * `withGut: false` : sans l'ajustement du ventre (VENTRE-BE-2), pour le modèle à espace d'états (TS-1).
+ * Le visage seul : le ressenti du ventre n'y entre plus (VENTRE-BE-2 retiré le 07/11) ; c'est le modèle à espace
+ * d'états (TS-1, method/stateSpace.js) qui relie ventre et bien-être.
  * La ligne de base (visage habituel) est calculée une fois par jour, à sa dernière lecture : O(jours × lectures)
  * au lieu de O(lectures²) (≈ 50 lectures par jour sur des mois).
  * @param {object[]} entries  entrées `face_burst` et `wellbeing` (les autres sont ignorées)
  */
-export function faceMoodDays(entries, { withGut = true } = {}) {
+export function faceMoodDays(entries) {
   const bursts = moodFaceBursts(entries).sort((a, b) => (a.at < b.at ? -1 : 1))
   const byDay = new Map()
   for (const b of bursts) {
@@ -47,15 +47,11 @@ export function faceMoodDays(entries, { withGut = true } = {}) {
   const days = [...byDay].filter(([, list]) => list.length >= FACE_MOOD_MIN_READINGS)
   if (!days.length) return []
   const calibration = personalCalibration(entries)
-  const gut = gutLevelsByDay(entries)
   return days.map(([date, list]) => {
     const lastAt = list[list.length - 1].at
     const base = personalNeutral(bursts, lastAt)
     const readings = list.map((b) => estimateBurst(b, { bursts, calibration, base }))
-    // Ressenti du ventre du jour (VENTRE-BE-2) : une entrée Y de plus, à poids faible.
-    // TS-1 (method/stateSpace.js) demande le visage seul (withGut: false) : il relie lui-même ventre et bien-être.
-    const raw = weightedMedian(readings.map((r) => r.note), readings.map(readingWeight))
-    const { note } = withGut ? gutAdjust(raw, gut.get(date)) : { note: raw }
+    const note = weightedMedian(readings.map((r) => r.note), readings.map(readingWeight))
     return { date, note: Math.round(note * 100) / 100, readings: list.length, lastAt }
   })
 }

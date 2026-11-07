@@ -251,8 +251,6 @@ function ExpressionMatrix({ mix }) {
 }
 
 /** Détail du point touché (BE-HISTO-DETAIL, retour (6) du 04/11) : ce que les modèles ont lu, jamais un diagnostic. */
-/** VENTRE-BE-2 : une note du ventre du jour a un peu compté dans la note (poids faible). */
-const GUT_LINE = { discomfort: 'Gêne digestive notée', pain: 'Douleur digestive notée' }
 
 export function ReadingDetail({ point, period, onClose }) {
   const title = pointTitle(point, period)
@@ -272,7 +270,6 @@ export function ReadingDetail({ point, period, onClose }) {
         {hasRange && <span className="wbh-detail-range mono"> entre {frDecimal(toDisplay(point.low))} et {frDecimal(toDisplay(point.high))}</span>}
       </p>
       <p className="wbh-figure-sub mono">{readingsLine(d)}</p>
-      {d.gut && <p className="wbh-gut">{GUT_LINE[d.gut.level]} ce jour-là : la note baisse de {frDecimal(gapToDisplay(-d.gut.shift))}.</p>}
       {d.valence != null && <BipolarBar label="Valence" value={d.valence} left="désagréable" right="agréable" />}
       {d.arousal != null && <BipolarBar label="Éveil" value={d.arousal} left="calme" right="animé" />}
       {d.expressions

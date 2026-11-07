@@ -104,11 +104,11 @@ const plural = (n, one, many) => `${n} ${n > 1 ? many : one}`
  * Bloc « Bien-être aujourd'hui » de l'Accueil (AUJ-2, revue design du 07/11 : montrer la donnée, pas un verdict) :
  * la valeur du jour sur 1 à 5, d'où elle vient, et les points de la courbe du jour.
  *
- * Le bloc ne parle que du bien-être (Y) : le visage du jour d'abord (faceMoodEstimate, où une gêne ou une douleur
- * digestive compte un peu, VENTRE-BE-2, dit en toutes lettres) ; sans lecture du jour, les notes du jour ; sinon rien.
- * La note manuelle n'entre pas dans l'estimation du visage du jour.
+ * Le bloc ne parle que du bien-être (Y). Avec des lectures du visage aujourd'hui : l'estimation du jour du modèle à
+ * espace d'états (TS-1, `data.state`, qui remplace VENTRE-BE-2 : visage, notes et lien avec la digestion), sinon la
+ * médiane des lectures du jour ; sans lecture du jour, les notes du jour ; sinon rien.
  *
- * @param {{ est?: object | null, today?: { points?: object[], trend?: object[] } } | null | undefined} data
+ * @param {{ est?: object | null, state?: { mean: number } | null, today?: { points?: object[], trend?: object[] } } | null | undefined} data
  *   sortie de loadWellbeingToday (estimation et historique du jour)
  * @param {object[]} entries  entrées récentes (notes `wellbeing`, payload.score sur 0–5)
  * @returns {{ source: 'face'|'note'|null, value: string | null, from: string | null,
@@ -125,11 +125,11 @@ export function dayWellbeing(data, entries = [], now = new Date()) {
   if (day && typeof day.note === 'number') {
     const points = (data.today?.points || []).filter((p) => isToday(p.at) && typeof p.note === 'number')
     const trend = (data.today?.trend || []).filter((p) => isToday(p.at) && typeof p.note === 'number')
-    const gut = day.gut ? ` et votre ${day.gut.level === 'pain' ? 'douleur' : 'gêne'} digestive` : ''
+    const state = data.state && Number.isFinite(data.state.mean) ? data.state : null
     return {
       source: 'face',
-      value: formatNote(day.note),
-      from: `D’après ${plural(day.readings, 'lecture', 'lectures')} du visage${gut}`,
+      value: formatNote(state ? state.mean : day.note),
+      from: `D’après ${plural(day.readings, 'lecture', 'lectures')} du visage${state && notes.length ? ' et votre note' : ''}`,
       points: points.map((p) => ({ at: p.at, note: p.note })),
       trend: trend.map((p) => ({ at: p.at, note: p.note })),
     }
