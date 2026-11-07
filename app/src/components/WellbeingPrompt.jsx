@@ -60,6 +60,13 @@ const AUTO_HINTS = {
   travel: 'Voyage (fuseau horaire changé aujourd’hui)',
 }
 
+/** Précisions proposées d'abord (retours du testeur du 06/11), puis les autres dans l'ordre habituel. */
+const FIRST_TAGS = ['stress', 'alcohol', 'coffee_late', 'late_meal', 'late_screen']
+const PROMPT_TAGS = [
+  ...FIRST_TAGS.map((id) => BEHAVIOR_TAGS.find((t) => t.id === id)).filter(Boolean),
+  ...BEHAVIOR_TAGS.filter((t) => !FIRST_TAGS.includes(t.id)),
+]
+
 function isToday(iso) {
   const d = new Date(iso)
   return !Number.isNaN(d.getTime()) && d.toDateString() === new Date().toDateString()
@@ -112,7 +119,7 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
 
   // Never ask for what the app already measures (an old note keeps its tag visible, to remove it).
   const autoIds = open ? autoDetectedTagIds({ phoneUsage: getPhoneUsageSettings().enabled, ...captures }) : []
-  const shownTags = BEHAVIOR_TAGS.filter((t) => !autoIds.includes(t.id) || tags.includes(t.id))
+  const shownTags = PROMPT_TAGS.filter((t) => !autoIds.includes(t.id) || tags.includes(t.id))
   const autoHints = autoIds.map((id) => AUTO_HINTS[id]).filter(Boolean)
 
   // I119 : la phrase ne fait que proposer (lexiques disjoints ressenti / contexte) ; elle n'est jamais enregistrée.
@@ -120,6 +127,9 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
   const readChoice = read?.score != null ? scoreToChoice(read.score) : null
   const proposedScore = readChoice !== null && readChoice !== selected ? readChoice : null
   const proposedTags = read ? shownTags.filter((t) => read.tags.includes(t.id) && !tags.includes(t.id)) : []
+
+  // TESTEUR-2b : la note d'abord ; précisions, phrase et rappel du soir apparaissent une fois la note choisie.
+  const showDetails = selected !== null
 
   const close = () => onClose?.()
 
@@ -216,90 +226,93 @@ export default function WellbeingPrompt({ open = false, onClose, entry } = {}) {
           ))}
         </div>
 
-        <p className="wellbeing-tags-title" id="wellbeing-tags-title">
-          {entry && !isToday(entry.at) ? 'Ce jour-là' : 'Aujourd’hui'} <span className="wellbeing-tags-optional">(facultatif)</span>
-        </p>
-        <div className="wellbeing-tags" role="group" aria-labelledby="wellbeing-tags-title">
-          {shownTags.map((t) => {
-            const on = tags.includes(t.id)
-            return (
-              <button
-                key={t.id}
-                type="button"
-                className={'wellbeing-tag' + (on ? ' wellbeing-tag-selected' : '')}
-                aria-pressed={on}
-                onClick={() => toggleTag(t.id)}
-              >
-                {t.label}
-              </button>
-            )
-          })}
-        </div>
-        {autoHints.length > 0 && <p className="wellbeing-tags-hint">Repéré sans vous : {autoHints.join(', ')}.</p>}
-
-        <label className="wellbeing-phrase">
-          <span className="wellbeing-tags-title">
-            En une phrase <span className="wellbeing-tags-optional">(facultatif)</span>
-          </span>
-          <textarea
-            className="wellbeing-phrase-input"
-            rows={2}
-            maxLength={500}
-            value={phrase}
-            placeholder="« Journée crevante mais contente, apéro le soir »"
-            onChange={(e) => setPhrase(e.target.value)}
-          />
-        </label>
-        {proposedScore !== null || proposedTags.length > 0 ? (
-          <div className="wellbeing-proposals">
-            <p className="wellbeing-tags-hint">Proposé d’après votre phrase (touchez pour garder) :</p>
-            <div className="wellbeing-tags">
-              {proposedScore !== null && (
-                <button
-                  type="button"
-                  className="wellbeing-tag wellbeing-proposal"
-                  aria-label={`Prendre la note ${proposedScore}`}
-                  onClick={() => {
-                    setSelected(proposedScore)
-                    setError(null)
-                  }}
-                >
-                  Note {proposedScore}
-                </button>
-              )}
-              {proposedTags.map((t) => (
+        {showDetails && (
+          <div className="wellbeing-details">
+          <p className="wellbeing-tags-title" id="wellbeing-tags-title">
+            {entry && !isToday(entry.at) ? 'Ce jour-là' : 'Aujourd’hui'} <span className="wellbeing-tags-optional">(facultatif)</span>
+          </p>
+          <div className="wellbeing-tags" role="group" aria-labelledby="wellbeing-tags-title">
+            {shownTags.map((t) => {
+              const on = tags.includes(t.id)
+              return (
                 <button
                   key={t.id}
                   type="button"
-                  className="wellbeing-tag wellbeing-proposal"
-                  aria-label={`Ajouter le tag ${t.label}`}
+                  className={'wellbeing-tag' + (on ? ' wellbeing-tag-selected' : '')}
+                  aria-pressed={on}
                   onClick={() => toggleTag(t.id)}
                 >
                   {t.label}
                 </button>
-              ))}
-            </div>
+              )
+            })}
           </div>
-        ) : (
-          <p className="wellbeing-tags-hint">
-            Dictez-la avec le micro du clavier si vous préférez : elle sert seulement à vous proposer une note et des
-            tags, elle n’est pas gardée.
-          </p>
-        )}
+          {autoHints.length > 0 && <p className="wellbeing-tags-hint">Repéré sans vous : {autoHints.join(', ')}.</p>}
 
-        {evening && (
-          <>
-            <button
-              type="button"
-              className={'wellbeing-evening' + (evening.enabled ? ' wellbeing-evening-on' : '')}
-              aria-pressed={!!evening.enabled}
-              onClick={toggleEvening}
-            >
-              <LineIcon name="bell" size={18} /> Me la demander le soir, d’un geste depuis une notification
-              {evening.enabled ? ` (vers ${formatMinute(evening.minuteOfDay ?? DEFAULT_MINUTE)})` : ''}
-            </button>
-            {eveningHint && <p className="wellbeing-tags-hint">{eveningHint}</p>}
-          </>
+          <label className="wellbeing-phrase">
+            <span className="wellbeing-tags-title">
+              En une phrase <span className="wellbeing-tags-optional">(facultatif)</span>
+            </span>
+            <textarea
+              className="wellbeing-phrase-input"
+              rows={2}
+              maxLength={500}
+              value={phrase}
+              placeholder="« Journée crevante mais contente, apéro le soir »"
+              onChange={(e) => setPhrase(e.target.value)}
+            />
+          </label>
+          {proposedScore !== null || proposedTags.length > 0 ? (
+            <div className="wellbeing-proposals">
+              <p className="wellbeing-tags-hint">Proposé d’après votre phrase (touchez pour garder) :</p>
+              <div className="wellbeing-tags">
+                {proposedScore !== null && (
+                  <button
+                    type="button"
+                    className="wellbeing-tag wellbeing-proposal"
+                    aria-label={`Prendre la note ${proposedScore}`}
+                    onClick={() => {
+                      setSelected(proposedScore)
+                      setError(null)
+                    }}
+                  >
+                    Note {proposedScore}
+                  </button>
+                )}
+                {proposedTags.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    className="wellbeing-tag wellbeing-proposal"
+                    aria-label={`Ajouter le tag ${t.label}`}
+                    onClick={() => toggleTag(t.id)}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="wellbeing-tags-hint">
+              Elle propose des précisions, elle n’est pas gardée.
+            </p>
+          )}
+
+          {evening && (
+            <>
+              <button
+                type="button"
+                className={'wellbeing-evening' + (evening.enabled ? ' wellbeing-evening-on' : '')}
+                aria-pressed={!!evening.enabled}
+                onClick={toggleEvening}
+              >
+                <LineIcon name="bell" size={18} /> Me la demander le soir, d’un geste depuis une notification
+                {evening.enabled ? ` (vers ${formatMinute(evening.minuteOfDay ?? DEFAULT_MINUTE)})` : ''}
+              </button>
+              {eveningHint && <p className="wellbeing-tags-hint">{eveningHint}</p>}
+            </>
+          )}
+          </div>
         )}
 
         {error && (
