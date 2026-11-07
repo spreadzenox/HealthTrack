@@ -182,6 +182,23 @@ describe('contrat des résultats d’Analyses', () => {
     expect(JSON.parse(JSON.stringify(all))).toStrictEqual(all)
   })
 
+  it('TS-2 : un lien doit tenir à l’intérieur des périodes (un saut commun n’en fait pas un lien)', () => {
+    const r = rng(11)
+    const entries = []
+    for (let i = 0; i < 90; i += 1) {
+      const after = i >= 45
+      // Les pas montent d'un coup en même temps que le bien-être, mais au jour le jour ils ne jouent pas.
+      const s = Math.round((after ? 9000 : 5000) + 800 * gauss(r))
+      entries.push({ type: 'steps', at: at(i, '12'), source: 'health_connect', payload: { value: s, period: 'day' } })
+      const y = (after ? 3.8 : 2.2) + 0.3 * gauss(r)
+      entries.push({ type: 'wellbeing', at: at(i, '21'), payload: { score: Math.round(y * 10) / 10 } })
+    }
+    const res = computeAnalysisResults(entries, { now: new Date(START + 89 * 86_400_000 + 22 * 3_600_000) })
+    const wb = res.outcomes.wellbeing
+    expect(wb.changes.length).toBeGreaterThanOrEqual(1)
+    for (const h of Object.values(wb.horizons)) expect(h.factors.some((f) => f.key === 'steps' && f.net)).toBe(false)
+  })
+
   it('contributions : rien tant que le résultat est verrouillé', () => {
     const { entries, now } = world({ days: 8 })
     const res = computeAnalysisResults(entries, { now })
