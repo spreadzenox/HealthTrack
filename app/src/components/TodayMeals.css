@@ -1,0 +1,77 @@
+/* « Mes repas du jour » (AUJ-5) : pêche, le thème digestion et nutrition. */
+.today-meals {
+  background: var(--peach-bg);
+  color: var(--peach-text);
+}
+
+.today-meals-title {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.today-meals-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.today-meal {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tap-min);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--peach-track);
+  color: inherit;
+  text-decoration: none;
+}
+
+.today-meals-list li:last-child .today-meal {
+  border-bottom: 0;
+}
+
+.today-meal-time {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.today-meal-name {
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.today-meal-kcal {
+  font-size: 0.85rem;
+  color: var(--peach-label);
+  white-space: nowrap;
+}
+
+.today-meal-chevron {
+  transform: rotate(-90deg);
+  color: var(--peach-label);
+}
+
+.today-meals-empty {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.today-meals-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--color-on-brand);
+  font-weight: 700;
+  cursor: pointer;
+}

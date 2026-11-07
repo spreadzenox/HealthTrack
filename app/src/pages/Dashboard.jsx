@@ -12,6 +12,7 @@ import { buildDailyJournal } from '../services/dailyJournal'
 import { localDateKey } from '../services/analysisEngine'
 import { GutCard } from '../components/TodayCards'
 import DigestBlock from '../components/DigestBlock'
+import TodayMeals from '../components/TodayMeals'
 import TodayBySource from '../components/TodayBySource'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { headerLine, measureTiles } from '../services/today'
@@ -120,6 +121,8 @@ export default function Dashboard() {
       )}
       {/* AUJ-4 : le bloc digestif ; les résultats des analyses n'ont qu'une maison, l'onglet Analyses (leçon 16). */}
       {!loading && gutMode !== 'hide' && <DigestBlock onNote={() => setAddOpen('digestion')} />}
+      {/* AUJ-5 : les repas du jour, ou un bouton qui ouvre l'appareil photo. */}
+      {!loading && !error && <TodayMeals entries={entries} />}
 
 
       <WellbeingPrompt open={!!wellbeingOpen} initialMode={wellbeingOpen === 'reminder' ? 'reminder' : 'now'}

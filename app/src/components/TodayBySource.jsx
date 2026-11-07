@@ -49,7 +49,10 @@ export default function TodayBySource({
     return () => window.removeEventListener('health-entries-updated', refresh)
   }, [refresh])
 
+  // Les repas ont leur bloc, « Mes repas du jour » (AUJ-5, leçon 16 : une information n'a qu'une maison)
   const groups = todayBySource({ tiles, summary, entries, now: now || new Date(), showGut })
+    .map((g) => ({ ...g, items: g.items.filter((i) => i.key !== 'meals') }))
+    .filter((g) => g.items.length)
   // Rien du tout : ni titre ni lien (le bien-être du jour et le bandeau d'ajout suffisent au premier jour)
   if (!groups.length) return null
   const items = groups.flatMap((g) => g.items)

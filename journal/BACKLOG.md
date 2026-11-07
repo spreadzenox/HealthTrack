@@ -51,7 +51,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   digestion », rappel du soir, petit graphique du jour s'il y a des notes ; ni délais, ni Benjamini-Hochberg, ni
   minimum ; la carte lilas des pistes (`PistesTeaser`) quitte l'Accueil. (07/11 19:30 : `DigestBlock`, « Noter ma
   digestion » ouvre la fenêtre du bandeau ; analyses prêtes → une ligne vers Analyses › Digestion)
-- [ ] AUJ-5 — « Mes repas du jour » : la liste, ou « Aucun repas aujourd'hui » et un bouton.
+- [x] AUJ-5 — « Mes repas du jour » : la liste, ou « Aucun repas aujourd'hui » et un bouton. (07/11 19:00 :
+  `TodayMeals`, chaque repas ouvre Journal › Repas ; « Photographier un repas » ouvre l'appareil photo)
 - [ ] AUJ-6 — Sous chaque bloc, un petit « + » qui remonte au bandeau ; bouton plus large pour un bloc qui attend la
   personne (calibration, analyses, repas vides).
 - [x] AUJ-7 — « Ventre » devient « digestif » dans tous les textes visibles (« Ma digestion », sous-onglet
