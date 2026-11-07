@@ -82,7 +82,8 @@ describe('Onboarding (jalon 4c) : premier geste et paywall passable', () => {
     await waitFor(() =>
       expect(store.createEntry).toHaveBeenCalledWith({ type: 'wellbeing', source: 'app_wellbeing', payload: { score: 3.75 } }),
     )
-    expect(screen.getByRole('button', { name: '4 sur 5' })).toHaveAttribute('aria-pressed', 'true')
+    // L'état « choisi » suit l'enregistrement asynchrone : attendu, pas lu tout de suite (instable sous charge en CI)
+    await waitFor(() => expect(screen.getByRole('button', { name: '4 sur 5' })).toHaveAttribute('aria-pressed', 'true'))
     expect(await screen.findByText(/C’est noté/)).toBeInTheDocument()
   })
 
