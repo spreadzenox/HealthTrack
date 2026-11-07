@@ -56,9 +56,27 @@
   justify-content: flex-start;
 }
 
+/* TESTEUR-3c : le modèle est une seconde ligne discrète sous « Comment c’est calculé », jamais dedans */
 .reco-footer .reco-model-note {
-  margin-top: 10px;
-  text-align: left;
+  margin-top: 2px;
+}
+
+.reco-model-method {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 12px 0 16px;
+}
+
+.reco-model-method-title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.reco-model-method p {
+  margin: 8px 0 0;
 }
 
 .reco-method-sub {

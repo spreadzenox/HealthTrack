@@ -620,8 +620,8 @@ function CorrelationMethod({ result }) {
 }
 
 /**
- * Pied de page (POL-7, SLOP-1b-6 : la mise en garde reste dans l'encart du haut) : une seule note « Comment c’est calculé » qui réunit
- * la méthode des liens, celle du bien-être estimé et le modèle de prédiction (calculé seulement à l’ouverture).
+ * Pied de page (POL-7, SLOP-1b-6 : la mise en garde reste dans l'encart du haut) : une note « Comment c’est calculé » (méthode
+ * des liens et du bien-être estimé) et, à côté, le modèle de prédiction (calculé seulement à l’ouverture ; TESTEUR-3c).
  */
 function MethodFooter({ analysis, advanced, onOpenAdvanced }) {
   const correlationsOk = analysis.correlations.status !== 'not_enough_data'
@@ -634,13 +634,14 @@ function MethodFooter({ analysis, advanced, onOpenAdvanced }) {
         <summary>Comment c’est calculé</summary>
         {correlationsOk && <CorrelationMethod result={analysis.correlations} />}
         {faceOk && <FaceMoodMethod />}
-        <details
-          className="reco-method-note reco-model-note"
-          onToggle={(e) => { if (e.currentTarget.open) onOpenAdvanced() }}
-        >
-          <summary>Le modèle qui prédit votre bien-être</summary>
-          {advanced ? <AdvancedTab analysis={advanced} /> : <p>Calcul…</p>}
-        </details>
+      </details>
+      {/* TESTEUR-3c : à côté de « Comment c’est calculé », plus dedans (jamais un dépliant dans un dépliant) */}
+      <details
+        className="reco-method-note reco-model-note"
+        onToggle={(e) => { if (e.currentTarget.open) onOpenAdvanced() }}
+      >
+        <summary>Le modèle qui prédit votre bien-être</summary>
+        {advanced ? <AdvancedTab analysis={advanced} /> : <p>Calcul…</p>}
       </details>
     </footer>
   )
@@ -886,8 +887,8 @@ function AdvancedTab({ analysis }) {
           <> <span className="reco-reliability-ok">✓ Il prédit bien les jours qu’il n’a pas vus.</span></>
         )}
       </p>
-        <details className="reco-method-note">
-          <summary>Comment fonctionne ce modèle ?</summary>
+        <section className="reco-model-method">
+          <h4 className="reco-model-method-title">Comment fonctionne ce modèle</h4>
           <p>
             Modèle : <em>{method}</em>, entraîné entièrement sur vos données locales.
             {modelInfo?.r2 != null && (
@@ -947,7 +948,7 @@ function AdvancedTab({ analysis }) {
             juste ? » et l’« attendu d’après vos habitudes » des Tendances les estiment donc sans les avoir vus.
           </p>
           </>)}
-        </details>
+        </section>
 
 
       {topRecommendations?.length > 0 && (
