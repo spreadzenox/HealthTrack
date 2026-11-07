@@ -55,7 +55,12 @@
 > du ventre en pêche avec l'objectif ventre, repas et cigarettes du jour). L'appareil est écrit en petit en haut à
 > droite (« Garmin », « Montre Huawei »). Une source sans chiffre n'apparaît pas ; sans montre, un lien discret
 > « Ajouter une montre ». L'ancienne carte « Bien-être estimé » est supprimée du code (tout est dans l'historique).
-> Prochaines : « Ce qui change aujourd'hui » (1d-2), puis l'animation (1e).
+> **Ce qui change aujourd'hui (12:35)** : sous « Votre journée », jusqu'à trois mesures du jour loin de **vos** 14
+> derniers jours (« Nuit plus courte · 5 h 30 · d'habitude 7 h 10 », « Plus de pas »…), sans couleur ni jugement ;
+> rien d'inhabituel : « Une journée comme les autres pour vos mesures. » Masqué avant 7 jours de mesures. Les pas et
+> l'écran ne sont dits « en moins » qu'après 21 h (la journée n'est pas finie). La carte des analyses dit enfin ce
+> qu'elles cherchent (« Halcya cherchera quels repas reviennent avant vos gênes au ventre. »).
+> Prochaine : l'animation (1e).
 > Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
@@ -173,6 +178,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 12:35 — [Ce qui change aujourd'hui](runs/2026-11-07-1235-ce-qui-change.md) | 🎨 | TESTEUR-1d-2 : section « Ce qui change aujourd'hui » sur l'Accueil (au plus 3 écarts à votre médiane des 14 jours, sans jugement) ; phrase « Halcya cherchera… » dans la carte des analyses. Rien à faire de votre côté |
 | 07/11 11:35 — [Vos données du jour](runs/2026-11-07-1135-donnees-du-jour.md) | 🎨 | TESTEUR-1d-b : « Vos données du jour » par source (Montre, Téléphone, Noté par vous) sur l'Accueil ; ancienne carte « Bien-être estimé » supprimée. Rien à faire de votre côté |
 | 07/11 10:35 — [Un seul endroit pour noter](runs/2026-11-07-1035-noter.md) | 🎨 | TESTEUR-1d-a : section « Noter » sur l'Accueil (Photo du repas, « Mon bien-être », « Mon ventre » avec l'objectif ventre, « Autre chose ») ; la carte « Votre journée » n'a plus de bouton. Rien à faire de votre côté |
 | 07/11 09:35 — [Votre journée](runs/2026-11-07-0935-votre-journee.md) | 🎨 | TESTEUR-1c : carte « Votre journée » en tête de l'Accueil (titre, échelle 1 à 5, d'où il vient, étiquettes), à la place du titre et de la carte « Bien-être estimé » ; toucher → historique ; « Pas encore d'avis » avec un seul bouton. |

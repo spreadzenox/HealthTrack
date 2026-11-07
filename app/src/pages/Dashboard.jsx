@@ -17,6 +17,7 @@ import { APP_NAME } from '../config/brand'
 import { homeFocus, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
 import NoteSection from '../components/NoteSection'
+import DayChanges from '../components/DayChanges'
 
 export default function Dashboard() {
   // Entrées des derniers jours : tuiles du jour et compteur de cigarettes (le journal des jours est dans l'onglet Journal)
@@ -114,7 +115,9 @@ export default function Dashboard() {
       <DayStatusCard data={loading ? undefined : wellbeing} entries={entries}
         onAddManual={() => setWellbeingOpen(true)} unlockReminder={unlockReminder}
         onDismissReminder={closeUnlockReminder} />
-      {/* Ordre de la maquette du 07/11 : statut, analyses, données du jour, puis un seul endroit pour noter (TESTEUR-1d). */}
+      {/* Ordre de la maquette du 07/11 : statut, ce qui change, analyses, données du jour, puis un seul endroit pour
+          noter (TESTEUR-1d). */}
+      {!loading && !error && !empty && <DayChanges />}
       <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} />
       {!loading && !error && (
         <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} showGut={gutMode !== 'hide'} />

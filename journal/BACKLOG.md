@@ -76,9 +76,13 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   Noté par vous = note du jour seulement (menthe / pêche), repas, cigarettes ; appareil d'origine en mono en tête de
   carte ; rien du tout au premier jour. `MeasureTiles` et `MoodEstimateCard` supprimés ; rappel et calibration dans
   `WellbeingNudges.jsx`. La météo n'y est pas : elle n'est enregistrée que pour les journées terminées.)
-- [ ] TESTEUR-1d-2 — « Ce qui change aujourd'hui » : `dayDeviations` (médiane 14 j, 3 écarts au plus, aucune couleur
+- [x] TESTEUR-1d-2 — « Ce qui change aujourd'hui » : `dayDeviations` (médiane 14 j, 3 écarts au plus, aucune couleur
   de jugement, règle 6) + carte lilas qui explique les analyses (« Halcya cherchera ce qui revient avant vos bons et
-  vos mauvais jours »).
+  vos mauvais jours »). (07/11 12:35 : `services/dayDeviations.js` + `components/DayChanges.jsx` ; sommeil, VFC nuit,
+  FC au repos, pas, écran ; au moins 7 jours passés ; seuil 1,5 écart absolu médian avec minimum par mesure ; cumuls
+  « en moins » seulement après 21 h ; phrase lilas propre à l'objectif ; 548 lectures à l'Accueil sur 3 ans.)
+- [ ] TESTEUR-1d-3 — Carte lilas, analyses prêtes : la piste la plus solide qui touche une mesure du jour (« Les nuits
+  courtes vont souvent avec… », à confirmer), lien vers Analyses.
 - [ ] TESTEUR-1e — Animation « horizon qui respire » (CSS, pente selon le statut, immobile avec « réduire les
   animations », `aria-hidden`).
 
