@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette — Aujourd'hui (TESTEUR-1b)</title>
+<!--
+  Maquette statique du nouvel écran « Aujourd'hui » (retours du premier testeur, 06/11, point 1).
+  Pas du code produit : elle sert de référence aux runs TESTEUR-1c, 1d et 1e. Données synthétiques.
+  Paramètres : ?theme=dark  ?state=demo|empty|good|hard  ?motion=off
+  Rendu : node journal/maquettes/aujourdhui/render.mjs (depuis la racine du dépôt, app/ installé).
+-->
+<link rel="stylesheet" href="../../../app/src/theme/tokens.css">
+<style>
+  @font-face { font-family: 'Figtree Variable'; font-weight: 300 900;
+    src: url('../../../app/node_modules/@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'IBM Plex Mono'; font-weight: 400;
+    src: url('../../../app/node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-ink); font-family: var(--font-sans); }
+  .screen { width: 412px; margin: 0 auto; padding: 0 var(--gutter) 110px; }
+  .mono { font-family: var(--font-mono); }
+  .top { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+  .logo { display: flex; gap: 10px; align-items: center; font-weight: 800; font-size: 20px; }
+  .logo svg { width: 34px; height: 34px; border-radius: 10px; }
+  .gear { width: 28px; height: 28px; color: var(--color-ink-2); }
+  .date { font-size: 14px; color: var(--color-ink-2); margin-top: 6px; }
+  .hello { font-size: 17px; margin: 2px 0 14px; }
+
+  /* 1. Statut du jour */
+  .status { background: var(--mint-bg); border-radius: var(--radius-card); padding: 20px 20px 18px; color: var(--mint-text);
+    position: relative; overflow: hidden; }
+  .status .label { font-size: 15px; font-weight: 700; color: var(--mint-label); }
+  .status h1 { font-size: 34px; line-height: 1.1; font-weight: 800; margin: 4px 0 0; color: var(--color-ink); max-width: 180px; }
+  .halo { position: absolute; right: 4px; top: 4px; width: 128px; height: 128px; }
+  .scale { display: flex; gap: 6px; margin: 18px 0 6px; }
+  .scale span { flex: 1; height: 8px; border-radius: 4px; background: rgba(var(--ink-rgb), .12); }
+  .scale span.on { background: var(--mint-label); }
+  .scale-legend { display: flex; justify-content: space-between; font-size: 12px; }
+  .why { margin-top: 14px; font-size: 15px; line-height: 1.4; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { font-family: var(--font-mono); font-size: 12px; border-radius: var(--radius-tag); padding: 5px 9px;
+    background: rgba(var(--bg-rgb), .7); color: var(--mint-text); }
+  .status .btn { margin-top: 16px; }
+
+  /* Boutons */
+  .btn { display: flex; align-items: center; justify-content: center; gap: 10px; height: var(--button-height);
+    border-radius: var(--radius-pill); font-weight: 700; font-size: 17px; border: 2px solid var(--color-ink);
+    background: transparent; color: var(--color-ink); width: 100%; font-family: inherit; }
+  .btn.primary { background: var(--color-brand); color: var(--color-on-brand); border-color: var(--color-brand); }
+
+  /* Titres de section */
+  h2 { font-size: 20px; font-weight: 800; margin: 30px 0 4px; }
+  .sub { font-size: 14px; color: var(--color-ink-2); margin: 0 0 12px; }
+
+  /* 2. Ce qui l'explique */
+  .rows { border-radius: var(--radius-card); background: var(--color-surface); padding: 4px 16px; }
+  .row { display: grid; grid-template-columns: 36px 1fr auto; gap: 10px; align-items: center; min-height: 58px;
+    border-bottom: 1px solid var(--color-border); }
+  .row:last-child { border-bottom: 0; }
+  .row .ic { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--color-bg); }
+  .row .t { font-size: 15px; font-weight: 600; }
+  .row .d { font-size: 13px; color: var(--color-ink-2); }
+  .row .v { font-family: var(--font-mono); font-size: 14px; text-align: right; }
+  .row .v small { display: block; color: var(--color-ink-2); font-size: 12px; }
+  .row.gut .ic { background: var(--peach-bg); color: var(--peach-label); }
+  .soon { margin-top: 10px; background: var(--lilac-bg); color: var(--lilac-text); border-radius: var(--radius-card);
+    padding: 16px; }
+  .soon b { display: block; font-size: 16px; }
+  .soon p { margin: 4px 0 10px; font-size: 14px; }
+  .bar { height: 8px; border-radius: 4px; background: var(--lilac-track); }
+  .bar i { display: block; height: 8px; border-radius: 4px; background: var(--lilac-bar); }
+  .soon .mono { font-size: 12px; margin-top: 6px; }
+
+  /* 3. Données du jour par source */
+  .src { background: var(--color-surface); border-radius: var(--radius-card); padding: 14px 16px 16px; margin-bottom: 10px; }
+  .src header { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--color-ink-2); }
+  .src header .when { margin-left: auto; font-family: var(--font-mono); font-weight: 400; font-size: 12px; }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+  .tile { background: var(--color-bg); border-radius: 14px; padding: 10px; }
+  .tile .k { font-size: 12px; color: var(--color-ink-2); }
+  .tile .n { font-family: var(--font-mono); font-size: 18px; margin-top: 2px; white-space: nowrap; }
+  .tile .n small { font-size: 12px; }
+  .tile.mint { background: var(--mint-bg); } .tile.mint .k { color: var(--mint-label); }
+  .tile.peach { background: var(--peach-bg); } .tile.peach .k { color: var(--peach-label); }
+  .add-src { font-size: 14px; color: var(--color-brand); font-weight: 700; padding: 6px 0 0; }
+
+  /* 4. Noter */
+  .note-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .note { border-radius: var(--radius-choice); min-height: 96px; padding: 14px; display: flex; flex-direction: column;
+    justify-content: space-between; font-weight: 700; font-size: 16px; border: 0; text-align: left; font-family: inherit; }
+  .note svg { width: 26px; height: 26px; }
+  .note.meal { grid-column: span 2; min-height: 64px; flex-direction: row; align-items: center; justify-content: center; gap: 10px;
+    background: var(--color-brand); color: var(--color-on-brand); border-radius: var(--radius-pill); }
+  .note.mood { background: var(--mint-bg); color: var(--mint-label); }
+  .note.gut { background: var(--peach-bg); color: var(--peach-label); }
+  .note.more { background: var(--color-surface); color: var(--color-ink); }
+  .note small { font-weight: 400; font-size: 13px; color: var(--color-ink-2); }
+
+  .tabs { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 412px; height: 76px;
+    background: var(--color-bg); border-top: 1px solid var(--color-border); display: grid; grid-template-columns: repeat(4,1fr);
+    font-size: 13px; color: var(--color-ink-2); text-align: center; padding-top: 10px; }
+  .tabs .on { color: var(--color-brand); font-weight: 700; }
+  .tabs i { display: block; margin: 0 auto 4px; width: 46px; height: 26px; border-radius: 13px; }
+  .tabs .on i { background: rgba(var(--brand-rgb), .15); }
+
+  /* Animation : l'horizon qui respire (originale ; immobile si « réduire les animations ») */
+  @keyframes breathe { 0%,100% { transform: scale(1); opacity: .55 } 50% { transform: scale(1.08); opacity: .8 } }
+  @keyframes drift { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-4px) } }
+  .halo .ring { transform-origin: 75px 75px; animation: breathe 5s ease-in-out infinite; }
+  .halo .ring.r2 { animation-delay: -2.5s; }
+  .halo .dot { animation: drift 5s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .halo * { animation: none !important; } }
+  .nomotion .halo * { animation: none !important; }
+  .fullpage .tabs { position: static; transform: none; margin: 0 auto; }
+</style>
+</head>
+<body>
+<div class="screen" id="app"></div>
+<nav class="tabs">
+  <div class="on"><i></i>Aujourd'hui</div><div><i></i>Journal</div><div><i></i>Analyses</div><div><i></i>Sources</div>
+</nav>
+<script>
+const q = new URLSearchParams(location.search)
+if (q.get('theme') === 'dark') document.documentElement.dataset.theme = 'dark'
+if (q.get('motion') === 'off') document.body.classList.add('nomotion')
+if (q.get('full') === '1') document.body.classList.add('fullpage')
+const state = q.get('state') || 'demo'
+
+// Niveau du jour : même échelle 1 à 5 que la note (TESTEUR-2a) ; 3 libellés seulement
+const LEVELS = {
+  good: { note: 4, title: 'Plutôt bonne', arc: 'M14 104 C44 104 58 70 75 66 C94 62 108 40 136 36', dotY: 66 },
+  demo: { note: 3, title: 'Plutôt moyenne', arc: 'M14 82 C44 82 56 74 75 74 C94 74 108 70 136 70', dotY: 74 },
+  hard: { note: 2, title: 'Plus difficile', arc: 'M14 52 C44 52 58 76 75 82 C94 88 108 100 136 104', dotY: 82 },
+}
+const lv = LEVELS[state] || LEVELS.demo
+
+const ICON = {
+  logo: `<svg viewBox="0 0 108 108"><rect width="108" height="108" fill="#10231D"/><g transform="translate(54 54) scale(0.9) translate(-54 -54)"><rect x="30" y="28" width="11" height="52" rx="5.5" fill="#fff"/><rect x="67" y="28" width="11" height="52" rx="5.5" fill="#fff"/><path d="M36 64 C46 64 46 50 54 50 C62 50 62 42 72 42" fill="none" stroke="#5EE0B5" stroke-width="7" stroke-linecap="round"/><circle cx="54" cy="50" r="5.5" fill="#FFB84D"/></g></svg>`,
+  gear: `<svg class="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>`,
+  moon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>`,
+  steps: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v-2.4C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6C9.4 2 10 3.8 10 5.5c0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0zM20 20v-2.4c0-2.1 1-3.1 1-5.6 0-2.7-1.5-6-4.5-6C14.6 6 14 7.8 14 9.5c0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0z"/></svg>`,
+  gut: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M8 13c1.5 2 6.5 2 8 0"/></svg>`,
+  sun: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>`,
+  watch: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="3"/><path d="M9 6l1-4h4l1 4M9 18l1 4h4l1-4"/></svg>`,
+  phone: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>`,
+  pen: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4z"/></svg>`,
+  camera: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+  smile: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>`,
+  plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>`,
+}
+
+function halo() {
+  return `<svg class="halo" viewBox="0 0 150 150" aria-hidden="true">
+    <circle class="ring" cx="75" cy="75" r="62" fill="var(--accent-mint)" opacity=".35"/>
+    <circle class="ring r2" cx="75" cy="75" r="44" fill="var(--accent-mint)" opacity=".45"/>
+    <path d="${lv.arc}" fill="none" stroke="var(--mint-label)" stroke-width="5" stroke-linecap="round"/>
+    <g class="dot"><circle cx="75" cy="${lv.dotY}" r="9" fill="var(--accent-amber)"/></g>
+  </svg>`
+}
+const scale = (n) => `<div class="scale">${[1,2,3,4,5].map(i => `<span class="${i === n ? 'on' : ''}"></span>`).join('')}</div>
+  <div class="scale-legend mono"><span>1 très mal</span><span>3</span><span>5 très bien</span></div>`
+
+function statusCard() {
+  if (state === 'empty') {
+    return `<section class="status">
+      <div class="label">Votre journée</div>
+      <h1>Pas encore d'avis</h1>
+      ${halo()}
+      <p class="why">Dites comment vous vous sentez, ou laissez la caméra lire votre visage quand vous ouvrez le téléphone.</p>
+      <button class="btn primary">Noter comment je me sens</button>
+    </section>`
+  }
+  const gut = state === 'demo' ? '<span class="chip">ventre : gêne à 10:19</span>' : ''
+  return `<section class="status">
+    <div class="label">Votre journée</div>
+    <h1>${lv.title}</h1>
+    ${halo()}
+    ${scale(lv.note)}
+    <p class="why">D'après votre visage ce matin et votre note de 9&nbsp;h.</p>
+    <div class="chips"><span class="chip">12 lectures du visage</span><span class="chip">note : ${lv.note}/5</span>${gut}</div>
+  </section>`
+}
+
+function explain() {
+  if (state === 'empty') return ''
+  return `<h2>Ce qui change aujourd'hui</h2>
+  <p class="sub">Comparé à vos 14 derniers jours.</p>
+  <div class="rows">
+    <div class="row"><div class="ic">${ICON.moon}</div><div><div class="t">Nuit plus courte</div><div class="d">Montre</div></div><div class="v">5 h 50<small>d'habitude 7 h 05</small></div></div>
+    <div class="row"><div class="ic">${ICON.steps}</div><div><div class="t">Plus de pas hier</div><div class="d">Téléphone</div></div><div class="v">10 085<small>d'habitude 6 900</small></div></div>
+    <div class="row gut"><div class="ic">${ICON.gut}</div><div><div class="t">Gêne au ventre</div><div class="d">Noté par vous</div></div><div class="v">10:19<small>compte un peu</small></div></div>
+  </div>
+  <div class="soon">
+    <b>Vos analyses arrivent dans 19 jours</b>
+    <p>Halcya cherchera ce qui revient avant vos bons et vos mauvais jours.</p>
+    <div class="bar"><i style="width:32%"></i></div>
+    <div class="mono">9/28 jours notés</div>
+  </div>`
+}
+
+function sources() {
+  const empty = state === 'empty'
+  const watch = empty ? '' : `<div class="src"><header>${ICON.watch} Montre <span class="when">il y a 12 min</span></header>
+    <div class="tiles">
+      <div class="tile"><div class="k">Sommeil</div><div class="n">5 h 50</div></div>
+      <div class="tile"><div class="k">VFC nuit</div><div class="n">46 <small>ms</small></div></div>
+      <div class="tile"><div class="k">FC repos</div><div class="n">58 <small>bpm</small></div></div>
+    </div></div>`
+  const phone = `<div class="src"><header>${ICON.phone} Téléphone <span class="when">${empty ? 'depuis 8 h' : 'en direct'}</span></header>
+    <div class="tiles">
+      <div class="tile"><div class="k">Pas</div><div class="n">${empty ? '1 240' : '3 412'}</div></div>
+      <div class="tile"><div class="k">Écran</div><div class="n">${empty ? '0 h 25' : '1 h 40'}</div></div>
+      <div class="tile"><div class="k">Météo</div><div class="n">${empty ? '11°' : '11° ☁'}</div></div>
+    </div></div>`
+  const noted = empty ? '' : `<div class="src"><header>${ICON.pen} Noté par vous <span class="when">aujourd'hui</span></header>
+    <div class="tiles">
+      <div class="tile mint"><div class="k">Bien-être</div><div class="n">3<small>/5</small></div></div>
+      <div class="tile peach"><div class="k">Ventre</div><div class="n">gêne</div></div>
+      <div class="tile"><div class="k">Repas</div><div class="n">2</div></div>
+    </div></div>`
+  return `<h2>Vos données du jour</h2>${watch}${phone}${noted}
+    ${empty ? '<div class="add-src">Ajouter une montre ›</div>' : ''}`
+}
+
+function noteGrid() {
+  return `<h2>Noter</h2>
+  <div class="note-grid">
+    <button class="note meal">${ICON.camera} Photo du repas</button>
+    <button class="note mood"><span style="width:26px;height:26px">${ICON.smile}</span>Mon bien-être<small>1 à 5, en un geste</small></button>
+    <button class="note gut"><span style="width:26px;height:26px">${ICON.gut.replace('width="18" height="18"','width="26" height="26"')}</span>Mon ventre<small>calme, gêne, douleur</small></button>
+    <button class="note more" style="grid-column:span 2;min-height:56px;flex-direction:row;align-items:center;justify-content:flex-start;gap:10px"><span style="width:22px;height:22px">${ICON.plus}</span>Autre chose (selles, note libre)</button>
+  </div>`
+}
+
+document.getElementById('app').innerHTML = `
+  <div class="top"><div class="logo">${ICON.logo} Halcya</div>${ICON.gear}</div>
+  <div class="date mono">sam. 7 nov.</div>
+  <div class="hello">Bonjour</div>
+  ${statusCard()}
+  ${explain()}
+  ${sources()}
+  ${noteGrid()}`
+</script>
+</body>
+</html>
