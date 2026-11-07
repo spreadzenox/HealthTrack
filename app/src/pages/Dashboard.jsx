@@ -16,7 +16,6 @@ import { headerLine, measureTiles } from '../services/today'
 import { homeFocus, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
 import AddStrip from '../components/AddStrip'
-import DayChanges from '../components/DayChanges'
 
 export default function Dashboard() {
   // Entrées des derniers jours : tuiles du jour et compteur de cigarettes (le journal des jours est dans l'onglet Journal)
@@ -48,8 +47,6 @@ export default function Dashboard() {
     setUnlockReminder(false)
   }, [])
   const days = useMemo(() => buildDailyJournal(entries), [entries])
-  // Aucune donnée : pas de renvoi vers un Journal et des Tendances vides (VC-26)
-  const empty = days.length === 0
 
   const loadEntries = useCallback(async (isCancelled = () => false) => {
     try {
@@ -113,13 +110,12 @@ export default function Dashboard() {
       <DayStatusCard data={loading ? undefined : wellbeing} entries={entries}
         onAddManual={() => setWellbeingOpen(true)} unlockReminder={unlockReminder}
         onDismissReminder={closeUnlockReminder} />
-      {/* Ordre de la maquette du 07/11 : statut, ce qui change, analyses, données du jour, puis un seul endroit pour
-          noter (TESTEUR-1d). */}
-      {!loading && !error && !empty && <DayChanges onItems={setDayChanges} />}
-      <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} todayChanges={dayChanges} />
+      {/* AUJ-3 : vos données du jour, un bloc, l'écart à votre norme sur chaque mesure ; puis les analyses. */}
       {!loading && !error && (
-        <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} showGut={gutMode !== 'hide'} />
+        <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} showGut={gutMode !== 'hide'}
+          onItems={setDayChanges} />
       )}
+      <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} todayChanges={dayChanges} />
 
 
       <WellbeingPrompt open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />

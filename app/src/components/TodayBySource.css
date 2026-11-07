@@ -1,4 +1,4 @@
-/* « Vos données du jour » (TESTEUR-1d-b) : une carte neutre par source ; menthe = bien-être, pêche = ventre. */
+/* « Vos données du jour » (AUJ-3) : un bloc, une ligne par mesure, l'icône dans la couleur de son thème (AUJ-8). */
 .today-sources {
   margin: 0 0 16px;
 }
@@ -9,88 +9,79 @@
   font-weight: 700;
 }
 
-.today-source {
+.today-data {
   background: var(--color-surface);
   border-radius: var(--radius-card);
-  padding: 12px;
-  margin: 0 0 8px;
+  padding: 6px 14px 12px;
 }
 
-.today-source-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-  margin: 0 0 8px;
-}
-
-.today-source-name {
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.today-source-from {
-  font-size: 0.68rem;
-  color: var(--text-muted);
-  text-align: right;
-  overflow-wrap: anywhere;
-}
-
-.today-source-items {
+.today-data-items {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.today-data-item {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
-  gap: 8px;
+  grid-template-columns: 36px 1fr auto;
+  column-gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.today-source-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.today-data-item:last-child {
+  border-bottom: 0;
+}
+
+.today-data-icon {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--tone-bg, var(--color-bg));
+  color: var(--tone-label, var(--text-muted));
+}
+
+.today-data-label {
   min-width: 0;
-  padding: 8px 10px;
-  border-radius: var(--radius-choice);
-  background: var(--color-bg);
-}
-
-.today-source-item[data-theme="mint"] {
-  background: var(--mint-bg);
-  color: var(--mint-text);
-}
-
-.today-source-item[data-theme="peach"] {
-  background: var(--peach-bg);
-  color: var(--peach-text);
-}
-
-.today-source-label {
-  font-size: 0.75rem;
+  font-size: 0.95rem;
   font-weight: 600;
+  color: var(--text);
+}
+
+.today-data-when {
+  font-weight: 400;
   color: var(--text-muted);
 }
 
-.today-source-item[data-theme] .today-source-label {
-  color: inherit;
-}
-
-.today-source-value {
+.today-data-value {
   font-size: 1.05rem;
   font-weight: 600;
   white-space: nowrap;
+  text-align: right;
 }
 
-.today-source-when {
-  font-size: 0.65rem;
+.today-data-usual {
+  grid-column: 2 / 4;
+  justify-self: end;
+  display: inline-flex;
+  gap: 4px;
+  font-size: 0.72rem;
   color: var(--text-muted);
 }
 
-.today-source-item[data-theme] .today-source-when {
-  color: inherit;
-  opacity: 0.8;
+.today-data-usual.is-notable {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.today-data-from {
+  margin: 8px 0 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
 }
 
 .today-sources-add {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { dayDeviations, DEVIATION_MIN_PAST_DAYS } from './dayDeviations'
+import { dayDeviations, measureNorms, DEVIATION_MIN_PAST_DAYS } from './dayDeviations'
 
 // Mercredi 21 octobre 2026, 12 h (heure locale)
 const NOW = new Date(2026, 9, 21, 12, 0)
@@ -76,5 +76,27 @@ describe('dayDeviations', () => {
       expect(i.text).not.toMatch(/bon|mauvais|trop|attention|insuffisant|mieux|pire/i)
       expect(i).not.toHaveProperty('tone')
     }
+  })
+})
+
+describe('measureNorms (AUJ-3 : l’écart à votre norme sur chaque mesure)', () => {
+  it('donne « d’habitude » à chaque mesure du jour, même sans écart net', () => {
+    const { ready, norms } = measureNorms(history(usual, { sleepMinutes: 425, steps: 3000 }), NOW)
+    expect(ready).toBe(true)
+    expect(norms.sleep).toMatchObject({ usual: 'd’habitude 7 h 10', value: '7 h 05', direction: null })
+    // pas « en moins » avant 21 h : la journée continue
+    expect(norms.steps.direction).toBeNull()
+    expect(norms.hrv).toBeUndefined()
+  })
+
+  it('dit le sens d’un écart net', () => {
+    const { norms } = measureNorms(history(usual, { sleepMinutes: 330 }), NOW)
+    expect(norms.sleep).toMatchObject({ direction: 'down', text: 'Nuit plus courte' })
+  })
+
+  it('rien avant 7 jours d’historique', () => {
+    const { ready, norms } = measureNorms(history(usual, { sleepMinutes: 330 }, DEVIATION_MIN_PAST_DAYS - 1), NOW)
+    expect(ready).toBe(false)
+    expect(norms).toEqual({})
   })
 })

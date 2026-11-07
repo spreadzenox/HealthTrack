@@ -50,13 +50,13 @@ function median(values) {
 }
 
 /**
- * @param {{ dateKey: string, summary: object }[]} days  sortie de buildDailyJournal (ordre indifférent)
- * @param {Date} now
- * @returns {{ ready: boolean, items: Array<{ key: string, text: string, value: string, usual: string,
- *   direction: 'up'|'down', score: number }> }}
- *   `ready` : au moins une mesure a assez de jours passés (sinon la section reste masquée).
+ * Norme de chaque mesure du jour (AUJ-3, revue du 07/11 : l'écart à votre norme sur la mesure elle-même, dès 7 jours
+ * d'historique). Pour chaque mesure qui a une valeur aujourd'hui et au moins 7 jours passés : « d'habitude … » (la
+ * médiane de vos 14 derniers jours) et, si l'écart est net, son sens (`up` / `down`) et sa phrase. Jamais un jugement.
+ * @returns {{ ready: boolean, norms: Record<string, { usual: string, value: string, direction: 'up'|'down'|null,
+ *   text: string | null, score: number }> }}
  */
-export function dayDeviations(days, now = new Date()) {
+export function measureNorms(days, now = new Date()) {
   const today = localDateKey(now.toISOString())
   const from = localDateKey(new Date(now.getTime() - DEVIATION_WINDOW_DAYS * DAY_MS).toISOString())
   const past = (days || []).filter((d) => d?.dateKey >= from && d.dateKey < today)
@@ -64,7 +64,7 @@ export function dayDeviations(days, now = new Date()) {
   const evening = now.getHours() >= CUMULATIVE_FROM_HOUR
 
   let ready = false
-  const items = []
+  const norms = {}
   for (const m of METRICS) {
     const values = past.map((d) => d.summary?.[m.field]).filter(isNum)
     if (values.length < DEVIATION_MIN_PAST_DAYS) continue
@@ -74,21 +74,35 @@ export function dayDeviations(days, now = new Date()) {
     const med = median(values)
     const mad = median(values.map((x) => Math.abs(x - med))) * 1.4826
     const diff = v - med
-    if (Math.abs(diff) < m.minAbs) continue
     const scale = Math.max(mad, Math.abs(med) * 0.05, m.minAbs / 2)
     const score = Math.abs(diff) / scale
-    if (score < DEVIATION_MIN_SCORE) continue
-    const direction = diff > 0 ? 'up' : 'down'
-    if (m.cumulative && direction === 'down' && !evening) continue
-    items.push({
-      key: m.key,
-      text: m[direction],
-      value: m.fmt(v),
+    let direction = diff > 0 ? 'up' : 'down'
+    if (Math.abs(diff) < m.minAbs || score < DEVIATION_MIN_SCORE) direction = null
+    if (m.cumulative && direction === 'down' && !evening) direction = null
+    norms[m.key] = {
       usual: `d’habitude ${m.fmt(med)}`,
+      usualValue: m.fmt(med),
+      value: m.fmt(v),
       direction,
+      text: direction ? m[direction] : null,
       score: Math.round(score * 10) / 10,
-    })
+    }
   }
+  return { ready, norms }
+}
+
+/**
+ * @param {{ dateKey: string, summary: object }[]} days  sortie de buildDailyJournal (ordre indifférent)
+ * @param {Date} now
+ * @returns {{ ready: boolean, items: Array<{ key: string, text: string, value: string, usual: string,
+ *   direction: 'up'|'down', score: number }> }}
+ *   `ready` : au moins une mesure a assez de jours passés (sinon la section reste masquée).
+ */
+export function dayDeviations(days, now = new Date()) {
+  const { ready, norms } = measureNorms(days, now)
+  const items = Object.entries(norms)
+    .filter(([, n]) => n.direction)
+    .map(([key, n]) => ({ key, text: n.text, value: n.value, usual: n.usual, direction: n.direction, score: n.score }))
   items.sort((a, b) => b.score - a.score)
   return { ready, items: items.slice(0, DEVIATION_MAX_ITEMS) }
 }
