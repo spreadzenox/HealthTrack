@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
 
 /**
  * « Note du soir d'un geste » (journal/IDEES.md I113) : une notification à l'heure habituelle des notes de
- * bien-être, avec les 6 notes de l'échelle (0 à 5) en boutons, sans ouvrir l'app. La note attend dans une boîte
+ * bien-être, avec les 5 notes de l'échelle (1 à 5, 3 au milieu ; TESTEUR-2c) en boutons, sans ouvrir l'app. La note attend dans une boîte
  * native et entre dans l'historique à l'ouverture suivante (src/services/eveningNote.js), comme une note saisie.
  * C'est de l'auto-déclaration (Y, vérité terrain de la porte du visage) : jamais obligatoire, jamais deux fois
  * par jour, jamais si une note existe déjà. Règle pure : le natif lui passe l'état, elle rend null (on demande)
@@ -24,9 +24,11 @@ public final class EveningNote {
     /** Une alarme retardée (Doze) de plus de 2 h ne demande plus rien ce soir-là. */
     public static final int LATE_AFTER_MIN = 120;
 
-    public static final int MIN_SCORE = 0;
+    /** Note affichée (1 à 5) ; l'app la convertit dans son échelle interne (mood/wellbeingScale.js). */
+    public static final int MIN_SCORE = 1;
     public static final int MAX_SCORE = 5;
-    public static final int RECORD_VERSION = 1;
+    /** v2 : « choice » 1 à 5 (v1 gardait « score » 0 à 5, toujours lu par l'app). */
+    public static final int RECORD_VERSION = 2;
 
     public static final String QUIET_DISABLED = "disabled";
     public static final String QUIET_NOTED = "noted_today";
@@ -87,6 +89,6 @@ public final class EveningNote {
     /** Ce que la boîte garde d'une note : la note et l'heure du geste, rien d'autre. */
     public static String record(int score, long atMs) {
         if (!validScore(score)) throw new IllegalArgumentException("note hors échelle : " + score);
-        return "{\"v\":" + RECORD_VERSION + ",\"score\":" + score + ",\"at\":" + atMs + "}";
+        return "{\"v\":" + RECORD_VERSION + ",\"choice\":" + score + ",\"at\":" + atMs + "}";
     }
 }

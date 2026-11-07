@@ -1,6 +1,6 @@
 /**
  * « Note du soir d'un geste » (journal/IDEES.md I113) : une notification à l'heure habituelle des notes de
- * bien-être, avec les 6 notes de l'échelle en boutons (natif : EveningNoteNotice.java, règle mood/EveningNote.java).
+ * bien-être, avec les 5 notes de l'échelle (1 à 5) en boutons (natif : EveningNoteNotice.java, règle mood/EveningNote.java).
  * Le geste ne lance pas l'app : la note attend dans une boîte native et devient, à l'ouverture suivante, une note
  * `wellbeing` de la même forme qu'une note saisie (même source, même export), écrite sans doublon.
  *
@@ -11,6 +11,7 @@
 import { registerPlugin } from '@capacitor/core'
 import { listEntries, upsertEntries } from '../storage/localHealthStorage'
 import { localDateKey } from './wellbeingSeries'
+import { choiceToScore } from './mood/wellbeingScale'
 
 export const DEFAULT_MINUTE = 21 * 60
 const EARLIEST_MINUTE = 18 * 60
@@ -20,8 +21,10 @@ const EVENING_FROM_MINUTE = 17 * 60
 /** Il faut au moins 3 notes du soir récentes pour déplacer l'heure. */
 const MIN_EVENING_NOTES = 3
 const LEARN_DAYS = 14
-const RECORD_VERSION = 1
+/** v1 : « score » 0 à 5 (ancienne échelle, gardé tel quel) ; v2 : « choice » 1 à 5 (TESTEUR-2c). */
+const RECORD_VERSIONS = [1, 2]
 const KEY = 'healthtrack_evening_note'
+const MINUTE_KEY = 'healthtrack_evening_note_minute'
 
 const NativeEveningNote = registerPlugin('EveningNote')
 const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
@@ -96,10 +99,17 @@ export function parseEveningNote(json) {
   } catch {
     return null
   }
-  if (!r || typeof r !== 'object' || r.v !== RECORD_VERSION) return null
-  if (!Number.isInteger(r.score) || r.score < 0 || r.score > 5) return null
+  if (!r || typeof r !== 'object' || !RECORD_VERSIONS.includes(r.v)) return null
+  let score
+  if (r.v === 1) {
+    if (!Number.isInteger(r.score) || r.score < 0 || r.score > 5) return null
+    score = r.score
+  } else {
+    score = choiceToScore(r.choice)
+    if (score == null) return null
+  }
   if (typeof r.at !== 'number' || !Number.isFinite(r.at) || r.at <= 0) return null
-  return { type: 'wellbeing', source: 'app_wellbeing', at: new Date(r.at).toISOString(), payload: { score: r.score } }
+  return { type: 'wellbeing', source: 'app_wellbeing', at: new Date(r.at).toISOString(), payload: { score } }
 }
 
 function notifyEntriesUpdated() {
@@ -169,10 +179,32 @@ export async function drainNativeInbox({ plugin, parse, write = upsertEntries, o
   return out
 }
 
-async function learned({ list, now }) {
+/** Heure choisie par l'utilisateur (minute du jour, 18 h à 23 h), ou null : l'heure apprise s'applique alors. */
+export function getEveningNoteMinute(storage = globalThis.localStorage) {
+  try {
+    const m = JSON.parse(storage?.getItem(MINUTE_KEY) || 'null')
+    return Number.isInteger(m) && m >= EARLIEST_MINUTE && m <= LATEST_MINUTE ? m : null
+  } catch {
+    return null
+  }
+}
+
+/** Garde l'heure choisie (ramenée entre 18 h et 23 h) ; null l'oublie. Rend la minute gardée, ou null. */
+export function setEveningNoteMinute(minute, storage = globalThis.localStorage) {
+  const m = Number.isInteger(minute) ? Math.max(EARLIEST_MINUTE, Math.min(LATEST_MINUTE, minute)) : null
+  try {
+    if (m == null) storage?.removeItem(MINUTE_KEY)
+    else storage?.setItem(MINUTE_KEY, JSON.stringify(m))
+  } catch {
+    /* l'heure apprise s'appliquera */
+  }
+  return m
+}
+
+async function learned({ list, now, storage }) {
   const since = new Date(now.getTime() - LEARN_DAYS * 86_400_000).toISOString()
   const notes = await list({ type: 'wellbeing', since, limit: 500 })
-  return { minuteOfDay: eveningNoteMinute(notes, now), noteDay: latestNoteDay(notes) }
+  return { minuteOfDay: getEveningNoteMinute(storage) ?? eveningNoteMinute(notes, now), noteDay: latestNoteDay(notes) }
 }
 
 /**
@@ -182,7 +214,7 @@ async function learned({ list, now }) {
 export async function syncEveningNote({ plugin = eveningNotePlugin(), list = listEntries, now = new Date(), storage = globalThis.localStorage } = {}) {
   if (!plugin?.configure) return null
   try {
-    const status = await plugin.configure(await learned({ list, now }))
+    const status = await plugin.configure(await learned({ list, now, storage }))
     mirror(status?.enabled, storage)
     return status
   } catch {
@@ -191,7 +223,7 @@ export async function syncEveningNote({ plugin = eveningNotePlugin(), list = lis
 }
 
 /**
- * Allume ou éteint la note du soir. Allumer demande d'abord l'autorisation des notifications (Android 13+).
+ * Allume ou éteint la note du soir (à l'heure choisie, sinon apprise). Allumer demande d'abord l'autorisation des notifications (Android 13+).
  * Rend { enabled, notifications, blocked } : `blocked` quand les notifications restent refusées sans que
  * Android puisse encore les demander (à autoriser dans les réglages).
  */
@@ -208,7 +240,7 @@ export async function setEveningNoteEnabled(enabled, { plugin = eveningNotePlugi
   let opts = { enabled: !!enabled }
   if (enabled) {
     try {
-      opts = { ...opts, ...(await learned({ list, now })) }
+      opts = { ...opts, ...(await learned({ list, now, storage })) }
     } catch {
       /* l'heure par défaut suffit */
     }

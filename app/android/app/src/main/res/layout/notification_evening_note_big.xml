@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Note du soir d'un geste (EveningNoteNotice.java, I113) : les 6 notes de l'échelle, 0 = très bas, 5 = très bien. -->
+<!-- Note du soir d'un geste (EveningNoteNotice.java, I113) : les 5 notes de l'échelle, 1 = très bas, 3 = moyen, 5 = très bien. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Votre soirée ? 0 = très bas, 5 = très bien"
+        android:text="Votre soirée ? 1 = très bas, 5 = très bien"
         android:textAppearance="@android:style/TextAppearance.Material.Notification.Title" />
     <TextView
         android:layout_width="match_parent"
@@ -18,16 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:orientation="horizontal">
-        <TextView
-            android:id="@+id/evening_note_0"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="0"
-            android:textAppearance="@android:style/TextAppearance.Material.Notification.Title"
-            android:textSize="20sp"
-            android:contentDescription="Note 0 sur 5" />
         <TextView
             android:id="@+id/evening_note_1"
             android:layout_width="0dp"

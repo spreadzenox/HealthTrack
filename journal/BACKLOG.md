@@ -63,8 +63,14 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   n'affiche que les cinq notes ; les précisions, rangées stress, alcool, café, repas tardif, écran tard puis les autres,
   la phrase et le rappel du soir apparaissent une fois la note choisie ; « Dictez-la… » devient une ligne. Tags et
   stockage inchangés.)
-- [ ] TESTEUR-2c — Notification du soir : deux choix « Remplir maintenant » / « Recevoir un rappel » (heure réglable) ;
-  moins de texte (« encore quelques jours de lecture… », « un jour sur trois »).
+- [x] TESTEUR-2c — Notification du soir : deux choix « Remplir maintenant » / « Recevoir un rappel » (heure réglable) ;
+  moins de texte (« encore quelques jours de lecture… », « un jour sur trois »). (07/11 06:35 : dans la fenêtre de
+  note, un sélecteur à deux choix avant la note ; « Recevoir un rappel » montre « Chaque soir à [heure] » (18 h à 23 h),
+  « Programmer le rappel » ou « Changer l'heure », et « Arrêter le rappel » en lien ; l'heure choisie remplace l'heure
+  apprise (`eveningNote.js`, `healthtrack_evening_note_minute`). L'ancien bouton « Me la demander le soir, d'un geste
+  depuis une notification » disparaît. Correctif lié à 2a : la notification native proposait encore 0 à 5 ; elle
+  propose 1 à 5 (boîte v2 `choice`, v1 toujours lue, même valeur stockée qu'une note saisie). Reste : « encore quelques
+  jours de lecture » et « un jour sur trois » sont dans la carte Bien-être de l'Accueil, à reprendre avec TESTEUR-1c.)
 
 **(3) Analyses**
 - [x] TESTEUR-3a — Retirer « sur les 6 dernières semaines », « sinon surtout du hasard » ; garder « encore N nuits ».

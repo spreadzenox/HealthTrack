@@ -71,8 +71,9 @@ public class EveningNoteTest {
 
     @Test
     public void laBoiteNeGardeQueLaNoteEtLHeure() {
-        assertEquals("{\"v\":1,\"score\":4,\"at\":1760900000000}", EveningNote.record(4, 1_760_900_000_000L));
-        assertTrue(EveningNote.validScore(0));
+        assertEquals("{\"v\":2,\"choice\":4,\"at\":1760900000000}", EveningNote.record(4, 1_760_900_000_000L));
+        assertFalse(EveningNote.validScore(0));
+        assertTrue(EveningNote.validScore(1));
         assertTrue(EveningNote.validScore(5));
         assertFalse(EveningNote.validScore(6));
         assertFalse(EveningNote.validScore(-1));

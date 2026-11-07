@@ -10,11 +10,13 @@ import {
   isEveningNoteEnabled,
   formatMinute,
   eveningNoteDiagnostic,
+  getEveningNoteMinute,
+  setEveningNoteMinute,
 } from './eveningNote'
 
 const memoryStorage = () => {
   const m = new Map()
-  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }
+  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k) }
 }
 
 /** Note saisie à l'heure locale donnée, `daysAgo` jours avant `now`. */
@@ -68,6 +70,14 @@ describe('parseEveningNote', () => {
       payload: { score: 4 },
     })
     expect(parseEveningNote(JSON.stringify({ v: 1, score: 0, at: AT }))?.payload).toEqual({ score: 0 })
+  })
+
+  it('v2 (TESTEUR-2c) : la note 1 à 5 de la notification devient la même valeur qu’une note saisie', () => {
+    const scores = [1, 2, 3, 4, 5].map((choice) => parseEveningNote(JSON.stringify({ v: 2, choice, at: AT }))?.payload.score)
+    expect(scores).toEqual([0, 1.25, 2.5, 3.75, 5])
+    for (const choice of [0, 6, 2.5, '3', null]) {
+      expect(parseEveningNote(JSON.stringify({ v: 2, choice, at: AT }))).toBeNull()
+    }
   })
 
   it('refuse ce qui n’est pas une note de l’échelle', () => {
@@ -157,6 +167,29 @@ describe('setEveningNoteEnabled', () => {
     expect(plugin.requestNotifications).not.toHaveBeenCalled()
     expect(plugin.configure).toHaveBeenCalledWith({ enabled: false })
     expect(isEveningNoteEnabled(storage)).toBe(false)
+  })
+})
+
+describe('heure choisie (TESTEUR-2c)', () => {
+  it('gardée entre 18 h et 23 h, oubliée avec null', () => {
+    const storage = memoryStorage()
+    expect(getEveningNoteMinute(storage)).toBeNull()
+    expect(setEveningNoteMinute(20 * 60 + 30, storage)).toBe(20 * 60 + 30)
+    expect(getEveningNoteMinute(storage)).toBe(20 * 60 + 30)
+    expect(setEveningNoteMinute(7 * 60, storage)).toBe(18 * 60)
+    expect(setEveningNoteMinute(null, storage)).toBeNull()
+    expect(getEveningNoteMinute(storage)).toBeNull()
+  })
+
+  it('remplace l’heure apprise au rappel comme à la synchronisation', async () => {
+    const storage = memoryStorage()
+    setEveningNoteMinute(19 * 60, storage)
+    const notes = [note(NOW, 1, 22, 10), note(NOW, 2, 21, 40), note(NOW, 3, 22, 30)]
+    const plugin = { configure: vi.fn(async (o) => ({ enabled: true, ...o })) }
+    await syncEveningNote({ plugin, list: async () => notes, now: NOW, storage })
+    expect(plugin.configure).toHaveBeenLastCalledWith(expect.objectContaining({ minuteOfDay: 19 * 60 }))
+    await setEveningNoteEnabled(true, { plugin, list: async () => notes, now: NOW, storage })
+    expect(plugin.configure).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: true, minuteOfDay: 19 * 60 }))
   })
 })
 
