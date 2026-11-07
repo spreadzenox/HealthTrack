@@ -13,6 +13,7 @@
 import { localDateKey } from './analysisEngine'
 import { appLocale } from '../i18n/locale.js'
 import { listEntries } from '../storage/localHealthStorage'
+import { normStart } from './method/changes'
 
 export const DEVIATION_WINDOW_DAYS = 14
 /** Jours passés avec la mesure avant de comparer. */
@@ -41,6 +42,25 @@ const METRICS = [
   { key: 'screen', field: 'screenMinutes', up: 'Plus de temps d’écran', down: 'Moins de temps d’écran', minAbs: 20, cumulative: true, fmt: hm },
 ]
 
+/** Mesure comparée → courbe des changements durables (TS-2, services/method/changes.js `CHANGE_METRICS`). */
+const CHANGE_KEYS = { sleep: 'sleepMinutes', hrv: 'hrv_ms', restingHr: 'restingHR', steps: 'steps', screen: 'screen_minutes' }
+
+/**
+ * TS-2 : jour à partir duquel chaque mesure a sa norme, le dernier changement durable confirmé de sa courbe (la norme
+ * repart du nouveau niveau). Mesure sans changement : absente (les 14 derniers jours, comme avant).
+ * @param {Record<string, Array<{ date: string }>> | null} changes  résultat de la tâche `changes`
+ * @returns {Record<string, string>}  mesure → dateKey
+ */
+export function normSinceFromChanges(changes) {
+  const out = {}
+  if (!changes || typeof changes !== 'object') return out
+  for (const [key, curve] of Object.entries(CHANGE_KEYS)) {
+    const start = normStart(Array.isArray(changes[curve]) ? changes[curve] : [])
+    if (start) out[key] = start
+  }
+  return out
+}
+
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v)
 
 function median(values) {
@@ -53,10 +73,13 @@ function median(values) {
  * Norme de chaque mesure du jour (AUJ-3, revue du 07/11 : l'écart à votre norme sur la mesure elle-même, dès 7 jours
  * d'historique). Pour chaque mesure qui a une valeur aujourd'hui et au moins 7 jours passés : « d'habitude … » (la
  * médiane de vos 14 derniers jours) et, si l'écart est net, son sens (`up` / `down`) et sa phrase. Jamais un jugement.
+ * `since` (TS-2) : mesure → jour du dernier changement durable ; la norme ne prend que les jours depuis ce changement
+ * (toujours 7 au moins : un changement n'est confirmé que 7 jours après). Un changement postérieur au jour comparé
+ * est ignoré.
  * @returns {{ ready: boolean, norms: Record<string, { usual: string, value: string, direction: 'up'|'down'|null,
  *   text: string | null, score: number }> }}
  */
-export function measureNorms(days, now = new Date()) {
+export function measureNorms(days, now = new Date(), { since = {} } = {}) {
   const today = localDateKey(now.toISOString())
   const from = localDateKey(new Date(now.getTime() - DEVIATION_WINDOW_DAYS * DAY_MS).toISOString())
   const past = (days || []).filter((d) => d?.dateKey >= from && d.dateKey < today)
@@ -66,7 +89,8 @@ export function measureNorms(days, now = new Date()) {
   let ready = false
   const norms = {}
   for (const m of METRICS) {
-    const values = past.map((d) => d.summary?.[m.field]).filter(isNum)
+    const start = since[m.key] && since[m.key] <= today ? since[m.key] : null
+    const values = past.filter((d) => !start || d.dateKey >= start).map((d) => d.summary?.[m.field]).filter(isNum)
     if (values.length < DEVIATION_MIN_PAST_DAYS) continue
     ready = true
     const v = todaySummary[m.field]
@@ -98,8 +122,8 @@ export function measureNorms(days, now = new Date()) {
  *   direction: 'up'|'down', score: number }> }}
  *   `ready` : au moins une mesure a assez de jours passés (sinon la section reste masquée).
  */
-export function dayDeviations(days, now = new Date()) {
-  const { ready, norms } = measureNorms(days, now)
+export function dayDeviations(days, now = new Date(), options = {}) {
+  const { ready, norms } = measureNorms(days, now, options)
   const items = Object.entries(norms)
     .filter(([, n]) => n.direction)
     .map(([key, n]) => ({ key, text: n.text, value: n.value, usual: n.usual, direction: n.direction, score: n.score }))

@@ -18,7 +18,8 @@ import { stoolEntryLabel } from '../services/stool'
 import { INITIAL_DAYS, MORE_DAYS, loadJournalEntries } from '../services/journalEntries'
 import { appLocale } from '../i18n/locale.js'
 import { chipKey, chipTheme, summaryChips } from '../services/journalChips'
-import { measureNorms, readDeviationEntries } from '../services/dayDeviations'
+import { measureNorms, normSinceFromChanges, readDeviationEntries } from '../services/dayDeviations'
+import { lastAnalysis } from '../services/analysisRunner'
 import LineIcon from './LineIcon'
 
 /** Icône de chaque mesure du jour (ORG-2, leçon 9 : une icône pour toutes les mesures). */
@@ -33,12 +34,15 @@ const NORM_KEYS = { sleepMinutes: 'sleep', hrv: 'hrv', restingHr: 'restingHr', s
 /** Jours relus pour les normes : 14 jours avant le plus ancien jour affiché (14 jours de journal au plus). */
 const NORM_EXTRA_DAYS = 15
 
-/** Normes du jour `dateKey` : les 14 jours qui le précèdent ; un jour passé est fini (minuit). */
-function normsOf(normDays, dateKey) {
+/**
+ * Normes du jour `dateKey` : les 14 jours qui le précèdent, depuis le dernier changement durable de la mesure (TS-2) ;
+ * un jour passé est fini (minuit).
+ */
+function normsOf(normDays, dateKey, since) {
   if (!normDays) return {}
   const today = new Date()
   const isToday = dateKey === `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
-  return measureNorms(normDays, isToday ? today : new Date(`${dateKey}T23:59:00`)).norms
+  return measureNorms(normDays, isToday ? today : new Date(`${dateKey}T23:59:00`), { since }).norms
 }
 
 /**
@@ -325,9 +329,9 @@ function EntryItem({ e, measuredScreen, onEdit, editingMealId, onEditMeal, onRed
   )
 }
 
-function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays = null }) {
+function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays = null, normSince = {} }) {
   const { title, date } = dayHeading(day.dateKey)
-  const norms = normsOf(normDays, day.dateKey)
+  const norms = normsOf(normDays, day.dateKey, normSince)
   const chips = summaryChips(day.summary)
   const measuredScreen = day.summary?.screenMinutes != null
   return (
@@ -390,10 +394,16 @@ export default function DailyJournal() {
   const [hiddenKey, setHiddenKey] = useState(null)
   // AUJ-3b : l'écart à votre norme sur chaque mesure, comme sur l'Accueil (lu à part, quelques types)
   const [normDays, setNormDays] = useState(null)
+  const [normSince, setNormSince] = useState({})
   useEffect(() => {
     let alive = true
     const load = () => readDeviationEntries(new Date(), NORM_EXTRA_DAYS)
-      .then((list) => alive && setNormDays(buildDailyJournal(list)))
+      .then((list) => {
+        if (!alive) return
+        // TS-2 : la norme repart du dernier changement durable (dernier calcul connu, aucun calcul ici)
+        setNormSince(normSinceFromChanges(lastAnalysis('changes')))
+        setNormDays(buildDailyJournal(list))
+      })
       .catch(() => {})
     load()
     window.addEventListener('health-entries-updated', load)
@@ -485,6 +495,7 @@ export default function DailyJournal() {
                 key={day.dateKey}
                 day={day}
                 normDays={normDays}
+                normSince={normSince}
                 onEdit={setEditingWellbeing}
                 editingMealId={editingMealId}
                 onEditMeal={setEditingMealId}

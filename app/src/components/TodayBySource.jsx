@@ -9,7 +9,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { sourcesSentence, todayBySource } from '../services/today'
 import { buildDailyJournal } from '../services/dailyJournal'
-import { dayDeviations, measureNorms, readDeviationEntries } from '../services/dayDeviations'
+import { dayDeviations, measureNorms, normSinceFromChanges, readDeviationEntries } from '../services/dayDeviations'
+import { lastAnalysis } from '../services/analysisRunner'
 import { measureTone } from '../theme/themes'
 import LineIcon from './LineIcon'
 import StripPlus from './StripPlus'
@@ -35,8 +36,10 @@ export default function TodayBySource({
     try {
       const days = buildDailyJournal(await readNorms())
       const at = now || new Date()
-      setNorms(measureNorms(days, at).norms)
-      const dev = dayDeviations(days, at)
+      // TS-2 : la norme repart du dernier changement durable, pris dans le dernier calcul connu (aucun calcul ici)
+      const options = { since: normSinceFromChanges(lastAnalysis('changes')) }
+      setNorms(measureNorms(days, at, options).norms)
+      const dev = dayDeviations(days, at, options)
       onItems?.(dev.ready ? dev.items : [])
     } catch {
       setNorms({})
