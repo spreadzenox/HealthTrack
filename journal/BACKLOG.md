@@ -250,8 +250,10 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   retrouvé 79 %. Bien-être et digestion sur l'estimation TS-1 (digestion sans le bien-être). Reste à l'interface : le
   repère dans Tendances et le rapport. TS-2b ✅ 07/11 : les liens d'Analyses tiennent à l'intérieur des périodes (chaque
   changement durable du résultat devient un contrôle de niveau ; `outcomes[x].changes`) ; un saut commun d'un facteur
-  et du résultat n'est plus un lien (test). Reste : `normStart` dans la norme des écarts du jour (`dayDeviations.js`,
-  touché par la session interface ce soir : à faire quand elle n'y travaille plus).
+  et du résultat n'est plus un lien (test). `normStart` ✅ 07/11 (reprise du soir, 21:40) : la norme de chaque mesure
+  de « Vos données du jour » et du Journal › Jours ne prend que les jours depuis le dernier changement durable de sa
+  courbe (`normSinceFromChanges`, option `since` de `measureNorms`) ; la date vient du dernier calcul `changes` connu
+  (`lastAnalysis`, aucun calcul ni lecture de plus à l'Accueil : budget de lectures intact).
 - [x] TESTEUR-4a — Repas vierges : « Aucun repas enregistré pour l'instant » et un bouton « Ajouter mon premier repas »
   qui ouvre l'appareil photo, sans les trois étapes de texte (06/11 22:35).
 - [x] TESTEUR-4b — « Photographier un repas » de l'Accueil et de Nutrition ouvre directement l'appareil photo (sans

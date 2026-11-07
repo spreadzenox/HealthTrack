@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { dayDeviations, measureNorms, DEVIATION_MIN_PAST_DAYS } from './dayDeviations'
+import { dayDeviations, measureNorms, normSinceFromChanges, DEVIATION_MIN_PAST_DAYS } from './dayDeviations'
 
 // Mercredi 21 octobre 2026, 12 h (heure locale)
 const NOW = new Date(2026, 9, 21, 12, 0)
@@ -98,5 +98,40 @@ describe('measureNorms (AUJ-3 : l’écart à votre norme sur chaque mesure)', (
     const { ready, norms } = measureNorms(history(usual, { sleepMinutes: 330 }, DEVIATION_MIN_PAST_DAYS - 1), NOW)
     expect(ready).toBe(false)
     expect(norms).toEqual({})
+  })
+})
+
+describe('TS-2 : la norme repart du dernier changement durable (normStart)', () => {
+  // 6 jours à 6 h (7 → 12 octobre), puis 8 jours à 7 h 30 depuis le changement du 13 octobre
+  const shifted = (i) => ({ sleepMinutes: i < 8 ? 450 : 360 })
+
+  it('sans changement : la médiane des 14 jours mélange les deux niveaux', () => {
+    const { norms } = measureNorms(history(shifted, { sleepMinutes: 450 }), NOW)
+    expect(norms.sleep.usualValue).toBe('7 h 30')
+    const r = dayDeviations(history(shifted, { sleepMinutes: 360 }), NOW)
+    expect(r.items.map((i) => i.key)).toContain('sleep')
+  })
+
+  it('avec un changement : seuls les jours depuis le changement font la norme', () => {
+    const since = normSinceFromChanges({ sleepMinutes: [{ date: '2026-09-01' }, { date: key(13) }] })
+    expect(since).toEqual({ sleep: key(13) })
+    // 7 h 30 tous les jours depuis le 13 : 6 h aujourd'hui est un écart net, et la norme dit 7 h 30
+    const { norms } = measureNorms(history(shifted, { sleepMinutes: 360 }), NOW, { since })
+    expect(norms.sleep).toMatchObject({ usualValue: '7 h 30', direction: 'down' })
+    // l'ancien niveau ne compte plus : 7 h 30 n'est plus un écart
+    const r = dayDeviations(history(shifted, { sleepMinutes: 450 }), NOW, { since })
+    expect(r.items).toEqual([])
+  })
+
+  it('un changement postérieur au jour comparé est ignoré (Journal, jours passés)', () => {
+    const a = measureNorms(history(usual, { sleepMinutes: 330 }), NOW, { since: { sleep: key(25) } })
+    const b = measureNorms(history(usual, { sleepMinutes: 330 }), NOW)
+    expect(a).toEqual(b)
+  })
+
+  it('normSinceFromChanges : courbes du calcul `changes` → mesures ; rien si le résultat manque', () => {
+    expect(normSinceFromChanges(null)).toEqual({})
+    expect(normSinceFromChanges({ wellbeing: [{ date: key(1) }], steps: [], hrv_ms: [{ date: key(2) }], restingHR: [{ date: key(3) }], screen_minutes: [{ date: key(4) }] }))
+      .toEqual({ hrv: key(2), restingHr: key(3), screen: key(4) })
   })
 })

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { getAnalysis, peekAnalysis, analysisCacheKey, _resetAnalysisRunner } from './analysisRunner'
+import { getAnalysis, peekAnalysis, lastAnalysis, analysisCacheKey, _resetAnalysisRunner } from './analysisRunner'
 import { bumpDataRevision } from '../storage/dataRevision'
 import { runAnalysisTask } from '../workers/analysisTasks'
 
@@ -43,6 +43,18 @@ describe('analysisRunner — cache', () => {
     expect(analysisCacheKey(day1)).not.toBe(analysisCacheKey(day2))
     await getAnalysis('todayPrediction', day2)
     expect(runAnalysisTask).toHaveBeenCalledTimes(3)
+  })
+
+  it('lastAnalysis : le dernier résultat connu, même après une écriture, sans rien calculer', async () => {
+    expect(lastAnalysis('changes')).toBeNull()
+    runAnalysisTask.mockResolvedValue({ steps: [{ date: '2026-10-01' }] })
+    await getAnalysis('changes')
+    bumpDataRevision()
+    expect(peekAnalysis('changes').hit).toBe(false)
+    expect(lastAnalysis('changes')).toEqual({ steps: [{ date: '2026-10-01' }] })
+    _resetAnalysisRunner()
+    expect(lastAnalysis('changes')).toEqual({ steps: [{ date: '2026-10-01' }] })
+    expect(runAnalysisTask).toHaveBeenCalledTimes(1)
   })
 
   it('deux appels simultanés partagent le même calcul', async () => {

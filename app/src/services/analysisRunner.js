@@ -69,6 +69,18 @@ export function peekAnalysis(task, now = new Date()) {
   return { hit: false }
 }
 
+/**
+ * Dernier résultat connu d'une tâche, même si les données ont changé depuis (aucun calcul, aucune lecture de la
+ * base). Pour un résultat qui bouge lentement, comme les changements durables (TS-2), dont l'Accueil prend la date du
+ * dernier changement sans relancer le calcul (budget de lectures). `null` si la tâche n'a jamais été calculée.
+ */
+export function lastAnalysis(task) {
+  const mem = memory.get(task)
+  if (mem) return mem.result ?? null
+  if (!isDataRevisionPersistent()) return null
+  return readStored()[task]?.result ?? null
+}
+
 function getWorker() {
   if (workerBroken || typeof Worker === 'undefined') return null
   if (worker) return worker
