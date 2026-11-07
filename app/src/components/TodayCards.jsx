@@ -1,6 +1,6 @@
 /**
- * Cartes de l'accueil « Aujourd'hui » (maquette du 20/10/2026, journal/DESIGN.md §7), hors bien-être estimé
- * (MoodEstimateCard) : tuiles de mesures, carte pêche « Votre ventre », carte lilas des pistes.
+ * Cartes de l'accueil « Aujourd'hui » (maquette du 20/10/2026, journal/DESIGN.md §7) : carte pêche du ventre et
+ * carte lilas des analyses. Les mesures du jour sont dans TodayBySource (TESTEUR-1d-b).
  */
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -68,29 +68,6 @@ function useEntries(read) {
     return () => window.removeEventListener('health-entries-updated', refresh)
   }, [refresh])
   return entries
-}
-
-/** Sommeil, VFC et pas du jour ; chiffres en mono, source en mode détails. */
-export function MeasureTiles({ tiles, details }) {
-  // Rien de mesuré : ni trois tuiles « — » (VC-26) ni phrase sur les sources, branchées pendant l'accueil (retours du
-  // testeur du 06/11) ; les tuiles reviennent avec le premier chiffre
-  if (tiles.every((t) => t.value == null)) return null
-  return (
-    <section className="today-tiles-wrap" aria-label="Mesures du jour">
-      <ul className="today-tiles">
-        {tiles.map((t) => (
-          <li key={t.key} className="today-tile">
-            <span className="today-tile-label">{t.label}</span>
-            <span className="today-tile-value mono">{t.value ?? '—'}</span>
-            {t.when && <span className="today-tile-when mono">{t.when}</span>}
-            {details && (
-              <span className="today-tile-source mono">{t.sources.length ? t.sources.join(', ') : 'aucune source'}</span>
-            )}
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
 }
 
 /** Rangée Calme / Gêne / Douleur : rond à côté du mot, au-dessus pour les trois à la fois (grande police), ou un

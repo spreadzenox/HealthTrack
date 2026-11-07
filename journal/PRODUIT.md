@@ -213,6 +213,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 ## 5. Historique
 
 - **07/11 09:35** — **TESTEUR-1c** : carte menthe « Votre journée » en tête de l'Accueil (titre en deux mots, échelle 1 à 5, d'où il vient, étiquettes), qui remplace le titre et la carte « Bien-être estimé » ; toucher → historique ; « Pas encore d'avis » avec un seul bouton.
+- **07/11 11:35** — **TESTEUR-1d-b** : « Vos données du jour » par source sur l'Accueil (Montre, Téléphone, Noté par vous ; source sans chiffre masquée, « Ajouter une montre » sans montre) ; ancienne carte « Bien-être estimé » supprimée.
 - **07/11 10:35** — **TESTEUR-1d-a** : section « Noter » unique sur l'Accueil (Photo du repas, « Mon bien-être » en menthe, « Mon ventre » en pêche avec l'objectif ventre, « Autre chose » pour la cigarette) ; la carte « Votre journée » ne porte plus de bouton ; analyses avant les tuiles du jour.
 - **07/11 08:35** — **TESTEUR-1b** (run idées) : maquette du nouvel écran Aujourd'hui (`maquettes/aujourdhui/` : statut du jour, ce qui change, données par source, « Noter », animation), règle de sens constant des couleurs, découpage 1c, 1d, 1d-2, 1e.
 - **07/11 07:35** — **TESTEUR-5a-1** : l'accueil propose la météo (position approximative, divulgation, refus respecté, déjà activée = rien à redemander) ; le premier geste « Comment vous sentez-vous ? » passe de 0–5 à 1–5 (oubli de 2a).

@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "Vos données du jour, par source",
+  "items": [
+    "Sur l'Accueil, les chiffres du jour sont rangés par source : votre montre, votre téléphone, puis ce que vous avez noté.",
+    "Une source sans chiffre n'apparaît pas. Sans montre, un lien mène à Sources pour en ajouter une."
+  ]
+}

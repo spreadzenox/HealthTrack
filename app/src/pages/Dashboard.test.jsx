@@ -64,7 +64,7 @@ function renderDashboard() {
   )
 }
 
-// Fin du chargement : sans mesure du jour, il n'y a plus de bloc « Mesures du jour » à attendre (testeur du 06/11)
+// Fin du chargement : sans mesure du jour, il n'y a plus de bloc « Vos données du jour » à attendre (testeur du 06/11)
 const loaded = () => waitFor(() => expect(screen.queryByText('Chargement des données…')).not.toBeInTheDocument())
 
 describe('Dashboard', () => {
@@ -97,15 +97,17 @@ describe('Dashboard', () => {
     expect(screen.queryByRole('link', { name: /dans le Journal/ })).not.toBeInTheDocument()
   })
 
-  it('montre les tuiles du jour, la carte ventre, la carte pistes et « Photo du repas » ouvre l’appareil photo puis les repas', async () => {
+  it('montre les données du jour par source, la carte ventre, la carte pistes et « Photo du repas » ouvre l’appareil photo puis les repas', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([
       { id: 1, type: 'steps', source: 'health_connect', at: new Date().toISOString(), payload: { value: 4321, period: 'day' } },
     ])
     renderDashboard()
-    expect(await screen.findByRole('region', { name: 'Mesures du jour' })).toBeInTheDocument()
-    expect(screen.getByText('Sommeil')).toBeInTheDocument()
-    expect(screen.getByText('VFC nuit')).toBeInTheDocument()
+    // TESTEUR-1d-b : les données du jour par source ; une source sans chiffre (montre) ne s'affiche pas
+    expect(await screen.findByRole('heading', { name: 'Vos données du jour' })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Téléphone' })).toHaveTextContent('Pas')
+    expect(screen.queryByRole('region', { name: 'Montre' })).toBeNull()
+    expect(screen.getByRole('link', { name: /Ajouter une montre/ })).toHaveAttribute('href', '/connectors')
     expect(screen.getByTestId('gut-card')).toBeInTheDocument()
     expect(screen.getByTestId('pistes-card')).toBeInTheDocument()
     // TESTEUR-4b : le bouton est le libellé d'un champ photo arrière ; la photo prise part vers Repas.

@@ -13,7 +13,7 @@ import { isDaytimeHrv } from './hrv'
 import { appLocale, localeDate } from '../i18n/locale.js'
 import { faceModelTag } from './mood/modelName'
 import { FEATURES } from '../config/distribution'
-import { toDisplay } from './mood/wellbeingScale'
+import { toDisplay, formatNote } from './mood/wellbeingScale'
 
 export const GUT_TYPE = 'gut'
 export const GUT_SOURCE = 'app_gut'
@@ -276,6 +276,7 @@ export function measureTiles(summary, entries, now = new Date(), yesterday = nul
     {
       key: 'sleep',
       label: sleep.s.sleepEstimated ? 'Sommeil (estimé)' : 'Sommeil',
+      estimated: Boolean(sleep.s.sleepEstimated),
       value: sleep.s.sleepMinutes != null ? formatSleep(sleep.s.sleepMinutes) : null,
       // La nuit est rangée au jour du réveil : « cette nuit », comme VFC et pas disent « hier » (POL-PLAY-27)
       when: sleep.s.sleepMinutes == null ? null : sleep.when ? 'nuit d’avant' : 'cette nuit',
@@ -291,6 +292,74 @@ export function measureTiles(summary, entries, now = new Date(), yesterday = nul
     },
   ]
 }
+
+const isNum = (v) => typeof v === 'number' && Number.isFinite(v)
+
+const WATCH_LABELS = new Set([SOURCE_LABELS.huawei_watch, SOURCE_LABELS.samsung_watch])
+
+/** « 2 h 15 », « 45 min » */
+function formatMinutes(min) {
+  const m = Math.round(min)
+  return m < 60 ? `${m} min` : formatSleep(m)
+}
+
+/** Dernière entrée du jour d'un type, ou null. */
+function lastOfDay(entries, type, day, ok = () => true) {
+  let best = null
+  for (const e of entries || []) {
+    if (e?.type !== type || !e.at || localDateKey(e.at) !== day || !ok(e)) continue
+    if (!best || e.at > best.at) best = e
+  }
+  return best
+}
+
+/**
+ * « Vos données du jour » rangées par source (TESTEUR-1d-b, maquette journal/maquettes/aujourdhui §2.4) :
+ * - `watch` (Montre) : sommeil, VFC de la nuit, FC au repos, et les pas quand ils viennent de la montre (montre
+ *   connue, ou même appareil que la nuit) ;
+ * - `phone` (Téléphone) : pas, nuit estimée par le téléphone, temps d'écran ;
+ * - `noted` (Noté par vous) : dernière note du bien-être (menthe) et du ventre (pêche, seulement avec « Mon ventre »)
+ *   du jour, repas et cigarettes du jour. Jamais une note d'hier.
+ * Une source sans chiffre n'apparaît pas. Les tuiles viennent de `measureTiles` (même règle « aujourd'hui, sinon hier »).
+ * @returns {Array<{ id: 'watch'|'phone'|'noted', title: string, items: object[] }>}
+ */
+export function todayBySource({ tiles = [], summary = null, entries = [], now = new Date(), showGut = false } = {}) {
+  const s = summary || {}
+  const watch = []
+  const phone = []
+  // Appareil d'une source : l'app d'origine quand Health Connect la donne (« Health Connect · Garmin » → « Garmin »)
+  const device = (l) => l.split(' · ').pop()
+  const shown = tiles.filter((t) => t.value != null)
+  for (const t of shown) {
+    if (t.key === 'sleep' && t.estimated) phone.push(t)
+    else if (t.key !== 'steps') watch.push(t)
+  }
+  const watchDevices = new Set(watch.flatMap((t) => (t.sources || []).map(device)))
+  for (const t of shown.filter((x) => x.key === 'steps')) {
+    // Les pas vont avec la montre quand c'est elle qui les compte : montre connue, ou même appareil que la nuit
+    const fromWatch = t.sources?.length > 0
+      && t.sources.every((l) => WATCH_LABELS.has(l) || watchDevices.has(device(l)))
+    ;(fromWatch ? watch : phone).push(t)
+  }
+  if (isNum(s.restingHr)) watch.push({ key: 'restingHr', label: 'FC au repos', value: `${Math.round(s.restingHr)} bpm`, when: null, sources: [] })
+  if (isNum(s.screenMinutes)) phone.push({ key: 'screen', label: 'Temps d’écran', value: formatMinutes(s.screenMinutes), when: null, sources: [] })
+
+  const day = localDateKey(now.toISOString())
+  const noted = []
+  const wb = lastOfDay(entries, 'wellbeing', day, (e) => isNum(e.payload?.score))
+  if (wb) noted.push({ key: 'wellbeing', label: 'Bien-être', value: `${formatNote(wb.payload.score)}/5`, when: `à ${hhmm(wb.at)}`, theme: 'mint' })
+  const gut = showGut ? lastOfDay(entries, GUT_TYPE, day, (e) => !isGutDayNote(e) && gutLevelLabel(e.payload?.level)) : null
+  if (gut) noted.push({ key: 'gut', label: 'Ventre', value: gutLevelLabel(gut.payload.level), when: `à ${hhmm(gut.at)}`, theme: 'peach' })
+  if (s.meals > 0) noted.push({ key: 'meals', label: 'Repas', value: String(s.meals), when: null })
+  if (s.cigarettes > 0) noted.push({ key: 'cigarettes', label: s.cigarettes > 1 ? 'Cigarettes' : 'Cigarette', value: String(s.cigarettes), when: null })
+
+  return [
+    { id: 'watch', title: 'Montre', items: watch },
+    { id: 'phone', title: 'Téléphone', items: phone },
+    { id: 'noted', title: 'Noté par vous', items: noted },
+  ].filter((g) => g.items.length)
+}
+todayBySource.hasWatch = (groups) => (groups || []).some((g) => g.id === 'watch')
 
 /**
  * Ventre : dernière note et bilan des 7 derniers jours (aujourd'hui compris). Le bilan du soir compte dans les 7

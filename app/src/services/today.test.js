@@ -9,6 +9,7 @@ import {
   gutWeekLine,
   headerLine,
   measureTiles,
+  todayBySource,
   pistesProgress,
   gutNotesProgress,
   GUT_PISTES_MIN_NOTE_DAYS,
@@ -245,5 +246,75 @@ describe('gutEveningCheck (bilan du soir, I170)', () => {
 
   it('le bilan de la veille ne compte pas pour ce soir', () => {
     expect(gutEveningCheck([day(20, 'calm')], evening)).toEqual({ ask: true, done: null })
+  })
+})
+
+describe('todayBySource (TESTEUR-1d-b)', () => {
+  const tiles = (over = {}) => [
+    { key: 'sleep', label: 'Sommeil', value: '7 h 32', when: 'cette nuit', sources: ['Montre Huawei'], ...over.sleep },
+    { key: 'hrv', label: 'VFC nuit', value: '41 ms', when: null, sources: ['Montre Huawei'], ...over.hrv },
+    { key: 'steps', label: 'Pas', value: '3 456', when: null, sources: ['Health Connect'], ...over.steps },
+  ]
+  const ids = (groups) => groups.map((g) => g.id)
+  const keys = (g) => g.items.map((i) => i.key)
+
+  it('range les chiffres par source : montre (sommeil, VFC, FC au repos), téléphone (pas, écran)', () => {
+    const groups = todayBySource({ tiles: tiles(), summary: { restingHr: 52, screenMinutes: 135 }, entries: [], now: NOW })
+    expect(ids(groups)).toEqual(['watch', 'phone'])
+    expect(groups[0].title).toBe('Montre')
+    expect(keys(groups[0])).toEqual(['sleep', 'hrv', 'restingHr'])
+    expect(groups[0].items[2]).toMatchObject({ label: 'FC au repos', value: '52 bpm' })
+    expect(groups[1].title).toBe('Téléphone')
+    expect(keys(groups[1])).toEqual(['steps', 'screen'])
+    expect(groups[1].items[1]).toMatchObject({ label: 'Temps d’écran', value: '2 h 15' })
+  })
+
+  it('une source sans chiffre ne s’affiche pas ; sans montre, hasWatch est faux', () => {
+    const none = { value: null, sources: [] }
+    const groups = todayBySource({ tiles: tiles({ sleep: none, hrv: none }), summary: {}, entries: [], now: NOW })
+    expect(ids(groups)).toEqual(['phone'])
+    expect(todayBySource.hasWatch(groups)).toBe(false)
+    expect(todayBySource({ tiles: tiles({ sleep: none, hrv: none, steps: none }), summary: null, entries: [], now: NOW })).toEqual([])
+  })
+
+  it('la nuit estimée par le téléphone va avec le téléphone, les pas d’une montre seule avec la montre', () => {
+    const groups = todayBySource({
+      tiles: tiles({ sleep: { label: 'Sommeil (estimé)', estimated: true, sources: [] }, hrv: { value: null, sources: [] }, steps: { sources: ['Montre Huawei'] } }),
+      summary: {}, entries: [], now: NOW,
+    })
+    expect(groups.map((g) => [g.id, keys(g)])).toEqual([['watch', ['steps']], ['phone', ['sleep']]])
+  })
+
+  it('les pas du même appareil que la nuit vont avec la montre ; ceux de Health Connect seul avec le téléphone', () => {
+    const same = todayBySource({
+      tiles: tiles({ sleep: { sources: ['Health Connect · Garmin'] }, hrv: { value: null, sources: [] }, steps: { sources: ['Health Connect · Garmin'] } }),
+      summary: {}, entries: [], now: NOW,
+    })
+    expect(same.map((g) => [g.id, keys(g)])).toEqual([['watch', ['sleep', 'steps']]])
+    const other = todayBySource({ tiles: tiles({ sleep: { sources: ['Health Connect · Garmin'] } }), summary: {}, entries: [], now: NOW })
+    expect(other.map((g) => [g.id, keys(g)])).toEqual([['watch', ['sleep', 'hrv']], ['phone', ['steps']]])
+  })
+
+  it('« Noté par vous » : dernière note du bien-être et du ventre du jour, repas et cigarettes ; jamais hier', () => {
+    const entries = [
+      { type: 'wellbeing', at: at(21, 8), payload: { score: 2.5 } },
+      { type: 'wellbeing', at: at(21, 10), payload: { score: 5 } },
+      { type: 'wellbeing', at: at(20, 20), payload: { score: 0 } },
+      { type: 'gut', at: at(21, 9), payload: { level: 'discomfort' } },
+      { type: 'gut', at: at(20, 9), payload: { level: 'pain' } },
+    ]
+    const g = todayBySource({ tiles: [], summary: { meals: 2, cigarettes: 1 }, entries, now: NOW, showGut: true })
+    expect(ids(g)).toEqual(['noted'])
+    expect(g[0].title).toBe('Noté par vous')
+    expect(g[0].items.map((i) => [i.key, i.value, i.theme ?? null])).toEqual([
+      ['wellbeing', '5/5', 'mint'], ['gut', 'Gêne', 'peach'], ['meals', '2', null], ['cigarettes', '1', null],
+    ])
+    expect(g[0].items[0].when).toBe('à 10:00')
+  })
+
+  it('le ventre seulement avec « Mon ventre » ; rien de noté aujourd’hui : pas de groupe', () => {
+    const entries = [{ type: 'gut', at: at(21, 9), payload: { level: 'calm' } }]
+    expect(todayBySource({ tiles: [], summary: {}, entries, now: NOW, showGut: false })).toEqual([])
+    expect(todayBySource({ tiles: [], summary: { meals: 0, cigarettes: 0 }, entries: [{ type: 'gut', at: at(20, 9), payload: { level: 'calm' } }], now: NOW, showGut: true })).toEqual([])
   })
 })

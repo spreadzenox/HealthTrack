@@ -49,7 +49,13 @@
 > **Un seul endroit pour noter (10:35)** : plus bas sur l'Accueil, la section « Noter » réunit « Photo du repas »,
 > « Mon bien-être » (la note de 1 à 5, en menthe) et, avec l'objectif ventre, « Mon ventre » (en pêche) ; la cigarette
 > passe dans « Autre chose ». La carte « Votre journée » ne porte plus de bouton.
-> Prochaines : vos données du jour rangées par source (1d-b), puis « Ce qui change aujourd'hui » (1d-2).
+> **Vos données du jour (11:35)** : entre les analyses et « Noter », les chiffres du jour sont rangés par source,
+> une carte grise chacune : « Montre » (sommeil, VFC de la nuit, FC au repos, et les pas quand c'est la montre qui
+> les compte), « Téléphone » (pas, temps d'écran) et « Noté par vous » (votre dernière note de bien-être en menthe,
+> du ventre en pêche avec l'objectif ventre, repas et cigarettes du jour). L'appareil est écrit en petit en haut à
+> droite (« Garmin », « Montre Huawei »). Une source sans chiffre n'apparaît pas ; sans montre, un lien discret
+> « Ajouter une montre ». L'ancienne carte « Bien-être estimé » est supprimée du code (tout est dans l'historique).
+> Prochaines : « Ce qui change aujourd'hui » (1d-2), puis l'animation (1e).
 > Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
@@ -167,6 +173,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 11:35 — [Vos données du jour](runs/2026-11-07-1135-donnees-du-jour.md) | 🎨 | TESTEUR-1d-b : « Vos données du jour » par source (Montre, Téléphone, Noté par vous) sur l'Accueil ; ancienne carte « Bien-être estimé » supprimée. Rien à faire de votre côté |
 | 07/11 10:35 — [Un seul endroit pour noter](runs/2026-11-07-1035-noter.md) | 🎨 | TESTEUR-1d-a : section « Noter » sur l'Accueil (Photo du repas, « Mon bien-être », « Mon ventre » avec l'objectif ventre, « Autre chose ») ; la carte « Votre journée » n'a plus de bouton. Rien à faire de votre côté |
 | 07/11 09:35 — [Votre journée](runs/2026-11-07-0935-votre-journee.md) | 🎨 | TESTEUR-1c : carte « Votre journée » en tête de l'Accueil (titre, échelle 1 à 5, d'où il vient, étiquettes), à la place du titre et de la carte « Bien-être estimé » ; toucher → historique ; « Pas encore d'avis » avec un seul bouton. |
 | 07/11 08:35 — [Maquette d'Aujourd'hui](runs/2026-11-07-0835-maquette-aujourdhui.md) | 💡 | TESTEUR-1b : maquette du nouvel écran Aujourd'hui (statut du jour en tête et d'où il vient, ce qui change, données par source, un seul endroit pour noter, animation), captures claires, sombres et premier jour ; découpée en 4 runs de code. Rien à faire de votre côté, sauf un avis si la maquette ne vous va pas |

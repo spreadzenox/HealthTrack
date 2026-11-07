@@ -9,7 +9,8 @@ import { loadWellbeingToday } from '../services/mood/faceMoodData'
 import { loadJournalEntries } from '../services/journalEntries'
 import { buildDailyJournal } from '../services/dailyJournal'
 import { localDateKey } from '../services/analysisEngine'
-import { MeasureTiles, GutCard, PistesTeaser } from '../components/TodayCards'
+import { GutCard, PistesTeaser } from '../components/TodayCards'
+import TodayBySource from '../components/TodayBySource'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { headerLine, measureTiles } from '../services/today'
 import { APP_NAME } from '../config/brand'
@@ -115,7 +116,9 @@ export default function Dashboard() {
         onDismissReminder={closeUnlockReminder} />
       {/* Ordre de la maquette du 07/11 : statut, analyses, données du jour, puis un seul endroit pour noter (TESTEUR-1d). */}
       <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} />
-      {!loading && !error && <MeasureTiles tiles={tiles} details={details} />}
+      {!loading && !error && (
+        <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} showGut={gutMode !== 'hide'} />
+      )}
 
       <NoteSection
         onWellbeing={() => setWellbeingOpen(true)}
