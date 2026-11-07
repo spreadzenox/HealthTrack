@@ -73,7 +73,7 @@ export default function DayStatusCard({
 
   return (
     <section className={`today-card mood-estimate day-status is-${w.source}`} aria-labelledby="day-status-title">
-      <Link to="/bien-etre" className="day-status-main" aria-labelledby="day-status-title"
+      <Link to="/tendances?mesure=wellbeing" className="day-status-main" aria-labelledby="day-status-title"
         aria-describedby="day-status-value day-status-from">
         <div className="day-status-top">
           {heading}

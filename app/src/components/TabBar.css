@@ -119,53 +119,40 @@
   box-shadow: 0 0 0 2px var(--bg);
 }
 
-/* Sous-onglets du Journal : Jours | Repas | Nutrition | Tendances (pilules, cibles ≥ 44 px). Largeur selon le
-   libellé, avec une marge intérieure : sur un écran de 360 px, « Tendances » ne touche plus sa bordure. */
+/* Sous-onglets du Journal et d'Analyses (ORG-3c, revue du 07/11) : des onglets soulignés sur toute la largeur, au-dessus
+   des réglages de chaque page (qui restent petits, dans leurs cartes). Cibles ≥ 44 px. */
 .journal-tabs {
   display: flex;
-  flex-wrap: wrap; /* filet : en très grande police, une pilule passe à la ligne plutôt que de sortir de l'écran */
-  gap: 6px;
-  margin: 4px 0 12px;
+  margin: 0 0 14px;
+  border-bottom: 1px solid var(--border);
 }
 
 .journal-tab {
-  flex: 1 1 auto;
-  padding: 0 8px;
-  white-space: nowrap;
+  flex: 1 1 0;
+  min-width: 0;
   min-height: var(--tap-min);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-pill);
-  border: 2px solid var(--border);
-  color: var(--text);
+  padding: 0 4px;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  color: var(--text-muted);
   font-weight: 600;
   text-decoration: none;
+  white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
 }
 
 .journal-tab.active {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--color-on-brand);
+  color: var(--text);
+  border-bottom-color: var(--accent);
 }
 
-@media (max-width: 380px) {
-  .journal-tab {
-    padding: 0 6px;
-    font-size: 15px;
-  }
-}
-
-/* Petits écrans (320 px) : les quatre sous-onglets d'Analyses tiennent sur une ligne (mesuré : 278 px pour
-   288 de large ; REVUE-320). */
 @media (max-width: 340px) {
-  .journal-tabs {
-    gap: 3px;
-  }
   .journal-tab {
-    padding: 0 3px;
     font-size: 14px;
+    padding: 0 2px;
   }
 }
 

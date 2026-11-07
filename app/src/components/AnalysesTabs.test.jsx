@@ -22,14 +22,14 @@ describe('AnalysesTabs (Bien-être | Ventre | FODMAP | Tendances, retours du 04/
     expect(screen.getByRole('link', { name: 'Bien-être' })).toHaveAttribute('href', '/recommendations')
     expect(screen.getByRole('link', { name: 'Digestion' })).toHaveAttribute('href', '/recommendations/ventre')
     expect(screen.getByRole('link', { name: 'FODMAP' })).toHaveAttribute('href', '/reintroduction')
-    expect(screen.getByRole('link', { name: 'Tendances' })).toHaveAttribute('href', '/tendances')
+    // ORG-3 : Tendances revient au Journal
+    expect(screen.queryByRole('link', { name: 'Tendances' })).toBeNull()
   })
 
   it('shows no gut nor FODMAP tab with another goal (POL-4, nothing deleted)', () => {
     saveOnboarding({ goal: 'energy' })
     renderAt('/recommendations')
     expect(screen.getByRole('link', { name: 'Bien-être' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Tendances' })).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Digestion' })).toBeNull()
     expect(screen.queryByRole('link', { name: 'FODMAP' })).toBeNull()
   })
@@ -38,7 +38,6 @@ describe('AnalysesTabs (Bien-être | Ventre | FODMAP | Tendances, retours du 04/
     ['/recommendations', 'Bien-être', 'Digestion'],
     ['/recommendations/ventre', 'Digestion', 'Bien-être'],
     ['/reintroduction', 'FODMAP', 'Bien-être'],
-    ['/tendances', 'Tendances', 'Bien-être'],
   ])('on %s, « %s » is current', (path, current, other) => {
     saveOnboarding({ goal: 'gut' })
     renderAt(path)

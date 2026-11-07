@@ -1,0 +1,266 @@
+/* Journal › Tendances (ORG-3, ORG-3c) : les réglages de la courbe sont petits, dans la carte, jamais au niveau des
+   onglets. Chaque mesure prend la couleur de son thème (data-tone, AUJ-8). */
+.trends-card {
+  background: var(--color-surface);
+}
+
+.trends-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.trends-chips,
+.trends-add-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.trends-add-menu {
+  margin-top: 8px;
+}
+
+.trends-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+button.trends-chip {
+  cursor: pointer;
+}
+
+.trends-chip-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--tone-label, var(--text-muted));
+  flex: none;
+}
+
+.trends-chip-remove,
+.trends-add,
+.trends-detail-close {
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.trends-chip-remove {
+  width: 24px;
+  height: 24px;
+  margin-right: -6px;
+}
+
+.trends-add {
+  width: var(--tap-min);
+  height: var(--tap-min);
+  margin: -6px 0;
+}
+
+/* Petit cercle visible, cible de 44 px autour */
+.trends-add .line-icon {
+  box-sizing: content-box;
+  padding: 8px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--border);
+}
+
+.trends-periods {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+}
+
+.trends-period {
+  position: relative;
+  min-height: var(--tap-min);
+  margin: -7px 0;
+  padding: 0 10px;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.trends-period > span {
+  position: relative;
+}
+
+/* Pastille de 30 px, cible de 44 px */
+.trends-period.is-on::before {
+  content: '';
+  position: absolute;
+  inset: 7px 0;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+.trends-period.is-on {
+  color: var(--color-on-brand);
+}
+
+.trends-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+  overflow: visible;
+}
+
+.trends-axis {
+  font-size: 9px;
+  fill: var(--text-muted);
+}
+
+.trends-grid {
+  stroke: var(--border);
+  stroke-dasharray: 2 4;
+}
+
+.trends-today line {
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  opacity: 0.5;
+}
+
+.trends-today text {
+  font-size: 9px;
+  font-weight: 700;
+  fill: var(--text);
+}
+
+.trends-band {
+  fill: var(--tone-track, var(--border));
+  opacity: 0.55;
+}
+
+.trends-band.is-future {
+  opacity: 0.3;
+}
+
+.trends-line {
+  fill: none;
+  stroke: var(--tone-label, var(--text));
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* Le pointillé ne sert qu'à l'attendu du futur (ORG-3c). */
+.trends-line.is-future {
+  stroke-dasharray: 4 4;
+  opacity: 0.8;
+}
+
+.trends-dot {
+  fill: var(--color-surface);
+  stroke: var(--tone-label, var(--text));
+  stroke-width: 1.5;
+}
+
+.trends-dot.is-full {
+  fill: var(--tone-label, var(--text));
+}
+
+.trends-selected {
+  stroke: var(--text);
+  stroke-width: 1;
+}
+
+.trends-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.trends-hint,
+.trends-empty {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.trends-detail {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-choice);
+  background: var(--color-bg);
+}
+
+.trends-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.trends-detail-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.trends-detail-title::first-letter {
+  text-transform: uppercase;
+}
+
+.trends-detail-close {
+  width: var(--tap-min);
+  height: var(--tap-min);
+  margin: -10px -10px -10px 0;
+}
+
+.trends-detail-note {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.trends-detail-list {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+}
+
+.trends-detail-list li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 2px 8px;
+  padding: 4px 0;
+}
+
+.trends-detail-range {
+  grid-column: 2 / 4;
+  justify-self: end;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.trends-detail-value {
+  font-weight: 600;
+}
+
+.trends-card .wbh-page {
+  margin-top: 10px;
+}
