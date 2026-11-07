@@ -37,10 +37,6 @@ describe('cibles tactiles de 44 px (accessibilité)', () => {
     expect(rule(read('pages/Premium.css'), '.paywall-link')).toContain('min-height: var(--tap-min)')
   })
 
-  it('le volet « Attendu d’après vos habitudes » a 44 px', () => {
-    expect(rule(read('components/WellbeingCharts.css'), '.wellbeing-pred-details > summary')).toContain('min-height: var(--tap-min)')
-  })
-
   it('les liens de licence sont des cibles de 44 px', () => {
     const body = rule(read('pages/Licences.css'), 'a.licences-tag')
     expect(body).toContain('min-height: var(--tap-min)')

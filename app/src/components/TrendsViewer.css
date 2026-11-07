@@ -92,10 +92,9 @@ button.trends-chip {
 }
 
 .trends-period {
-  position: relative;
   min-height: var(--tap-min);
   margin: -7px 0;
-  padding: 0 10px;
+  padding: 0;
   border: 0;
   background: transparent;
   color: var(--text-muted);
@@ -106,19 +105,16 @@ button.trends-chip {
 }
 
 .trends-period > span {
-  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
 }
 
 /* Pastille de 30 px, cible de 44 px */
-.trends-period.is-on::before {
-  content: '';
-  position: absolute;
-  inset: 7px 0;
-  border-radius: var(--radius-pill);
+.trends-period.is-on > span {
   background: var(--accent);
-}
-
-.trends-period.is-on {
   color: var(--color-on-brand);
 }
 
@@ -137,7 +133,6 @@ button.trends-chip {
 
 .trends-grid {
   stroke: var(--border);
-  stroke-dasharray: 2 4;
 }
 
 .trends-today line {

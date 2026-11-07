@@ -84,7 +84,7 @@ export default function Act({ read = readAct, now }) {
     read().then((d) => setData(d)).catch(() => setData({ challenges: [], gut: [], pistes: null, trialsData: null, results: null }))
   }, [read])
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- chargement asynchrone depuis IndexedDB
+     
     load()
     window.addEventListener('health-entries-updated', load)
     return () => window.removeEventListener('health-entries-updated', load)
