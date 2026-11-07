@@ -27,6 +27,10 @@
 import { buildDailyDataset, localDateKey, VARIABLE_META } from './analysisEngine'
 import { isWeekendKey, residualize } from './statistics'
 import { faceMoodDays } from './mood/faceMoodDays'
+import { FODMAP_SUBGROUPS } from './fodmapGroups'
+import { fodmapGroupOf, mealFactors } from './gutWindows'
+import { measuredTagsByDay } from './behaviorTags'
+import { estimateStates, observationsFromEntries } from './method/stateSpace'
 import { GUT_TYPE } from './today'
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
@@ -146,6 +150,15 @@ export function holm(pValues) {
 /** Un facteur n'entre que s'il est connu au moins ces jours-là (part des jours du résultat). */
 export const FACTOR_MIN_COVERAGE = 0.5
 
+const FODMAP_LABELS = {
+  fructans: 'Fructanes', gos: 'GOS', fructose: 'Fructose en excès', lactose: 'Lactose', sorbitol: 'Sorbitol',
+  mannitol: 'Mannitol',
+}
+const FODMAP_TEXT = {
+  fructans: 'fructanes', gos: 'GOS', fructose: 'fructose en excès', lactose: 'lactose', sorbitol: 'sorbitol',
+  mannitol: 'mannitol',
+}
+
 const fmtInt = (v) => Math.round(v).toLocaleString(appLocale())
 
 /**
@@ -185,6 +198,11 @@ export const FACTORS = [
     text: (a) => `${fmtInt(a)} °C de plus` },
   { key: 'weather_pressure_change_hpa', label: 'Pression', theme: 'context', actionable: false, unit: 'hPa', step: 1,
     text: (a) => `${fmtInt(a)} hPa de variation de pression de plus` },
+  // ORG-5b : FODMAP par sous-groupe (repas au-dessus du repère par portion, hypothèse de départ, fodmapGroups.js).
+  ...FODMAP_SUBGROUPS.map((g) => ({
+    key: `fodmap_${g}`, label: FODMAP_LABELS[g], theme: 'nutrition', actionable: true, unit: 'repas', step: 1,
+    text: (a) => `${fmtInt(a)} repas riche${a > 1 ? 's' : ''} en ${FODMAP_TEXT[g]} de plus`,
+  })),
 ]
 
 const FACTOR_BY_KEY = Object.fromEntries(FACTORS.map((f) => [f.key, f]))
@@ -249,14 +267,58 @@ function factorDays(entries) {
       vals[f.key] = isNum(v) ? v : null
     }
     vals._meals = r.mealCount > 0
+    for (const g of FODMAP_SUBGROUPS) vals[`fodmap_${g}`] = 0
+    vals._disrupted = false
     out.set(r.dateKey, vals)
   }
+  // FODMAP : nombre de repas du jour au-dessus du repère, par sous-groupe.
+  // Contrôle « journée à part » (ORG-5) : malade ou en voyage (déclaré, ou fuseau horaire changé).
+  for (const e of entries || []) {
+    if (!e?.at) continue
+    const vals = out.get(localDateKey(e.at))
+    if (!vals) continue
+    if (e.type === 'food') {
+      for (const f of mealFactors(e)) {
+        const g = fodmapGroupOf(f)
+        if (g) vals[`fodmap_${g}`] += 1
+      }
+    }
+    const tags = Array.isArray(e.payload?.tags) ? e.payload.tags : []
+    if (tags.includes('sick') || tags.includes('travel')) vals._disrupted = true
+  }
+  for (const [dk, on] of measuredTagsByDay(entries || []).get('travel') ?? []) if (on && out.has(dk)) out.get(dk)._disrupted = true
   // Nutrition : un jour sans repas noté est inconnu, pas un jour à jeun.
   for (const vals of out.values()) {
     if (vals._meals) continue
     for (const f of FACTORS) if (f.theme === 'nutrition') vals[f.key] = null
   }
   return out
+}
+
+/**
+ * Retire de `values` la part expliquée par les colonnes de `design` (aucun intercept ajouté : il est dans le design,
+ * pondéré). Gram-Schmidt ; colonnes constantes ou redondantes ignorées ; `used` = colonnes retenues au-delà de la
+ * première (l'intercept), comme `residualize`.
+ */
+function residualizeNoIntercept(values, design) {
+  const dot = (a, b) => a.reduce((s, x, i) => s + x * b[i], 0)
+  const basis = []
+  for (const col of design) {
+    let u = col.slice()
+    const norm0 = dot(u, u)
+    for (const b of basis) {
+      const c = dot(u, b) / dot(b, b)
+      u = u.map((x, i) => x - c * b[i])
+    }
+    if (!(dot(u, u) > 1e-10 * Math.max(norm0, 1e-300)) || norm0 === 0) continue
+    basis.push(u)
+  }
+  let residuals = values.slice()
+  for (const b of basis) {
+    const c = dot(residuals, b) / dot(b, b)
+    residuals = residuals.map((x, i) => x - c * b[i])
+  }
+  return { residuals, used: Math.max(0, basis.length - 1) }
 }
 
 /** Valeur d'un facteur sur la fenêtre d'un horizon avant le jour `num` ; null si moins de la moitié des jours connus. */
@@ -374,22 +436,27 @@ export function tCritical95(df) {
  */
 export const blockDays = (horizon) => Math.max(7, horizon.to - horizon.from + 1)
 
-function fitOne(series, days, f, horizon) {
+function fitOne(series, days, f, horizon, weights) {
   const pts = []
   for (const [dk, y] of series) {
     const num = dayNum(dk)
     const x = windowValue(days, f.key, num, horizon)
-    if (x !== null) pts.push({ dk, num, x, y })
+    if (x !== null) pts.push({ dk, num, x, y, w: weights?.get(dk) ?? 1 })
   }
   if (pts.length < Math.max(8, FACTOR_MIN_COVERAGE * series.size)) return null
   pts.sort((a, b) => a.num - b.num)
   const xs = pts.map((p) => p.x)
   const ys = pts.map((p) => p.y)
   const center = xs.reduce((s, v) => s + v, 0) / xs.length
-  // Contrôles : semaine / week-end et tendance lente (ORG-5).
+  // Contrôles (ORG-5) : semaine / week-end, tendance lente, journée à part (malade, voyage) quand il y en a.
   const covs = [pts.map((p) => (isWeekendKey(p.dk) ? 1 : 0)), pts.map((p) => p.num)]
-  const rx = residualize(xs, covs)
-  const ry = residualize(ys, covs).residuals
+  const disrupted = pts.map((p) => (days.get(p.dk)?._disrupted ? 1 : 0))
+  if (disrupted.some(Boolean) && !disrupted.every(Boolean)) covs.push(disrupted)
+  // Moindres carrés pondérés : tout est multiplié par √poids (l'intercept aussi), puis résidualisé sans intercept.
+  const sw = pts.map((p) => Math.sqrt(p.w))
+  const design = [sw, ...covs.map((c) => c.map((v, i) => v * sw[i]))]
+  const rx = residualizeNoIntercept(xs.map((v, i) => v * sw[i]), design)
+  const ry = residualizeNoIntercept(ys.map((v, i) => v * sw[i]), design).residuals
   const sxx = rx.residuals.reduce((s, v) => s + v * v, 0)
   if (!(sxx > 1e-9)) return null
   const slope = rx.residuals.reduce((s, v, i) => s + v * ry[i], 0) / sxx
@@ -403,7 +470,7 @@ function fitOne(series, days, f, horizon) {
   const rss = errors.reduce((s, v) => s + v * v, 0)
   const se = SE_INFLATION * Math.sqrt(rss / Math.max(1, n - 2 - rx.used) / (sxx * (nEff / n)))
   const tc = tCritical95(df)
-  const sd = Math.sqrt(sxx / n)
+  const sd = Math.sqrt(residualize(xs, covs).residuals.reduce((s, v) => s + v * v, 0) / n)
   const amount = niceAmount(sd, f.step)
   const p = se > 0 ? tTwoSidedP(Math.abs(slope / se), df) : 1
   const r = (v) => Math.round(v * 100) / 100
@@ -432,7 +499,8 @@ function fitOne(series, days, f, horizon) {
  * @returns {AnalysisResults}
  */
 export function computeAnalysisResults(entries, { now = new Date() } = {}) {
-  return analyzeMatrix(buildAnalysisMatrix(entries), { today: localDateKey(now.toISOString()) })
+  const today = localDateKey(now.toISOString())
+  return analyzeMatrix(buildAnalysisMatrix(entries, { today }), { today })
 }
 
 /**
@@ -441,8 +509,42 @@ export function computeAnalysisResults(entries, { now = new Date() } = {}) {
  * @returns {{ series: { wellbeing: Map<string, number>, digestion: Map<string, number>, symptomDays: number },
  *   days: Map<string, Record<string, number|null>> }}
  */
-export function buildAnalysisMatrix(entries) {
-  return { series: outcomeSeries(entries), days: factorDays(entries) }
+export function buildAnalysisMatrix(entries, { today } = {}) {
+  const raw = outcomeSeries(entries)
+  const days = factorDays(entries)
+  // ORG-5b : le résultat de chaque jour est l'estimation de TS-1 (notes et visage pour le bien-être ; notes du ventre
+  // et selles, sans rien du bien-être, pour la digestion : règle 5), pesée par sa précision (jours notés plus pesants).
+  const obs = observationsFromEntries(entries)
+  const states = estimateStates(obs, { today, ahead: 0 })
+  if (!states) return { series: raw, days }
+  const wellbeing = new Map()
+  const digestion = new Map()
+  const wW = new Map()
+  const wD = new Map()
+  for (const d of states.days) {
+    if (d.future) continue
+    if (obs.wellbeing.has(d.date)) {
+      wellbeing.set(d.date, d.wellbeing.mean)
+      wW.set(d.date, 1 / Math.max(1e-6, d.wellbeing.sd) ** 2)
+    }
+    const o = obs.digestion.get(d.date)
+    if (isNum(o?.gut) || isNum(o?.stool)) {
+      digestion.set(d.date, d.digestionOwn.mean)
+      wD.set(d.date, 1 / Math.max(1e-6, d.digestionOwn.sd) ** 2)
+    }
+  }
+  return {
+    series: { wellbeing, digestion, symptomDays: raw.symptomDays, weights: { wellbeing: normWeights(wW), digestion: normWeights(wD) } },
+    days,
+  }
+}
+
+/** Poids ramenés à une moyenne de 1, bornés à [1/4, 4] (aucun jour ne compte pour plus de 16 autres). */
+export const WEIGHT_RANGE = [0.25, 4]
+function normWeights(map) {
+  if (!map.size) return map
+  const m = [...map.values()].reduce((s, v) => s + v, 0) / map.size
+  return new Map([...map].map(([k, v]) => [k, Math.min(WEIGHT_RANGE[1], Math.max(WEIGHT_RANGE[0], v / m))]))
 }
 
 /**
@@ -463,7 +565,7 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
       horizons[h.id] = { id: h.id, label: h.label, window: h.window, status: ready ? 'ready' : 'locked', daysHave, daysNeeded, factors: [] }
       if (!ready) continue
       for (const f of factors) {
-        const fit = fitOne(ys, days, f, h)
+        const fit = fitOne(ys, days, f, h, series.weights?.[def.id])
         if (fit) { fit.outcome = def.id; fitted.push(fit) }
       }
     }
@@ -530,4 +632,4 @@ export function dayContributions(results, entries, dateKey, { outcome = 'wellbei
 export const factorMeta = (key) => FACTOR_BY_KEY[key] ?? null
 
 /** Garde-fou : chaque facteur existe dans le jeu quotidien du moteur. */
-export const FACTOR_KEYS_KNOWN = FACTORS.every((f) => f.key in VARIABLE_META)
+export const FACTOR_KEYS_KNOWN = FACTORS.every((f) => f.key in VARIABLE_META || f.key.startsWith('fodmap_'))
