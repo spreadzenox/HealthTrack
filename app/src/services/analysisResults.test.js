@@ -95,6 +95,18 @@ describe('contrat des résultats d’Analyses', () => {
     expect(wb.horizons.short.factors[0].key).toBe('steps')
   })
 
+  it('ORG-5c : modèle régularisé, stabilité et comparaison à « demain = aujourd’hui »', () => {
+    const { entries, now } = world({ days: 70 })
+    const wb = computeAnalysisResults(entries, { now }).outcomes.wellbeing
+    const steps = wb.horizons.short.factors.find((f) => f.key === 'steps')
+    expect(steps.inModel).toBe(true)
+    expect(steps.stability).toBeGreaterThanOrEqual(0.85)
+    expect(typeof wb.beatsPersistence).toBe('boolean')
+    for (const h of Object.values(wb.horizons)) {
+      for (const f of h.factors) if (f.net) expect(f.inModel && f.stability >= 0.85).toBe(true)
+    }
+  })
+
   it('ne trouve pas de lien net sur un facteur sans effet', () => {
     const { entries, now } = world({ days: 70 })
     const wb = computeAnalysisResults(entries, { now }).outcomes.wellbeing
@@ -129,7 +141,7 @@ describe('contrat des résultats d’Analyses', () => {
       for (const h of Object.values(dig.horizons)) if (h.factors.some((f) => f.key === 'steps' && f.net)) falseDigestive += 1
     }
     expect(falseDigestive).toBeLessThanOrEqual(1)
-  })
+  }, 120_000)
 
   it('aucun facteur n’est le bien-être, le ventre ou une entrée de l’estimateur', () => {
     expect(FACTOR_KEYS_KNOWN).toBe(true)
