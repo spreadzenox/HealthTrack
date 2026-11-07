@@ -64,7 +64,10 @@
 > menthe qui gonflent lentement, une ligne dont la pente suit la journée (monte si plutôt bonne, plate si moyenne,
 > descend si plus difficile) et un point ambre qui flotte dessus. Immobile si le téléphone demande de réduire les
 > animations ; absente tant qu'il n'y a pas d'avis sur la journée.
-> Prochaine : la carte des analyses, une fois prêtes, citera la piste qui touche une mesure du jour (1d-3).
+> **La piste qui touche votre journée (14:35)** : quand une de vos pistes parle d'une mesure sortie de vos habitudes
+> aujourd'hui (nuit, pas, temps d'écran), la carte lilas « N pistes repérées » la cite en premier, avec une ligne
+> « Aujourd’hui : nuit plus courte. » ; sinon elle reste comme avant. L'écran Aujourd'hui de la maquette est complet.
+> Prochaines : Health Connect proposé aussi sans montre pendant l'accueil (5a-2), puis Bien-être et Tendances (3b).
 > Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
@@ -182,6 +185,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 14:35 — [La piste qui touche votre journée](runs/2026-11-07-1435-piste-du-jour.md) | 🎨 | TESTEUR-1d-3 : la carte « N pistes repérées » de l'Accueil cite d'abord la piste qui parle d'une mesure du jour (nuit, pas, écran), avec « Aujourd’hui : nuit plus courte. ». Rien à faire de votre côté |
 | 07/11 13:35 — [Un horizon qui respire](runs/2026-11-07-1335-horizon-respire.md) | 🎨 | TESTEUR-1e : petite animation en bas de la carte « Votre journée » (pente selon la journée, immobile avec « réduire les animations »). Rien à faire de votre côté |
 | 07/11 12:35 — [Ce qui change aujourd'hui](runs/2026-11-07-1235-ce-qui-change.md) | 🎨 | TESTEUR-1d-2 : section « Ce qui change aujourd'hui » sur l'Accueil (au plus 3 écarts à votre médiane des 14 jours, sans jugement) ; phrase « Halcya cherchera… » dans la carte des analyses. Rien à faire de votre côté |
 | 07/11 11:35 — [Vos données du jour](runs/2026-11-07-1135-donnees-du-jour.md) | 🎨 | TESTEUR-1d-b : « Vos données du jour » par source (Montre, Téléphone, Noté par vous) sur l'Accueil ; ancienne carte « Bien-être estimé » supprimée. Rien à faire de votre côté |

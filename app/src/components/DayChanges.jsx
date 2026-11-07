@@ -8,17 +8,23 @@ import { buildDailyJournal } from '../services/dailyJournal'
 import { dayDeviations, readDeviationEntries } from '../services/dayDeviations'
 import './DayChanges.css'
 
-/** @param {{ read?: () => Promise<object[]>, now?: Date }} props */
-export default function DayChanges({ read = readDeviationEntries, now }) {
+/**
+ * @param {{ read?: () => Promise<object[]>, now?: Date, onItems?: (items: object[]) => void }} props
+ *   `onItems` : les écarts du jour, pour que la carte des analyses cite la piste qui les touche (TESTEUR-1d-3).
+ */
+export default function DayChanges({ read = readDeviationEntries, now, onItems }) {
   const [result, setResult] = useState(null)
   const refresh = useCallback(async () => {
     try {
       const entries = await read()
-      setResult(dayDeviations(buildDailyJournal(entries), now || new Date()))
+      const next = dayDeviations(buildDailyJournal(entries), now || new Date())
+      setResult(next)
+      onItems?.(next.ready ? next.items : [])
     } catch {
       setResult(null)
+      onItems?.([])
     }
-  }, [read, now])
+  }, [read, now, onItems])
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- chargement asynchrone depuis IndexedDB
     refresh()

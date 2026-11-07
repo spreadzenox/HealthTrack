@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import DayChanges from './DayChanges'
 
@@ -39,5 +39,12 @@ describe('DayChanges (TESTEUR-1d-2)', () => {
   it('rien d’inhabituel : une phrase calme', async () => {
     wrap(entries(14, 430))
     expect(await screen.findByText('Une journée comme les autres pour vos mesures.')).toBeInTheDocument()
+  })
+
+  it('transmet ses écarts à l’Accueil pour la carte des analyses (TESTEUR-1d-3)', async () => {
+    const onItems = vi.fn()
+    render(<DayChanges now={NOW} read={async () => entries(14, 330)} onItems={onItems} />)
+    await screen.findByText('Nuit plus courte')
+    expect(onItems).toHaveBeenLastCalledWith([expect.objectContaining({ key: 'sleep', text: 'Nuit plus courte' })])
   })
 })

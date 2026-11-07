@@ -19,9 +19,28 @@ export function summarizePistes(analysis, hidden = getHiddenLinks()) {
   if (!analysis) return null
   const gut = analysis.gut?.status === 'links' ? analysis.gut.links.filter((l) => !hidden.includes(gutLinkKey(l))).map(gutTitle) : []
   const ready = analysis.correlations?.status === 'ok'
-  const levers = ready ? (analysis.correlations.levers ?? []).filter((l) => !hidden.includes(l.variable)).map((l) => l.title ?? l.action).filter(Boolean) : []
+  const shown = ready
+    ? (analysis.correlations.levers ?? []).filter((l) => !hidden.includes(l.variable) && (l.title ?? l.action))
+    : []
   if (!ready && !gut.length) return null
-  return { gut, levers }
+  // `leverVars` (TESTEUR-1d-3) : la variable de chaque piste, alignée sur `levers`, pour la relier aux mesures du jour
+  return { gut, levers: shown.map((l) => l.title ?? l.action), leverVars: shown.map((l) => l.variable ?? null) }
+}
+
+/** Variable d'une piste → mesure de « Ce qui change aujourd'hui » (dayDeviations). VFC et FC au repos n'en sont pas. */
+const LEVER_TO_DAY_MEASURE = { sleepMinutes: 'sleep', steps: 'steps', screen_minutes: 'screen' }
+
+/**
+ * TESTEUR-1d-3 : la piste la plus solide (ordre d'Analyses) qui touche une mesure du jour sortie de vos habitudes.
+ * `{ title, today }` (« plus de pas ») ou `null` ; un ancien résumé sans `leverVars` ne cite rien.
+ */
+export function pisteTouchingToday(summary, dayItems) {
+  if (!summary || !Array.isArray(summary.leverVars) || !dayItems?.length) return null
+  for (let i = 0; i < summary.levers.length; i++) {
+    const item = dayItems.find((d) => d.key === LEVER_TO_DAY_MEASURE[summary.leverVars[i]])
+    if (item) return { title: summary.levers[i], today: item.text.charAt(0).toLowerCase() + item.text.slice(1) }
+  }
+  return null
 }
 
 export function rememberPistesSummary(analysis, now = new Date()) {
@@ -34,7 +53,7 @@ export function rememberPistesSummary(analysis, now = new Date()) {
   }
 }
 
-/** `{ gut: string[], levers: string[], at }` ou `null`. */
+/** `{ gut: string[], levers: string[], leverVars?: (string|null)[], at }` ou `null`. */
 export function readPistesSummary() {
   try {
     const s = JSON.parse(localStorage.getItem(PISTES_SUMMARY_KEY) || 'null')
