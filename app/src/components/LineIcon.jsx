@@ -43,6 +43,23 @@ const PATHS = {
   chevron: <path d="M6 9.5l6 6 6-6" />,
   plus: <path d="M12 5v14M5 12h14" />,
   close: <path d="M6 6l12 12M18 6L6 18" />,
+  // Bandeau d'ajout de l'Accueil (07/11) : un visage pour le bien-être, une courbe douce pour la digestion
+  smile: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M8.5 14.2a4.2 4.2 0 0 0 7 0" />
+      <circle cx="9.3" cy="9.8" r="0.6" />
+      <circle cx="14.7" cy="9.8" r="0.6" />
+    </>
+  ),
+  digestion: <path d="M9 3.5v3.2c0 1.6-3.5 2.3-3.5 6.3 0 4.4 3.3 7.5 7.4 7.5 3.6 0 6.1-2.5 6.1-5.4 0-2.7-2-4.3-4.4-4.3-1.9 0-3.1 1.2-3.1 2.8M15 3.5v2" />,
+  dots: (
+    <>
+      <circle cx="6" cy="12" r="1.2" />
+      <circle cx="12" cy="12" r="1.2" />
+      <circle cx="18" cy="12" r="1.2" />
+    </>
+  ),
 }
 
 export default function LineIcon({ name, size = 20, className = '' }) {

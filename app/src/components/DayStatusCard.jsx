@@ -3,7 +3,7 @@
  * journal/maquettes/aujourdhui) : « Votre journée » et un titre en deux mots, la place du jour sur l'échelle 1 à 5,
  * d'où il vient en une phrase et des étiquettes. Carte menthe : c'est du bien-être (règle de sens constant).
  * Toucher le haut de la carte ouvre l'historique du bien-être. Sans lecture ni note du jour : « Pas encore d'avis ».
- * On note dans la section « Noter » plus bas (TESTEUR-1d) ; seule la calibration de départ garde son bouton ici.
+ * On note dans le bandeau d’ajout en haut (AUJ-1) ; seule la calibration de départ garde son bouton ici.
  */
 import { Link } from 'react-router-dom'
 import { dayStatus } from '../services/today'
@@ -50,8 +50,8 @@ export default function DayStatusCard({
         {reminder || (
           <p className="day-status-from">
             {est
-              ? 'Pas encore de lecture du visage aujourd’hui. Notez votre bien-être plus bas.'
-              : <>Notez votre bien-être plus bas, ou laissez la caméra lire votre visage :{' '}
+              ? 'Pas encore de lecture du visage aujourd’hui. Notez votre bien-être en haut.'
+              : <>Notez votre bien-être en haut, ou laissez la caméra lire votre visage :{' '}
                 <Link to="/connectors">à activer dans Sources</Link>.</>}
           </p>
         )}

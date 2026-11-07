@@ -16,7 +16,7 @@ import { headerLine, measureTiles } from '../services/today'
 import { APP_NAME } from '../config/brand'
 import { homeFocus, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
-import NoteSection from '../components/NoteSection'
+import AddStrip from '../components/AddStrip'
 import DayChanges from '../components/DayChanges'
 
 export default function Dashboard() {
@@ -99,16 +99,22 @@ export default function Dashboard() {
   return (
     <section className="dashboard">
       <header className="today-head">
-        <p className="today-dateline">{head.date}</p>
-        <p className="today-hello">{head.hello}</p>
+        <h1 className="today-date">{head.date}</h1>
       </header>
+      {/* Nouvel écran Aujourd'hui (07/11, AUJ-1) : le seul vrai endroit pour ajouter, juste sous la date. */}
+      <AddStrip
+        onWellbeing={() => setWellbeingOpen(true)}
+        digestion={<GutCard title="Ma digestion" details={details} onToggleDetails={toggleDetails} />}
+        cigarette={!loading && <CigaretteQuickAdd />}
+        cigaretteInStrip={!loading && shouldShowCigaretteCounter(entries)}
+      />
       <PaymentIssueCard />
       <LaunchEndCard />
       {/* Présentation utile au premier lancement seulement, en une phrase (VC-26) ; les sources se branchent pendant
           l'accueil et restent dans l'onglet Sources. */}
       {!loading && !error && empty && (
         <p className="dashboard-intro">
-          Notez {focus === 'gut' ? 'vos repas et votre ventre' : 'vos repas'} en un geste : {APP_NAME} vous aide à
+          Notez {focus === 'gut' ? 'vos repas et votre digestion' : 'vos repas'} en un geste : {APP_NAME} vous aide à
           comprendre ce qui va avec vos bons et mauvais jours.
         </p>
       )}
@@ -125,14 +131,6 @@ export default function Dashboard() {
         <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} showGut={gutMode !== 'hide'} />
       )}
 
-      <NoteSection
-        onWellbeing={() => setWellbeingOpen(true)}
-        gut={gutMode !== 'hide' && (
-          <GutCard title="Mon ventre" details={details} onToggleDetails={toggleDetails}
-            onlyIfUsed={gutMode === 'used'} />
-        )}
-        other={!loading && shouldShowCigaretteCounter(entries) && <CigaretteQuickAdd />}
-      />
 
       <WellbeingPrompt open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />
 
