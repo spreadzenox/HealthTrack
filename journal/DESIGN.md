@@ -149,3 +149,37 @@ fera adapter l'icône : ne pas l'anticiper.
 | (ii) | Icône adaptative Android + monochrome + icône de notification + écran de démarrage | ✅ 21/10 04:30 — glyphe réduit à 90 % (coin le plus éloigné à 31,8 dp du centre, zone sûre 33) ; logo de l'en-tête et icône Play 512 px générés par `app/scripts/brand/render-icons.mjs` |
 | (iii) | Écran Accueil « Aujourd'hui » selon la maquette | ✅ 21/10 12:30 — `MoodEstimateCard` (menthe), `TodayCards` (tuiles, ventre pêche, pistes lilas), bouton « détails » unique pour la page (retenu) ; prénom à venir avec l'onboarding ; « VFC » sans « nuit » tant que la source ne distingue pas la nuit ; navigation 4 onglets = étape suivante (2c) |
 | (iv+) | Chaque écran quand le chantier produit le touche (onboarding, pistes, paywall, Journal, Sources) | ⬜ |
+
+## 9. Leçons du propriétaire (revue design du 07/11 vers 15:00) — font foi, à appliquer à chaque écran touché
+
+> Recopiées du prompt de la routine au run du 07/11 15:35. La revue continue écran par écran : d'autres leçons
+> suivront, ajoutées ici.
+
+1. Montrer la donnée, pas un verdict.
+2. Aucun texte de remplissage.
+3. Choisir puis expliquer : pour chaque élément, la personne visée s'y intéresse-t-elle, à cet endroit de l'app ? Ce
+   qui reste est dit avec ses mots, en phrases complètes et naturelles ; jamais une phrase qui tasse trop
+   d'informations, ni détail technique ou statistique sur un écran d'entrée.
+4. L'app est un arbre : vue d'ensemble à l'entrée, détails à la demande par un geste évident (toucher un point de
+   courbe, une mesure, une carte), toujours faciles à trouver, jamais tout d'un coup.
+5. Un graphique bien fait vaut mieux qu'un paragraphe ; un tableau de bord est bienvenu si ses couleurs s'expliquent
+   seules.
+6. Chaque attente propose une action.
+7. Une action, un endroit principal.
+8. Regrouper par sens pour la personne, pas par provenance technique.
+9. Une icône pour toutes les mesures, ou pour aucune.
+10. Assumer la proximité avec le médical (données et liens statistiques réels, faits pour être partagés avec un
+    médecin), sans diagnostic, sans cause, sans promesse de traitement.
+11. Police mono pour les chiffres seulement.
+12. Une couleur par thème, partout, assumée : **vert = bien-être, orange = digestion, lilas = activité et sport, bleu
+    nuit = sommeil** ; une analyse prend la couleur de son thème ; une couleur, un cadre ou une icône ne change jamais
+    de sens d'un écran à l'autre. (Remplace « lilas = pistes » du § 2 : migration des tokens en étape AUJ-8.)
+
+### Nouvel écran Aujourd'hui (07/11), de haut en bas
+(1) la date seule ; (2) le bandeau d'ajout, seul vrai endroit pour ajouter (repas en photo, bien-être, digestion,
+cigarette, autre chose) ; (3) le bien-être du jour (courbe simplifiée, moyenne sur 5, nombre de lectures ; toucher →
+historique ; sans lecture, les notes ; pas de verdict ; calibration « 0 jour sur 3 ») ; (4) « Vos données du jour »,
+un bloc, une icône par mesure, l'écart à vos 14 derniers jours sur la mesure, sources en petit en bas ; (5) le bloc
+digestif (« Vos analyses digestives arrivent dans N jours », N/28, « Noter ma digestion », rappel du soir) ; (6) « Mes
+repas du jour ». Sous chaque bloc, un petit « + » qui remonte au bandeau ; un bloc qui attend la personne a un bouton
+plus large vers la même saisie. Découpage : BACKLOG, section « Nouvel écran Aujourd'hui (07/11) ».

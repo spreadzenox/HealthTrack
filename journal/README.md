@@ -70,6 +70,15 @@
 > Prochaines : Health Connect proposé aussi sans montre pendant l'accueil (5a-2), puis Bien-être et Tendances (3b).
 > Rien à faire de votre côté.
 
+> 🏠 **Nouvel écran Aujourd'hui (votre revue design de 15:00) : pris en compte.** Vos 12 leçons sont recopiées dans
+> [`DESIGN.md`](DESIGN.md) § 9 (elles font foi) et l'écran est découpé en 8 étapes (AUJ-1 à AUJ-8) en tête de
+> `BACKLOG.md`. La PR #781 (carte lilas) était déjà mergée à 14:54, avant votre revue : sa carte disparaîtra avec le
+> bloc digestif (AUJ-4). La décision « ventre → digestif » et le nom App Store après la soumission sont transmis à la
+> routine iOS. **Première étape (15:35)** : en haut de l'Accueil, la date seule (« Samedi 7 novembre »), puis une
+> rangée de boutons : Repas (appareil photo), Bien-être, Digestion (petite fenêtre Calme / Gêne / Douleur et selles),
+> la cigarette si vous l'utilisez, et Autre chose. La section « Noter » du bas a disparu. Prochaine : le bloc
+> bien-être du jour (courbe, moyenne sur 5, nombre de lectures, sans verdict). Rien à faire de votre côté.
+
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
 > jobs (« account is locked due to a billing issue »). À 07:33 UTC, le run de 08:35 a relancé les checks de la PR #748 :
 > ils ont tous démarré et sont **verts** (11 sur 11). Rien à faire, sauf si vous recevez un e-mail de GitHub sur un
@@ -185,6 +194,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 15:35 — [Bandeau d'ajout](runs/2026-11-07-1535-bandeau-ajout.md) | 🎨 | Revue design du 07/11 consignée (leçons, AUJ-1 à 8, iOS) ; AUJ-1 : la date seule et le bandeau Repas / Bien-être / Digestion / Autre chose en haut de l'Accueil ; section « Noter » retirée. Rien à faire de votre côté |
 | 07/11 14:35 — [La piste qui touche votre journée](runs/2026-11-07-1435-piste-du-jour.md) | 🎨 | TESTEUR-1d-3 : la carte « N pistes repérées » de l'Accueil cite d'abord la piste qui parle d'une mesure du jour (nuit, pas, écran), avec « Aujourd’hui : nuit plus courte. ». Rien à faire de votre côté |
 | 07/11 13:35 — [Un horizon qui respire](runs/2026-11-07-1335-horizon-respire.md) | 🎨 | TESTEUR-1e : petite animation en bas de la carte « Votre journée » (pente selon la journée, immobile avec « réduire les animations »). Rien à faire de votre côté |
 | 07/11 12:35 — [Ce qui change aujourd'hui](runs/2026-11-07-1235-ce-qui-change.md) | 🎨 | TESTEUR-1d-2 : section « Ce qui change aujourd'hui » sur l'Accueil (au plus 3 écarts à votre médiane des 14 jours, sans jugement) ; phrase « Halcya cherchera… » dans la carte des analyses. Rien à faire de votre côté |

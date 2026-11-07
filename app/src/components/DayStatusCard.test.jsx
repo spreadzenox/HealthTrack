@@ -47,7 +47,7 @@ describe('DayStatusCard (TESTEUR-1c)', () => {
     view({ data: null, onAddManual: vi.fn() })
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Pas encore d’avis')
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
-    expect(screen.getByText(/Notez votre bien-être plus bas/)).toBeInTheDocument()
+    expect(screen.getByText(/Notez votre bien-être en haut/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'à activer dans Sources' })).toHaveAttribute('href', '/connectors')
     expect(screen.queryByRole('link', { name: /Votre journée/ })).not.toBeInTheDocument()
   })

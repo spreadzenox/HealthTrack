@@ -21,6 +21,38 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🏠 Nouvel écran Aujourd'hui (revue design du propriétaire du 07/11 vers 15:00) — PRIORITÉ DES RUNS DE CODE
+
+> Remplace TESTEUR-1 (1a à 1e) et les points (3) à (5) du 24/10 15:00. La PR #781 (carte lilas) était déjà mergée à
+> 14:54 quand la consigne est arrivée : sa carte disparaît avec AUJ-4. Leçons de design : `DESIGN.md` § 9 (font foi).
+> Un run = une étape, captures avant / après, clair et sombre, vierge et démo.
+
+- [x] AUJ-1 — La date seule (« Samedi 7 novembre », sans « Bonjour ») et le **bandeau d'ajout** juste dessous
+  (`components/AddStrip.jsx`) : Repas (appareil photo), Bien-être (note 1 à 5), Digestion (fenêtre « Ma
+  digestion »), cigarette si le compteur est actif (sinon dans « Autre chose »), Autre chose (« Décrire un repas »,
+  cigarette). Section « Noter » du bas supprimée ; la carte « Mon ventre » n'est plus sur l'écran (dans la fenêtre
+  Digestion). (07/11 15:35)
+- [ ] AUJ-2 — Bloc bien-être du jour : courbe du jour de l'historique simplifiée (points et tendance, sans légende),
+  moyenne sur 5 et nombre de lectures, toucher → historique ; sans lecture, les notes du jour ; plus de verdict
+  (« Plus difficile ») ni « estimation prudente » ; l'horizon qui respire (`DayBreath`) part avec le verdict.
+- [ ] AUJ-2b — Calibration de départ dans ce bloc : « Calibration du bien-être : 0 jour sur 3 », phrase du
+  propriétaire, « Remplir maintenant » et « Recevoir un rappel » (bouton large) ; lié à (5) du 04/11.
+- [ ] AUJ-3 — « Vos données du jour » en un seul bloc : une icône par mesure, l'écart à vos 14 derniers jours sur la
+  mesure elle-même, sources en petit en bas (jamais un nom d'appareil ou d'app technique) ; `DayChanges` (« Ce qui
+  change aujourd'hui ») disparaît.
+- [ ] AUJ-3b — Même logique d'écart sur la mesure dans le Journal.
+- [ ] AUJ-4 — Bloc digestif : « Vos analyses digestives arrivent dans N jours », « Halcya cherchera quels facteurs sont
+  statistiquement liés à votre confort digestif. », « N/28 jours avec une note digestive », bouton « Noter ma
+  digestion », rappel du soir, petit graphique du jour s'il y a des notes ; ni délais, ni Benjamini-Hochberg, ni
+  minimum ; la carte lilas des pistes (`PistesTeaser`) quitte l'Accueil.
+- [ ] AUJ-5 — « Mes repas du jour » : la liste, ou « Aucun repas aujourd'hui » et un bouton.
+- [ ] AUJ-6 — Sous chaque bloc, un petit « + » qui remonte au bandeau ; bouton plus large pour un bloc qui attend la
+  personne (calibration, analyses, repas vides).
+- [ ] AUJ-7 — « Ventre » devient « digestif » dans tous les textes visibles (« Ma digestion », sous-onglet
+  d'Analyses, PDF, fiche) ; données et identifiants inchangés ; test de non-régression des libellés.
+- [ ] AUJ-8 — Couleurs par thème (leçon 12) : vert = bien-être, orange = digestion, lilas = activité et sport, bleu
+  nuit = sommeil ; tokens, contrastes testés, une analyse prend la couleur de son thème.
+
 ## 🧑‍🔬 Retours du premier testeur iPhone du 06/11 au soir — PRIORITÉ DES RUNS DE CODE (seule une CI cassée passe avant)
 
 Résumé anonyme : [`RETOURS-TESTEURS.md`](RETOURS-TESTEURS.md). Code partagé : ce qui est corrigé ici part aussi sur

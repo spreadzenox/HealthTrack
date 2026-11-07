@@ -28,7 +28,7 @@ describe('Layout — attente de la décision d’onboarding', () => {
 
   it('nouvelle installation : ni Accueil ni calcul avant la réponse, puis l’onboarding', async () => {
     const { container } = render(<App />)
-    expect(screen.queryByRole('button', { name: /Photo du repas/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Repas' })).not.toBeInTheDocument()
     expect(container.querySelector('main .loading')).toBeInTheDocument()
     resolveNeeded(true)
     await waitFor(() => expect(window.location.pathname).toBe('/bienvenue'))
@@ -37,13 +37,13 @@ describe('Layout — attente de la décision d’onboarding', () => {
   it('base déjà remplie : l’Accueil s’affiche dès la réponse', async () => {
     render(<App />)
     resolveNeeded(false)
-    expect(await screen.findByRole('button', { name: /Photo du repas/ })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: 'Repas' })).toBeInTheDocument()
     expect(window.location.pathname).toBe('/')
   })
 
   it('onboarding déjà fait : l’Accueil s’affiche tout de suite, sans attendre', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true }))
     render(<App />)
-    expect(screen.getByRole('button', { name: /Photo du repas/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Repas' })).toBeInTheDocument()
   })
 })

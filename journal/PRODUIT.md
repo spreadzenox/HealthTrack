@@ -213,6 +213,7 @@ visage, montre, Health Connect…) restent stockées et exportées même si leur
 ## 5. Historique
 
 - **07/11 09:35** — **TESTEUR-1c** : carte menthe « Votre journée » en tête de l'Accueil (titre en deux mots, échelle 1 à 5, d'où il vient, étiquettes), qui remplace le titre et la carte « Bien-être estimé » ; toucher → historique ; « Pas encore d'avis » avec un seul bouton.
+- **07/11 15:35** — **Nouvel écran Aujourd'hui (revue design du propriétaire du 07/11)** consigné : leçons dans `DESIGN.md` § 9, étapes AUJ-1 à AUJ-8 dans `BACKLOG.md`, décision « ventre → digestif » et nom App Store transmis à iOS. **AUJ-1** livré : la date seule en tête, puis un bandeau d'ajout (Repas en photo, Bien-être, Digestion, Autre chose ; cigarette si le compteur est actif) ; la section « Noter » du bas et la carte « Mon ventre » quittent l'écran.
 - **07/11 14:35** — **TESTEUR-1d-3** : la carte lilas « N pistes repérées » cite d'abord la piste qui touche une mesure sortie des habitudes du jour (nuit, pas, écran), avec « Aujourd’hui : nuit plus courte. » ; l'écran Aujourd'hui de la maquette du 07/11 est complet.
 - **07/11 13:35** — **TESTEUR-1e** : « horizon qui respire » dans la carte « Votre journée » (deux disques menthe, pente selon le statut, point ambre ; CSS seul, immobile avec « réduire les animations »).
 - **07/11 12:35** — **TESTEUR-1d-2** : « Ce qui change aujourd'hui » sur l'Accueil (au plus trois mesures du jour loin de la médiane personnelle des 14 jours, sans jugement) ; la carte des analyses dit ce qu'elles cherchent.

@@ -77,14 +77,12 @@ const DAY_MS = 86_400_000
 export const frDecimal = (v) => v.toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
 /**
- * En-tête de l'Accueil : la date courte et « Bonjour », chacun sur sa ligne (retours du testeur du 06/11 : plus de
- * « · ») ; prénom ajouté quand l'onboarding le demandera.
+ * En-tête de l'Accueil : la date seule, en toutes lettres (« Samedi 7 novembre »), sans « Bonjour » (nouvel écran
+ * Aujourd'hui, revue design du propriétaire du 07/11).
  */
-export function headerLine(now = new Date(), firstName = '') {
-  return {
-    date: localeDate(now, { weekday: 'short', day: 'numeric', month: 'short' }),
-    hello: `Bonjour${firstName ? ` ${firstName}` : ''}`,
-  }
+export function headerLine(now = new Date()) {
+  const date = localeDate(now, { weekday: 'long', day: 'numeric', month: 'long' })
+  return { date: date.charAt(0).toUpperCase() + date.slice(1) }
 }
 
 /**

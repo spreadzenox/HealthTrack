@@ -1,0 +1,121 @@
+/* Bandeau d'ajout de l'Accueil (AUJ-1, revue design du 07/11). */
+.add-strip {
+  margin: 4px 0 16px;
+}
+
+.add-strip-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  grid-auto-flow: column;
+  gap: 8px;
+}
+
+.add-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 64px;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  cursor: pointer;
+}
+
+.add-chip .line-icon { color: var(--color-ink-2); }
+
+/* Repas : l'action principale, en émeraude plein. */
+.add-chip.is-meal {
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+}
+.add-chip.is-meal .line-icon { color: var(--color-on-brand); }
+
+.add-chip.is-wellbeing { background: var(--mint-bg); }
+.add-chip.is-wellbeing .line-icon { color: var(--mint-label); }
+
+.add-chip.is-digestion { background: var(--peach-bg); }
+.add-chip.is-digestion .line-icon { color: var(--peach-label); }
+
+/* Cigarette (compteur actif) : une case du bandeau comme les autres. */
+.add-chip-slot .cigarette-quick-add { position: relative; height: 100%; }
+.add-chip-slot .btn.dashboard-cigarette-btn {
+  width: 100%;
+  height: 100%;
+  min-height: 64px;
+  margin: 0;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.add-chip-slot .cigarette-quick-add-ok,
+.add-chip-slot .cigarette-quick-add-error {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -18px;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.add-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.add-sheet-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-ink-2);
+  cursor: pointer;
+}
+
+/* La carte digestive garde son style, sans double cadre dans la fenêtre. */
+.add-sheet .today-card {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.add-sheet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 16px;
+  border-radius: 18px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Le titre est celui de la fenêtre : pas de second « Ma digestion » ni de bouton « détails » dans la fenêtre. */
+.add-sheet .today-card-head { display: none; }

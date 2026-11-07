@@ -76,14 +76,17 @@ describe('Dashboard', () => {
 
   it('renders the « Aujourd’hui » header and, without any data, the introduction', async () => {
     renderDashboard()
-    // Date et « Bonjour » sur deux lignes, sans « · » (retours du testeur du 06/11)
-    expect(screen.getByText('Bonjour')).toHaveClass('today-hello')
-    expect(document.querySelector('.today-dateline').textContent).not.toMatch(/·|Bonjour/)
-    // TESTEUR-1c : sans lecture ni note, « Votre journée : pas encore d'avis » ; on note dans « Noter » (TESTEUR-1d)
+    // Nouvel écran du 07/11 : la date seule, sans « Bonjour », puis le bandeau d'ajout juste dessous
+    const date = screen.getByRole('heading', { level: 1 })
+    expect(date.textContent).not.toMatch(/·|Bonjour/)
+    expect(screen.queryByText(/Bonjour/)).toBeNull()
+    const strip = screen.getByRole('region', { name: 'Ajouter' })
+    expect(date.compareDocumentPosition(strip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    // TESTEUR-1c : sans lecture ni note, « Votre journée : pas encore d'avis » ; on ajoute dans le bandeau
     expect(await screen.findByRole('heading', { level: 2, name: /Votre journée.*Pas encore d’avis/ })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Noter comment je me sens' })).not.toBeInTheDocument()
-    const noter = screen.getByRole('region', { name: 'Noter' })
-    fireEvent.click(within(noter).getByRole('button', { name: /Mon bien-être/ }))
+    expect(screen.queryByRole('region', { name: 'Noter' })).toBeNull()
+    fireEvent.click(within(strip).getByRole('button', { name: 'Bien-être' }))
     expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
     const intro = await screen.findByText(/ce qui va avec vos bons et mauvais jours/i)
     // Une seule phrase (VC-26) ; les sources se branchent pendant l'accueil, plus de ligne « Pas et nuits… »
@@ -97,7 +100,7 @@ describe('Dashboard', () => {
     expect(screen.queryByRole('link', { name: /dans le Journal/ })).not.toBeInTheDocument()
   })
 
-  it('montre les données du jour par source, la carte ventre, la carte pistes et « Photo du repas » ouvre l’appareil photo puis les repas', async () => {
+  it('montre les données du jour par source, la carte pistes, et « Repas » ouvre l’appareil photo puis les repas', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([
       { id: 1, type: 'steps', source: 'health_connect', at: new Date().toISOString(), payload: { value: 4321, period: 'day' } },
@@ -108,10 +111,9 @@ describe('Dashboard', () => {
     expect(screen.getByRole('region', { name: 'Téléphone' })).toHaveTextContent('Pas')
     expect(screen.queryByRole('region', { name: 'Montre' })).toBeNull()
     expect(screen.getByRole('link', { name: /Ajouter une montre/ })).toHaveAttribute('href', '/connectors')
-    expect(screen.getByTestId('gut-card')).toBeInTheDocument()
     expect(screen.getByTestId('pistes-card')).toBeInTheDocument()
     // TESTEUR-4b : le bouton est le libellé d'un champ photo arrière ; la photo prise part vers Repas.
-    const photo = screen.getByRole('button', { name: 'Photo du repas' })
+    const photo = screen.getByRole('button', { name: 'Repas' })
     const input = document.getElementById(photo.getAttribute('for'))
     expect(input).toHaveAttribute('capture', 'environment')
     expect(navigateMock).not.toHaveBeenCalled()
@@ -122,7 +124,7 @@ describe('Dashboard', () => {
     expect(takePendingMealPhoto()).toBe(file)
   })
 
-  it('objectif « énergie et sommeil » : pas de carte ventre (POL-4), la carte des pistes parle sommeil (I155)', async () => {
+  it('objectif « énergie et sommeil » : la carte des pistes parle sommeil (I155) ; la digestion reste dans le bandeau', async () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'energy' }))
     renderDashboard()
     const pistes = await screen.findByTestId('pistes-card')
@@ -131,31 +133,15 @@ describe('Dashboard', () => {
     localStorage.removeItem('healthtrack_onboarding')
   })
 
-  it('objectif « tout comprendre » : pas de carte ventre (POL-4)', async () => {
-    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'all' }))
+  it('« Digestion » (bandeau) ouvre « Ma digestion » dans une fenêtre, sans carte « Mon ventre » sur l’écran (07/11)', async () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
     renderDashboard()
     await screen.findByTestId('pistes-card')
     expect(screen.queryByTestId('gut-card')).not.toBeInTheDocument()
-    localStorage.removeItem('healthtrack_onboarding')
-  })
-
-  it('objectif « Mon ventre » : la carte ventre, toujours, dans « Noter » après les pistes (TESTEUR-1d)', async () => {
-    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
-    renderDashboard()
-    const pistes = await screen.findByTestId('pistes-card')
-    const gut = screen.getByTestId('gut-card')
-    expect(pistes).toHaveAttribute('data-focus', 'gut')
-    expect(gut).toHaveAttribute('data-only-if-used', 'false')
-    expect(screen.getByRole('region', { name: 'Noter' })).toContainElement(gut)
-    expect(pistes.compareDocumentPosition(gut) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    localStorage.removeItem('healthtrack_onboarding')
-  })
-
-  it('aucun objectif (installation d’avant l’onboarding) : la carte ventre seulement si le ventre est noté', async () => {
-    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'existing', goal: null }))
-    renderDashboard()
-    await screen.findByTestId('pistes-card')
-    expect(screen.getByTestId('gut-card')).toHaveAttribute('data-only-if-used', 'true')
+    expect(screen.queryByText('Mon ventre')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Digestion' }))
+    const dialog = screen.getByRole('dialog', { name: 'Ma digestion' })
+    expect(within(dialog).getByTestId('gut-card')).toBeInTheDocument()
     localStorage.removeItem('healthtrack_onboarding')
   })
 
@@ -196,15 +182,16 @@ describe('Dashboard', () => {
     expect(screen.queryByText(/ce qui va avec vos bons et mauvais jours/i)).not.toBeInTheDocument()
   })
 
-  it('un seul geste sous les cartes : « Photo du repas » (la note manuelle est dans la carte bien-être, POL-3)', async () => {
+  it('un seul endroit pour ajouter : le bandeau, plus de section « Noter » ni de « Photo du repas » en bas', async () => {
     renderDashboard()
-    expect(screen.getByRole('button', { name: 'Photo du repas' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Repas' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Photo du repas' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Ajouter une note' })).not.toBeInTheDocument()
   })
 
-  it('« Mon bien-être » (section Noter) ouvre la note manuelle (TESTEUR-1d)', async () => {
+  it('« Bien-être » (bandeau) ouvre la note manuelle', async () => {
     renderDashboard()
-    fireEvent.click(await screen.findByRole('button', { name: /Mon bien-être/ }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Bien-être' }))
     expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
   })
 
@@ -233,7 +220,7 @@ describe('Dashboard', () => {
 
   it('la note manuelle s’ouvre vierge et se ferme', async () => {
     renderDashboard()
-    fireEvent.click(await screen.findByRole('button', { name: /Mon bien-être/ }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Bien-être' }))
     expect(screen.getByRole('dialog')).not.toHaveTextContent('Édition')
     fireEvent.click(screen.getByRole('button', { name: /Fermer/i }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
