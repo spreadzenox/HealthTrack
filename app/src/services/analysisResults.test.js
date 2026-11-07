@@ -169,3 +169,48 @@ describe('contrat des résultats d’Analyses', () => {
     expect(res.outcomes.wellbeing.daysHave).toBe(10)
   })
 })
+
+describe('matrice (ORG-5b)', () => {
+  it('FODMAP par sous-groupe : repas au-dessus du repère comptés par jour', async () => {
+    const { loadNutritionTable } = await import('../data/nutritionTable')
+    await loadNutritionTable()
+    const { buildAnalysisMatrix, factorMeta } = await import('./analysisResults')
+    const entries = [
+      { type: 'food', at: '2026-07-01T12:00:00', payload: { items: [{ ingredient: 'Oignon jaune, cru', quantity_g: 120 }] } },
+      { type: 'food', at: '2026-07-01T19:00:00', payload: { items: [{ ingredient: 'Oignon jaune, cru', quantity_g: 120 }] } },
+      { type: 'food', at: '2026-07-02T12:00:00', payload: { items: [{ ingredient: 'Riz blanc, cuit', quantity_g: 150 }] } },
+    ]
+    const { days } = buildAnalysisMatrix(entries, { today: '2026-07-02' })
+    expect(days.get('2026-07-01').fodmap_fructans).toBe(2)
+    expect(days.get('2026-07-02').fodmap_fructans).toBe(0)
+    expect(factorMeta('fodmap_fructans')).toMatchObject({ theme: 'nutrition', actionable: true, label: 'Fructanes' })
+  })
+
+  it('journée à part : malade ou en voyage', async () => {
+    const { buildAnalysisMatrix } = await import('./analysisResults')
+    const entries = [
+      { type: 'wellbeing', at: '2026-07-01T21:00:00', payload: { score: 2, tags: ['sick'] } },
+      { type: 'wellbeing', at: '2026-07-02T21:00:00', payload: { score: 4 } },
+    ]
+    const { days } = buildAnalysisMatrix(entries, { today: '2026-07-02' })
+    expect(days.get('2026-07-01')._disrupted).toBe(true)
+    expect(days.get('2026-07-02')._disrupted).toBe(false)
+  })
+
+  it('résultat du jour = estimation TS-1, jours notés plus pesants ; digestion sans le bien-être', async () => {
+    const { buildAnalysisMatrix, WEIGHT_RANGE } = await import('./analysisResults')
+    const { entries } = world({ days: 30, gut: true })
+    const { series } = buildAnalysisMatrix(entries, { today: dk(29) })
+    expect(series.wellbeing.size).toBe(30)
+    expect(series.weights.wellbeing.size).toBe(30)
+    for (const w of series.weights.wellbeing.values()) {
+      expect(w).toBeGreaterThanOrEqual(WEIGHT_RANGE[0])
+      expect(w).toBeLessThanOrEqual(WEIGHT_RANGE[1])
+    }
+    // Retirer toutes les notes de bien-être ne change pas la série digestive (règle 5).
+    const noWb = entries.filter((e) => e.type !== 'wellbeing')
+    const a = [...series.digestion.values()]
+    const b = [...buildAnalysisMatrix(noWb, { today: dk(29) }).series.digestion.values()]
+    expect(b).toEqual(a)
+  })
+})
