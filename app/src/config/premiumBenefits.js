@@ -23,8 +23,8 @@ export const PREMIUM_BENEFITS = [
     label: 'Vos pistes personnelles, avec des délais de 2 à 48 h entre repas et digestion',
     playLabel: 'Pistes personnelles avec délais',
     delivered: true,
-    // Pistes repas → ventre d'Analyses (jalon 5), floutées sans premium sur la version Play
-    deliveredBy: 'app/src/components/GutLinks.jsx',
+    // Analyses sur le contrat de la méthode (ORG-4, ORG-6), pistes floutées sans premium sur la version Play
+    deliveredBy: 'app/src/pages/Recommendations.jsx',
   },
   {
     id: 'fodmap',

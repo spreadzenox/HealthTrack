@@ -71,7 +71,7 @@ export default function Trial({ read = readTrialsData, now }) {
       .catch(() => setState(null))
   }, [id, read])
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- chargement asynchrone depuis IndexedDB
+     
     load()
     window.addEventListener('health-entries-updated', load)
     return () => window.removeEventListener('health-entries-updated', load)

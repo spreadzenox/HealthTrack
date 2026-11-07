@@ -15,22 +15,16 @@ import {
   GUT_DAY_SCOPE,
   gutSummary,
   gutWeekLine,
-  pistesProgress,
-  gutNotesProgress,
   PISTES_MIN_DAYS,
   GUT_PISTES_MIN_NOTE_DAYS,
   WHEN_TO_SEE_DOCTOR,
 } from '../services/today'
 import DetailsToggle from './DetailsToggle'
 import { FEATURES } from '../config/distribution'
-import { useEntitlement } from '../hooks/useEntitlement'
-import { gutCardMode } from '../settings/onboarding'
-import { pisteTouchingToday, readPistesSummary } from '../services/pistesSummary'
 import GutEveningReminder from './GutEveningReminder'
 import StoolLine from './StoolLine'
 import LineIcon from './LineIcon'
 import { useStackedChoices } from '../hooks/useStackedChoices'
-import { keepWhole } from '../utils/keepWhole'
 import './TodayCards.css'
 import { appLocale, localeDate } from '../i18n/locale.js'
 
@@ -188,164 +182,6 @@ export function GutCard({
       )}
       {details && entries && <p className="today-details-line mono">{gutWeekLine(summary)}</p>}
       {details && <p className="gut-consult-note">{WHEN_TO_SEE_DOCTOR}</p>}
-    </section>
-  )
-}
-
-/** Fenêtre des jours suivis : bornée pour le budget de lectures de l'accueil (perf D2, scripts/perf/budget.json). */
-const TRACKED_WINDOW_DAYS = 42
-
-const readTracked = async () => {
-  const since = new Date(Date.now() - TRACKED_WINDOW_DAYS * DAY_MS).toISOString()
-  const [food, gut] = await Promise.all([
-    listEntries({ type: 'food', since, limit: Infinity }),
-    listEntries({ type: GUT_TYPE, since, limit: Infinity }),
-  ])
-  return [...food, ...gut]
-}
-
-// Objectif « énergie et sommeil » : les nuits (une de plus pour celle qui finit le premier jour) et le bien-être
-const readTrackedEnergy = async () => {
-  const since = new Date(Date.now() - TRACKED_WINDOW_DAYS * DAY_MS).toISOString()
-  const sleepSince = new Date(Date.now() - (TRACKED_WINDOW_DAYS + 1) * DAY_MS).toISOString()
-  const [sleep, notes, faces] = await Promise.all([
-    listEntries({ type: 'sleep', since: sleepSince, limit: Infinity }),
-    listEntries({ type: 'wellbeing', since, limit: Infinity }),
-    listEntries({ type: 'face_burst', since, limit: Infinity }),
-  ])
-  return [...sleep, ...notes, ...faces]
-}
-
-const PISTES_TEXT = {
-  // Carte ventre montrée : le compte des notes du ventre, celui de l'onglet Ventre (revue du 06/11)
-  gut: {
-    title: 'Vos analyses digestives arrivent dans',
-    explain: `${APP_NAME} cherchera quels repas reviennent avant vos gênes digestives.`,
-    count: 'jours avec une note digestive',
-    bar: 'Jours de notes digestives',
-    ready: 'Aucune piste pour l’instant : elles se précisent à chaque note digestive',
-    details: 'Délais testés : 0–4 h, 4–24 h, 24–48 h après le repas ; le jour même ou la veille pour le bilan du soir',
-    minimum: `minimum ${GUT_PISTES_MIN_NOTE_DAYS} jours de notes digestives`,
-  },
-  // Carte ventre masquée (autre objectif) : les repas seuls, sans parler du ventre
-  meals: {
-    title: 'Vos analyses arrivent dans',
-    explain: `${APP_NAME} cherchera ce qui revient avant vos bons et vos mauvais jours.`,
-    count: 'jours avec un repas',
-    bar: 'Jours suivis',
-    ready: 'Aucune piste pour l’instant : elles se précisent à chaque jour suivi',
-    details: 'Vos repas sont comparés à votre bien-être des heures et des jours qui suivent',
-    minimum: `minimum ${PISTES_MIN_DAYS} jours suivis`,
-  },
-  energy: {
-    title: 'Vos analyses arrivent dans',
-    explain: `${APP_NAME} cherchera comment vos nuits vont avec votre bien-être du lendemain.`,
-    count: 'nuits suivies d’une mesure du bien-être',
-    bar: 'Jours suivis',
-    ready: 'Les pistes sommeil → bien-être arrivent dans une prochaine version',
-    details: 'Vos pistes sommeil → bien-être compareront chaque nuit au bien-être du jour qui suit',
-    minimum: `minimum ${PISTES_MIN_DAYS} jours suivis`,
-  },
-}
-
-/**
- * POL-PLAY-21 : des pistes déjà repérées par Analyses (résumé mémorisé, rien recalculé ici) — leur nombre et la
- * première en une ligne ; toucher la carte ouvre Analyses. Les pistes du ventre restent floues sans premium
- * (version Play), comme dans Analyses.
- */
-function PistesFound({ gut, levers, locked, today = null }) {
-  const count = gut.length + levers.length
-  // TESTEUR-1d-3 : la piste qui touche une mesure du jour passe devant, avec la mesure (pistes du bien-être, jamais floues)
-  const first = today ? today.title : locked ? levers[0] : (gut[0] ?? levers[0])
-  // Retours du 04/11 (4) : la carte ouvre le sous-onglet de la piste annoncée (ventre ou bien-être)
-  const to = gut.length > 0 && (first === gut[0] || !levers.length) ? '/recommendations/ventre' : '/recommendations'
-  return (
-    <Link to={to} className="today-card pistes-card pistes-card--found" data-tone={to === '/recommendations' ? 'mint' : 'peach'} aria-labelledby="pistes-card-title">
-      <div className="today-card-head">
-        <h3 id="pistes-card-title" className="today-card-title">
-          {count} {count > 1 ? 'pistes repérées' : 'piste repérée'}
-        </h3>
-        <span className="pistes-card-chevron" aria-hidden="true">›</span>
-      </div>
-      {first ? (
-        <p className="pistes-first">{first}</p>
-      ) : (
-        <p className="pistes-first pistes-first--locked">
-          <span className="pistes-first-blur" aria-hidden="true" />
-          <span className="pistes-premium-tag mono">premium</span>
-        </p>
-      )}
-      {today && <p className="pistes-today">Aujourd’hui : {today.today}.</p>}
-      <p className="today-card-text">
-        {count > 1 ? 'Touchez pour voir le détail et comment les vérifier.' : 'Touchez pour voir le détail et comment la vérifier.'}
-      </p>
-    </Link>
-  )
-}
-
-/**
- * Carte lilas : jours suivis avant les pistes (pas de piste tant que le hasard domine).
- * `todayChanges` : les écarts de « Ce qui change aujourd'hui » (dayDeviations), pour citer la piste qui touche le jour.
- */
-export function PistesTeaser({
-  details, onToggleDetails, focus = 'gut', read, onPistesPage = false, extraDetail = null, todayChanges = null,
-}) {
-  const entries = useEntries(read || (focus === 'energy' ? readTrackedEnergy : readTracked))
-  const [summary] = useState(() => (onPistesPage ? null : readPistesSummary()))
-  const [ent] = useEntitlement()
-  if (entries === null) return null
-  if (summary) {
-    const gut = gutCardMode() !== 'hide' ? summary.gut : []
-    if (gut.length + summary.levers.length > 0) {
-      const locked = gut.length > 0 && FEATURES.billing && !ent.premium
-      return <PistesFound gut={gut} levers={summary.levers} locked={locked} today={pisteTouchingToday(summary, todayChanges)} />
-    }
-  }
-  // Objectif ventre avec la carte ventre : les pistes repas → ventre ne dépendent que des notes du ventre (chaque jour
-  // noté est aussi un jour suivi) ; un seul compte à rebours, le même que l'onglet Ventre d'Analyses
-  const kind = focus === 'energy' ? 'energy' : gutCardMode() !== 'hide' ? 'gut' : 'meals'
-  const bar = kind === 'gut'
-    ? gutNotesProgress(entries)
-    : pistesProgress(kind === 'meals' ? entries.filter((e) => e.type !== GUT_TYPE) : entries, focus)
-  const text = PISTES_TEXT[kind]
-  const title = bar.ready
-    ? 'Assez de jours pour chercher des pistes'
-    : `${text.title} ${bar.remaining} jour${bar.remaining > 1 ? 's' : ''}`
-  return (
-    <section className="today-card pistes-card" data-tone={kind === 'energy' ? 'mint' : 'peach'} aria-labelledby="pistes-card-title">
-      <div className="today-card-head">
-        <h3 id="pistes-card-title" className="today-card-title">{keepWhole(title)}</h3>
-        <DetailsToggle on={details} onToggle={onToggleDetails} />
-      </div>
-      {/* Ce que les analyses cherchent, en une phrase (retours du testeur du 06/11 : « piste » n'était pas compris) */}
-      {!bar.ready && <p className="today-card-text">{text.explain}</p>}
-      <div
-        className="pistes-progress"
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={bar.target}
-        aria-valuenow={bar.days}
-        aria-label={text.bar}
-      >
-        <div className="pistes-progress-bar" style={{ width: `${(bar.days / bar.target) * 100}%` }} />
-      </div>
-      <p className="pistes-count">
-        <span className="mono">{bar.days}/{bar.target}</span> {text.count}
-      </p>
-      {/* Avant l'échéance, le compte à rebours suffit : plus de « surtout du hasard » (retours du testeur du 06/11) */}
-      {bar.ready && (
-        <p className="today-card-text">
-          {onPistesPage
-            ? `${text.ready}.`
-            : <>{text.ready}. Voyez <Link to="/recommendations">l’onglet Analyses</Link>.</>}
-        </p>
-      )}
-      {details && (
-        <p className="today-details-line mono">
-          {text.details}. Comparaisons multiples corrigées (Benjamini-Hochberg), {text.minimum}.
-        </p>
-      )}
-      {details && extraDetail && <p className="today-details-line mono">{extraDetail}</p>}
     </section>
   )
 }
