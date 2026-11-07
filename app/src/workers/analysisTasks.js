@@ -20,6 +20,7 @@ import { mealHoursEffect } from '../services/mood/mealHours'
 import { wellbeingWeeks } from '../services/mood/wellbeingWeeks'
 import { computeAnalysisResults, contributionsByDay } from '../services/analysisResults'
 import { estimateStatesFromEntries } from '../services/method/stateSpace'
+import { changesFromEntries } from '../services/method/changes'
 
 export const ANALYSIS_TASKS = {
   /** Accueil — « Prédiction du jour ». */
@@ -59,6 +60,11 @@ export const ANALYSIS_TASKS = {
    * 7 jours à venir, courbe digestive montrée ou non, note à demander ou non.
    */
   dayStates: async () => estimateStatesFromEntries(await listEntriesForAnalysis()),
+  /**
+   * TS-2 — Changements durables par courbe (Tendances, vue Mois ; rapport médecin) : date, niveaux avant et après.
+   * « Au même moment » : `sameTime` ; norme des écarts : `normStart` (services/method/changes.js).
+   */
+  changes: async () => changesFromEntries(await listEntriesForAnalysis()),
   /** Analyses — onglet « Analyse avancée ». */
   advancedAnalysis: async () => {
     const entries = await listEntriesForAnalysis()
