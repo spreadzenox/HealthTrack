@@ -1,4 +1,3 @@
-import { toDisplay } from '../services/mood/wellbeingScale'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GOALS, TRACKS, defaultTracks, loadOnboarding, saveOnboarding, finishOnboarding, markScreenSeen } from '../settings/onboarding'
@@ -18,6 +17,9 @@ import LineIcon from '../components/LineIcon'
 import { APP_NAME } from '../config/brand'
 import './Onboarding.css'
 import { appLocale } from '../i18n/locale.js'
+import { getApproxPosition } from '../services/approxPosition'
+import { enableWeather, getWeatherSettings, syncWeather } from '../services/weatherSync'
+import { NOTE_CHOICES, choiceToScore, toDisplay } from '../services/mood/wellbeingScale'
 import Ordinal from '../components/Ordinal'
 
 const WATCHES = [
@@ -33,7 +35,8 @@ const WATCHES = [
 /**
  * Écrans dans l'ordre (jalon 4a : 1 à 3 ; 4b : Health Connect puis import et « aha », seulement avec une montre
  * Health Connect, le « aha » seulement si l'accès est donné ; 4c : premier geste, puis le paywall soft dans la seule
- * variante play ; 4c-2 : la lecture du visage facultative avant le premier geste, seulement si le téléphone sait la faire).
+ * variante play ; 4c-2 : la lecture du visage facultative avant le premier geste, seulement si le téléphone sait la faire ;
+ * TESTEUR-5a : la position approximative pour la météo, pour que les autorisations soient données avant d'entrer).
  */
 function stepsFor(state) {
   const steps = ['goal', 'tracks', 'watch']
@@ -41,6 +44,7 @@ function stepsFor(state) {
     steps.push('health')
     if (state.health === 'granted') steps.push('aha')
   }
+  steps.push('weather')
   if (isFaceSenseAvailable()) steps.push('face')
   steps.push('gesture')
   if (FEATURES.billing) steps.push('premium')
@@ -524,13 +528,67 @@ function FaceStep({ face, onFace, onPitch, onLater }) {
   )
 }
 
-const WELLBEING_SCORES = [0, 1, 2, 3, 4, 5]
 
 /**
  * Premier geste (écran 8 d'I154), facultatif : selon l'objectif, une note du ventre (entrée `gut`, le premier jour
  * du compteur X/21 des pistes) ou une note de bien-être de 0 à 5 (entrée `wellbeing`, auto-déclaration). Une seule
  * entrée : changer d'avis la modifie.
  */
+/** TESTEUR-5a : la météo s'active pendant l'accueil (position approximative, divulgation d'abord, refus respecté). */
+function WeatherStep({ weather, onWeather }) {
+  const [disclosure, askConsent] = useDisclosure()
+  const [busy, setBusy] = useState(false)
+  const on = weather === 'on' || (weather == null && getWeatherSettings().enabled)
+
+  const allow = async () => {
+    if (!(await askConsent('location'))) {
+      onWeather('declined')
+      return
+    }
+    setBusy(true)
+    try {
+      const pos = await getApproxPosition()
+      enableWeather({ ...pos, name: null })
+      onWeather('on')
+      // Les 3 derniers mois et le jour arrivent en arrière-plan ; un échec se reprend à la prochaine ouverture.
+      syncWeather({ force: true }).catch(() => {})
+    } catch {
+      onWeather('unavailable')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <>
+      {disclosure}
+      <h1 className="onb-title">La météo de votre ville</h1>
+      <p className="onb-lead">Chaque jour, la météo et l’air de votre ville, comparés à votre bien-être.</p>
+      {on ? (
+        <p className="onb-note onb-note-ok" role="status">
+          C’est activé. La météo arrive chaque jour, sans rien saisir.
+        </p>
+      ) : (
+        <>
+          {weather === 'declined' && (
+            <p className="onb-note" role="status">
+              Vous pourrez choisir une ville plus tard dans l’onglet Sources.
+            </p>
+          )}
+          {weather === 'unavailable' && (
+            <p className="onb-note" role="status">
+              Position indisponible. Vous pourrez choisir une ville dans l’onglet Sources.
+            </p>
+          )}
+          <button type="button" className="btn btn-secondary onb-action" onClick={allow} disabled={busy}>
+            {busy ? 'Recherche de la position…' : 'Utiliser ma position approximative'}
+          </button>
+        </>
+      )}
+    </>
+  )
+}
+
 function GestureStep({ goal, gesture, onGesture }) {
   const [error, setError] = useState(false)
   const gut = goal === 'gut'
@@ -539,7 +597,7 @@ function GestureStep({ goal, gesture, onGesture }) {
 
   const record = async (value) => {
     setError(false)
-    const payload = gut ? { level: value } : { score: value }
+    const payload = gut ? { level: value } : { score: choiceToScore(value) }
     try {
       let id = current?.id
       if (id != null) await updateEntry(id, { payload })
@@ -559,7 +617,7 @@ function GestureStep({ goal, gesture, onGesture }) {
       <p className="onb-lead">
         {gut
           ? 'Notez-le d’un geste. Les pistes viennent de ces notes, comparées à vos repas.'
-          : 'Une note de 0 à 5. Elle s’ajoute au bien-être estimé.'}
+          : 'Une note de 1 à 5. Elle s’ajoute au bien-être estimé.'}
       </p>
       {gut ? (
         <div className="onb-gesture" role="group" aria-label="Comment va votre ventre ?">
@@ -578,7 +636,7 @@ function GestureStep({ goal, gesture, onGesture }) {
       ) : (
         <>
           <div className="onb-gesture onb-gesture-scores" role="group" aria-label="Comment vous sentez-vous ?">
-            {WELLBEING_SCORES.map((n) => (
+            {NOTE_CHOICES.map((n) => (
               <button
                 key={n}
                 type="button"
@@ -591,7 +649,7 @@ function GestureStep({ goal, gesture, onGesture }) {
               </button>
             ))}
           </div>
-          <p className="onb-fine mono">0 = très mal · 5 = très bien</p>
+          <p className="onb-fine mono">1 = très mal, 5 = très bien</p>
         </>
       )}
       {current && (
@@ -613,7 +671,8 @@ function GestureStep({ goal, gesture, onGesture }) {
 
 /**
  * Onboarding du premier lancement (jalon 4, journal/IDEES.md I154) : plein écran, sans barre d'onglets, reprend à
- * l'écran où la personne s'était arrêtée. Aucune autorisation ni notification demandée dans ces écrans.
+ * l'écran où la personne s'était arrêtée. Les autorisations (Health Connect, position, caméra) y sont proposées, chacune
+ * après sa divulgation et facultative (TESTEUR-5a) ; aucune notification.
  */
 export default function Onboarding() {
   const navigate = useNavigate()
@@ -703,6 +762,7 @@ export default function Onboarding() {
         {step === 'aha' && (
           <AhaStep imported={!!state.imported} onImported={() => update({ imported: true })} onReady={() => setAhaReady(true)} />
         )}
+        {step === 'weather' && <WeatherStep weather={state.weather} onWeather={(weather) => update({ weather })} />}
         {step === 'face' && (
           <FaceStep
             face={state.face}

@@ -32,7 +32,7 @@ describe('Onboarding (jalon 4a)', () => {
     expect(screen.getByRole('radio', { name: /Tout comprendre de mes données/ })).toBeInTheDocument()
     expect(screen.getByText(/18 ans ou plus/)).toBeInTheDocument()
     expect(screen.getByText(/Local par défaut/)).toBeInTheDocument()
-    expect(screen.getByText('01/06')).toBeInTheDocument()
+    expect(screen.getByText('01/07')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Passer' })).not.toBeInTheDocument()
     expect(cont()).toBeDisabled()
   })
@@ -68,7 +68,7 @@ describe('Onboarding (jalon 4a)', () => {
 
   it('note les écrans vus pour le diagnostic local (I156)', () => {
     renderAt()
-    expect(loadOnboarding()).toMatchObject({ seen: ['goal'], lastScreen: 'goal', screens: 4 })
+    expect(loadOnboarding()).toMatchObject({ seen: ['goal'], lastScreen: 'goal', screens: 5 })
     fireEvent.click(screen.getByRole('radio', { name: /Mon ventre/ }))
     fireEvent.click(cont())
     expect(loadOnboarding()).toMatchObject({ seen: ['goal', 'tracks'], lastScreen: 'tracks' })
@@ -97,6 +97,8 @@ describe('Onboarding (jalon 4a)', () => {
     expect(cont()).toBeDisabled()
     fireEvent.click(screen.getByRole('radio', { name: /Pas de montre/ }))
     fireEvent.click(cont())
+    expect(screen.getByRole('heading', { name: 'La météo de votre ville' })).toBeInTheDocument()
+    fireEvent.click(cont())
     expect(screen.getByRole('heading', { name: 'Comment va votre ventre ?' })).toBeInTheDocument()
     fireEvent.click(cont())
     expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
@@ -106,7 +108,7 @@ describe('Onboarding (jalon 4a)', () => {
       goal: 'gut',
       watch: 'none',
       tracks: ['gut', 'meals', 'sleep', 'wellbeing'],
-      maxStep: 3,
+      maxStep: 4,
     })
   })
 
@@ -116,6 +118,7 @@ describe('Onboarding (jalon 4a)', () => {
     fireEvent.click(screen.getByRole('radio', { name: /compatible Huawei/ }))
     fireEvent.click(cont())
     fireEvent.click(cont())
+    fireEvent.click(cont())
     expect(await screen.findByText('Page Sources')).toBeInTheDocument()
   })
 
@@ -123,7 +126,7 @@ describe('Onboarding (jalon 4a)', () => {
     saveOnboarding({ goal: 'gut', step: 1 })
     renderAt()
     expect(screen.getByRole('heading', { name: 'Que voulez-vous suivre ?' })).toBeInTheDocument()
-    expect(screen.getByText('02/06')).toBeInTheDocument()
+    expect(screen.getByText('02/07')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Retour' }))
     expect(screen.getByRole('radio', { name: /Mon ventre/ })).toBeChecked()
   })
@@ -131,10 +134,10 @@ describe('Onboarding (jalon 4a)', () => {
   it('le compteur ne grimpe jamais : il compte d’abord les écrans d’une montre Health Connect, puis baisse (POL-PLAY-61)', () => {
     saveOnboarding({ goal: 'gut', step: 2 })
     renderAt()
-    expect(screen.getByText('03/06')).toBeInTheDocument()
+    expect(screen.getByText('03/07')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('radio', { name: /Pas de montre/ }))
-    expect(screen.getByText('03/04')).toBeInTheDocument()
-    expect(screen.getByRole('progressbar', { name: 'Avancement' })).toHaveAttribute('aria-valuemax', '4')
+    expect(screen.getByText('03/05')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Avancement' })).toHaveAttribute('aria-valuemax', '5')
   })
 
   it('« Passer » termine l’onboarding sans rien demander', async () => {
