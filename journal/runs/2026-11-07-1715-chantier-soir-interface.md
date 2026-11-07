@@ -1,4 +1,4 @@
-# Run du 07/11 17:15 → 21:00 — chantier du soir, session « interface »
+# Run du 07/11 17:15 → 20:26 — chantier du soir, session « interface »
 
 **Déclencheur** : demande du propriétaire du 07/11 vers 17:15 (« tout ce qu'on a vu mis en place sur Android et sur
 iOS avant ce soir minuit »). Session « interface » (tout ce qui se voit) ; la session « méthode » livre en parallèle

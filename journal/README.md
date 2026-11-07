@@ -15,7 +15,7 @@
 > groupe « Testeurs Halcya » et à l'examen bêta, par la CI ; si sa clé n'a pas ce droit, elle vous écrira le geste exact).
 > Rien à faire de votre côté. Au passage à l'heure d'été (fin mars), l'heure de l'envoi sera recalée par la routine.
 
-> 🌙 **Chantier du soir (07/11) — voie « interface »** (tout ce qui se voit ; session « interface », de 17:15 à 21:00).
+> 🌙 **Chantier du soir (07/11) — voie « interface »** (tout ce qui se voit ; session « interface », de 17:15 à 20:26).
 > **Livré ce soir** (une étape = une PR mergée, tests, build, captures et budget de lectures verts) :
 > - **Aujourd'hui** : « ventre » devient « digestion » partout, fiche du Store comprise (AUJ-7, #785) ; une couleur par
 >   thème, bleu nuit pour le sommeil, rose framboise pour le corps, gris pour le contexte (AUJ-8, #788) ; calibration
@@ -252,7 +252,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
-| 07/11 17:15 → 21:00 — [Chantier du soir, interface](runs/2026-11-07-1715-chantier-soir-interface.md) | 🎨 | AUJ-7, AUJ-8, AUJ-2b, AUJ-3, AUJ-4, AUJ-5, AUJ-6, AUJ-1b, AUJ-4b, AUJ-9, ORG-1, ORG-1b, ORG-2, AUJ-3b, ORG-3, ORG-3b, ORG-3c, ORG-4, ORG-6, ORG-8, TS-2 (affichage), TESTEUR-5a-2, correctif du budget de lectures (#784 à #814). Rien à faire de votre côté |
+| 07/11 17:15 → 20:26 — [Chantier du soir, interface](runs/2026-11-07-1715-chantier-soir-interface.md) | 🎨 | AUJ-7, AUJ-8, AUJ-2b, AUJ-3, AUJ-4, AUJ-5, AUJ-6, AUJ-1b, AUJ-4b, AUJ-9, ORG-1, ORG-1b, ORG-2, AUJ-3b, ORG-3, ORG-3b, ORG-3c, ORG-4, ORG-6, ORG-8, TS-2 (affichage), TESTEUR-5a-2, correctif du budget de lectures (#784 à #814). Rien à faire de votre côté |
 | 07/11 18:50 — [Chantier du soir, méthode (2/2)](runs/2026-11-07-1850-methode-soir-2.md) | 🧮 | ORG-5c (#797), ORG-5d (#799), contributions du jour (#801), TS-2 et TS-2b (#802), ORG-7. Rien de visible : la session interface s'y branche. Rien à faire de votre côté |
 | 07/11 17:20 — [Chantier du soir, méthode (1/2)](runs/2026-11-07-1720-methode-soir.md) | 🧮 | Contrat des résultats d'Analyses (#786), banc ORG-5a (#790), TS-1 (#792), ORG-5b (#795). Rien de visible. Rien à faire de votre côté |
 | 07/11 17:35 — [Publication quotidienne](runs/2026-11-07-1735-publication-quotidienne.md) | 🔧 | CD-ALPHA-6 : Alpha reçoit chaque soir à 23:45 la dernière version de main prête (plus à chaque merge, plus de délai de 24 h) ; décision iPhone (soumission quotidienne à l'examen bêta) transmise à la routine iOS. Rien à faire de votre côté |
