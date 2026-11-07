@@ -5,9 +5,17 @@
 
 .add-strip-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  grid-auto-columns: minmax(68px, 1fr);
   grid-auto-flow: column;
   gap: 8px;
+  /* Jusqu'à six gestes (AUJ-1b) : au-delà de la largeur de l'écran, le bandeau défile ; le bouton coupé au bord
+     montre qu'il y en a d'autres. */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.add-strip-row::-webkit-scrollbar {
+  display: none;
 }
 
 .add-chip {

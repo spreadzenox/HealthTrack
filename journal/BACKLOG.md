@@ -63,8 +63,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   et gris compris ; `src/theme/themes.js`, `data-tone`, Journal, Sources, Analyses, réintroduction, abonnement)
 
 **Compléments du propriétaire (07/11 vers 16:30)**, à intégrer aux étapes ci-dessus :
-- [ ] AUJ-1b — Photo des selles dans le bandeau d'ajout (geste explicite, analyse IA comme les repas, aucune photo
+- [x] AUJ-1b — Photo des selles dans le bandeau d'ajout (geste explicite, analyse IA comme les repas, aucune photo
   gardée, résultat modifiable, jamais un diagnostic ; retours (7) du 04/11) et un petit « + » dans le bloc digestif.
+  (07/11 19:45 : bouton « Selles » → fenêtre « Photo des selles » (`StoolPhotoLine`, divulgation inchangée) ; la ligne
+  quitte le Journal ; bandeau défilant au-delà de 5 gestes)
 - [ ] AUJ-4b — Bloc digestif : « Vos apports jusqu'ici » après le premier repas du jour, sans rouge ni alerte ; un
   toucher ouvre Journal › Nutrition.
 - [x] AUJ-3 (précision) — l'écart à votre norme sur chaque mesure dès 7 jours d'historique, en reprenant l'affichage

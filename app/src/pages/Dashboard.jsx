@@ -13,6 +13,7 @@ import { localDateKey } from '../services/analysisEngine'
 import { GutCard } from '../components/TodayCards'
 import DigestBlock from '../components/DigestBlock'
 import TodayMeals from '../components/TodayMeals'
+import StoolPhotoLine from '../components/StoolPhotoLine'
 import TodayBySource from '../components/TodayBySource'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { headerLine, measureTiles } from '../services/today'
@@ -105,6 +106,7 @@ export default function Dashboard() {
         onOpenChange={setAddOpen}
         onWellbeing={() => setWellbeingOpen(true)}
         digestion={<GutCard title="Ma digestion" details={details} onToggleDetails={toggleDetails} />}
+        stool={gutMode !== 'hide' ? <StoolPhotoLine /> : null}
         cigarette={!loading && <CigaretteQuickAdd />}
         cigaretteInStrip={!loading && shouldShowCigaretteCounter(entries)}
       />

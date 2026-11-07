@@ -15,6 +15,7 @@ import { localDateKey } from '../services/analysisEngine'
 import { readPistesSummary } from '../services/pistesSummary'
 import GutEveningReminder from './GutEveningReminder'
 import LineIcon from './LineIcon'
+import StripPlus from './StripPlus'
 import { keepWhole } from '../utils/keepWhole'
 import './DigestBlock.css'
 
@@ -104,6 +105,7 @@ export default function DigestBlock({ onNote, read = readGutNotes, summary: summ
       <DayNotes notes={todayNotes} />
       <button type="button" className="digest-note-button" onClick={onNote}>Noter ma digestion</button>
       <GutEveningReminder />
+      <StripPlus label="Ajouter une note digestive ou une photo des selles" />
     </section>
   )
 }
