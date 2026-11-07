@@ -47,11 +47,21 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   « Pas et nuits peuvent venir de votre téléphone ; une montre ajoute le cœur » ; « Vos pistes arrivent dans N jours »
   devient « Vos analyses arrivent dans N jours » (06/11 23:35 ; aussi dans Analyses, sans « 6 dernières semaines » ni
   « surtout du hasard » sur la carte du compte à rebours).
-- [ ] TESTEUR-1b — Maquette (run idées) : statut du jour en tête (« Votre journée : plutôt moyenne » et d'où il vient),
+- [x] TESTEUR-1b — Maquette (run idées) : statut du jour en tête (« Votre journée : plutôt moyenne » et d'où il vient),
   animation chaleureuse originale, puis l'explication, puis les données du jour par source, puis « Noter ».
-- [ ] TESTEUR-1c — Statut du jour en tête de l'Accueil (composant + tests, sans casser les cartes existantes).
-- [ ] TESTEUR-1d — Données du jour regroupées par source (montre, téléphone, noté par vous).
-- [ ] TESTEUR-1e — Petite animation (CSS, respecte « réduire les animations »).
+  (07/11 08:35 : [`maquettes/aujourdhui/`](maquettes/aujourdhui/README.md), HTML aux tokens de l'app, captures
+  avant / après, clair, sombre, premier jour, bonne et difficile ; règle de sens constant écrite ; découpage ci-dessous.)
+- [ ] TESTEUR-1c — `DayStatusCard` en tête de l'Accueil : « Votre journée » + titre (seuils de `daySummaryTitle`),
+  échelle 1 à 5, « D'après… » + étiquettes (lectures, note, ventre si VENTRE-BE-2 l'a compté), « Pas encore d'avis »
+  avec un seul bouton ; remplace le titre et la carte « Bien-être estimé » ; toucher → historique.
+- [ ] TESTEUR-1d — « Vos données du jour » par source (Montre, Téléphone, Noté par vous ; source absente masquée,
+  « Ajouter une montre › » sinon) et section « Noter » unique (Photo du repas, Mon bien-être, Mon ventre si « Mon
+  ventre », Autre chose : selles, cigarette, note libre) ; la carte ventre pêche et les boutons épars disparaissent.
+- [ ] TESTEUR-1d-2 — « Ce qui change aujourd'hui » : `dayDeviations` (médiane 14 j, 3 écarts au plus, aucune couleur
+  de jugement, règle 6) + carte lilas qui explique les analyses (« Halcya cherchera ce qui revient avant vos bons et
+  vos mauvais jours »).
+- [ ] TESTEUR-1e — Animation « horizon qui respire » (CSS, pente selon le statut, immobile avec « réduire les
+  animations », `aria-hidden`).
 
 **(2) Note de bien-être**
 - [x] TESTEUR-2a — Échelle 1 à 5 avec un milieu : migration des anciennes notes 0–5 sans perte (fonction pure,

@@ -85,6 +85,10 @@ fera adapter l'icône : ne pas l'anticiper.
 ## 7. Maquettes validées (structure et textes à reproduire, adaptés aux vraies données)
 
 ### Accueil « Aujourd'hui »
+> ⚠️ Remplacée le 07/11 par la maquette [`maquettes/aujourdhui/`](maquettes/aujourdhui/README.md) (retours du premier
+> testeur : statut du jour en tête, données par source, un seul endroit pour noter, sens constant des couleurs).
+> Ce qui suit est l'historique du 20/10.
+
 - Petite ligne mono « mar. 20 oct. · Bonjour <prénom> » ; titre-résumé en phrase (« Plutôt une bonne journée »).
 - Carte **menthe** « Bien-être estimé » : grand chiffre « 3,4 / 5 » (Figtree 800), écart à la moyenne en mono,
   courbe des 14 derniers jours, « Un peu mieux que votre moyenne des 14 derniers jours. Une estimation, pas un

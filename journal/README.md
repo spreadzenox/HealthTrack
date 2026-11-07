@@ -34,7 +34,14 @@
 > sur 0 à 5, passe aussi à 1 à 5. Suite de (5) : Health Connect proposé aussi sans montre.
 > **À tester** sur votre Galaxy : Accueil → « Noter moi-même » → « Recevoir un rappel », choisissez une heure proche,
 > puis touchez une note dans la notification ; elle apparaît dans l'historique à la prochaine ouverture.
-> Prochaines : une maquette du nouvel écran Aujourd'hui (run idées de 08:35), puis son statut du jour (1c).
+> **Maquette du nouvel écran Aujourd'hui (08:35, run idées)** : [`maquettes/aujourdhui/`](maquettes/aujourdhui/README.md),
+> avec les captures avant / après. En haut, une seule carte « Votre journée : plutôt moyenne », l'échelle 1 à 5 et
+> d'où elle vient (« D'après votre visage ce matin et votre note de 9 h ») ; puis « Ce qui change aujourd'hui » (au
+> plus trois écarts à vos habitudes, sans couleur de jugement) et la carte des analyses qui dit enfin ce qu'elles
+> cherchent ; puis vos données du jour par source (montre, téléphone, noté par vous) ; enfin un seul endroit
+> « Noter ». Animation : un « horizon qui respire » dont la pente suit la journée. Si quelque chose vous déplaît
+> dans la maquette, dites-le avant les runs de code qui suivent.
+> Prochaines : le statut du jour dans l'app (1c), puis les données par source et « Noter » (1d).
 > Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
@@ -152,6 +159,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 08:35 — [Maquette d'Aujourd'hui](runs/2026-11-07-0835-maquette-aujourdhui.md) | 💡 | TESTEUR-1b : maquette du nouvel écran Aujourd'hui (statut du jour en tête et d'où il vient, ce qui change, données par source, un seul endroit pour noter, animation), captures claires, sombres et premier jour ; découpée en 4 runs de code. Rien à faire de votre côté, sauf un avis si la maquette ne vous va pas |
 | 07/11 07:35 — [La météo dès l'accueil](runs/2026-11-07-0735-meteo-accueil.md) | 🎨 | TESTEUR-5a-1 : écran « La météo de votre ville » dans l'accueil (position approximative après divulgation, refus respecté) ; premier geste de l'accueil de 1 à 5 (il était resté sur 0 à 5). |
 | 07/11 06:35 — [Remplir maintenant ou plus tard](runs/2026-11-07-0635-rappel-du-soir.md) | 🎨 | En notant son bien-être, deux choix : « Remplir maintenant » ou « Recevoir un rappel » à l'heure voulue (18 h à 23 h), qui s'arrête d'un geste ; la notification du soir passe aux notes 1 à 5, comme l'app. **À tester** : programmez un rappel proche et notez depuis la notification |
 | 07/11 05:35 — [La note d'abord](runs/2026-11-07-0535-note-dabord.md) | 🎨 | En notant son bien-être, on ne voit d'abord que les cinq notes ; précisions (stress, alcool, café, repas tardif, écran tard en tête) et phrase apparaissent une fois la note choisie ; la ligne sur la phrase dictée tient en une phrase. Rien à faire de votre côté |
