@@ -169,6 +169,9 @@ résultat (règle 5).
 Règles : le bien-être n'est jamais un facteur, ni la digestion ; la digestion n'apprend que de l'information
 digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est un facteur (`isEstimatorInput`).
 
+> **07/11 (chantier du soir, interface)** : la revue design du 07/11 est livrée côté écrans (Aujourd'hui, Agir, Journal
+> › Tendances, Analyses ; détail dans le résumé de la semaine). Aucune nouvelle action du propriétaire.
+
 ## 4. Actions du propriétaire (jamais faites par la routine) — la plus débloquante d'abord
 
 - ~~**P47 (06/11 07:40, 🚨 BLOQUANT : GitHub Actions arrêté)**~~ **levée le 06/11 vers 07:30 UTC** (checks de #748 relancés à 07:33, tous verts ; rien à faire sauf e-mail de GitHub sur un paiement en échec). Énoncé d'origine : depuis le 06/11 ~06:40 UTC, GitHub refuse de lancer
