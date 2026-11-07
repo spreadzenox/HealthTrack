@@ -140,6 +140,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     pesants, poids bornés à [1/4, 4]) ; FODMAP par sous-groupe comme facteurs (`fodmap_fructans`… : repas du jour
     au-dessus du repère) ; contrôle « journée à part » (malade ou voyage, déclaré ou fuseau changé) avec la semaine et la
     tendance ; moindres carrés pondérés.
+  - [x] ORG-5c (07/11, chantier du soir) : modèle linéaire régularisé par résultat (`services/method/ridgeModel.js`) :
+    courte liste par personne (les candidats les plus nets, ≤ 1 pour 8 jours et ≤ 12, sans doublons corrélés à > 0,9),
+    ridge pondérée avec contrôles non pénalisés, λ par validation croisée par semaines ; stabilité par bootstrap des
+    semaines (« net » = Holm et signe tenu dans ≥ 85 % des rééchantillonnages ; fourchette 2,5–97,5 %) ;
+    `beatsPersistence` (prévision des semaines mises de côté contre « demain = aujourd'hui »). Banc (100 jeux) : faux
+    liens 0 à 3 % ; fort court terme 65 % à 70 j, 90 % à 120 j ; moyen terme 57 % à 120 j ; digestion forte 72 % à 90 j.
 - [ ] ORG-6 — Résultats d'Analyses : « Pistes à tester » (2 ou 3 liens nets sur ce qu'on peut changer, « Essayer dans
   Agir ») puis « Ce qui pèse sur votre bien-être » : Court / Moyen / Long terme, barres de part et d'autre de zéro en
   points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,
