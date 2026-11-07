@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Trends from './Trends'
 
@@ -80,7 +80,8 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(detail).toHaveTextContent('Plus de tristesse')
     expect(within(detail).getByRole('img', { name: 'Humeur et éveil : 2 lectures' })).toBeInTheDocument()
     expect(detail).toHaveTextContent('Éveil plutôt calme, moins que d’habitude')
-    const weigh = within(detail).getByRole('region', { name: 'Ce qui a pu peser ce jour-là' })
+    // contributions lues au premier jour touché (budget de lectures)
+    const weigh = await within(detail).findByRole('region', { name: 'Ce qui a pu peser ce jour-là' })
     expect(within(weigh).getByText('Sommeil').closest('li')).toHaveAttribute('data-tone', 'night')
     expect(weigh).toHaveTextContent('−0,4')
     expect(detail.textContent).not.toMatch(/diagnostic|cause/i)
@@ -89,7 +90,8 @@ describe('Journal › Tendances (ORG-3)', () => {
   it('TS-2 : vue Mois, repère « changement » avec niveau avant et après et « Au même moment », jamais de cause', async () => {
     renderAt('/tendances')
     fireEvent.click(await screen.findByRole('button', { name: 'Mois' }))
-    expect(document.querySelectorAll('.trends-change')).toHaveLength(1)
+    // changements lus à la première vue Mois (budget de lectures)
+    await waitFor(() => expect(document.querySelectorAll('.trends-change')).toHaveLength(1))
     fireEvent.click(screen.getByRole('button', { name: 'dimanche 25 octobre' }))
     const detail = screen.getByRole('group', { name: /Détail du dimanche 25 octobre/ })
     expect(detail).toHaveTextContent('Changement durable : bien-être')

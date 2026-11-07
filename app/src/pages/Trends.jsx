@@ -44,22 +44,46 @@ export default function Trends({
   const asked = params.get('mesure')
   const [period, setPeriod] = useState(params.get('vue') === 'jour' ? 'day' : 'week')
   const [data, setData] = useState(null)
+  // Budget de lectures (perf D2) : à l'ouverture, seulement l'estimation TS-1 ; les contributions (calcul d'Analyses)
+  // au premier jour touché, les changements durables à la première vue Mois.
+  const [wantContrib, setWantContrib] = useState(false)
+  const [contributions, setContributions] = useState(null)
+  const [changes, setChanges] = useState(null)
   useEffect(() => {
     let alive = true
-    const load = () => Promise.all([readDayStates(), readDays().catch(() => []), readFaceEntries(), readDayContributions(), readDayChanges()])
-      .then(([states, days, face, contributions, changes]) => alive && setData({ states, days, face, contributions, changes }))
+    const load = () => Promise.all([readDayStates(), readDays().catch(() => []), readFaceEntries()])
+      .then(([states, days, face]) => alive && setData({ states, days, face }))
     load()
     window.addEventListener('health-entries-updated', load)
     return () => {
       alive = false
       window.removeEventListener('health-entries-updated', load)
     }
-  }, [readDays, readDayStates, readFaceEntries, readDayContributions, readDayChanges])
+  }, [readDays, readDayStates, readFaceEntries])
+  useEffect(() => {
+    if (!wantContrib) return undefined
+    let alive = true
+    readDayContributions().then((c) => alive && setContributions(c))
+    return () => {
+      alive = false
+    }
+  }, [wantContrib, readDayContributions])
+  useEffect(() => {
+    if (period !== 'month' || changes) return undefined
+    let alive = true
+    readDayChanges().then((c) => alive && setChanges(c ?? {}))
+    return () => {
+      alive = false
+    }
+  }, [period, changes, readDayChanges])
   // Le confort digestif seul affiché : ses contributions ; sinon celles du bien-être
-  const dayExtra = (date, keys) => ({
-    face: dayFaceDetail(data?.face ?? [], date),
-    contributions: data?.contributions?.[keys.includes('wellbeing') || !keys.includes('digestion') ? 'wellbeing' : 'digestion']?.[date] ?? null,
-  })
+  const dayExtra = (date, keys) => {
+    if (!wantContrib) setTimeout(() => setWantContrib(true), 0)
+    return {
+      face: dayFaceDetail(data?.face ?? [], date),
+      contributions: contributions?.[keys.includes('wellbeing') || !keys.includes('digestion') ? 'wellbeing' : 'digestion']?.[date] ?? null,
+    }
+  }
   return (
     <section className="journal-page">
       <JournalTabs />
@@ -73,7 +97,7 @@ export default function Trends({
           onPeriod={setPeriod}
           dayView={<WellbeingHistory embedded initialPeriod="day" now={now} />}
           dayExtra={dayExtra}
-          changes={data.changes}
+          changes={changes}
         />
       ) : (
         <div className="loading"><div className="spinner" aria-hidden /></div>
