@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   daySummaryTitle,
-  dayStatus,
+  dayWellbeing,
   entrySourceLabel,
   formatDelta,
   gutEveningCheck,
@@ -41,36 +41,41 @@ describe('daySummaryTitle', () => {
   })
 })
 
-describe('dayStatus (TESTEUR-1c)', () => {
+describe('dayWellbeing (AUJ-2)', () => {
   const now = new Date(2026, 10, 7, 12, 0)
   const at = (h, m = 0) => new Date(2026, 10, 7, h, m).toISOString()
+  const yesterday = new Date(2026, 10, 6, 20).toISOString()
   const note = (score, iso) => ({ type: 'wellbeing', at: iso, payload: { score } })
 
-  it('trois titres, mêmes seuils que daySummaryTitle, et le segment de l’échelle 1 à 5', () => {
-    const s = (n) => dayStatus({ day: { note: n, readings: 4 }, confidence: 'bonne' }, [], now)
-    expect(s(3.4)).toMatchObject({ level: 'good', title: 'Plutôt bonne', segment: 4, source: 'face' })
-    expect(s(2.5)).toMatchObject({ level: 'medium', title: 'Plutôt moyenne', segment: 3 })
-    expect(s(1.5)).toMatchObject({ level: 'hard', title: 'Plus difficile', segment: 2 })
-    expect(s(0)).toMatchObject({ segment: 1 })
-    expect(s(5)).toMatchObject({ segment: 5 })
-    expect(s(2.5).from).toBe('D’après votre visage aujourd’hui.')
-    expect(s(2.5).chips).toEqual(['4 lectures du visage'])
+  it('visage du jour : la valeur sur 1 à 5, le nombre de lectures, les points et la tendance du jour seulement', () => {
+    const data = {
+      est: { day: { note: 3, readings: 4, gut: null }, confidence: 'faible' },
+      today: {
+        points: [{ at: yesterday, note: 1 }, { at: at(8), note: 2.5 }, { at: at(11), note: 3.5 }],
+        trend: [{ at: at(8), note: 2.8 }, { at: at(11), note: 3.2 }],
+      },
+    }
+    const w = dayWellbeing(data, [note(5, at(9))], now)
+    expect(w).toMatchObject({ source: 'face', value: '3,4', from: 'D’après 4 lectures du visage' })
+    expect(w.points).toEqual([{ at: at(8), note: 2.5 }, { at: at(11), note: 3.5 }])
+    expect(w.trend).toHaveLength(2)
+    // Ni verdict ni « estimation prudente »
+    expect(JSON.stringify(w)).not.toMatch(/Plutôt|difficile|prudente/)
   })
 
-  it('étiquettes : une lecture, la note du jour, le ventre seulement s’il a été compté, la prudence', () => {
-    const est = { day: { note: 2.5, readings: 1, gut: { level: 'pain' } }, confidence: 'faible' }
-    const s = dayStatus(est, [note(3.75, at(9)), note(0, at(8, 0))], now)
-    expect(s.chips).toEqual(['1 lecture du visage', 'votre note : 4/5', 'ventre : douleur comptée', 'estimation prudente'])
-    const noGut = dayStatus({ day: { note: 2.5, readings: 2, gut: null }, confidence: 'moyenne' }, [], now)
-    expect(noGut.chips.join(' ')).not.toMatch(/ventre|prudente/)
+  it('une gêne ou une douleur digestive comptée est dite en toutes lettres (VENTRE-BE-2)', () => {
+    const w = (gut, readings = 1) => dayWellbeing({ est: { day: { note: 2.5, readings, gut } } }, [], now).from
+    expect(w({ level: 'pain' })).toBe('D’après 1 lecture du visage et votre douleur digestive')
+    expect(w({ level: 'discomfort' }, 3)).toBe('D’après 3 lectures du visage et votre gêne digestive')
   })
 
-  it('sans lecture du jour : la dernière note du jour, jamais une note d’hier', () => {
-    const s = dayStatus({ day: null, moment: { note: 4.5 } }, [note(1.25, at(9, 5)), note(5, at(7))], now)
-    expect(s).toMatchObject({ level: 'hard', title: 'Plus difficile', segment: 2, source: 'note', chips: [] })
-    expect(s.from).toMatch(/^D’après votre note de 09:05\.$/)
-    const yesterday = note(5, new Date(2026, 10, 6, 20).toISOString())
-    expect(dayStatus(null, [yesterday], now)).toMatchObject({ level: null, title: 'Pas encore d’avis', segment: null })
+  it('sans lecture du jour : les notes du jour en points, la dernière en valeur ; jamais une note d’hier', () => {
+    const w = dayWellbeing({ est: { day: null } }, [note(1.25, at(9, 5)), note(5, at(7))], now)
+    expect(w).toMatchObject({ source: 'note', value: '2', trend: [] })
+    expect(w.from).toMatch(/^Votre dernière note, à 09:05$/)
+    expect(w.points.map((p) => p.note)).toEqual([5, 1.25])
+    expect(dayWellbeing(null, [note(3.75, at(10))], now).from).toMatch(/^Votre note de 10:00$/)
+    expect(dayWellbeing(null, [note(5, yesterday)], now)).toMatchObject({ source: null, value: null, points: [] })
   })
 })
 

@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "Votre bien-être du jour en un coup d'œil",
+  "items": [
+    "Sur l'Accueil, le bloc « Bien-être aujourd'hui » montre la valeur du jour sur 5, le nombre de lectures et la courbe de la journée.",
+    "Sans lecture du visage, il montre vos notes du jour. Touchez-le pour ouvrir l'historique."
+  ]
+}

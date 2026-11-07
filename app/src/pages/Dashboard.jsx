@@ -13,7 +13,6 @@ import { GutCard, PistesTeaser } from '../components/TodayCards'
 import TodayBySource from '../components/TodayBySource'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { headerLine, measureTiles } from '../services/today'
-import { APP_NAME } from '../config/brand'
 import { homeFocus, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
 import AddStrip from '../components/AddStrip'
@@ -110,16 +109,7 @@ export default function Dashboard() {
       />
       <PaymentIssueCard />
       <LaunchEndCard />
-      {/* Présentation utile au premier lancement seulement, en une phrase (VC-26) ; les sources se branchent pendant
-          l'accueil et restent dans l'onglet Sources. */}
-      {!loading && !error && empty && (
-        <p className="dashboard-intro">
-          Notez {focus === 'gut' ? 'vos repas et votre digestion' : 'vos repas'} en un geste : {APP_NAME} vous aide à
-          comprendre ce qui va avec vos bons et mauvais jours.
-        </p>
-      )}
-
-      {/* TESTEUR-1c : le statut du jour remplace le titre et la carte « Bien-être estimé » (détails dans l'historique). */}
+      {/* AUJ-2 : le bien-être du jour (valeur, lectures, courbe) ; détails dans l'historique. */}
       <DayStatusCard data={loading ? undefined : wellbeing} entries={entries}
         onAddManual={() => setWellbeingOpen(true)} unlockReminder={unlockReminder}
         onDismissReminder={closeUnlockReminder} />

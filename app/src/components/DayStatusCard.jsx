@@ -1,32 +1,48 @@
 /**
- * Statut du jour en tête de l'Accueil (TESTEUR-1c, retours du testeur iPhone du 06/11, maquette
- * journal/maquettes/aujourdhui) : « Votre journée » et un titre en deux mots, la place du jour sur l'échelle 1 à 5,
- * d'où il vient en une phrase et des étiquettes. Carte menthe : c'est du bien-être (règle de sens constant).
- * Toucher le haut de la carte ouvre l'historique du bien-être. Sans lecture ni note du jour : « Pas encore d'avis ».
- * On note dans le bandeau d’ajout en haut (AUJ-1) ; seule la calibration de départ garde son bouton ici.
+ * Bloc « Bien-être aujourd'hui » en tête de l'Accueil (AUJ-2, revue design du 07/11 : montrer la donnée, pas un
+ * verdict). La valeur du jour sur 5, d'où elle vient, et la courbe du jour (points et tendance, sans légende), comme
+ * la vue Jour de l'historique. Carte menthe : c'est du bien-être (règle de sens constant). Toucher le bloc ouvre
+ * l'historique du bien-être. Sans lecture ni note du jour : une phrase qui renvoie au bandeau d'ajout (AUJ-1).
  */
 import { Link } from 'react-router-dom'
-import { dayStatus } from '../services/today'
-import { NOTE_CHOICES } from '../services/mood/wellbeingScale'
+import { dayWellbeing } from '../services/today'
+import { toDisplay } from '../services/mood/wellbeingScale'
 import { StartCalibration, UnlockReminder } from './WellbeingNudges'
 import LineIcon from './LineIcon'
-import DayBreath from './DayBreath'
 import './DayStatusCard.css'
 
-function Scale({ segment }) {
+/** Un graphique à partir de 3 points (leçon 17). */
+const CURVE_MIN_POINTS = 3
+const W = 300
+const H = 64
+const PAD = 6
+
+/** Heure locale décimale (8 h 30 → 8,5). */
+const hourOf = (iso) => { const d = new Date(iso); return d.getHours() + d.getMinutes() / 60 }
+
+/** Courbe du jour : x = l'heure (de 6 h à 23 h au moins), y = 1 à 5 ; ligne du milieu (3) en pointillés. */
+function DayCurve({ points, trend }) {
+  if (points.length < CURVE_MIN_POINTS) return null
+  const hours = points.map((p) => hourOf(p.at))
+  const start = Math.min(6, Math.floor(Math.min(...hours)))
+  const end = Math.max(23, Math.ceil(Math.max(...hours)))
+  const x = (iso) => PAD + ((hourOf(iso) - start) / (end - start)) * (W - 2 * PAD)
+  const y = (note) => PAD + ((5 - toDisplay(note)) / 4) * (H - 2 * PAD)
+  const line = trend.length >= 2 ? trend.map((p, i) => `${i ? 'L' : 'M'}${x(p.at).toFixed(1)},${y(p.note).toFixed(1)}`).join(' ') : null
   return (
-    <div className="day-status-scale" aria-hidden="true">
-      <div className="day-status-segments">
-        {NOTE_CHOICES.map((n) => <span key={n} className={n === segment ? 'is-on' : ''} />)}
-      </div>
-      <div className="day-status-legend mono"><span>1 très bas</span><span>3</span><span>5 très bien</span></div>
-    </div>
+    <svg className="day-curve" viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
+      <line className="day-curve-mid" x1={PAD} x2={W - PAD} y1={H / 2} y2={H / 2} />
+      {line && <path className="day-curve-trend" d={line} />}
+      {points.map((p) => (
+        <circle key={p.at} className="day-curve-dot" cx={x(p.at)} cy={y(p.note)} r="3.5" />
+      ))}
+    </svg>
   )
 }
 
 /**
- * @param {{ data: undefined | null | { est: object | null }, entries?: object[], onAddManual?: () => void,
- *   unlockReminder?: boolean, onDismissReminder?: () => void, now?: Date }} props
+ * @param {{ data: undefined | null | { est: object | null, today?: object }, entries?: object[],
+ *   onAddManual?: () => void, unlockReminder?: boolean, onDismissReminder?: () => void, now?: Date }} props
  *   `data` : undefined pendant la lecture du visage, null sans aucune lecture.
  */
 export default function DayStatusCard({
@@ -34,16 +50,11 @@ export default function DayStatusCard({
 }) {
   if (data === undefined) return null
   const est = data?.est ?? null
-  const status = dayStatus(est, entries, now ?? new Date())
+  const w = dayWellbeing(data, entries, now ?? new Date())
   const reminder = unlockReminder && <UnlockReminder onDismiss={onDismissReminder} />
-  const heading = (
-    <h2 id="day-status-title" className="day-status-heading">
-      <span className="day-status-label">Votre journée</span>
-      <span className="day-status-title">{status.title}</span>
-    </h2>
-  )
+  const heading = <h2 id="day-status-title" className="day-status-label">Bien-être aujourd’hui</h2>
 
-  if (!status.level) {
+  if (!w.source) {
     return (
       <section className="today-card mood-estimate day-status is-empty" aria-labelledby="day-status-title">
         {heading}
@@ -55,30 +66,28 @@ export default function DayStatusCard({
                 <Link to="/connectors">à activer dans Sources</Link>.</>}
           </p>
         )}
+        {est?.startCalibration && <StartCalibration cal={est.startCalibration} onAddManual={onAddManual} />}
       </section>
     )
   }
 
   return (
-    <section className={`today-card mood-estimate day-status is-${status.level}`} aria-labelledby="day-status-title">
-      <Link to="/bien-etre" className="day-status-main" aria-describedby="day-status-from">
+    <section className={`today-card mood-estimate day-status is-${w.source}`} aria-labelledby="day-status-title">
+      <Link to="/bien-etre" className="day-status-main" aria-labelledby="day-status-title"
+        aria-describedby="day-status-value day-status-from">
         <div className="day-status-top">
           {heading}
           <LineIcon name="chevron" size={20} className="day-status-chevron" />
         </div>
-        <Scale segment={status.segment} />
-      </Link>
-      <div className="day-status-foot">
-        <div className="day-status-foot-text">
-          <p id="day-status-from" className="day-status-from">{status.from}</p>
-          {status.chips.length > 0 && (
-            <div className="mood-chips">
-              {status.chips.map((c) => <span key={c} className="mood-chip">{c}</span>)}
-            </div>
-          )}
+        <div className="day-status-body">
+          <p id="day-status-value" className="day-status-value">
+            <span className="mono day-status-number">{w.value}</span>
+            <span className="mono day-status-max">/5</span>
+          </p>
+          <p id="day-status-from" className="day-status-from">{w.from}</p>
         </div>
-        <DayBreath level={status.level} />
-      </div>
+        <DayCurve points={w.points} trend={w.trend} />
+      </Link>
       {est?.startCalibration && <StartCalibration cal={est.startCalibration} onAddManual={onAddManual} />}
       {reminder}
     </section>

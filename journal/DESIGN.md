@@ -175,6 +175,18 @@ fera adapter l'icône : ne pas l'anticiper.
     nuit = sommeil** ; une analyse prend la couleur de son thème ; une couleur, un cadre ou une icône ne change jamais
     de sens d'un écran à l'autre. (Remplace « lilas = pistes » du § 2 : migration des tokens en étape AUJ-8.)
 
+13. Un même signe fait toujours la même chose : « › » ouvre une page, le bouton plein est l'action principale, un seul
+    style de bouton d'ajout.
+14. Chaque onglet a une fonction : Journal = voir ce qui s'est passé, Analyses = comprendre (liens statistiques), Agir =
+    agir ; une vue n'est jamais dans deux onglets.
+15. Un seul compte à rebours à la fois : seulement la prochaine étape.
+16. Une information n'a qu'une maison ; les autres écrans y mènent par un lien.
+17. Une fonction n'apparaît que quand elle sert (FODMAP seulement si une analyse le justifie ; un graphique à partir de
+    3 points).
+
+(Leçons 13 à 17 ajoutées au run du 07/11 16:35, revue du 07/11 vers 16:30, avec la nouvelle organisation des onglets :
+`BACKLOG.md`, section « Nouvelle organisation ».)
+
 ### Nouvel écran Aujourd'hui (07/11), de haut en bas
 (1) la date seule ; (2) le bandeau d'ajout, seul vrai endroit pour ajouter (repas en photo, bien-être, digestion,
 cigarette, autre chose) ; (3) le bien-être du jour (courbe simplifiée, moyenne sur 5, nombre de lectures ; toucher →

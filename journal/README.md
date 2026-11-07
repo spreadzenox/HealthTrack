@@ -76,8 +76,13 @@
 > bloc digestif (AUJ-4). La décision « ventre → digestif » et le nom App Store après la soumission sont transmis à la
 > routine iOS. **Première étape (15:35)** : en haut de l'Accueil, la date seule (« Samedi 7 novembre »), puis une
 > rangée de boutons : Repas (appareil photo), Bien-être, Digestion (petite fenêtre Calme / Gêne / Douleur et selles),
-> la cigarette si vous l'utilisez, et Autre chose. La section « Noter » du bas a disparu. Prochaine : le bloc
-> bien-être du jour (courbe, moyenne sur 5, nombre de lectures, sans verdict). Rien à faire de votre côté.
+> la cigarette si vous l'utilisez, et Autre chose. La section « Noter » du bas a disparu. **Deuxième étape (16:35)** :
+> le bloc « Bien-être aujourd'hui » montre la valeur du jour sur 5 (« 3,1 /5 »), « D'après 101 lectures du visage »
+> et la courbe du jour (points et tendance, sans légende) ; plus de « Plutôt moyenne », d'échelle à segments ni
+> d'« estimation prudente ». Sans lecture : vos notes du jour. Toucher le bloc ouvre l'historique. La phrase de
+> présentation du premier lancement a disparu. **Votre revue de 16:30** (nouvelle organisation : Agir, Tendances dans
+> le Journal, nouvelle méthode d'analyse, leçons 13 à 17) est consignée en étapes ORG-1 à ORG-7 et AUJ-1b, 4b, 9 ;
+> elle passe juste après le nouvel écran Aujourd'hui. Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
 > jobs (« account is locked due to a billing issue »). À 07:33 UTC, le run de 08:35 a relancé les checks de la PR #748 :
@@ -194,6 +199,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 16:35 — [Bien-être du jour](runs/2026-11-07-1635-bien-etre-du-jour.md) | 🎨 | Revue de 16:30 consignée (leçons 13 à 17, ORG-1 à ORG-7, compléments AUJ) ; AUJ-2 : le bloc « Bien-être aujourd'hui » montre la valeur sur 5, le nombre de lectures et la courbe du jour, sans verdict ; phrase d'intro retirée. Rien à faire de votre côté |
 | 07/11 15:35 — [Bandeau d'ajout](runs/2026-11-07-1535-bandeau-ajout.md) | 🎨 | Revue design du 07/11 consignée (leçons, AUJ-1 à 8, iOS) ; AUJ-1 : la date seule et le bandeau Repas / Bien-être / Digestion / Autre chose en haut de l'Accueil ; section « Noter » retirée. Rien à faire de votre côté |
 | 07/11 14:35 — [La piste qui touche votre journée](runs/2026-11-07-1435-piste-du-jour.md) | 🎨 | TESTEUR-1d-3 : la carte « N pistes repérées » de l'Accueil cite d'abord la piste qui parle d'une mesure du jour (nuit, pas, écran), avec « Aujourd’hui : nuit plus courte. ». Rien à faire de votre côté |
 | 07/11 13:35 — [Un horizon qui respire](runs/2026-11-07-1335-horizon-respire.md) | 🎨 | TESTEUR-1e : petite animation en bas de la carte « Votre journée » (pente selon la journée, immobile avec « réduire les animations »). Rien à faire de votre côté |
