@@ -31,6 +31,7 @@ import { FODMAP_SUBGROUPS } from './fodmapGroups'
 import { fodmapGroupOf, mealFactors } from './gutWindows'
 import { measuredTagsByDay } from './behaviorTags'
 import { estimateStates, observationsFromEntries } from './method/stateSpace'
+import { STABILITY_MIN, fitOutcomeModel } from './method/ridgeModel'
 import { GUT_TYPE } from './today'
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
@@ -61,6 +62,8 @@ export const CONTRACT_VERSION = 1
  * @property {number} perUnit        points par unité du facteur (pour les contributions)
  * @property {number} center         valeur habituelle du facteur sur cet horizon (moyenne des jours utilisés)
  * @property {number} days           jours utilisés
+ * @property {boolean} [inModel]     ORG-5c : dans le modèle régularisé (effet à autres facteurs égaux)
+ * @property {number|null} [stability]  part des rééchantillonnages par semaines où le signe tient (0 à 1)
  */
 
 /**
@@ -492,6 +495,28 @@ function fitOne(series, days, f, horizon, weights) {
   }
 }
 
+/** Modèle régularisé d'un résultat (ORG-5c) sur les facteurs × horizons triés. */
+function fitModel(ys, days, fitted, weights) {
+  const nums = [...ys.keys()].map(dayNum)
+  const first = Math.min(...nums)
+  const keys = [...ys.keys()]
+  const disrupted = keys.map((dk) => (days.get(dk)?._disrupted ? 1 : 0))
+  const withDisrupted = disrupted.some(Boolean) && !disrupted.every(Boolean)
+  const rows = keys.map((dk, i) => ({
+    dk,
+    num: dayNum(dk),
+    y: ys.get(dk),
+    w: weights?.get(dk) ?? 1,
+    controls: [isWeekendKey(dk) ? 1 : 0, (dayNum(dk) - first) / 100, ...(withDisrupted ? [disrupted[i]] : [])],
+  }))
+  const byId = new Map(HORIZONS.map((h) => [h.id, h]))
+  const valueOf = (id, dk) => {
+    const [key, h] = id.split('|')
+    return windowValue(days, key, dayNum(dk), byId.get(h))
+  }
+  return fitOutcomeModel({ rows, candidates: fitted.map((f) => ({ id: `${f.key}|${f.horizon}`, p: f._p })), valueOf })
+}
+
 /**
  * Résultats d'Analyses, forme stable (voir les typedefs plus haut).
  * @param {object[]} entries  toutes les entrées (listEntriesForAnalysis)
@@ -570,8 +595,23 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
       }
     }
     const qs = holm(fitted.map((f) => f._p))
+    // ORG-5c : les candidats entrent ensemble dans un modèle régularisé ; « net » exige aussi la stabilité.
+    const model = fitted.length ? fitModel(ys, days, fitted, series.weights?.[def.id]) : null
     fitted.forEach((f, i) => {
-      f.net = qs[i] <= NET_MAX_P && (f.low > 0 || f.high < 0)
+      const passed = qs[i] <= NET_MAX_P && (f.low > 0 || f.high < 0)
+      const c = model?.coef.get(`${f.key}|${f.horizon}`)
+      f.inModel = Boolean(c)
+      f.stability = c ? Math.round(c.stability * 100) / 100 : null
+      if (c) {
+        const a = f.usualChange.amount
+        const r2 = (v) => Math.round(v * 100) / 100
+        f.perUnit = c.perUnit
+        f.center = c.mean
+        f.effect = r2(c.perUnit * a)
+        f.low = r2(Math.min(c.low, c.high) * a)
+        f.high = r2(Math.max(c.low, c.high) * a)
+      }
+      f.net = passed && Boolean(c) && c.stability >= STABILITY_MIN && Math.sign(f.effect) !== 0
       delete f._p
       horizons[f.horizon].factors.push(f)
     })
@@ -586,7 +626,7 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
       daysHave,
       daysToFirst: Math.max(0, first - daysHave),
       ...(def.id === 'digestion' ? { symptomDays: series.symptomDays, symptomDaysNeeded: DIGESTION_MIN_SYMPTOM_DAYS } : {}),
-      beatsPersistence: null,
+      beatsPersistence: model ? model.beatsPersistence : null,
       horizons,
     }
   }
