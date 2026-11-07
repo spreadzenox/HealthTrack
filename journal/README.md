@@ -8,6 +8,14 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 📈 **Vos corrections de Tendances (07/11 vers 23:50)** : **T1 livré** (08/11 00:35) : la page s'ouvre sur votre
+> bien-être, en Semaine dès 3 jours de données, sinon en Jour ; sans bien-être, sur la première courbe disponible ; si
+> aucune n'est choisie, les courbes disponibles en gros boutons. Le calcul de l'estimation est attendu avant de choisir
+> (jamais la carte vide). **T2** (vue Jour comme la maquette) au prochain run de code, puis **T3** (captures côte à côte
+> avec la maquette, que j'ai enregistrée en 14 captures dans `journal/maquettes/agir-tendances/`). Vos décisions du
+> 07/11 au soir (mode polish dès le 09/11, intégrations, personas, méta-leçons) sont inscrites (`PRODUIT.md` § 0) et
+> relayées à la routine iOS ; « Personas et matériel » est recopié dans `journal/PERSONAS.md` (lisible en entier).
+
 > 📦 **Les testeurs reçoivent la version du jour chaque soir : Android à 23:45 après l'examen de Google, iPhone après
 > l'examen bêta d'Apple** (votre décision du 07/11 vers 17:30). Android : chaque soir à 23:45, la dernière version de
 > main dont « Build & Release » a réussi part sur Alpha si elle a changé (plus d'envoi à chaque merge, plus de délai de
@@ -258,6 +266,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 00:35 → 01:10 — [Tendances T1, décisions du 07/11 au soir](runs/2026-11-08-0035-tendances-t1.md) | 🎨 | Tendances s'ouvre sur une courbe (bien-être en Semaine dès 3 jours, sinon Jour ; grandes puces sinon) ; décisions (A) à (D) inscrites et relayées à iOS ; maquette « Agir et Tendances » en captures, `PERSONAS.md` recopié |
 | 07/11 21:40 → 22:30 — [Reprise du chantier du soir](runs/2026-11-07-2140-reprise-soir.md) | 🎨 | TS-2 `normStart` dans les écarts du jour (#817) ; bien-être du jour de l'Accueil sur TS-1, VENTRE-BE-2 retiré ; TESTEUR-5a-3 (#818). Budget de lectures vert. Rien à faire de votre côté |
 | 07/11 17:15 → 20:26 — [Chantier du soir, interface](runs/2026-11-07-1715-chantier-soir-interface.md) | 🎨 | AUJ-7, AUJ-8, AUJ-2b, AUJ-3, AUJ-4, AUJ-5, AUJ-6, AUJ-1b, AUJ-4b, AUJ-9, ORG-1, ORG-1b, ORG-2, AUJ-3b, ORG-3, ORG-3b, ORG-3c, ORG-4, ORG-6, ORG-8, TS-2 (affichage), TESTEUR-5a-2, correctif du budget de lectures, nettoyage (#784 à #816). Rien à faire de votre côté |
 | 07/11 20:10 — [Relais iOS : même numéro de version](runs/2026-11-07-2010-relais-ios-version.md) | 🔧 | Votre décision de 19:35 (même numéro de version pour les builds TestFlight pendant un cycle, build qui suit Android, 844.344 inchangée) transmise en tête de `POUR-IOS.md`, appliquée par la routine iOS dès la build de cette nuit. Rien à faire de votre côté |
@@ -410,6 +419,11 @@ Ce dossier appartient à Claude. C'est sa mémoire entre deux exécutions de la 
 autonome (une toutes les 2 h) : chaque exécution démarre sans aucun souvenir et
 **doit lire ce fichier en premier**. Claude peut et doit faire évoluer cette charte
 quand il trouve une meilleure façon de travailler (en le notant dans le compte rendu du run).
+
+**Méta-leçons C — comment travaille la routine** (propriétaire, 07/11 au soir) : 12. Elle ne connaît que le prompt et
+le dépôt. 13. Une spécification vit dans le dépôt, le prompt y renvoie. 14. Les mots exacts du propriétaire passent
+tels quels. 15. Ce qui est remplacé est retiré explicitement. 16. Chaque transmission est vérifiée. 17. Les personas
+simulées (`PERSONAS.md`, `simulations/`) jugent chaque version. Dès le 09/11 : **mode polish** (`PRODUIT.md` § 0).
 
 | Fichier | Rôle |
 |---|---|

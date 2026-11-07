@@ -136,3 +136,18 @@ export function changeMarks(all, keys, dates) {
   }
   return out
 }
+
+/**
+ * Vue à l'ouverture de Tendances (correction T1 du propriétaire, 07/11) : une courbe dès qu'une mesure le peut.
+ * Le bien-être d'abord, en Semaine s'il a au moins 3 jours, sinon en Jour s'il a des lectures ou des notes ; sans
+ * bien-être, la première mesure qui a une courbe. Une demande explicite (`?mesure`, `?vue=jour`) prime.
+ * @param {{ asked?: string|null, askedDay?: boolean, available: string[], hasWellbeing: boolean }} input
+ * @returns {{ period: 'day'|'week', keys: string[] }}
+ */
+export function defaultTrendsView({ asked = null, askedDay = false, available = [], hasWellbeing = false }) {
+  if (askedDay) return { period: 'day', keys: ['wellbeing'] }
+  if (trendMeasure(asked)) return { period: 'week', keys: [asked] }
+  if (available.includes('wellbeing')) return { period: 'week', keys: ['wellbeing'] }
+  if (hasWellbeing) return { period: 'day', keys: ['wellbeing'] }
+  return { period: 'week', keys: available.slice(0, 1) }
+}

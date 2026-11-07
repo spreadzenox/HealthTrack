@@ -107,4 +107,34 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(day).toHaveAttribute('data-period', 'day')
     expect(screen.getByRole('button', { name: 'Jour' })).toHaveAttribute('aria-pressed', 'true')
   })
+
+  // Correction T1 du propriétaire (07/11 vers 23:50) : jamais une carte vide à l'ouverture
+  const renderWith = (path, { st = states, d = days, f = face } = {}) => render(
+    <MemoryRouter initialEntries={[path]}>
+      <Trends now={NOW} readDays={async () => d} readDayStates={async () => st}
+        readFaceEntries={async () => f} readDayContributions={async () => null} readDayChanges={async () => ({})} />
+    </MemoryRouter>,
+  )
+
+  it('T1 : bien-être sur 2 jours seulement → vue Jour à l’ouverture', async () => {
+    const two = { ...states, days: states.days.filter((x) => x.date >= '2026-11-06') }
+    renderWith('/tendances', { st: two })
+    expect(await screen.findByTestId('wb-day')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Jour' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('T1 : sans bien-être, la première mesure qui a une courbe s’affiche en Semaine', async () => {
+    renderWith('/tendances', { st: null, f: [] })
+    expect(await screen.findByRole('img', { name: 'Courbe de Sommeil' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Semaine' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('T1 : mesure demandée sans courbe → les mesures disponibles en grandes puces, sans « Choisissez… avec + »', async () => {
+    renderWith('/tendances?mesure=digestion', { st: null, f: [] })
+    const pick = await screen.findByRole('list', { name: 'Courbes disponibles' })
+    expect(screen.queryByText(/Choisissez une mesure/)).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Ajouter une mesure' })).toBeNull()
+    fireEvent.click(within(pick).getByRole('button', { name: /Pas/ }))
+    expect(screen.getByRole('img', { name: 'Courbe de Pas' })).toBeInTheDocument()
+  })
 })

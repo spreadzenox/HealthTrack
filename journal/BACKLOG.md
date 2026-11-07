@@ -21,6 +21,40 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 📈 Corrections du propriétaire du 07/11 vers 23:50 — Journal › Tendances (v896) — PRIORITÉ DES RUNS DE CODE (seule une CI cassée passe avant)
+
+> Ses mots : « L'onglet tendance je suis pas du tout convaincu en v896. Déjà quand tu cliques dessus tu arrives par
+> défaut sur la vue par semaine. Sur mon screenshot avec très peu de données tu peux voir que l'interface laisse à
+> désirer. Si aucun graph n'est affichable par défaut il faut que le bouton pour en afficher un soit plus gros. » ; vue
+> Jour : « il n'y a que le bonheur qui s'affiche sans le "+" […] c'est pas très clair ». Référence : maquette validée
+> « Agir et Tendances », captures dans `maquettes/agir-tendances/` (chaque capture de l'app y est comparée).
+
+- [x] **T1** ✅ 08/11 00:35 — À l'ouverture, une courbe dès qu'une mesure le peut : bien-être en Semaine s'il a 3 jours,
+  sinon en Jour s'il a des lectures ou des notes ; sans bien-être, la première mesure qui a une courbe ; une demande
+  explicite (`?mesure`, `?vue=jour`) prime (`defaultTrendsView`, `trendsData.js`). Vérifié : la page attend le calcul
+  TS-1 (`getAnalysis('dayStates')` calcule s'il manque) derrière un indicateur d'attente avant de décider, jamais la
+  carte vide ; avec 2 jours de bien-être, TS-1 ne donne que 2 points (< 3), d'où la vue Jour. Aucune mesure choisie :
+  les courbes disponibles en grandes puces (48 px), « Choisissez une mesure avec « + » » retiré.
+- [ ] **T2** — Vue Jour comme la maquette : lectures du jour (points couleur bien-être) et note (losange), sans moyenne
+  en pointillés, sans barres de fourchette par lecture ni légende à cinq entrées ; dessous, le même détail du jour qu'en
+  Semaine et Mois (`TrendsDayDetail` : étoile, Humeur et éveil, Ce qui a pu peser). Retirer explicitement l'ancien détail
+  (curseurs valence / éveil, barres d'expressions, « Fiabilité mesurée… », « pas un diagnostic », « Deux modèles
+  embarqués… ») : `WellbeingHistory` embarqué quitte Tendances. Le « + » reste en Jour ; une mesure sans détail heure
+  par heure y est grisée (« une valeur par jour ») et la toucher passe en Semaine.
+- [ ] **T3** — Captures en tête du résumé : démo et historique presque vide (2 jours), à côté de la maquette.
+
+## 🧭 Décisions du propriétaire du 07/11 au soir (mode polish, intégrations, personas, méta-leçons) — détail : `PRODUIT.md` § 0
+
+- [ ] **POLISH-0** (A) Dès le 09/11 : plus de nouvelle fonction (propositions avec maquette seulement), sauf (B).
+- [ ] **INTEG-1** (B) Garmin et Samsung : inventaire de ce qui arrive par Health Connect, ce qui manque, accès direct
+  possible (API, conditions, rétro-ingénierie propre) ; spécification dans `protocoles/`. Puis INTEG-2 Withings, INTEG-3
+  Huawei (fin du 21/10 sur Android, Health Kit sur iPhone), INTEG-4 Xiaomi.
+- [ ] **PERSONAS-1** (C) Recopier l'artefact « Personas et matériel » dans `PERSONAS.md` ; outillage de simulation
+  (agent visuel seul, captures et clics sur `npm run visual` / Playwright, données de démo J1 / J14 / J45) ; premier
+  passage complet avant l'envoi aux testeurs du 08/11 au soir ; rapports dans `simulations/`.
+- [x] **META-1** (D) ✅ 08/11 00:35 : A en tête de `PRODUIT.md`, B et leçon 18 dans `DESIGN.md` § 9, C dans la charte ;
+  (A) à (D) relayés en tête de `POUR-IOS.md`.
+
 ## 📦 Publication quotidienne aux testeurs (décision du propriétaire du 07/11 vers 17:30)
 
 > « Chaque modification arrive aux testeurs au fur et à mesure, une fois par jour, sur Android comme sur iPhone ; ce

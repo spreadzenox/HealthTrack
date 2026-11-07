@@ -47,3 +47,21 @@ describe('Tendances (ORG-3)', () => {
     expect(canAdd(['wellbeing', 'sleep'], 'steps')).toBe(false)
   })
 })
+
+describe('Vue par défaut de Tendances (correction T1 du 07/11)', () => {
+  it('le bien-être d’abord : Semaine s’il a 3 jours, sinon Jour s’il a des lectures ou des notes', async () => {
+    const { defaultTrendsView } = await import('./trendsData')
+    expect(defaultTrendsView({ available: ['wellbeing', 'steps'], hasWellbeing: true })).toEqual({ period: 'week', keys: ['wellbeing'] })
+    expect(defaultTrendsView({ available: ['steps'], hasWellbeing: true })).toEqual({ period: 'day', keys: ['wellbeing'] })
+  })
+  it('sans bien-être, la première mesure qui a une courbe ; rien : Semaine et aucune mesure', async () => {
+    const { defaultTrendsView } = await import('./trendsData')
+    expect(defaultTrendsView({ available: ['sleep', 'steps'], hasWellbeing: false })).toEqual({ period: 'week', keys: ['sleep'] })
+    expect(defaultTrendsView({ available: [], hasWellbeing: false })).toEqual({ period: 'week', keys: [] })
+  })
+  it('une demande explicite (?mesure, ?vue=jour) prime', async () => {
+    const { defaultTrendsView } = await import('./trendsData')
+    expect(defaultTrendsView({ asked: 'digestion', available: ['wellbeing'], hasWellbeing: true })).toEqual({ period: 'week', keys: ['digestion'] })
+    expect(defaultTrendsView({ askedDay: true, available: ['wellbeing'], hasWellbeing: true })).toEqual({ period: 'day', keys: ['wellbeing'] })
+  })
+})

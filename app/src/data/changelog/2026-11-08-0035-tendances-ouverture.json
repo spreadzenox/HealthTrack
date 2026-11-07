@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-08",
+  "kind": "amélioration",
+  "title": "Tendances s'ouvre sur une courbe",
+  "items": [
+    "Journal › Tendances affiche tout de suite votre bien-être : la semaine s'il y a au moins 3 jours, sinon la journée. Sans bien-être, la première courbe disponible s'affiche.",
+    "Quand aucune courbe n'est choisie, les courbes disponibles apparaissent en gros boutons."
+  ]
+}

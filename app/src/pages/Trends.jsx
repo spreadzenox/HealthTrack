@@ -4,7 +4,7 @@
  * bien-être (ORG-3b : chaque lecture au toucher). « Votre forme », le radar et les comptes à rebours en texte sont
  * retirés de cette page (code gardé). `?mesure=digestion` et `?vue=jour` ouvrent la page réglée (AUJ-9).
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import JournalTabs from '../components/JournalTabs'
 import TrendsViewer from '../components/TrendsViewer'
@@ -12,7 +12,7 @@ import WellbeingHistory from './WellbeingHistory'
 import { getAnalysis } from '../services/analysisRunner'
 import { buildDailyJournal } from '../services/dailyJournal'
 import { listEntries } from '../storage/localHealthStorage'
-import { trendMeasure } from '../services/trendsData'
+import { buildTrendSeries, defaultTrendsView } from '../services/trendsData'
 import { dayFaceDetail } from '../services/trendsDay'
 import { loadFaceMoodEntries } from '../services/mood/faceMoodData'
 
@@ -42,7 +42,8 @@ export default function Trends({
 }) {
   const [params] = useSearchParams()
   const asked = params.get('mesure')
-  const [period, setPeriod] = useState(params.get('vue') === 'jour' ? 'day' : 'week')
+  // Choisie par la personne ; sinon la vue par défaut, décidée une fois les données lues (correction T1)
+  const [chosen, setPeriod] = useState(null)
   const [data, setData] = useState(null)
   // Budget de lectures (perf D2) : à l'ouverture, seulement l'estimation TS-1 ; les contributions (calcul d'Analyses)
   // au premier jour touché, les changements durables à la première vue Mois.
@@ -68,6 +69,15 @@ export default function Trends({
       alive = false
     }
   }, [wantContrib, readDayContributions])
+  // T1 : une courbe dès qu'une mesure le peut. L'estimation TS-1 est attendue (spinner) avant de décider : le
+  // bien-être ne manque jamais seulement parce qu'elle n'est pas encore calculée.
+  const view = useMemo(() => (data ? defaultTrendsView({
+    asked,
+    askedDay: params.get('vue') === 'jour',
+    available: buildTrendSeries({ states: data.states, days: data.days, period: 'week', now: now || new Date() }).available,
+    hasWellbeing: data.face.length > 0 || Boolean(data.states?.days?.some((d) => !d.future && d.observed?.wellbeing)),
+  }) : null), [data, asked, params, now])
+  const period = chosen ?? view?.period ?? 'week'
   useEffect(() => {
     if (period !== 'month' || changes) return undefined
     let alive = true
@@ -92,7 +102,7 @@ export default function Trends({
           states={data.states}
           days={data.days}
           now={now}
-          initialKeys={[trendMeasure(asked) ? asked : 'wellbeing']}
+          initialKeys={view.keys}
           period={period}
           onPeriod={setPeriod}
           dayView={<WellbeingHistory embedded initialPeriod="day" now={now} />}
