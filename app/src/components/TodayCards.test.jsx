@@ -293,6 +293,8 @@ describe('PistesTeaser', () => {
     // Plus de détail technique (« 6 dernières semaines », « surtout du hasard ») : retours du testeur du 06/11
     expect(screen.queryByText(/hasard|semaines/)).not.toBeInTheDocument()
     expect(screen.queryByText(/21/)).not.toBeInTheDocument()
+    // TESTEUR-1d-2 : ce que les analyses cherchent, en une phrase, propre au ventre
+    expect(screen.getByText('Halcya cherchera quels repas reviennent avant vos gênes au ventre.')).toBeInTheDocument()
   })
 
   it('carte ventre masquée (autre objectif) : les jours avec un repas, sans parler du ventre', async () => {
@@ -301,6 +303,7 @@ describe('PistesTeaser', () => {
     expect(await screen.findByText('Vos analyses arrivent dans 18 jours')).toBeInTheDocument()
     expect(screen.getByRole('progressbar', { name: 'Jours suivis' })).toHaveAttribute('aria-valuenow', '3')
     expect(document.querySelector('.pistes-count')).toHaveTextContent('3/21 jours avec un repas')
+    expect(screen.getByText('Halcya cherchera ce qui revient avant vos bons et vos mauvais jours.')).toBeInTheDocument()
     expect(screen.queryByText(/ventre/)).not.toBeInTheDocument()
   })
 

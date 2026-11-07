@@ -4,6 +4,7 @@
  */
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { APP_NAME } from '../config/brand'
 import { createEntry, listEntries } from '../storage/localHealthStorage'
 import {
   GUT_LEVELS,
@@ -219,6 +220,7 @@ const PISTES_TEXT = {
   // Carte ventre montrée : le compte des notes du ventre, celui de l'onglet Ventre (revue du 06/11)
   gut: {
     title: 'Vos analyses du ventre arrivent dans',
+    explain: `${APP_NAME} cherchera quels repas reviennent avant vos gênes au ventre.`,
     count: 'jours avec une note du ventre',
     bar: 'Jours de notes du ventre',
     ready: 'Aucune piste pour l’instant : elles se précisent à chaque note du ventre',
@@ -228,6 +230,7 @@ const PISTES_TEXT = {
   // Carte ventre masquée (autre objectif) : les repas seuls, sans parler du ventre
   meals: {
     title: 'Vos analyses arrivent dans',
+    explain: `${APP_NAME} cherchera ce qui revient avant vos bons et vos mauvais jours.`,
     count: 'jours avec un repas',
     bar: 'Jours suivis',
     ready: 'Aucune piste pour l’instant : elles se précisent à chaque jour suivi',
@@ -236,6 +239,7 @@ const PISTES_TEXT = {
   },
   energy: {
     title: 'Vos analyses arrivent dans',
+    explain: `${APP_NAME} cherchera comment vos nuits vont avec votre bien-être du lendemain.`,
     count: 'nuits suivies d’une mesure du bien-être',
     bar: 'Jours suivis',
     ready: 'Les pistes sommeil → bien-être arrivent dans une prochaine version',
@@ -306,6 +310,8 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
         <h3 id="pistes-card-title" className="today-card-title">{keepWhole(title)}</h3>
         <DetailsToggle on={details} onToggle={onToggleDetails} />
       </div>
+      {/* Ce que les analyses cherchent, en une phrase (retours du testeur du 06/11 : « piste » n'était pas compris) */}
+      {!bar.ready && <p className="today-card-text">{text.explain}</p>}
       <div
         className="pistes-progress"
         role="progressbar"
