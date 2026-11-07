@@ -21,6 +21,29 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 📦 Publication quotidienne aux testeurs (décision du propriétaire du 07/11 vers 17:30)
+
+> « Chaque modification arrive aux testeurs au fur et à mesure, une fois par jour, sur Android comme sur iPhone ; ce
+> soir, la version qui contient le chantier du soir part vers les testeurs des deux plateformes, et de même demain soir. »
+
+- [x] ✅ 07/11 17:35 **CD-ALPHA-6** (Android) : « Play — Alpha (livraison continue) » envoie chaque soir à **23:45,
+  heure de Paris** (cron `45 22 * * *` en UTC, heure d'hiver ; **à recaler en `45 21 * * *` le 28/03/2027** au
+  passage à l'heure d'été) la plus récente version de main dont « Build & Release » (et Tests, émulateurs, Play — AAB)
+  a réussi, si elle a changé depuis le dernier envoi ; une version pas prête cède la place à la précédente prête
+  (`decideNightly`, 7 tests dans `alphaGate.test.mjs`). Plus d'envoi à chaque merge ni à 07:13 ; plus d'espacement de
+  24 h (CD-ALPHA-2 remplacé : le rythme quotidien en tient lieu) ; gel (`review-freeze.json`) et `ALPHA_AUTO` gardés ;
+  `workflow_dispatch` gardé. Le test interne reçoit toujours chaque version.
+- [ ] **CD-ALPHA-7** (suite de CD-ALPHA-6) : la porte de 24 h de la fiche (07:23 UTC) et des abonnements (07:33 UTC)
+  compte encore l'envoi d'Alpha de la veille (≈ 8 h 40 avant) : avec un envoi Alpha chaque soir, leurs changements ne
+  partiraient plus. À régler : les faire partir dans le même créneau du soir que l'alpha (juste avant 23:45), ou ne
+  compter pour eux que leurs propres envois. Vérifier le premier soir (07/11 22:45 UTC) le bilan du workflow.
+- [ ] **CD-ALPHA-8** : veiller à ce que les merges du soir aient fini « Build & Release », les émulateurs et
+  « Play — AAB » avant 22:45 UTC (sinon c'est la version prête précédente qui part ; la suivante part le lendemain).
+- [x] ✅ 07/11 17:35 **IOS-QUOTIDIEN** (relais) : décision transmise en tête de `POUR-IOS.md` (soumission quotidienne
+  de la dernière build TestFlight au groupe externe « Testeurs Halcya » et à l'examen bêta d'Apple, par la CI ; jamais
+  la version de l'App Store ni la build 844.344 ; question du numéro de version constant). Suivi : `POUR-ORCHESTRATEUR.md`
+  du dépôt iOS.
+
 ## 🏠 Nouvel écran Aujourd'hui (revue design du propriétaire du 07/11 vers 15:00) — PRIORITÉ DES RUNS DE CODE
 
 > Remplace TESTEUR-1 (1a à 1e) et les points (3) à (5) du 24/10 15:00. La PR #781 (carte lilas) était déjà mergée à
@@ -477,7 +500,7 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   (`Process: fr.jpesquet.sante` / `com.healthtrack.app` dans le bloc AndroidRuntime) dans `.github/scripts/old-webview/check.sh`.
 - [x] ✅ 05/11 21:35 **CD-ALPHA-5** (run idées du 05/11 20:35, I222 ; aide Google : délai d'examen compté depuis le dernier changement
   envoyé pour **l'app**) : la porte de 24 h tient compte aussi des derniers `play-listing` et `play-subscriptions` réussis,
-  et ces deux workflows attendent eux aussi 24 h après un envoi examiné (report au passage de 07:13 UTC) ; rien envoyé
+  et ces deux workflows attendent eux aussi 24 h après un envoi examiné (report au passage de 07:13 UTC ; alpha à 23:45 Paris depuis CD-ALPHA-6 du 07/11, voir « Publication quotidienne ») ; rien envoyé
   pendant l'examen de la demande de production (P30). Tests dans `alphaGate.test.mjs`.
   → Livré : `reviewGate.mjs` (décision pure, 8 tests) + `reviewIo.mjs` + `review-gate-cli.mjs` ; l'alpha compte les
   derniers envois réussis de la fiche et des abonnements (étape d'envoi réussie, API Actions) ; fiche et abonnements
