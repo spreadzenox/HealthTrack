@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import { eveningNotePlugin } from '../services/eveningNote'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
@@ -28,7 +29,9 @@ export default function Dashboard() {
   const [error, setError] = useState(null)
   const [wellbeingOpen, setWellbeingOpen] = useState(false)
   // Écarts de « Ce qui change aujourd'hui », relus par la carte des analyses (TESTEUR-1d-3)
-  const [addOpen, setAddOpen] = useState(null)
+  // « Noter maintenant » d'Analyses › Digestion arrive ici avec la fenêtre « Ma digestion » ouverte (ORG-4)
+  const location = useLocation()
+  const [addOpen, setAddOpen] = useState(() => (location.state?.open === 'digestion' ? 'digestion' : null))
   const [details, toggleDetails] = useDetailsMode()
   // L'objectif choisi règle l'Accueil : la carte des pistes parle sommeil avec « énergie et sommeil » (I155), la
   // carte ventre n'apparaît qu'avec « Mon ventre » (POL-4 ; aucune note effacée)

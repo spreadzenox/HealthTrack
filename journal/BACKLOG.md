@@ -117,10 +117,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   `services/trendsData.js` sur TS-1 ; sous-onglets soulignés pleine largeur)
 - [x] ORG-3b — L'historique du bien-être fusionne dans Tendances (vue Jour, détail de chaque lecture au toucher :
   matrice des émotions, valence, éveil, qualité ; on descend aussi loin qu'on veut).
-- [ ] ORG-4 — Analyses = Bien-être et Digestion, même structure : retirer l'historique, « Sur quelques semaines »,
+- [x] ORG-4 — Analyses = Bien-être et Digestion, même structure : retirer l'historique, « Sur quelques semaines »,
   « Autres liens repérés », « Bientôt » et l'analyse « dans les heures » ; « Comment c'est calculé » en lien discret en
   bas ; avant les résultats un seul compte à rebours (« Vos premiers résultats arrivent dans N jours », phrase du
-  propriétaire, « Noter maintenant », « Recevoir un rappel »).
+  propriétaire, « Noter maintenant », « Recevoir un rappel »). (07/11 21:00 : `pages/Recommendations.jsx` réécrite sur
+  le contrat `analysisResults`, `services/resultsView.js` ; anciens blocs retirés)
 - [ ] ORG-5 — Méthode (remplace le modèle actuel) : une ligne par jour ; fenêtres court (le jour même avant la mesure et
   la veille), moyen (2 à 6 jours avant), long (7 à 27 jours avant) ; un modèle linéaire régularisé par résultat, avec
   contrôles (jour de la semaine, maladie ou voyage, tendance) et intervalles ; tests par blocs d'une semaine, correction
@@ -161,7 +162,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     du modèle régularisé (coefficient à autres facteurs égaux × écart à la valeur habituelle), horizons d'un même
     facteur additionnés (une barre par facteur) ; `contributionsByDay` les calcule pour chaque jour, rendues par la
     tâche `analysisResults` (champ `contributions[outcome][jour]`) pour « Ce qui a pu peser ce jour-là » de Tendances.
-- [ ] ORG-6 — Résultats d'Analyses : « Pistes à tester » (2 ou 3 liens nets sur ce qu'on peut changer, « Essayer dans
+- [x] ORG-6 — Résultats d'Analyses : « Pistes à tester » (2 ou 3 liens nets sur ce qu'on peut changer, « Essayer dans
   Agir ») puis « Ce qui pèse sur votre bien-être » : Court / Moyen / Long terme, barres de part et d'autre de zéro en
   points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,
   hachurées si pas assez net ; à part « À regarder, pas à changer » (corps, contexte). Déblocage : bien-être 14 / 21 /
