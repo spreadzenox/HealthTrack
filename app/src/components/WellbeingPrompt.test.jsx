@@ -10,6 +10,43 @@ vi.mock('../storage/localHealthStorage', () => ({
   upsertEntries: vi.fn(() => Promise.resolve({ inserted: 1, skipped: 0 })),
 }))
 
+/** TESTEUR-2b : la note d'abord ; les précisions apparaissent ensuite. */
+const pickNote = (n = 3) => fireEvent.click(screen.getByRole('button', { name: new RegExp(`Note ${n} sur 5`) }))
+
+describe('WellbeingPrompt — la note d’abord, les précisions ensuite (TESTEUR-2b)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('montre seulement les cinq notes tant qu’aucune n’est choisie', async () => {
+    render(<WellbeingPrompt open onClose={vi.fn()} />)
+    await screen.findByRole('dialog')
+    expect(screen.queryByRole('button', { name: 'Alcool' })).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/En une phrase/)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Enregistrer/ })).toBeInTheDocument()
+    pickNote(4)
+    expect(screen.getByRole('button', { name: 'Alcool' })).toBeInTheDocument()
+    expect(screen.getByLabelText(/En une phrase/)).toBeInTheDocument()
+  })
+
+  it('propose d’abord stress, alcool, café, repas tardif et écran tard', async () => {
+    render(<WellbeingPrompt open onClose={vi.fn()} />)
+    await screen.findByRole('dialog')
+    pickNote(3)
+    const group = screen.getByRole('group', { name: /Aujourd/ })
+    const labels = [...group.querySelectorAll('button')].map((b) => b.textContent)
+    expect(labels.slice(0, 5)).toEqual(['Stress', 'Alcool', 'Café après 14 h', 'Repas tardif', 'Écran tard'])
+  })
+
+  it('dit en une ligne que la phrase n’est pas gardée', async () => {
+    render(<WellbeingPrompt open onClose={vi.fn()} />)
+    await screen.findByRole('dialog')
+    pickNote(3)
+    expect(screen.getByText('Elle propose des précisions, elle n’est pas gardée.')).toBeInTheDocument()
+    expect(screen.queryByText(/Dictez-la/)).not.toBeInTheDocument()
+  })
+})
+
 describe('WellbeingPrompt (ouverte par l’appelant)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -61,6 +98,7 @@ describe('WellbeingPrompt — behaviour tags', () => {
 
   it('shows optional behaviour tags as toggle buttons', () => {
     render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    pickNote()
     const alcohol = screen.getByRole('button', { name: /Alcool/i })
     expect(alcohol).toHaveAttribute('aria-pressed', 'false')
     fireEvent.click(alcohol)
@@ -87,6 +125,7 @@ describe('WellbeingPrompt — behaviour tags', () => {
     localStorage.setItem('healthtrack_phone_usage', JSON.stringify({ enabled: true }))
     try {
       render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+      pickNote()
       expect(screen.queryByRole('button', { name: /Écran tard/i })).not.toBeInTheDocument()
       expect(screen.getByRole('button', { name: /Alcool/i })).toBeInTheDocument()
       expect(screen.getByText(/Repéré sans vous : Écran tard \(≥ 30 min après 22 h\)/i)).toBeInTheDocument()
@@ -101,6 +140,7 @@ describe('WellbeingPrompt — behaviour tags', () => {
       { id: 9, type: 'activity', source: 'huawei_watch', at: new Date().toISOString(), payload: { workoutType: 'running', durationSeconds: 2400 } },
     ])
     render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    pickNote()
     expect(await screen.findByText(/Sport le soir \(séance après 18 h\)/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Sport le soir/i })).not.toBeInTheDocument()
     expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'activity' }))
@@ -119,6 +159,7 @@ describe('WellbeingPrompt — behaviour tags', () => {
     }
     listEntries.mockImplementation(async ({ type }) => (type === 'food' ? meals : []))
     render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    pickNote()
     expect(await screen.findByText(/Repas tardif \(repas noté après 21 h\)/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Repas tardif/i })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Sport le soir/i })).toBeInTheDocument()
@@ -132,12 +173,14 @@ describe('WellbeingPrompt — behaviour tags', () => {
     const ctx = (d, tz) => ({ id: tz, type: 'context', at: d.toISOString(), payload: { date: key(d), tz, tzOffset: 0 } })
     listEntries.mockImplementation(async ({ type }) => (type === 'context' ? [ctx(yesterday, 'Europe/Paris'), ctx(today, 'Asia/Tokyo')] : []))
     const { unmount } = render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    pickNote()
     expect(await screen.findByText(/Voyage \(fuseau horaire changé aujourd’hui\)/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Voyage/i })).not.toBeInTheDocument()
     unmount()
 
     listEntries.mockImplementation(async ({ type }) => (type === 'context' ? [ctx(yesterday, 'Europe/Paris'), ctx(today, 'Europe/Paris')] : []))
     render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    pickNote()
     await waitFor(() => expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'context' })))
     expect(screen.getByRole('button', { name: /Voyage/i })).toBeInTheDocument()
   })
@@ -146,12 +189,14 @@ describe('WellbeingPrompt — behaviour tags', () => {
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockImplementation(async ({ type }) => (type === 'food' ? [{ id: 1, type: 'food', at: new Date().toISOString(), payload: {} }] : []))
     render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    pickNote()
     await waitFor(() => expect(listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'food' })))
     expect(screen.getByRole('button', { name: /Repas tardif/i })).toBeInTheDocument()
   })
 
   it('still asks for « Sport le soir » when no workout is recorded', async () => {
     render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    pickNote()
     expect(screen.getByRole('button', { name: /Sport le soir/i })).toBeInTheDocument()
     await waitFor(() => expect(screen.getByRole('button', { name: /Sport le soir/i })).toBeInTheDocument())
   })
@@ -169,9 +214,11 @@ describe('WellbeingPrompt — behaviour tags', () => {
 
   it('resets tags when the dialog is reopened', () => {
     const { rerender } = render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    pickNote()
     fireEvent.click(screen.getByRole('button', { name: /Alcool/i }))
     rerender(<WellbeingPrompt open={false} onClose={vi.fn()} />)
     rerender(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+    pickNote()
     expect(screen.getByRole('button', { name: /Alcool/i })).toHaveAttribute('aria-pressed', 'false')
   })
 })
@@ -321,6 +368,7 @@ describe('WellbeingPrompt — note du soir d’un geste (I113)', () => {
     window.__healthtrackFakeEveningNote = plugin
     try {
       render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+      pickNote()
       const toggle = await screen.findByRole('button', { name: /Me la demander le soir/ })
       expect(toggle).toHaveAttribute('aria-pressed', 'false')
       fireEvent.click(toggle)
@@ -338,6 +386,7 @@ describe('WellbeingPrompt — note du soir d’un geste (I113)', () => {
     window.__healthtrackFakeEveningNote = plugin
     try {
       render(<WellbeingPrompt open={true} onClose={vi.fn()} />)
+      pickNote()
       fireEvent.click(await screen.findByRole('button', { name: /Me la demander le soir/ }))
       expect(await screen.findByText(new RegExp(`autorisez-les pour ${APP_NAME} dans les réglages Android`))).toBeInTheDocument()
     } finally {
@@ -356,6 +405,7 @@ describe('WellbeingPrompt — votre journée en une phrase (I119)', () => {
 
   it('propose la note et les tags lus dans la phrase, sans rien cocher d’office', async () => {
     render(<WellbeingPrompt open onClose={() => {}} />)
+    pickNote(1)
     type('Journée crevante mais contente, apéro avec les collègues')
     expect(screen.getByText(/Proposé d’après votre phrase/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Note 3 sur 5/ })).toHaveAttribute('aria-pressed', 'false')
@@ -371,6 +421,7 @@ describe('WellbeingPrompt — votre journée en une phrase (I119)', () => {
     const { createEntry } = await import('../storage/localHealthStorage')
     const onClose = vi.fn()
     render(<WellbeingPrompt open onClose={onClose} />)
+    pickNote(1)
     type('Très heureuse, sport ce soir')
     fireEvent.click(screen.getByRole('button', { name: 'Prendre la note 5' }))
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
@@ -382,6 +433,7 @@ describe('WellbeingPrompt — votre journée en une phrase (I119)', () => {
     localStorage.setItem('healthtrack_phone_usage', JSON.stringify({ enabled: true }))
     try {
       render(<WellbeingPrompt open onClose={() => {}} />)
+      pickNote()
       type('écran tard hier')
       expect(screen.queryByRole('button', { name: /Ajouter le tag Écran tard/ })).not.toBeInTheDocument()
     } finally {

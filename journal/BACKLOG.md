@@ -58,8 +58,11 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   testée sur toutes les valeurs, export/import d'anciens fichiers), estimateur et graphiques recalés. (07/11 04:35 :
   stockage inchangé sur 0–5, aucune donnée réécrite ; `mood/wellbeingScale.js`, affiché = 1 + 0,8 × interne,
   réversible ; saisie à cinq choix stockés 0 / 1,25 / 2,5 / 3,75 / 5 ; tous les affichages convertis.)
-- [ ] TESTEUR-2b — La note d'abord, puis précisions pré-remplies (stress, alcool, café, repas tardif, écran tard) et
-  une phrase libre (précisions = facteurs X, jamais entrées de l'estimateur : règle 5).
+- [x] TESTEUR-2b — La note d'abord, puis précisions pré-remplies (stress, alcool, café, repas tardif, écran tard) et
+  une phrase libre (précisions = facteurs X, jamais entrées de l'estimateur : règle 5). (07/11 05:35 : la fenêtre
+  n'affiche que les cinq notes ; les précisions, rangées stress, alcool, café, repas tardif, écran tard puis les autres,
+  la phrase et le rappel du soir apparaissent une fois la note choisie ; « Dictez-la… » devient une ligne. Tags et
+  stockage inchangés.)
 - [ ] TESTEUR-2c — Notification du soir : deux choix « Remplir maintenant » / « Recevoir un rappel » (heure réglable) ;
   moins de texte (« encore quelques jours de lecture… », « un jour sur trois »).
 
