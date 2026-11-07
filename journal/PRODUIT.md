@@ -136,6 +136,39 @@ roue **Réglages** en haut à droite (Données, Paramètres, Nouveautés). Avant
 Données à ne jamais perdre en masquant : toutes les entrées IndexedDB (repas, bien-être, cigarettes, rafales du
 visage, montre, Health Connect…) restent stockées et exportées même si leur écran est masqué.
 
+## 3 bis. Sources de données classées (ORG-7, 07/11, session « méthode »)
+
+Rôle dans la méthode (ORG-5, `app/src/services/analysisResults.js`) : **résultat** (ce que l'on cherche à expliquer,
+estimé par TS-1), **facteur** (ce qui peut l'expliquer, testé sur trois horizons), **contrôle** (retiré avant de
+comparer, jamais présenté comme un lien), **affichage** (montré, pas analysé). « Agir » = la personne peut le changer
+(« Pistes à tester », Agir) ; sinon « À regarder, pas à changer ». Une source n'a jamais deux rôles pour le même
+résultat (règle 5).
+
+| Source | Fréquence | Rôle | Agir | Thème (couleur) |
+|---|---|---|---|---|
+| Note de bien-être | 0 à 1 par jour | résultat bien-être (précise) | – | bien-être (vert) |
+| Lecture du visage (valence, éveil) | plusieurs par jour | résultat bien-être (moins précise, calibrée par personne) | – | bien-être |
+| Note digestive (calme / gêne / douleur) | 0 à 1 par jour | résultat digestion (échelle ordonnée) | – | digestion (orange) |
+| Selles, type de Bristol (saisie ou photo) | 0 à 3 par jour | résultat digestion (peu précise) | – | digestion |
+| Repas (photo, description) → calories, macros, fibres, sucres, alcool | 0 à 5 par jour | facteur | oui | nutrition (orange) |
+| Repas → FODMAP par sous-groupe (fructanes, GOS, fructose, lactose, sorbitol, mannitol) | par repas | facteur (hypothèse de départ, données personnelles d'abord) | oui | nutrition |
+| Sommeil (durée ; phases et régularité plus tard) | 1 par nuit | facteur | oui | sommeil (bleu nuit) |
+| Pas, calories d'activité, séances | continu, total du jour | facteur | oui | activité (lilas) |
+| Temps d'écran, écran tard, réseaux sociaux | 1 par jour | facteur | oui | contexte (gris) |
+| FC au repos, VFC | 1 par jour (nuit) | facteur | non (à regarder) | corps (framboise) |
+| SpO₂, température, stress montre, respiration | variable | affichage pour l'instant | non | corps |
+| Météo (soleil, température, pression), pollen, qualité de l'air | 1 par jour | facteur | non (à regarder) | contexte |
+| Jour de la semaine, tendance lente | – | contrôle | – | – |
+| Malade, en voyage (déclaré ou fuseau horaire changé) | quelques jours | contrôle (« journée à part ») | – | – |
+| Poids, composition corporelle | rare | affichage | – | corps |
+| Changements durables (TS-2) | – | découpe en périodes (norme, liens, essais) | – | celui de la courbe |
+| À venir : bilans sanguins | quelques fois par an | affichage et rapport médecin ; trop rares pour un facteur quotidien | – | corps |
+| À venir : son ambiant (niveaux sonores seulement, jamais d'audio) | continu | facteur | en partie | contexte |
+| À venir : cycle menstruel | 1 par jour | contrôle ou facteur, à décider | non | corps |
+
+Règles : le bien-être n'est jamais un facteur, ni la digestion ; la digestion n'apprend que de l'information
+digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est un facteur (`isEstimatorInput`).
+
 ## 4. Actions du propriétaire (jamais faites par la routine) — la plus débloquante d'abord
 
 - ~~**P47 (06/11 07:40, 🚨 BLOQUANT : GitHub Actions arrêté)**~~ **levée le 06/11 vers 07:30 UTC** (checks de #748 relancés à 07:33, tous verts ; rien à faire sauf e-mail de GitHub sur un paiement en échec). Énoncé d'origine : depuis le 06/11 ~06:40 UTC, GitHub refuse de lancer

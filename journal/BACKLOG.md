@@ -160,8 +160,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,
   hachurées si pas assez net ; à part « À regarder, pas à changer » (corps, contexte). Déblocage : bien-être 14 / 21 /
   42 jours, digestion 28 / 35 / 56 jours et au moins 5 jours de gêne ou douleur.
-- [ ] ORG-7 — Sources de données classées dans `PRODUIT.md` (fréquence, rôle, possibilité d'agir) ; à venir : bilans
-  sanguins (rares) et son ambiant (niveaux seulement, jamais d'audio).
+- [x] ORG-7 — Sources de données classées dans `PRODUIT.md` (fréquence, rôle, possibilité d'agir) ; à venir : bilans
+  sanguins (rares) et son ambiant (niveaux seulement, jamais d'audio). ✅ 07/11 (chantier du soir) : `PRODUIT.md` § 3 bis, tableau source / fréquence / rôle (résultat, facteur, contrôle,
+  affichage) / agir / thème.
 
 ### Agir, Tendances et séries temporelles (revue design du 07/11 vers 17:00, maquette validée) — fait foi
 
