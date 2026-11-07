@@ -101,6 +101,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     pour une variation habituelle, fourchette à 95 %, « net », thème, possibilité d'agir ; seuils de déblocage d'ORG-6 ;
     contributions du jour (coefficient × écart). Méthode provisoire (pente contrôlée semaine / week-end et tendance,
     échantillon effectif, BH) ; ORG-5c la remplace sans changer la forme. La session interface s'y branche.
+  - [x] ORG-5a (07/11, chantier du soir) : banc de simulation avec vérité connue (`services/method/simulate.js`,
+    `bench.js`, `bench.test.js`) : facteurs autocorrélés, rythme de la semaine, tendance, jours manquants, digestion
+    en échelle ordonnée ; mesure la part des jeux avec au moins un faux lien « net » et la puissance par effet vrai.
+    Le banc a montré que la méthode provisoire laissait passer jusqu'à 60 % de jeux avec un faux lien (BH + échantillon
+    effectif sur la seule veille) : corrigée (Bartlett, Student, Holm, facteur de prudence 1,4 calé au banc). Mesures
+    (200 jeux) : faux liens 0 à 3,5 % selon le scénario ; effet fort court terme retrouvé 60 % à 70 jours, ≥ 80 % à 120 ;
+    moyen terme 26 % à 70 jours ; long terme 3 % (il faut des mois) ; digestion forte 75 % à 90 jours ; règle 5 vérifiée
+    (un facteur du seul bien-être ne sort pas en digestion). Porte d'ORG-5c : faire mieux en puissance sans dépasser 5 %.
 - [ ] ORG-6 — Résultats d'Analyses : « Pistes à tester » (2 ou 3 liens nets sur ce qu'on peut changer, « Essayer dans
   Agir ») puis « Ce qui pèse sur votre bien-être » : Court / Moyen / Long terme, barres de part et d'autre de zéro en
   points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,
