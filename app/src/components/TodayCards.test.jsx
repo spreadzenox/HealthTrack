@@ -257,6 +257,28 @@ describe('PistesTeaser', () => {
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
   })
 
+  it('cite d’abord la piste qui touche une mesure du jour, et la mesure (TESTEUR-1d-3)', async () => {
+    remember({
+      gut: [],
+      levers: ['Plus de protéines → meilleur bien-être', 'Nuits plus longues → meilleur bien-être'],
+      leverVars: ['protein_g', 'sleepMinutes'],
+    })
+    const changes = [{ key: 'sleep', text: 'Nuit plus courte', direction: 'down', score: 2 }]
+    wrap(<PistesTeaser read={async () => [day(0)]} todayChanges={changes} />)
+    expect(await screen.findByText('Nuits plus longues → meilleur bien-être')).toBeInTheDocument()
+    expect(screen.getByText('Aujourd’hui : nuit plus courte.')).toBeInTheDocument()
+    expect(screen.queryByText('Plus de protéines → meilleur bien-être')).not.toBeInTheDocument()
+    expect(screen.getByText('2 pistes repérées').closest('a')).toHaveAttribute('href', '/recommendations')
+  })
+
+  it('sans mesure du jour liée, la première piste comme avant, sans ligne « Aujourd’hui »', async () => {
+    remember({ gut: [], levers: ['Plus de protéines → meilleur bien-être'], leverVars: ['protein_g'] })
+    const changes = [{ key: 'sleep', text: 'Nuit plus courte', direction: 'down', score: 2 }]
+    wrap(<PistesTeaser read={async () => [day(0)]} todayChanges={changes} />)
+    expect(await screen.findByText('Plus de protéines → meilleur bien-être')).toBeInTheDocument()
+    expect(screen.queryByText(/^Aujourd’hui :/)).not.toBeInTheDocument()
+  })
+
   it('les pistes du ventre comptent tant que la carte ventre est montrée', async () => {
     remember({ gut: ['Oignon → ventre'], levers: [] })
     wrap(<PistesTeaser read={async () => [day(0)]} />)

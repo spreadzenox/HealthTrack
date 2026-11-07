@@ -25,6 +25,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [wellbeingOpen, setWellbeingOpen] = useState(false)
+  // Écarts de « Ce qui change aujourd'hui », relus par la carte des analyses (TESTEUR-1d-3)
+  const [dayChanges, setDayChanges] = useState(null)
   const [details, toggleDetails] = useDetailsMode()
   // L'objectif choisi règle l'Accueil : la carte des pistes parle sommeil avec « énergie et sommeil » (I155), la
   // carte ventre n'apparaît qu'avec « Mon ventre » (POL-4 ; aucune note effacée)
@@ -117,8 +119,8 @@ export default function Dashboard() {
         onDismissReminder={closeUnlockReminder} />
       {/* Ordre de la maquette du 07/11 : statut, ce qui change, analyses, données du jour, puis un seul endroit pour
           noter (TESTEUR-1d). */}
-      {!loading && !error && !empty && <DayChanges />}
-      <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} />
+      {!loading && !error && !empty && <DayChanges onItems={setDayChanges} />}
+      <PistesTeaser focus={focus} details={details} onToggleDetails={toggleDetails} todayChanges={dayChanges} />
       {!loading && !error && (
         <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} showGut={gutMode !== 'hide'} />
       )}

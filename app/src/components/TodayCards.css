@@ -510,6 +510,12 @@
   color: var(--lilac-text);
 }
 
+.pistes-today {
+  margin: 4px 0 0;
+  font-size: 0.95rem;
+  color: var(--lilac-text);
+}
+
 .pistes-first--locked {
   display: flex;
   align-items: center;

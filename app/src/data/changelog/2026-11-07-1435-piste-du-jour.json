@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "La piste qui touche votre journée",
+  "items": [
+    "Quand une de vos pistes parle d'une mesure qui change aujourd'hui (nuit, pas, temps d'écran), la carte des analyses de l'Accueil la cite en premier.",
+    "Une ligne dit ce qui a changé, par exemple « Aujourd'hui : nuit plus courte »."
+  ]
+}

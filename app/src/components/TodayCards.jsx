@@ -25,7 +25,7 @@ import DetailsToggle from './DetailsToggle'
 import { FEATURES } from '../config/distribution'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { gutCardMode } from '../settings/onboarding'
-import { readPistesSummary } from '../services/pistesSummary'
+import { pisteTouchingToday, readPistesSummary } from '../services/pistesSummary'
 import GutEveningReminder from './GutEveningReminder'
 import StoolLine from './StoolLine'
 import LineIcon from './LineIcon'
@@ -253,9 +253,10 @@ const PISTES_TEXT = {
  * première en une ligne ; toucher la carte ouvre Analyses. Les pistes du ventre restent floues sans premium
  * (version Play), comme dans Analyses.
  */
-function PistesFound({ gut, levers, locked }) {
+function PistesFound({ gut, levers, locked, today = null }) {
   const count = gut.length + levers.length
-  const first = locked ? levers[0] : (gut[0] ?? levers[0])
+  // TESTEUR-1d-3 : la piste qui touche une mesure du jour passe devant, avec la mesure (pistes du bien-être, jamais floues)
+  const first = today ? today.title : locked ? levers[0] : (gut[0] ?? levers[0])
   // Retours du 04/11 (4) : la carte ouvre le sous-onglet de la piste annoncée (ventre ou bien-être)
   const to = gut.length > 0 && (first === gut[0] || !levers.length) ? '/recommendations/ventre' : '/recommendations'
   return (
@@ -274,6 +275,7 @@ function PistesFound({ gut, levers, locked }) {
           <span className="pistes-premium-tag mono">premium</span>
         </p>
       )}
+      {today && <p className="pistes-today">Aujourd’hui : {today.today}.</p>}
       <p className="today-card-text">
         {count > 1 ? 'Touchez pour voir le détail et comment les vérifier.' : 'Touchez pour voir le détail et comment la vérifier.'}
       </p>
@@ -281,8 +283,13 @@ function PistesFound({ gut, levers, locked }) {
   )
 }
 
-/** Carte lilas : jours suivis avant les pistes (pas de piste tant que le hasard domine). */
-export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, onPistesPage = false, extraDetail = null }) {
+/**
+ * Carte lilas : jours suivis avant les pistes (pas de piste tant que le hasard domine).
+ * `todayChanges` : les écarts de « Ce qui change aujourd'hui » (dayDeviations), pour citer la piste qui touche le jour.
+ */
+export function PistesTeaser({
+  details, onToggleDetails, focus = 'gut', read, onPistesPage = false, extraDetail = null, todayChanges = null,
+}) {
   const entries = useEntries(read || (focus === 'energy' ? readTrackedEnergy : readTracked))
   const [summary] = useState(() => (onPistesPage ? null : readPistesSummary()))
   const [ent] = useEntitlement()
@@ -291,7 +298,7 @@ export function PistesTeaser({ details, onToggleDetails, focus = 'gut', read, on
     const gut = gutCardMode() !== 'hide' ? summary.gut : []
     if (gut.length + summary.levers.length > 0) {
       const locked = gut.length > 0 && FEATURES.billing && !ent.premium
-      return <PistesFound gut={gut} levers={summary.levers} locked={locked} />
+      return <PistesFound gut={gut} levers={summary.levers} locked={locked} today={pisteTouchingToday(summary, todayChanges)} />
     }
   }
   // Objectif ventre avec la carte ventre : les pistes repas → ventre ne dépendent que des notes du ventre (chaque jour

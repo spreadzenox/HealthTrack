@@ -26,6 +26,8 @@
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *   npm run visual -- --routes=/ --calibration  # notes de bien-être d'hier seulement : calibration de départ
  *                                          en cours (BE-BIAIS-2, 1 jour sur 3, note du jour demandée)
+ *   npm run visual -- --routes=/ --pistes-summary   # pistes déjà repérées : la carte lilas cite celle qui touche
+ *                                          une mesure du jour (TESTEUR-1d-3) ; =short-night : nuit de 5 h 20
  *   npm run visual -- --routes=/bien-etre --face-dense --click=Jour  # aujourd'hui, une lecture du visage toutes
  *                                          les 6 min depuis 7 h (déverrouillages fréquents) : vue Jour par heure (I83)
  *   npm run visual -- --routes=/recommendations --gut-links  # bilans du soir du ventre : une piste repas → ventre
@@ -603,6 +605,17 @@ async function main() {
         }
       }, bannerMode)
     }
+    if (args['pistes-summary'] !== undefined) {
+      // Pistes déjà repérées par Analyses (résumé mémorisé, TESTEUR-1d-3) : la carte lilas de l'Accueil cite celle qui
+      // touche une mesure du jour (nuit, pas ou écran, selon les écarts des données de démo)
+      await context.addInitScript(() => localStorage.setItem('healthtrack_pistes_summary', JSON.stringify({
+        gut: [],
+        levers: ['Plus de protéines → meilleur bien-être', 'Nuits plus longues → meilleur bien-être',
+          'Plus de pas → meilleur bien-être', 'Moins de temps d’écran → meilleur bien-être'],
+        leverVars: ['protein_g', 'sleepMinutes', 'steps', 'screen_minutes'],
+        at: new Date().toISOString(),
+      })))
+    }
     if (args.play && args['launch-ended'] !== undefined) {
       // Dernière fin de période retenue par l'app, passée de N jours (le relais ne la renvoie plus après la fin)
       const last = new Date(Date.now() - Number(args['launch-ended']) * 86_400_000).toISOString()
@@ -1159,6 +1172,12 @@ async function main() {
       const yesterday = new Date(); yesterday.setHours(0, 0, 0, 0); yesterday.setDate(yesterday.getDate() - 1)
       const today = new Date(); today.setHours(0, 0, 0, 0)
       entries = entries.filter((e) => e.type !== 'wellbeing' || (new Date(e.at) >= yesterday && new Date(e.at) < today))
+    }
+    if (args['pistes-summary'] === 'short-night') {
+      // La nuit qui finit aujourd'hui raccourcie à 5 h 20 : « Nuit plus courte » touche la piste des nuits (TESTEUR-1d-3)
+      const start = new Date(); start.setHours(0, 0, 0, 0)
+      entries = entries.map((e) => (e.type === 'sleep' && new Date(e.payload?.endDate) >= start
+        ? { ...e, payload: { ...e.payload, durationMinutes: 320 } } : e))
     }
     if (args['face-dense']) {
       // Déverrouillages fréquents : la première lecture du jour recopiée toutes les 6 min depuis 7 h, valence en

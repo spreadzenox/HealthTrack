@@ -81,8 +81,10 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   vos mauvais jours »). (07/11 12:35 : `services/dayDeviations.js` + `components/DayChanges.jsx` ; sommeil, VFC nuit,
   FC au repos, pas, écran ; au moins 7 jours passés ; seuil 1,5 écart absolu médian avec minimum par mesure ; cumuls
   « en moins » seulement après 21 h ; phrase lilas propre à l'objectif ; 548 lectures à l'Accueil sur 3 ans.)
-- [ ] TESTEUR-1d-3 — Carte lilas, analyses prêtes : la piste la plus solide qui touche une mesure du jour (« Les nuits
-  courtes vont souvent avec… », à confirmer), lien vers Analyses.
+- [x] TESTEUR-1d-3 — Carte lilas, analyses prêtes : la piste la plus solide qui touche une mesure du jour (« Les nuits
+  courtes vont souvent avec… », à confirmer), lien vers Analyses. (07/11 14:35 : `leverVars` dans le résumé des pistes,
+  `pisteTouchingToday` (nuits, pas, écran ; VFC et FC jamais), écarts transmis par `DayChanges` ; la piste liée passe
+  devant avec « Aujourd’hui : nuit plus courte. » ; sinon la carte est inchangée.)
 - [x] TESTEUR-1e — Animation « horizon qui respire » (CSS, pente selon le statut, immobile avec « réduire les
   animations », `aria-hidden`). (07/11 13:35 : `components/DayBreath.{jsx,css}`, en bas à droite de la carte, à côté
   de « D'après… » : en haut à droite, elle faisait passer « Plutôt moyenne » sur deux lignes.)
