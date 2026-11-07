@@ -146,6 +146,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     semaines (« net » = Holm et signe tenu dans ≥ 85 % des rééchantillonnages ; fourchette 2,5–97,5 %) ;
     `beatsPersistence` (prévision des semaines mises de côté contre « demain = aujourd'hui »). Banc (100 jeux) : faux
     liens 0 à 3 % ; fort court terme 65 % à 70 j, 90 % à 120 j ; moyen terme 57 % à 120 j ; digestion forte 72 % à 90 j.
+  - [x] ORG-5d (07/11, chantier du soir) : la méthode est derrière le contrat (`method: 'org5'`) ; tâches du worker
+    d'analyse `analysisResults` (contrat, seuils de déblocage d'ORG-6) et `dayStates` (TS-1 : estimation, fourchette,
+    attendu, courbe digestive, note à demander), en cache comme les autres (fidélité JSON vérifiée). Pour l'interface :
+    `getAnalysis('analysisResults')`, `getAnalysis('dayStates')` (`services/analysisRunner.js`).
 - [ ] ORG-6 — Résultats d'Analyses : « Pistes à tester » (2 ou 3 liens nets sur ce qu'on peut changer, « Essayer dans
   Agir ») puis « Ce qui pèse sur votre bien-être » : Court / Moyen / Long terme, barres de part et d'autre de zéro en
   points de bien-être pour une variation habituelle (« pour 50 min de sommeil de plus »), fourchette, couleur du thème,

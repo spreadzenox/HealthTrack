@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  CONTRACT_VERSION, DIGESTION_MIN_SYMPTOM_DAYS, FACTORS, FACTOR_KEYS_KNOWN, HORIZONS, OUTCOMES, UNLOCK_DAYS,
+  CONTRACT_VERSION, DIGESTION_MIN_SYMPTOM_DAYS, FACTORS, factorKeysKnown, HORIZONS, OUTCOMES, UNLOCK_DAYS,
   computeAnalysisResults, dayContributions, outcomeSeries,
 } from './analysisResults'
 import { isEstimatorInput } from './mood/estimatorInputs'
@@ -49,7 +49,7 @@ describe('contrat des résultats d’Analyses', () => {
     const { entries, now } = world({ days: 10 })
     const res = computeAnalysisResults(entries, { now })
     expect(res.contractVersion).toBe(CONTRACT_VERSION)
-    expect(res.method).toBe('provisional')
+    expect(res.method).toBe('org5')
     expect(Object.keys(res.outcomes)).toEqual(OUTCOMES.map((o) => o.id))
     for (const o of Object.values(res.outcomes)) {
       expect(Object.keys(o.horizons)).toEqual(HORIZONS.map((h) => h.id))
@@ -144,7 +144,7 @@ describe('contrat des résultats d’Analyses', () => {
   }, 120_000)
 
   it('aucun facteur n’est le bien-être, le ventre ou une entrée de l’estimateur', () => {
-    expect(FACTOR_KEYS_KNOWN).toBe(true)
+    expect(factorKeysKnown()).toBe(true)
     for (const f of FACTORS) {
       expect(isEstimatorInput(f.key)).toBe(false)
       expect(f.key).not.toMatch(/wellbeing|gut|mood/)
