@@ -149,7 +149,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   éloigne (9 jours sur 14), « Vous vous éloignez de cette habitude » avec « Relancer le test » et « Supprimer cette
   habitude », au plus une fois par mois et par habitude, effacé dès qu'elle reprend. Les essais vont dans le rapport
   médecin.
-- [ ] TS-1 — **Un seul modèle à espace d'états** pour le bien-être et le confort digestif (avant ORG-5d : les analyses
+- [x] TS-1 — **Un seul modèle à espace d'états** pour le bien-être et le confort digestif (avant ORG-5d : les analyses
   prennent l'estimation du jour et sa fourchette) : deux états cachés par jour, chacun = tendance lente + rythme de la
   semaine + écart du jour ; écarts corrélés entre les deux (lien appris sur les jours où les deux sont connus, rétréci
   vers une valeur prudente commune) ; observations : notes de bien-être et lectures du visage (le même objet, précisions
@@ -161,6 +161,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   n'apprennent que de l'information digestive ; le banc vérifie qu'un facteur qui ne touche que le bien-être ne devient
   pas un facteur digestif. Aucun texte visible ne dit qu'une estimation est « dégradée » ou moins bonne faute de notes.
   (Session méthode.)
+  ✅ 07/11 (chantier du soir) : `services/method/stateSpace.js` (`estimateStates`, `estimateStatesFromEntries`) :
+  filtre de Kalman + lissage RTS sur 4 états (tendances et écarts du jour liés), paramètres appris par personne
+  (précision du visage, écarts du jour, lien rétréci vers 0,3 sur 20 jours), rythme de la semaine dès 21 jours ;
+  fourchette à 80 % ; attendu des 7 jours à venir ; `digestionOwn` (sans rien du bien-être, seule série digestive des
+  analyses) ; `showDigestiveCurve` (validation par blocs d'une semaine contre la moyenne) ; `noteRequest` (jours parmi
+  les 30 % plus incertains des 4 dernières semaines). Banc : 9 à 10 sur 10 mieux que le visage seul, couverture de la
+  fourchette entre 65 et 95 %, règle 5 ≤ 5 %. VENTRE-BE-2 reste en place dans l'affichage du jour jusqu'à ce que
+  l'interface prenne l'estimation TS-1 (ORG-5d branche déjà les analyses dessus).
 - [ ] TS-2 — **Changements durables** : bien-être, confort digestif, sommeil, VFC, FC au repos, pas, écran, une fois le
   rythme de la semaine retiré ; un saut de niveau, au moins 7 jours de chaque côté, au moins une demi-variation
   habituelle, confirmé 7 jours après ; seuil calé sur le banc (moins d'une fausse alerte par courbe et par semestre).
