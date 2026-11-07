@@ -20,7 +20,7 @@ describe('keepWhole', () => {
   })
 
   it('laisse un texte sans trait d’union tel quel', () => {
-    expect(keepWhole('Vos pistes du ventre arrivent dans 3 jours')).toBe('Vos pistes du ventre arrivent dans 3 jours')
+    expect(keepWhole('Vos pistes digestives arrivent dans 3 jours')).toBe('Vos pistes digestives arrivent dans 3 jours')
     expect(keepWhole('')).toBe('')
     expect(keepWhole('2026-11-06')).toBe('2026-11-06')
   })

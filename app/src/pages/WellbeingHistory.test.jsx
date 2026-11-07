@@ -316,11 +316,11 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
 
 describe('ReadingDetail — ressenti du ventre (VENTRE-BE-2)', () => {
   const point = { at: '2026-11-04T19:00:00.000Z', date: '2026-11-04', note: 2.9, readings: 3, detail: { readings: 3, poor: 0, valence: 0.2, arousal: 0, expressions: null } }
-  it('dit quand une note du ventre a fait baisser la note du jour', () => {
+  it('dit quand une note digestive a fait baisser la note du jour', () => {
     render(<ReadingDetail point={{ ...point, detail: { ...point.detail, gut: { level: 'pain', shift: -0.5 } } }} period="week" onClose={() => {}} />)
-    expect(screen.getByText('Douleur au ventre notée ce jour-là : la note baisse de 0,4.')).toBeInTheDocument()
+    expect(screen.getByText('Douleur digestive notée ce jour-là : la note baisse de 0,4.')).toBeInTheDocument()
   })
-  it('rien sur le ventre sans note du ventre', () => {
+  it('rien sur le ventre sans note digestive', () => {
     render(<ReadingDetail point={point} period="week" onClose={() => {}} />)
     expect(screen.queryByText(/au ventre/)).toBeNull()
   })

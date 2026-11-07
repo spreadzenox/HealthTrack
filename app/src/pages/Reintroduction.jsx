@@ -144,10 +144,10 @@ function ChooseGroup({ results, onPick, combos, focus = null }) {
   return (
     <>
       <p className="fodmap-when">
-        À faire après 2 à 6 semaines de repas pauvres en FODMAP, si votre ventre va mieux.
+        À faire après 2 à 6 semaines de repas pauvres en FODMAP, si votre digestion va mieux.
       </p>
       <p className="fodmap-intro">
-        Un groupe à la fois, sur 3 jours : une portion, puis le double, puis le triple. Notez votre ventre comme
+        Un groupe à la fois, sur 3 jours : une portion, puis le double, puis le triple. Notez votre digestion comme
         d’habitude.
       </p>
       <ul className="fodmap-groups">
@@ -224,9 +224,9 @@ function Prepare({ group, food, start, onBack, onStart, busy }) {
         <PortionReminderRow />
         {start.reason === 'not_calm' && (
           <p className="fodmap-wait" role="status">
-            On attend que votre ventre soit calme : ça rend le test lisible.{' '}
+            On attend que votre digestion soit calme : ça rend le test lisible.{' '}
             Il faut {calmDaysLeftText(start.calmDays)}
-            {' '}(notez votre ventre chaque jour, le bilan du soir suffit).
+            {' '}(notez votre digestion chaque jour, le bilan du soir suffit).
           </p>
         )}
         <button
@@ -283,7 +283,7 @@ function Running({ challenge, status, busy, onDose, onAnswer, onRestart, onAband
         )}
         {status.doseTakenToday && status.state !== 'question' && (
           <p className="today-card-text">
-            Portion du jour notée à {timeOf(last.at)}. Notez votre ventre dans les 24 h qui suivent
+            Portion du jour notée à {timeOf(last.at)}. Notez votre digestion dans les 24 h qui suivent
             {status.day < 3 ? ' ; la portion suivante, c’est demain.' : '.'}
           </p>
         )}
@@ -327,7 +327,7 @@ function Locked() {
       <h3 className="today-card-title">Testez vos aliments, un groupe à la fois</h3>
       <p className="today-card-text">
         Trois jours de portions croissantes, puis le résultat en une phrase, par exemple « Blé : une portion
-        moyenne passe ». Vos notes du ventre restent gratuites.
+        moyenne passe ». Vos notes digestives restent gratuites.
       </p>
       <Link to="/premium" className="btn fodmap-cta">Débloquer</Link>
     </article>
@@ -449,7 +449,7 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
                   <li key={c.entry.id ?? c.entry.payload.startedAt}>{verdictSentence(c.entry.payload, c.status.verdict)}</li>
                 ))}
               </ul>
-              <p className="fodmap-tag mono">d’après vos notes de ventre</p>
+              <p className="fodmap-tag mono">d’après vos notes digestives</p>
             </article>
           )}
           <Disclaimer />

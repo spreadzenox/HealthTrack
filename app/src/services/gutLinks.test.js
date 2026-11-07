@@ -7,7 +7,7 @@ const DAY_ONLY = { timedNotes: false, dayNotes: true }
 const note = (iso, level) => ({ type: 'gut', at: iso, payload: { level } })
 
 describe('summarizeGutLinks', () => {
-  it('sans note du ventre : rien à montrer', () => {
+  it('sans note digestive : rien à montrer', () => {
     expect(summarizeGutLinks([]).status).toBe('no_notes')
     expect(summarizeGutLinks(null).noteDays).toBe(0)
   })
@@ -20,7 +20,7 @@ describe('summarizeGutLinks', () => {
     expect(GUT_LINKS_MIN_DAYS).toBe(28)
   })
 
-  it('un effet net jour par jour devient une piste « aliment → ventre », une seule par aliment', () => {
+  it('un effet net jour par jour devient une piste « aliment → digestion », une seule par aliment', () => {
     let hits = 0
     for (let seed = 1; seed <= 6; seed++) {
       const s = summarizeGutLinks(simulateRealistic({ seed: seed * 31, days: 90, ...DAY_ONLY, dayEffect: { food: 'oignon', day: 0, odds: 8 } }))

@@ -74,7 +74,7 @@ describe('Settings — Ce qui vous amène (I155)', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
     renderSettings()
     const group = screen.getByRole('radiogroup', { name: 'Ce qui vous amène' })
-    expect(within(group).getByRole('radio', { name: 'Mon ventre' })).toBeChecked()
+    expect(within(group).getByRole('radio', { name: 'Ma digestion' })).toBeChecked()
     fireEvent.click(within(group).getByRole('radio', { name: 'Mon énergie et mon sommeil' }))
     expect(JSON.parse(localStorage.getItem('healthtrack_onboarding'))).toMatchObject({ done: true, goal: 'energy' })
   })
@@ -83,21 +83,21 @@ describe('Settings — Ce qui vous amène (I155)', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true }))
     renderSettings()
     expect(screen.getByText(/ou tant que rien n’est choisi/)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('radio', { name: 'Mon ventre' }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Ma digestion' }))
     expect(screen.queryByText(/ou tant que rien n’est choisi/)).not.toBeInTheDocument()
   })
 
-  it('rappel du bilan du ventre : seulement avec la carte ventre, et retiré du natif quand l’objectif change (I170)', async () => {
+  it('rappel du bilan digestif : seulement avec la carte ventre, et retiré du natif quand l’objectif change (I170)', async () => {
     const configure = vi.fn(async (o) => ({ enabled: !!o.enabled }))
     window.__healthtrackFakeGutEvening = { status: async () => ({ enabled: true, minuteOfDay: 20 * 60 + 30 }), configure }
     try {
       localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
       localStorage.setItem('healthtrack_gut_evening', JSON.stringify({ enabled: true }))
       renderSettings()
-      expect(screen.getByRole('checkbox', { name: 'Rappel du bilan du ventre, le soir' })).toBeChecked()
+      expect(screen.getByRole('checkbox', { name: 'Rappel du bilan digestif, le soir' })).toBeChecked()
       expect(await screen.findByText(/Vers 20 h 30/)).toBeInTheDocument()
       fireEvent.click(screen.getByRole('radio', { name: 'Mon énergie et mon sommeil' }))
-      expect(screen.queryByRole('checkbox', { name: 'Rappel du bilan du ventre, le soir' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('checkbox', { name: 'Rappel du bilan digestif, le soir' })).not.toBeInTheDocument()
       await waitFor(() => expect(configure).toHaveBeenLastCalledWith({ enabled: false }))
       expect(JSON.parse(localStorage.getItem('healthtrack_gut_evening'))).toEqual({ enabled: true })
     } finally {

@@ -40,7 +40,7 @@ describe('VENTRE-BE-2 : le ressenti du ventre ajuste le bien-être (poids faible
     expect(withGut.day.gut.level).toBe('pain')
     expect(plain.day.gut).toBeNull()
     expect(withGut.signals).toEqual(['visage', 'ventre'])
-    expect(describeFaceMood(withGut).join(' ')).toMatch(/douleur au ventre/)
+    expect(describeFaceMood(withGut).join(' ')).toMatch(/douleur digestive/)
     // Une note du ventre d'hier ne touche pas aujourd'hui.
     expect(faceMoodEstimate([...face, gut(at(1, 12), 'pain')], { now: NOW }).day.note).toBe(plain.day.note)
   })
@@ -58,7 +58,7 @@ describe('VENTRE-BE-2 : le ressenti du ventre ajuste le bien-être (poids faible
     expect(h.points[1].detail.gut ?? null).toBeNull()
   })
 
-  it('lit les notes du ventre depuis la première lecture du visage', async () => {
+  it('lit les notes digestives depuis la première lecture du visage', async () => {
     const store = [...readings(0, 0.4), gut(at(0, 12), 'pain'), gut(at(20, 12), 'pain')]
     const list = async ({ type, since }) => store.filter((e) => e.type === type && (!since || e.at >= since))
     const res = await loadWellbeingToday({ list, now: NOW })

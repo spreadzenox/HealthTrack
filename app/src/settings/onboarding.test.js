@@ -36,7 +36,7 @@ describe('settings/onboarding', () => {
     expect(homeFocus('gut')).toBe('gut')
   })
 
-  it('gutCardMode : carte ventre seulement avec « Mon ventre » ; sans objectif, selon l’installation (POL-4)', () => {
+  it('gutCardMode : carte ventre seulement avec « Ma digestion » ; sans objectif, selon l’installation (POL-4)', () => {
     expect(gutCardMode()).toBe('show')
     saveOnboarding({ goal: 'gut' })
     expect(gutCardMode()).toBe('show')

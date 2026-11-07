@@ -83,11 +83,11 @@ describe('GutLinks — masquer une piste (I86)', () => {
 
   it('n’affiche plus une piste masquée, et le dit quand tout est masqué', () => {
     const { unmount } = render(<GutLinks gut={gut} hidden={['gut:oignon']} />)
-    expect(screen.queryByText(/Oignon → ventre/)).toBeNull()
-    expect(screen.getByText(/Ail → ventre/)).toBeTruthy()
+    expect(screen.queryByText(/Oignon → digestion/)).toBeNull()
+    expect(screen.getByText(/Ail → digestion/)).toBeTruthy()
     unmount()
     render(<GutLinks gut={gut} hidden={['gut:oignon', 'gut:ail']} />)
-    expect(screen.getByText('Vous avez masqué toutes les pistes du ventre.')).toBeTruthy()
+    expect(screen.getByText('Vous avez masqué toutes les pistes digestives.')).toBeTruthy()
   })
 })
 
@@ -95,7 +95,7 @@ describe('GutLinks — chaque piste dit qu’elle porte sur le ventre (VENTRE-BE
   it('étiquette « Ventre » sur la carte', () => {
     render(<GutLinks gut={{ status: 'links', noteDays: 30, tested: 12, links: [link()] }} />)
     const card = screen.getByText(/Oignon/).closest('li')
-    expect(card.querySelector('.domain-tag--gut')).toHaveTextContent('Ventre')
+    expect(card.querySelector('.domain-tag--gut')).toHaveTextContent('Digestion')
   })
 })
 
@@ -107,7 +107,7 @@ describe('GutLinks — horizons d’effet (ANALYSES-ONGLETS-3)', () => {
     const hours = screen.getByTestId('horizon-hours')
     const days = screen.getByTestId('horizon-days')
     expect(hours.compareDocumentPosition(days) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    const titles = screen.getAllByText(/→ ventre/).map((n) => n.textContent)
+    const titles = screen.getAllByText(/→ digestion/).map((n) => n.textContent)
     expect(titles[0]).toMatch(/^Ail/)
     expect(titles[1]).toMatch(/^Oignon/)
   })

@@ -27,7 +27,7 @@ export default function GutWeeks({ weeks }) {
       <HorizonHeading id="weeks" hint="Vos jours calmes, de gêne et de douleur, semaine par semaine." />
       {!ready && (
         <p className="gut-weeks-soon">
-          Arrive après {GUT_WEEKS_MIN_NOTED} semaines de notes du ventre.
+          Arrive après {GUT_WEEKS_MIN_NOTED} semaines de notes digestives.
         </p>
       )}
       {ready && (

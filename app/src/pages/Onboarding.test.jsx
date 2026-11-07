@@ -27,7 +27,7 @@ describe('Onboarding (jalon 4a)', () => {
     renderAt()
     expect(screen.getByRole('heading', { name: /Comprenez ce qui va avec vos bons et mauvais jours/ })).toBeInTheDocument()
     expect(screen.getByText(/envoyé à .* sans votre accord/)).toBeInTheDocument()
-    expect(screen.getByRole('radio', { name: /Mon ventre/ })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /Ma digestion/ })).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: /Mon énergie et mon sommeil/ })).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: /Tout comprendre de mes données/ })).toBeInTheDocument()
     expect(screen.getByText(/18 ans ou plus/)).toBeInTheDocument()
@@ -69,7 +69,7 @@ describe('Onboarding (jalon 4a)', () => {
   it('note les écrans vus pour le diagnostic local (I156)', () => {
     renderAt()
     expect(loadOnboarding()).toMatchObject({ seen: ['goal'], lastScreen: 'goal', screens: 5 })
-    fireEvent.click(screen.getByRole('radio', { name: /Mon ventre/ }))
+    fireEvent.click(screen.getByRole('radio', { name: /Ma digestion/ }))
     fireEvent.click(cont())
     expect(loadOnboarding()).toMatchObject({ seen: ['goal', 'tracks'], lastScreen: 'tracks' })
     fireEvent.click(screen.getByRole('button', { name: 'Retour' }))
@@ -82,15 +82,15 @@ describe('Onboarding (jalon 4a)', () => {
     fireEvent.click(cont())
     expect(screen.getByRole('heading', { name: 'Que voulez-vous suivre ?' })).toBeInTheDocument()
     expect(screen.getByRole('checkbox', { name: /Mon sommeil/ })).toBeChecked()
-    expect(screen.getByRole('checkbox', { name: /Mon ventre/ })).not.toBeChecked()
-    fireEvent.click(screen.getByRole('checkbox', { name: /Mon ventre/ }))
-    expect(screen.getByRole('checkbox', { name: /Mon ventre/ })).toBeChecked()
+    expect(screen.getByRole('checkbox', { name: /Ma digestion/ })).not.toBeChecked()
+    fireEvent.click(screen.getByRole('checkbox', { name: /Ma digestion/ }))
+    expect(screen.getByRole('checkbox', { name: /Ma digestion/ })).toBeChecked()
     expect(loadOnboarding().tracks).toContain('gut')
   })
 
   it('parcours complet sans montre → Aujourd’hui, onboarding fait', async () => {
     renderAt()
-    fireEvent.click(screen.getByRole('radio', { name: /Mon ventre/ }))
+    fireEvent.click(screen.getByRole('radio', { name: /Ma digestion/ }))
     fireEvent.click(cont())
     fireEvent.click(cont())
     expect(screen.getByRole('heading', { name: 'Avez-vous une montre ?' })).toBeInTheDocument()
@@ -99,7 +99,7 @@ describe('Onboarding (jalon 4a)', () => {
     fireEvent.click(cont())
     expect(screen.getByRole('heading', { name: 'La météo de votre ville' })).toBeInTheDocument()
     fireEvent.click(cont())
-    expect(screen.getByRole('heading', { name: 'Comment va votre ventre ?' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Comment va votre digestion ?' })).toBeInTheDocument()
     fireEvent.click(cont())
     expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
     expect(loadOnboarding()).toMatchObject({
@@ -128,7 +128,7 @@ describe('Onboarding (jalon 4a)', () => {
     expect(screen.getByRole('heading', { name: 'Que voulez-vous suivre ?' })).toBeInTheDocument()
     expect(screen.getByText('02/07')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Retour' }))
-    expect(screen.getByRole('radio', { name: /Mon ventre/ })).toBeChecked()
+    expect(screen.getByRole('radio', { name: /Ma digestion/ })).toBeChecked()
   })
 
   it('le compteur ne grimpe jamais : il compte d’abord les écrans d’une montre Health Connect, puis baisse (POL-PLAY-61)', () => {

@@ -26,14 +26,14 @@ describe('GutLinks — paywall au moment de la valeur (jalon 6, pistes-delays)',
 
   it('sideload : les pistes restent visibles, sans paywall', () => {
     renderLinks()
-    expect(screen.getByText(/Oignon → ventre/)).toBeInTheDocument()
+    expect(screen.getByText(/Oignon → digestion/)).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Débloquer' })).toBeNull()
   })
 
   it('play sans premium : le nombre de pistes, un aperçu flouté sans aucun aliment, et « Débloquer »', () => {
     dist.play = true
     renderLinks()
-    expect(screen.getByText('2 pistes repérées entre vos repas et votre ventre')).toBeInTheDocument()
+    expect(screen.getByText('2 pistes repérées entre vos repas et votre digestion')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Débloquer' })).toHaveAttribute('href', '/premium')
     // Les aliments ne sont jamais dans la page (un flou CSS se retire) ; les liens de réintroduction non plus
     expect(document.body.textContent).not.toMatch(/Oignon|Pain/)
@@ -44,7 +44,7 @@ describe('GutLinks — paywall au moment de la valeur (jalon 6, pistes-delays)',
   it('play sans premium : une seule piste au singulier', () => {
     dist.play = true
     renderLinks({ ...gut, links: [gut.links[0]] })
-    expect(screen.getByText('1 piste repérée entre vos repas et votre ventre')).toBeInTheDocument()
+    expect(screen.getByText('1 piste repérée entre vos repas et votre digestion')).toBeInTheDocument()
   })
 
   it('play sans premium : « rien ne ressort » reste gratuit (aucune promesse à vendre)', () => {
@@ -58,7 +58,7 @@ describe('GutLinks — paywall au moment de la valeur (jalon 6, pistes-delays)',
     dist.play = true
     localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'launch', launchUntil: '2099-01-01T00:00:00Z' }))
     renderLinks()
-    expect(screen.getByText(/Oignon → ventre/)).toBeInTheDocument()
+    expect(screen.getByText(/Oignon → digestion/)).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Débloquer' })).toBeNull()
   })
 })

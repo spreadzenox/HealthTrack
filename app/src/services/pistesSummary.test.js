@@ -13,7 +13,7 @@ describe('pistesSummary', () => {
 
   it('garde les titres montrés par Analyses : ventre d’abord, puis pistes à tester', () => {
     const s = summarizePistes(analysis({ gut: ['Oignon'], levers: [{ action: 'Marcher davantage' }] }))
-    expect(s).toEqual({ gut: ['Oignon → ventre'], levers: ['Marcher davantage'], leverVars: [null] })
+    expect(s).toEqual({ gut: ['Oignon → digestion'], levers: ['Marcher davantage'], leverVars: [null] })
   })
 
   it('préfère le titre « facteur → effet » à l’action impérative (POL-PLAY-32)', () => {
@@ -30,7 +30,7 @@ describe('pistesSummary', () => {
 
   it('pas assez de jours et aucune piste du ventre : rien à résumer (la carte garde son compte à rebours)', () => {
     expect(summarizePistes(analysis({ status: 'not_enough_data' }))).toBeNull()
-    expect(summarizePistes(analysis({ status: 'not_enough_data', gut: ['Ail'] }))).toEqual({ gut: ['Ail → ventre'], levers: [], leverVars: [] })
+    expect(summarizePistes(analysis({ status: 'not_enough_data', gut: ['Ail'] }))).toEqual({ gut: ['Ail → digestion'], levers: [], leverVars: [] })
     expect(summarizePistes(null)).toBeNull()
   })
 
@@ -53,10 +53,10 @@ describe('pistesSummary', () => {
   })
 })
 
-describe('summarizePistes — pistes du ventre masquées (I86)', () => {
-  it('ne cite plus une piste repas → ventre masquée', () => {
+describe('summarizePistes — pistes digestives masquées (I86)', () => {
+  it('ne cite plus une piste repas → digestion masquée', () => {
     const s = summarizePistes(analysis({ gut: ['Oignon', 'Ail'] }), ['gut:oignon'])
-    expect(s.gut).toEqual(['Ail → ventre'])
+    expect(s.gut).toEqual(['Ail → digestion'])
   })
 })
 

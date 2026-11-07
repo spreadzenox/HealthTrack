@@ -33,7 +33,7 @@ const TYPE_LABELS = {
   sleep: 'Sommeil',
   wellbeing: 'Bien-être',
   cigarette: 'Cigarette',
-  gut: 'Ventre',
+  gut: 'Digestion',
   stool: 'Selles',
   steps: 'Pas',
   heart_rate: 'Fréquence cardiaque',
@@ -52,7 +52,7 @@ const TYPE_LABELS = {
 }
 
 function entryTitle(e) {
-  if (isGutDayNote(e)) return 'Ventre · bilan du jour'
+  if (isGutDayNote(e)) return 'Digestion · bilan du jour'
   return TYPE_LABELS[e.type] || e.type
 }
 
@@ -61,7 +61,7 @@ const DELETE_LABELS = {
   food: 'ce repas',
   wellbeing: 'cette note de bien-être',
   cigarette: 'cette cigarette',
-  gut: 'cette note du ventre',
+  gut: 'cette note digestive',
   stool: 'cette note des selles',
 }
 

@@ -133,12 +133,12 @@ describe('Dashboard', () => {
     localStorage.removeItem('healthtrack_onboarding')
   })
 
-  it('« Digestion » (bandeau) ouvre « Ma digestion » dans une fenêtre, sans carte « Mon ventre » sur l’écran (07/11)', async () => {
+  it('« Digestion » (bandeau) ouvre « Ma digestion » dans une fenêtre, sans carte « Ma digestion » sur l’écran (07/11)', async () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
     renderDashboard()
     await screen.findByTestId('pistes-card')
     expect(screen.queryByTestId('gut-card')).not.toBeInTheDocument()
-    expect(screen.queryByText('Mon ventre')).toBeNull()
+    expect(screen.queryByText('Ma digestion')).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'Digestion' }))
     const dialog = screen.getByRole('dialog', { name: 'Ma digestion' })
     expect(within(dialog).getByTestId('gut-card')).toBeInTheDocument()

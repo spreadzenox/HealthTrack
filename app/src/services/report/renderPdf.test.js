@@ -34,7 +34,7 @@ describe('renderReportPdf', () => {
     expect(doc.getTitle()).toBe('Rapport pour mon médecin — Halcya')
     expect(onPage(1)).toMatch(/En bref/)
     expect(onPage(2)).toMatch(/Détail/)
-    expect(all).toMatch(/Aucune note du ventre sur la période\./)
+    expect(all).toMatch(/Aucune note digestive sur la période\./)
     expect(all).toMatch(/Aucun test de réintroduction fait\./)
     expect(all).toMatch(/Aucune nuit mesurée sur la période\./)
     expect(all.replace(/\n/g, ' ')).toMatch(/Journal tenu par la personne elle-même/)
@@ -51,7 +51,7 @@ describe('renderReportPdf', () => {
     const entries = [gut(0, 'pain'), gut(-1, 'calm'), gut(-2, 'discomfort')]
     const { onPage, texts } = await render(buildReport(entries, { now: NOW }))
     const p1 = onPage(1)
-    expect(p1).toMatch(/Pas encore assez de notes du ventre \(3\/\d+ jours\)/)
+    expect(p1).toMatch(/Pas encore assez de notes digestives \(3\/\d+ jours\)/)
     expect(p1).not.toMatch(/Aucun lien n’a passé/)
     expect(p1).not.toMatch(/comparaisons faites/)
     // Les semaines d'avant la première note ne font plus de rangées (POL-PLAY-105) : une phrase les résume.

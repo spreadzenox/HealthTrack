@@ -5,7 +5,7 @@ import DomainTag from './DomainTag'
 describe('DomainTag (VENTRE-BE-1, retour (3) du 04/11)', () => {
   it('dit en toutes lettres « Ventre », en pêche', () => {
     render(<DomainTag domain="gut" />)
-    const tag = screen.getByText('Ventre')
+    const tag = screen.getByText('Digestion')
     expect(tag).toHaveClass('domain-tag', 'domain-tag--gut')
   })
 

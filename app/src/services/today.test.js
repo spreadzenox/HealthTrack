@@ -193,7 +193,7 @@ describe('gutSummary', () => {
 })
 
 describe('pistesProgress', () => {
-  it('compte les jours avec un repas ou une note du ventre, jusqu’à 21', () => {
+  it('compte les jours avec un repas ou une note digestive, jusqu’à 21', () => {
     const entries = [
       { type: 'food', at: at(1) }, { type: 'food', at: at(1, 20) }, { type: 'gut', at: at(2) },
       { type: 'steps', at: at(3) }, { type: 'wellbeing', at: at(4) },
@@ -218,7 +218,7 @@ describe('pistesProgress', () => {
 })
 
 describe('gutNotesProgress', () => {
-  it('compte les jours avec une note du ventre, jusqu’au seuil des pistes repas → ventre', () => {
+  it('compte les jours avec une note digestive, jusqu’au seuil des pistes repas → digestion', () => {
     const entries = [{ type: 'gut', at: at(1) }, { type: 'gut', at: at(1, 20) }, { type: 'gut', at: at(2) }, { type: 'food', at: at(3) }]
     expect(gutNotesProgress(entries)).toEqual({ days: 2, target: 28, remaining: 26, ready: false })
     const many = Array.from({ length: 30 }, (_, i) => ({ type: 'gut', at: new Date(2026, 8, i + 1, 21).toISOString() }))
@@ -316,7 +316,7 @@ describe('todayBySource (TESTEUR-1d-b)', () => {
     expect(g[0].items[0].when).toBe('à 10:00')
   })
 
-  it('le ventre seulement avec « Mon ventre » ; rien de noté aujourd’hui : pas de groupe', () => {
+  it('le ventre seulement avec « Ma digestion » ; rien de noté aujourd’hui : pas de groupe', () => {
     const entries = [{ type: 'gut', at: at(21, 9), payload: { level: 'calm' } }]
     expect(todayBySource({ tiles: [], summary: {}, entries, now: NOW, showGut: false })).toEqual([])
     expect(todayBySource({ tiles: [], summary: { meals: 0, cigarettes: 0 }, entries: [{ type: 'gut', at: at(20, 9), payload: { level: 'calm' } }], now: NOW, showGut: true })).toEqual([])

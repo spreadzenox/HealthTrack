@@ -68,14 +68,14 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
     expect(screen.getByText(/quand vous déverrouillez le téléphone/)).toBeInTheDocument()
     expect(cont()).toBeEnabled()
     fireEvent.click(cont())
-    expect(screen.getByRole('heading', { name: 'Comment va votre ventre ?' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Comment va votre digestion ?' })).toBeInTheDocument()
   })
 
   it('absente quand le téléphone ne sait pas lire le visage', () => {
     face.available = false
     saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
     renderAt()
-    expect(screen.getByRole('heading', { name: 'Comment va votre ventre ?' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Comment va votre digestion ?' })).toBeInTheDocument()
     expect(screen.getByText('05/05')).toBeInTheDocument()
   })
 
@@ -166,7 +166,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
       renderAt()
       await screen.findByRole('button', { name: 'Activer' })
       fireEvent.click(screen.getByRole('button', { name: 'Plus tard' }))
-      expect(screen.getByRole('heading', { name: 'Comment va votre ventre ?' })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Comment va votre digestion ?' })).toBeInTheDocument()
       expect(loadOnboarding().face).toBe('later')
       // seul ce « Plus tard » ouvre droit au rappel de l'Accueil (POL-PLAY-84)
       expect(loadOnboarding().unlockLater).toBe(true)

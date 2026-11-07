@@ -50,8 +50,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] AUJ-5 — « Mes repas du jour » : la liste, ou « Aucun repas aujourd'hui » et un bouton.
 - [ ] AUJ-6 — Sous chaque bloc, un petit « + » qui remonte au bandeau ; bouton plus large pour un bloc qui attend la
   personne (calibration, analyses, repas vides).
-- [ ] AUJ-7 — « Ventre » devient « digestif » dans tous les textes visibles (« Ma digestion », sous-onglet
-  d'Analyses, PDF, fiche) ; données et identifiants inchangés ; test de non-régression des libellés.
+- [x] AUJ-7 — « Ventre » devient « digestif » dans tous les textes visibles (« Ma digestion », sous-onglet
+  d'Analyses, PDF, fiche) ; données et identifiants inchangés ; test de non-régression des libellés. (07/11 17:45 :
+  app, notification du soir, pages légales, fiche « Halcya — digestion & bien-être » ; `digestifWording.test.js`)
 - [ ] AUJ-8 — Couleurs par thème (leçon 12) : vert = bien-être, orange = digestion, lilas = activité et sport, bleu
   nuit = sommeil ; tokens, contrastes testés, une analyse prend la couleur de son thème.
 
