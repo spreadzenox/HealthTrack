@@ -17,7 +17,29 @@ import { SOURCE_LABELS, gutLevelLabel, isGutDayNote } from '../services/today'
 import { stoolEntryLabel } from '../services/stool'
 import { INITIAL_DAYS, MORE_DAYS, loadJournalEntries } from '../services/journalEntries'
 import { appLocale } from '../i18n/locale.js'
-import { chipTheme, summaryChips } from '../services/journalChips'
+import { chipKey, chipTheme, summaryChips } from '../services/journalChips'
+import { measureNorms, readDeviationEntries } from '../services/dayDeviations'
+import LineIcon from './LineIcon'
+
+/** Icône de chaque mesure du jour (ORG-2, leçon 9 : une icône pour toutes les mesures). */
+const CHIP_ICONS = {
+  sleepMinutes: 'moon', watchSleepScore: 'star', sleepHr: 'heart', steps: 'steps', restingHr: 'heart', hrv: 'pulse',
+  hrvDay: 'pulse', spo2: 'drop', respiratoryRate: 'wind', temperatureC: 'thermo', skinTempC: 'thermo', watchStress: 'gauge',
+  bloodPressure: 'heart', glucoseMgDl: 'drop', heartRate: 'heart', burnedKcal: 'flame', wellbeing: 'smile', meals: 'meal',
+  screenMinutes: 'phone', socialMinutes: 'phone', weather: 'sun',
+}
+/** Mesure du résumé → mesure comparée à votre norme (dayDeviations, AUJ-3b). */
+const NORM_KEYS = { sleepMinutes: 'sleep', hrv: 'hrv', restingHr: 'restingHr', steps: 'steps', screenMinutes: 'screen' }
+/** Jours relus pour les normes : 14 jours avant le plus ancien jour affiché (14 jours de journal au plus). */
+const NORM_EXTRA_DAYS = 15
+
+/** Normes du jour `dateKey` : les 14 jours qui le précèdent ; un jour passé est fini (minuit). */
+function normsOf(normDays, dateKey) {
+  if (!normDays) return {}
+  const today = new Date()
+  const isToday = dateKey === `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+  return measureNorms(normDays, isToday ? today : new Date(`${dateKey}T23:59:00`)).norms
+}
 
 /**
  * « Vos derniers jours » : le journal par jour (résumé chiffré, saisies et événements avec leur heure), déplacé de
@@ -50,7 +72,7 @@ const TYPE_LABELS = {
 }
 
 function entryTitle(e) {
-  if (isGutDayNote(e)) return 'Digestion · bilan du jour'
+  if (isGutDayNote(e)) return 'Digestion, bilan du jour'
   return TYPE_LABELS[e.type] || e.type
 }
 
@@ -105,7 +127,7 @@ function EntryBody({ e, measuredScreen = false }) {
         <p className="entry-wellbeing-tags">
           {shownTags
             .map((t) => t.label)
-            .join(' · ')}
+            .join(', ')}
         </p>
       )}
       {e.type === 'cigarette' && count > 1 && (
@@ -123,19 +145,19 @@ function EntryBody({ e, measuredScreen = false }) {
       )}
       {e.type === 'body_composition' && e.payload && (
         <p className="entry-wellbeing-score">
-          {bodyCompositionParts(e.payload).join(' · ') || 'Mesure enregistrée'}
+          {bodyCompositionParts(e.payload).join(', ') || 'Mesure enregistrée'}
         </p>
       )}
       {e.type === 'activity' && e.payload?.workoutType && (
         <p className="entry-wellbeing-score">
           {workoutTypeLabel(e.payload.workoutType)}
-          {e.payload.durationSeconds && ` · ${formatDuration(e.payload.durationSeconds / 60)}`}
-          {e.payload.totalCalories && ` · ${Math.round(e.payload.totalCalories)} kcal`}
+          {e.payload.durationSeconds && `, ${formatDuration(e.payload.durationSeconds / 60)}`}
+          {e.payload.totalCalories && `, ${Math.round(e.payload.totalCalories)} kcal`}
         </p>
       )}
       {e.type === 'activity' && workoutDetailParts(e.payload).length > 0 && (
         <p className="entry-workout-detail">
-          <span>{workoutDetailParts(e.payload).join(' · ')}</span>
+          <span>{workoutDetailParts(e.payload).join(', ')}</span>
           <HeartRateSpark curve={e.payload.heartRateCurve} />
         </p>
       )}
@@ -167,7 +189,7 @@ function CigaretteGroupRow({ group }) {
       const count = typeof e.payload?.count === 'number' ? e.payload.count : 1
       return count > 1 ? `${timeOf(e.at)} ×${count}` : timeOf(e.at)
     })
-    .join(' · ')
+    .join(', ')
   const lastDeletable = [...group.entries].reverse().find(isDeletableEntry)
   const [open, setOpen] = useState(false)
   return (
@@ -279,7 +301,7 @@ function EntryItem({ e, measuredScreen, onEdit, editingMealId, onEditMeal, onRed
           <span className="entry-kcal entry-score">{gutLevelLabel(e.payload.level)}</span>
         )}
         {e.type === 'stool' && stoolEntryLabel(e) && (
-          <span className="entry-kcal entry-score">{`${stoolEntryLabel(e)}${e.payload?.estimated ? ' · photo' : ''}`}</span>
+          <span className="entry-kcal entry-score">{`${stoolEntryLabel(e)}${e.payload?.estimated ? ' (photo)' : ''}`}</span>
         )}
         {!isDeletableEntry(e) && (
           <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>
@@ -303,8 +325,9 @@ function EntryItem({ e, measuredScreen, onEdit, editingMealId, onEditMeal, onRed
   )
 }
 
-function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
+function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays = null }) {
   const { title, date } = dayHeading(day.dateKey)
+  const norms = normsOf(normDays, day.dateKey)
   const chips = summaryChips(day.summary)
   const measuredScreen = day.summary?.screenMinutes != null
   return (
@@ -314,12 +337,21 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal }) {
       </h4>
       {chips.length > 0 && (
         <dl className="day-summary">
-          {chips.map(([label, value]) => (
-            <div key={label} className="day-summary-item" data-theme={chipTheme(label)}>
-              <dt>{label}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
+          {chips.map(([label, value]) => {
+            const key = chipKey(label)
+            const n = norms[NORM_KEYS[key]]
+            return (
+              <div key={label} className="day-summary-item" data-theme={chipTheme(label)}>
+                <dt><LineIcon name={CHIP_ICONS[key] ?? 'dots'} size={14} />{label}</dt>
+                <dd>{value}</dd>
+                {n?.direction && (
+                  <dd className="day-summary-usual" aria-label={n.text}>
+                    {n.direction === 'up' ? '↑' : '↓'} d’habitude <span className="mono">{n.usualValue}</span>
+                  </dd>
+                )}
+              </div>
+            )
+          })}
         </dl>
       )}
       {day.items.length > 0 && (
@@ -356,6 +388,20 @@ export default function DailyJournal() {
   // kcal des repas : table Ciqual chargée à la demande, journal recalculé à son arrivée
   const nutritionTable = useNutritionTable()
   const [hiddenKey, setHiddenKey] = useState(null)
+  // AUJ-3b : l'écart à votre norme sur chaque mesure, comme sur l'Accueil (lu à part, quelques types)
+  const [normDays, setNormDays] = useState(null)
+  useEffect(() => {
+    let alive = true
+    const load = () => readDeviationEntries(new Date(), NORM_EXTRA_DAYS)
+      .then((list) => alive && setNormDays(buildDailyJournal(list)))
+      .catch(() => {})
+    load()
+    window.addEventListener('health-entries-updated', load)
+    return () => {
+      alive = false
+      window.removeEventListener('health-entries-updated', load)
+    }
+  }, [])
   const days = useMemo(
     () => buildDailyJournal(entries).filter((d) => d.dateKey !== hiddenKey),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -415,7 +461,6 @@ export default function DailyJournal() {
   return (
     <section className="daily-journal" aria-labelledby="daily-journal-title">
       <h2 id="daily-journal-title" className="page-title">Vos derniers jours</h2>
-      <p className="page-intro">Ce qui a été mesuré et noté, jour par jour.</p>
       <WellbeingPrompt
         open={editingWellbeing !== null}
         entry={editingWellbeing}
@@ -439,6 +484,7 @@ export default function DailyJournal() {
               <DayCard
                 key={day.dateKey}
                 day={day}
+                normDays={normDays}
                 onEdit={setEditingWellbeing}
                 editingMealId={editingMealId}
                 onEditMeal={setEditingMealId}

@@ -384,8 +384,19 @@
 }
 
 .day-summary-item dt {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.72rem;
   font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* AUJ-3b : l'écart net à votre norme, sous la valeur (sans couleur de jugement) */
+.day-summary-item dd.day-summary-usual {
+  font-family: var(--font-sans);
+  letter-spacing: 0;
+  font-size: 0.66rem;
   color: var(--text-muted);
 }
 

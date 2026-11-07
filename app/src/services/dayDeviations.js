@@ -111,9 +111,9 @@ export function dayDeviations(days, now = new Date()) {
  * Seules les mesures comparées sont lues, sur 15 jours (une nuit de plus pour celle qui finit le premier jour) ; la
  * fréquence cardiaque par ses seuls sous-types repos et VFC (budget de lectures de l'Accueil, perf D2).
  */
-export async function readDeviationEntries(now = new Date()) {
-  const since = new Date(now.getTime() - (DEVIATION_WINDOW_DAYS + 1) * DAY_MS).toISOString()
-  const sleepSince = new Date(now.getTime() - (DEVIATION_WINDOW_DAYS + 2) * DAY_MS).toISOString()
+export async function readDeviationEntries(now = new Date(), extraDays = 0) {
+  const since = new Date(now.getTime() - (DEVIATION_WINDOW_DAYS + 1 + extraDays) * DAY_MS).toISOString()
+  const sleepSince = new Date(now.getTime() - (DEVIATION_WINDOW_DAYS + 2 + extraDays) * DAY_MS).toISOString()
   const lists = await Promise.all([
     listEntries({ type: 'sleep', since: sleepSince, limit: Infinity }),
     listEntries({ type: 'steps', since, limit: Infinity }),
