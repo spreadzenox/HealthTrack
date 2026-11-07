@@ -10,6 +10,7 @@
  * interrupteur « Aussi à chaque déverrouillage », derrière sa divulgation, qui démarre le service app ouverte ; il ne
  * reprend jamais tout seul (« Reprendre » après un redémarrage), et « Désactiver » coupe tout.
  */
+import { toDisplay } from '../services/mood/wellbeingScale'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import MethodNote from './MethodNote'
 import {
@@ -290,7 +291,7 @@ export default function FaceSenseCard({
       const { history: h } = await refresh()
       const t = h?.testEstimate
       setMessage(t
-        ? `Test : visage lu. Bien-être de ce moment : ${t.label}, ≈ ${fmt(t.note)} / 5 (entre ${fmt(t.low)} et ${fmt(t.high)}). Un test ne compte pas dans l’estimation du jour.`
+        ? `Test : visage lu. Bien-être de ce moment : ${t.label}, ≈ ${fmt(toDisplay(t.note))} / 5 (entre ${fmt(toDisplay(t.low))} et ${fmt(toDisplay(t.high))}). Un test ne compte pas dans l’estimation du jour.`
         : null)
     } finally {
       setBusy(false)

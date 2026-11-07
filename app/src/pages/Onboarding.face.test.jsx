@@ -97,7 +97,7 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
     expect(trial.runFaceTrial).not.toHaveBeenCalled()
     fireEvent.click(screen.getByRole('button', { name: 'J’accepte, autoriser la caméra' }))
     await waitFor(() => expect(screen.getByText(/Lecture faite : plutôt bien/)).toBeInTheDocument())
-    expect(screen.getByText('3,4 / 5')).toBeInTheDocument()
+    expect(screen.getByText('3,7 / 5')).toBeInTheDocument()
     expect(trial.runFaceTrial).toHaveBeenCalledOnce()
     expect(loadOnboarding().face).toBe('on')
     expect(screen.queryByRole('button', { name: 'Essayer maintenant' })).not.toBeInTheDocument()

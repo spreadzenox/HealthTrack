@@ -1,3 +1,4 @@
+import { toDisplay } from '../services/mood/wellbeingScale'
 import { useState, useEffect } from 'react'
 import { loadWellbeingTrends } from '../services/mood/faceMoodData'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
@@ -32,8 +33,8 @@ function PredictionLegend({ prediction }) {
       <summary>
         <span className="wellbeing-chart-pred-legend">
           <span>Attendu d’après vos habitudes :</span>
-          <strong className="wellbeing-prediction-value">{fmt(prediction.predicted)} / 5</strong>
-          {prediction.actual != null && <span>· votre note du jour : {fmt(prediction.actual)}</span>}
+          <strong className="wellbeing-prediction-value">{fmt(toDisplay(prediction.predicted))} / 5</strong>
+          {prediction.actual != null && <span>· votre note du jour : {fmt(toDisplay(prediction.actual))}</span>}
         </span>
       </summary>
       <p className="wellbeing-prediction-note">

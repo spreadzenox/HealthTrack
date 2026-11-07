@@ -28,6 +28,7 @@
  * Entrées : uniquement des signaux émotionnels directs (rafales `face_burst` du déverrouillage, notes `wellbeing`,
  * notes du ventre), c'est-à-dire des entrées Y déclarées dans estimatorInputs.js (D5) ; aucun comportement ni contexte.
  */
+import { toDisplay } from './wellbeingScale'
 import { localDateKey } from '../analysisEngine'
 import { FACE_BURST_TYPE, moodFaceBursts } from '../faceBursts'
 import { evaluateGate, gateDays } from './gate'
@@ -431,7 +432,7 @@ export function describeFaceMood(est, { features } = {}) {
   if (!est) return null
   const lines = []
   if (est.day) {
-    lines.push(`Bien-être estimé aujourd’hui : ${est.day.label}, ≈ ${fmt(est.day.note)} / 5 (entre ${fmt(est.day.low)} et ${fmt(est.day.high)}).`)
+    lines.push(`Bien-être estimé aujourd’hui : ${est.day.label}, ≈ ${fmt(toDisplay(est.day.note))} / 5 (entre ${fmt(toDisplay(est.day.low))} et ${fmt(toDisplay(est.day.high))}).`)
   }
   const when = est.moment.today ? `à ${hour(est.moment.at)}` : `le ${localeDate(est.moment.at, { day: 'numeric', month: 'long' })} à ${hour(est.moment.at)}`
   lines.push(`Bien-être à la dernière lecture (${when}) : ${est.moment.label}.`)

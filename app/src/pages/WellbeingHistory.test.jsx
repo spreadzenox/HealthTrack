@@ -48,7 +48,7 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
 
   it('montre la moyenne, la courbe, la légende et le détail des modèles comme des estimations', async () => {
     renderPage()
-    expect(await screen.findByText('3,4')).toBeInTheDocument()
+    expect(await screen.findByText('3,7')).toBeInTheDocument()
     const sub = document.querySelector('.wbh-figure-sub')
     expect(sub.textContent).toMatch(/7 lectures · 2 jours · 1 note à la main/)
     // KEEP-SEGMENTS : la ligne ne se coupe qu'aux points médians (« 1 note / à la main » à 360 px sinon).
@@ -76,7 +76,7 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
 
   it('étiquette les 7 jours de la semaine sans ambiguïté (deux lettres, aucun doublon) (POL-PLAY-18)', async () => {
     const { container } = renderPage()
-    await screen.findByText('3,4')
+    await screen.findByText('3,7')
     const labels = [...container.querySelectorAll('svg.wbh-chart text.wbh-axis')]
       .map((t) => t.textContent).filter((t) => !/^\d/.test(t))
     expect(labels).toEqual(['di', 'lu', 'ma', 'me', 'je', 've', 'sa'])
@@ -84,7 +84,7 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
 
   it('change de période : jour, semaine, mois', async () => {
     renderPage()
-    await screen.findByText('3,4')
+    await screen.findByText('3,7')
     expect(loadWellbeingHistory).toHaveBeenLastCalledWith({ period: 'week', now: NOW })
     fireEvent.click(screen.getByRole('button', { name: 'Mois' }))
     await waitFor(() => expect(loadWellbeingHistory).toHaveBeenLastCalledWith({ period: 'month', now: NOW }))
@@ -112,7 +112,7 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
       trend: period === 'day' ? [{ at: points[0].at, note: 2.9 }, { at: points[1].at, note: 3.2 }, { at: points[2].at, note: 3.5 }] : [],
     })))
     const { container } = renderPage()
-    await screen.findByText('3,1')
+    await screen.findByText('3,5')
     expect(container.querySelector('[data-trend]')).toBeNull()
     expect(screen.queryByText('tendance lissée')).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Jour' }))
@@ -129,7 +129,7 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
 
   it('légende : la ligne pointillée est la moyenne ; en vue Jour, la fourchette de chaque lecture (POL-PLAY-85)', async () => {
     renderPage()
-    await screen.findByText('3,4')
+    await screen.findByText('3,7')
     expect(screen.getByText('moyenne')).toBeInTheDocument()
     expect(screen.queryByText('fourchette')).not.toBeInTheDocument()
     loadWellbeingHistory.mockResolvedValue(history({
@@ -180,13 +180,13 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
     it('vue Jour : la lecture touchée montre sa note, sa fourchette, valence, éveil, expressions et netteté', async () => {
       loadWellbeingHistory.mockImplementation(() => Promise.resolve(dayHistory()))
       renderPage()
-      const dot = await screen.findByRole('button', { name: /Lecture de 8 h 05 : 2,8 sur 5/ })
+      const dot = await screen.findByRole('button', { name: /Lecture de 8 h 05 : 3,2 sur 5/ })
       expect(screen.getByText('Touchez un point pour voir sa lecture.')).toBeInTheDocument()
       fireEvent.click(dot)
       const card = screen.getByRole('region', { name: 'Lecture de 8 h 05' })
       expect(dot).toHaveAttribute('aria-pressed', 'true')
-      expect(card).toHaveTextContent('2,8')
-      expect(card).toHaveTextContent('entre 2,1 et 3,5')
+      expect(card).toHaveTextContent('3,2')
+      expect(card).toHaveTextContent('entre 2,7 et 3,8')
       expect(card).toHaveTextContent('lecture peu nette')
       expect(card).toHaveTextContent('−0,18')
       expect(card).toHaveTextContent('+0,07')
@@ -201,7 +201,7 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
       loadWellbeingHistory.mockImplementation(() => Promise.resolve(dayHistory()))
       renderPage()
       fireEvent.click(await screen.findByRole('button', { name: /Lecture de 8 h 05/ }))
-      const noon = screen.getByRole('button', { name: /Lecture de 12 h 40 : 3,6 sur 5/ })
+      const noon = screen.getByRole('button', { name: /Lecture de 12 h 40 : 3,9 sur 5/ })
       fireEvent.click(noon)
       const card = screen.getByRole('region', { name: 'Lecture de 12 h 40' })
       expect(card).toHaveTextContent('lecture nette')
@@ -219,7 +219,7 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
       const pts = history().points.map((p, i) => ({ ...p, detail: { readings: p.readings, poor: i, valence: 0.12, arousal: -0.05, expressions: null } }))
       loadWellbeingHistory.mockImplementation(({ period }) => Promise.resolve(history({ period, points: pts })))
       renderPage()
-      fireEvent.click(await screen.findByRole('button', { name: /jeudi 22 octobre : 3,1 sur 5/ }))
+      fireEvent.click(await screen.findByRole('button', { name: /jeudi 22 octobre : 3,5 sur 5/ }))
       const card = screen.getByRole('region', { name: 'jeudi 22 octobre' })
       expect(card).toHaveTextContent('5 lectures')
       expect(card).not.toHaveTextContent('peu nette')
@@ -244,7 +244,7 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
 
     it('flèche « précédente » : la semaine d’avant, datée ; « suivante » revient, puis se grise', async () => {
       renderPage()
-      await screen.findByText('3,4')
+      await screen.findByText('3,7')
       expect(screen.getByText('Ces 7 jours')).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Semaine suivante' })).toBeDisabled()
       fireEvent.click(screen.getByRole('button', { name: 'Semaine précédente' }))
@@ -276,7 +276,7 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
         period, from: new Date(new Date(now).getTime() - 6 * 86400000).toISOString(), earliest: new Date(2026, 9, 12).toISOString(),
       })))
       const { container } = renderPage()
-      await screen.findByText('3,4')
+      await screen.findByText('3,7')
       const card = container.querySelector('.wbh-card')
       fireEvent.touchStart(card, { touches: [{ clientX: 40, clientY: 100 }] })
       fireEvent.touchEnd(card, { changedTouches: [{ clientX: 200, clientY: 110 }] })
@@ -306,7 +306,7 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
     it('fiabilité : écart mesuré sur les notes, ou quand il sera mesuré', async () => {
       loadWellbeingHistory.mockResolvedValue(history({ agreement: { days: 6, gap: 0.7 } }))
       renderPage()
-      expect(await screen.findByText(/Écart moyen avec vos notes/)).toHaveTextContent('Écart moyen avec vos notes : 0,7 point sur 5, mesuré sur 6 jours notés.')
+      expect(await screen.findByText(/Écart moyen avec vos notes/)).toHaveTextContent('Écart moyen avec vos notes : 0,6 point sur 5, mesuré sur 6 jours notés.')
       loadWellbeingHistory.mockResolvedValue(history({ agreement: null }))
       fireEvent.click(screen.getByRole('button', { name: 'Mois' }))
       expect(await screen.findByText(/Fiabilité mesurée dès 3 jours notés/)).toBeInTheDocument()
@@ -318,7 +318,7 @@ describe('ReadingDetail — ressenti du ventre (VENTRE-BE-2)', () => {
   const point = { at: '2026-11-04T19:00:00.000Z', date: '2026-11-04', note: 2.9, readings: 3, detail: { readings: 3, poor: 0, valence: 0.2, arousal: 0, expressions: null } }
   it('dit quand une note du ventre a fait baisser la note du jour', () => {
     render(<ReadingDetail point={{ ...point, detail: { ...point.detail, gut: { level: 'pain', shift: -0.5 } } }} period="week" onClose={() => {}} />)
-    expect(screen.getByText('Douleur au ventre notée ce jour-là : la note baisse de 0,5.')).toBeInTheDocument()
+    expect(screen.getByText('Douleur au ventre notée ce jour-là : la note baisse de 0,4.')).toBeInTheDocument()
   })
   it('rien sur le ventre sans note du ventre', () => {
     render(<ReadingDetail point={point} period="week" onClose={() => {}} />)

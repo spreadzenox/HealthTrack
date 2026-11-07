@@ -5,6 +5,7 @@
  *
  * Description seulement : aucune analyse, aucun facteur X lu (D5), aucun jugement ni conseil (règle 6).
  */
+import { toDisplay } from './wellbeingScale'
 import { localDateKey } from '../analysisEngine'
 import { faceMoodDays } from './faceMoodDays'
 
@@ -75,7 +76,7 @@ export const shownWellbeingWeeks = (weeks) => {
   return first < 0 ? [] : list.slice(first)
 }
 
-const fmt = (v) => String(v).replace('.', ',')
+const fmt = (v) => String(Math.round(toDisplay(v) * 10) / 10).replace('.', ',')
 
 /** « Semaine du 26 oct. : estimé 3,4 sur 5 (6 jours), vos notes 3,8 (2 jours) » (lecteur d'écran). */
 export function wellbeingWeekLabel(w) {

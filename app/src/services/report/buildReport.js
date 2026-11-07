@@ -14,6 +14,7 @@
  * - aucune norme : on décrit, on ne juge pas (pas de « bon » ou « mauvais » sommeil) ;
  * - forme des selles (I176) : répartition dures / normales / liquides seulement, aucun sous-type du SII déduit.
  */
+import { toDisplay } from '../mood/wellbeingScale'
 import { APP_NAME } from '../../config/brand'
 import { localDateKey } from '../analysisEngine'
 import { FODMAP_CHALLENGE_TYPE, challengeStatus, findFood, findGroup, verdictSentence } from '../fodmapChallenge'
@@ -183,7 +184,7 @@ export function buildReport(entries, { now = new Date(), weeks = REPORT_DEFAULT_
     const est = faceMoodDays(period).filter((d) => d.date >= from && d.date <= to)
     wellbeing = est.length ? {
       days: est.length,
-      mean: Math.round((est.reduce((a, d) => a + d.note, 0) / est.length) * 10) / 10,
+      mean: Math.round(toDisplay(est.reduce((a, d) => a + d.note, 0) / est.length) * 10) / 10,
       scale: 5,
       note: 'Estimé à partir de l’expression du visage.',
     } : null

@@ -23,7 +23,10 @@
 > n'affiche plus d'où vient chaque valeur (« ≈ 8 000 pas/jour sur 14 jours », « Withings ») : on le voit en touchant la
 > valeur ; « À compléter… » ouvre directement le formulaire. Sixième (03:35) : en bas d'Analyses, « Le modèle qui
 > prédit votre bien-être » n'est plus caché dans « Comment c'est calculé » : les deux sont l'un sous l'autre, un geste
-> chacun. Prochaines : une maquette du nouvel écran Aujourd'hui (run idées de 08:35), puis la note de bien-être de 1 à 5.
+> chacun. Septième (04:35) : la note de bien-être va de 1 à 5, avec 3 au milieu ; vos anciennes notes ne sont pas
+> modifiées, elles s'affichent sur la même échelle (une ancienne 3 se lit 3,4), comme le bien-être estimé partout dans
+> l'app. Prochaines : une maquette du nouvel écran Aujourd'hui (run idées de 08:35), puis « la note d'abord, les
+> précisions ensuite ».
 > Rien à faire de votre côté.
 
 > ✅ **GitHub Actions repart (06/11 08:35, P47 levée).** Entre 06:40 et ~07:30 UTC, GitHub refusait de lancer les
@@ -141,6 +144,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 04:35 — [Note de bien-être de 1 à 5](runs/2026-11-07-0435-note-1-a-5.md) | 🎨 | La note de bien-être se donne de 1 à 5, avec 3 au milieu (retour du testeur). Aucune note n'est réécrite : les anciennes s'affichent sur la même échelle (0 → 1, 3 → 3,4, 5 → 5), comme le bien-être estimé dans toute l'app. Rien à faire de votre côté |
 | 07/11 03:35 — [Analyses : le modèle à part](runs/2026-11-07-0335-modele-a-cote.md) | 🎨 | En bas d'Analyses, « Le modèle qui prédit votre bien-être » n'est plus un dépliant caché dans « Comment c'est calculé » (lui-même avec un troisième dépliant dedans) : deux lignes l'une sous l'autre, un geste chacune. Rien à faire de votre côté |
 | 07/11 02:35 — [Nutrition : provenance au toucher](runs/2026-11-07-0235-profil-toucher.md) | 🎨 | Carte « Votre profil » de Nutrition : d'où vient une valeur (pas des 14 derniers jours, Withings, par défaut) s'affiche en touchant cette valeur ; « À compléter… » ouvre le formulaire dans la même carte ; dans le formulaire, l'explication du niveau d'activité n'apparaît qu'après un choix. Rien à faire de votre côté |
 | 07/11 01:35 — [Analyses : moins de détails techniques](runs/2026-11-07-0135-analyses-texte.md) | 🎨 | Analyses ne parle plus de « hasard » ni de « données exploratoires » : seulement ce qui manque (« Encore N jours de notes… », « Après un repas : encore N jours de lectures du visage ») ; la méthode reste tout en bas dans « Comment c'est calculé ». Journal : « Ce qui a été mesuré et noté, jour par jour. » Rien à faire de votre côté |

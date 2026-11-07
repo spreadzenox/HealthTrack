@@ -273,7 +273,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
       { type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-10T09:00:00', payload: { score: 4 } },
     ])
     const row = document.querySelector('.entry-card[data-type="wellbeing"]')
-    expect(row.querySelector('.entry-card-header')).toHaveTextContent('09:00Bien-être4 / 5')
+    expect(row.querySelector('.entry-card-header')).toHaveTextContent('09:00Bien-être4,2 / 5')
     expect(row).not.toHaveTextContent('Note :')
     openActions()
     expect(within(row).getByRole('button', { name: /Modifier/ })).toBeInTheDocument()
@@ -286,7 +286,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
       { type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-10T09:00:00', payload: { score: 4 } },
       { type: 'wellbeing', source: 'app_wellbeing', at: '2026-04-10T21:00:00', payload: { score: 2 } },
     ])
-    expect(summaryValue('Bien-être')).toBe('3 / 5')
+    expect(summaryValue('Bien-être')).toBe('3,4 / 5')
   })
 
   it('shows behaviour tags of a wellbeing entry in French', async () => {

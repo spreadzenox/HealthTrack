@@ -9,6 +9,7 @@
  */
 import { Link } from 'react-router-dom'
 import { modelLabel, formatDelta, frDecimal, wellbeingTrend } from '../services/today'
+import { toDisplay, gapToDisplay } from '../services/mood/wellbeingScale'
 import DetailsToggle from './DetailsToggle'
 import LineIcon from './LineIcon'
 import './MoodEstimateCard.css'
@@ -177,11 +178,11 @@ export default function MoodEstimateCard({
         <DetailsToggle on={details} onToggle={onToggleDetails} />
       </div>
       <p className="mood-estimate-figure">
-        <span className="mood-estimate-note">{frDecimal(shown.note)}</span>
+        <span className="mood-estimate-note">{frDecimal(toDisplay(shown.note))}</span>
         <span className="mood-estimate-scale"> / 5</span>
         {trend.delta != null && (
-          <span className="mood-estimate-delta mono" aria-label={`Écart à votre moyenne : ${formatDelta(trend.delta)}`}>
-            {formatDelta(trend.delta)} vs moy.
+          <span className="mood-estimate-delta mono" aria-label={`Écart à votre moyenne : ${formatDelta(gapToDisplay(trend.delta))}`}>
+            {formatDelta(gapToDisplay(trend.delta))} vs moy.
           </span>
         )}
       </p>
@@ -190,11 +191,11 @@ export default function MoodEstimateCard({
       {details && (
         <div className="mood-details">
           <MoodRange low={shown.low} high={shown.high} note={shown.note} />
-          <p className="mood-details-range mono">entre {frDecimal(shown.low)} et {frDecimal(shown.high)}</p>
+          <p className="mood-details-range mono">entre {frDecimal(toDisplay(shown.low))} et {frDecimal(toDisplay(shown.high))}</p>
           <div className="mood-chips">
             <ConfidenceBadge level={est.confidence} />
             <span className="mood-chip mono">{est.day ? `${est.day.readings} ${est.day.readings > 1 ? 'lectures' : 'lecture'} auj.` : '1 lecture'}</span>
-            {trend.mean != null && <span className="mood-chip mono">moy. {frDecimal(trend.mean)} sur {trend.pastDays} j</span>}
+            {trend.mean != null && <span className="mood-chip mono">moy. {frDecimal(toDisplay(trend.mean))} sur {trend.pastDays} j</span>}
             {est.day?.gut && <span className="mood-chip mood-chip-gut">{est.day.gut.level === 'pain' ? 'douleur' : 'gêne'} au ventre comptée</span>}
           </div>
           <p className="mood-details-model mono">{modelLabel(est.model)}</p>
