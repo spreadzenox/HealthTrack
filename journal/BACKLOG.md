@@ -218,7 +218,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   les 30 % plus incertains des 4 dernières semaines). Banc : 9 à 10 sur 10 mieux que le visage seul, couverture de la
   fourchette entre 65 et 95 %, règle 5 ≤ 5 %. VENTRE-BE-2 reste en place dans l'affichage du jour jusqu'à ce que
   l'interface prenne l'estimation TS-1 (ORG-5d branche déjà les analyses dessus).
-- [ ] TS-2 — **Changements durables** : bien-être, confort digestif, sommeil, VFC, FC au repos, pas, écran, une fois le
+- [x] TS-2 — **Changements durables** : bien-être, confort digestif, sommeil, VFC, FC au repos, pas, écran, une fois le
   rythme de la semaine retiré ; un saut de niveau, au moins 7 jours de chaque côté, au moins une demi-variation
   habituelle, confirmé 7 jours après ; seuil calé sur le banc (moins d'une fausse alerte par courbe et par semestre).
   Repère « changement » dans Tendances (vue Mois) : niveau avant et après, « Au même moment » (autres changements à ±
@@ -233,6 +233,16 @@ iPhone. Un run = une étape testable, captures avant et après (clair et sombre,
 apparence = même type d'information ; moins de texte ; jamais le problème dans une carte et la solution dans une autre.
 
 **(4) Journal et repas** (le plus court, commencé en premier)
+  ✅ 07/11 (chantier du soir) : `services/method/changes.js` (`detectChanges`, `changesFromEntries`, `normStart`,
+  `periods`, `crossingChanges`, `sameTime`) et tâche `changes` du worker. Rythme de la semaine retiré, variation
+  habituelle robuste, t corrigé de l'autocorrélation ≥ 4, saut ≥ 0,5 variation habituelle, ≥ 7 jours de chaque côté,
+  confirmé par les médianes des 7 jours avant et après, deux changements à ≥ 14 jours. Banc (200 courbes de 6 mois) :
+  0,26 fausse alerte par courbe et par semestre (0,69 sur des courbes plus lissées) ; saut de 2 variations habituelles
+  retrouvé 79 %. Bien-être et digestion sur l'estimation TS-1 (digestion sans le bien-être). Reste à l'interface : le
+  repère dans Tendances et le rapport. TS-2b ✅ 07/11 : les liens d'Analyses tiennent à l'intérieur des périodes (chaque
+  changement durable du résultat devient un contrôle de niveau ; `outcomes[x].changes`) ; un saut commun d'un facteur
+  et du résultat n'est plus un lien (test). Reste : `normStart` dans la norme des écarts du jour (`dayDeviations.js`,
+  touché par la session interface ce soir : à faire quand elle n'y travaille plus).
 - [x] TESTEUR-4a — Repas vierges : « Aucun repas enregistré pour l'instant » et un bouton « Ajouter mon premier repas »
   qui ouvre l'appareil photo, sans les trois étapes de texte (06/11 22:35).
 - [x] TESTEUR-4b — « Photographier un repas » de l'Accueil et de Nutrition ouvre directement l'appareil photo (sans
