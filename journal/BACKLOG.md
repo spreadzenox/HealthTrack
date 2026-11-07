@@ -46,10 +46,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   change aujourd'hui ») disparaît. (07/11 19:05 : `TodayBySource` en un bloc, `measureNorms`, icônes par mesure,
   « D'après votre montre et votre téléphone. »)
 - [ ] AUJ-3b — Même logique d'écart sur la mesure dans le Journal.
-- [ ] AUJ-4 — Bloc digestif : « Vos analyses digestives arrivent dans N jours », « Halcya cherchera quels facteurs sont
+- [x] AUJ-4 — Bloc digestif : « Vos analyses digestives arrivent dans N jours », « Halcya cherchera quels facteurs sont
   statistiquement liés à votre confort digestif. », « N/28 jours avec une note digestive », bouton « Noter ma
   digestion », rappel du soir, petit graphique du jour s'il y a des notes ; ni délais, ni Benjamini-Hochberg, ni
-  minimum ; la carte lilas des pistes (`PistesTeaser`) quitte l'Accueil.
+  minimum ; la carte lilas des pistes (`PistesTeaser`) quitte l'Accueil. (07/11 19:30 : `DigestBlock`, « Noter ma
+  digestion » ouvre la fenêtre du bandeau ; analyses prêtes → une ligne vers Analyses › Digestion)
 - [ ] AUJ-5 — « Mes repas du jour » : la liste, ou « Aucun repas aujourd'hui » et un bouton.
 - [ ] AUJ-6 — Sous chaque bloc, un petit « + » qui remonte au bandeau ; bouton plus large pour un bloc qui attend la
   personne (calibration, analyses, repas vides).
