@@ -103,3 +103,36 @@ export function canAdd(keys, key) {
   const units = unitsOf(keys)
   return !keys.includes(key) && (units.length < 2 || units.includes(trendMeasure(key)?.unit))
 }
+
+/** Mesure de Tendances → courbe des changements durables (TS-2, services/method/changes.js). */
+export const CHANGE_KEYS = { wellbeing: 'wellbeing', digestion: 'digestion', sleep: 'sleepMinutes', hrv: 'hrv_ms', restingHr: 'restingHR', steps: 'steps', screen: 'screen_minutes' }
+const CHANGE_LABELS = { wellbeing: 'Bien-être', digestion: 'Confort digestif', sleepMinutes: 'Sommeil', hrv_ms: 'VFC', restingHR: 'FC au repos', steps: 'Pas', screen_minutes: 'Temps d’écran' }
+
+/**
+ * Repères « changement » des mesures affichées dans la période (vue Mois) : niveau avant et après, dans l'unité de
+ * la courbe, et « Au même moment » (autres changements à ± 5 jours). Jamais de cause.
+ * @param {Record<string, Array>} all  sortie de changesFromEntries
+ */
+export function changeMarks(all, keys, dates) {
+  if (!all) return []
+  const inRange = new Set(dates)
+  const out = []
+  for (const k of keys) {
+    const m = trendMeasure(k)
+    const ck = CHANGE_KEYS[k]
+    for (const c of all[ck] || []) {
+      if (!inRange.has(c.date)) continue
+      const conv = (v) => (m.state ? toDisplay(v) : v * (m.scale ?? 1))
+      const near = []
+      for (const [other, list] of Object.entries(all)) {
+        if (other === ck) continue
+        for (const o of list) {
+          const gap = Math.abs(Date.parse(`${o.date}T12:00:00`) - Date.parse(`${c.date}T12:00:00`)) / 86_400_000
+          if (gap <= 5) near.push(CHANGE_LABELS[other] ?? other)
+        }
+      }
+      out.push({ key: k, date: c.date, label: m.label, tone: m.tone, before: m.fmt(conv(c.before)), after: m.fmt(conv(c.after)), sameTime: [...new Set(near)] })
+    }
+  }
+  return out
+}
