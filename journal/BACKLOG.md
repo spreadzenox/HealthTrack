@@ -68,9 +68,14 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   compteur est actif). `DayStatusCard` n'a plus de bouton (sauf calibration de départ) ; vide : « Notez votre bien-être
   plus bas… ». Ordre de l'Accueil : statut, carte lilas des analyses, tuiles du jour, Noter. Les selles restent dans
   la carte ventre (thème pêche) ; aucune « note libre » n'existe encore sur l'Accueil.)
-- [ ] TESTEUR-1d-b — « Vos données du jour » par source (Montre, Téléphone, Noté par vous ; source absente masquée,
+- [x] TESTEUR-1d-b — « Vos données du jour » par source (Montre, Téléphone, Noté par vous ; source absente masquée,
   « Ajouter une montre › » sinon), dernière note du ventre et du bien-être dans « Noté par vous » ; supprimer
-  `MoodEstimateCard` (déplacer `StartCalibration` et `UnlockReminder`).
+  `MoodEstimateCard` (déplacer `StartCalibration` et `UnlockReminder`). (07/11 11:35 : `todayBySource()` dans
+  `services/today.js` + `components/TodayBySource.jsx` ; Montre = sommeil, VFC nuit, FC au repos, et les pas quand
+  ils viennent d'une montre connue ou du même appareil que la nuit ; Téléphone = pas, nuit estimée, temps d'écran ;
+  Noté par vous = note du jour seulement (menthe / pêche), repas, cigarettes ; appareil d'origine en mono en tête de
+  carte ; rien du tout au premier jour. `MeasureTiles` et `MoodEstimateCard` supprimés ; rappel et calibration dans
+  `WellbeingNudges.jsx`. La météo n'y est pas : elle n'est enregistrée que pour les journées terminées.)
 - [ ] TESTEUR-1d-2 — « Ce qui change aujourd'hui » : `dayDeviations` (médiane 14 j, 3 écarts au plus, aucune couleur
   de jugement, règle 6) + carte lilas qui explique les analyses (« Halcya cherchera ce qui revient avant vos bons et
   vos mauvais jours »).

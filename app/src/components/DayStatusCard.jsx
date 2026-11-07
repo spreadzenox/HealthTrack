@@ -8,9 +8,8 @@
 import { Link } from 'react-router-dom'
 import { dayStatus } from '../services/today'
 import { NOTE_CHOICES } from '../services/mood/wellbeingScale'
-import { StartCalibration, UnlockReminder } from './MoodEstimateCard'
+import { StartCalibration, UnlockReminder } from './WellbeingNudges'
 import LineIcon from './LineIcon'
-import './MoodEstimateCard.css'
 import './DayStatusCard.css'
 
 function Scale({ segment }) {

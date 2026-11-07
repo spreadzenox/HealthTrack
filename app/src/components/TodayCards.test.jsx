@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import { GutCard, MeasureTiles, PistesTeaser } from './TodayCards'
+import { GutCard, PistesTeaser } from './TodayCards'
 
 vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn(),
@@ -9,29 +9,6 @@ vi.mock('../storage/localHealthStorage', () => ({
 }))
 
 const wrap = (ui) => render(<BrowserRouter>{ui}</BrowserRouter>)
-
-describe('MeasureTiles', () => {
-  const tiles = [
-    { key: 'sleep', label: 'Sommeil', value: '7 h 32', sources: ['Health Connect · Garmin'] },
-    { key: 'hrv', label: 'VFC nuit', value: null, sources: [] },
-    { key: 'steps', label: 'Pas', value: '3 456', sources: ['Montre Huawei'] },
-  ]
-
-  it('montre les chiffres, et leur source en mode détails', () => {
-    const { rerender } = wrap(<MeasureTiles tiles={tiles} />)
-    expect(screen.getByText('7 h 32')).toBeInTheDocument()
-    expect(screen.getByText('—')).toBeInTheDocument()
-    expect(screen.queryByText('Health Connect · Garmin')).not.toBeInTheDocument()
-    rerender(<BrowserRouter><MeasureTiles tiles={tiles} details /></BrowserRouter>)
-    expect(screen.getByText('Health Connect · Garmin')).toBeInTheDocument()
-    expect(screen.getByText('aucune source')).toBeInTheDocument()
-  })
-
-  it('rien de mesuré : ni tuiles « — » ni phrase sur les sources, branchées pendant l’accueil (testeur du 06/11)', () => {
-    const { container } = wrap(<MeasureTiles tiles={tiles.map((t) => ({ ...t, value: null }))} />)
-    expect(container).toBeEmptyDOMElement()
-  })
-})
 
 describe('GutCard', () => {
   beforeEach(async () => {
