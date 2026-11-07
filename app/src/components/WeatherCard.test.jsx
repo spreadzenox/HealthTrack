@@ -26,6 +26,13 @@ describe('WeatherCard', () => {
     expect(await screen.findByText(/Votre position \(à ≈ 10 km près\)/)).toBeInTheDocument()
   })
 
+  it('TESTEUR-5a-3 : position déjà accordée à l’accueil (même réglage) → Sources ne la redemande pas', () => {
+    enableWeather({ lat: 48.85, lon: 2.35, name: null })
+    render(<WeatherCard sync={vi.fn(async () => ({ ran: false }))} />)
+    expect(screen.queryByRole('button', { name: 'Utiliser ma position approximative' })).toBeNull()
+    expect(screen.getByText('Automatique')).toBeInTheDocument()
+  })
+
   it('position refusée : propose la recherche de ville', async () => {
     const getPosition = vi.fn(async () => {
       throw new Error('denied')
