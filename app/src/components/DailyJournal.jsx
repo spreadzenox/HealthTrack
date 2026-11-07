@@ -417,7 +417,7 @@ export default function DailyJournal() {
   return (
     <section className="daily-journal" aria-labelledby="daily-journal-title">
       <h2 id="daily-journal-title" className="page-title">Vos derniers jours</h2>
-      <p className="page-intro">Chaque jour, ce que vos sources ont mesuré et ce que vous avez noté.</p>
+      <p className="page-intro">Ce qui a été mesuré et noté, jour par jour.</p>
       {/* Journal vierge : « Rien de noté » d'abord, la photo des selles ensuite (REVUE-320-SOMBRE-2). */}
       {stoolPhoto && days.length > 0 && <StoolPhotoLine />}
       <WellbeingPrompt

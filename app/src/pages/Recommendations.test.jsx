@@ -124,7 +124,8 @@ describe('Recommendations page', () => {
     expect(title.querySelector('span').style.whiteSpace).toBe('nowrap')
     expect(container.querySelector('.pistes-count')).toHaveTextContent(/0\/5 jours avec une note de bien-être/)
     expect(container.textContent).not.toMatch(/ventre/)
-    expect(screen.getByText(/résultats seraient surtout dus au hasard/)).toBeInTheDocument()
+    // TESTEUR-3a : plus de détail technique (« hasard ») sous le compte à rebours, seulement ce qui manque
+    expect(container.textContent).not.toMatch(/hasard/)
     // COUNTDOWN-LIEN : « la carte de l'Accueil » mène à l'Accueil, en un geste
     const home = within(screen.getByTestId('reco-countdown-wellbeing')).getByRole('link', { name: 'la carte de l’Accueil' })
     expect(home).toHaveAttribute('href', '/')
@@ -411,7 +412,8 @@ describe('Recommendations levers', () => {
     expect(verifyCard).toHaveClass('reco-advice-card--verify')
     expect(screen.queryByText(/Chez vous : lien net|À vérifier : peut-être|Hypothèse (solide|à confirmer|incertaine)/)).not.toBeInTheDocument()
     fireEvent.click(within(verifyCard).getByRole('button'))
-    expect(verifyCard).toHaveTextContent('Peut-être le hasard')
+    expect(verifyCard).toHaveTextContent('À revoir dans quelques jours')
+    expect(verifyCard).not.toHaveTextContent(/hasard/)
     spy.mockRestore()
   })
 
@@ -447,7 +449,18 @@ describe('Recommendations levers', () => {
       correlations: [{ ...baseCorr, variable: 'steps', label: 'Pas quotidiens', r: 0.05, q: 0.9, evidence: 'incertain', strength: 'négligeable' }],
       levers: [],
     })
-    expect(await screen.findByText(/Aucune piste ne se dégage/i)).toBeInTheDocument()
+    // TESTEUR-3a : une phrase simple, sans « hasard »
+    expect(await screen.findByText('Rien de net pour l’instant. Continuez à noter votre bien-être chaque jour.')).toBeInTheDocument()
+    expect(screen.queryByText(/hasard/)).not.toBeInTheDocument()
+    spy.mockRestore()
+  })
+
+  it('dit ce qui manque quand les liens sont encore fragiles (TESTEUR-3a)', async () => {
+    const spy = await renderWithBasic({
+      status: 'ok', datasetDays: 6, reliability: 'exploratory', correlations: [], levers: [],
+    })
+    expect(await screen.findByText('Encore 4 jours de notes pour des résultats plus sûrs.')).toBeInTheDocument()
+    expect(screen.queryByText(/exploratoires|objectif/i)).not.toBeInTheDocument()
     spy.mockRestore()
   })
 

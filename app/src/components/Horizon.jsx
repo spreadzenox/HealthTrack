@@ -69,14 +69,19 @@ export function WellbeingWeeks({ weeks }) {
  * reste du même jour (services/mood/mealHours.js). Rien sans lecture du visage ni repas noté ; un compteur tant que
  * les jours manquent ; un écart dit seulement s'il est net, sans sens présupposé ni conseil (règle 6).
  */
+/** TESTEUR-3a : ce qui manque, en une ligne. */
+function soonMealHours({ currentDays, minDays }) {
+  const left = Math.max(minDays - (currentDays || 0), 1)
+  return `Après un repas : encore ${left} jour${left > 1 ? 's' : ''} de lectures du visage.`
+}
+
 export function MealHoursHorizon({ result }) {
   if (!result || result.status === 'no_face' || result.status === 'no_meals') return null
   let body
   if (result.status === 'not_enough_data') {
     body = (
       <p className="horizon-line horizon-line--soon">
-        Après un repas : arrive avec {result.minDays} jours de lectures du visage avant et après vos repas
-        <span className="horizon-num"> ({result.currentDays} / {result.minDays})</span>.
+        {soonMealHours(result)}
       </p>
     )
   } else if (result.clear) {

@@ -109,7 +109,7 @@ function AgainstNormNote() {
 /** I108 : une piste nette « chez vous » (q < 0,05) ou une seule « à vérifier » (q < 0,2). */
 const LEVER_STAGE = {
   personal: { evidence: 'solide', note: 'Le lien tient même en comptant tous les facteurs testés.' },
-  toVerify: { evidence: 'à confirmer', note: 'Peut-être le hasard. À revoir dans quelques jours.' },
+  toVerify: { evidence: 'à confirmer', note: 'Lien encore fragile. À revoir dans quelques jours.' },
 }
 
 /** POL-7b : la piste en mots d'abord ; r, jours indépendants et week-end derrière le chevron. */
@@ -276,6 +276,13 @@ function CorrelationCard({ item, measure = 'bien-être', extra, onHide }) {
   )
 }
 
+/** TESTEUR-3a : ce qui manque (« encore N jours »), sans le mot « exploratoire » ni l'objectif chiffré. */
+const RELIABLE_DAYS = 10
+function exploratoryLine(days) {
+  const left = Math.max(RELIABLE_DAYS - (days || 0), 1)
+  return `Encore ${left} jour${left > 1 ? 's' : ''} de notes pour des résultats plus sûrs.`
+}
+
 // ─── Not enough data placeholder ─────────────────────────────────────────────
 
 function NotEnoughData({ currentDays, minDays }) {
@@ -285,7 +292,7 @@ function NotEnoughData({ currentDays, minDays }) {
       <p className="reco-not-enough-title">Pas encore assez de jours mesurés</p>
       <p className="reco-not-enough-hint">
         {currentDays === 0
-          ? `Les liens avec votre bien-être demandent au moins ${minDays} jours avec une note de bien-être («\u00a0Noter moi-même\u00a0», dans la carte Bien-être estimé de l’Accueil).`
+          ? `Encore ${minDays} jours avec une note de bien-être.`
           : `Encore ${remaining} jour${remaining > 1 ? 's' : ''} avec une note de bien-être (vous en avez ${currentDays}).`}
       </p>
     </div>
@@ -497,7 +504,7 @@ function LinksSection({ analysis, levers = [], hidden = [], onHide }) {
           <summary>
             {uncertain.length === 1 ? 'Voir le lien incertain' : 'Voir les liens incertains'}
           </summary>
-          <p className="reco-section-hint">Trop tôt pour dire : peut-être le hasard.</p>
+          <p className="reco-section-hint">Trop tôt pour conclure.</p>
           {!hasFace(clear) && hasFace(uncertain) && faceHint}
           {list(uncertain)}
         </details>
@@ -702,7 +709,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
     <div className="reco-tab-content">
       {result.reliability === 'exploratory' && (
         <p className="reco-reliability-warn reco-explore">
-          Données exploratoires : continuez à noter votre bien-être (objectif : 10 jours).
+          {exploratoryLine(result.datasetDays)}
         </p>
       )}
 
@@ -734,8 +741,7 @@ function AnalysisView({ analysis, teaserShown = false, advanced, onOpenAdvanced 
           <p className="reco-empty-levers">Vous avez masqué toutes les pistes.</p>
         ) : (
           <p className="reco-empty-levers">
-            Aucune piste ne se dégage encore nettement de vos données : les liens observés
-            peuvent être dus au hasard. Continuez à noter votre bien-être chaque jour.
+            Rien de net pour l’instant. Continuez à noter votre bien-être chaque jour.
           </p>
         )}
       </section>
@@ -791,7 +797,7 @@ export function AnalysisCountdown({ domain, days, target }) {
       </p>
       {/* COUNTDOWN-LIEN : la carte où noter, à un geste */}
       <p className="today-card-text">
-        {text.how} <Link to="/">la carte de l’Accueil</Link>. Avec moins de jours, les résultats seraient surtout dus au hasard.
+        {text.how} <Link to="/">la carte de l’Accueil</Link>.
       </p>
     </section>
   )

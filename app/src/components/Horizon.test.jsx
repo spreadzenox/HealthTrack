@@ -13,8 +13,9 @@ describe('MealHoursHorizon — bien-être dans les heures après un repas (ANALY
   it('pas assez de jours : une ligne discrète avec le compteur, sous « Dans les heures »', () => {
     render(<MealHoursHorizon result={{ status: 'not_enough_data', currentDays: 4, minDays: 10 }} />)
     expect(screen.getByTestId('horizon-hours')).toHaveTextContent('Dans les heures')
-    expect(screen.getByText(/arrive avec 10 jours de lectures du visage/)).toBeInTheDocument()
-    expect(screen.getByText(/4 \/ 10/)).toBeInTheDocument()
+    // TESTEUR-3a : ce qui manque, en une ligne (« encore 6 jours »), sans le détail du calcul
+    expect(screen.getByTestId('meal-hours')).toHaveTextContent('Après un repas : encore 6 jours de lectures du visage')
+    expect(screen.getByTestId('meal-hours')).not.toHaveTextContent(/avant et après/)
   })
 
   it('écart net : dit le sens tel quel, avec le chiffre et le nombre de jours', () => {

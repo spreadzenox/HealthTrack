@@ -34,7 +34,8 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   passer par la page Repas) ; test du champ `capture` sur les deux points d'entrée (07/11 00:35 : `MealPhotoButton`,
   libellé d'un champ `capture="environment"` ; la photo passe en mémoire à Repas, reprise une fois ; aussi la tuile du
   Journal vide).
-- [ ] TESTEUR-4c — « Vos derniers jours… » en une phrase simple.
+- [x] TESTEUR-4c — « Vos derniers jours… » en une phrase simple (07/11 01:35 : « Ce qui a été mesuré et noté, jour par
+  jour. »).
 - [ ] TESTEUR-4d — Nutrition : sous-titres (« estimé d'après vos pas des 14 derniers jours », « modérément actif sans
   montre ») au toucher seulement ; problème et solution dans la même carte.
 
@@ -58,9 +59,10 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
   moins de texte (« encore quelques jours de lecture… », « un jour sur trois »).
 
 **(3) Analyses**
-- [ ] TESTEUR-3a — Retirer « sur les 6 dernières semaines », « sinon surtout du hasard » ; garder « encore N nuits ».
-  Fait le 06/11 23:35 pour la carte du compte à rebours ; reste la phrase « Avec moins de jours… hasard » de
-  `Recommendations.jsx` (texte `how`) et les autres mentions techniques de l'onglet.
+- [x] TESTEUR-3a — Retirer « sur les 6 dernières semaines », « sinon surtout du hasard » ; garder « encore N nuits ».
+  (06/11 23:35 carte du compte à rebours ; 07/11 01:35 : plus aucun « hasard » visible, « Données exploratoires »
+  devient « Encore N jours de notes pour des résultats plus sûrs », « Après un repas : encore N jours de lectures du
+  visage » ; la méthode reste dans « Comment c'est calculé ». Reste le séparateur « · » de la ligne d'en-tête, avec 3b.)
 - [ ] TESTEUR-3b — Bien-être et Tendances : fusionner ou différencier (proposition en run idées d'abord).
 - [ ] TESTEUR-3c — Plus d'interrupteur dans un interrupteur (calcul du modèle qui prédit le bien-être).
 
