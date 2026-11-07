@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "Le bien-être du jour sur le nouveau calcul",
+  "items": [
+    "Sur l’Accueil, la valeur du bien-être du jour vient du même calcul que Journal › Tendances : vos lectures du visage, vos notes et leur lien avec votre confort digestif.",
+    "La mention « et votre gêne digestive » et la ligne « la note baisse de… » du détail d’une lecture disparaissent : le lien entre digestion et bien-être est désormais appris sur vos données."
+  ],
+  "variants": ["play", "sideload"]
+}

@@ -39,12 +39,17 @@
 > - **Correctif** : de #806 à #809, le contrôle « Budget de lectures » était rouge sur main (Tendances lançait trois
 >   calculs à l'ouverture) ; corrigé par #813 (les détails se calculent à la demande). Nettoyage du code laissé par la
 >   réorganisation et pointillé réservé à l'attendu du futur (#816).
-> **Reste à faire** : la norme des écarts du jour qui repart du dernier changement durable (TS-2, `normStart`) et la
-> valeur du jour de l'Accueil sur l'estimation TS-1 (à la place de VENTRE-BE-2) : tous deux ajoutent un calcul lourd à
-> l'Accueil, à faire en vérifiant le budget de lectures ; TESTEUR-5a-3 (Sources sans double demande, à vérifier sur
-> téléphone) ; le point (5b) iPhone, côté routine iOS. **À tester sur votre Galaxy** (version de ce soir sur Alpha à
-> 23:45) : l'Accueil de haut en bas, l'onglet Agir, Journal › Tendances (touchez un jour), Analyses. Rien à faire de
-> votre côté.
+> - **Reprise de 21:40** (les trois dernières étapes) : « d'habitude » sur l'Accueil et dans Journal › Jours se compare
+>   au niveau atteint depuis le dernier changement durable de la mesure (TS-2 `normStart`, #817) ; la valeur du
+>   bien-être du jour de l'Accueil vient de l'estimation TS-1, et l'ancien ajustement par la digestion (VENTRE-BE-2) est
+>   retiré partout, textes compris (« et votre gêne digestive », « la note baisse de… ») ; Sources ne redemande rien de
+>   ce qui a été accordé à l'accueil (TESTEUR-5a-3, vérifié dans le code et par un test) (#818). Aucun calcul lourd
+>   ajouté à l'Accueil : il réutilise les entrées qu'il lit déjà (402 enregistrements pour une limite de 1 500).
+> **Reste à faire** : le point (5b) iPhone, côté routine iOS. **À tester sur votre Galaxy** (version de ce soir sur
+> Alpha à 23:45) : l'Accueil de haut en bas (la valeur du bien-être du jour peut bouger un peu : elle tient compte de
+> vos notes et de votre digestion), l'onglet Agir, Journal › Tendances (touchez un jour), Analyses ; et, sur une
+> installation neuve, que Sources ne redemande ni la position, ni la caméra, ni Health Connect accordées à l'accueil.
+> Rien à faire de votre côté.
 
 > 🌙 **Chantier du soir (07/11) — voie « méthode »** (session « méthode », en parallèle de la session « interface »).
 > **Livré ce soir** (services testés, aucun écran touché ; l'interface s'y branche) : le contrat des résultats
@@ -59,8 +64,8 @@
 > contributions du jour sur ce modèle ; TS-2 et TS-2b (changements durables : 0,26 fausse alerte par courbe et par
 > semestre au banc ; un lien doit tenir à l'intérieur des périodes) ; ORG-7 (sources classées, `PRODUIT.md` § 3 bis).
 > Numéros des PR et état final : voir le tableau des runs. **Reste à faire** : la norme des écarts du jour qui repart
-> du dernier changement (`normStart` dans `dayDeviations.js`, que la session interface modifiait ce soir) ; remplacer
-> VENTRE-BE-2 à l'affichage par l'estimation TS-1 (côté interface : tâche `dayStates`).
+> du dernier changement et VENTRE-BE-2 remplacé par TS-1 à l'affichage : faits à la reprise de 21:40 (voir la voie
+> interface).
 
 > 🧑‍🔬 **Retours de votre premier testeur iPhone (06/11 22:35) : pris en compte.** Le résumé anonyme est dans
 > [`RETOURS-TESTEURS.md`](RETOURS-TESTEURS.md) et découpé en 17 étapes (TESTEUR-*) en tête de `BACKLOG.md` ; elles
@@ -253,6 +258,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 21:40 → 22:30 — [Reprise du chantier du soir](runs/2026-11-07-2140-reprise-soir.md) | 🎨 | TS-2 `normStart` dans les écarts du jour (#817) ; bien-être du jour de l'Accueil sur TS-1, VENTRE-BE-2 retiré ; TESTEUR-5a-3 (#818). Budget de lectures vert. Rien à faire de votre côté |
 | 07/11 17:15 → 20:26 — [Chantier du soir, interface](runs/2026-11-07-1715-chantier-soir-interface.md) | 🎨 | AUJ-7, AUJ-8, AUJ-2b, AUJ-3, AUJ-4, AUJ-5, AUJ-6, AUJ-1b, AUJ-4b, AUJ-9, ORG-1, ORG-1b, ORG-2, AUJ-3b, ORG-3, ORG-3b, ORG-3c, ORG-4, ORG-6, ORG-8, TS-2 (affichage), TESTEUR-5a-2, correctif du budget de lectures, nettoyage (#784 à #816). Rien à faire de votre côté |
 | 07/11 20:10 — [Relais iOS : même numéro de version](runs/2026-11-07-2010-relais-ios-version.md) | 🔧 | Votre décision de 19:35 (même numéro de version pour les builds TestFlight pendant un cycle, build qui suit Android, 844.344 inchangée) transmise en tête de `POUR-IOS.md`, appliquée par la routine iOS dès la build de cette nuit. Rien à faire de votre côté |
 | 07/11 18:50 — [Chantier du soir, méthode (2/2)](runs/2026-11-07-1850-methode-soir-2.md) | 🧮 | ORG-5c (#797), ORG-5d (#799), contributions du jour (#801), TS-2 et TS-2b (#802), ORG-7. Rien de visible : la session interface s'y branche. Rien à faire de votre côté |

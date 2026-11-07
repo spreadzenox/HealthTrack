@@ -22,8 +22,8 @@
  *    modèle personnel, et sa fourchette de son erreur en validation croisée. Les notes affinent, elles ne
  *    conditionnent jamais l'affichage.
  *
- * 4. **Ressenti du ventre** (VENTRE-BE-2) : une note « gêne » ou « douleur » du jour fait faire à la note du jour un
- *    petit pas vers le bas (gutSelfReport.js, poids faible).
+ * 4. **Ressenti du ventre** : il n'entre plus ici (VENTRE-BE-2 retiré le 07/11). Le modèle à espace d'états (TS-1,
+ *    method/stateSpace.js) relie ventre et bien-être, et l'Accueil affiche son estimation du jour.
  *
  * Entrées : uniquement des signaux émotionnels directs (rafales `face_burst` du déverrouillage, notes `wellbeing`,
  * notes du ventre), c'est-à-dire des entrées Y déclarées dans estimatorInputs.js (D5) ; aucun comportement ni contexte.
@@ -35,7 +35,6 @@ import { evaluateGate, gateDays } from './gate'
 import { calibrateRidge, predictCalibrated } from './calibration'
 import { appLocale, localeDate } from '../../i18n/locale.js'
 import { faceModelTag } from './modelName'
-import { gutAdjust, gutLevelsByDay } from './gutSelfReport'
 
 /** Indices d'expression lus par l'estimateur (yaw / asymmetry / jawOpen servent à la qualité, pas à l'humeur). */
 export const EXPRESSION_KEYS = ['smile', 'duchenne', 'mouthFrown', 'browDown', 'browInnerUp']
@@ -359,8 +358,7 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
     const readings = todays.map((b) => estimateBurst(b, ctx))
     const notes = readings.map((r) => r.note)
     const weights = readings.map(readingWeight)
-    const adjusted = gutAdjust(weightedMedian(notes, weights), gutLevelsByDay(entries).get(today))
-    const note = adjusted.note
+    const note = weightedMedian(notes, weights)
     const n = notes.length
     // Nombre effectif de lectures (Kish) : des lectures peu nettes resserrent moins la fourchette.
     const nEff = weights.reduce((s, w) => s + w, 0) ** 2 / weights.reduce((s, w) => s + w * w, 0)
@@ -390,7 +388,6 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
       spread: spread == null ? null : round1(spread),
       arousal: arousal == null ? null : Math.round(arousal * 100) / 100,
       arousalLabel: arousalLabel(arousal),
-      gut: adjusted.gut,
     }
   }
   return {
@@ -405,7 +402,7 @@ export function faceMoodEstimate(entries, { now = new Date() } = {}) {
     calibrationDays: calibration.days,
     offsetDays: calibration.model ? 0 : calibration.offset?.days ?? 0,
     startCalibration: startCalibration(entries, calibration, today),
-    signals: day?.gut ? ['visage', 'ventre'] : ['visage'],
+    signals: ['visage'],
     duo: gap == null ? null : { models: 2, gap: Math.round(gap * 100) / 100, agreement: agreementOf(gap) },
   }
 }
@@ -424,7 +421,6 @@ export function testReadingEstimate(entries, { now = new Date() } = {}) {
 const fmt = (v) => v.toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 const hour = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 
-const GUT_WORDS = { discomfort: 'gêne digestive', pain: 'douleur digestive' }
 const DUO_WORDS = { accord: 'deux modèles d’accord', partiel: 'deux modèles à peu près d’accord', 'désaccord': 'deux modèles en désaccord' }
 
 /** Phrases pour la carte (et le tableau de bord). Toujours une estimation, jamais un diagnostic. */
@@ -454,7 +450,7 @@ export function describeFaceMood(est, { features } = {}) {
     parts.push('aucune lecture aujourd’hui')
   }
   if (est.duo) parts.push(DUO_WORDS[est.duo.agreement])
-  parts.push(est.day?.gut ? `visage, et votre note digestive (${GUT_WORDS[est.day.gut.level]}) qui compte un peu` : 'un seul signal (visage)')
+  parts.push('un seul signal (visage)')
   lines.push(`Confiance ${est.confidence} : ${parts.join(', ')}.`)
   const habit = est.baselineDays ? `, ajusté à votre visage habituel (${est.baselineDays} ${est.baselineDays > 1 ? 'jours' : 'jour'})` : ''
   const notes = est.offsetDays ? `recalé sur vos notes de ${est.offsetDays} jours, que d’autres notes affineront` : 'vos notes, facultatives, l’affineront'

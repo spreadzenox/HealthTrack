@@ -18,7 +18,6 @@ import { localDateKey } from '../analysisEngine'
 import { moodFaceBursts } from '../faceBursts'
 import { BASELINE_DAYS, estimateBurst, isPoorReading, notesAgreement, personalCalibration, personalNeutral, readingWeight, weightedMedian } from './faceMood'
 import { FACE_MOOD_MIN_READINGS } from './faceMoodDays'
-import { gutAdjust, gutLevelsByDay } from './gutSelfReport'
 
 // fortnight : les 14 jours de « Votre bien-être » dans Analyses → Tendances (signalement du 05/11).
 export const PERIODS = { day: 1, week: 7, fortnight: 14, month: 30 }
@@ -211,7 +210,6 @@ export function wellbeingHistory(entries, { period = 'week', now = new Date() } 
   const manual = (entries || []).filter((e) => e?.type === 'wellbeing' && isNum(e.payload?.score))
   const inPeriod = all.filter((b) => b.at >= fromIso && b.at <= nowIso)
   const calibration = inPeriod.length ? personalCalibration(entries) : null
-  const gutByDay = gutLevelsByDay(entries)
   const byDay = new Map()
   for (const b of inPeriod) {
     const dk = localDateKey(b.at)
@@ -230,12 +228,12 @@ export function wellbeingHistory(entries, { period = 'week', now = new Date() } 
         at: r.at, date, note: r.note, low: r.low, high: r.high, readings: 1, detail: pointDetail([list[i]]),
       }))
     } else {
-      // Même note du jour que l'Accueil et les Analyses : ressenti du ventre compris (VENTRE-BE-2).
-      const { note, gut } = gutAdjust(weightedMedian(readings.map((r) => r.note), readings.map(readingWeight)), gutByDay.get(date))
+      // Visage seul (VENTRE-BE-2 retiré le 07/11 : le lien ventre ↔ bien-être est dans TS-1).
+      const note = weightedMedian(readings.map((r) => r.note), readings.map(readingWeight))
       const detail = pointDetail(list)
       points.push({
         at: list[list.length - 1].at, date, note: round2(note), readings: list.length,
-        few: list.length < FACE_MOOD_MIN_READINGS, detail: gut && detail ? { ...detail, gut } : detail,
+        few: list.length < FACE_MOOD_MIN_READINGS, detail,
       })
     }
   }

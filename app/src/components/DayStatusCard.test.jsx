@@ -36,9 +36,10 @@ describe('Bloc bien-être du jour (AUJ-2)', () => {
     expect(screen.getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Ajouter une note de bien-être'])
   })
 
-  it('une gêne digestive comptée est dite (VENTRE-BE-2)', () => {
+  it('VENTRE-BE-2 retiré : la digestion n’est plus citée dans la provenance', () => {
     view({ data: face(1.5, { day: { note: 1.5, readings: 2, gut: { level: 'discomfort' } } }) })
-    expect(screen.getByText('D’après 2 lectures du visage et votre gêne digestive')).toBeInTheDocument()
+    expect(screen.getByText('D’après 2 lectures du visage')).toBeInTheDocument()
+    expect(screen.queryByText(/digestive/)).toBeNull()
   })
 
   it('sans lecture du jour : les notes du jour en points et la dernière en valeur', () => {

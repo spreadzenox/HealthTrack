@@ -225,8 +225,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   fourchette à 80 % ; attendu des 7 jours à venir ; `digestionOwn` (sans rien du bien-être, seule série digestive des
   analyses) ; `showDigestiveCurve` (validation par blocs d'une semaine contre la moyenne) ; `noteRequest` (jours parmi
   les 30 % plus incertains des 4 dernières semaines). Banc : 9 à 10 sur 10 mieux que le visage seul, couverture de la
-  fourchette entre 65 et 95 %, règle 5 ≤ 5 %. VENTRE-BE-2 reste en place dans l'affichage du jour jusqu'à ce que
-  l'interface prenne l'estimation TS-1 (ORG-5d branche déjà les analyses dessus).
+  fourchette entre 65 et 95 %, règle 5 ≤ 5 %. ✅ 07/11 (reprise du soir) : VENTRE-BE-2 retiré. La valeur du jour de
+  l'Accueil vient de TS-1 (`todayWellbeingState` : le calcul `dayStates` s'il est en cache, sinon le même modèle sur
+  les entrées que l'Accueil lit déjà, selles comprises ; seulement si le bien-être est observé aujourd'hui) ;
+  `gutSelfReport.js` (`gutAdjust`) supprimé ; plus d'ajustement digestif dans `faceMood.js`, `faceMoodDays.js`,
+  `wellbeingHistory.js` ; « et votre gêne digestive » (Accueil) et « la note baisse de… » (détail d'une lecture)
+  retirés. Budget de lectures local : Accueil 402 enregistrements (max 1 500), aucune tâche longue.
 - [x] TS-2 — **Changements durables** : bien-être, confort digestif, sommeil, VFC, FC au repos, pas, écran, une fois le
   rythme de la semaine retiré ; un saut de niveau, au moins 7 jours de chaque côté, au moins une demi-variation
   habituelle, confirmé 7 jours après ; seuil calé sur le banc (moins d'une fausse alerte par courbe et par semestre).
@@ -356,7 +360,10 @@ apparence = même type d'information ; moins de texte ; jamais le problème dans
     encore 0 à 5 et stockait le chiffre brut : il propose 1 à 5, stockés par `choiceToScore`.
   - [x] 5a-2 : Health Connect proposé aussi sans montre (le téléphone y écrit pas et sommeil), avec l'historique
     (READ_HEALTH_DATA_HISTORY déjà demandé ?) ; vérifier l'ordre des écrans (Santé, météo, caméra) et le compteur.
-  - [ ] 5a-3 : Sources sans doublon de demande une fois tout accordé à l'accueil (vérif. en captures vierges).
+  - [x] 5a-3 (07/11, reprise du soir) : Sources sans doublon de demande une fois tout accordé à l'accueil. Vérifié
+    dans le code : météo (`enableWeather` → la carte n'affiche plus « Utiliser ma position », test ajouté), lecture du
+    visage (`isFaceSenseEnabled`, même réglage), Health Connect (`checkPermissions` accordé → plus de « Demander les
+    autorisations » ; source allumée par le premier import). Reste à voir sur téléphone (« À tester »).
 - [ ] TESTEUR-5b — iPhone : mention propre à Android dans la source Santé ; source « iOS 26.4 ou plus » masquée ou
   expliquée (transmis à la routine iOS le 06/11 22:35 ; vérifier ici les textes du code partagé). (07/11 : aucun texte
   « iOS 26.4 » ni mention Android dans le code partagé de Sources ; reste côté routine iOS)

@@ -89,7 +89,7 @@ export function observationsFromEntries(entries) {
     }
   }
   for (const [dk, a] of notes) at(wellbeing, dk).note = mean(a)
-  for (const d of faceMoodDays(entries || [], { withGut: false })) at(wellbeing, d.date).face = d.note
+  for (const d of faceMoodDays(entries || [])) at(wellbeing, d.date).face = d.note
   for (const [dk, lvl] of gut) at(digestion, dk).gut = GUT_VALUE[lvl]
   for (const [dk, a] of stool) at(digestion, dk).stool = mean(a)
   return { wellbeing, digestion }

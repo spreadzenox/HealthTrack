@@ -314,11 +314,11 @@ describe('WellbeingHistory — historique du bien-être (POL-2)', () => {
   })
 })
 
-describe('ReadingDetail — ressenti du ventre (VENTRE-BE-2)', () => {
+describe('ReadingDetail — VENTRE-BE-2 retiré (TS-1 le remplace)', () => {
   const point = { at: '2026-11-04T19:00:00.000Z', date: '2026-11-04', note: 2.9, readings: 3, detail: { readings: 3, poor: 0, valence: 0.2, arousal: 0, expressions: null } }
-  it('dit quand une note digestive a fait baisser la note du jour', () => {
+  it('plus de ligne « la note baisse », même avec un ancien détail digestif', () => {
     render(<ReadingDetail point={{ ...point, detail: { ...point.detail, gut: { level: 'pain', shift: -0.5 } } }} period="week" onClose={() => {}} />)
-    expect(screen.getByText('Douleur digestive notée ce jour-là : la note baisse de 0,4.')).toBeInTheDocument()
+    expect(screen.queryByText(/la note baisse/)).toBeNull()
   })
   it('rien sur le ventre sans note digestive', () => {
     render(<ReadingDetail point={point} period="week" onClose={() => {}} />)

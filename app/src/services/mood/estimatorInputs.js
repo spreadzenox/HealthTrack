@@ -24,10 +24,11 @@ export const ESTIMATOR_INPUTS = [
     tags: ['stress'],
   },
   {
-    // VENTRE-BE-2 (I220, accepté le 05/11) : une note « gêne » ou « douleur » ajuste un peu le bien-être du jour
-    // (poids faible, mood/gutSelfReport.js). Le ventre n'est donc jamais un facteur des liens du bien-être.
+    // TS-1 (method/stateSpace.js, remplace VENTRE-BE-2 le 07/11) : les notes digestives sont observées par le même
+    // modèle que le bien-être, dont les écarts du jour sont liés. Le ventre n'est donc jamais un facteur des liens
+    // du bien-être.
     key: 'gutSelfReport',
-    label: 'Ce que vous déclarez de votre digestion (poids faible)',
+    label: 'Ce que vous déclarez de votre digestion',
     columns: ['gut'],
     prefix: 'gut_',
   },
