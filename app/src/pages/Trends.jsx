@@ -34,10 +34,11 @@ async function readMeasureDays(now = new Date()) {
 const readStates = () => getAnalysis('dayStates').catch(() => null)
 // Détail d'un jour (ORG-3c) : lectures du visage et notes, contributions du modèle d'Analyses (ORG-5, contrat)
 const readFace = () => loadFaceMoodEntries().then(({ bursts, notes }) => [...bursts, ...notes]).catch(() => [])
+const readChanges = () => getAnalysis('changes').catch(() => null)
 const readContributions = () => getAnalysis('analysisResults').then((r) => r?.contributions ?? null).catch(() => null)
 
 export default function Trends({
-  readDays = readMeasureDays, readDayStates = readStates, readFaceEntries = readFace, readDayContributions = readContributions, now,
+  readDays = readMeasureDays, readDayStates = readStates, readFaceEntries = readFace, readDayContributions = readContributions, readDayChanges = readChanges, now,
 }) {
   const [params] = useSearchParams()
   const asked = params.get('mesure')
@@ -45,15 +46,15 @@ export default function Trends({
   const [data, setData] = useState(null)
   useEffect(() => {
     let alive = true
-    const load = () => Promise.all([readDayStates(), readDays().catch(() => []), readFaceEntries(), readDayContributions()])
-      .then(([states, days, face, contributions]) => alive && setData({ states, days, face, contributions }))
+    const load = () => Promise.all([readDayStates(), readDays().catch(() => []), readFaceEntries(), readDayContributions(), readDayChanges()])
+      .then(([states, days, face, contributions, changes]) => alive && setData({ states, days, face, contributions, changes }))
     load()
     window.addEventListener('health-entries-updated', load)
     return () => {
       alive = false
       window.removeEventListener('health-entries-updated', load)
     }
-  }, [readDays, readDayStates, readFaceEntries, readDayContributions])
+  }, [readDays, readDayStates, readFaceEntries, readDayContributions, readDayChanges])
   // Le confort digestif seul affiché : ses contributions ; sinon celles du bien-être
   const dayExtra = (date, keys) => ({
     face: dayFaceDetail(data?.face ?? [], date),
@@ -72,6 +73,7 @@ export default function Trends({
           onPeriod={setPeriod}
           dayView={<WellbeingHistory embedded initialPeriod="day" now={now} />}
           dayExtra={dayExtra}
+          changes={data.changes}
         />
       ) : (
         <div className="loading"><div className="spinner" aria-hidden /></div>
