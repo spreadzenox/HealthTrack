@@ -62,6 +62,8 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     renderJournal()
     await screen.findByText(/Vos derniers jours/i)
     await waitFor(() => expect(document.querySelector('.entry-score')).toBeInTheDocument())
+    // TESTEUR-4c : « Vos derniers jours » expliqué en une phrase courte
+    expect(screen.getByText('Ce qui a été mesuré et noté, jour par jour.')).toBeInTheDocument()
     // Les autres lectures de la page (cartes de forme) visent un type ; celle du journal non
     const journalReads = listEntries.mock.calls.filter(([o]) => !o?.type)
     expect(journalReads).toHaveLength(1)
