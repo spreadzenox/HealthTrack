@@ -40,7 +40,8 @@ const WATCHES = [
  */
 function stepsFor(state) {
   const steps = ['goal', 'tracks', 'watch']
-  if (state.watch === 'health_connect') {
+  // TESTEUR-5a-2 : Health Connect aussi sans montre (le téléphone y écrit les pas, parfois le sommeil)
+  if (state.watch === 'health_connect' || state.watch === 'none') {
     steps.push('health')
     if (state.health === 'granted') steps.push('aha')
   }
@@ -183,13 +184,18 @@ function WatchStep({ watch, onWatch }) {
   )
 }
 
-function HealthStep({ health, onHealth }) {
+function HealthStep({ health, onHealth, noWatch = false }) {
   const [disclosure, askConsent] = useDisclosure()
   const [busy, setBusy] = useState(false)
   const connector = getConnector('health_connect')
 
   useEffect(() => {
-    if (health === 'granted' || !connector) return
+    if (health === 'granted') return
+    // Sans connecteur (autre plateforme) : jamais bloqué sur cet écran
+    if (!connector) {
+      if (health !== 'unavailable') onHealth('unavailable')
+      return
+    }
     let alive = true
     // Déjà autorisé (réinstallation, retour en arrière) : rien à redemander.
     withTimeout(connector.availabilityDetails(), 12000, { available: false })
@@ -233,7 +239,9 @@ function HealthStep({ health, onHealth }) {
       {disclosure}
       <h1 className="onb-title">Vos données Health Connect</h1>
       <p className="onb-lead">
-        L’app lit sur le téléphone vos 30 derniers jours de sommeil, de pas et de cœur. Rien n’est envoyé.
+        {noWatch
+          ? 'Votre téléphone compte vos pas, parfois votre sommeil, dans Health Connect. L’app lit vos 30 derniers jours sur le téléphone. Rien n’est envoyé.'
+          : 'L’app lit sur le téléphone vos 30 derniers jours de sommeil, de pas et de cœur. Rien n’est envoyé.'}
       </p>
       {health === 'granted' && (
         <p className="onb-note onb-note-ok" role="status">
@@ -758,7 +766,7 @@ export default function Onboarding() {
         )}
         {step === 'tracks' && <TracksStep tracks={tracks} onToggle={toggleTrack} />}
         {step === 'watch' && <WatchStep watch={state.watch} onWatch={(watch) => update({ watch })} />}
-        {step === 'health' && <HealthStep health={state.health} onHealth={(health) => update({ health })} />}
+        {step === 'health' && <HealthStep health={state.health} noWatch={state.watch === 'none'} onHealth={(health) => update({ health })} />}
         {step === 'aha' && (
           <AhaStep imported={!!state.imported} onImported={() => update({ imported: true })} onReady={() => setAhaReady(true)} />
         )}
