@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "Vos jours, plus lisibles",
+  "items": [
+    "Dans Journal › Jours, chaque mesure a son icône et la couleur de son thème ; « Stress montre » devient « Stress ».",
+    "Quand une mesure s'écarte nettement de vos 14 jours précédents, la tuile le dit : « ↓ d'habitude 7 h 10 »."
+  ]
+}

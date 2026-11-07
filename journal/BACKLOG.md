@@ -68,7 +68,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   mesure elle-même, sources en petit en bas (jamais un nom d'appareil ou d'app technique) ; `DayChanges` (« Ce qui
   change aujourd'hui ») disparaît. (07/11 19:05 : `TodayBySource` en un bloc, `measureNorms`, icônes par mesure,
   « D'après votre montre et votre téléphone. »)
-- [ ] AUJ-3b — Même logique d'écart sur la mesure dans le Journal.
+- [x] AUJ-3b — Même logique d'écart sur la mesure dans le Journal. (07/11 21:20, avec ORG-2 : « ↓ d'habitude … » sous la
+  valeur quand l'écart est net)
 - [x] AUJ-4 — Bloc digestif : « Vos analyses digestives arrivent dans N jours », « Halcya cherchera quels facteurs sont
   statistiquement liés à votre confort digestif. », « N/28 jours avec une note digestive », bouton « Noter ma
   digestion », rappel du soir, petit graphique du jour s'il y a des notes ; ni délais, ni Benjamini-Hochberg, ni
@@ -108,7 +109,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   vide simple ; la réintroduction FODMAP quitte Analyses pour Agir (code gardé), proposée seulement quand une analyse
   digestive repère un groupe FODMAP. (07/11 19:00 : `pages/Act.jsx`, `services/act.js`, 5e onglet ; FODMAP retiré des
   sous-onglets et de l'onglet Digestion d'Analyses)
-- [ ] ORG-2 — Journal › Jours : retirer « Ce qui a été mesuré et noté, jour par jour », la photo des selles et « Vous
+- [x] ORG-2 — Journal › Jours : retirer « Ce qui a été mesuré et noté, jour par jour », la photo des selles et « Vous
   avez corrigé N estimations » ; cartes jour par jour gardées, une icône par mesure, couleurs par thème, écart à la
   norme ; ni source dans un libellé (« Stress montre ») ni « · ».
 - [x] ORG-3 — Journal › Tendances (quitte Analyses) devient un visualiseur : jour, semaine ou mois ; une ou plusieurs

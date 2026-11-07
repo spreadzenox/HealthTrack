@@ -15,7 +15,7 @@ const frNumber = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: 1
 const CHIP_KEYS = {
   Sommeil: 'sleepMinutes',
   'Sommeil (estimé)': 'sleepMinutes',
-  'Score montre': 'watchSleepScore',
+  'Score de nuit': 'watchSleepScore',
   'FC nuit': 'sleepHr',
   Pas: 'steps',
   'FC au repos': 'restingHr',
@@ -25,7 +25,7 @@ const CHIP_KEYS = {
   Respiration: 'respiratoryRate',
   Température: 'temperatureC',
   'Temp. peau': 'skinTempC',
-  'Stress montre': 'watchStress',
+  Stress: 'watchStress',
   Tension: 'bloodPressure',
   Glycémie: 'glucoseMgDl',
   FC: 'heartRate',
@@ -35,6 +35,11 @@ const CHIP_KEYS = {
   Écran: 'screenMinutes',
   'Réseaux sociaux': 'socialMinutes',
   Météo: 'weather',
+}
+
+/** Clé de mesure d'une tuile (icône, thème, écart à la norme). */
+export function chipKey(label) {
+  return CHIP_KEYS[label] ?? (/ repas$/.test(label) ? 'meals' : null)
 }
 
 export function chipTheme(label) {
@@ -57,7 +62,7 @@ export function summaryChips(s) {
   const chips = []
   const fr = (v) => v.toLocaleString(appLocale())
   if (s.sleepMinutes != null) chips.push([s.sleepEstimated ? 'Sommeil (estimé)' : 'Sommeil', formatDuration(s.sleepMinutes)])
-  if (s.watchSleepScore != null) chips.push(['Score montre', `${s.watchSleepScore} / 100`])
+  if (s.watchSleepScore != null) chips.push(['Score de nuit', `${s.watchSleepScore} / 100`])
   if (s.sleepHr != null) chips.push(['FC nuit', `${s.sleepHr} bpm`])
   if (s.steps != null) chips.push(['Pas', fr(Math.round(s.steps))])
   if (s.restingHr != null) chips.push(['FC au repos', `${Math.round(s.restingHr)} bpm`])
@@ -67,7 +72,7 @@ export function summaryChips(s) {
   if (s.respiratoryRate != null) chips.push(['Respiration', `${frNumber(s.respiratoryRate)} /min`])
   if (s.temperatureC != null) chips.push(['Température', `${frNumber(s.temperatureC)} °C`])
   if (s.skinTempC != null) chips.push(['Temp. peau', `${frNumber(s.skinTempC)} °C`])
-  if (s.watchStress != null) chips.push(['Stress montre', `${s.watchStress} · ${watchStressBand(s.watchStress)}`])
+  if (s.watchStress != null) chips.push(['Stress', `${s.watchStress}, ${watchStressBand(s.watchStress)}`])
   if (s.bloodPressure) chips.push(['Tension', `${s.bloodPressure.systolic}/${s.bloodPressure.diastolic} mmHg`])
   if (s.glucoseMgDl != null) {
     chips.push(['Glycémie', `${(s.glucoseMgDl / 100).toLocaleString(appLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })} g/L`])

@@ -62,8 +62,8 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     renderJournal()
     await screen.findByText(/Vos derniers jours/i)
     await waitFor(() => expect(document.querySelector('.entry-score')).toBeInTheDocument())
-    // TESTEUR-4c : « Vos derniers jours » expliqué en une phrase courte
-    expect(screen.getByText('Ce qui a été mesuré et noté, jour par jour.')).toBeInTheDocument()
+    // ORG-2 : plus de phrase d'introduction
+    expect(screen.queryByText('Ce qui a été mesuré et noté, jour par jour.')).toBeNull()
     // Les autres lectures de la page (cartes de forme) visent un type ; celle du journal non
     const journalReads = listEntries.mock.calls.filter(([o]) => !o?.type)
     expect(journalReads).toHaveLength(1)
@@ -195,7 +195,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
 
   it('SELLES-PHOTO-3 : une note estimée par photo porte la marque « photo »', async () => {
     await renderEntries([{ type: 'stool', source: 'app_stool', at: '2026-04-11T10:00:00', payload: { form: 'normal', bristol: 4, estimated: true, estimate: { bristol: 4, form: 'normal' } } }])
-    expect(screen.getByText('Normales · type 4 · photo')).toBeInTheDocument()
+    expect(screen.getByText('Normales · type 4 (photo)')).toBeInTheDocument()
   })
 
   it('AUJ-1b : la photo des selles quitte le Journal (elle est dans le bandeau d’ajout de l’Accueil)', async () => {
@@ -226,7 +226,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     const rows = document.querySelectorAll('.entry-card[data-type="cigarette"]')
     expect(rows).toHaveLength(1)
     expect(rows[0].querySelector('.entry-card-header')).toHaveTextContent('Cigarettes4')
-    expect(rows[0]).toHaveTextContent('09:05 ×2 · 11:30 · 15:00')
+    expect(rows[0]).toHaveTextContent('09:05 ×2, 11:30, 15:00')
     // Une seule action, repliée derrière « ⋯ » : retirer la dernière notée (celle de 15:00, id 1)
     expect(within(rows[0]).getAllByRole('button')).toHaveLength(1)
     fireEvent.click(within(rows[0]).getByRole('button', { name: 'Actions pour ces cigarettes' }))
@@ -366,7 +366,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     const rows = document.querySelectorAll('.entry-card')
     expect(rows).toHaveLength(1)
     expect(rows[0]).toHaveTextContent('Pesée')
-    expect(rows[0]).toHaveTextContent('77,2 kg · Masse grasse 24,1 %')
+    expect(rows[0]).toHaveTextContent('77,2 kg, Masse grasse 24,1 %')
   })
 
   it('shows height in cm', async () => {
@@ -379,14 +379,14 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
   it('translates the workout type of an activity', async () => {
     await renderEntries([{ type: 'activity', source: 'health_connect', at: '2026-04-10T18:00:00', payload: { workoutType: 'cycling', durationSeconds: 3360, totalCalories: 329 } }])
     const row = document.querySelector('.entry-card')
-    expect(row).toHaveTextContent('Vélo · 56 min · 329 kcal')
+    expect(row).toHaveTextContent('Vélo, 56 min, 329 kcal')
     expect(row).not.toHaveTextContent('cycling')
   })
 
   it('séance de la montre : FC moyenne, allure et courbe de FC (M7)', async () => {
     await renderEntries([{ type: 'activity', source: 'huawei_watch', at: '2026-04-10T18:00:00', payload: { workoutType: 'running', durationSeconds: 1800, avgHeartRate: 142, heartRateCurve: { stepSeconds: 60, bpm: [120, null, 150, 148] }, paceSplitsSecPerKm: [330, 318] } }])
     const row = document.querySelector('.entry-card')
-    expect(row).toHaveTextContent('FC moy. 142 bpm · 5:24 /km')
+    expect(row).toHaveTextContent('FC moy. 142 bpm, 5:24 /km')
     expect(row.querySelector('svg[aria-label="Fréquence cardiaque de 120 à 150 bpm"]')).not.toBeNull()
   })
 
