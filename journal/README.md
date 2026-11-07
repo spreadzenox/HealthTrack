@@ -8,6 +8,13 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 📦 **Les testeurs reçoivent la version du jour chaque soir : Android à 23:45 après l'examen de Google, iPhone après
+> l'examen bêta d'Apple** (votre décision du 07/11 vers 17:30). Android : chaque soir à 23:45, la dernière version de
+> main dont « Build & Release » a réussi part sur Alpha si elle a changé (plus d'envoi à chaque merge, plus de délai de
+> 24 h) ; ce soir, c'est celle du chantier du soir. iPhone : demandé à la routine iOS (dernière build TestFlight au
+> groupe « Testeurs Halcya » et à l'examen bêta, par la CI ; si sa clé n'a pas ce droit, elle vous écrira le geste exact).
+> Rien à faire de votre côté. Au passage à l'heure d'été (fin mars), l'heure de l'envoi sera recalée par la routine.
+
 > 🧑‍🔬 **Retours de votre premier testeur iPhone (06/11 22:35) : pris en compte.** Le résumé anonyme est dans
 > [`RETOURS-TESTEURS.md`](RETOURS-TESTEURS.md) et découpé en 17 étapes (TESTEUR-*) en tête de `BACKLOG.md` ; elles
 > passent devant le reste des runs de code. Le point (5) propre à l'iPhone (mention Android dans la source Santé, source
@@ -199,6 +206,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 07/11 17:35 — [Publication quotidienne](runs/2026-11-07-1735-publication-quotidienne.md) | 🔧 | CD-ALPHA-6 : Alpha reçoit chaque soir à 23:45 la dernière version de main prête (plus à chaque merge, plus de délai de 24 h) ; décision iPhone (soumission quotidienne à l'examen bêta) transmise à la routine iOS. Rien à faire de votre côté |
 | 07/11 16:35 — [Bien-être du jour](runs/2026-11-07-1635-bien-etre-du-jour.md) | 🎨 | Revue de 16:30 consignée (leçons 13 à 17, ORG-1 à ORG-7, compléments AUJ) ; AUJ-2 : le bloc « Bien-être aujourd'hui » montre la valeur sur 5, le nombre de lectures et la courbe du jour, sans verdict ; phrase d'intro retirée. Rien à faire de votre côté |
 | 07/11 15:35 — [Bandeau d'ajout](runs/2026-11-07-1535-bandeau-ajout.md) | 🎨 | Revue design du 07/11 consignée (leçons, AUJ-1 à 8, iOS) ; AUJ-1 : la date seule et le bandeau Repas / Bien-être / Digestion / Autre chose en haut de l'Accueil ; section « Noter » retirée. Rien à faire de votre côté |
 | 07/11 14:35 — [La piste qui touche votre journée](runs/2026-11-07-1435-piste-du-jour.md) | 🎨 | TESTEUR-1d-3 : la carte « N pistes repérées » de l'Accueil cite d'abord la piste qui parle d'une mesure du jour (nuit, pas, écran), avec « Aujourd’hui : nuit plus courte. ». Rien à faire de votre côté |

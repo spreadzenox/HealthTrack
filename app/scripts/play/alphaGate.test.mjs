@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { decideAlpha, affectsApp, commitCountOf, findCommitByCount, REQUIRED_WORKFLOWS } from './alphaGate.mjs'
+import { decideAlpha, decideNightly, affectsApp, commitCountOf, findCommitByCount, REQUIRED_WORKFLOWS, NIGHTLY_MIN_HOURS } from './alphaGate.mjs'
 
 const ok = (extra = []) => [...REQUIRED_WORKFLOWS.map((name) => ({ name, event: 'push', status: 'completed', conclusion: 'success' })), ...extra]
 const base = { candidateVersionCode: 100694, alphaVersionCode: 100693, changedFiles: ['app/src/pages/Home.jsx'] }
@@ -133,6 +133,57 @@ describe('livraison continue vers l’alpha (04/11)', () => {
     it('gel (demande de production en examen) : rien ne part', () => {
       const d = decideAlpha({ ...base, runs: ok(), alphaSentAt: h(40), now, freezeUntil: '2026-11-10T00:00:00Z' })
       expect(d).toMatchObject({ send: false, frozen: true })
+    })
+  })
+
+  describe('un envoi par jour à 23:45, heure de Paris (CD-ALPHA-6, 07/11)', () => {
+    const now = Date.parse('2026-11-07T22:45:00Z')
+    const h = (n) => new Date(now - n * 3600e3).toISOString()
+    const cand = (sha, extra = {}) => ({ sha, ...base, runs: ok(), internalVersionCode: 100700, alphaSentAt: h(6), now, minHours: NIGHTLY_MIN_HOURS, ...extra })
+
+    it('Build & Release fait partie des workflows exigés', () => {
+      expect(REQUIRED_WORKFLOWS).toContain('Build & Release')
+      const runs = ok().map((r) => (r.name === 'Build & Release' ? { ...r, conclusion: 'failure' } : r))
+      expect(decideAlpha({ ...base, runs }).send).toBe(false)
+    })
+
+    it('part même si l’alpha a reçu une version il y a moins de 24 h (pas d’espacement : le rythme est quotidien)', () => {
+      expect(NIGHTLY_MIN_HOURS).toBe(0)
+      expect(decideNightly([cand('s1')])).toMatchObject({ send: true, sha: 's1', versionCode: 100694 })
+    })
+
+    it('envoie la plus récente version prête de main', () => {
+      const d = decideNightly([cand('s2', { candidateVersionCode: 100699 }), cand('s1')])
+      expect(d).toMatchObject({ send: true, sha: 's2', versionCode: 100699 })
+    })
+
+    it('version la plus récente pas prête (émulateur en cours, AAB absent) : la précédente prête part', () => {
+      const running = ok().map((r) => (r.name.startsWith('Test — émulateur') ? { ...r, status: 'in_progress', conclusion: null } : r))
+      const noAab = ok().filter((r) => r.name !== 'Play — AAB')
+      const d = decideNightly([cand('s3', { candidateVersionCode: 100699, runs: running }), cand('s2', { candidateVersionCode: 100698, runs: noAab }), cand('s1')])
+      expect(d).toMatchObject({ send: true, sha: 's1', versionCode: 100694 })
+      expect(d.skipped.map((s) => s.sha)).toEqual(['s3', 's2'])
+    })
+
+    it('rien n’a changé depuis le dernier envoi : rien ne part, sans remonter plus loin', () => {
+      const d = decideNightly([cand('s2', { candidateVersionCode: 100693 }), cand('s1', { candidateVersionCode: 100694 })])
+      expect(d).toMatchObject({ send: false, sha: 's2' })
+      expect(d.reason).toMatch(/déjà/)
+      const same = decideNightly([cand('s1', { changedFiles: ['journal/README.md'] }), cand('s0', { candidateVersionCode: 100692 })])
+      expect(same).toMatchObject({ send: false, sha: 's1' })
+    })
+
+    it('gel ou interrupteur coupé : rien ne part', () => {
+      expect(decideNightly([cand('s1', { freezeUntil: '2026-11-10T00:00:00Z' })])).toMatchObject({ send: false, frozen: true })
+      expect(decideNightly([cand('s1', { enabled: false })]).send).toBe(false)
+    })
+
+    it('aucune version prête : rien ne part, raison donnée', () => {
+      const failed = ok().map((r) => (r.name === 'Tests' ? { ...r, conclusion: 'failure' } : r))
+      const d = decideNightly([cand('s1', { runs: failed })])
+      expect(d.send).toBe(false)
+      expect(d.reason).toMatch(/aucune version/)
+      expect(decideNightly([]).send).toBe(false)
     })
   })
 

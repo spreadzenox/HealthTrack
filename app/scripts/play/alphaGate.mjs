@@ -12,7 +12,12 @@
  * (concurrency), qui ne serait alors jamais envoyée (100787, 05/11). Il hérite donc de la version du test interne si
  * rien de l'app n'a changé entre elle et lui : ses « Tests » et son émulateur portent sur le même code d'app.
  *
- * Envois espacés (CD-ALPHA-2, 05/11) : chaque envoi relance l'examen de Google (quelques heures à 2 jours) ; à un
+ * Un envoi par jour à heure fixe (CD-ALPHA-6, décision du propriétaire du 07/11 vers 17:30) : chaque soir à 23:45
+ * (heure de Paris), le workflow envoie la plus récente version de main dont « Build & Release » a réussi (et les
+ * autres workflows exigés), si elle a changé depuis le dernier envoi (`decideNightly`). Plus d'envoi à chaque merge
+ * ni d'espacement de 24 h : le rythme quotidien en tient lieu (`NIGHTLY_MIN_HOURS` = 0) ; le gel s'applique toujours.
+ *
+ * Historique — envois espacés (CD-ALPHA-2, 05/11, remplacé par CD-ALPHA-6) : chaque envoi relance l'examen de Google (quelques heures à 2 jours) ; à un
  * envoi par heure, l'alpha restait « En cours d'examen » et les testeurs ne pouvaient pas être invités. Une nouvelle
  * version ne part que `minHours` (24 par défaut, ALPHA_MIN_HOURS) après celle de l'alpha ; la date de celle-ci est
  * celle de son commit sur main (l'envoi suit d'une heure environ). Depuis CD-ALPHA-5, les derniers envois de la fiche
@@ -23,7 +28,9 @@ import { decideReviewed, DEFAULT_MIN_HOURS } from './reviewGate.mjs'
 
 export { DEFAULT_MIN_HOURS }
 
-export const REQUIRED_WORKFLOWS = ['Tests', 'Test — émulateur Samsung Galaxy A56', 'Play — AAB']
+export const REQUIRED_WORKFLOWS = ['Tests', 'Test — émulateur Samsung Galaxy A56', 'Play — AAB', 'Build & Release']
+/** Envoi quotidien : pas d'écart minimal entre deux envois (CD-ALPHA-6). */
+export const NIGHTLY_MIN_HOURS = 0
 export const VERSION_OFFSET = 100000
 
 /** Le fichier change-t-il l'app installée ? */
@@ -73,12 +80,12 @@ export function decideAlpha({ runs, candidateVersionCode, alphaVersionCode, inte
     return { send: false, reason: `${candidate} n’est pas en test interne (envoi refusé ou en attente ; test interne : ${internalVersionCode ?? 'vide'})` }
   }
   if (alphaVersionCode != null && candidate <= Number(alphaVersionCode)) {
-    return { send: false, reason: `l’alpha a déjà ${alphaVersionCode} (≥ ${candidate})` }
+    return { send: false, upToDate: true, reason: `l’alpha a déjà ${alphaVersionCode} (≥ ${candidate})` }
   }
   let why = `version de l’alpha introuvable dans l’historique : envoi${from}`
   if (changedFiles) {
     const app = changedFiles.filter(affectsApp)
-    if (!app.length) return { send: false, reason: `rien ne change dans l’app depuis ${alphaVersionCode}` }
+    if (!app.length) return { send: false, upToDate: true, reason: `rien ne change dans l’app depuis ${alphaVersionCode}` }
     why = `${app.length} fichier(s) de l’app modifié(s) depuis ${alphaVersionCode}${from}`
   }
   const sends = [{ what: `${alphaVersionCode} sur l’alpha`, at: alphaSentAt }, ...otherSends]
@@ -86,6 +93,24 @@ export function decideAlpha({ runs, candidateVersionCode, alphaVersionCode, inte
   if (!gate.send) return gate
   if (changedFiles) return { send: true, versionCode: candidate, reason: why }
   return { send: true, versionCode: candidate, reason: `version de l’alpha introuvable dans l’historique : envoi${from}` }
+}
+
+/**
+ * Envoi du soir (CD-ALPHA-6). `candidates` : commits de main dont « Build & Release » a réussi, du plus récent au plus
+ * ancien, chacun avec les entrées de `decideAlpha` et son `sha`. On envoie le premier prêt ; un commit pas prêt
+ * (workflow en cours ou en échec, pas d'AAB) cède la place au précédent ; un commit déjà sur l'alpha ou sans
+ * changement de l'app arrête la recherche (les plus anciens le sont aussi), comme le gel ou l'interrupteur.
+ * Renvoie la décision de `decideAlpha` avec { sha, skipped: [{ sha, reason }] }.
+ */
+export function decideNightly(candidates) {
+  const skipped = []
+  for (const { sha, ...input } of candidates) {
+    const d = decideAlpha(input)
+    if (d.send || d.upToDate || d.frozen || input.enabled === false) return { ...d, sha, skipped }
+    skipped.push({ sha, reason: d.reason })
+  }
+  const why = skipped.length ? ` (${skipped.map((s) => `${String(s.sha).slice(0, 7)} : ${s.reason}`).join(' ; ')})` : ''
+  return { send: false, reason: `aucune version de main prête pour l’alpha${why}`, skipped }
 }
 
 /**
