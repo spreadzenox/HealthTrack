@@ -476,7 +476,7 @@ function fitOne(series, days, f, horizon, weights) {
   const sd = Math.sqrt(residualize(xs, covs).residuals.reduce((s, v) => s + v * v, 0) / n)
   const amount = niceAmount(sd, f.step)
   const p = se > 0 ? tTwoSidedP(Math.abs(slope / se), df) : 1
-  const r = (v) => Math.round(v * 100) / 100
+  const r = (v) => Math.round(v * 100) / 100 + 0 // + 0 : jamais -0 (le cache JSON le perdrait)
   return {
     key: f.key,
     label: f.label,
@@ -604,7 +604,7 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
       f.stability = c ? Math.round(c.stability * 100) / 100 : null
       if (c) {
         const a = f.usualChange.amount
-        const r2 = (v) => Math.round(v * 100) / 100
+        const r2 = (v) => Math.round(v * 100) / 100 + 0
         f.perUnit = c.perUnit
         f.center = c.mean
         f.effect = r2(c.perUnit * a)
@@ -630,7 +630,8 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
       horizons,
     }
   }
-  return { contractVersion: CONTRACT_VERSION, method: 'provisional', computedFor: today ?? null, outcomes }
+  // ORG-5d : la méthode d'ORG-5 (TS-1, matrice, modèle régularisé et stabilité) est derrière le contrat.
+  return { contractVersion: CONTRACT_VERSION, method: 'org5', computedFor: today ?? null, outcomes }
 }
 
 /**
@@ -661,7 +662,7 @@ export function dayContributions(results, entries, dateKey, { outcome = 'wellbei
     const horizon = HORIZONS.find((h) => h.id === f.horizon)
     const value = windowValue(days, f.key, num, horizon)
     if (value === null) continue
-    const points = Math.round(f.perUnit * (value - f.center) * 100) / 100
+    const points = Math.round(f.perUnit * (value - f.center) * 100) / 100 + 0
     if (points === 0) continue
     list.push({ key: f.key, label: f.label, theme: f.theme, horizon: f.horizon, points, value, usual: f.center })
   }
@@ -672,4 +673,4 @@ export function dayContributions(results, entries, dateKey, { outcome = 'wellbei
 export const factorMeta = (key) => FACTOR_BY_KEY[key] ?? null
 
 /** Garde-fou : chaque facteur existe dans le jeu quotidien du moteur. */
-export const FACTOR_KEYS_KNOWN = FACTORS.every((f) => f.key in VARIABLE_META || f.key.startsWith('fodmap_'))
+export const factorKeysKnown = () => FACTORS.every((f) => f.key in VARIABLE_META || f.key.startsWith('fodmap_'))
