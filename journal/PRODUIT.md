@@ -348,6 +348,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **08/11 17:35** — **Seulement les pas du jour** (POLISH-SIM-2c) : « Vos données du jour » ne reprend plus les pas d'hier (2 personas sur 2 cherchaient ceux du jour).
 - **08/11 16:35** — **Rapport médecin depuis Agir** (POLISH-SIM-12) : lien « rapport médecin » d'Agir vers la carte de Données ; période proposée bornée aux jours d'usage (2 semaines sous 15 jours).
 - **08/11 21:35** — **Analyses : une seule unité par facteur** (POLISH-SIM-16) : « 1 500 pas de plus » sur les trois horizons ; un effet plus grand que l'échelle dit « pas assez de données ».
+- **09/11 00:35** — **Mode polish ouvert ; Gold expliqué à l'accueil** (POLISH-SIM-18) : « Gold est la formule payante de Halcya… Comme l’app est encore en test, vous l’avez sans rien payer » ; compteur du tuto conforme à la maquette.
 - **08/11 15:35** — **Avant les premiers résultats** (POLISH-SIM-5) : comptes à rebours en jours notés, jours de gêne « vous en avez 1 », Agir vide qui dit ce qui viendra et mène à Analyses.
 - **08/11 14:35** — **VFC et FC au repos en toutes lettres** (POLISH-SIM-6) : une ligne sous la courbe dans Tendances ; Sources dit « variabilité cardiaque », « oxygène du sang ».
 - **08/11 13:35** — **Tendances : « attendu » au-dessus du pointillé** (POLISH-SIM-13) : les personas ne comprenaient pas la partie pointillée après « auj. ».

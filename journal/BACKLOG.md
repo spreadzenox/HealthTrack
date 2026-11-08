@@ -174,7 +174,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-17** Aujourd'hui : le bouton « Repas » ne donne aucun retour quand l'appareil photo ne s'ouvre pas
   (2 personas sur 2) ; proposer « Décrire » en secours. Vérifier d'abord sur le téléphone (la version web n'a pas de
   caméra). Saisie décrite : heure par défaut = maintenant ; un raccourci « Ce midi / ce soir » serait une proposition.
-- [ ] **POLISH-SIM-18** Accueil : les trois cartes du tuto affichent toutes « 01/06 » (voulu par ACC-1 ? à confirmer
+- [x] **POLISH-SIM-18** ✅ 09/11 00:35 : « 01/06 » sur les trois cartes conforme à la maquette v3 (« 01/07 » sur chaque carte : le tuto est un seul écran, les points disent la carte), rien changé ; écran Gold : « Gold est la formule payante de Halcya, avec toutes les analyses. Comme l’app est encore en test, vous l’avez sans rien payer, jusqu’au … inclus. » ; test ; captures `runs/captures/2026-11-09-0035-gold-{clair,sombre}.png`. Accueil : les trois cartes du tuto affichent toutes « 01/06 » (voulu par ACC-1 ? à confirmer
   contre la maquette v3, sinon 01 à 03) ; « Gold » et « pendant le test » sans un mot d'explication pour une persona
   peu technique (écran ACC-9).
 - [ ] **POLISH-SIM-19** « 19 analyses IA restantes » après un seul essai sans résultat (« Aucun aliment reconnu ») :

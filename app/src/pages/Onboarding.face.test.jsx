@@ -176,6 +176,9 @@ describe('Nouvel accueil (ACC-9) : Gold pendant le test, abonnement sinon', () =
     expect(screen.getByText('06/06')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Gold est offert pendant le test' })).toBeInTheDocument()
     expect(screen.getByText(/jusqu’au .*déc.* inclus\. Aucune carte bancaire n’est demandée\./)).toBeInTheDocument()
+    // POLISH-SIM-18 : une persona peu technique ne savait pas ce qu'est « Gold » ni de quel « test » on parle.
+    expect(screen.getByText(/Gold est la formule payante de Halcya/)).toBeInTheDocument()
+    expect(screen.getByText(/l’app est encore en test/)).toBeInTheDocument()
     fireEvent.click(cont())
     expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
     expect(loadOnboarding().done).toBe(true)
