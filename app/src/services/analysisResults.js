@@ -65,6 +65,7 @@ export const CONTRACT_VERSION = 1
  * @property {boolean} net           lien assez net pour être montré plein (sinon hachuré)
  * @property {{ amount: number, unit: string, text: string }} usualChange  variation habituelle (« 50 min de sommeil de plus »)
  * @property {number} perUnit        points par unité du facteur (pour les contributions)
+ * @property {boolean} [outOfScale]   effet plus grand que l'échelle (SCALE_SPAN) : « pas assez de données »
  * @property {number} center         valeur habituelle du facteur sur cet horizon (moyenne des jours utilisés)
  * @property {number} days           jours utilisés
  * @property {boolean} [inModel]     ORG-5c : dans le modèle régularisé (effet à autres facteurs égaux)
@@ -502,6 +503,45 @@ function fitOne(series, days, f, horizon, weights, changeDates = []) {
   }
 }
 
+/**
+ * POLISH-SIM-16 : une même variation pour toutes les lignes d'un facteur (« 2 000 pas de plus » partout, pas 2 000,
+ * 1 000 puis 500). On garde celle du court terme (la variation d'un jour à l'autre, celle des essais d'Agir), sinon
+ * la plus grande ; effet et fourchette suivent (la pente, la p et la netteté ne changent pas).
+ */
+export function sameUnitPerFactor(fitted) {
+  const byKey = new Map()
+  for (const f of fitted) byKey.set(f.key, [...(byKey.get(f.key) ?? []), f])
+  for (const list of byKey.values()) {
+    const short = list.find((f) => f.horizon === 'short')
+    const amount = short ? short.usualChange.amount : Math.max(...list.map((f) => f.usualChange.amount))
+    for (const f of list) {
+      const k = amount / f.usualChange.amount
+      if (k === 1) continue
+      const r = (v) => Math.round(v * k * 100) / 100 + 0
+      f.effect = r(f.effect)
+      f.low = r(f.low)
+      f.high = r(f.high)
+      const def = FACTOR_BY_KEY[f.key]
+      f.usualChange = { amount, unit: f.usualChange.unit, text: def ? def.text(amount) : f.usualChange.text }
+    }
+  }
+  return fitted
+}
+
+/** Écart le plus grand possible sur une note de 1 à 5 : un effet au-delà n'est pas un résultat. */
+export const SCALE_SPAN = 4
+
+/**
+ * POLISH-SIM-16 : un effet plus grand que l'échelle elle-même (« −4,7 pt » sur une note sur 5) vient de trop peu de
+ * jours qui diffèrent : « pas assez de données », jamais net, et il ne compte pas dans « Ce qui a pu peser ».
+ */
+export function boundToScale(f) {
+  if (Math.abs(f.effect) <= SCALE_SPAN) return f
+  f.outOfScale = true
+  f.net = false
+  return f
+}
+
 /** Modèle régularisé d'un résultat (ORG-5c) sur les facteurs × horizons triés. */
 function fitModel(ys, days, fitted, weights, changeDates = []) {
   const nums = [...ys.keys()].map(dayNum)
@@ -607,6 +647,7 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
         if (fit) { fit.outcome = def.id; fitted.push(fit) }
       }
     }
+    sameUnitPerFactor(fitted)
     const qs = holm(fitted.map((f) => f._p))
     // ORG-5c : les candidats entrent ensemble dans un modèle régularisé ; « net » exige aussi la stabilité.
     const model = fitted.length ? fitModel(ys, days, fitted, series.weights?.[def.id], changeDates) : null
@@ -625,10 +666,13 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
         f.high = r2(Math.max(c.low, c.high) * a)
       }
       f.net = passed && Boolean(c) && c.stability >= STABILITY_MIN && Math.sign(f.effect) !== 0
+      boundToScale(f)
       delete f._p
       horizons[f.horizon].factors.push(f)
     })
-    for (const h of Object.values(horizons)) h.factors.sort((a, b) => Math.abs(b.effect) - Math.abs(a.effect))
+    for (const h of Object.values(horizons)) {
+      h.factors.sort((a, b) => Number(Boolean(a.outOfScale)) - Number(Boolean(b.outOfScale)) || Math.abs(b.effect) - Math.abs(a.effect))
+    }
     const readyCount = Object.values(horizons).filter((h) => h.status === 'ready').length
     const first = UNLOCK_DAYS[def.id].short
     outcomes[def.id] = {
@@ -662,7 +706,7 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
 export function dayContributions(results, entries, dateKey, { outcome = 'wellbeing', max = 3, days: givenDays } = {}) {
   const out = results?.outcomes?.[outcome]
   if (!out) return []
-  const terms = Object.values(out.horizons).flatMap((h) => h.factors.filter((f) => f.inModel))
+  const terms = Object.values(out.horizons).flatMap((h) => h.factors.filter((f) => f.inModel && !f.outOfScale))
   if (!terms.length) return []
   const days = givenDays ?? factorDays(entries)
   const num = dayNum(dateKey)

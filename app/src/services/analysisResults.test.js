@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   CONTRACT_VERSION, DIGESTION_MIN_SYMPTOM_DAYS, FACTORS, factorKeysKnown, HORIZONS, OUTCOMES, UNLOCK_DAYS,
-  computeAnalysisResults, contributionsByDay, dayContributions, outcomeSeries,
+  computeAnalysisResults, contributionsByDay, dayContributions, outcomeSeries, SCALE_SPAN, boundToScale, sameUnitPerFactor,
 } from './analysisResults'
 import { isEstimatorInput } from './mood/estimatorInputs'
 
@@ -93,6 +93,51 @@ describe('contrat des résultats d’Analyses', () => {
     expect(steps.effect).toBeCloseTo(steps.perUnit * steps.usualChange.amount, 1)
     // Le facteur le plus fort vient en premier.
     expect(wb.horizons.short.factors[0].key).toBe('steps')
+  })
+
+  it('POLISH-SIM-16 : une même variation pour toutes les lignes d’un facteur, celle du court terme', () => {
+    const { entries, now } = world({ days: 70 })
+    for (const o of Object.values(computeAnalysisResults(entries, { now }).outcomes)) {
+      const amounts = new Map()
+      const shorts = new Map()
+      for (const h of Object.values(o.horizons)) {
+        for (const f of h.factors) {
+          amounts.set(f.key, new Set([...(amounts.get(f.key) ?? []), f.usualChange.text]))
+          if (f.horizon === 'short') shorts.set(f.key, f.usualChange.amount)
+        }
+      }
+      for (const [key, texts] of amounts) expect([key, texts.size]).toEqual([key, 1])
+      const steps = o.horizons.long.factors.find((f) => f.key === 'steps')
+      if (steps && shorts.has('steps')) expect(steps.usualChange.amount).toBe(shorts.get('steps'))
+    }
+  })
+
+  it('POLISH-SIM-16 : changer d’unité met effet et fourchette à l’échelle, sans toucher la netteté', () => {
+    const mk = (horizon, amount, effect) => ({
+      key: 'steps', horizon, effect, low: effect - 0.1, high: effect + 0.1, net: true,
+      usualChange: { amount, unit: 'pas', text: `${amount} pas de plus` },
+    })
+    const [s, l] = sameUnitPerFactor([mk('short', 2000, 0.4), mk('long', 500, -0.2)])
+    expect(s.effect).toBe(0.4)
+    expect(l.usualChange.amount).toBe(2000)
+    expect(l.usualChange.text).toMatch(/^2\s?000 pas de plus$/)
+    expect(l.effect).toBe(-0.8)
+    expect(l.low).toBe(-1.2)
+    expect(l.high).toBe(-0.4)
+    expect(l.net).toBe(true)
+  })
+
+  it('POLISH-SIM-16 : un effet plus grand que l’échelle n’est jamais net et ne pèse sur aucun jour', () => {
+    expect(SCALE_SPAN).toBe(4)
+    expect(boundToScale({ effect: -4.7, net: true })).toEqual({ effect: -4.7, net: false, outOfScale: true })
+    expect(boundToScale({ effect: 3.9, net: true })).toEqual({ effect: 3.9, net: true })
+    const results = {
+      outcomes: { wellbeing: { horizons: { short: { factors: [
+        { key: 'steps', horizon: 'short', inModel: true, outOfScale: true, perUnit: 1, center: 0, label: 'Pas', theme: 'activity' },
+      ] } } } },
+    }
+    const { entries } = world({ days: 5 })
+    expect(dayContributions(results, entries, dk(4))).toEqual([])
   })
 
   it('ORG-5c : modèle régularisé, stabilité et comparaison à « demain = aujourd’hui »', () => {

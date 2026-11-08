@@ -8,6 +8,11 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 📏 **Analyses : une seule unité par facteur (08/11 21:35)** : les lignes « Pas » disaient 2 000, 1 000 puis 500 pas
+> selon l'horizon ; elles disent toutes la même quantité, celle du court terme ([capture](runs/captures/2026-11-08-2135-analyses-meme-unite.png)).
+> Un effet plus grand que la note elle-même (« −4,7 pt » sur une note sur 5, vu par une persona) s'affiche
+> « pas assez de données », ne compte jamais comme lien net ni dans « Ce qui a pu peser ». Part sur Alpha le 09/11 au soir.
+
 > 🧪 **Personas sur le nouvel accueil (08/11 20:35, run « idées »)** : l'outil sautait l'accueil au jour 1 (corrigé) ;
 > « Ventre, sans technique » a fait tout l'accueil puis la visite sans se perdre, a noté son mal de ventre et trouvé le
 > rapport médecin. À corriger dès demain (mode polish) : dans la visite, l'étiquette dit « jour 5 » sous une bulle
@@ -423,6 +428,7 @@
 | 08/11 18:35 — [Humeur et éveil](runs/2026-11-08-1835-humeur-eveil-libelles.md) | 🎨 | T4-suite : « désagréable » / « agréable » à l'horizontale (maquette) ; test, captures claires et sombres |
 | 08/11 19:35 — [Cœur en toutes lettres](runs/2026-11-08-1935-coeur-en-toutes-lettres.md) | 🎨 | POLISH-SIM-6b : « Cœur au repos plus rapide », « Variabilité cardiaque plus basse » dans « Ce qui a pu peser » ; émulateur A56 rouge (ancien premier écran), corrigé par #841 (session Accueil), mergée pendant ce run |
 | 08/11 20:35 — [Personas sur le nouvel accueil](runs/2026-11-08-2035-personas-accueil.md) | 💡 | Outil : le jour 1 ouvre enfin l'accueil (il était sauté) ; Ventre sans technique J1 et Sportif J45 ; POLISH-SIM-14 à 19 (étiquette « jour 5 » sous « jour 28 », 14 contre 28 jours, « −4,7 pt » sur 5, bouton Repas muet). Rien à faire de votre côté |
+| 08/11 21:35 — [Une unité par facteur](runs/2026-11-08-2135-analyses-meme-unite.md) | 🎨 | POLISH-SIM-16 : même variation sur les trois horizons, « pas assez de données » au-delà de l'échelle ; tests, capture. Rien à faire de votre côté |
 | 08/11 16:35 — [Rapport depuis Agir](runs/2026-11-08-1635-rapport-depuis-agir.md) | 🎨 | Merge de #835 (verte, non mergée au run précédent) ; POLISH-SIM-12 : lien Agir → rapport médecin, période bornée aux jours d'usage ; tests, captures |
 | 08/11 15:35 — [Avant les premiers résultats](runs/2026-11-08-1535-attente-analyses.md) | 🎨 | POLISH-SIM-5 : comptes à rebours en jours notés, jours de gêne « vous en avez N », Agir vide qui mène à Analyses ; tests, captures claire et sombre |
 | 08/11 14:35 — [VFC en toutes lettres](runs/2026-11-08-1435-noms-en-toutes-lettres.md) | 🎨 | POLISH-SIM-6 : nom complet de VFC et FC au repos sous la courbe de Tendances, mots simples dans Sources ; « attendu » seulement avec un futur tracé |
