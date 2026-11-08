@@ -50,7 +50,8 @@
 >   aux testeurs ; rapports dans `simulations/`, constats en étapes de polish. **État 08/11 03:35** : outil
 >   `npm run persona` livré, `PERSONAS.md` recopié ; premier passage complet fait avant l'envoi du 08/11 au soir
 >   (synthèse `simulations/2026-11-08-0340-synthese.md`, POLISH-SIM-1 corrigé, POLISH-SIM-3 corrigé le 08/11 05:35, POLISH-SIM-3b le 08/11 06:35, POLISH-SIM-4 le 08/11 07:35, POLISH-SIM-10 et 11 le 08/11 09:35, POLISH-SIM-5 le 08/11 15:35, POLISH-SIM-12 le 08/11 16:35,
->   les autres au BACKLOG).
+>   les autres au BACKLOG). **08/11 20:35** : premier passage d'une persona sur le nouvel accueil (l'outil le sautait au
+>   jour 1, corrigé) et Sportif J45 ; POLISH-SIM-14 à 19 (synthèse `simulations/2026-11-08-2035-synthese.md`).
 > - **(D) Méta-leçons** : A ci-dessus, B dans `DESIGN.md` § 9, C dans la charte.
 > - **(E) Envoi quotidien aux testeurs** : Android à 23:45 (CD-ALPHA-6) ; iPhone, examen bêta quotidien (routine iOS).
 >   Envoi refusé : erreur exacte en tête du résumé, rien contourné.

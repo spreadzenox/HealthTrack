@@ -82,6 +82,16 @@ await context.addInitScript(() => {
 })
 const latestId = readdirSync(join(APP_DIR, 'src/data/changelog')).filter((f) => f.endsWith('.json')).sort().pop().replace(/\.json$/, '')
 // Jour 1 : premier lancement, l'onboarding s'ouvre ; sinon il a été fait le jour de l'installation.
+// Au jour 1, les 30 jours importés sont déjà dans la base : sans marque, l'app y verrait quelqu'un qui a déjà des
+// données (`needsOnboarding` → « existing ») et sauterait l'accueil (artefact des J1 du 08/11). On marque donc
+// l'onboarding comme commencé (maxStep 1, écran 0), ce qui le rouvre au premier écran.
+if (day === 1) {
+  await context.addInitScript(() => {
+    if (!localStorage.getItem('healthtrack_onboarding')) {
+      localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: false, step: 0, maxStep: 1 }))
+    }
+  })
+}
 if (day > 1) {
   await context.addInitScript(({ doneAt, latestId }) => {
     if (!localStorage.getItem('healthtrack_onboarding')) {

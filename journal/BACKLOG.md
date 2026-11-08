@@ -151,9 +151,29 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   le premier repas, jamais plus de 4 semaines, choix manuel respecté (`defaultReportWeeks`, `getFirstEntryAt`).
 - [x] **POLISH-SIM-13** ✅ 08/11 13:35 : « attendu » en italique gris au-dessus de la partie pointillée (au milieu du
   futur, seulement s'il y a un futur) ; test de page ; captures `comparaison/semaine-attendu-{clair,sombre}.png`.
+- [ ] **POLISH-SIM-14** (simulations du 08/11 20:35, J1 sur le nouvel accueil) Visite guidée : l'étiquette « EXEMPLE ·
+  données fictives · jour 5 » reste affichée sous la bulle « Au jour 28 » (et « jour 11 » sous « jour 14 ») ; elle doit
+  dire le jour annoncé par la bulle. Une bande blanche vide couvre le bas de l'écran sous la bulle (barre d'onglets
+  masquée) : à reproduire sur l'émulateur A56 avant correction. Capture `simulations/captures/2026-11-08-2035-ventre-sans-technique-J1/visite-jour5-vs-jour28.png`.
+- [ ] **POLISH-SIM-15** Visite guidée, étape Analyses : « Elles démarrent après 14 jours notés » alors qu'Aujourd'hui dit
+  « Encore 28 jours notés avant vos analyses digestives » ; avec un objectif ventre ou cycle, dire les deux échéances
+  (bien-être au jour 14, digestion au jour 28) depuis `config/firstResults.js` (`services/tour.js`).
+- [ ] **POLISH-SIM-16** Analyses : un effet affiché ne dépasse jamais l'échelle de la mesure (« −4,7 pt » sur une note
+  sur 5, Lactose long terme, hachuré) : au-delà, « pas assez de données » plutôt qu'un chiffre ; et une même unité de
+  pas pour toutes les lignes d'un même facteur (aujourd'hui 2 000, 1 000 puis 500 pas). Capture
+  `simulations/captures/2026-11-08-2035-sportif-J45/analyses-facteurs.png`.
+- [ ] **POLISH-SIM-17** Aujourd'hui : le bouton « Repas » ne donne aucun retour quand l'appareil photo ne s'ouvre pas
+  (2 personas sur 2) ; proposer « Décrire » en secours. Vérifier d'abord sur le téléphone (la version web n'a pas de
+  caméra). Saisie décrite : heure par défaut = maintenant ; un raccourci « Ce midi / ce soir » serait une proposition.
+- [ ] **POLISH-SIM-18** Accueil : les trois cartes du tuto affichent toutes « 01/06 » (voulu par ACC-1 ? à confirmer
+  contre la maquette v3, sinon 01 à 03) ; « Gold » et « pendant le test » sans un mot d'explication pour une persona
+  peu technique (écran ACC-9).
+- [ ] **POLISH-SIM-19** « 19 analyses IA restantes » après un seul essai sans résultat (« Aucun aliment reconnu ») :
+  vérifier dans le relais qu'un échec ne décompte pas (peut venir de l'analyse factice de l'outil).
 - [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`) et fixer
   l'objectif d'onboarding de la persona ; profil de saisie par persona (« Stressé » ne note pas de repas) ; dire aux
-  agents que Health Connect et le sommeil estimé n'existent pas dans la version web. Fait le 08/11 08:35 : nom de
+  agents que Health Connect et le sommeil estimé n'existent pas dans la version web. Fait le 08/11 20:35 : le jour 1 ouvre le nouvel accueil même
+  avec 30 jours importés. Fait le 08/11 08:35 : nom de
   source réaliste par matériel, Galaxy Watch sans FC au repos ni température, champs date et heure en français.
 - [ ] **INTEG-1a** Note `protocoles/garmin-samsung.md` (08/11 08:35) : Samsung Health Data SDK (température cutanée,
   Energy Score, tension ; enregistrement par Samsung = geste du propriétaire), Garmin clé personnelle (VFC, stress,
