@@ -49,3 +49,18 @@ describe('mode exemple de la visite guidée (ACC-8)', () => {
     expect(await countAllEntries()).toBe(0)
   })
 })
+
+describe('mode exemple : rien de fictif vers la montre', () => {
+  it('le profil envoyé à la montre attend la fin de l’exemple et lit le vrai poids', async () => {
+    const { watchProfile } = await import('../services/watchAutoSync')
+    await createEntry({ type: 'weight', source: 'withings', at: '2026-11-01T07:00:00.000Z', payload: { value: 61, unit: 'kg' } })
+    enterExampleMode([{ type: 'weight', source: 'withings', at: '2026-11-07T07:00:00.000Z', payload: { value: 99, unit: 'kg' } }])
+    let profile = null
+    const p = watchProfile().then((r) => (profile = r))
+    await new Promise((r) => setTimeout(r, 20))
+    expect(profile).toBe(null)
+    exitExampleMode()
+    await p
+    expect(profile.weightKg).not.toBe(99)
+  })
+})
