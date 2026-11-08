@@ -237,7 +237,8 @@ function formatSleep(minutes) {
 /**
  * Les trois tuiles de mesures du jour (sommeil, VFC de la nuit, pas), avec la source de chaque chiffre.
  * Un chiffre absent aujourd'hui (montre pas encore synchronisée, journée qui commence) reprend celui de la veille,
- * marqué `when: 'hier'`, plutôt qu'un « — » alors que la veille est connue (POL-PLAY-8).
+ * marqué `when: 'hier'`, plutôt qu'un « — » alors que la veille est connue (POL-PLAY-8). Sauf les pas : un total
+ * de la journée, jamais repris de la veille (POLISH-SIM-2c).
  * @param {object | null} summary    résumé du jour (buildDailyJournal) ou null
  * @param {object[]} entries         entrées lues par l'accueil (pour les sources)
  * @param {object | null} yesterday  résumé de la veille ou null
@@ -246,14 +247,15 @@ export function measureTiles(summary, entries, now = new Date(), yesterday = nul
   const day = localDateKey(now.toISOString())
   const prevDay = localDateKey(new Date(now.getTime() - DAY_MS).toISOString())
   const sourcesOf = (key, d) => [...new Set((entries || []).filter((e) => e && TILE_MATCHERS[key](e, d)).map(tileSourceLabel))]
-  const pick = (key, has) => {
+  const pick = (key, has, { fromYesterday = true } = {}) => {
     if (summary && has(summary)) return { s: summary, d: day, when: null }
-    if (yesterday && has(yesterday)) return { s: yesterday, d: prevDay, when: 'hier' }
+    if (fromYesterday && yesterday && has(yesterday)) return { s: yesterday, d: prevDay, when: 'hier' }
     return { s: {}, d: day, when: null }
   }
   const sleep = pick('sleep', (s) => s.sleepMinutes != null)
   const hrv = pick('hrv', (s) => s.hrv != null)
-  const steps = pick('steps', (s) => s.steps != null)
+  // Les pas sont un total de la journée : ceux d’hier laissaient chercher ceux d’aujourd’hui (POLISH-SIM-2c)
+  const steps = pick('steps', (s) => s.steps != null, { fromYesterday: false })
   return [
     {
       key: 'sleep',

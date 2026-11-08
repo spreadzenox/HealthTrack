@@ -155,11 +155,17 @@ describe('measureTiles', () => {
     expect(measureTiles({}, entries, NOW, { sleepMinutes: 400 })[0]).toMatchObject({ value: '6 h 40', when: 'nuit d’avant' })
   })
 
-  it('reprend la veille, marquée « hier », quand aujourd’hui n’a pas encore le chiffre (POL-PLAY-8)', () => {
+  it('reprend la veille, marquée « hier », quand aujourd’hui n’a pas encore le chiffre de la nuit (POL-PLAY-8)', () => {
     const tiles = measureTiles({ sleepMinutes: 452 }, entries, NOW, { sleepMinutes: 400, hrv: 38, steps: 9000 })
-    expect(tiles.map((t) => [t.value, t.when])).toEqual([['7 h 32', 'cette nuit'], ['38 ms', 'hier'], ['9 000'.replace(' ', '\u202f'), 'hier']])
-    expect(tiles[2].sources).toEqual(['Health Connect'])
+    expect(tiles.map((t) => [t.value, t.when])).toEqual([['7 h 32', 'cette nuit'], ['38 ms', 'hier'], [null, null]])
     expect(measureTiles(null, [], NOW, null).map((t) => t.when)).toEqual([null, null, null])
+  })
+
+  it('ne montre jamais les pas d’hier parmi les données du jour (POLISH-SIM-2c)', () => {
+    // Les pas sont un total de la journée : ceux d’hier laissaient chercher ceux d’aujourd’hui
+    const [, , steps] = measureTiles({}, entries, NOW, { steps: 9000 })
+    expect(steps).toMatchObject({ value: null, when: null, sources: [] })
+    expect(measureTiles({ steps: 1200 }, entries, NOW, { steps: 9000 })[2]).toMatchObject({ value: '1\u202f200', when: null })
   })
 })
 
