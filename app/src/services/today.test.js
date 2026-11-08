@@ -206,14 +206,14 @@ describe('gutSummary', () => {
 })
 
 describe('pistesProgress', () => {
-  it('compte les jours avec un repas ou une note digestive, jusqu’à 21', () => {
+  it('compte les jours avec un repas ou une note digestive, jusqu’au jour des premiers résultats (14)', () => {
     const entries = [
       { type: 'food', at: at(1) }, { type: 'food', at: at(1, 20) }, { type: 'gut', at: at(2) },
       { type: 'steps', at: at(3) }, { type: 'wellbeing', at: at(4) },
     ]
-    expect(pistesProgress(entries)).toEqual({ days: 2, target: 21, remaining: 19, ready: false })
+    expect(pistesProgress(entries)).toEqual({ days: 2, target: 14, remaining: 12, ready: false })
     const many = Array.from({ length: 30 }, (_, i) => ({ type: 'food', at: new Date(2026, 8, i + 1, 12).toISOString() }))
-    expect(pistesProgress(many)).toEqual({ days: 21, target: 21, remaining: 0, ready: true })
+    expect(pistesProgress(many)).toEqual({ days: 14, target: 14, remaining: 0, ready: true })
   })
 
   it('objectif énergie : compte les jours avec une nuit ET une mesure du bien-être', () => {
@@ -225,7 +225,7 @@ describe('pistesProgress', () => {
       // nuit seule, bien-être seul, repas : ne comptent pas
       { type: 'sleep', at: at(4, 1), payload: { endDate: at(4, 7) } }, { type: 'wellbeing', at: at(5) }, { type: 'food', at: at(6) },
     ]
-    expect(pistesProgress(entries, 'energy')).toEqual({ days: 2, target: 21, remaining: 19, ready: false })
+    expect(pistesProgress(entries, 'energy')).toEqual({ days: 2, target: 14, remaining: 12, ready: false })
     expect(pistesProgress(entries, 'gut').days).toBe(1)
   })
 })

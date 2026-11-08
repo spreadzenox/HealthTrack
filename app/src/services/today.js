@@ -8,6 +8,7 @@
  * - Pistes : jours suivis (un repas ou une note du ventre ; une nuit et une mesure du bien-être si l'objectif est
  *   « Mon énergie et mon sommeil ») sur 21, le seuil avant de chercher des pistes.
  */
+import { FIRST_RESULTS_DAY } from '../config/firstResults'
 import { localDateKey } from './analysisEngine'
 import { isDaytimeHrv } from './hrv'
 import { appLocale, localeDate } from '../i18n/locale.js'
@@ -60,8 +61,8 @@ export function gutLevelLabel(id) {
   return GUT_LEVELS.find((l) => l.id === id)?.label ?? null
 }
 
-/** Jours suivis avant de chercher des pistes (« Vos analyses arrivent dans N jours »). */
-export const PISTES_MIN_DAYS = 21
+/** Jours suivis avant les premières pistes : le calendrier unique (ACC-10). */
+export const PISTES_MIN_DAYS = FIRST_RESULTS_DAY.wellbeing
 /**
  * Jours de notes du ventre avant les pistes repas → ventre (= `gutLinks.GUT_LINKS_MIN_DAYS`, vérifié par un test ;
  * recopié ici pour que l'Accueil n'embarque pas la table nutritionnelle).
@@ -412,7 +413,7 @@ export function pistesProgress(entries, focus = 'gut') {
 }
 
 /**
- * Objectif ventre, une fois les 21 jours suivis atteints : jours distincts avec une note du ventre, jusqu'au seuil
+ * Objectif ventre, une fois les premiers jours suivis atteints : jours distincts avec une note du ventre, jusqu'au seuil
  * des pistes repas → ventre. Sans cela, la carte lilas disait « assez de jours » puis « il en faut 28 ».
  */
 export function gutNotesProgress(entries) {
