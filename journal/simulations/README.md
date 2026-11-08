@@ -14,7 +14,7 @@ note ce qu'il comprend ou non, captures à l'appui. Personas et configurations :
 
 `npm run persona -- --day=14 --equipment=watch --port=7811 --out=<dossier>` (dans `app/`) lance la variante play
 dans un téléphone simulé avec les données de démo que la persona aurait (`scripts/persona/personaData.mjs`, testé) :
-**jour 1** = premier lancement (onboarding, aucune saisie, 30 jours importés si montre) ; **jour N** = N jours de
+**jour 1** = premier lancement (le nouvel accueil s'ouvre au premier écran même si 30 jours sont déjà importés ; corrigé le 08/11 20:35 : avant, il était sauté), aucune saisie ; **jour N** = N jours de
 données. **Matériel** : `phone` (pas et calories), `watch` (Health Connect sans VFC : Samsung, Garmin, Xiaomi),
 `watch-hrv` (avec VFC : Apple Watch, Fitbit, Pixel), `huawei` (connexion directe), `full` (+ balance). Relais,
 météo et GitHub sont simulés (période de lancement, Gold), analyse de repas factice. L'agent n'agit que par des
