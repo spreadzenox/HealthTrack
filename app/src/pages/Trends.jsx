@@ -13,7 +13,7 @@ import { getAnalysis } from '../services/analysisRunner'
 import { buildDailyJournal } from '../services/dailyJournal'
 import { listEntries } from '../storage/localHealthStorage'
 import { buildTrendSeries, defaultTrendsView } from '../services/trendsData'
-import { dayFaceDetail, dayReadingsView } from '../services/trendsDay'
+import { dayFaceDetail, dayReadingsView, latestReadingDay } from '../services/trendsDay'
 import { loadFaceMoodEntries } from '../services/mood/faceMoodData'
 
 const DAY_MS = 86_400_000
@@ -106,6 +106,7 @@ export default function Trends({
           period={period}
           onPeriod={setPeriod}
           dayReadings={(date) => dayReadingsView(data.face, date, now || new Date())}
+          initialDay={latestReadingDay(data.face, now || new Date())}
           dayExtra={dayExtra}
           changes={changes}
         />

@@ -12,7 +12,16 @@
 > erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
 > Alpha (livraison continue) » → Run workflow (main). Je ne peux pas le lancer moi-même depuis la session.
 
-> 📈 **Vos corrections de Tendances (07/11 vers 23:50)** : **T2 livré** (08/11 01:35) : la vue Jour est celle de la
+> 📸 **Tendances, côte à côte avec la maquette (T3, 08/11 02:35)** : [démo, Semaine](maquettes/agir-tendances/comparaison/semaine-demo.png) ·
+> [démo, Jour](maquettes/agir-tendances/comparaison/jour-demo.png) · [historique de 2 jours, clair et sombre](maquettes/agir-tendances/comparaison/jour-2-jours.png).
+> Avec 2 jours, la page s'ouvre en Jour sur la courbe des lectures (avant ce run, la nuit, elle tombait sur un
+> « aujourd'hui » vide : corrigé, elle montre le dernier jour qui a des lectures). Votre note n'est plus dite deux fois
+> avec deux chiffres différents. Écarts qui restent avec la maquette (polish, T3-a à T3-c) : en démo, l'étoile et
+> « Humeur et éveil » n'ont pas encore le repère de l'habitude ; « Ce qui a pu peser » n'a ni l'unité « pt » ni la
+> valeur du jour ; une espace trop large dans « 3,4 /5 ». La barre du bas apparaît au milieu des captures pleine page :
+> c'est l'outil de capture, pas l'app.
+
+> 📈 **Vos corrections de Tendances (07/11 vers 23:50)** : **T3 livré** (ci-dessus). **T2 livré** (08/11 01:35) : la vue Jour est celle de la
 > maquette (chaque lecture du visage en point à son heure, votre note en losange, plus de moyenne ni de fourchette ni de
 > légende à cinq entrées) ; dessous, le même détail qu'en Semaine ; ‹ › passent au jour d'avant ou d'après ; un jour
 > touché en Semaine s'ouvre en Jour ; « + » montre les autres mesures grisées (« Une valeur par jour, en Semaine »).
@@ -274,6 +283,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 02:35 — [Tendances T3](runs/2026-11-08-0235-tendances-t3.md) | 🎨 | Captures démo / 2 jours / maquette côte à côte ; vue Jour ouverte sur le dernier jour qui a des lectures ; note dite une fois ; `--history-days` dans `npm run visual` ; écarts restants T3-a à c au BACKLOG |
 | 08/11 01:35 — [Tendances T2](runs/2026-11-08-0135-tendances-t2.md) | 🎨 | Vue Jour de la maquette (points des lectures, losange de la note, même fiche qu'en Semaine, ‹ › jour par jour) ; ancien historique retiré ; captures de la maquette enfin versionnées. Cron Alpha du 07/11 non déclenché (voir le run) |
 | 08/11 00:35 → 01:10 — [Tendances T1, décisions du 07/11 au soir](runs/2026-11-08-0035-tendances-t1.md) | 🎨 | Tendances s'ouvre sur une courbe (bien-être en Semaine dès 3 jours, sinon Jour ; grandes puces sinon) ; décisions (A) à (D) inscrites et relayées à iOS ; maquette « Agir et Tendances » en captures, `PERSONAS.md` recopié |
 | 07/11 21:40 → 22:30 — [Reprise du chantier du soir](runs/2026-11-07-2140-reprise-soir.md) | 🎨 | TS-2 `normStart` dans les écarts du jour (#817) ; bien-être du jour de l'Accueil sur TS-1, VENTRE-BE-2 retiré ; TESTEUR-5a-3 (#818). Budget de lectures vert. Rien à faire de votre côté |

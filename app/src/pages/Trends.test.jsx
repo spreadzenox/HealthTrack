@@ -60,7 +60,7 @@ describe('Journal › Tendances (ORG-3)', () => {
     await screen.findByRole('img', { name: /Courbe/ })
     fireEvent.click(screen.getByRole('button', { name: 'jeudi 5 novembre' }))
     const past = screen.getByRole('group', { name: /Détail du jeudi 5 novembre/ })
-    expect(past).toHaveTextContent('noté')
+    expect(past).toHaveTextContent('votre note 3')
     expect(past.textContent).not.toMatch(/attendu|habitudes/i)
     fireEvent.click(screen.getByRole('button', { name: 'dimanche 8 novembre' }))
     const future = screen.getByRole('group', { name: /Détail du dimanche 8 novembre/ })
@@ -74,7 +74,9 @@ describe('Journal › Tendances (ORG-3)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'jeudi 5 novembre' }))
     const detail = screen.getByRole('group', { name: /Détail du jeudi 5 novembre/ })
     expect(detail).toHaveTextContent('2 lectures du visage')
-    expect(detail).toHaveTextContent('note 3 /5')
+    // T3 : la note dit son chiffre une seule fois, sur la ligne du bien-être
+    expect(detail).toHaveTextContent('votre note 3')
+    expect(detail.textContent.match(/note/g)).toHaveLength(1)
     expect(within(detail).getByRole('img', { name: /Expressions du visage : .*Tristesse 15 %/ })).toBeInTheDocument()
     expect(detail).toHaveTextContent('Plus de tristesse')
     expect(within(detail).getByRole('img', { name: 'Humeur et éveil : 2 lectures' })).toBeInTheDocument()
@@ -100,10 +102,14 @@ describe('Journal › Tendances (ORG-3)', () => {
   })
 
   // Correction T2 du propriétaire (07/11 vers 23:50) : la vue Jour de la maquette, l'ancien historique retiré
-  it('T2 : ?vue=jour ouvre la vue Jour d’aujourd’hui ; ‹ remonte les jours ; lectures en points, note en losange', async () => {
+  it('T2/T3 : ?vue=jour ouvre le dernier jour qui a une lecture ; › jusqu’à aujourd’hui ; lectures en points, note en losange', async () => {
     renderAt('/tendances?vue=jour')
-    expect(await screen.findByRole('img', { name: 'Bien-être du samedi 7 novembre, heure par heure' })).toBeInTheDocument()
+    // T3 : rien encore le 7 ni le 6 → la vue s'ouvre sur le 5, pas sur un jour vide
+    expect(await screen.findByRole('img', { name: 'Bien-être du jeudi 5 novembre, heure par heure' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Jour' })).toHaveAttribute('aria-pressed', 'true')
+    fireEvent.click(screen.getByRole('button', { name: 'Jour suivant' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Jour suivant' }))
+    expect(screen.getByRole('img', { name: 'Bien-être du samedi 7 novembre, heure par heure' })).toBeInTheDocument()
     expect(screen.getByText('Aucune lecture du visage ce jour-là')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Jour suivant' })).toBeDisabled()
     fireEvent.click(screen.getByRole('button', { name: 'Jour précédent' }))

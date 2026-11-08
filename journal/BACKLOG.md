@@ -42,7 +42,17 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   embarqués… ») : `WellbeingHistory` embarqué quitte Tendances. Le « + » reste en Jour ; une mesure sans détail heure
   par heure y est grisée (« une valeur par jour ») et la toucher passe en Semaine. Fait : `DayChart` + `dayReadingsView`,
   ‹ › jour par jour, `WellbeingHistory` (page, CSS, tests) supprimé.
-- [ ] **T3** — Captures en tête du résumé : démo et historique presque vide (2 jours), à côté de la maquette.
+- [x] **T3** ✅ 08/11 02:35 — Captures en tête du résumé : démo et historique presque vide (2 jours), à côté de la maquette
+  (`maquettes/agir-tendances/comparaison/`, option `npm run visual -- --history-days=2`). Corrigé au passage : la vue
+  Jour s'ouvre sur le dernier jour qui a une lecture ou une note (`latestReadingDay`), plus sur un « aujourd'hui » vide
+  la nuit ; la note n'est plus dite deux fois avec deux chiffres (« note 3,4 » en tête et « 3,3 noté ») : une seule
+  fois, « votre note 3,4 » sous la valeur du bien-être.
+- [ ] **T3-a** (polish, constat des captures) Démo, vue Jour : l'étoile n'a pas le trait gris de l'habitude ni la
+  phrase « plus de… que d'habitude », et « Humeur et éveil » montre un seul point sans la zone de l'habitude, alors que
+  la maquette les a. Vérifier si c'est la démo (lectures trop semblables, habitude des 28 jours absente) ou le calcul.
+- [ ] **T3-b** (polish) « Ce qui a pu peser » : la maquette dit l'unité (« −0,29 pt ») et la valeur du jour
+  (« Nuit plus courte que d'habitude (6 h 21) ») ; l'app affiche « Sommeil +0,6 » sans unité ni valeur.
+- [ ] **T3-c** (polish) Valeurs en IBM Plex Mono : « 3,4  /5 » a une espace trop large avant « /5 » (Jour et Semaine).
 
 ## 🧭 Décisions du propriétaire du 07/11 au soir (mode polish, intégrations, personas, méta-leçons) — détail : `PRODUIT.md` § 0
 
