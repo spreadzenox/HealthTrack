@@ -8,15 +8,19 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
-> 🔧 **CI de main rouge le 08/11 de 10:00 à midi environ (heure de Paris)** : panne de téléchargement côté GitHub
-> (504), d'abord sur Gradle, puis sur le compilateur Kotlin. Gradle passe désormais par un téléchargement avec reprises
-> et miroir (empreinte vérifiée), et les dépendances par le miroir Google de Maven Central. Aucune release n'a été
-> publiée pendant la panne. Correctif prêt et vert (PR #830), mais la session n'a pas pu le merger (garde-fou de
-> permissions) : le run suivant le fera, ou un clic « Squash and merge » sur #830.
+> 📅 **Invitation des testeurs aujourd'hui (08/11) : Gold offert jusqu'au 2 décembre inclus** (J = 08/11 + 14 jours
+> + 10 jours de marge ; `until` = `2026-12-02T23:00:00Z`, posé le 08/11 12:35). Le relais est redéployé par le merge,
+> sans mise à jour de l'app : l'app affiche « jusqu'au 2 déc. ». Texte à envoyer :
+> [`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md) §3 (à jour). Rappel du jour 7 vers le 15/11.
 
-> ⚠️ **Envoi Alpha du 07/11 au soir : le déclenchement de 23:45 n'a pas eu lieu** (GitHub n'a pas lancé le cron, sans
-> erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
-> Alpha (livraison continue) » → Run workflow (main). Je ne peux pas le lancer moi-même depuis la session.
+> 🔧 **CI de main réparée (08/11 12:35)** : la panne de téléchargement chez GitHub (504 sur Gradle puis sur le
+> compilateur Kotlin, de 10:00 à midi environ) a été contournée par #830 (reprises, miroirs, empreinte vérifiée),
+> mergée ce run. **Pourquoi 100906 n'est pas en test interne** : 100906 est la version de #828 (09:00 UTC) ; sa
+> construction a échoué pendant la panne, elle n'a jamais existé. La suivante, **100907**, part avec le merge de #830.
+
+> ✏️ **Correction : l'envoi Alpha du 07/11 n'a pas sauté.** D'après la Play Console (vous, le 08/11 à 12:12), Alpha =
+> 100898 à 100 %, publiée le 08/11 à 02:51 : le cron de 23:45 est parti avec environ 3 h de retard chez GitHub. Un
+> envoi du soir peut donc partir tard ; ce soir, la version des testeurs part de la même façon.
 
 > 🛠️ **CI de main rouge depuis #828 (08/11 10:35) : téléchargement de Gradle en panne** (services.gradle.org → GitHub
 > en 504 et délais dépassés, 4 relances sur plus d'une heure ; aucun bug dans le code). Correctif : le téléchargement
@@ -282,7 +286,7 @@
 > > sommeil, énergie, bien-être), en gardant vos données sur votre téléphone. Avant sa sortie publique, Google
 > > m'impose un test fermé de **14 jours avec au moins 12 personnes** : pouvez-vous m'aider ?
 > >
-> > **Gold (le premium) est offert pendant le test (jusqu'au 30 novembre inclus) : vous n'avez rien à payer**,
+> > **Gold (le premium) est offert pendant le test (jusqu'au 2 décembre inclus) : vous n'avez rien à payer**,
 > > aucune carte bancaire n'est demandée. Il faut un téléphone **Android 8 ou plus récent** (pas encore d'iPhone).
 > >
 > > Ce qu'il faut faire (5 minutes, avec le compte Gmail de votre téléphone Android) :
@@ -343,6 +347,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 12:35 — [Gold jusqu'au 2/12, CI réparée](runs/2026-11-08-1235-until-j08-ci.md) | 🔧 | `until` posé au 2 décembre (invitation du 08/11) ; #830 mergée, CI de main reconstruite ; 100906 jamais construite (panne) ; note Alpha du 07/11 corrigée (partie avec 3 h de retard) |
 | 08/11 11:35 — [CI : miroir Maven](runs/2026-11-08-1135-ci-miroir-maven.md) | 🛠️ | Kotlin en 504 chez GitHub : miroir Google de Maven Central avant mavenCentral() ; reprise de #830, checks verts, merge refusé par le garde-fou de la session |
 | 08/11 10:35 — [CI Gradle, données du jour](runs/2026-11-08-1035-ci-gradle-donnees-du-jour.md) | 🛠️🎨 | CI de main rouge (Gradle 504) : téléchargement avec reprises, miroir et SHA-256 ; POLISH-SIM-2 : chaque ligne ouvre sa courbe, « + » visible ; PR #830 non mergée (Kotlin en 504 chez GitHub) |
 | 08/11 09:35 — [Analyses : ce qui va avec](runs/2026-11-08-0935-analyses-va-avec.md) | 🎨 | POLISH-SIM-10 : titre neutre et unité « pt » ; POLISH-SIM-11 : une seule habitude entre Aujourd'hui et le Journal ; capture |
