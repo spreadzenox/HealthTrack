@@ -91,10 +91,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   fixait pas) avant de juger l'Accueil trop centré sur la digestion.
 - [ ] **POLISH-SIM-8** (proposition au propriétaire, avec maquette ; pas de code en mode polish) Poids sur l'Accueil et
   dans Tendances ; phases du sommeil ; cycle et douleur pelvienne (persona Endométriose) ; export CSV.
-- [ ] **POLISH-SIM-10** Analyses › Bien-être : « Ce qui pèse sur votre bien-être » liste aussi des effets favorables
-  (Pas +0,4) : titre neutre (« Ce qui va avec votre bien-être ») et unité « pt » comme Tendances (T4).
-- [ ] **POLISH-SIM-11** Habitude de sommeil : 7 h 19 sur l'Accueil, 7 h 17 dans le Journal ; une seule fenêtre de
-  calcul partout.
+- [x] **POLISH-SIM-10** ✅ 08/11 09:35 : « Ce qui va avec votre bien-être / confort digestif » (titre neutre) et
+  « +0,4 pt » à chaque valeur (Recommendations.jsx, test de page ; capture `comparaison/analyses-va-avec-sombre.png`).
+- [x] **POLISH-SIM-11** ✅ 08/11 09:35 : l'écart venait de la carte d'hier dans le Journal (fenêtre des 14 jours avant
+  hier). Un jour des 14 derniers reprend désormais l'habitude d'aujourd'hui (`measureNorms(…, { dayKey })`, test) ;
+  plus ancien : sa propre fenêtre. Reste possible : un jour très ancien garde son habitude d'alors (voulu).
 - [ ] **POLISH-SIM-12** Rapport PDF : lien depuis Agir (qui en parle) ; période par défaut bornée aux jours d'usage.
 - [ ] **POLISH-SIM-13** Tendances : la partie pointillée après « auj. » n'est pas comprise : un mot (« attendu ») à son
   début.

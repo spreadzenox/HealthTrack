@@ -12,6 +12,11 @@
 > erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
 > Alpha (livraison continue) » → Run workflow (main). Je ne peux pas le lancer moi-même depuis la session.
 
+> 🔤 **Analyses : « Ce qui va avec votre bien-être » (08/11 09:35)** : l'ancien titre « Ce qui pèse » ne collait pas
+> aux effets favorables (Pas +0,2) ; chaque valeur dit « pt » comme Tendances
+> ([capture](maquettes/agir-tendances/comparaison/analyses-va-avec-sombre.png)). Dans le Journal, l'habitude de la carte
+> d'hier est celle d'Aujourd'hui (plus de 7 h 19 d'un côté, 7 h 17 de l'autre). Constats des personas (POLISH-SIM-10, 11).
+
 > 🧪 **Deux simulations de personas (08/11 08:35)** : « Tout mesurer » (Android seul, J1) et « Stressé et pressé »
 > (Galaxy Watch, J14). [Synthèse](simulations/2026-11-08-0835-synthese.md). Nouveaux constats en polish :
 > « Ce qui pèse sur votre bien-être » liste aussi ce qui aide (Pas +0,4) et sans unité ; habitude de sommeil
@@ -323,6 +328,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 09:35 — [Analyses : ce qui va avec](runs/2026-11-08-0935-analyses-va-avec.md) | 🎨 | POLISH-SIM-10 : titre neutre et unité « pt » ; POLISH-SIM-11 : une seule habitude entre Aujourd'hui et le Journal ; capture |
 | 08/11 08:35 — [Idées : personas, Garmin et Samsung](runs/2026-11-08-0835-idees-personas-garmin-samsung.md) | 💡 | 2 simulations (Tout mesurer J1, Stressé J14) ; outil corrigé (3 faux constats) ; POLISH-SIM-10 à 13 ; note INTEG-1 Garmin et Samsung |
 | 08/11 07:35 — [Tendances : bien-être et note](runs/2026-11-08-0735-tendances-bien-etre-note.md) | 🎨 | POLISH-SIM-4 : la ligne du bien-être dit ce qui se mêle à la note ; « 5 = calme » pour le confort digestif ; capture |
 | 08/11 06:35 — [Tendances : graduations rondes](runs/2026-11-08-0635-tendances-graduations.md) | 🎨 | POLISH-SIM-3b : axes sur des valeurs rondes et régulières (pas de 1, 2, 2,5 ou 5 × 10ⁿ) ; captures clair et sombre refaites |

@@ -4,7 +4,7 @@
  * calculé dans le worker) :
  * - avant les résultats, un seul compte à rebours avec la phrase du propriétaire, « Noter maintenant » et « Recevoir
  *   un rappel » ;
- * - ensuite « Pistes à tester » (« Essayer dans Agir »), « Ce qui pèse sur votre … » par horizon (Court / Moyen / Long
+ * - ensuite « Pistes à tester » (« Essayer dans Agir »), « Ce qui va avec votre … » par horizon (Court / Moyen / Long
  *   terme, barres de part et d'autre de zéro en points sur 5 pour une variation habituelle, fourchette, couleur du
  *   thème, hachurées si pas assez net) et, à part, « À regarder, pas à changer » ;
  * - « Comment c'est calculé » en lien discret en bas.
@@ -30,8 +30,8 @@ import { keepWhole } from '../utils/keepWhole'
 import './Recommendations.css'
 
 const WORDS = {
-  wellbeing: { what: 'votre bien-être', note: 'votre bien-être', weigh: 'Ce qui pèse sur votre bien-être' },
-  digestion: { what: 'votre confort digestif', note: 'votre digestion', weigh: 'Ce qui pèse sur votre confort digestif' },
+  wellbeing: { what: 'votre bien-être', note: 'votre bien-être', weigh: 'Ce qui va avec votre bien-être' },
+  digestion: { what: 'votre confort digestif', note: 'votre digestion', weigh: 'Ce qui va avec votre confort digestif' },
 }
 
 const pts = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`
@@ -95,7 +95,7 @@ function EffectBar({ f, max }) {
         <span className="reco-effect-range" style={{ left: pos(Math.max(-max, f.low)), right: `calc(100% - ${pos(Math.min(max, f.high))})` }} />
         <span className="reco-effect-bar" style={{ left: pos(left), right: `calc(100% - ${pos(right)})` }} />
       </span>
-      <span className="reco-effect-value mono" aria-label={`${pts(f.effect)} point sur 5${f.net ? '' : ', pas assez net'}`}>{pts(f.effect)}</span>
+      <span className="reco-effect-value mono" aria-label={`${pts(f.effect)} point sur 5${f.net ? '' : ', pas assez net'}`}>{pts(f.effect)}&nbsp;pt</span>
     </li>
   )
 }

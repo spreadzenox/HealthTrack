@@ -35,14 +35,16 @@ const NORM_KEYS = { sleepMinutes: 'sleep', hrv: 'hrv', restingHr: 'restingHr', s
 const NORM_EXTRA_DAYS = 15
 
 /**
- * Normes du jour `dateKey` : les 14 jours qui le précèdent, depuis le dernier changement durable de la mesure (TS-2) ;
- * un jour passé est fini (minuit).
+ * Normes du jour `dateKey`, depuis le dernier changement durable de la mesure (TS-2). Dans les 14 derniers jours : la
+ * même habitude qu'aujourd'hui, donc le même chiffre que l'Accueil (POLISH-SIM-11) ; plus ancien : les 14 jours qui
+ * le précèdent (un jour passé est fini).
  */
 function normsOf(normDays, dateKey, since) {
   if (!normDays) return {}
   const today = new Date()
-  const isToday = dateKey === `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
-  return measureNorms(normDays, isToday ? today : new Date(`${dateKey}T23:59:00`), { since }).norms
+  const current = measureNorms(normDays, today, { since, dayKey: dateKey })
+  if (Object.keys(current.norms).length || current.ready) return current.norms
+  return measureNorms(normDays, new Date(`${dateKey}T23:59:00`), { since }).norms
 }
 
 /**
