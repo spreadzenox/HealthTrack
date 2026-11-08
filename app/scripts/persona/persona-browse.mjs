@@ -20,7 +20,7 @@
  */
 import { spawn } from 'node:child_process'
 import { createServer } from 'node:http'
-import { mkdirSync } from 'node:fs'
+import { mkdirSync, readdirSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
@@ -71,11 +71,24 @@ await context.route('**/v1/subscription/verify', (r) => json(r, { ok: true, prem
 await context.route('**/v1/credits', (r) => json(r, { credits: { plan: 'premium', tier: 'gold', remaining: 19, daily: 20, resetAt: new Date(Date.now() + 86400000).toISOString(), state: 'x' } }))
 const FAKE_MEAL = { dish: 'Pâtes à la carbonara', items: [{ ingredient: 'Pâtes alimentaires, cuites', quantity_g: 220 }, { ingredient: 'Lardons', quantity_g: 50 }, { ingredient: 'Oeuf, cru', quantity_g: 50 }, { ingredient: 'Parmesan', quantity_g: 15 }] }
 await context.route('**/v1/meal/analyze', (r) => json(r, { parsed: FAKE_MEAL, quota: { remaining: 18, resetAt: new Date(Date.now() + 6 * 3600000).toISOString() } }))
+// Faux Play Billing (aucun achat) : comme sur le téléphone, l'app relit ses droits au démarrage auprès du relais
+// (période de lancement : Gold offert). Sans lui, le navigateur restait en gratuit (constat des simulations du 08/11).
+await context.addInitScript(() => {
+  window.__HT_PLAY_BILLING__ = {
+    getProducts: async () => ({ products: [] }), purchase: async () => ({ status: 'cancelled' }),
+    queryPurchases: async () => ({ purchases: [] }), addListener: async () => ({ remove() {} }),
+  }
+})
+const latestId = readdirSync(join(APP_DIR, 'src/data/changelog')).filter((f) => f.endsWith('.json')).sort().pop().replace(/\.json$/, '')
 // Jour 1 : premier lancement, l'onboarding s'ouvre ; sinon il a été fait le jour de l'installation.
 if (day > 1) {
-  await context.addInitScript((doneAt) => {
-    if (!localStorage.getItem('healthtrack_onboarding')) localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'completed', doneAt, step: 6, maxStep: 6 }))
-  }, new Date(Date.now() - (day - 1) * 86400000).toISOString())
+  await context.addInitScript(({ doneAt, latestId }) => {
+    if (!localStorage.getItem('healthtrack_onboarding')) {
+      localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'completed', doneAt, step: 6, maxStep: 6 }))
+      // L'onboarding marque toutes les Nouveautés comme lues : pas de « 258 autres changements » (artefact du 08/11)
+      localStorage.setItem('healthtrack-whats-new-last-seen', latestId)
+    }
+  }, { doneAt: new Date(Date.now() - (day - 1) * 86400000).toISOString(), latestId })
 }
 const page = await context.newPage()
 await page.goto(base, { waitUntil: 'load' })

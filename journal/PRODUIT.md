@@ -33,7 +33,9 @@
 > - **(C) Simulation de personas** : agent sans connaissance de l'app, accès visuel seul, persona + matériel (pondéré par
 >   les parts de marché) + moment (J1, J14, J45) ; 7 personas ; configurations dans l'artefact « Personas et matériel »
 >   (à recopier dans `PERSONAS.md`) ; deux simulations par jour (runs « idées ») et un passage complet avant chaque envoi
->   aux testeurs ; rapports dans `simulations/`, constats en étapes de polish.
+>   aux testeurs ; rapports dans `simulations/`, constats en étapes de polish. **État 08/11 03:35** : outil
+>   `npm run persona` livré, `PERSONAS.md` recopié ; premier passage complet fait avant l'envoi du 08/11 au soir
+>   (synthèse `simulations/2026-11-08-0340-synthese.md`, POLISH-SIM-1 corrigé, 2 à 9 au BACKLOG).
 > - **(D) Méta-leçons** : A ci-dessus, B dans `DESIGN.md` § 9, C dans la charte.
 > - **(E) Envoi quotidien aux testeurs** : Android à 23:45 (CD-ALPHA-6) ; iPhone, examen bêta quotidien (routine iOS).
 >   Envoi refusé : erreur exacte en tête du résumé, rien contourné.
