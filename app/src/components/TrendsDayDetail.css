@@ -26,6 +26,10 @@
   overflow: visible;
 }
 
+.tdd-map {
+  max-width: 300px;
+}
+
 .tdd-star-axis,
 .tdd-map-axis {
   stroke: var(--border);
@@ -79,8 +83,9 @@
 }
 
 .tdd-map-edge {
-  font-size: 8px;
-  fill: var(--text-muted);
+  font-size: 9.5px;
+  font-weight: 600;
+  fill: var(--text);
 }
 
 .tdd-contrib {
