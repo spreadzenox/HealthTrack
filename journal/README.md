@@ -8,6 +8,11 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 🔤 **Tendances : le cœur en toutes lettres (08/11 19:35)** : « Ce qui a pu peser ce jour-là » dit « Cœur au repos plus
+> rapide que d'habitude (64 bpm) » et « Variabilité cardiaque plus basse… », plus « FC » ni « VFC » (POLISH-SIM-6b).
+> ⚠️ Le test sur émulateur A56 de main est rouge depuis le nouvel accueil (#838) : il attend encore l'ancien premier écran
+> (« Comprenez ce qui va… »). La session Accueil le corrige dans sa PR #841 ; l'app elle-même n'est pas en cause.
+
 > ↔️ **Tendances › Jour : « Humeur et éveil » comme la maquette (08/11 18:35)** : « désagréable » et « agréable » sont
 > écrits à l'horizontale de chaque côté du carré, plus tournés à la verticale ([clair](maquettes/agir-tendances/comparaison/jour-humeur-eveil-clair.png) ·
 > [sombre](maquettes/agir-tendances/comparaison/jour-humeur-eveil-sombre.png)). Reste de T4 : « Nuits plus longues (7 h 46) »
@@ -379,6 +384,7 @@
 |---|---|---|
 | 08/11 17:35 — [Pas du jour](runs/2026-11-08-1735-pas-du-jour.md) | 🎨 | POLISH-SIM-2c : plus de « Pas · hier » dans « Vos données du jour » ; tests, captures |
 | 08/11 18:35 — [Humeur et éveil](runs/2026-11-08-1835-humeur-eveil-libelles.md) | 🎨 | T4-suite : « désagréable » / « agréable » à l'horizontale (maquette) ; test, captures claires et sombres |
+| 08/11 19:35 — [Cœur en toutes lettres](runs/2026-11-08-1935-coeur-en-toutes-lettres.md) | 🎨 | POLISH-SIM-6b : « Cœur au repos plus rapide », « Variabilité cardiaque plus basse » dans « Ce qui a pu peser » ; émulateur A56 rouge (ancien premier écran), corrigé par la PR #841 de la session Accueil |
 | 08/11 16:35 — [Rapport depuis Agir](runs/2026-11-08-1635-rapport-depuis-agir.md) | 🎨 | Merge de #835 (verte, non mergée au run précédent) ; POLISH-SIM-12 : lien Agir → rapport médecin, période bornée aux jours d'usage ; tests, captures |
 | 08/11 15:35 — [Avant les premiers résultats](runs/2026-11-08-1535-attente-analyses.md) | 🎨 | POLISH-SIM-5 : comptes à rebours en jours notés, jours de gêne « vous en avez N », Agir vide qui mène à Analyses ; tests, captures claire et sombre |
 | 08/11 14:35 — [VFC en toutes lettres](runs/2026-11-08-1435-noms-en-toutes-lettres.md) | 🎨 | POLISH-SIM-6 : nom complet de VFC et FC au repos sous la courbe de Tendances, mots simples dans Sources ; « attendu » seulement avec un futur tracé |

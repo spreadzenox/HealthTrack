@@ -93,7 +93,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   singulier comme la maquette, exposer la valeur du seul jour dans `dayContributions`. ~~Libellés des axes de la carte
   Humeur et éveil encore tournés à la verticale~~ ✅ 08/11 18:35 : horizontaux de part et d'autre du carré, comme la
   maquette (`MoodMap`, test ; captures `comparaison/jour-humeur-eveil-*.png`).
-- [ ] **POLISH-SIM-6b** « Ce qui a pu peser » (Tendances, détail du jour) dit encore « FC au repos plus basse que
+- [x] **POLISH-SIM-6b** (livré 08/11 19:35 : « Cœur au repos plus rapide/lent », « Variabilité cardiaque plus haute/basse ») « Ce qui a pu peser » (Tendances, détail du jour) dit encore « FC au repos plus basse que
   d'habitude » : écrire « Cœur au repos » ou le nom complet, comme sous la courbe (vu le 08/11 18:35).
 
 ## 🧭 Décisions du propriétaire du 07/11 au soir (mode polish, intégrations, personas, méta-leçons) — détail : `PRODUIT.md` § 0
