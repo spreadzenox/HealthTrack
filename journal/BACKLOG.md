@@ -79,8 +79,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [x] **POLISH-SIM-3b** ✅ 08/11 06:35 : graduations rondes et régulières (`services/niceAxis.js` : pas de 1, 2, 2,5 ou
   5 × 10ⁿ, 3 à 5 graduations, domaine étendu ; « 4 000 / 6 000 / … / 12 000 » pas, « 6 / 7 / 8 / 9 » h ; demi-heures
   avec une décimale). Tests unitaires et de page ; captures `comparaison/semaine-deux-axes-*.png` refaites.
-- [ ] **POLISH-SIM-4** Détail d'un jour : « Bien-être 3,2 » et « votre note 3,4 » côte à côte sans explication ; dire
-  l'échelle du confort digestif (5 = calme).
+- [x] **POLISH-SIM-4** ✅ 08/11 07:35 : la ligne du bien-être dit ce qui se mêle à la note (« votre note 3,4 et le
+  visage », « … et les jours voisins » sans lecture ; « votre note » seule si les chiffres sont égaux) ; le confort
+  digestif rappelle « 5 = calme » (`detailSource`, trendsData.js, 4 tests ; capture `comparaison/jour-note-et-visage.png`).
 - [ ] **POLISH-SIM-5** Analyses et Agir vides pendant 28 jours : une phrase sur ce qui les remplit et quand ; compte à
   rebours compris (« encore 19 jours notés ») ; « 4 jours de plus avec une gêne » à réécrire.
 - [ ] **POLISH-SIM-6** Jargon : VFC, FC au repos, SpO₂ en toutes lettres une fois (Journal, Tendances), unités claires.

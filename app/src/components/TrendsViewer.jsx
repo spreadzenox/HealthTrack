@@ -6,7 +6,7 @@
  * jour ouvre son détail ; un jour futur montre l'attendu et sa fourchette, jamais un « attendu » sur le passé.
  */
 import { useMemo, useState } from 'react'
-import { buildTrendSeries, canAdd, changeMarks, trendMeasure, unitsOf } from '../services/trendsData'
+import { buildTrendSeries, canAdd, changeMarks, detailSource, trendMeasure, unitsOf } from '../services/trendsData'
 import { appLocale } from '../i18n/locale.js'
 import { niceAxis } from '../services/niceAxis'
 import LineIcon from './LineIcon'
@@ -225,10 +225,8 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
               )}
               {!future && m.state && (
                 <span className="trends-detail-range">
-                  {k === 'digestion' && face?.gut ? `noté « ${face.gut} »`
-                    // T3 : la note brute dit son chiffre ici seulement (l'estimation du jour la lisse un peu)
-                    : k === 'wellbeing' && face?.note != null ? `votre note ${face.note.toLocaleString(appLocale(), { maximumFractionDigits: 1 })}`
-                      : p.observed ? 'noté' : 'estimé'}
+                  {/* T3, POLISH-SIM-4 : la note dit son chiffre ici seulement, avec ce qui s'y mêle */}
+                  {detailSource(k, { value: p.value, note: face?.note ?? null, readings: face?.readings ?? 0, gut: face?.gut ?? null, observed: p.observed })}
                 </span>
               )}
             </li>

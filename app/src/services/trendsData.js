@@ -151,3 +151,21 @@ export function defaultTrendsView({ asked = null, askedDay = false, available = 
   if (hasWellbeing) return { period: 'day', keys: ['wellbeing'] }
   return { period: 'week', keys: available.slice(0, 1) }
 }
+
+/**
+ * POLISH-SIM-4 : ce que dit la ligne d'un jour passé à côté de son chiffre, pour qu'un bien-être de 3,2 à côté d'une
+ * note de 3,4 se comprenne (l'estimation du jour mêle la note au visage, ou aux jours voisins quand il n'a pas de
+ * lecture), et que le confort digestif dise le sens de son échelle.
+ * @param {'wellbeing'|'digestion'} key
+ * @param {{ value: number, note?: number|null, readings?: number, gut?: string|null, observed?: boolean }} d
+ */
+export function detailSource(key, { value, note = null, readings = 0, gut = null, observed = false }) {
+  if (key === 'digestion') return `${gut ? `noté « ${gut} »` : observed ? 'noté' : 'estimé'}, 5 = calme`
+  if (note != null) {
+    if (Math.round(value * 10) === Math.round(note * 10)) return 'votre note'
+    const n = note.toLocaleString(appLocale(), { maximumFractionDigits: 1 })
+    return `votre note ${n} et ${readings > 0 ? 'le visage' : 'les jours voisins'}`
+  }
+  if (readings > 0) return 'd’après le visage'
+  return observed ? 'noté' : 'estimé'
+}

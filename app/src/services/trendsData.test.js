@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildTrendSeries, periodDates, canAdd, unitsOf } from './trendsData'
+import { buildTrendSeries, periodDates, canAdd, unitsOf, detailSource } from './trendsData'
 
 const NOW = new Date(2026, 10, 7, 20)
 const band = (mean) => ({ mean, low: mean - 0.5, high: mean + 0.5, sd: 0.4 })
@@ -63,5 +63,23 @@ describe('Vue par défaut de Tendances (correction T1 du 07/11)', () => {
     const { defaultTrendsView } = await import('./trendsData')
     expect(defaultTrendsView({ asked: 'digestion', available: ['wellbeing'], hasWellbeing: true })).toEqual({ period: 'week', keys: ['digestion'] })
     expect(defaultTrendsView({ askedDay: true, available: ['wellbeing'], hasWellbeing: true })).toEqual({ period: 'day', keys: ['wellbeing'] })
+  })
+})
+
+describe('detailSource (POLISH-SIM-4) : d’où vient le chiffre d’un jour passé', () => {
+  it('bien-être égal à la note arrondie : « votre note », sans second chiffre', () => {
+    expect(detailSource('wellbeing', { value: 3.42, note: 3.4, readings: 2 })).toBe('votre note')
+  })
+  it('bien-être différent de la note : dit ce qui s’y mêle (visage ou jours voisins)', () => {
+    expect(detailSource('wellbeing', { value: 3.2, note: 3.4, readings: 2 })).toBe('votre note 3,4 et le visage')
+    expect(detailSource('wellbeing', { value: 3.2, note: 3.4, readings: 0 })).toBe('votre note 3,4 et les jours voisins')
+  })
+  it('bien-être sans note : lu sur le visage, ou estimé', () => {
+    expect(detailSource('wellbeing', { value: 3.2, note: null, readings: 3 })).toBe('d’après le visage')
+    expect(detailSource('wellbeing', { value: 3.2, note: null, readings: 0, observed: false })).toBe('estimé')
+  })
+  it('confort digestif : donne toujours le sens de l’échelle', () => {
+    expect(detailSource('digestion', { value: 2, gut: 'Gêné', observed: true })).toBe('noté « Gêné », 5 = calme')
+    expect(detailSource('digestion', { value: 2, observed: false })).toBe('estimé, 5 = calme')
   })
 })
