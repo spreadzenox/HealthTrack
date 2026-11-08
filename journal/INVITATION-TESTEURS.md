@@ -12,6 +12,11 @@
 
 ## 1. Le jour où la version candidate part en alpha (fait par Claude, via la CI)
 
+**✅ J fixé au 08/11 (décision du propriétaire, 08/11 vers 12:20 : « oui je les invite aujourd'hui », Alpha 100898
+disponible)** : `until` = `2026-12-02T23:00:00Z` (J = 08/11 + 14 jours + 10 jours de marge) : **Gold offert jusqu'au
+2 décembre 2026 inclus**. Posé le 08/11 12:35 (Paris), texte d'invitation (§3) mis à jour. Rappel du jour 7 : vers
+le 15/11 ; 14 jours comptés à partir de l'inscription du 12ᵉ testeur.
+
 **🔁 Recalé le 05/11 22:35 (Paris), J glissé au 06/11** : Alpha (100811) est encore en examen chez Google et la porte
 de 24 h la garde au moins jusqu'au 06/11 vers 16:30 ; l'invitation ne peut donc pas partir avant le **vendredi 6/11**.
 `until` = `2026-11-30T23:00:00Z` (J = 06/11 + 14 jours + 10 jours de marge) : **Gold offert jusqu'au 30 novembre
@@ -81,7 +86,7 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 > sommeil, énergie, bien-être), en gardant vos données sur votre téléphone. Avant sa sortie publique, Google
 > m'impose un test fermé de **14 jours avec au moins 12 personnes** : pouvez-vous m'aider ?
 >
-> **Gold (le premium) est offert pendant le test (jusqu'au 30 novembre inclus) : vous n'avez rien à payer**, aucune carte
+> **Gold (le premium) est offert pendant le test (jusqu'au 2 décembre inclus) : vous n'avez rien à payer**, aucune carte
 > bancaire n'est demandée.
 >
 > Il faut un téléphone **Android 8 ou plus récent** (l'app n'existe pas encore sur iPhone).
