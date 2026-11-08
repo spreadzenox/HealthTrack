@@ -430,6 +430,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 22:50 — [Relais iOS : 896 retirée](runs/2026-11-08-2250-relais-ios-896.md) | 🔧 | Votre réponse « 896 retirée » (22:35) transmise en tête de `POUR-IOS.md` : la routine iOS vérifie que la 896.376 n'est plus en examen, puis soumet la 918.396 (nouvel accueil, visite guidée) à l'examen bêta des « Testeurs Halcya ». Rien à faire de votre côté |
 | 08/11 18:10 — [Nouvel accueil](runs/2026-11-08-1810-nouvel-accueil.md) | 🚪 | Chantier accueil : #838 (ACC-1 à 4, 6, 7, 9), #840 (ACC-5, 10), visite guidée #841 (ACC-8) ; captures côte à côte avec la maquette ; envoi Alpha à la main |
 | 08/11 17:35 — [Pas du jour](runs/2026-11-08-1735-pas-du-jour.md) | 🎨 | POLISH-SIM-2c : plus de « Pas · hier » dans « Vos données du jour » ; tests, captures |
 | 08/11 18:35 — [Humeur et éveil](runs/2026-11-08-1835-humeur-eveil-libelles.md) | 🎨 | T4-suite : « désagréable » / « agréable » à l'horizontale (maquette) ; test, captures claires et sombres |
