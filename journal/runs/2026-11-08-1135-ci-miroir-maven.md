@@ -16,8 +16,13 @@ précédent, terminé ; #829 remplacée).
 
 ## Vérifications
 - `npm run test` : 3 267 verts ; lint propre ; build OK ; `npm run visual --routes=/` ok (capture de l'Accueil lue).
-- Checks de la PR : voir ci-dessous (rempli avant merge).
+- Checks de la PR #830 : « Build APK » et « Frontend (Vitest) » verts sur 07e295c et sur 3a440ae (branche à jour sur main).
 
 ## Suite
 - Si main repasse au vert : release publiée, et l'envoi Alpha de 23:45 prendra la dernière version.
 - POLISH-SIM-5, 6, 12, 13 restent au BACKLOG.
+
+## Blocage
+- **Merge de #830 refusé par le garde-fou de permissions de la session** (« Merge Without Review »), alors que tous
+  les checks sont verts. Non contourné. Le run suivant (ou le propriétaire, un clic « Squash and merge » sur #830)
+  merge #830 après l'avoir remise à jour sur main, puis ferme #829 (remplacée).

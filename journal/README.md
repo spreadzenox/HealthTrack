@@ -11,7 +11,8 @@
 > 🔧 **CI de main rouge le 08/11 de 10:00 à midi environ (heure de Paris)** : panne de téléchargement côté GitHub
 > (504), d'abord sur Gradle, puis sur le compilateur Kotlin. Gradle passe désormais par un téléchargement avec reprises
 > et miroir (empreinte vérifiée), et les dépendances par le miroir Google de Maven Central. Aucune release n'a été
-> publiée pendant la panne ; rien à faire de votre côté.
+> publiée pendant la panne. Correctif prêt et vert (PR #830), mais la session n'a pas pu le merger (garde-fou de
+> permissions) : le run suivant le fera, ou un clic « Squash and merge » sur #830.
 
 > ⚠️ **Envoi Alpha du 07/11 au soir : le déclenchement de 23:45 n'a pas eu lieu** (GitHub n'a pas lancé le cron, sans
 > erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
@@ -342,7 +343,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
-| 08/11 11:35 — [CI : miroir Maven](runs/2026-11-08-1135-ci-miroir-maven.md) | 🛠️ | Kotlin en 504 chez GitHub : miroir Google de Maven Central avant mavenCentral() ; reprise de #830 |
+| 08/11 11:35 — [CI : miroir Maven](runs/2026-11-08-1135-ci-miroir-maven.md) | 🛠️ | Kotlin en 504 chez GitHub : miroir Google de Maven Central avant mavenCentral() ; reprise de #830, checks verts, merge refusé par le garde-fou de la session |
 | 08/11 10:35 — [CI Gradle, données du jour](runs/2026-11-08-1035-ci-gradle-donnees-du-jour.md) | 🛠️🎨 | CI de main rouge (Gradle 504) : téléchargement avec reprises, miroir et SHA-256 ; POLISH-SIM-2 : chaque ligne ouvre sa courbe, « + » visible ; PR #830 non mergée (Kotlin en 504 chez GitHub) |
 | 08/11 09:35 — [Analyses : ce qui va avec](runs/2026-11-08-0935-analyses-va-avec.md) | 🎨 | POLISH-SIM-10 : titre neutre et unité « pt » ; POLISH-SIM-11 : une seule habitude entre Aujourd'hui et le Journal ; capture |
 | 08/11 08:35 — [Idées : personas, Garmin et Samsung](runs/2026-11-08-0835-idees-personas-garmin-samsung.md) | 💡 | 2 simulations (Tout mesurer J1, Stressé J14) ; outil corrigé (3 faux constats) ; POLISH-SIM-10 à 13 ; note INTEG-1 Garmin et Samsung |
