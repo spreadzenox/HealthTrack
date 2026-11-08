@@ -50,8 +50,8 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **ACC-7** Première note : 5 visages, « Et votre ventre ? » avec digestion ou cycle, « Enregistrer » crée de
   vraies entrées. Même PR.
 - [x] **ACC-8** Visite guidée sur les vrais écrans (13 étapes, digestion avec digestion ou cycle), données fictives en
-  mémoire (`src/storage/exampleMode.js`), jamais écrites dans la base, « Voir un exemple » les 14 premiers jours — PR
-  de la visite. Reste (question au propriétaire) : au jour 14 l'exemple ne montre aucun lien net (moteur honnête).
+  mémoire (`src/storage/exampleMode.js`), jamais écrites dans la base, « Voir un exemple » les 14 premiers jours — #841.
+  Reste (question au propriétaire) : au jour 14 l'exemple ne montre aucun lien net (moteur honnête).
 - [x] **ACC-9** Play en période de lancement : écran court « Gold est offert pendant le test » (date du relais) ;
   sinon l'abonnement actuel, sans la croix qui doublait « Continuer gratuitement ». Même PR.
 - [x] **ACC-10** Calendrier unique `src/config/firstResults.js` (jour 14, jour 28), lu par le moteur, Aujourd'hui,
