@@ -99,12 +99,9 @@
  *   npm run visual -- --empty --routes=/ --onboarding   # premier lancement : l'Accueil redirige vers /bienvenue (jalon 4)
  *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer"  # écrans suivants de l'onboarding
  *                                          (sans --onboarding, il est noté « fait » pour que les autres pages s'affichent)
- *   npm run visual -- --routes=/bienvenue --onboarding=aha   # « Vos 30 derniers jours » (jalon 4b), données de démo
- *   npm run visual -- --routes=/bienvenue --onboarding=gesture   # premier geste (jalon 4c ; gesture-energy : 1 à 5)
- *   npm run visual -- --routes=/bienvenue --onboarding=weather   # météo par la position approximative (TESTEUR-5a)
- *   npm run visual -- --face=on --routes=/bienvenue --onboarding=face   # lecture du visage facultative (jalon 4c-2)
- *   npm run visual -- --play --routes=/bienvenue --onboarding=premium   # paywall soft en fin d'onboarding (play)
- *   npm run visual -- --play --routes=/bienvenue --onboarding=health    # « Autoriser Health Connect » (jalon 4b)
+ *   npm run visual -- --routes=/bienvenue --onboarding=found   # nouvel accueil (ACC-1 à 9) : tuto-2, tuto-3, goal,
+ *                                          sources, sources-huawei, found, found-none, face (avec --face=on), first,
+ *                                          first-stress, premium (avec --play)
  *   npm run visual -- --play --face=on --face-unlock=off --routes=/ --onboarding=unlock-later   # rappel discret de la
  *                                          lecture au déverrouillage dans la carte Bien-être (POL-PLAY-84)
  *   npm run visual -- --routes=/ --goal=energy   # Accueil réglé par l'objectif « énergie et sommeil » (I155 ; sans carte ventre, POL-4)
@@ -700,17 +697,21 @@ async function main() {
     // (ou avec --onboarding, pour vérifier la redirection d'une installation vierge).
     // Écrans de l'onboarding ouverts directement : « aha » (jalon 4b, résumé depuis les données de démo, sans relire
     // Health Connect), premier geste et paywall soft (jalon 4c ; ce dernier avec --play).
+    // Nouvel accueil (ACC-1 à ACC-9, 08/11) : écran ouvert par son nom (lastScreen), parcours version 2.
+    const at = (lastScreen, extra = {}) => ({ flow: 2, lastScreen, ...extra })
     const ONBOARDING_AT = {
-      aha: { goal: 'energy', watch: 'health_connect', health: 'granted', imported: true, step: 4 },
-      // Météo par la position approximative (TESTEUR-5a), juste après la montre
-      weather: { goal: 'gut', watch: 'none', step: 3, maxStep: 3 },
-      gesture: { goal: 'gut', watch: 'none', step: 4, maxStep: 4 },
-      'gesture-energy': { goal: 'energy', watch: 'none', step: 4, maxStep: 4 },
-      // Lecture du visage facultative (jalon 4c-2) : seulement avec --face (sinon le téléphone « ne sait pas lire »)
-      face: { goal: 'gut', watch: 'none', step: 4, maxStep: 4 },
-      premium: { goal: 'gut', watch: 'none', step: 5, maxStep: 5 },
-      // Écran « Autoriser Health Connect » (jalon 4b) : montre Health Connect choisie
-      health: { goal: 'energy', watch: 'health_connect', step: 3, maxStep: 3 },
+      'tuto-2': at('tuto', { card: 1 }),
+      'tuto-3': at('tuto', { card: 2 }),
+      goal: at('goal', { goals: ['gut', 'stress'] }),
+      sources: at('sources', { goals: ['gut'] }),
+      'sources-huawei': at('sources', { goals: ['gut'], huawei: 'pair' }),
+      // « Voici ce que Halcya recevra » : résumé depuis les données de démo, sans relire Health Connect
+      found: at('found', { goals: ['gut'], health: 'granted', imported: true }),
+      'found-none': at('found', { goals: ['gut'], health: 'declined' }),
+      face: at('face', { goals: ['gut'] }),
+      first: at('first', { goals: ['gut', 'cycle'] }),
+      'first-stress': at('first', { goals: ['stress'] }),
+      premium: at('premium', { goals: ['gut'] }),
     }
     if (args.onboarding === 'unlock-later') {
       // « Plus tard » à la lecture au déverrouillage il y a 3 jours (POL-PLAY-84) : rappel discret dans la carte
@@ -727,6 +728,8 @@ async function main() {
       })
     } else if (ONBOARDING_AT[args.onboarding]) {
       await context.addInitScript((state) => {
+        // Health Connect simulé (aucun import) : la carte « Connecter Health Connect » s'affiche dans le navigateur
+        window.__healthtrackFakeHealthConnect = true
         try {
           localStorage.setItem('healthtrack_onboarding', JSON.stringify(state))
         } catch {

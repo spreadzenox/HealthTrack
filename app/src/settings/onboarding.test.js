@@ -13,6 +13,7 @@ import {
   dismissUnlockReminder,
   GOALS,
   TRACKS,
+  goalsOf,
 } from './onboarding'
 
 describe('settings/onboarding', () => {
@@ -28,22 +29,37 @@ describe('settings/onboarding', () => {
     expect(loadOnboarding()).toMatchObject({ goal: 'gut', tracks: ['gut', 'meals'], step: 1, maxStep: 1 })
   })
 
-  it('homeFocus : « énergie » seulement pour l’objectif énergie, sinon l’ordre ventre de la maquette', () => {
+  it('homeFocus : « énergie » avec stress et sommeil sans ventre, sinon l’ordre ventre ; ancien goal lu', () => {
     expect(homeFocus()).toBe('gut')
     saveOnboarding({ goal: 'energy' })
     expect(homeFocus()).toBe('energy')
+    expect(homeFocus(['stress', 'sport'])).toBe('energy')
+    expect(homeFocus(['stress', 'cycle'])).toBe('gut')
     expect(homeFocus('all')).toBe('gut')
-    expect(homeFocus('gut')).toBe('gut')
   })
 
-  it('gutCardMode : carte ventre seulement avec « Ma digestion » ; sans objectif, selon l’installation (POL-4)', () => {
+  it('gutCardMode : carte ventre avec « Ma digestion » ou « Mon cycle » ; sans objectif, selon l’installation (ACC-3)', () => {
     expect(gutCardMode()).toBe('show')
-    saveOnboarding({ goal: 'gut' })
+    saveOnboarding({ goals: ['cycle'] })
     expect(gutCardMode()).toBe('show')
+    expect(gutCardMode({ goals: ['gut', 'sport'] })).toBe('show')
+    expect(gutCardMode({ goals: ['stress'] })).toBe('hide')
+    expect(gutCardMode({ goals: ['all'] })).toBe('hide')
+    expect(gutCardMode({ goals: [], endedBy: 'existing' })).toBe('used')
+    expect(gutCardMode({ goals: [], endedBy: 'skipped' })).toBe('show')
+    // ancien format (un seul objectif)
+    expect(gutCardMode({ goal: 'gut' })).toBe('show')
     expect(gutCardMode({ goal: 'energy' })).toBe('hide')
-    expect(gutCardMode({ goal: 'all' })).toBe('hide')
     expect(gutCardMode({ goal: null, endedBy: 'existing' })).toBe('used')
-    expect(gutCardMode({ goal: null, endedBy: 'skipped' })).toBe('show')
+  })
+
+  it('goalsOf : migration de l’ancien goal (gut, energy, all) ; goals prime ; ids inconnus ignorés', () => {
+    expect(goalsOf({ goal: 'gut' })).toEqual(['gut'])
+    expect(goalsOf({ goal: 'energy' })).toEqual(['stress'])
+    expect(goalsOf({ goal: 'all' })).toEqual(['all'])
+    expect(goalsOf({ goal: null })).toEqual([])
+    expect(goalsOf({ goal: 'gut', goals: ['sport', 'x'] })).toEqual(['sport'])
+    expect(GOALS.map((g) => g.id)).toEqual(['gut', 'cycle', 'stress', 'sport', 'care', 'all'])
   })
 
   it('maxStep ne recule jamais (écran le plus loin atteint, pour le diagnostic)', () => {
@@ -65,16 +81,18 @@ describe('settings/onboarding', () => {
     expect(typeof s.doneAt).toBe('string')
   })
 
-  it('suivis cochés d’avance selon l’objectif ; chaque suivi existe', () => {
+  it('suivis déduits des objectifs (le champ reste enregistré pour les anciens fichiers)', () => {
     const ids = TRACKS.map((t) => t.id)
     for (const g of GOALS) {
-      const tracks = defaultTracks(g.id)
+      const tracks = defaultTracks([g.id])
       expect(tracks.length).toBeGreaterThan(0)
       for (const t of tracks) expect(ids).toContain(t)
     }
-    expect(defaultTracks('gut')).toEqual(expect.arrayContaining(['gut', 'meals']))
+    expect(defaultTracks(['gut'])).toEqual(expect.arrayContaining(['gut', 'meals']))
+    expect(defaultTracks(['stress'])).toEqual(expect.arrayContaining(['sleep', 'wellbeing']))
+    expect(defaultTracks(['all'])).toEqual(ids)
+    expect(defaultTracks([])).toEqual(ids)
     expect(defaultTracks('energy')).toEqual(expect.arrayContaining(['sleep', 'wellbeing']))
-    expect(defaultTracks('all')).toEqual(ids)
   })
 
   describe('needsOnboarding', () => {
@@ -136,9 +154,9 @@ describe('settings/onboarding', () => {
       saveOnboarding({ goal: 'gut', watch: 'none', tracks: ['gut'], step: 2 })
       finishOnboarding('skipped')
       const d = onboardingDiagnostic()
-      expect(d).toMatchObject({ done: true, endedBy: 'skipped', goal: 'gut', watch: 'none', step: 2, maxStep: 2 })
+      expect(d).toMatchObject({ done: true, endedBy: 'skipped', goal: 'gut', goals: ['gut'], watch: 'none', step: 2, maxStep: 2 })
       expect(Object.keys(d).sort()).toEqual(
-        ['done', 'doneAt', 'endedBy', 'face', 'goal', 'health', 'lastScreen', 'maxStep', 'screens', 'seen', 'step', 'unlockLater', 'unlockReminderDone', 'watch'],
+        ['done', 'doneAt', 'endedBy', 'face', 'goal', 'goals', 'health', 'huawei', 'lastScreen', 'maxStep', 'screen', 'screens', 'seen', 'step', 'unlockLater', 'unlockReminderDone', 'watch', 'weather'],
       )
     })
   })

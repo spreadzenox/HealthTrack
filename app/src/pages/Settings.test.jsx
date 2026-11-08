@@ -70,21 +70,22 @@ describe('Settings — Cigarettes', () => {
 describe('Settings — Ce qui vous amène (I155)', () => {
   beforeEach(() => localStorage.clear())
 
-  it('reprend l’objectif de l’onboarding et retient le nouveau choix', () => {
+  it('reprend l’ancien objectif de l’onboarding (goal) en cases, et retient plusieurs choix (ACC-3)', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
     renderSettings()
-    const group = screen.getByRole('radiogroup', { name: 'Ce qui vous amène' })
-    expect(within(group).getByRole('radio', { name: 'Ma digestion' })).toBeChecked()
-    fireEvent.click(within(group).getByRole('radio', { name: 'Mon énergie et mon sommeil' }))
-    expect(JSON.parse(localStorage.getItem('healthtrack_onboarding'))).toMatchObject({ done: true, goal: 'energy' })
+    const group = screen.getByRole('group', { name: 'Ce qui vous amène' })
+    expect(within(group).getByRole('checkbox', { name: 'Ma digestion' })).toBeChecked()
+    expect(within(group).getAllByRole('checkbox')).toHaveLength(6)
+    fireEvent.click(within(group).getByRole('checkbox', { name: 'Mon stress et mon sommeil' }))
+    expect(JSON.parse(localStorage.getItem('healthtrack_onboarding'))).toMatchObject({ done: true, goals: ['gut', 'stress'] })
   })
 
   it('sans objectif choisi, dit que la carte ventre reste affichée (POL-PLAY-13)', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true }))
     renderSettings()
-    expect(screen.getByText(/ou tant que rien n’est choisi/)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('radio', { name: 'Ma digestion' }))
-    expect(screen.queryByText(/ou tant que rien n’est choisi/)).not.toBeInTheDocument()
+    expect(screen.getByText(/ou tant que rien n’est coché/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Ma digestion' }))
+    expect(screen.queryByText(/ou tant que rien n’est coché/)).not.toBeInTheDocument()
   })
 
   it('rappel du bilan digestif : seulement avec la carte ventre, et retiré du natif quand l’objectif change (I170)', async () => {
@@ -96,7 +97,8 @@ describe('Settings — Ce qui vous amène (I155)', () => {
       renderSettings()
       expect(screen.getByRole('checkbox', { name: 'Rappel du bilan digestif, le soir' })).toBeChecked()
       expect(await screen.findByText(/Vers 20 h 30/)).toBeInTheDocument()
-      fireEvent.click(screen.getByRole('radio', { name: 'Mon énergie et mon sommeil' }))
+      fireEvent.click(screen.getByRole('checkbox', { name: 'Ma digestion' }))
+      fireEvent.click(screen.getByRole('checkbox', { name: 'Mon stress et mon sommeil' }))
       expect(screen.queryByRole('checkbox', { name: 'Rappel du bilan digestif, le soir' })).not.toBeInTheDocument()
       await waitFor(() => expect(configure).toHaveBeenLastCalledWith({ enabled: false }))
       expect(JSON.parse(localStorage.getItem('healthtrack_gut_evening'))).toEqual({ enabled: true })

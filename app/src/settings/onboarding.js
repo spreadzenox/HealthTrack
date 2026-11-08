@@ -10,54 +10,88 @@ import { countAllEntries } from '../storage/localHealthStorage'
 
 const KEY = 'healthtrack_onboarding'
 
+/**
+ * Objectifs de l'accueil (ACC-3, 08/11) : choix multiple, une option par persona. Stockés dans `goals` (tableau).
+ * L'ancien `goal` (un seul choix : gut, energy, all) reste lu : voir legacyGoals.
+ */
 export const GOALS = [
-  { id: 'gut', label: 'Ma digestion', hint: 'SII, ballonnements' },
-  { id: 'energy', label: 'Mon énergie et mon sommeil', hint: 'fatigue, nuits' },
-  { id: 'all', label: 'Tout comprendre de mes données', hint: 'toutes mes montres et mesures' },
+  { id: 'gut', label: 'Ma digestion', hint: 'ballonnements, SII, inconforts' },
+  { id: 'cycle', label: 'Mon cycle', hint: 'règles, douleurs, endométriose' },
+  { id: 'stress', label: 'Mon stress et mon sommeil', hint: 'fatigue, nuits, charge mentale' },
+  { id: 'sport', label: 'Mon sport et ma récupération', hint: 'entraînements, cœur, repos' },
+  { id: 'care', label: 'Prendre soin de moi', hint: 'alimentation, poids, forme' },
+  { id: 'all', label: 'Tout mesurer', hint: 'toutes mes montres et mesures au même endroit' },
 ]
+const GOAL_IDS = new Set(GOALS.map((g) => g.id))
 
-export const TRACKS = [
-  { id: 'gut', label: 'Ma digestion', hint: 'calme, gêne ou douleur, en un geste' },
-  { id: 'meals', label: 'Mes repas', hint: 'une photo ou quelques mots' },
-  { id: 'sleep', label: 'Mon sommeil', hint: 'durée et régularité des nuits' },
-  { id: 'wellbeing', label: 'Mon énergie et mon bien-être', hint: 'estimé ou noté par vous' },
-  { id: 'activity', label: 'Mon activité', hint: 'pas et entraînements' },
-]
-
-const DEFAULT_TRACKS = {
-  gut: ['gut', 'meals', 'sleep', 'wellbeing'],
-  energy: ['sleep', 'wellbeing', 'activity'],
-  all: TRACKS.map((t) => t.id),
+/** Ancien accueil (un seul objectif) → tableau : gut → [gut], energy → [stress], all → [all]. */
+export function legacyGoals(goal) {
+  return { gut: ['gut'], energy: ['stress'], all: ['all'] }[goal] ?? []
 }
 
-const EMPTY = { done: false, goal: null, tracks: null, watch: null, step: 0, maxStep: 0 }
+/** Objectifs cochés, quel que soit le format enregistré (nouveau `goals` ou ancien `goal`). */
+export function goalsOf(s = loadOnboarding()) {
+  if (Array.isArray(s?.goals)) return s.goals.filter((g) => GOAL_IDS.has(g))
+  return legacyGoals(s?.goal)
+}
+
+/** Le ventre est mis en avant avec « Ma digestion » ou « Mon cycle » (ventre et douleurs). */
+export const wantsGut = (goals) => goals.includes('gut') || goals.includes('cycle')
 
 /**
- * Ce que l'objectif change sur la carte des pistes (I155) : avec « Mon énergie et mon sommeil », elle parle
- * sommeil → bien-être ; sinon, repas → ventre. La carte ventre suit gutCardMode. Réglable ensuite dans Paramètres
- * (« Ce qui vous amène »).
+ * Anciens suivis (écran « Que voulez-vous suivre ? », retiré le 08/11) : déduits des objectifs pour les anciens
+ * fichiers. Le champ `tracks` n'est lu nulle part dans l'app.
+ */
+export const TRACKS = [
+  { id: 'gut', label: 'Ma digestion' },
+  { id: 'meals', label: 'Mes repas' },
+  { id: 'sleep', label: 'Mon sommeil' },
+  { id: 'wellbeing', label: 'Mon énergie et mon bien-être' },
+  { id: 'activity', label: 'Mon activité' },
+]
+
+const TRACKS_BY_GOAL = {
+  gut: ['gut', 'meals', 'sleep', 'wellbeing'],
+  cycle: ['gut', 'meals', 'sleep', 'wellbeing'],
+  stress: ['sleep', 'wellbeing', 'activity'],
+  sport: ['sleep', 'wellbeing', 'activity'],
+  care: ['meals', 'sleep', 'wellbeing', 'activity'],
+}
+
+/** Suivis déduits des objectifs (tous si rien n'est coché ou avec « Tout mesurer »). Accepte aussi un ancien id. */
+export function defaultTracks(goals) {
+  const list = Array.isArray(goals) ? goals : legacyGoals(goals)
+  if (!list.length || list.includes('all')) return TRACKS.map((t) => t.id)
+  const set = new Set(list.flatMap((g) => TRACKS_BY_GOAL[g] || []))
+  return TRACKS.map((t) => t.id).filter((id) => set.has(id))
+}
+
+/** Version du parcours : 2 = nouvel accueil du 08/11 (tuto, objectifs, sources, trouvé, visage, première note, Gold). */
+export const FLOW_VERSION = 2
+
+const EMPTY = { done: false, goal: null, goals: null, tracks: null, watch: null, step: 0, maxStep: 0 }
+
+/**
+ * Ce que les objectifs changent sur la carte des pistes (I155) : stress et sommeil sans ventre → sommeil → bien-être ;
+ * sinon, repas → ventre.
  * @returns {'gut'|'energy'}
  */
-export function homeFocus(goal = loadOnboarding().goal) {
-  return goal === 'energy' ? 'energy' : 'gut'
+export function homeFocus(goals = goalsOf()) {
+  const list = Array.isArray(goals) ? goals : legacyGoals(goals)
+  return list.includes('stress') && !wantsGut(list) ? 'energy' : 'gut'
 }
 
 /**
- * Carte « Votre ventre » de l'Accueil (retour du propriétaire du 24/10, POL-4) : avec « Mon ventre », toujours ;
- * avec un autre objectif, jamais. Sans objectif : installation d'avant l'onboarding ('existing') → seulement pour
- * qui a noté son ventre ces 7 derniers jours ; onboarding passé sans choisir → affichée (le ventre est la porte
- * d'entrée de l'app). Masquer n'efface aucune note ; le réglage se change dans Paramètres.
+ * Carte « Votre ventre » de l'Accueil (POL-4, ACC-3) : avec « Ma digestion » ou « Mon cycle », toujours ; avec
+ * d'autres objectifs seulement, jamais. Sans objectif : installation d'avant l'onboarding ('existing') → seulement
+ * pour qui a noté son ventre ces 7 derniers jours ; accueil passé sans choisir → affichée. Masquer n'efface rien.
  * @returns {'show'|'used'|'hide'}
  */
 export function gutCardMode(s = loadOnboarding()) {
-  if (s.goal === 'gut') return 'show'
-  if (s.goal) return 'hide'
+  const goals = goalsOf(s)
+  if (wantsGut(goals)) return 'show'
+  if (goals.length) return 'hide'
   return s.endedBy === 'existing' ? 'used' : 'show'
-}
-
-/** Suivis cochés d'avance pour un objectif (tous si l'objectif est inconnu). */
-export function defaultTracks(goal) {
-  return [...(DEFAULT_TRACKS[goal] || DEFAULT_TRACKS.all)]
 }
 
 export function loadOnboarding() {
@@ -102,6 +136,10 @@ export function onboardingDiagnostic(s = loadOnboarding()) {
     endedBy: s.endedBy ?? null,
     doneAt: s.doneAt ?? null,
     goal: s.goal ?? null,
+    goals: goalsOf(s),
+    huawei: s.huawei ?? null,
+    weather: s.weather ?? null,
+    screen: s.screen ?? null,
     watch: s.watch ?? null,
     health: s.health ?? null,
     face: s.face ?? null,

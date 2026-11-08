@@ -9,7 +9,7 @@ import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
 import { DISTRIBUTION, FEATURES, STORE, storeOfPurchase } from '../config/distribution'
 import { feedbackLink } from '../config/feedback'
-import { GOALS, gutCardMode, loadOnboarding, saveOnboarding } from '../settings/onboarding'
+import { GOALS, goalsOf, gutCardMode, loadOnboarding, saveOnboarding } from '../settings/onboarding'
 import { syncGutEvening } from '../services/gutEvening'
 import GutEveningReminder from '../components/GutEveningReminder'
 import AiCreditsHint from '../components/AiCreditsHint'
@@ -132,7 +132,7 @@ export default function Settings() {
 
   const [cigarettePinned, setCigarettePinned] = useState(() => isCigaretteCounterPinned())
   const [theme, setTheme] = useState(() => getThemeChoice())
-  const [goal, setGoal] = useState(() => loadOnboarding().goal)
+  const [goals, setGoals] = useState(() => goalsOf(loadOnboarding()))
 
   const handleSave = () => {
     setGeminiApiKey(apiKey)
@@ -157,9 +157,10 @@ export default function Settings() {
     }
   }
 
-  const handleGoal = (value) => {
-    saveOnboarding({ goal: value })
-    setGoal(value)
+  const handleGoal = (id) => {
+    const value = goals.includes(id) ? goals.filter((g) => g !== id) : [...goals, id]
+    saveOnboarding({ goals: value })
+    setGoals(value)
     // sans carte ventre, plus de rappel du bilan du soir (le choix est gardé pour plus tard)
     syncGutEvening()
   }
@@ -198,14 +199,14 @@ export default function Settings() {
       {/* L'objectif de l'onboarding règle l'Accueil (I155, POL-4) : carte ventre seulement avec « Mon ventre ». */}
       <div className="settings-block">
         <h3 className="section-title">Ce qui vous amène</h3>
-        <div className="theme-choices" role="radiogroup" aria-label="Ce qui vous amène">
+        <div className="theme-choices" role="group" aria-label="Ce qui vous amène">
           {GOALS.map((g) => (
-            <label key={g.id} className={`theme-choice${goal === g.id ? ' is-selected' : ''}`}>
+            <label key={g.id} className={`theme-choice${goals.includes(g.id) ? ' is-selected' : ''}`}>
               <input
-                type="radio"
-                name="goal"
+                type="checkbox"
+                name="goals"
                 value={g.id}
-                checked={goal === g.id}
+                checked={goals.includes(g.id)}
                 onChange={() => handleGoal(g.id)}
               />
               <span>{g.label}</span>
@@ -213,12 +214,12 @@ export default function Settings() {
           ))}
         </div>
         <p className="hint">
-          L’Accueil montre la carte «&nbsp;Votre digestion&nbsp;» avec «&nbsp;Ma digestion&nbsp;»
-          {goal ? '' : gutCardMode(loadOnboarding()) === 'used'
+          L’Accueil montre la carte «&nbsp;Votre digestion&nbsp;» avec «&nbsp;Ma digestion&nbsp;» ou «&nbsp;Mon cycle&nbsp;»
+          {goals.length ? '' : gutCardMode(loadOnboarding()) === 'used'
             ? ', ou si vous avez noté votre digestion ces 7 derniers jours'
-            : ', ou tant que rien n’est choisi'}. Vos notes sont gardées, quel que soit votre choix.
+            : ', ou tant que rien n’est coché'}. Vos notes sont gardées, quel que soit votre choix.
         </p>
-        {gutCardMode({ ...loadOnboarding(), goal }) !== 'hide' && <GutEveningReminder variant="setting" />}
+        {gutCardMode({ ...loadOnboarding(), goals }) !== 'hide' && <GutEveningReminder variant="setting" />}
       </div>
 
       {FEATURES.billing && <SubscriptionBlock />}

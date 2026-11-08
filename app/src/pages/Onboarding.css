@@ -372,7 +372,7 @@
 /* Jalon 4c-2 : lecture du visage facultative */
 .onb-face-lines {
   margin: 0;
-  padding: 16px 18px 16px 34px;
+  padding: 14px 16px;
   border-radius: var(--radius-card);
   background: var(--mint-bg);
   color: var(--mint-text);
@@ -397,57 +397,346 @@
   cursor: pointer;
 }
 
-/* Lecture au déverrouillage mise en avant (variante play, demande du 31/10) : deux lignes de points d'illustration */
-.onb-unlock-benefit {
+/* Nouvel accueil (ACC-1 à ACC-9, 08/11) */
+.onb-tuto {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.onb-tuto-ill {
   display: grid;
-  gap: 10px;
-  margin-bottom: 12px;
-  padding: 16px 18px;
+  gap: 12px;
+  padding: 20px;
   border-radius: var(--radius-card);
   background: var(--mint-bg);
-  color: var(--mint-text);
 }
 
-.onb-unlock-row {
-  display: grid;
-  gap: 6px;
+.onb-tuto-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
 }
 
-.onb-unlock-label {
-  font-size: 0.92rem;
+.onb-pill {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
   font-weight: 600;
 }
 
-.onb-unlock-label-strong {
-  color: var(--mint-label);
+.onb-pill--meal { background: var(--peach-bg); color: var(--peach-text); }
+.onb-pill--sleep { background: var(--night-bg); color: var(--night-text); }
+.onb-pill--activity { background: var(--lilac-bg); color: var(--lilac-text); }
+.onb-pill--wellbeing { background: var(--color-bg); color: var(--mint-text); }
+
+.onb-tuto-curve {
+  width: 100%;
+  height: 64px;
+}
+
+.onb-tabs-list,
+.onb-leaves,
+.onb-devices {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.onb-tabs-list li,
+.onb-leaves li,
+.onb-device {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: var(--radius-choice);
+  background: var(--surface);
+}
+
+.onb-tabs-name,
+.onb-leaves-title,
+.onb-device-name {
   font-weight: 700;
+  color: var(--text);
 }
 
-.onb-unlock-dots {
+.onb-tabs-text,
+.onb-leaves-detail,
+.onb-device-detail {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.onb-device.is-silent {
+  background: none;
+  border: 1.5px dashed var(--border);
+}
+
+.onb-leaves-group {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.onb-dots {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  justify-content: center;
+  margin-top: auto;
 }
 
-.onb-unlock-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+/* Cible de 44 px, point dessiné au centre */
+.onb-dot {
+  width: var(--tap-min);
+  height: var(--tap-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.onb-unlock-dot-few {
-  background: var(--chart-bar-2);
+.onb-dot::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--border);
 }
 
-.onb-unlock-dot-many {
+.onb-dot.is-current::before {
+  width: 22px;
   background: var(--color-brand);
 }
 
-.onb-unlock-caption {
-  margin: 0;
-  font-weight: 600;
+.onb-card {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
 }
 
-.onb-face-actions-pitch {
-  gap: 10px;
+.onb-card-main {
+  border: 2px solid var(--mint-label);
+}
+
+.onb-card-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.onb-card-sub {
+  margin: -6px 0 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.onb-card-text {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.onb-quiet {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.onb-rows {
+  display: grid;
+  gap: 8px;
+}
+
+.onb-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-choice);
+  background: var(--surface);
+}
+
+.onb-row-text {
+  flex: 1;
+  display: grid;
+  gap: 2px;
+}
+
+.onb-row-title {
+  font-weight: 700;
+}
+
+.onb-row-detail {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.onb-switch {
+  position: relative;
+  display: inline-flex;
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  align-items: center;
+  justify-content: center;
+}
+
+.onb-switch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.onb-switch-track {
+  width: 44px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  position: relative;
+  transition: background 0.15s;
+}
+
+.onb-switch-track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  transition: transform 0.15s;
+}
+
+.onb-switch input:checked + .onb-switch-track {
+  background: var(--color-brand);
+}
+
+.onb-switch input:checked + .onb-switch-track::after {
+  transform: translateX(18px);
+}
+
+.onb-switch input:focus-visible + .onb-switch-track {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.onb-face-modes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.onb-face-mode {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: var(--radius-choice);
+  border: 2px solid var(--border);
+  cursor: pointer;
+}
+
+.onb-face-mode input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.onb-face-mode.is-selected {
+  border-color: var(--mint-label);
+  background: var(--mint-bg);
+}
+
+.onb-face-mode-title {
+  font-weight: 700;
+}
+
+.onb-face-mode-detail {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.onb-face-lines div {
+  display: grid;
+  gap: 1px;
+}
+
+.onb-face-lines dt {
+  font-weight: 700;
+}
+
+.onb-face-lines dd {
+  margin: 0;
+}
+
+.onb-feelings {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.onb-feeling {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 10px 2px;
+  min-height: var(--tap-min);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-choice);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.onb-feeling.is-selected {
+  border-color: var(--mint-label);
+  background: var(--mint-bg);
+}
+
+.onb-feeling-face circle:first-child,
+.onb-feeling-face path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.onb-feeling-face .onb-face-eye {
+  fill: currentColor;
+}
+
+.onb-feeling-label {
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.onb-gold {
+  border: 2px solid var(--peach-label);
+  position: relative;
+}
+
+.onb-gold-tag {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--peach-bg);
+  color: var(--peach-text);
+  font-size: 0.8rem;
+  font-weight: 700;
 }
