@@ -60,9 +60,27 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] **INTEG-1** (B) Garmin et Samsung : inventaire de ce qui arrive par Health Connect, ce qui manque, accès direct
   possible (API, conditions, rétro-ingénierie propre) ; spécification dans `protocoles/`. Puis INTEG-2 Withings, INTEG-3
   Huawei (fin du 21/10 sur Android, Health Kit sur iPhone), INTEG-4 Xiaomi.
-- [ ] **PERSONAS-1** (C) Recopier l'artefact « Personas et matériel » dans `PERSONAS.md` ; outillage de simulation
-  (agent visuel seul, captures et clics sur `npm run visual` / Playwright, données de démo J1 / J14 / J45) ; premier
-  passage complet avant l'envoi aux testeurs du 08/11 au soir ; rapports dans `simulations/`.
+- [x] **PERSONAS-1** (C) ✅ 08/11 03:35 : outil `npm run persona` (gestes HTTP → captures, données par matériel et
+  par jour, `scripts/persona/personaData.mjs` testé) ; premier passage complet (7 personas) avant l'envoi du soir :
+  synthèse `simulations/2026-11-08-0340-synthese.md`. Deux simulations par jour aux runs « idées » ensuite.
+- [x] **POLISH-SIM-1** ✅ 08/11 03:35 : l'erreur de l'IA (« Aucun aliment reconnu ») disparaît dès qu'un aliment est
+  ajouté à la main (elle laissait croire que l'enregistrement avait raté).
+- [ ] **POLISH-SIM-2** Le petit « + » (AUJ-6) ne fait rien de visible quand le bandeau d'ajout est déjà à l'écran
+  (4 personas sur 7) : au moins un retour visible (le bandeau s'anime déjà : le rendre perceptible) ; sinon proposer
+  au propriétaire de le retirer sous « Vos données du jour » (rien à y ajouter à la main).
+- [ ] **POLISH-SIM-3** Tendances : unité sur l'axe (h, ms, pas, bpm) ; avec deux courbes, l'axe prend la couleur de sa
+  courbe.
+- [ ] **POLISH-SIM-4** Détail d'un jour : « Bien-être 3,2 » et « votre note 3,4 » côte à côte sans explication ; dire
+  l'échelle du confort digestif (5 = calme).
+- [ ] **POLISH-SIM-5** Analyses et Agir vides pendant 28 jours : une phrase sur ce qui les remplit et quand ; compte à
+  rebours compris (« encore 19 jours notés ») ; « 4 jours de plus avec une gêne » à réécrire.
+- [ ] **POLISH-SIM-6** Jargon : VFC, FC au repos, SpO₂ en toutes lettres une fois (Journal, Tendances), unités claires.
+- [ ] **POLISH-SIM-7** Rejouer les personas « maigrir » et « stressé » avec leur objectif d'onboarding (l'outil ne le
+  fixait pas) avant de juger l'Accueil trop centré sur la digestion.
+- [ ] **POLISH-SIM-8** (proposition au propriétaire, avec maquette ; pas de code en mode polish) Poids sur l'Accueil et
+  dans Tendances ; phases du sommeil ; cycle et douleur pelvienne (persona Endométriose) ; export CSV.
+- [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`) et fixer
+  l'objectif d'onboarding de la persona ; nom de source réaliste dans les données de démo (pas « Gadgetbridge »).
 - [x] **META-1** (D) ✅ 08/11 00:35 : A en tête de `PRODUIT.md`, B et leçon 18 dans `DESIGN.md` § 9, C dans la charte ;
   (A) à (D) relayés en tête de `POUR-IOS.md`.
 

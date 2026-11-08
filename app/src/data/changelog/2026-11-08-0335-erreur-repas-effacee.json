@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-08",
+  "kind": "correctif",
+  "title": "Repas décrit : le message d'erreur s'efface quand vous ajoutez un aliment",
+  "items": [
+    "Si l'analyse ne reconnaît aucun aliment, le message rouge disparaît dès que vous en ajoutez un vous-même."
+  ]
+}

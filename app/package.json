@@ -15,7 +15,8 @@
     "postinstall": "patch-package",
     "visual": "node scripts/visual/visual-check.mjs",
     "perf": "node scripts/perf/perf-check.mjs",
-    "test:java": "bash scripts/java-protocol-test.sh"
+    "test:java": "bash scripts/java-protocol-test.sh",
+    "persona": "node scripts/persona/persona-browse.mjs"
   },
   "dependencies": {
     "@capacitor-community/bluetooth-le": "8.3.0",

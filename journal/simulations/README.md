@@ -10,6 +10,19 @@ note ce qu'il comprend ou non, captures à l'appui. Personas et configurations :
 **Nommage** : `simulations/AAAA-MM-JJ-HHMM-<persona>-J<n>.md`
 (ex. `2026-11-08-0130-sportif-J14.md` ; persona en minuscules avec tirets ; `n` = 1, 14 ou 45).
 
+## Outil (PERSONAS-1, 08/11)
+
+`npm run persona -- --day=14 --equipment=watch --port=7811 --out=<dossier>` (dans `app/`) lance la variante play
+dans un téléphone simulé avec les données de démo que la persona aurait (`scripts/persona/personaData.mjs`, testé) :
+**jour 1** = premier lancement (onboarding, aucune saisie, 30 jours importés si montre) ; **jour N** = N jours de
+données. **Matériel** : `phone` (pas et calories), `watch` (Health Connect sans VFC : Samsung, Garmin, Xiaomi),
+`watch-hrv` (avec VFC : Apple Watch, Fitbit, Pixel), `huawei` (connexion directe), `full` (+ balance). Relais,
+météo et GitHub sont simulés (période de lancement, Gold), analyse de repas factice. L'agent n'agit que par des
+gestes HTTP (`/tap?text=…`, `/tap?x=&y=`, `/type`, `/scroll`, `/back`, `/full`) qui renvoient chacun une capture ;
+il ne lit jamais le code. Consigne donnée aux agents : `brief.md`. Tirage : persona uniforme, configuration au
+prorata des poids, moment uniforme parmi 1, 14, 45 ; une configuration iPhone est jouée sur l'apparence Android
+(même code).
+
 ## Modèle de rapport
 
 ```markdown

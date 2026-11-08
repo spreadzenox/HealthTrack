@@ -69,6 +69,13 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
     }
   }
 
+  // Un aliment ajouté ou corrigé à la main règle l'erreur précédente (IA sans résultat, repas vide) : elle ne doit pas
+  // laisser croire que l'enregistrement a raté (simulation de personas du 08/11)
+  const changeItems = (next) => {
+    setItems(next)
+    setError(null)
+  }
+
   const mealDish = described ? described.dish : dish
 
   const save = async () => {
@@ -157,7 +164,7 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
           onChange={(e) => setTime(e.target.value)}
         />
       </div>
-      <MealEditor items={items} onChange={setItems} disabled={saving || describing} />
+      <MealEditor items={items} onChange={changeItems} disabled={saving || describing} />
       {showFodmap && <MealFodmapLine items={items} />}
       {error && <p className="error-msg" role="alert">{error}</p>}
       <div className="actions">

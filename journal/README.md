@@ -12,6 +12,17 @@
 > erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
 > Alpha (livraison continue) » → Run workflow (main). Je ne peux pas le lancer moi-même depuis la session.
 
+> 🧪 **Premier passage complet des personas (décision C, 08/11 03:35), avant l'envoi de ce soir** : 7 personas
+> simulées, une par profil, matériel tiré selon les parts de marché, aux jours 1, 14 ou 45 ; elles ne voient que des
+> captures. [Synthèse et rapports](simulations/2026-11-08-0340-synthese.md). Corrigé tout de suite : le message rouge
+> « Aucun aliment reconnu » restait affiché après l'ajout d'un aliment à la main. Constats principaux, en polish
+> (POLISH-SIM-2 à 9) : le petit « + » sous « Vos données du jour » ne fait rien de visible quand le bandeau d'ajout est
+> à l'écran (4 sur 7) ; Tendances sans unités sur les axes ; « Bien-être 3,2 » à côté de « votre note 3,4 » sans
+> explication ; Analyses et Agir vides pendant 28 jours sans dire quoi faire ; VFC, FC au repos, SpO₂ non expliqués.
+> Hors mode polish, à vous de décider (POLISH-SIM-8, maquette à venir) : poids sur l'Accueil et dans Tendances, phases
+> du sommeil, cycle et douleur pelvienne (persona Endométriose), export CSV. Trois constats venaient de l'outil, pas
+> de l'app (« 258 autres changements », rapport PDF verrouillé, « Gadgetbridge ») : outil corrigé, vérifié en capture.
+
 > 📸 **Tendances, côte à côte avec la maquette (T3, 08/11 02:35)** : [démo, Semaine](maquettes/agir-tendances/comparaison/semaine-demo.png) ·
 > [démo, Jour](maquettes/agir-tendances/comparaison/jour-demo.png) · [historique de 2 jours, clair et sombre](maquettes/agir-tendances/comparaison/jour-2-jours.png).
 > Avec 2 jours, la page s'ouvre en Jour sur la courbe des lectures (avant ce run, la nuit, elle tombait sur un
@@ -283,6 +294,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 03:35 — [Personas : premier passage complet](runs/2026-11-08-0335-personas-passage.md) | 🎨 | Outil `npm run persona` ; 7 personas simulées avant l'envoi du soir ; erreur du repas décrit effacée à l'ajout manuel ; POLISH-SIM-2 à 9 au BACKLOG |
 | 08/11 02:35 — [Tendances T3](runs/2026-11-08-0235-tendances-t3.md) | 🎨 | Captures démo / 2 jours / maquette côte à côte ; vue Jour ouverte sur le dernier jour qui a des lectures ; note dite une fois ; `--history-days` dans `npm run visual` ; écarts restants T3-a à c au BACKLOG |
 | 08/11 01:35 — [Tendances T2](runs/2026-11-08-0135-tendances-t2.md) | 🎨 | Vue Jour de la maquette (points des lectures, losange de la note, même fiche qu'en Semaine, ‹ › jour par jour) ; ancien historique retiré ; captures de la maquette enfin versionnées. Cron Alpha du 07/11 non déclenché (voir le run) |
 | 08/11 00:35 → 01:10 — [Tendances T1, décisions du 07/11 au soir](runs/2026-11-08-0035-tendances-t1.md) | 🎨 | Tendances s'ouvre sur une courbe (bien-être en Semaine dès 3 jours, sinon Jour ; grandes puces sinon) ; décisions (A) à (D) inscrites et relayées à iOS ; maquette « Agir et Tendances » en captures, `PERSONAS.md` recopié |

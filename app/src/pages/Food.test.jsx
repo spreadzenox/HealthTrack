@@ -556,6 +556,22 @@ describe('Food — décrire un repas en quelques mots', () => {
     spy.mockRestore()
   })
 
+  it('l’erreur de l’IA disparaît dès qu’un aliment est ajouté à la main (simulation de personas du 08/11)', async () => {
+    const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+    setGeminiApiKey('KEY')
+    const gemini = await import('../services/geminiStandalone')
+    const spy = vi.spyOn(gemini, 'analyzeMealText').mockResolvedValue({ provider: 'gemini', model: 'm', dish: null, items: [] })
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    fireEvent.click(screen.getByRole('button', { name: /Décrire ou saisir sans photo/i }))
+    fireEvent.change(screen.getByLabelText(/Décrivez votre repas/i), { target: { value: 'riz' } })
+    fireEvent.click(screen.getByRole('button', { name: /Remplir avec Gemini/i }))
+    expect(await screen.findByRole('alert')).toHaveTextContent(/Aucun aliment reconnu/)
+    fireEvent.change(screen.getByLabelText(/Ajouter un ingrédient/i), { target: { value: 'abondance' } })
+    fireEvent.click(screen.getByRole('option', { name: 'Abondance' }))
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    spy.mockRestore()
+  })
+
   it('sans clé Gemini : pas de champ de description, renvoi vers les Paramètres', () => {
     render(<BrowserRouter><Food /></BrowserRouter>)
     fireEvent.click(screen.getByRole('button', { name: /Décrire ou saisir sans photo/i }))
