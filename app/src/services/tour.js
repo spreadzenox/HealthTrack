@@ -6,6 +6,17 @@ import { APP_NAME } from '../config/brand'
 import { healthStoreName } from './onboardingFlow'
 import { loadOnboarding } from '../settings/onboarding'
 
+export const COUNTER_MS = 900
+
+/**
+ * Jour affiché par le compteur après `elapsed` ms : calculé sur l'horloge, jamais au nombre de ticks, pour qu'un écran
+ * lent à se remplir (analyses sur 75 jours) n'arrête pas l'étiquette à « jour 5 » sous une bulle « Au jour 28 ».
+ */
+export function counterDay(elapsed, days, duration = COUNTER_MS) {
+  if (!(elapsed > 0)) return 1
+  return Math.min(days, Math.max(1, Math.ceil((elapsed / duration) * days)))
+}
+
 export const TOUR_START_EVENT = 'halcya-tour-start'
 
 /** Relance la visite (« Voir un exemple »). */
@@ -34,7 +45,7 @@ export function tourSteps({ hc, face, gut }) {
     { route: '/', days: W, anchor: '.today-sources', title: 'Vos mesures du jour', text: hc ? 'Ce que vos appareils envoient, comparé à vos habitudes.' : `Avec ${healthStoreName()} ou une montre, vos nuits et vos pas s’affichent ici.`, button: 'Suivant' },
     { route: '/journal', title: 'Le Journal', text: 'Chacune de vos journées sera gardée ici.', button: `Voir dans ${W} jours` },
     { route: '/journal', days: W, reveal: true, anchor: '.day-card', title: 'Une journée d’un coup d’œil', text: 'Sommeil, pas, cœur, repas et notes au même endroit.', button: 'Suivant' },
-    { route: '/recommendations', title: 'Les analyses', text: `Elles démarrent après ${W} jours notés.`, button: `Voir au jour ${W}` },
+    { route: '/recommendations', title: 'Les analyses', text: gut ? `Bien-être après ${W} jours notés, digestion après ${D}.` : `Elles démarrent après ${W} jours notés.`, button: `Voir au jour ${W}` },
     { route: '/recommendations', days: W, dataDays: RESULTS_DATA_DAYS, reveal: true, anchor: '[aria-labelledby="reco-pistes-wellbeing"]', title: `Au jour ${W} : vos premières pistes`, text: 'Ce qui va avec vos bons et vos mauvais jours. Des pistes, pas des causes.', button: 'Suivant' },
     { route: '/recommendations', days: W, dataDays: RESULTS_DATA_DAYS, anchor: '[aria-labelledby="reco-weigh-wellbeing"]', title: 'Le détail de chaque piste', text: 'De combien chaque facteur joue sur votre bien-être, en points sur 5.', button: 'Suivant' },
   ]

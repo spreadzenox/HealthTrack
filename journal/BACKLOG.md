@@ -151,11 +151,11 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   le premier repas, jamais plus de 4 semaines, choix manuel respecté (`defaultReportWeeks`, `getFirstEntryAt`).
 - [x] **POLISH-SIM-13** ✅ 08/11 13:35 : « attendu » en italique gris au-dessus de la partie pointillée (au milieu du
   futur, seulement s'il y a un futur) ; test de page ; captures `comparaison/semaine-attendu-{clair,sombre}.png`.
-- [ ] **POLISH-SIM-14** (simulations du 08/11 20:35, J1 sur le nouvel accueil) Visite guidée : l'étiquette « EXEMPLE ·
+- [x] **POLISH-SIM-14** ✅ 08/11 22:35 : compteur calculé sur l'horloge (`counterDay`, valeur finale garantie) et projecteur remesuré toutes les 300 ms pendant l'étape (la découpe restait là où la section était vide : c'était la bande blanche) ; tests ; capture `runs/captures/2026-11-08-2235-visite-jour28.png`. À revoir sur l'A56 au prochain passage des personas. (simulations du 08/11 20:35, J1 sur le nouvel accueil) Visite guidée : l'étiquette « EXEMPLE ·
   données fictives · jour 5 » reste affichée sous la bulle « Au jour 28 » (et « jour 11 » sous « jour 14 ») ; elle doit
   dire le jour annoncé par la bulle. Une bande blanche vide couvre le bas de l'écran sous la bulle (barre d'onglets
   masquée) : à reproduire sur l'émulateur A56 avant correction. Capture `simulations/captures/2026-11-08-2035-ventre-sans-technique-J1/visite-jour5-vs-jour28.png`.
-- [ ] **POLISH-SIM-15** Visite guidée, étape Analyses : « Elles démarrent après 14 jours notés » alors qu'Aujourd'hui dit
+- [x] **POLISH-SIM-15** ✅ 08/11 22:35 : avec digestion ou cycle, « Bien-être après 14 jours notés, digestion après 28. » ; test. Visite guidée, étape Analyses : « Elles démarrent après 14 jours notés » alors qu'Aujourd'hui dit
   « Encore 28 jours notés avant vos analyses digestives » ; avec un objectif ventre ou cycle, dire les deux échéances
   (bien-être au jour 14, digestion au jour 28) depuis `config/firstResults.js` (`services/tour.js`).
 - [x] **POLISH-SIM-16** ✅ 08/11 21:35 : `sameUnitPerFactor` (variation du court terme pour tous les horizons d'un facteur, effet et fourchette mis à l'échelle, netteté inchangée) et `boundToScale` (|effet| > 4 pt : `outOfScale`, jamais net, exclu de « Ce qui a pu peser », ligne « pas assez de données » sans barre ni chiffre) ; tests moteur et page ; capture `recommendations-2`. Analyses : un effet affiché ne dépasse jamais l'échelle de la mesure (« −4,7 pt » sur une note
