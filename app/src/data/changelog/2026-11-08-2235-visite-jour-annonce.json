@@ -1,6 +1,6 @@
 {
   "date": "2026-11-08",
-  "kind": "correction",
+  "kind": "correctif",
   "title": "Visite guidée : le bon jour sur l'étiquette",
   "items": [
     "L'étiquette « Exemple » affiche le jour annoncé par la bulle (jour 28 pour la digestion), même quand l'écran met du temps à se remplir.",
