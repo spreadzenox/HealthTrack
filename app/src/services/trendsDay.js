@@ -120,3 +120,20 @@ export function dayReadingsView(entries, dateKey, now = new Date()) {
     nowHour: isToday ? hourOf(now.toISOString()) : null,
   }
 }
+
+/**
+ * Jour ouvert par défaut en vue Jour (T3) : aujourd'hui s'il a déjà une lecture du visage ou une note, sinon le
+ * dernier jour passé qui en a une (la nuit, avant la première lecture, on voit la veille plutôt qu'un jour vide).
+ * @returns {string | null} AAAA-MM-JJ, ou null s'il n'y a ni lecture ni note
+ */
+export function latestReadingDay(entries, now = new Date()) {
+  const t = now.getTime()
+  let best = null
+  const notes = (entries || []).filter((e) => e?.type === 'wellbeing' && isNum(e.payload?.score))
+  for (const e of [...moodFaceBursts(entries || []), ...notes]) {
+    const at = Date.parse(e.at)
+    if (!Number.isFinite(at) || at > t) continue
+    if (best === null || at > best) best = at
+  }
+  return best === null ? null : localDateKey(new Date(best).toISOString())
+}

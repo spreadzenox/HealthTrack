@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { dayFaceDetail, dayReadingsView, shiftsSentence, vaSentence } from './trendsDay'
+import { dayFaceDetail, dayReadingsView, latestReadingDay, shiftsSentence, vaSentence } from './trendsDay'
 import { EXPRESSIONS } from './mood/wellbeingHistory'
 
 const ex = (over = {}) => Object.fromEntries(EXPRESSIONS.map(({ key }) => [key, over[key] ?? (key === 'exNeutral' ? 0.5 : 0.5 / 7)]))
@@ -62,5 +62,23 @@ describe('Vue Jour de Tendances (T2)', () => {
     const v = dayReadingsView(entries, '2026-11-02', new Date(2026, 10, 7, 20))
     expect(v.readings).toEqual([])
     expect(v.note).toBeNull()
+  })
+})
+
+// T3 (historique presque vide, 08/11) : la vue Jour s'ouvre sur le dernier jour qui a une lecture ou une note
+describe('Jour ouvert par défaut (T3)', () => {
+  const note = (d, h, score) => ({ type: 'wellbeing', at: new Date(2026, 10, d, h).toISOString(), payload: { score } })
+
+  it('aujourd’hui s’il a déjà une lecture', () => {
+    expect(latestReadingDay([burst(6, 9, {}), burst(7, 1, {})], new Date(2026, 10, 7, 2))).toBe('2026-11-07')
+  })
+
+  it('sinon le dernier jour qui a une lecture ou une note (nuit, rien encore aujourd’hui)', () => {
+    expect(latestReadingDay([burst(5, 9, {}), note(6, 21, 3)], new Date(2026, 10, 7, 2))).toBe('2026-11-06')
+  })
+
+  it('ignore le futur et les autres entrées ; null sans rien', () => {
+    expect(latestReadingDay([burst(5, 9, {}), burst(7, 20, {}), { type: 'sleep', at: new Date(2026, 10, 7, 1).toISOString() }], new Date(2026, 10, 7, 2))).toBe('2026-11-05')
+    expect(latestReadingDay([], new Date(2026, 10, 7, 2))).toBeNull()
   })
 })

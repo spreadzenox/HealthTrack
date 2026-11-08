@@ -181,11 +181,9 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
         )}
       </div>}
       {future && <p className="trends-detail-note">D’après vos habitudes</p>}
-      {face && (face.readings > 0 || face.note != null) && (
+      {face && face.readings > 0 && (
         <p className="trends-detail-note">
           {face.readings > 0 && `${face.readings} ${face.readings > 1 ? 'lectures' : 'lecture'} du visage`}
-          {face.readings > 0 && face.note != null && ', '}
-          {face.note != null && <>note <span className="mono">{face.note.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} /5</span></>}
         </p>
       )}
       <ul className="trends-detail-list">
@@ -203,7 +201,10 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
               )}
               {!future && m.state && (
                 <span className="trends-detail-range">
-                  {k === 'digestion' && face?.gut ? `noté « ${face.gut} »` : p.observed ? 'noté' : 'estimé'}
+                  {k === 'digestion' && face?.gut ? `noté « ${face.gut} »`
+                    // T3 : la note brute dit son chiffre ici seulement (l'estimation du jour la lisse un peu)
+                    : k === 'wellbeing' && face?.note != null ? `votre note ${face.note.toLocaleString(appLocale(), { maximumFractionDigits: 1 })}`
+                      : p.observed ? 'noté' : 'estimé'}
                 </span>
               )}
             </li>
@@ -227,9 +228,11 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
  *   period: 'day'|'week'|'month', onPeriod: (p: string) => void }} props
  * `dayExtra(date, keys)` : ce qu'on sait d'un jour passé au-delà des courbes (visage, contributions), ou null.
  * `dayReadings(date)` : les lectures et la note du jour pour la vue Jour (dayReadingsView).
+ * `initialDay` : jour ouvert par défaut en vue Jour (latestReadingDay).
  */
 export default function TrendsViewer({
   states, days, now, initialKeys = ['wellbeing'], period, onPeriod, dayReadings = null, dayExtra = null, changes = null,
+  initialDay = null,
 }) {
   const [keys, setKeys] = useState(initialKeys)
   const [adding, setAdding] = useState(false)
@@ -243,8 +246,9 @@ export default function TrendsViewer({
   const shown = keys.filter((k) => data.available.includes(k))
   const addable = data.available.filter((k) => canAdd(shown, k))
   const isDay = period === 'day'
-  // Jour affiché : celui touché en Semaine ou Mois s'il n'est pas futur, sinon aujourd'hui
-  const day = dayDate ?? data.today
+  // Jour affiché : celui touché en Semaine ou Mois s'il n'est pas futur, sinon le dernier jour qui a une lecture ou
+  // une note (aujourd'hui dès sa première lecture ; T3), sinon aujourd'hui
+  const day = dayDate ?? (initialDay && initialDay <= data.today ? initialDay : data.today)
   // En Jour, seul le bien-être a un détail heure par heure : les autres mesures sont grisées dans « + »
   const dayAddable = data.available.filter((k) => k !== 'wellbeing')
   const choosePeriod = (id) => {

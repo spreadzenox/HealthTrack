@@ -24,6 +24,8 @@
  *   npm run visual -- --radar=explained    # … avec « Voyage » noté chaque jour (« Probablement lié à… »)
  *   npm run visual -- --routes=/connectors --hrv-gap  # plus de VFC depuis 4 jours (« qui envoie quoi »)
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
+ *   npm run visual -- --routes=/tendances --history-days=2  # historique presque vide : seules les données des 2 derniers
+ *                                          jours (aujourd'hui et hier) sont gardées (T3, captures à côté de la maquette)
  *   npm run visual -- --routes=/ --calibration  # notes de bien-être d'hier seulement : calibration de départ
  *                                          en cours (BE-BIAIS-2, 1 jour sur 3, note du jour demandée)
  *   npm run visual -- --routes=/ --pistes-summary   # pistes déjà repérées : la carte lilas cite celle qui touche
@@ -1167,6 +1169,12 @@ async function main() {
       const from = dayStart(9)
       const to = dayStart(3)
       entries = entries.filter((e) => e.type !== 'wellbeing' || new Date(e.at) < from || new Date(e.at) >= to)
+    }
+    if (args['history-days']) {
+      // Historique presque vide : seules les entrées des N derniers jours (aujourd'hui compris) restent (T3).
+      const n = Math.max(1, Number(args['history-days']) || 2)
+      const from = new Date(); from.setHours(0, 0, 0, 0); from.setDate(from.getDate() - (n - 1))
+      entries = entries.filter((e) => new Date(e.at) >= from)
     }
     if (args.calibration) {
       // Début de la lecture du visage : une seule note de bien-être, hier (calibration de départ, 1 jour sur 3).

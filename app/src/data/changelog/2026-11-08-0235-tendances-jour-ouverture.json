@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-08",
+  "kind": "amélioration",
+  "title": "Tendances : la vue Jour s'ouvre sur un jour qui a des lectures",
+  "items": [
+    "La nuit ou avant la première lecture du visage, la vue Jour montre le dernier jour qui en a, plutôt qu'un jour vide. Les flèches mènent toujours jusqu'à aujourd'hui.",
+    "Le détail d'un jour donne votre note une seule fois, sur la ligne du bien-être."
+  ]
+}
