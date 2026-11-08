@@ -8,6 +8,10 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> ⚠️ **Release de 09:35 non publiée (08/11)** : panne des téléchargements GitHub (504 sur Gradle et Kotlin) pendant
+> le build ; rien à voir avec le code. Correctif de robustesse prêt (#829, délai de Gradle 120 s) ; le run suivant
+> relance et vérifie. La dernière version publiée reste v595. Rien à faire de votre côté.
+
 > ⚠️ **Envoi Alpha du 07/11 au soir : le déclenchement de 23:45 n'a pas eu lieu** (GitHub n'a pas lancé le cron, sans
 > erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
 > Alpha (livraison continue) » → Run workflow (main). Je ne peux pas le lancer moi-même depuis la session.
@@ -16,7 +20,7 @@
 > aux effets favorables (Pas +0,2) ; chaque valeur dit « pt » comme Tendances
 > ([capture](maquettes/agir-tendances/comparaison/analyses-va-avec-sombre.png)). Dans le Journal, l'habitude de la carte
 > d'hier est celle d'Aujourd'hui (plus de 7 h 19 d'un côté, 7 h 17 de l'autre). Constats des personas (POLISH-SIM-10, 11).
-> Après le merge, le serveur de Gradle trop lent a fait échouer la release (délai de 10 s) : délai porté à 120 s.
+
 
 > 🧪 **Deux simulations de personas (08/11 08:35)** : « Tout mesurer » (Android seul, J1) et « Stressé et pressé »
 > (Galaxy Watch, J14). [Synthèse](simulations/2026-11-08-0835-synthese.md). Nouveaux constats en polish :

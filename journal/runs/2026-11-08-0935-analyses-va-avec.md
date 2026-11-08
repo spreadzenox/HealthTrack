@@ -27,5 +27,10 @@ unité ; habitude de sommeil 7 h 19 sur l'Accueil, 7 h 17 dans le Journal.
 ## Après le merge (#828)
 - « Build & Release », « Play — AAB » et l'émulateur ont échoué trois fois : le wrapper Gradle n'obtenait pas
   `gradle-8.11.1-all.zip` en 10 s (services.gradle.org lent : 1 Mo en 11 s depuis la session ; pas une erreur du code).
-- Correctif : `networkTimeout=120000` dans `gradle-wrapper.properties` (PR « [Auto] CI : délai de téléchargement de
-  Gradle »), prouvé par le check « Build APK » de la PR, puis release vérifiée.
+- Correctif : `networkTimeout=120000` dans `gradle-wrapper.properties` (PR #829). Sur la PR, Gradle se télécharge
+  désormais (plus de 10 s : le délai sert), mais « Build APK » échoue ensuite : `kotlin-compiler-embeddable-2.1.0.jar`
+  redirigé vers les releases GitHub → **504 Gateway Time-out**. Panne des téléchargements de releases GitHub vers
+  09:00–09:17 UTC, hors de portée. **Non mergé** (garde-fou : Build APK rouge).
+- **À reprendre au run suivant, avant tout** : relancer « Build APK » de #829 (`rerun-failed-jobs`) ; vert → merger
+  #829 ; puis vérifier que « Build & Release », « Play — AAB » et l'émulateur passent sur main (le merge de #829 les
+  relance) et qu'une release > v595 a son APK. Si la panne dure, relancer seulement les runs de main de a4887eb.
