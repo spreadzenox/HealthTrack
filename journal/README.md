@@ -8,6 +8,10 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> ✏️ **Tendances : la partie pointillée dit « attendu » (08/11 13:35)** : après « auj. », le mot « attendu » coiffe la
+> courbe d'après vos habitudes ([clair](maquettes/agir-tendances/comparaison/semaine-attendu-clair.png) ·
+> [sombre](maquettes/agir-tendances/comparaison/semaine-attendu-sombre.png)). Constat des personas (POLISH-SIM-13).
+
 > 📅 **Invitation des testeurs aujourd'hui (08/11) : Gold offert jusqu'au 2 décembre inclus** (J = 08/11 + 14 jours
 > + 10 jours de marge ; `until` = `2026-12-02T23:00:00Z`, posé le 08/11 12:35). Le relais déployé le sert (vérifié : « premium=true
 > source=launch jusqu'au 2026-12-02 »), sans mise à jour de l'app : l'app affiche « jusqu'au 2 déc. ». Texte à envoyer :
@@ -347,6 +351,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 13:35 — [Tendances : « attendu »](runs/2026-11-08-1335-tendances-attendu.md) | 🎨 | POLISH-SIM-13 : le mot « attendu » au-dessus de la partie pointillée de la courbe ; test, captures claire et sombre |
 | 08/11 12:35 — [Gold jusqu'au 2/12, CI réparée](runs/2026-11-08-1235-until-j08-ci.md) | 🔧 | `until` posé au 2 décembre (invitation du 08/11) ; #830 mergée, CI de main reconstruite ; 100906 jamais construite (panne) ; note Alpha du 07/11 corrigée (partie avec 3 h de retard) |
 | 08/11 11:35 — [CI : miroir Maven](runs/2026-11-08-1135-ci-miroir-maven.md) | 🛠️ | Kotlin en 504 chez GitHub : miroir Google de Maven Central avant mavenCentral() ; reprise de #830, checks verts, merge refusé par le garde-fou de la session |
 | 08/11 10:35 — [CI Gradle, données du jour](runs/2026-11-08-1035-ci-gradle-donnees-du-jour.md) | 🛠️🎨 | CI de main rouge (Gradle 504) : téléchargement avec reprises, miroir et SHA-256 ; POLISH-SIM-2 : chaque ligne ouvre sa courbe, « + » visible ; PR #830 non mergée (Kotlin en 504 chez GitHub) |

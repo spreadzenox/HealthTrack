@@ -101,8 +101,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   hier). Un jour des 14 derniers reprend désormais l'habitude d'aujourd'hui (`measureNorms(…, { dayKey })`, test) ;
   plus ancien : sa propre fenêtre. Reste possible : un jour très ancien garde son habitude d'alors (voulu).
 - [ ] **POLISH-SIM-12** Rapport PDF : lien depuis Agir (qui en parle) ; période par défaut bornée aux jours d'usage.
-- [ ] **POLISH-SIM-13** Tendances : la partie pointillée après « auj. » n'est pas comprise : un mot (« attendu ») à son
-  début.
+- [x] **POLISH-SIM-13** ✅ 08/11 13:35 : « attendu » en italique gris au-dessus de la partie pointillée (au milieu du
+  futur, seulement s'il y a un futur) ; test de page ; captures `comparaison/semaine-attendu-{clair,sombre}.png`.
 - [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`) et fixer
   l'objectif d'onboarding de la persona ; profil de saisie par persona (« Stressé » ne note pas de repas) ; dire aux
   agents que Health Connect et le sommeil estimé n'existent pas dans la version web. Fait le 08/11 08:35 : nom de
