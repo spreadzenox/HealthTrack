@@ -101,7 +101,8 @@
  *                                          (sans --onboarding, il est noté « fait » pour que les autres pages s'affichent)
  *   npm run visual -- --routes=/bienvenue --onboarding=found   # nouvel accueil (ACC-1 à 9) : tuto-2, tuto-3, goal,
  *                                          sources, sources-huawei, found, found-none, face (avec --face=on), first,
- *                                          first-stress, premium (avec --play)
+ *                                          first-stress, premium (avec --play), tour (visite guidée, route /,
+ *                                          --click="Voir dans 14 jours" pour l'exemple)
  *   npm run visual -- --play --face=on --face-unlock=off --routes=/ --onboarding=unlock-later   # rappel discret de la
  *                                          lecture au déverrouillage dans la carte Bien-être (POL-PLAY-84)
  *   npm run visual -- --routes=/ --goal=energy   # Accueil réglé par l'objectif « énergie et sommeil » (I155 ; sans carte ventre, POL-4)
@@ -712,6 +713,8 @@ async function main() {
       first: at('first', { goals: ['gut', 'cycle'] }),
       'first-stress': at('first', { goals: ['stress'] }),
       premium: at('premium', { goals: ['gut'] }),
+      // Visite guidée (ACC-8) : accueil fini à l'instant ; --click="Voir dans 14 jours" pour l'exemple
+      tour: { flow: 2, done: true, endedBy: 'completed', doneAt: new Date().toISOString(), goals: ['gut'], health: 'granted', tour: 'pending' },
     }
     if (args.onboarding === 'unlock-later') {
       // « Plus tard » à la lecture au déverrouillage il y a 3 jours (POL-PLAY-84) : rappel discret dans la carte

@@ -1,3 +1,4 @@
+import SeeExample from '../components/SeeExample'
 import JournalTabs from '../components/JournalTabs'
 import DailyJournal from '../components/DailyJournal'
 
@@ -7,6 +8,7 @@ export default function Journal() {
     <section className="journal-page">
       <JournalTabs />
       <DailyJournal />
+      <SeeExample />
     </section>
   )
 }

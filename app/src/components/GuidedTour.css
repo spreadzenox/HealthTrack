@@ -1,0 +1,108 @@
+/* Visite guidée (ACC-8) : zone mise en lumière, reste assombri, bulle en bas au-dessus des onglets */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.tour-shade,
+.tour-spot {
+  position: fixed;
+  pointer-events: none;
+}
+
+.tour-shade {
+  inset: 0;
+  background: rgba(10, 20, 18, 0.6);
+}
+
+.tour-spot {
+  border-radius: var(--radius-card);
+  box-shadow: 0 0 0 9999px rgba(10, 20, 18, 0.6);
+  outline: 2px solid var(--color-brand);
+  transition: top 0.2s, left 0.2s, width 0.2s, height 0.2s;
+}
+
+.tour-badge {
+  position: fixed;
+  top: calc(var(--safe-top, 0px) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--peach-bg);
+  color: var(--peach-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tour-day {
+  text-transform: none;
+}
+
+/* Le même écran se remplit de haut en bas */
+.tour-curtain {
+  position: fixed;
+  inset: 0;
+  background: var(--bg, var(--color-bg));
+  animation: tour-reveal 1s ease-in forwards;
+}
+
+@keyframes tour-reveal {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+
+.tour-bubble {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(var(--safe-bottom, 0px) + 84px);
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: var(--radius-card);
+  background: var(--color-bg);
+  color: var(--text);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+}
+
+.tour-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.tour-text {
+  margin: 0;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tour-skip {
+  min-height: var(--tap-min);
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.tour-next {
+  margin-left: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-spot { transition: none; }
+  .tour-curtain { animation: none; display: none; }
+}

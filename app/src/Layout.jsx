@@ -7,6 +7,7 @@ import TabBar from './components/TabBar'
 import SettingsButton from './components/SettingsButton'
 import { APP_NAME } from './config/brand'
 import { useAutoSync } from './hooks/useAutoSync'
+import TourHost from './components/TourHost'
 import { FEATURES } from './config/distribution'
 import { loadOnboarding, needsOnboarding } from './settings/onboarding'
 import { takePortionOpen } from './services/fodmapReminder'
@@ -123,6 +124,7 @@ export default function Layout() {
         )}
       </main>
       <TabBar />
+      {!onboardingPending && !pathname.startsWith('/bienvenue') && <TourHost />}
     </div>
   )
 }

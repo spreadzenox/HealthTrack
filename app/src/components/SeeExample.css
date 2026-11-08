@@ -1,0 +1,17 @@
+.see-example {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0 8px;
+}
+
+.see-example-btn {
+  min-height: var(--tap-min);
+  padding: 0 16px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
