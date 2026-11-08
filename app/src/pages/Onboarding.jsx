@@ -502,7 +502,7 @@ function FoundStep({ health, imported, onImported, installed, onConnect }) {
           <h2 className="onb-leaves-group">Vos 30 derniers jours</h2>
           <ul className="onb-facts">
             {facts.map((f) => (
-              <li key={f.key} className="onb-fact">
+              <li key={f.key} className={`onb-fact onb-fact--${f.key}`}>
                 <span className="onb-fact-value">{f.value}</span>
                 <span className="onb-fact-label">{f.label}</span>
                 {!sharedSource && <span className="onb-fact-source">{f.source}</span>}

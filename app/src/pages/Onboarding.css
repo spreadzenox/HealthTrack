@@ -294,20 +294,33 @@
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
 }
 
+/* Une couleur par thème (DESIGN.md) : sommeil bleu nuit, activité lilas, corps rose */
 .onb-fact {
   display: grid;
+  align-content: start;
   gap: 2px;
-  padding: 16px 18px;
+  padding: 12px 14px;
   border-radius: var(--radius-card);
   background: var(--mint-bg);
 }
 
+.onb-fact--sleep { background: var(--night-bg); }
+.onb-fact--steps,
+.onb-fact--workouts { background: var(--lilac-bg); }
+.onb-fact--hrv,
+.onb-fact--resting { background: var(--rose-bg); }
+
+.onb-fact-label {
+  font-size: 0.88rem;
+}
+
 .onb-fact-value {
   font-family: var(--font-mono);
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--text);
 }
@@ -739,4 +752,8 @@
   color: var(--peach-text);
   font-size: 0.8rem;
   font-weight: 700;
+}
+
+.onb-body > .paywall-tag {
+  align-self: flex-start;
 }
