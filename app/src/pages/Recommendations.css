@@ -812,6 +812,14 @@
   text-align: right;
 }
 
+/* POLISH-SIM-16 : effet plus grand que l'échelle, pas de chiffre. */
+.reco-effect-out {
+  grid-column: 2 / 4;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
 .reco-legend {
   display: flex;
   align-items: center;

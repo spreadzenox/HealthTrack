@@ -158,7 +158,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-15** Visite guidée, étape Analyses : « Elles démarrent après 14 jours notés » alors qu'Aujourd'hui dit
   « Encore 28 jours notés avant vos analyses digestives » ; avec un objectif ventre ou cycle, dire les deux échéances
   (bien-être au jour 14, digestion au jour 28) depuis `config/firstResults.js` (`services/tour.js`).
-- [ ] **POLISH-SIM-16** Analyses : un effet affiché ne dépasse jamais l'échelle de la mesure (« −4,7 pt » sur une note
+- [x] **POLISH-SIM-16** ✅ 08/11 21:35 : `sameUnitPerFactor` (variation du court terme pour tous les horizons d'un facteur, effet et fourchette mis à l'échelle, netteté inchangée) et `boundToScale` (|effet| > 4 pt : `outOfScale`, jamais net, exclu de « Ce qui a pu peser », ligne « pas assez de données » sans barre ni chiffre) ; tests moteur et page ; capture `recommendations-2`. Analyses : un effet affiché ne dépasse jamais l'échelle de la mesure (« −4,7 pt » sur une note
   sur 5, Lactose long terme, hachuré) : au-delà, « pas assez de données » plutôt qu'un chiffre ; et une même unité de
   pas pour toutes les lignes d'un même facteur (aujourd'hui 2 000, 1 000 puis 500 pas). Capture
   `simulations/captures/2026-11-08-2035-sportif-J45/analyses-facteurs.png`.

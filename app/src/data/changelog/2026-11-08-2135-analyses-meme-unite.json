@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-08",
+  "kind": "amélioration",
+  "title": "Analyses : une seule unité par facteur",
+  "items": [
+    "Toutes les lignes d'un même facteur parlent de la même quantité (par exemple « 1 500 pas de plus » au court, moyen et long terme).",
+    "Un effet plus grand que la note elle-même s'affiche « pas assez de données » au lieu d'un chiffre."
+  ]
+}

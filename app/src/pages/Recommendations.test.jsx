@@ -74,6 +74,22 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(JSON.parse(localStorage.getItem(PISTES_SUMMARY_KEY)).levers).toEqual(['Sommeil', 'Pas'])
   })
 
+  it('POLISH-SIM-16 : un effet plus grand que l’échelle dit « pas assez de données », sans chiffre ni barre', async () => {
+    const out = { ...f('fodmap_lactose', 'Lactose', -4.7, { theme: 'nutrition', net: false, horizon: 'long' }), outOfScale: true }
+    const results = structuredClone(readyResults)
+    results.outcomes.wellbeing.horizons.short.factors.push(out)
+    renderPage({}, results)
+    await screen.findByRole('region', { name: 'Pistes à tester' })
+    const row = [...document.querySelectorAll('.reco-effect')].find((li) => li.textContent.startsWith('Lactose'))
+    expect(row).toHaveTextContent('pas assez de données')
+    expect(row.textContent).not.toMatch(/4,7|pt/)
+    expect(row.querySelector('.reco-effect-bar')).toBeNull()
+    // L'échelle des autres barres ne s'étire pas pour lui.
+    const sleep = [...document.querySelectorAll('.reco-effect')].find((li) => li.textContent.startsWith('Sommeil'))
+    // Sans lui, la barre de 0,4 pt n'occupe qu'un vingtième de la piste (max 4,85) ; avec, elle va presque au bout.
+    expect(Number(sleep.querySelector('.reco-effect-bar').style.right.match(/([\d.]+)%/)?.[1] ?? 100)).toBeLessThan(30)
+  })
+
   it('« Comment c’est calculé » : un lien discret en bas', async () => {
     renderPage({}, readyResults)
     const how = await screen.findByRole('button', { name: 'Comment c’est calculé' })

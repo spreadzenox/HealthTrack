@@ -52,12 +52,14 @@ export function resultsView(outcome) {
     })).filter((h) => h.factors.length)
     : null
   const lookBest = new Map()
+  // POLISH-SIM-16 : un effet hors échelle (« pas assez de données ») ne passe jamais devant un effet mesurable.
+  const rank = (f) => (f.outOfScale ? -1 : Math.abs(f.effect))
   for (const f of all.filter((x) => !x.actionable)) {
     const cur = lookBest.get(f.key)
-    if (!cur || Math.abs(f.effect) > Math.abs(cur.effect)) lookBest.set(f.key, f)
+    if (!cur || rank(f) > rank(cur)) lookBest.set(f.key, f)
   }
   const lookOnly = outcome.beatsPersistence === true
-    ? [...lookBest.values()].sort((a, b) => Math.abs(b.effect) - Math.abs(a.effect)).slice(0, MAX_PER_HORIZON)
+    ? [...lookBest.values()].sort((a, b) => rank(b) - rank(a)).slice(0, MAX_PER_HORIZON)
     : []
   const locked = horizons.find((h) => h.status === 'locked')
   const nextLock = locked ? { label: locked.label, daysLeft: Math.max(0, locked.daysNeeded - locked.daysHave) } : null

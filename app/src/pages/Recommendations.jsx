@@ -84,6 +84,18 @@ function Countdown({ outcome, view, onNote, onReminder }) {
 
 /** Barre de part et d'autre de zéro, avec sa fourchette ; hachurée si le lien n'est pas assez net. */
 function EffectBar({ f, max }) {
+  if (f.outOfScale) {
+    // POLISH-SIM-16 : un chiffre plus grand que la note elle-même ne s'affiche pas.
+    return (
+      <li className="reco-effect is-unsure is-out" data-tone={THEME_TONE[f.theme] ?? 'stone'}>
+        <span className="reco-effect-label">
+          {f.label}
+          <span className="reco-effect-for">pour {f.usualChange?.text}</span>
+        </span>
+        <span className="reco-effect-out">pas assez de données</span>
+      </li>
+    )
+  }
   const pos = (v) => `${50 + (v / max) * 50}%`
   const left = Math.min(0, f.effect)
   const right = Math.max(0, f.effect)
@@ -104,7 +116,8 @@ function EffectBar({ f, max }) {
 }
 
 function EffectList({ factors }) {
-  const max = Math.max(0.3, ...factors.map((f) => Math.max(Math.abs(f.low), Math.abs(f.high), Math.abs(f.effect))))
+  const shown = factors.filter((f) => !f.outOfScale)
+  const max = Math.max(0.3, ...shown.map((f) => Math.max(Math.abs(f.low), Math.abs(f.high), Math.abs(f.effect))))
   return <ul className="reco-effects">{factors.map((f) => <EffectBar key={`${f.key}-${f.horizon}`} f={f} max={max} />)}</ul>
 }
 
