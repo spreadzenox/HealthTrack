@@ -73,7 +73,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   ajouté à la main (elle laissait croire que l'enregistrement avait raté).
 - [ ] **POLISH-SIM-2** Le petit « + » (AUJ-6) ne fait rien de visible quand le bandeau d'ajout est déjà à l'écran
   (4 personas sur 7) : au moins un retour visible (le bandeau s'anime déjà : le rendre perceptible) ; sinon proposer
-  au propriétaire de le retirer sous « Vos données du jour » (rien à y ajouter à la main).
+  au propriétaire de le retirer sous « Vos données du jour » (rien à y ajouter à la main). Confirmé le 08/11 08:35
+  (2 sur 2) ; la ligne Sommeil ne s'ouvre pas non plus (l'ouvrir sur Tendances › Sommeil) ; « Pas · hier » : la
+  personne cherche les pas d'aujourd'hui.
 - [x] **POLISH-SIM-3** ✅ 08/11 05:35 : unité en tête de chaque axe (/5, h, pas, ms, bpm) ; avec deux axes, chacun
   prend la couleur de sa courbe (test de page, captures `comparaison/semaine-deux-axes-*.png`).
 - [x] **POLISH-SIM-3b** ✅ 08/11 06:35 : graduations rondes et régulières (`services/niceAxis.js` : pas de 1, 2, 2,5 ou
@@ -89,8 +91,22 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   fixait pas) avant de juger l'Accueil trop centré sur la digestion.
 - [ ] **POLISH-SIM-8** (proposition au propriétaire, avec maquette ; pas de code en mode polish) Poids sur l'Accueil et
   dans Tendances ; phases du sommeil ; cycle et douleur pelvienne (persona Endométriose) ; export CSV.
+- [ ] **POLISH-SIM-10** Analyses › Bien-être : « Ce qui pèse sur votre bien-être » liste aussi des effets favorables
+  (Pas +0,4) : titre neutre (« Ce qui va avec votre bien-être ») et unité « pt » comme Tendances (T4).
+- [ ] **POLISH-SIM-11** Habitude de sommeil : 7 h 19 sur l'Accueil, 7 h 17 dans le Journal ; une seule fenêtre de
+  calcul partout.
+- [ ] **POLISH-SIM-12** Rapport PDF : lien depuis Agir (qui en parle) ; période par défaut bornée aux jours d'usage.
+- [ ] **POLISH-SIM-13** Tendances : la partie pointillée après « auj. » n'est pas comprise : un mot (« attendu ») à son
+  début.
 - [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`) et fixer
-  l'objectif d'onboarding de la persona ; nom de source réaliste dans les données de démo (pas « Gadgetbridge »).
+  l'objectif d'onboarding de la persona ; profil de saisie par persona (« Stressé » ne note pas de repas) ; dire aux
+  agents que Health Connect et le sommeil estimé n'existent pas dans la version web. Fait le 08/11 08:35 : nom de
+  source réaliste par matériel, Galaxy Watch sans FC au repos ni température, champs date et heure en français.
+- [ ] **INTEG-1a** Note `protocoles/garmin-samsung.md` (08/11 08:35) : Samsung Health Data SDK (température cutanée,
+  Energy Score, tension ; enregistrement par Samsung = geste du propriétaire), Garmin clé personnelle (VFC, stress,
+  Body Battery lus par le téléphone, sans relais), Starter « push » = stockage serveur (HDS, accord requis) ;
+  rétro-ingénierie Garmin écartée (casse la coexistence). Prochaine étape : proposition au propriétaire (ordre § 4)
+  et lecture de la documentation du niveau personnel Garmin.
 - [x] **META-1** (D) ✅ 08/11 00:35 : A en tête de `PRODUIT.md`, B et leçon 18 dans `DESIGN.md` § 9, C dans la charte ;
   (A) à (D) relayés en tête de `POUR-IOS.md`.
 

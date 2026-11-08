@@ -17,6 +17,8 @@ samples/
 !app/android/app/src/test/resources/face/*.png
 # Captures des maquettes validées (comparées aux captures de l'app)
 !journal/maquettes/**/*.png
+# Captures citées par les rapports de simulation de personas
+!journal/simulations/captures/**/*.png
 
 # IDE
 .idea/
