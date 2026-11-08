@@ -14,6 +14,7 @@ describe('Essais (ORG-8)', () => {
     expect(instruction(t)).toBe('Dormir au moins 7 h 30')
     expect(instruction(t, false)).toBe('Comme d’habitude')
     expect(instruction(createTrial({ ...sleep, key: 'fiber_g', label: 'Fibres' }, { now: START }))).toBe('Un peu plus de fibres que d’habitude')
+    expect(instruction(createTrial({ ...sleep, key: 'alcohol_g', label: 'Alcool', effect: -0.5 }, { now: START }))).toBe('Un peu moins d’alcool que d’habitude')
   })
 
   it('la tenue vient des données ; la question seulement si elles manquent', () => {

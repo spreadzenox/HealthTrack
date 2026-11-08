@@ -29,6 +29,10 @@
 > partout ; D9 « Mon cycle » met en avant le ventre et les douleurs, l'app ne lit pas le cycle ce soir (le lire depuis
 > Health Connect ou Santé = proposition pour plus tard, avec la déclaration Google, jamais sans son accord).
 
+> **Exemple plus marqué (08/11 vers 22:55)** : « ok pour les données fictives plus marquées » : livré au run du 08/11
+> 23:35 (ACC-8b) : au jour 14 de la visite, une piste nette et un essai dans Agir ; au jour 28, la piste Fructanes ;
+> toujours « Exemple · données fictives », jamais écrit dans la base ; test sur le vrai moteur.
+
 > **Décisions du propriétaire du 07/11 au soir** (inscrites au run du 08/11 00:35 ; détail et étapes dans `BACKLOG.md`,
 > section « Décisions du 07/11 au soir ») :
 > - **(A) Mode polish dès le 09/11** (Android et iPhone, à partir de la version des testeurs du 08/11 au soir) : plus de

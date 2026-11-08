@@ -52,6 +52,15 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **ACC-8** Visite guidée sur les vrais écrans (13 étapes, digestion avec digestion ou cycle), données fictives en
   mémoire (`src/storage/exampleMode.js`), jamais écrites dans la base, « Voir un exemple » les 14 premiers jours — #841.
   Reste (question au propriétaire) : au jour 14 l'exemple ne montre aucun lien net (moteur honnête).
+- [x] **ACC-8b** ✅ 08/11 23:35 (« ok pour les données fictives plus marquées », propriétaire, 08/11 vers 22:55) :
+  l'étiquette « jour 14 » montre enfin 14 jours (et non 75 cachés) : `tourData.js` règle un levier (la nuit chez qui
+  reçoit son sommeil, sinon deux verres de vin certains soirs) et le bien-être du jour et de la veille sur un motif de
+  13 jours, et l'oignon cru au dîner (fructanes) règle la gêne du soir et du lendemain sur un motif de 11 jours. Vrai
+  moteur, sur 5 dates et heures × 4 configurations de sources, à l'heure de Paris : jour 14, une piste nette, son détail
+  et un essai dans Agir ; jour 28, la piste Fructanes (`tourResults.test.js`). Motifs cherchés sur 14 dates × 4
+  configurations × 3 fuseaux. Corrigé au passage : les entrées ajoutées se décalaient d'un jour avant le passage à
+  l'heure d'hiver (« maintenant − 24 h » ; le test l'attrape) ; « Un peu moins d'alcool » (élision) dans les essais.
+  Captures `runs/captures/2026-11-08-2335-visite-*.png`.
 - [x] **ACC-9** Play en période de lancement : écran court « Gold est offert pendant le test » (date du relais) ;
   sinon l'abonnement actuel, sans la croix qui doublait « Continuer gratuitement ». Même PR.
 - [x] **ACC-10** Calendrier unique `src/config/firstResults.js` (jour 14, jour 28), lu par le moteur, Aujourd'hui,
