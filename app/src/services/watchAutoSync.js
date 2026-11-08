@@ -15,12 +15,15 @@ import { CURRENT_VERSION } from './updateCheck'
 import { getBodyProfile } from './bodyProfile'
 import { getBodySettings } from '../settings/bodySettings'
 import { listEntries } from '../storage/localHealthStorage'
+import { isExampleMode, waitForRealData } from '../storage/exampleMode'
 import { syncVaultAfterConnection, vaultPlugin } from './watchVault'
 import { getBackgroundSync, importPendingCaptures, shareResumeWithNative } from './watchCaptures'
 import { appLocale } from '../i18n/locale.js'
 
 /** Profil envoyé à la montre (7/0x02) : taille, poids, âge, sexe connus de HealthTrack (lectures par index). */
 export async function watchProfile() {
+  // Visite guidée (ACC-8) : jamais le poids fictif de l'exemple vers la montre
+  while (isExampleMode()) await waitForRealData()
   const [weights, heights] = await Promise.all([listEntries({ type: 'weight' }), listEntries({ type: 'height' })])
   const p = await getBodyProfile([...weights, ...heights])
   return { heightCm: p.heightCm, weightKg: p.weightKg, age: p.age, sex: p.sex, birthYear: getBodySettings().birthYear ?? null }

@@ -8,6 +8,7 @@
  */
 import { getDataRevision, isDataRevisionPersistent } from '../storage/dataRevision'
 import { CURRENT_VERSION } from './updateCheck'
+import { isExampleMode } from '../storage/exampleMode'
 
 const STORAGE_KEY = 'healthtrack-analysis-cache-v1'
 
@@ -57,6 +58,8 @@ function store(task, key, result) {
  * @returns {{ hit: boolean, result?: unknown }}
  */
 export function peekAnalysis(task, now = new Date()) {
+  // Visite guidée (ACC-8) : jamais de cache pendant les données fictives
+  if (isExampleMode()) return { hit: false }
   const key = analysisCacheKey(now)
   const mem = memory.get(task)
   if (mem?.key === key) return { hit: true, result: mem.result }
@@ -75,6 +78,7 @@ export function peekAnalysis(task, now = new Date()) {
  * dernier changement sans relancer le calcul (budget de lectures). `null` si la tâche n'a jamais été calculée.
  */
 export function lastAnalysis(task) {
+  if (isExampleMode()) return null
   const mem = memory.get(task)
   if (mem) return mem.result ?? null
   if (!isDataRevisionPersistent()) return null
@@ -132,6 +136,8 @@ function runInWorker(task) {
  * @returns {Promise<unknown>}
  */
 export function getAnalysis(task, now = new Date()) {
+  // Visite guidée (ACC-8) : calcul sur le fil principal (le Worker lit la vraie base), sans rien ranger
+  if (isExampleMode()) return runOnMainThread(task).then((r) => r ?? null)
   const cached = peekAnalysis(task, now)
   if (cached.hit) return Promise.resolve(cached.result)
   const key = analysisCacheKey(now)

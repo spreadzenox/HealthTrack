@@ -26,7 +26,7 @@ import http from 'node:http'
 const PKG = 'fr.jpesquet.sante'
 const APK = process.env.PLAY_RELEASE_APK || 'app/android/app/build/outputs/apk/play/release/app-play-release.apk'
 const OUT_MD = 'play_release.md'
-const FIRST_SCREEN = 'Comprenez ce qui va'
+const FIRST_SCREEN = 'Bienvenue dans' // nouvel accueil (ACC-2, 08/11)
 // Plugins maison (main + play) et Health Connect : tous doivent survivre à R8 (AppUpdate n'existe que dans la
 // sideload, SELF_UPDATE)
 const PLUGINS = [

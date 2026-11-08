@@ -10,7 +10,7 @@ set -uo pipefail
 
 APK=app/android/app/build/outputs/apk/play/debug/app-play-debug.apk
 PKG=fr.jpesquet.sante
-FIRST_SCREEN="Comprenez ce qui va"
+FIRST_SCREEN="Bienvenue dans"  # nouvel accueil (ACC-2, 08/11)
 TIMEOUT_S=90
 OUT=play_coldstart.md
 
