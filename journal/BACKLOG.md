@@ -35,12 +35,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   TS-1 (`getAnalysis('dayStates')` calcule s'il manque) derrière un indicateur d'attente avant de décider, jamais la
   carte vide ; avec 2 jours de bien-être, TS-1 ne donne que 2 points (< 3), d'où la vue Jour. Aucune mesure choisie :
   les courbes disponibles en grandes puces (48 px), « Choisissez une mesure avec « + » » retiré.
-- [ ] **T2** — Vue Jour comme la maquette : lectures du jour (points couleur bien-être) et note (losange), sans moyenne
+- [x] **T2** ✅ 08/11 01:35 — Vue Jour comme la maquette : lectures du jour (points couleur bien-être) et note (losange), sans moyenne
   en pointillés, sans barres de fourchette par lecture ni légende à cinq entrées ; dessous, le même détail du jour qu'en
   Semaine et Mois (`TrendsDayDetail` : étoile, Humeur et éveil, Ce qui a pu peser). Retirer explicitement l'ancien détail
   (curseurs valence / éveil, barres d'expressions, « Fiabilité mesurée… », « pas un diagnostic », « Deux modèles
   embarqués… ») : `WellbeingHistory` embarqué quitte Tendances. Le « + » reste en Jour ; une mesure sans détail heure
-  par heure y est grisée (« une valeur par jour ») et la toucher passe en Semaine.
+  par heure y est grisée (« une valeur par jour ») et la toucher passe en Semaine. Fait : `DayChart` + `dayReadingsView`,
+  ‹ › jour par jour, `WellbeingHistory` (page, CSS, tests) supprimé.
 - [ ] **T3** — Captures en tête du résumé : démo et historique presque vide (2 jours), à côté de la maquette.
 
 ## 🧭 Décisions du propriétaire du 07/11 au soir (mode polish, intégrations, personas, méta-leçons) — détail : `PRODUIT.md` § 0

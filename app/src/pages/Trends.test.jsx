@@ -1,9 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Trends from './Trends'
 
-vi.mock('./WellbeingHistory', () => ({ default: ({ embedded, initialPeriod }) => <section data-testid="wb-day" data-embedded={String(embedded)} data-period={initialPeriod} /> }))
 
 const NOW = new Date(2026, 10, 7, 20)
 const band = (mean) => ({ mean, low: mean - 0.4, high: mean + 0.4, sd: 0.3 })
@@ -100,12 +99,47 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(detail.textContent).not.toMatch(/cause|à cause|parce que/i)
   })
 
-  it('?mesure=sommeil inconnue → bien-être ; ?vue=jour ouvre l’historique du jour (ORG-3b)', async () => {
+  // Correction T2 du propriétaire (07/11 vers 23:50) : la vue Jour de la maquette, l'ancien historique retiré
+  it('T2 : ?vue=jour ouvre la vue Jour d’aujourd’hui ; ‹ remonte les jours ; lectures en points, note en losange', async () => {
     renderAt('/tendances?vue=jour')
-    const day = await screen.findByTestId('wb-day')
-    expect(day).toHaveAttribute('data-embedded', 'true')
-    expect(day).toHaveAttribute('data-period', 'day')
+    expect(await screen.findByRole('img', { name: 'Bien-être du samedi 7 novembre, heure par heure' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Jour' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByText('Aucune lecture du visage ce jour-là')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Jour suivant' })).toBeDisabled()
+    fireEvent.click(screen.getByRole('button', { name: 'Jour précédent' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Jour précédent' }))
+    const chart = screen.getByRole('img', { name: 'Bien-être du jeudi 5 novembre, heure par heure' })
+    expect(chart.querySelectorAll('.trends-reading')).toHaveLength(2)
+    expect(chart.querySelectorAll('.trends-note')).toHaveLength(1)
+    const legend = screen.getByRole('list', { name: 'Légende' })
+    expect(within(legend).getAllByRole('listitem').map((li) => li.textContent)).toEqual(['une lecture du visage', 'votre note'])
+    // dessous, le même détail du jour qu'en Semaine
+    const detail = screen.getByRole('group', { name: /Détail du jeudi 5 novembre/ })
+    expect(within(detail).getByRole('img', { name: /Expressions du visage/ })).toBeInTheDocument()
+    expect(within(detail).getByRole('img', { name: 'Humeur et éveil : 2 lectures' })).toBeInTheDocument()
+    // l'ancien détail est retiré (une information n'a qu'une maison)
+    const page = document.body.textContent
+    expect(page).not.toMatch(/moyenne|Fiabilité mesurée|diagnostic|Deux modèles embarqués|Valence/i)
+  })
+
+  it('T2 : un jour touché en Semaine s’ouvre en Jour', async () => {
+    renderAt('/tendances')
+    await screen.findByRole('img', { name: /Courbe/ })
+    fireEvent.click(screen.getByRole('button', { name: 'jeudi 5 novembre' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Jour' }))
+    expect(screen.getByRole('img', { name: 'Bien-être du jeudi 5 novembre, heure par heure' })).toBeInTheDocument()
+  })
+
+  it('T2 : « + » en Jour : les mesures sans détail heure par heure sont grisées, les toucher passe en Semaine', async () => {
+    renderAt('/tendances?vue=jour')
+    fireEvent.click(await screen.findByRole('button', { name: 'Ajouter une mesure' }))
+    const menu = screen.getByRole('list', { name: 'Mesures à ajouter' })
+    const sleep = within(menu).getByRole('button', { name: /Sommeil/ })
+    expect(sleep).toHaveClass('is-daily')
+    expect(screen.getByText('Une valeur par jour, en Semaine')).toBeInTheDocument()
+    fireEvent.click(sleep)
+    expect(screen.getByRole('button', { name: 'Semaine' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('img', { name: 'Courbe de Bien-être, Sommeil' })).toBeInTheDocument()
   })
 
   // Correction T1 du propriétaire (07/11 vers 23:50) : jamais une carte vide à l'ouverture
@@ -119,7 +153,7 @@ describe('Journal › Tendances (ORG-3)', () => {
   it('T1 : bien-être sur 2 jours seulement → vue Jour à l’ouverture', async () => {
     const two = { ...states, days: states.days.filter((x) => x.date >= '2026-11-06') }
     renderWith('/tendances', { st: two })
-    expect(await screen.findByTestId('wb-day')).toBeInTheDocument()
+    expect(await screen.findByRole('img', { name: /heure par heure/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Jour' })).toHaveAttribute('aria-pressed', 'true')
   })
 

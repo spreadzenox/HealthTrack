@@ -107,17 +107,79 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
   )
 }
 
-function DayDetail({ data, keys, date, onClose, extra = null, marks = [] }) {
+/**
+ * Vue Jour (correction T2, maquette « Agir et Tendances ») : le bien-être seul, chaque lecture du visage en point à son
+ * heure, reliées par un trait fin ; la note en losange ; aujourd'hui, l'après « maintenant » grisé. Ni moyenne, ni
+ * fourchette par lecture, ni attendu (le pointillé ne sert qu'au futur).
+ */
+function DayChart({ date, view }) {
+  const { readings, note, nowHour } = view
+  const first = Math.min(6, ...readings.map((r) => Math.floor(r.hour)), note ? Math.floor(note.hour) : 6)
+  const x = (h) => PAD.l + ((h - first) / (24 - first)) * (W - PAD.l - PAD.r)
+  const y = (v) => PAD.t + (1 - (v - 1) / 4) * (H - PAD.t - PAD.b)
+  const ticks = [first, 12, 18, 24].filter((h, i, a) => a.indexOf(h) === i && (h === first || h - first >= 3))
+  const line = readings.length > 1 ? `M${readings.map((r) => `${x(r.hour).toFixed(1)},${y(r.value).toFixed(1)}`).join('L')}` : null
+  return (
+    <>
+      <svg className="trends-chart trends-daychart" viewBox={`0 0 ${W} ${H}`} role="img" data-tone="mint"
+        aria-label={`Bien-être du ${longDay(date)}, heure par heure`}>
+        {[1, 2, 3, 4, 5].map((v) => (
+          <g key={v}>
+            <line className="trends-grid" x1={PAD.l} x2={W - PAD.r} y1={y(v)} y2={y(v)} />
+            <text className="trends-axis mono" x={PAD.l - 6} y={y(v) + 3} textAnchor="end">{v}</text>
+          </g>
+        ))}
+        {ticks.map((h) => (
+          <text key={h} className="trends-axis" x={x(h)} y={H - 6} textAnchor="middle">{`${h} h`}</text>
+        ))}
+        {nowHour != null && nowHour > first && nowHour < 24 && (
+          <g className="trends-after-now">
+            <rect x={x(Math.max(first, nowHour))} y={PAD.t} width={x(24) - x(Math.max(first, nowHour))} height={H - PAD.t - PAD.b} />
+            <text x={x(Math.max(first, nowHour)) + 4} y={PAD.t + 10}>maintenant</text>
+          </g>
+        )}
+        <g className="trends-series" data-tone="mint">
+          {line && <path className="trends-reading-line" d={line} />}
+          {readings.map((r) => <circle key={r.at} className="trends-reading" cx={x(r.hour)} cy={y(r.value)} r={4} />)}
+          {note && (
+            <rect className="trends-note" x={x(note.hour) - 5} y={y(note.value) - 5} width={10} height={10}
+              transform={`rotate(45 ${x(note.hour)} ${y(note.value)})`} />
+          )}
+        </g>
+        {!readings.length && !note && (
+          <text className="trends-day-none" x={(PAD.l + W - PAD.r) / 2} y={H / 2} textAnchor="middle">Aucune lecture du visage ce jour-là</text>
+        )}
+      </svg>
+      {(readings.length > 0 || note) && (
+        <ul className="trends-legend" aria-label="Légende" data-tone="mint">
+          {readings.length > 0 && <li><span className="trends-legend-dot" aria-hidden="true" />une lecture du visage</li>}
+          {note && <li><span className="trends-legend-note" aria-hidden="true" />votre note</li>}
+        </ul>
+      )}
+    </>
+  )
+}
+
+const capFirst = (t) => t.charAt(0).toUpperCase() + t.slice(1)
+const prevDay = (k) => { const d = new Date(`${k}T12:00:00`); d.setDate(d.getDate() - 1); return keyOfDate(d) }
+const nextDay = (k) => { const d = new Date(`${k}T12:00:00`); d.setDate(d.getDate() + 1); return keyOfDate(d) }
+function keyOfDate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [], titled = true }) {
   const future = date > data.today
   const face = !future ? extra?.face ?? null : null
   return (
     <div className="trends-detail" role="group" aria-label={`Détail du ${longDay(date)}`}>
-      <div className="trends-detail-head">
+      {titled && <div className="trends-detail-head">
         <p className="trends-detail-title">{longDay(date)}</p>
-        <button type="button" className="trends-detail-close" aria-label="Fermer" onClick={onClose}>
-          <LineIcon name="close" size={18} />
-        </button>
-      </div>
+        {onClose && (
+          <button type="button" className="trends-detail-close" aria-label="Fermer" onClick={onClose}>
+            <LineIcon name="close" size={18} />
+          </button>
+        )}
+      </div>}
       {future && <p className="trends-detail-note">D’après vos habitudes</p>}
       {face && (face.readings > 0 || face.note != null) && (
         <p className="trends-detail-note">
@@ -162,36 +224,48 @@ function DayDetail({ data, keys, date, onClose, extra = null, marks = [] }) {
 
 /**
  * @param {{ states: object | null, days: object[], now?: Date, initialKeys?: string[],
- *   period: 'week'|'month', onPeriod: (p: string) => void, dayView?: import('react').ReactNode }} props
- */
-/**
- * `dayExtra(date)` : ce qu'on sait d'un jour passé au-delà des courbes (visage, contributions), ou null.
+ *   period: 'day'|'week'|'month', onPeriod: (p: string) => void }} props
+ * `dayExtra(date, keys)` : ce qu'on sait d'un jour passé au-delà des courbes (visage, contributions), ou null.
+ * `dayReadings(date)` : les lectures et la note du jour pour la vue Jour (dayReadingsView).
  */
 export default function TrendsViewer({
-  states, days, now, initialKeys = ['wellbeing'], period, onPeriod, dayView = null, dayExtra = null, changes = null,
+  states, days, now, initialKeys = ['wellbeing'], period, onPeriod, dayReadings = null, dayExtra = null, changes = null,
 }) {
   const [keys, setKeys] = useState(initialKeys)
   const [adding, setAdding] = useState(false)
   const [selected, setSelected] = useState(null)
+  const [dayDate, setDayDate] = useState(null)
+  // Vue Jour : la fiche du jour reprend les valeurs du mois (on peut remonter jusqu'à 30 jours)
   const data = useMemo(
-    () => buildTrendSeries({ states, days, period: period === 'day' ? 'week' : period, now: now || new Date() }),
+    () => buildTrendSeries({ states, days, period: period === 'day' ? 'month' : period, now: now || new Date() }),
     [states, days, period, now],
   )
   const shown = keys.filter((k) => data.available.includes(k))
   const addable = data.available.filter((k) => canAdd(shown, k))
+  const isDay = period === 'day'
+  // Jour affiché : celui touché en Semaine ou Mois s'il n'est pas futur, sinon aujourd'hui
+  const day = dayDate ?? data.today
+  // En Jour, seul le bien-être a un détail heure par heure : les autres mesures sont grisées dans « + »
+  const dayAddable = data.available.filter((k) => k !== 'wellbeing')
+  const choosePeriod = (id) => {
+    if (id === 'day') setDayDate(selected && selected <= data.today ? selected : null)
+    onPeriod(id)
+    setSelected(null)
+    setAdding(false)
+  }
   // TS-2 : repères « changement » en vue Mois
   const marks = period === 'month' ? changeMarks(changes, shown, data.dates) : []
   return (
     <article className="today-card trends-card">
       <div className="trends-controls">
         <ul className="trends-chips" aria-label="Mesures affichées">
-          {shown.map((k) => {
+          {(isDay ? ['wellbeing'] : shown).map((k) => {
             const m = trendMeasure(k)
             return (
               <li key={k} className="trends-chip" data-tone={m.tone}>
                 <span className="trends-chip-dot" aria-hidden="true" />
                 {m.label}
-                {shown.length > 1 && (
+                {!isDay && shown.length > 1 && (
                   <button type="button" className="trends-chip-remove" aria-label={`Retirer ${m.label}`}
                     onClick={() => setKeys(keys.filter((x) => x !== k))}>
                     <LineIcon name="close" size={12} />
@@ -200,7 +274,7 @@ export default function TrendsViewer({
               </li>
             )
           })}
-          {addable.length > 0 && period !== 'day' && shown.length > 0 && (
+          {(isDay ? dayAddable.length > 0 : addable.length > 0 && shown.length > 0) && (
             <li>
               <button type="button" className="trends-add" aria-label="Ajouter une mesure" aria-expanded={adding}
                 onClick={() => setAdding(!adding)}>
@@ -212,11 +286,29 @@ export default function TrendsViewer({
         <div className="trends-periods" role="group" aria-label="Période">
           {[['day', 'Jour'], ['week', 'Semaine'], ['month', 'Mois']].map(([id, label]) => (
             <button key={id} type="button" className={`trends-period${period === id ? ' is-on' : ''}`} aria-pressed={period === id}
-              onClick={() => { onPeriod(id); setSelected(null) }}><span>{label}</span></button>
+              onClick={() => choosePeriod(id)}><span>{label}</span></button>
           ))}
         </div>
       </div>
-      {adding && period !== 'day' && (
+      {adding && isDay && (
+        <>
+        <p className="trends-add-caption">Une valeur par jour, en Semaine</p>
+        <ul className="trends-add-menu" aria-label="Mesures à ajouter">
+          {dayAddable.map((k) => {
+            const m = trendMeasure(k)
+            return (
+              <li key={k}>
+                <button type="button" className="trends-chip is-daily" data-tone={m.tone}
+                  onClick={() => { setKeys(shown.includes(k) ? shown : canAdd(shown, k) ? [...shown, k] : [k]); choosePeriod('week') }}>
+                  <span className="trends-chip-dot" aria-hidden="true" />{m.label}
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+        </>
+      )}
+      {adding && !isDay && (
         <ul className="trends-add-menu" aria-label="Mesures à ajouter">
           {addable.map((k) => {
             const m = trendMeasure(k)
@@ -231,7 +323,23 @@ export default function TrendsViewer({
           })}
         </ul>
       )}
-      {period === 'day' ? dayView : shown.length ? (
+      {isDay ? (
+        <>
+          <div className="trends-daynav">
+            <button type="button" className="trends-daynav-btn is-prev" aria-label="Jour précédent" onClick={() => setDayDate(prevDay(day))}>
+              <LineIcon name="chevron" size={18} />
+            </button>
+            <p className="trends-daynav-title">{day === data.today ? 'Aujourd’hui' : capFirst(longDay(day))}</p>
+            <button type="button" className="trends-daynav-btn is-next" aria-label="Jour suivant" disabled={day >= data.today}
+              onClick={() => setDayDate(nextDay(day))}>
+              <LineIcon name="chevron" size={18} />
+            </button>
+          </div>
+          <DayChart date={day} view={dayReadings ? dayReadings(day) : { readings: [], note: null, nowHour: null }} />
+          <DayDetail data={data} keys={shown.length ? shown : ['wellbeing']} date={day} titled={false}
+            extra={dayExtra?.(day, shown.length ? shown : ['wellbeing']) ?? null} />
+        </>
+      ) : shown.length ? (
         <>
           <Chart data={data} keys={shown} selected={selected} onSelect={setSelected} marks={marks} />
           {selected

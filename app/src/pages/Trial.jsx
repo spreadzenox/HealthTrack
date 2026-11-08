@@ -107,7 +107,7 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
   const stop = () => saveTrial(entry.id, { ...t, endedAt: at.toISOString() })
   return (
     <section className="act-page trial-page" data-tone={THEME_TONE[t.factor.theme] ?? 'stone'}>
-      <p className="wbh-back"><Link to="/agir">← Agir</Link></p>
+      <p className="act-back"><Link to="/agir">← Agir</Link></p>
       <h1 className="page-title">{t.factor.label}</h1>
       {!s.done && (
         <article className="today-card trial-today">

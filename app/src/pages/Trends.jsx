@@ -1,19 +1,19 @@
 /**
  * Journal › Tendances (ORG-3, revue design du 07/11 ; quitte Analyses : Journal = voir ce qui s'est passé). Un
- * visualiseur : jour, semaine ou mois, une ou plusieurs mesures superposables. La vue Jour est l'historique du
- * bien-être (ORG-3b : chaque lecture au toucher). « Votre forme », le radar et les comptes à rebours en texte sont
+ * visualiseur : jour, semaine ou mois, une ou plusieurs mesures superposables. La vue Jour suit la maquette validée
+ * (correction T2 du 07/11) : les lectures du jour et la note, puis la même fiche du jour qu'en Semaine ; l'ancien
+ * historique du bien-être (WellbeingHistory) est retiré. « Votre forme », le radar et les comptes à rebours en texte sont
  * retirés de cette page (code gardé). `?mesure=digestion` et `?vue=jour` ouvrent la page réglée (AUJ-9).
  */
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import JournalTabs from '../components/JournalTabs'
 import TrendsViewer from '../components/TrendsViewer'
-import WellbeingHistory from './WellbeingHistory'
 import { getAnalysis } from '../services/analysisRunner'
 import { buildDailyJournal } from '../services/dailyJournal'
 import { listEntries } from '../storage/localHealthStorage'
 import { buildTrendSeries, defaultTrendsView } from '../services/trendsData'
-import { dayFaceDetail } from '../services/trendsDay'
+import { dayFaceDetail, dayReadingsView } from '../services/trendsDay'
 import { loadFaceMoodEntries } from '../services/mood/faceMoodData'
 
 const DAY_MS = 86_400_000
@@ -105,7 +105,7 @@ export default function Trends({
           initialKeys={view.keys}
           period={period}
           onPeriod={setPeriod}
-          dayView={<WellbeingHistory embedded initialPeriod="day" now={now} />}
+          dayReadings={(date) => dayReadingsView(data.face, date, now || new Date())}
           dayExtra={dayExtra}
           changes={changes}
         />

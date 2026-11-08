@@ -8,7 +8,15 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
-> 📈 **Vos corrections de Tendances (07/11 vers 23:50)** : **T1 livré** (08/11 00:35) : la page s'ouvre sur votre
+> ⚠️ **Envoi Alpha du 07/11 au soir : le déclenchement de 23:45 n'a pas eu lieu** (GitHub n'a pas lancé le cron, sans
+> erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
+> Alpha (livraison continue) » → Run workflow (main). Je ne peux pas le lancer moi-même depuis la session.
+
+> 📈 **Vos corrections de Tendances (07/11 vers 23:50)** : **T2 livré** (08/11 01:35) : la vue Jour est celle de la
+> maquette (chaque lecture du visage en point à son heure, votre note en losange, plus de moyenne ni de fourchette ni de
+> légende à cinq entrées) ; dessous, le même détail qu'en Semaine ; ‹ › passent au jour d'avant ou d'après ; un jour
+> touché en Semaine s'ouvre en Jour ; « + » montre les autres mesures grisées (« Une valeur par jour, en Semaine »).
+> L'ancien historique du bien-être est retiré. **T1 livré** (08/11 00:35) : la page s'ouvre sur votre
 > bien-être, en Semaine dès 3 jours de données, sinon en Jour ; sans bien-être, sur la première courbe disponible ; si
 > aucune n'est choisie, les courbes disponibles en gros boutons. Le calcul de l'estimation est attendu avant de choisir
 > (jamais la carte vide). **T2** (vue Jour comme la maquette) au prochain run de code, puis **T3** (captures côte à côte
@@ -266,6 +274,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 01:35 — [Tendances T2](runs/2026-11-08-0135-tendances-t2.md) | 🎨 | Vue Jour de la maquette (points des lectures, losange de la note, même fiche qu'en Semaine, ‹ › jour par jour) ; ancien historique retiré ; captures de la maquette enfin versionnées. Cron Alpha du 07/11 non déclenché (voir le run) |
 | 08/11 00:35 → 01:10 — [Tendances T1, décisions du 07/11 au soir](runs/2026-11-08-0035-tendances-t1.md) | 🎨 | Tendances s'ouvre sur une courbe (bien-être en Semaine dès 3 jours, sinon Jour ; grandes puces sinon) ; décisions (A) à (D) inscrites et relayées à iOS ; maquette « Agir et Tendances » en captures, `PERSONAS.md` recopié |
 | 07/11 21:40 → 22:30 — [Reprise du chantier du soir](runs/2026-11-07-2140-reprise-soir.md) | 🎨 | TS-2 `normStart` dans les écarts du jour (#817) ; bien-être du jour de l'Accueil sur TS-1, VENTRE-BE-2 retiré ; TESTEUR-5a-3 (#818). Budget de lectures vert. Rien à faire de votre côté |
 | 07/11 17:15 → 20:26 — [Chantier du soir, interface](runs/2026-11-07-1715-chantier-soir-interface.md) | 🎨 | AUJ-7, AUJ-8, AUJ-2b, AUJ-3, AUJ-4, AUJ-5, AUJ-6, AUJ-1b, AUJ-4b, AUJ-9, ORG-1, ORG-1b, ORG-2, AUJ-3b, ORG-3, ORG-3b, ORG-3c, ORG-4, ORG-6, ORG-8, TS-2 (affichage), TESTEUR-5a-2, correctif du budget de lectures, nettoyage (#784 à #816). Rien à faire de votre côté |

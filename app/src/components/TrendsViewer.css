@@ -256,10 +256,6 @@ button.trends-chip {
   font-weight: 600;
 }
 
-.trends-card .wbh-page {
-  margin-top: 10px;
-}
-
 .trends-hit:focus {
   outline: none;
 }
@@ -312,4 +308,121 @@ button.trends-chip {
 .trends-pick-chip .trends-chip-dot {
   width: 12px;
   height: 12px;
+}
+
+/* Vue Jour (correction T2, maquette « Agir et Tendances ») */
+.trends-daynav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.trends-daynav-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.trends-daynav-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.trends-daynav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.trends-daynav-btn.is-prev svg {
+  transform: rotate(90deg);
+}
+
+.trends-daynav-btn.is-next svg {
+  transform: rotate(-90deg);
+}
+
+.trends-reading-line {
+  fill: none;
+  stroke: var(--tone-label, var(--text-muted));
+  stroke-width: 1.5;
+  opacity: 0.4;
+}
+
+.trends-reading {
+  fill: var(--tone-label, var(--text-muted));
+}
+
+.trends-note {
+  fill: var(--color-surface);
+  stroke: var(--tone-label, var(--text-muted));
+  stroke-width: 2.5;
+}
+
+.trends-after-now rect {
+  fill: var(--color-bg);
+  opacity: 0.7;
+}
+
+.trends-after-now text,
+.trends-day-none {
+  fill: var(--text-muted);
+  font-size: 10px;
+}
+
+.trends-day-none {
+  font-size: 12px;
+}
+
+.trends-legend {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  gap: 16px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.trends-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trends-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tone-label, var(--text-muted));
+}
+
+.trends-legend-note {
+  width: 7px;
+  height: 7px;
+  border: 2px solid var(--tone-label, var(--text-muted));
+  transform: rotate(45deg);
+}
+
+.trends-chip.is-daily {
+  min-height: 44px;
+  color: var(--text-muted);
+}
+
+.trends-chip.is-daily .trends-chip-dot {
+  background: var(--text-muted);
+}
+
+.trends-add-caption {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
 }

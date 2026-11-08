@@ -7,6 +7,8 @@
 
 ## Captures
 
+Versionnées depuis le 08/11 01:35 (elles étaient ignorées par `.gitignore`) : `tendances-semaine.png`, `tendances-jour.png`, `tendances-mois.png`, `agir.png`, `essai-en-cours.png`, `essai-resultat.png`, refaites depuis `maquette.html` (412 px, échelle 1, un écran par section). Les autres lignes du tableau décrivent des états à reproduire au besoin en touchant la maquette.
+
 | Fichier | Ce qu'on voit |
 |---|---|
 | `tendances-semaine.png` | Journal › Tendances, vue Semaine (état par défaut) : bien-être + confort digestif, jour le plus bas (mar. 3/11) sélectionné, fiche du jour dessous. |

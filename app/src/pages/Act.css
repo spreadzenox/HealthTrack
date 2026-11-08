@@ -283,3 +283,18 @@ button.act-card-action {
   background: var(--color-bg);
   font-size: 0.85rem;
 }
+
+/* Retour vers Agir depuis un essai (repris de l'ancien historique du bien-être, retiré par T2) */
+.act-back {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+}
+
+.act-back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  color: var(--color-brand);
+  font-weight: 600;
+  text-decoration: none;
+}
