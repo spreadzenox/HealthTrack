@@ -8,7 +8,8 @@ const APP_TYPES = new Set(['food', 'gut', 'stool', 'wellbeing', 'face_burst', 'c
 /**
  * Matériel simplifié, d'après les colonnes « données reçues » de PERSONAS.md :
  * - phone : téléphone seul (pas et calories du téléphone ; ni sommeil, ni cœur, ni poids) ;
- * - watch : montre qui écrit dans Health Connect sans VFC (Samsung, Garmin, Xiaomi) ;
+ * - watch : Galaxy Watch par Health Connect (pas, sommeil, FC, SpO₂ ; ni VFC, ni FC au repos, ni température, ni
+ *   respiration : Samsung ne les y écrit pas, PERSONAS.md config. 4 ; Garmin et Xiaomi ressemblent) ;
  * - watch-hrv : montre qui envoie aussi la VFC (Fitbit, Pixel Watch, Oura…) ;
  * - huawei : montre Huawei en direct (tout, dont VFC de jour, température, stress) ;
  * - full : montre + balance connectée (tout).
@@ -23,7 +24,8 @@ export function keepForEquipment(entry, equipment) {
     case 'phone':
       return entry.type === 'steps' || entry.type === 'calories'
     case 'watch':
-      return !huawei && !hrv && entry.type !== 'weight'
+      return !huawei && !hrv && entry.payload?.subtype !== 'restingHeartRate'
+        && !['weight', 'body_temperature', 'respiratory_rate'].includes(entry.type)
     case 'watch-hrv':
       return !huawei && entry.type !== 'weight'
     case 'huawei':
@@ -33,6 +35,14 @@ export function keepForEquipment(entry, equipment) {
     default:
       throw new Error(`Matériel inconnu : ${equipment} (attendu : ${EQUIPMENT.join(', ')})`)
   }
+}
+
+/** App qui écrit dans Health Connect selon le matériel (les données de démo disent « Gadgetbridge »). */
+const SOURCE_NAME = { phone: 'Samsung Health', watch: 'Samsung Health', 'watch-hrv': 'Fitbit', huawei: 'Samsung Health', full: 'Withings' }
+
+function withSourceName(entry, equipment) {
+  if (entry.source !== 'health_connect' || !entry.payload?.sourceName) return entry
+  return { ...entry, payload: { ...entry.payload, sourceName: SOURCE_NAME[equipment] } }
 }
 
 /**
@@ -47,5 +57,5 @@ export function personaEntries(entries, { day, equipment, now = new Date() }) {
     if (at < from || at > now) return false
     if (day <= 1 && APP_TYPES.has(e.type)) return false
     return keepForEquipment(e, equipment)
-  })
+  }).map((e) => withSourceName(e, equipment))
 }

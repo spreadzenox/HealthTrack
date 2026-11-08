@@ -59,7 +59,8 @@ for (let i = 0; i < 100; i++) {
 }
 
 const { chromium } = await loadPlaywright()
-const browser = await chromium.launch()
+// Les champs date et heure natifs suivent la langue du système, pas celle du contexte : téléphone en français.
+const browser = await chromium.launch({ env: { ...process.env, LANG: 'fr_FR.UTF-8', LANGUAGE: 'fr' } })
 const context = await browser.newContext({
   viewport: { width: 412, height: 915 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true,
   locale: 'fr-FR', timezoneId: 'Europe/Paris', colorScheme: args.dark ? 'dark' : 'light',

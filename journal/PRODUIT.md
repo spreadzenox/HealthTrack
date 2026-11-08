@@ -30,6 +30,9 @@
 >   l'app du fabricant, jamais le mot de passe d'un autre service, jamais de code décompilé ni de clé extraite, secrets
 >   d'API seulement sur le relais, relais de passage sans stockage, tout stockage HDS attend son accord. Comptes
 >   développeur, contrats, partenariats : ses gestes, préparés pas à pas en §4.
+>   État au 08/11 08:35 : étude Garmin et Samsung faite (`protocoles/garmin-samsung.md`, ordre proposé § 4 : lire
+>   dans Health Connect étages, température cutanée et cycle ; Samsung Health Data SDK après l’enregistrement chez
+>   Samsung, geste du propriétaire ; Garmin par la clé personnelle, lue par le téléphone ; Starter en push = HDS).
 > - **(C) Simulation de personas** : agent sans connaissance de l'app, accès visuel seul, persona + matériel (pondéré par
 >   les parts de marché) + moment (J1, J14, J45) ; 7 personas ; configurations dans l'artefact « Personas et matériel »
 >   (à recopier dans `PERSONAS.md`) ; deux simulations par jour (runs « idées ») et un passage complet avant chaque envoi

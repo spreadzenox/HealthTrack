@@ -12,6 +12,19 @@
 > erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
 > Alpha (livraison continue) » → Run workflow (main). Je ne peux pas le lancer moi-même depuis la session.
 
+> 🧪 **Deux simulations de personas (08/11 08:35)** : « Tout mesurer » (Android seul, J1) et « Stressé et pressé »
+> (Galaxy Watch, J14). [Synthèse](simulations/2026-11-08-0835-synthese.md). Nouveaux constats en polish :
+> « Ce qui pèse sur votre bien-être » liste aussi ce qui aide (Pas +0,4) et sans unité ; habitude de sommeil
+> 7 h 19 sur l'Accueil, 7 h 17 dans le Journal ; la ligne Sommeil de l'Accueil ne s'ouvre pas ; le PDF médecin
+> difficile à trouver. Trois faux constats venaient de l'outil (« Gadgetbridge », heure au format américain,
+> VFC/température sur une Galaxy Watch) : outil corrigé. **Garmin et Samsung** (intégrations, B) :
+> [note](protocoles/garmin-samsung.md). Samsung : un kit officiel lit sur le téléphone la température cutanée,
+> l'Energy Score et la tension, pas la VFC ; il faudra que vous demandiez l'enregistrement de l'app chez Samsung
+> (pas à pas prêt quand vous le voudrez). Garmin : la clé personnelle que chacun crée dans Garmin Connect
+> permettrait de lire VFC, stress et Body Battery depuis le téléphone, sans serveur ; l'offre « Starter » envoie
+> les données à un serveur qui devrait les garder (hébergement de données de santé : votre accord d'abord).
+> Lire la montre Garmin en direct est écarté : il faudrait la retirer de Garmin Connect.
+
 > 🔎 **Tendances : bien-être et note expliqués (08/11 07:35)** : quand le bien-être du jour (3,3) diffère de votre
 > note (3,4), la ligne dit « votre note 3,4 et le visage » (ou « et les jours voisins » sans lecture) ; le confort
 > digestif rappelle « 5 = calme » ([capture](maquettes/agir-tendances/comparaison/jour-note-et-visage.png)). Constat des personas (POLISH-SIM-4).
@@ -310,6 +323,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 08:35 — [Idées : personas, Garmin et Samsung](runs/2026-11-08-0835-idees-personas-garmin-samsung.md) | 💡 | 2 simulations (Tout mesurer J1, Stressé J14) ; outil corrigé (3 faux constats) ; POLISH-SIM-10 à 13 ; note INTEG-1 Garmin et Samsung |
 | 08/11 07:35 — [Tendances : bien-être et note](runs/2026-11-08-0735-tendances-bien-etre-note.md) | 🎨 | POLISH-SIM-4 : la ligne du bien-être dit ce qui se mêle à la note ; « 5 = calme » pour le confort digestif ; capture |
 | 08/11 06:35 — [Tendances : graduations rondes](runs/2026-11-08-0635-tendances-graduations.md) | 🎨 | POLISH-SIM-3b : axes sur des valeurs rondes et régulières (pas de 1, 2, 2,5 ou 5 × 10ⁿ) ; captures clair et sombre refaites |
 | 08/11 05:35 — [Tendances : unités des axes](runs/2026-11-08-0535-tendances-unites-axes.md) | 🎨 | POLISH-SIM-3 : unité en tête de chaque axe, couleur de sa courbe avec deux axes ; captures clair et sombre |

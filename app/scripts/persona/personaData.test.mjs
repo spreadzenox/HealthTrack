@@ -37,6 +37,23 @@ describe('personaEntries', () => {
     expect(types(list).has('sleep')).toBe(true)
   })
 
+  it('montre Samsung (watch) : ni FC au repos, ni température, ni respiration (Samsung ne les écrit pas)', () => {
+    const list = personaEntries(demo, { day: 45, equipment: 'watch', now })
+    expect(list.some((e) => e.payload?.subtype === 'restingHeartRate')).toBe(false)
+    expect(types(list).has('body_temperature')).toBe(false)
+    expect(types(list).has('respiratory_rate')).toBe(false)
+    expect(list.some((e) => e.payload?.subtype === 'heartRate')).toBe(true)
+  })
+
+  it('nom de source réaliste selon le matériel, jamais « Gadgetbridge »', () => {
+    const names = (equipment) => new Set(personaEntries(demo, { day: 14, equipment, now })
+      .filter((e) => e.source === 'health_connect').map((e) => e.payload?.sourceName))
+    expect([...names('watch')]).toEqual(['Samsung Health'])
+    expect([...names('phone')]).toEqual(['Samsung Health'])
+    expect([...names('watch-hrv')]).toEqual(['Fitbit'])
+    expect(demo.some((e) => e.payload?.sourceName === 'Gadgetbridge')).toBe(true)
+  })
+
   it('refuse un matériel inconnu', () => {
     expect(() => keepForEquipment({ type: 'sleep' }, 'tablette')).toThrow(/inconnu/)
   })
