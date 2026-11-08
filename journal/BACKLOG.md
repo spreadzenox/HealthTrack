@@ -69,6 +69,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [x] **PERSONAS-1** (C) ✅ 08/11 03:35 : outil `npm run persona` (gestes HTTP → captures, données par matériel et
   par jour, `scripts/persona/personaData.mjs` testé) ; premier passage complet (7 personas) avant l'envoi du soir :
   synthèse `simulations/2026-11-08-0340-synthese.md`. Deux simulations par jour aux runs « idées » ensuite.
+- [x] **CI-MIROIR** ✅ 08/11 11:35 : dépendances Android par le miroir Google de Maven Central (avant `mavenCentral()`), Gradle avec reprises et miroir ; panne GitHub 504 du 08/11.
 - [x] **POLISH-SIM-1** ✅ 08/11 03:35 : l'erreur de l'IA (« Aucun aliment reconnu ») disparaît dès qu'un aliment est
   ajouté à la main (elle laissait croire que l'enregistrement avait raté).
 - [x] **POLISH-SIM-2 (a, b)** ✅ 08/11 10:35 : chaque ligne de « Vos données du jour » ouvre sa courbe dans Tendances
