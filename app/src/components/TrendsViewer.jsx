@@ -83,6 +83,11 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
           <text x={x(today)} y={H - 6} textAnchor="middle">auj.</text>
         </g>
       )}
+      {/* POLISH-SIM-13 : la partie pointillée dit ce qu'elle est, une fois, au-dessus du futur. */}
+      {dates.includes(today) && dates.indexOf(today) < dates.length - 1 && (
+        <text className="trends-future-label" x={(x(today) + x(dates[dates.length - 1])) / 2} y={PAD.t - 6}
+          textAnchor="middle">attendu</text>
+      )}
       {dates.map((d, i) => (i % step === 0 && Math.abs(i - dates.indexOf(today)) >= Math.max(1, Math.ceil(step / 2)) ? (
         <text key={d} className="trends-axis mono" x={x(d)} y={H - 6} textAnchor="middle">{shortDay(d)}</text>
       ) : null))}

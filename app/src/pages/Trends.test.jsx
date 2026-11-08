@@ -68,6 +68,14 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(sleepTicks.length).toBeGreaterThan(1)
   })
 
+  it('POLISH-SIM-13 : la partie pointillée après « auj. » commence par le mot « attendu »', async () => {
+    const { container } = renderAt('/tendances')
+    await screen.findByRole('img', { name: 'Courbe de Bien-être' })
+    const label = container.querySelector('.trends-future-label')
+    expect(label).toHaveTextContent('attendu')
+    expect(Number(label.getAttribute('x'))).toBeGreaterThan(Number(container.querySelector('.trends-today line').getAttribute('x1')))
+  })
+
   it('toucher un jour passé montre sa valeur, jamais un « attendu » ; un jour futur, l’attendu et sa fourchette', async () => {
     renderAt('/tendances')
     await screen.findByRole('img', { name: /Courbe/ })

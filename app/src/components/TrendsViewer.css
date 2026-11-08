@@ -156,6 +156,12 @@ button.trends-chip {
   fill: var(--text);
 }
 
+.trends-future-label {
+  font-size: 9px;
+  font-style: italic;
+  fill: var(--text-muted);
+}
+
 .trends-band {
   fill: var(--tone-track, var(--border));
   opacity: 0.55;
