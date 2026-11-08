@@ -78,7 +78,9 @@ export function instruction(trial, withDay = true) {
   const m = MEASURED[trial.factor.key]
   if (m && isNum(trial.threshold)) return `${trial.direction === 'more' ? m.more : m.less} ${m.fmt(trial.threshold)}${m.suffix ?? ''}`
   const what = trial.factor.label.toLowerCase()
-  return trial.direction === 'more' ? `Un peu plus de ${what} que d’habitude` : `Un peu moins de ${what} que d’habitude`
+  // « d’alcool », « d’activité » ; « de sucres »
+  const of = /^[aeéèêiîoôuh]/.test(what) ? `d’${what}` : `de ${what}`
+  return trial.direction === 'more' ? `Un peu plus ${of} que d’habitude` : `Un peu moins ${of} que d’habitude`
 }
 
 /** Tenu d'après les données (true / false), ou null si la mesure manque. */

@@ -24,13 +24,6 @@ export function startTour() {
   window.dispatchEvent(new CustomEvent(TOUR_START_EVENT))
 }
 
-/**
- * Analyses et Agir de l'exemple : un historique fictif plus long, pour que l'écran montre des pistes et un essai
- * (avec 14 jours de données de démonstration, le moteur ne trouve encore aucun lien net). Question posée au
- * propriétaire dans le résumé du 08/11 (ACC-8).
- */
-export const RESULTS_DATA_DAYS = 75
-
 const W = FIRST_RESULTS_DAY.wellbeing
 const D = FIRST_RESULTS_DAY.digestion
 
@@ -46,18 +39,18 @@ export function tourSteps({ hc, face, gut }) {
     { route: '/journal', title: 'Le Journal', text: 'Chacune de vos journées sera gardée ici.', button: `Voir dans ${W} jours` },
     { route: '/journal', days: W, reveal: true, anchor: '.day-card', title: 'Une journée d’un coup d’œil', text: 'Sommeil, pas, cœur, repas et notes au même endroit.', button: 'Suivant' },
     { route: '/recommendations', title: 'Les analyses', text: gut ? `Bien-être après ${W} jours notés, digestion après ${D}.` : `Elles démarrent après ${W} jours notés.`, button: `Voir au jour ${W}` },
-    { route: '/recommendations', days: W, dataDays: RESULTS_DATA_DAYS, reveal: true, anchor: '[aria-labelledby="reco-pistes-wellbeing"]', title: `Au jour ${W} : vos premières pistes`, text: 'Ce qui va avec vos bons et vos mauvais jours. Des pistes, pas des causes.', button: 'Suivant' },
-    { route: '/recommendations', days: W, dataDays: RESULTS_DATA_DAYS, anchor: '[aria-labelledby="reco-weigh-wellbeing"]', title: 'Le détail de chaque piste', text: 'De combien chaque facteur joue sur votre bien-être, en points sur 5.', button: 'Suivant' },
+    { route: '/recommendations', days: W, reveal: true, anchor: '[aria-labelledby="reco-pistes-wellbeing"]', title: `Au jour ${W} : vos premières pistes`, text: 'Ce qui va avec vos bons et vos mauvais jours. Des pistes, pas des causes.', button: 'Suivant' },
+    { route: '/recommendations', days: W, anchor: '[aria-labelledby="reco-weigh-wellbeing"]', title: 'Le détail de chaque piste', text: 'De combien chaque facteur joue sur votre bien-être, en points sur 5.', button: 'Suivant' },
   ]
   if (gut) {
     steps.push(
       { route: '/recommendations/ventre', title: 'Votre digestion', text: `Ses analyses demandent ${D} jours notés, dont 5 avec une gêne.`, button: `Voir au jour ${D}` },
-      { route: '/recommendations/ventre', days: D, dataDays: RESULTS_DATA_DAYS, reveal: true, anchor: '[aria-labelledby="reco-weigh-digestion"]', title: `Au jour ${D} : ce qui va avec votre ventre`, text: 'Repas, sommeil, écran : ce qui va avec vos jours calmes et vos jours de gêne.', button: 'Suivant' },
+      { route: '/recommendations/ventre', days: D, reveal: true, anchor: '[aria-labelledby="reco-weigh-digestion"]', title: `Au jour ${D} : ce qui va avec votre ventre`, text: 'Repas, sommeil, écran : ce qui va avec vos jours calmes et vos jours de gêne.', button: 'Suivant' },
     )
   }
   steps.push(
     { route: '/agir', title: 'Agir', text: 'Ici, vous vérifierez une piste par vous-même.', button: `Voir au jour ${W}` },
-    { route: '/agir', days: W, dataDays: RESULTS_DATA_DAYS, reveal: true, anchor: '.act-card', title: 'Vérifier par un essai', text: `${APP_NAME} vous propose deux semaines d’essai, puis compare avant et après.`, button: 'Revenir à mes données' },
+    { route: '/agir', days: W, reveal: true, anchor: '.act-card', title: 'Vérifier par un essai', text: `${APP_NAME} vous propose deux semaines d’essai, puis compare avant et après.`, button: 'Revenir à mes données' },
     { route: '/', anchor: '.tabbar', title: 'À vous', text: 'Pour revoir cette visite : « Voir un exemple », en bas des écrans encore vides.', button: 'Terminer', last: true },
   )
   return steps

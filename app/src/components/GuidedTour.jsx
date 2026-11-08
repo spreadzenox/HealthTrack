@@ -118,8 +118,8 @@ function Tour({ onEnd }) {
     if (!step.days) {
       exitExampleMode()
       shownDays.current = 0
-    } else if (shownDays.current !== (step.dataDays ?? step.days)) {
-      shownDays.current = step.dataDays ?? step.days
+    } else if (shownDays.current !== step.days) {
+      shownDays.current = step.days
       enterExampleMode(buildTourEntries({ ...ctx, days: shownDays.current }))
     }
   }, [step, ctx, navigate])

@@ -8,6 +8,14 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 🔎 **Visite guidée : des pistes dès le jour 14 (08/11 23:35, votre « ok pour les données fictives plus marquées »)** :
+> l'étiquette « jour 14 » montre maintenant 14 jours d'exemple (avant, 75 jours cachés derrière). Au jour 14, Analyses
+> montre une piste nette (« Sommeil » avec une montre, « Alcool » sans aucune source) et Agir propose l'essai ; au
+> jour 28, Digestion montre « Fructanes » ([montre, jour 14](runs/captures/2026-11-08-2335-visite-j14.png) ·
+> [sans source : jour 14, jour 28, Agir](runs/captures/2026-11-08-2335-visite-planche.png)). Un test le vérifie sur le
+> vrai moteur, à plusieurs dates et heures. Corrigé au passage : avant le passage à l'heure d'hiver, les données
+> ajoutées tard le soir se décalaient d'un jour. Part sur Alpha le 09/11 au soir.
+
 > 🧭 **Visite guidée : le bon jour sur l'étiquette (08/11 22:35)** : sous la bulle « Au jour 28 », l'étiquette disait
 > « jour 5 » (le compteur avançait au rythme des ticks, ralentis par le calcul des analyses) ; il suit maintenant
 > l'horloge et finit toujours au jour annoncé. La bande blanche sous la bulle venait du cadre lumineux resté où la
@@ -430,6 +438,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 23:35 — [Visite : des pistes dès le jour 14](runs/2026-11-08-2335-visite-donnees-marquees.md) | 🎨 | ACC-8b, votre accord de 22:55 : exemple de 14 jours (au lieu de 75 cachés) avec une piste nette et un essai dans Agir, piste Fructanes au jour 28 ; test sur le vrai moteur (4 configurations, 5 dates, heure de Paris) ; décalage d'un jour au changement d'heure corrigé. Rien à faire de votre côté |
 | 08/11 22:50 — [Relais iOS : 896 retirée](runs/2026-11-08-2250-relais-ios-896.md) | 🔧 | Votre réponse « 896 retirée » (22:35) transmise en tête de `POUR-IOS.md` : la routine iOS vérifie que la 896.376 n'est plus en examen, puis soumet la 918.396 (nouvel accueil, visite guidée) à l'examen bêta des « Testeurs Halcya ». Rien à faire de votre côté |
 | 08/11 18:10 — [Nouvel accueil](runs/2026-11-08-1810-nouvel-accueil.md) | 🚪 | Chantier accueil : #838 (ACC-1 à 4, 6, 7, 9), #840 (ACC-5, 10), visite guidée #841 (ACC-8) ; captures côte à côte avec la maquette ; envoi Alpha à la main |
 | 08/11 17:35 — [Pas du jour](runs/2026-11-08-1735-pas-du-jour.md) | 🎨 | POLISH-SIM-2c : plus de « Pas · hier » dans « Vos données du jour » ; tests, captures |
