@@ -69,6 +69,10 @@ jobs:
         working-directory: app/android
         run: chmod +x gradlew
 
+      - name: Télécharger Gradle (reprises, miroir, empreinte vérifiée)
+        working-directory: app/android
+        run: bash "$GITHUB_WORKSPACE/.github/scripts/fetch-gradle.sh"
+
       - name: Build APK
         working-directory: app/android
         # Variante sideload (GitHub Releases, mise à jour en un clic) ; versionCode = numéro du run, toujours croissant

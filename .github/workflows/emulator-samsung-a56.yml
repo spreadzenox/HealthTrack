@@ -93,6 +93,10 @@ jobs:
         working-directory: app/android
         run: chmod +x gradlew
 
+      - name: Télécharger Gradle (reprises, miroir, empreinte vérifiée)
+        working-directory: app/android
+        run: bash "$GITHUB_WORKSPACE/.github/scripts/fetch-gradle.sh"
+
       - name: Construire l'APK debug et l'APK de test
         working-directory: app/android
         # Variante sideload (testée sur l'émulateur) + AAB de la variante play, non signé ici : il vérifie seulement

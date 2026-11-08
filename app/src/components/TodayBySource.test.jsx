@@ -42,6 +42,19 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
     expect(screen.getByText('45 min').closest('li')).toHaveAttribute('data-tone', 'stone')
   })
 
+  it('chaque ligne ouvre sa courbe dans Tendances (POLISH-SIM-2)', () => {
+    wrap({ tiles, summary: { screenMinutes: 45 } })
+    expect(screen.getByRole('link', { name: /Sommeil.*7 h 32/ })).toHaveAttribute('href', '/tendances?mesure=sleep')
+    expect(screen.getByRole('link', { name: /Pas.*3 456/ })).toHaveAttribute('href', '/tendances?mesure=steps')
+    expect(screen.getByRole('link', { name: /Temps d’écran.*45 min/ })).toHaveAttribute('href', '/tendances?mesure=screen')
+  })
+
+  it('le confort digestif ouvre la courbe « digestion »', () => {
+    wrap({ entries: [{ type: 'gut', at: at(10), payload: { level: 'pain' } }], showGut: true })
+    const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.startsWith('/tendances'))
+    expect(link).toHaveAttribute('href', '/tendances?mesure=digestion')
+  })
+
   it('les sources une fois, en bas, sans nom d’appareil ni d’app', () => {
     wrap({ tiles, summary: { screenMinutes: 45 } })
     expect(screen.getByText('D’après votre montre et votre téléphone.')).toBeInTheDocument()

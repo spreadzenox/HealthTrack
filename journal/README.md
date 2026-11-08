@@ -12,6 +12,13 @@
 > erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
 > Alpha (livraison continue) » → Run workflow (main). Je ne peux pas le lancer moi-même depuis la session.
 
+> 🛠️ **CI de main rouge depuis #828 (08/11 10:35) : téléchargement de Gradle en panne** (services.gradle.org → GitHub
+> en 504 et délais dépassés, 4 relances sur plus d'une heure ; aucun bug dans le code). Correctif : le téléchargement
+> se fait avant la construction, avec reprises, puis par un miroir si besoin, et l'empreinte SHA-256 officielle est
+> vérifiée quelle que soit la source (`.github/scripts/fetch-gradle.sh`). La PR #829 (délai porté à 120 s) ne suffisait
+> pas contre un 504. **Aujourd'hui** : touchez une ligne de « Vos données du jour » (sommeil, pas, écran…) et sa courbe
+> s'ouvre dans Tendances ; le petit « + » entoure un instant les boutons d'ajout (constat des personas, POLISH-SIM-2).
+
 > 🔤 **Analyses : « Ce qui va avec votre bien-être » (08/11 09:35)** : l'ancien titre « Ce qui pèse » ne collait pas
 > aux effets favorables (Pas +0,2) ; chaque valeur dit « pt » comme Tendances
 > ([capture](maquettes/agir-tendances/comparaison/analyses-va-avec-sombre.png)). Dans le Journal, l'habitude de la carte
@@ -328,6 +335,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 10:35 — [CI Gradle, données du jour](runs/2026-11-08-1035-ci-gradle-donnees-du-jour.md) | 🛠️🎨 | CI de main rouge (Gradle 504) : téléchargement avec reprises, miroir et SHA-256 ; POLISH-SIM-2 : chaque ligne ouvre sa courbe, « + » visible |
 | 08/11 09:35 — [Analyses : ce qui va avec](runs/2026-11-08-0935-analyses-va-avec.md) | 🎨 | POLISH-SIM-10 : titre neutre et unité « pt » ; POLISH-SIM-11 : une seule habitude entre Aujourd'hui et le Journal ; capture |
 | 08/11 08:35 — [Idées : personas, Garmin et Samsung](runs/2026-11-08-0835-idees-personas-garmin-samsung.md) | 💡 | 2 simulations (Tout mesurer J1, Stressé J14) ; outil corrigé (3 faux constats) ; POLISH-SIM-10 à 13 ; note INTEG-1 Garmin et Samsung |
 | 08/11 07:35 — [Tendances : bien-être et note](runs/2026-11-08-0735-tendances-bien-etre-note.md) | 🎨 | POLISH-SIM-4 : la ligne du bien-être dit ce qui se mêle à la note ; « 5 = calme » pour le confort digestif ; capture |

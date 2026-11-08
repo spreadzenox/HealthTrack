@@ -113,6 +113,7 @@ jobs:
         working-directory: app/android
         run: |
           chmod +x gradlew
+          bash "$GITHUB_WORKSPACE/.github/scripts/fetch-gradle.sh"
           if [ "$PUBLISH" = "true" ]; then
             export HT_UPLOAD_KEYSTORE="$RUNNER_TEMP/upload.p12" HT_UPLOAD_PASSWORD="$(cat "$RUNNER_TEMP/upload.pass")"
           fi

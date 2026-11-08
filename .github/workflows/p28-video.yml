@@ -69,6 +69,7 @@ jobs:
         run: |
           echo "sdk.dir=$ANDROID_HOME" >> local.properties
           chmod +x gradlew
+          bash "$GITHUB_WORKSPACE/.github/scripts/fetch-gradle.sh"
           ./gradlew assemblePlayDebug -PfaceUnlockPlay=true -PplayPreview=true -PextraAbis=x86_64 --no-daemon
           cp app/build/outputs/apk/play/debug/app-play-debug.apk "$GITHUB_WORKSPACE/apercu.apk"
 
