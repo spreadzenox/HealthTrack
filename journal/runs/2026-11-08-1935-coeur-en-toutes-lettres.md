@@ -21,6 +21,6 @@
   constat des personas, l'écran Aujourd'hui est dans le périmètre de la session Accueil ce soir.
 
 ## Reste
-- Émulateur A56 vert sur main (après #841).
+- Émulateur A56 sur main : #841 (mergée à 19:48) corrige `smoke.mjs` ; vérifier le premier run vert au run suivant.
 - T4-suite (singulier, « Nuit plus courte (6 h 21) ») : question au propriétaire, toujours ouverte.
 - Envoi Alpha 23:45 ; aucun merge entre 22:00 et minuit.
