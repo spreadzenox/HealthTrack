@@ -57,6 +57,20 @@ export function reportTrials(list, now = new Date()) {
 
 export const REPORT_PERIODS = [2, 4, 12]
 export const REPORT_DEFAULT_WEEKS = 4
+
+/**
+ * Période proposée par défaut : la plus courte qui couvre les jours d'usage (depuis la première note ou le premier
+ * repas), jamais plus que REPORT_DEFAULT_WEEKS (POLISH-SIM-12 : 4 semaines pour 10 jours d'usage, c'est surtout du vide).
+ * @param {string|Date|null} firstAt
+ * @param {Date} [now]
+ */
+export function defaultReportWeeks(firstAt, now = new Date()) {
+  const t = firstAt ? new Date(firstAt).getTime() : NaN
+  if (!Number.isFinite(t)) return REPORT_DEFAULT_WEEKS
+  const days = Math.floor((now.getTime() - t) / 86400000) + 1
+  const fit = REPORT_PERIODS.find((w) => w * 7 >= days) ?? REPORT_DEFAULT_WEEKS
+  return Math.min(fit, REPORT_DEFAULT_WEEKS)
+}
 export const REPORT_TOP_FOODS = 8
 export const REPORT_DISCLAIMER = 'Journal tenu par la personne elle-même. Les liens repérés par l’app sont des pistes à discuter avec elle.'
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { REPORT_DISCLAIMER, buildReport, reportFileName } from './buildReport'
+import { REPORT_DISCLAIMER, buildReport, defaultReportWeeks, reportFileName } from './buildReport'
 import { FODMAP_CHALLENGE_SOURCE, FODMAP_CHALLENGE_TYPE, recordDose, startChallenge } from '../fodmapChallenge'
 import { fodmapGroupOf, mealFactors } from '../gutWindows'
 import { simulateRealistic } from '../gutWindows.sim'
@@ -13,6 +13,19 @@ const meal = (d, ingredient, h = 12, quantity_g = 100) => ({ type: 'food', sourc
 const night = (d, minutes, source = 'huawei_watch') => ({
   type: 'sleep', source, at: new Date(at(d, 7).getTime() - minutes * 60000).toISOString(),
   payload: { durationMinutes: minutes, endDate: at(d, 7).toISOString(), sleepState: 'asleep' },
+})
+
+describe('defaultReportWeeks — période par défaut bornée aux jours d’usage (POLISH-SIM-12)', () => {
+  const now = new Date('2026-11-08T12:00:00')
+  it('sans date de départ : 4 semaines', () => {
+    expect(defaultReportWeeks(null, now)).toBe(4)
+  })
+  it('10 jours d’usage : 2 semaines ; 3 semaines : 4 ; 3 mois : 4 (jamais plus que le défaut)', () => {
+    expect(defaultReportWeeks('2026-10-30T09:00:00', now)).toBe(2)
+    expect(defaultReportWeeks('2026-10-26T09:00:00', now)).toBe(2)
+    expect(defaultReportWeeks('2026-10-18T09:00:00', now)).toBe(4)
+    expect(defaultReportWeeks('2026-08-01T09:00:00', now)).toBe(4)
+  })
 })
 
 describe('buildReport — période et ventre', () => {

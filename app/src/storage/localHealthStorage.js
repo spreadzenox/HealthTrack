@@ -156,6 +156,23 @@ export async function getLatestEntryAt(source) {
   })
 }
 
+/**
+ * Plus ancienne date `at` d'un type (index [type, at], une seule entrée lue), ou null. Sert à borner la période
+ * proposée par le rapport médecin aux jours d'usage (POLISH-SIM-12).
+ * @param {string} type
+ * @returns {Promise<string|null>}
+ */
+export async function getFirstEntryAt(type) {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly')
+    const range = IDBKeyRange.bound([type, ''], [type, AT_MAX])
+    const req = tx.objectStore(STORE_NAME).index('type_at').openCursor(range, 'next')
+    req.onerror = () => reject(req.error)
+    req.onsuccess = () => resolve(req.result?.value.at ?? null)
+  })
+}
+
 const dedupKey = (e) => `${e.source}|${e.at}|${e.type}`
 
 /**

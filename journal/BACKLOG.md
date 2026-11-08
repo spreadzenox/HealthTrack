@@ -105,7 +105,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [x] **POLISH-SIM-11** ✅ 08/11 09:35 : l'écart venait de la carte d'hier dans le Journal (fenêtre des 14 jours avant
   hier). Un jour des 14 derniers reprend désormais l'habitude d'aujourd'hui (`measureNorms(…, { dayKey })`, test) ;
   plus ancien : sa propre fenêtre. Reste possible : un jour très ancien garde son habitude d'alors (voulu).
-- [ ] **POLISH-SIM-12** Rapport PDF : lien depuis Agir (qui en parle) ; période par défaut bornée aux jours d'usage.
+- [x] **POLISH-SIM-12** ✅ 08/11 16:35 : dans Agir, « rapport médecin » est un lien vers `/data#rapport-medecin` (la carte
+  vient à l'écran) ; période proposée = la plus courte qui couvre les jours d'usage depuis la première note du ventre ou
+  le premier repas, jamais plus de 4 semaines, choix manuel respecté (`defaultReportWeeks`, `getFirstEntryAt`).
 - [x] **POLISH-SIM-13** ✅ 08/11 13:35 : « attendu » en italique gris au-dessus de la partie pointillée (au milieu du
   futur, seulement s'il y a un futur) ; test de page ; captures `comparaison/semaine-attendu-{clair,sombre}.png`.
 - [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`) et fixer

@@ -22,7 +22,7 @@ describe('DoctorReportCard', () => {
   it('sideload : préparer, choisir 12 semaines et le bien-être, puis créer et ranger dans Documents', async () => {
     const create = vi.fn(async () => pdf)
     const save = vi.fn(async () => ({ saved: 'documents', shared: true }))
-    renderCard({ create, save })
+    renderCard({ create, save, firstAt: async () => null })
     expect(screen.getByText('Rapport PDF pour mon médecin')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Préparer le rapport' }))
 
@@ -38,6 +38,31 @@ describe('DoctorReportCard', () => {
     await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Halcya-rapport-2026-10-27.pdf est dans Documents'))
     expect(create).toHaveBeenCalledWith({ weeks: 12, includeWellbeing: true })
     expect(save).toHaveBeenCalledWith(pdf)
+  })
+
+  it('peu de jours d’usage : la période proposée est 2 semaines (POLISH-SIM-12)', async () => {
+    renderCard({ count: async () => 3, firstAt: async () => new Date(Date.now() - 6 * 86400000).toISOString() })
+    fireEvent.click(await screen.findByRole('button', { name: 'Préparer le rapport' }))
+    await waitFor(() => expect(screen.getByRole('radio', { name: '2 sem.' })).toBeChecked())
+  })
+
+  it('un choix fait à la main n’est pas écrasé par la date de départ', async () => {
+    let resolve
+    const firstAt = () => new Promise((r) => { resolve = r })
+    renderCard({ count: async () => 3, firstAt })
+    fireEvent.click(await screen.findByRole('button', { name: 'Préparer le rapport' }))
+    fireEvent.click(screen.getByRole('radio', { name: '12 sem.' }))
+    resolve(new Date(Date.now() - 2 * 86400000).toISOString())
+    await new Promise((r) => setTimeout(r, 0))
+    expect(screen.getByRole('radio', { name: '12 sem.' })).toBeChecked()
+  })
+
+  it('depuis Agir (#rapport-medecin) : la carte vient à l’écran', async () => {
+    const scroll = vi.fn()
+    window.HTMLElement.prototype.scrollIntoView = scroll
+    render(<MemoryRouter initialEntries={['/data#rapport-medecin']}><DoctorReportCard count={async () => 1} firstAt={async () => null} /></MemoryRouter>)
+    await waitFor(() => expect(scroll).toHaveBeenCalled())
+    delete window.HTMLElement.prototype.scrollIntoView
   })
 
   it('rien de noté : pas de rapport vide, une phrase dit quand il se remplit', async () => {

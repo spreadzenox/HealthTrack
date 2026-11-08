@@ -26,6 +26,7 @@ import {
   countEntries,
   upsertEntries,
   getLatestEntryAt,
+  getFirstEntryAt,
   exportToJson,
   importFromJson,
   parseBackup,
@@ -138,6 +139,16 @@ describe('upsertEntries', () => {
     const r2 = await upsertEntries([{ type: 'note', payload: {}, at: '2026-01-05T10:00:00Z' }])
     expect(r1.inserted).toBe(1)
     expect(r2).toEqual({ inserted: 0, skipped: 1 })
+  })
+})
+
+describe('getFirstEntryAt', () => {
+  it('null sans entrée de ce type ; sinon la plus ancienne date de ce type seulement', async () => {
+    expect(await getFirstEntryAt('food')).toBeNull()
+    await createEntry({ type: 'steps', source: 'hc', payload: {}, at: '2025-01-01T10:00:00Z' })
+    await createEntry({ type: 'food', source: 'manual', payload: {}, at: '2026-02-03T12:00:00Z' })
+    await createEntry({ type: 'food', source: 'manual', payload: {}, at: '2026-01-20T12:00:00Z' })
+    expect(await getFirstEntryAt('food')).toBe('2026-01-20T12:00:00Z')
   })
 })
 
