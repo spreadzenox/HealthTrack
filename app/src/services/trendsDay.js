@@ -9,7 +9,7 @@
  */
 import { localDateKey } from './analysisEngine'
 import { moodFaceBursts } from './faceBursts'
-import { expressionMix, habitualMix, habitShifts, pointDetail } from './mood/wellbeingHistory'
+import { expressionMix, habitualMix, habitShifts, pointDetail, wellbeingHistory } from './mood/wellbeingHistory'
 import { toDisplay } from './mood/wellbeingScale'
 import { gutLevelLabel } from './today'
 
@@ -91,5 +91,32 @@ export function dayFaceDetail(entries, dateKey) {
     day,
     habit,
     vaText: vaSentence(day, habit),
+  }
+}
+
+const hourOf = (iso) => {
+  const d = new Date(iso)
+  return d.getHours() + d.getMinutes() / 60
+}
+
+/**
+ * Vue Jour de Tendances (correction T2 du propriétaire, maquette « Agir et Tendances ») : les lectures du visage du
+ * jour à leur heure (au-delà de 24 lectures, une par heure, comme l'ancien historique) et la dernière note du jour,
+ * sur l'échelle affichée de 1 à 5. Aujourd'hui : seulement ce qui est déjà fait, et l'heure de « maintenant ».
+ * @returns {{ readings: { at: string, hour: number, value: number }[], note: { hour: number, value: number } | null,
+ *   nowHour: number | null }}
+ */
+export function dayReadingsView(entries, dateKey, now = new Date()) {
+  const isToday = localDateKey(now.toISOString()) === dateKey
+  const end = isToday ? now : new Date(`${dateKey}T23:59:59.999`)
+  const h = wellbeingHistory(entries || [], { period: 'day', now: end })
+  const readings = h.points
+    .filter((p) => localDateKey(p.at) === dateKey && isNum(p.note))
+    .map((p) => ({ at: p.at, hour: hourOf(p.at), value: toDisplay(p.note) }))
+  const last = h.notes.filter((n) => localDateKey(n.at) === dateKey).pop()
+  return {
+    readings,
+    note: last ? { hour: hourOf(last.at), value: toDisplay(last.score) } : null,
+    nowHour: isToday ? hourOf(now.toISOString()) : null,
   }
 }

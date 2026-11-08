@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { dayFaceDetail, shiftsSentence, vaSentence } from './trendsDay'
+import { dayFaceDetail, dayReadingsView, shiftsSentence, vaSentence } from './trendsDay'
 import { EXPRESSIONS } from './mood/wellbeingHistory'
 
 const ex = (over = {}) => Object.fromEntries(EXPRESSIONS.map(({ key }) => [key, over[key] ?? (key === 'exNeutral' ? 0.5 : 0.5 / 7)]))
@@ -34,5 +34,33 @@ describe('Détail d’un jour de Tendances (ORG-3c)', () => {
     expect(d.habit).not.toBeNull()
     expect(d.shifts).toMatch(/^Plus de tristesse/)
     expect(d.vaText).toBe('Éveil plutôt calme, moins que d’habitude')
+  })
+})
+
+// Correction T2 du propriétaire (07/11 vers 23:50) : la vue Jour de la maquette
+describe('Vue Jour de Tendances (T2)', () => {
+  const note = (d, h, score) => ({ type: 'wellbeing', at: new Date(2026, 10, d, h, 30).toISOString(), payload: { score } })
+  const entries = [burst(5, 9, {}), burst(5, 13, {}), burst(5, 18, {}), burst(6, 10, {}), note(5, 21, 2.5)]
+
+  it('les lectures du jour à leur heure, sur l’échelle affichée de 1 à 5, et la note (losange)', () => {
+    const v = dayReadingsView(entries, '2026-11-05', new Date(2026, 10, 7, 20))
+    expect(v.readings.map((r) => r.hour)).toEqual([9, 13, 18])
+    for (const r of v.readings) expect(r.value).toBeGreaterThanOrEqual(1)
+    for (const r of v.readings) expect(r.value).toBeLessThanOrEqual(5)
+    expect(v.note).toEqual({ hour: 21.5, value: 3 })
+    expect(v.nowHour).toBeNull()
+  })
+
+  it('aujourd’hui : seulement les lectures déjà faites, et l’heure de « maintenant »', () => {
+    const v = dayReadingsView([...entries, burst(7, 9, {}), burst(7, 19, {})], '2026-11-07', new Date(2026, 10, 7, 16, 30))
+    expect(v.readings.map((r) => r.hour)).toEqual([9])
+    expect(v.nowHour).toBe(16.5)
+    expect(v.note).toBeNull()
+  })
+
+  it('un jour sans lecture ni note : listes vides', () => {
+    const v = dayReadingsView(entries, '2026-11-02', new Date(2026, 10, 7, 20))
+    expect(v.readings).toEqual([])
+    expect(v.note).toBeNull()
   })
 })

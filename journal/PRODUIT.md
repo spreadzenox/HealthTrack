@@ -38,7 +38,7 @@
 > - **(E) Envoi quotidien aux testeurs** : Android à 23:45 (CD-ALPHA-6) ; iPhone, examen bêta quotidien (routine iOS).
 >   Envoi refusé : erreur exacte en tête du résumé, rien contourné.
 > - **Corrections Tendances (07/11 vers 23:50, v896)** : T1 à l'ouverture une courbe dès qu'une mesure le peut, grandes
->   puces sinon ; T2 vue Jour comme la maquette « Agir et Tendances » (captures dans `maquettes/agir-tendances/`) ; T3
+>   puces sinon ; T2 ✅ 08/11 01:35 vue Jour comme la maquette « Agir et Tendances » (captures dans `maquettes/agir-tendances/`) ; T3
 >   captures en tête du résumé. T1 livré le 08/11 00:35.
 
 ## 1. Décisions (résumé fidèle)

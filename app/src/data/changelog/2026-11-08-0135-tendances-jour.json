@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-08",
+  "kind": "amélioration",
+  "title": "Tendances : la vue Jour redessinée",
+  "items": [
+    "En vue Jour, chaque lecture du visage est un point à son heure, et votre note un losange. Les flèches passent au jour d'avant ou d'après.",
+    "Dessous, le même détail qu'en Semaine : expressions du visage, humeur et éveil, ce qui a pu peser ce jour-là.",
+    "Un jour touché en Semaine ou en Mois s'ouvre directement en vue Jour."
+  ]
+}
