@@ -48,6 +48,7 @@ import { choiceToScore } from '../services/mood/wellbeingScale'
 import { detectPhoneApps } from '../devices/phoneApps'
 import { GOLD_AI_DAILY } from '../config/premiumBenefits'
 import { useEntitlement } from '../hooks/useEntitlement'
+import { STATUS_LABEL, measureStatuses } from '../devices/deviceCapabilities'
 import { lastLaunchDay } from '../services/entitlement'
 
 const withTimeout = (promise, ms, fallback) =>
@@ -407,7 +408,7 @@ function SourcesStep({ state, update, installed }) {
 
 const pct = (p) => (p && p.total ? Math.round((p.done / p.total) * 100) : 0)
 
-function FoundStep({ health, imported, onImported, installed, onConnect }) {
+function FoundStep({ health, imported, onImported, installed, huawei, onConnect }) {
   const [progress, setProgress] = useState(importProgressNow)
   const [entries, setEntries] = useState(null)
   const [error, setError] = useState(false)
@@ -463,6 +464,9 @@ function FoundStep({ health, imported, onImported, installed, onConnect }) {
 
   const facts = entries ? summarizeImport(entries) : null
   const devices = entries ? foundDevices(entries, installed) : []
+  // Apps installées dont on connaît les limites ; la montre Huawei seulement si elle est reliée ou à relier
+  const appIds = (installed || []).filter((app) => !app.directWatch || huawei === 'pair').map((app) => app.id)
+  const measures = entries ? measureStatuses({ entries, appIds }) : null
   const sharedSource = facts?.length && facts.every((f) => f.source === facts[0].source) ? facts[0].source : null
 
   return (
@@ -496,6 +500,23 @@ function FoundStep({ health, imported, onImported, installed, onConnect }) {
             </li>
           ))}
         </ul>
+      )}
+      {measures?.groups.map((g) => (
+        <section key={g.theme} className={`onb-measures onb-measures--${g.theme}`} aria-label={g.label}>
+          <h2 className="onb-leaves-group">{g.label}</h2>
+          <ul className="onb-measure-list">
+            {g.items.map((m) => (
+              <li key={m.id} className={`onb-measure is-${m.status}`}>
+                <span className="onb-measure-name">{m.label}</span>
+                <span className="onb-measure-status">{STATUS_LABEL[m.status]}</span>
+                {m.reason && <span className="onb-measure-reason">{m.reason}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      {measures?.groups.length > 0 && measures.notMeasured.length > 0 && (
+        <p className="onb-fine">Pas mesuré par vos appareils : {measures.notMeasured.map((l) => (l.startsWith('FC') || l === 'VFC' ? l : l.toLowerCase())).join(', ')}.</p>
       )}
       {facts?.length > 0 && (
         <>
@@ -871,6 +892,7 @@ export default function Onboarding() {
             imported={!!state.imported}
             onImported={() => update({ imported: true })}
             installed={installed}
+            huawei={state.huawei}
             onConnect={() => go(STEPS.indexOf('sources'))}
           />
         )}

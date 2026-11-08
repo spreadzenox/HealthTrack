@@ -757,3 +757,64 @@
 .onb-body > .paywall-tag {
   align-self: flex-start;
 }
+
+/* ACC-5 : mesures groupées par thème, couleur du thème ; « pas partagée » en pointillés */
+.onb-measures {
+  display: grid;
+  gap: 6px;
+}
+
+.onb-measures--activity { --m-bg: var(--lilac-bg); --m-text: var(--lilac-text); }
+.onb-measures--sleep { --m-bg: var(--night-bg); --m-text: var(--night-text); }
+.onb-measures--body { --m-bg: var(--rose-bg); --m-text: var(--rose-text); }
+
+.onb-measures .onb-leaves-group {
+  color: var(--m-text);
+}
+
+.onb-measure-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.onb-measure {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 2px 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-choice);
+  background: var(--m-bg);
+  color: var(--text);
+}
+
+.onb-measure-name {
+  font-weight: 600;
+}
+
+.onb-measure-status {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  color: var(--m-text);
+}
+
+.onb-measure-reason {
+  grid-column: 1 / -1;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.onb-measure.is-not_shared {
+  background: none;
+  border: 1.5px dashed var(--border);
+}
+
+.onb-measure.is-not_shared .onb-measure-name {
+  color: var(--text-muted);
+}

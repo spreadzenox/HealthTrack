@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-08",
+  "kind": "amélioration",
+  "title": "Ce que vos appareils envoient",
+  "items": [
+    "À l'accueil, chaque mesure dit si elle arrive, en partie, ou si votre appareil la mesure sans la partager, avec la raison.",
+    "Premières pistes au jour 14, analyses de la digestion au jour 28 : le même délai partout."
+  ]
+}

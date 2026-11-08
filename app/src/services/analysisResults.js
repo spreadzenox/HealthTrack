@@ -27,6 +27,7 @@
  * n'apprennent que de l'information digestive (notes du ventre), jamais du bien-être ; aucun facteur n'est une entrée
  * de l'estimateur du bien-être (`isEstimatorInput`) ; aucun sens « bon » ou « mauvais » n'est supposé.
  */
+import { FIRST_RESULTS_DAY } from '../config/firstResults'
 import { buildDailyDataset, localDateKey, VARIABLE_META } from './analysisEngine'
 import { isWeekendKey, residualize } from './statistics'
 import { faceMoodDays } from './mood/faceMoodDays'
@@ -130,8 +131,8 @@ export const HORIZONS = [
 
 /** Seuils de déblocage (ORG-6) : jours du résultat connus, par horizon. */
 export const UNLOCK_DAYS = {
-  wellbeing: { short: 14, medium: 21, long: 42 },
-  digestion: { short: 28, medium: 35, long: 56 },
+  wellbeing: { short: FIRST_RESULTS_DAY.wellbeing, medium: 21, long: 42 },
+  digestion: { short: FIRST_RESULTS_DAY.digestion, medium: 35, long: 56 },
 }
 /** Digestion : au moins 5 jours de gêne ou de douleur (sans eux, rien à expliquer). */
 export const DIGESTION_MIN_SYMPTOM_DAYS = 5

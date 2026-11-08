@@ -169,3 +169,25 @@ describe('Nouvel accueil (ACC-5) : « Voici ce que Halcya recevra »', () => {
     ])
   })
 })
+
+describe('Nouvel accueil (ACC-5) : mesures par thème', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+    resetImportForTests()
+    hc.availabilityDetails.mockResolvedValue({ available: true })
+    hc.checkPermissions.mockResolvedValue('granted')
+    hc.sync.mockResolvedValue({ synced: 3, skipped: 0, errors: [] })
+  })
+
+  it('Samsung : reçu, pas partagée avec sa raison, et ce qui n’est pas mesuré en une ligne', async () => {
+    const sam = (type, payload = {}) => ({ type, source: 'health_connect', at: new Date(Date.now() - 86400000).toISOString(), payload: { sourceName: 'com.sec.android.app.shealth', ...payload } })
+    stored.entries = [sam('steps', { count: 8000 }), sam('heart_rate', { bpm: 70 })]
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'found', health: 'granted', imported: true })
+    renderAt()
+    expect(await screen.findByRole('region', { name: 'Corps' })).toBeInTheDocument()
+    expect(screen.getByText('votre montre la mesure, Samsung ne la partage avec aucune app')).toBeInTheDocument()
+    expect(screen.getAllByText('pas partagée').length).toBeGreaterThan(0)
+    expect(screen.getByText(/Pas mesuré par vos appareils : durée du sommeil/)).toBeInTheDocument()
+  })
+})
