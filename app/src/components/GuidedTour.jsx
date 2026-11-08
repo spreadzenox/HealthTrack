@@ -12,7 +12,7 @@ import { goalsOf, loadOnboarding, saveOnboarding, wantsGut } from '../settings/o
 import { isFaceSenseEnabled } from '../services/faceSense'
 import { getWeatherSettings } from '../services/weatherSync'
 import { getPhoneUsageSettings } from '../services/phoneUsageSync'
-import { tourSteps } from '../services/tour'
+import { COUNTER_MS, counterDay, tourSteps } from '../services/tour'
 
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
@@ -21,31 +21,52 @@ function DayCounter({ days, animate }) {
   const [day, setDay] = useState(animate ? 1 : days)
   useEffect(() => {
     if (!animate) return undefined
-    const t = setInterval(() => setDay((d) => (d >= days ? d : d + 1)), Math.max(30, 900 / days))
-    return () => clearInterval(t)
+    const start = Date.now()
+    const tick = () => setDay(counterDay(Date.now() - start, days))
+    const t = setInterval(tick, Math.max(30, COUNTER_MS / days))
+    // Dernière valeur garantie, même si les ticks ont été retardés
+    const end = setTimeout(() => {
+      clearInterval(t)
+      setDay(days)
+    }, COUNTER_MS + 50)
+    return () => {
+      clearInterval(t)
+      clearTimeout(end)
+    }
   }, [days, animate])
   return <span className="tour-day mono">jour {day}</span>
 }
 
-function Spotlight({ selector, stepKey }) {
+const sameRect = (a, b) => a && b && a.top === b.top && a.left === b.left && a.width === b.width && a.height === b.height
+
+/**
+ * Projecteur sur l'élément de l'étape. L'écran se remplit après coup (données de l'exemple, analyses) : la position est
+ * remesurée tant que l'étape dure, sinon la découpe reste où l'élément était vide (bande blanche sous la bulle).
+ */
+export function Spotlight({ selector, stepKey }) {
   const [rect, setRect] = useState(null)
   useEffect(() => {
     setRect(null)
     if (!selector) return undefined
     let tries = 0
     let timer = null
-    const find = () => {
+    let found = false
+    const measure = () => {
       const el = document.querySelector(selector)
       if (el) {
-        el.scrollIntoView?.({ block: 'center' })
+        if (!found) el.scrollIntoView?.({ block: 'center' })
+        found = true
         const r = el.getBoundingClientRect()
-        setRect({ top: r.top - 6, left: r.left - 6, width: r.width + 12, height: r.height + 12 })
+        const next = { top: r.top - 6, left: r.left - 6, width: r.width + 12, height: r.height + 12 }
+        setRect((prev) => (sameRect(prev, next) ? prev : next))
+        timer = setTimeout(measure, 300)
         return
       }
       // L'écran se charge : on réessaie un peu, puis la bulle reste seule (jamais bloquant)
-      if (++tries < 15) timer = setTimeout(find, 150)
+      if (found) setRect(null)
+      if (found || ++tries < 15) timer = setTimeout(measure, 150)
     }
-    timer = setTimeout(find, 120)
+    timer = setTimeout(measure, 120)
     return () => clearTimeout(timer)
   }, [selector, stepKey])
   if (!rect) return <div className="tour-shade" aria-hidden="true" />

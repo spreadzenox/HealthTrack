@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-08",
+  "kind": "correction",
+  "title": "Visite guidée : le bon jour sur l'étiquette",
+  "items": [
+    "L'étiquette « Exemple » affiche le jour annoncé par la bulle (jour 28 pour la digestion), même quand l'écran met du temps à se remplir.",
+    "Le cadre lumineux suit la partie montrée quand elle s'agrandit.",
+    "Avec la digestion, l'étape Analyses donne les deux délais : bien-être après 14 jours notés, digestion après 28."
+  ]
+}

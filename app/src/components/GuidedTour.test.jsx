@@ -114,4 +114,46 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
     expect(tourSteps({ hc: true, face: false, gut: true }).some((s) => s.days === 28)).toBe(true)
     expect(tourSteps({ hc: false, face: false, gut: false })[2].text).toMatch(/^Avec Health Connect ou une montre/)
   })
+
+  it('étape Analyses : avec la digestion, les deux échéances (14 et 28 jours), jamais seulement 14 (POLISH-SIM-15)', () => {
+    const analyses = (gut) => tourSteps({ hc: true, face: false, gut }).find((s) => s.title === 'Les analyses').text
+    expect(analyses(false)).toBe('Elles démarrent après 14 jours notés.')
+    expect(analyses(true)).toBe('Bien-être après 14 jours notés, digestion après 28.')
+  })
+})
+
+describe('visite guidée : étiquette et projecteur (POLISH-SIM-14)', () => {
+  it('le compteur suit l’horloge : il finit au jour annoncé même si les ticks ont pris du retard', async () => {
+    const { counterDay } = await import('../services/tour')
+    expect(counterDay(0, 28)).toBe(1)
+    expect(counterDay(450, 28)).toBe(14)
+    expect(counterDay(900, 28)).toBe(28)
+    // Un seul tick après 5 s de calcul (écran lent) : jour 28, plus jamais « jour 5 »
+    expect(counterDay(5000, 28)).toBe(28)
+  })
+
+  it('le projecteur suit l’élément quand l’écran se remplit après coup', async () => {
+    vi.useFakeTimers()
+    try {
+      const { Spotlight } = await import('./GuidedTour')
+      const el = document.createElement('section')
+      el.className = 'cible'
+      let box = { top: 600, left: 0, width: 300, height: 40 }
+      el.getBoundingClientRect = () => box
+      document.body.appendChild(el)
+      const { container } = render(<Spotlight selector=".cible" stepKey={1} />)
+      const { act } = await import('@testing-library/react')
+      await act(async () => vi.advanceTimersByTime(130))
+      expect(container.querySelector('.tour-spot').style.top).toBe('594px')
+      // Les analyses arrivent : la section grandit et remonte
+      box = { top: 100, left: 0, width: 300, height: 500 }
+      await act(async () => vi.advanceTimersByTime(320))
+      const spot = container.querySelector('.tour-spot')
+      expect(spot.style.top).toBe('94px')
+      expect(spot.style.height).toBe('512px')
+      el.remove()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
 })

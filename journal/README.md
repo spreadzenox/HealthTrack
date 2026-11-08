@@ -8,6 +8,13 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 🧭 **Visite guidée : le bon jour sur l'étiquette (08/11 22:35)** : sous la bulle « Au jour 28 », l'étiquette disait
+> « jour 5 » (le compteur avançait au rythme des ticks, ralentis par le calcul des analyses) ; il suit maintenant
+> l'horloge et finit toujours au jour annoncé. La bande blanche sous la bulle venait du cadre lumineux resté où la
+> section était encore vide : il suit la section quand elle se remplit ([capture](runs/captures/2026-11-08-2235-visite-jour28.png)).
+> Avec un objectif ventre, l'étape Analyses dit « Bien-être après 14 jours notés, digestion après 28. » (POLISH-SIM-14, 15).
+> Part sur Alpha le 09/11 au soir (gel jusqu'au 09/11 22:00).
+
 > 📏 **Analyses : une seule unité par facteur (08/11 21:35)** : les lignes « Pas » disaient 2 000, 1 000 puis 500 pas
 > selon l'horizon ; elles disent toutes la même quantité, celle du court terme ([capture](runs/captures/2026-11-08-2135-analyses-meme-unite.png)).
 > Un effet plus grand que la note elle-même (« −4,7 pt » sur une note sur 5, vu par une persona) s'affiche
@@ -428,6 +435,7 @@
 | 08/11 18:35 — [Humeur et éveil](runs/2026-11-08-1835-humeur-eveil-libelles.md) | 🎨 | T4-suite : « désagréable » / « agréable » à l'horizontale (maquette) ; test, captures claires et sombres |
 | 08/11 19:35 — [Cœur en toutes lettres](runs/2026-11-08-1935-coeur-en-toutes-lettres.md) | 🎨 | POLISH-SIM-6b : « Cœur au repos plus rapide », « Variabilité cardiaque plus basse » dans « Ce qui a pu peser » ; émulateur A56 rouge (ancien premier écran), corrigé par #841 (session Accueil), mergée pendant ce run |
 | 08/11 20:35 — [Personas sur le nouvel accueil](runs/2026-11-08-2035-personas-accueil.md) | 💡 | Outil : le jour 1 ouvre enfin l'accueil (il était sauté) ; Ventre sans technique J1 et Sportif J45 ; POLISH-SIM-14 à 19 (étiquette « jour 5 » sous « jour 28 », 14 contre 28 jours, « −4,7 pt » sur 5, bouton Repas muet). Rien à faire de votre côté |
+| 08/11 22:35 — [Visite : le bon jour sur l'étiquette](runs/2026-11-08-2235-visite-jour-annonce.md) | 🎨 | POLISH-SIM-14 et 15 : compteur sur l'horloge (« jour 28 » sous « Au jour 28 »), cadre qui suit la section, deux délais avec la digestion ; tests, capture. Rien à faire de votre côté |
 | 08/11 21:35 — [Une unité par facteur](runs/2026-11-08-2135-analyses-meme-unite.md) | 🎨 | POLISH-SIM-16 : même variation sur les trois horizons, « pas assez de données » au-delà de l'échelle ; tests, capture. Rien à faire de votre côté |
 | 08/11 16:35 — [Rapport depuis Agir](runs/2026-11-08-1635-rapport-depuis-agir.md) | 🎨 | Merge de #835 (verte, non mergée au run précédent) ; POLISH-SIM-12 : lien Agir → rapport médecin, période bornée aux jours d'usage ; tests, captures |
 | 08/11 15:35 — [Avant les premiers résultats](runs/2026-11-08-1535-attente-analyses.md) | 🎨 | POLISH-SIM-5 : comptes à rebours en jours notés, jours de gêne « vous en avez N », Agir vide qui mène à Analyses ; tests, captures claire et sombre |
