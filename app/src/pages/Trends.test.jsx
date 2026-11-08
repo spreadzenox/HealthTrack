@@ -68,6 +68,31 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(sleepTicks.length).toBeGreaterThan(1)
   })
 
+  it('POLISH-SIM-6 : VFC et FC au repos disent une fois leur nom en toutes lettres sous les mesures', async () => {
+    const hrDays = [4, 5, 6, 7].map((d) => ({ dateKey: `2026-11-0${d}`, summary: { hrv: 40 + d, restingHr: 58 + d } }))
+    const { container } = render(
+      <MemoryRouter initialEntries={['/tendances?mesure=hrv']}>
+        <Trends now={NOW} readDays={async () => hrDays} readDayStates={async () => null}
+          readFaceEntries={async () => []} readDayContributions={async () => null} readDayChanges={async () => null} />
+      </MemoryRouter>,
+    )
+    await screen.findByRole('img', { name: 'Courbe de VFC nuit' })
+    // Pas d'attendu tracé pour la VFC : pas de mot « attendu » au-dessus d'un futur vide
+    expect(container.querySelector('.trends-future-label')).toBeNull()
+    const gloss = () => [...container.querySelectorAll('.trends-gloss li')].map((li) => li.textContent)
+    expect(gloss()).toEqual(['VFC nuit : variabilité de la fréquence cardiaque pendant la nuit, en millisecondes'])
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une mesure' }))
+    fireEvent.click(within(screen.getByRole('list', { name: 'Mesures à ajouter' })).getByRole('button', { name: /FC au repos/ }))
+    expect(gloss()).toHaveLength(2)
+    expect(gloss()[1]).toBe('FC au repos : fréquence cardiaque au repos, en battements par minute')
+  })
+
+  it('POLISH-SIM-6 : rien à expliquer pour le bien-être seul', async () => {
+    const { container } = renderAt('/tendances')
+    await screen.findByRole('img', { name: 'Courbe de Bien-être' })
+    expect(container.querySelector('.trends-gloss')).toBeNull()
+  })
+
   it('POLISH-SIM-13 : la partie pointillée après « auj. » commence par le mot « attendu »', async () => {
     const { container } = renderAt('/tendances')
     await screen.findByRole('img', { name: 'Courbe de Bien-être' })

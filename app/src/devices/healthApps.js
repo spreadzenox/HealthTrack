@@ -121,9 +121,9 @@ export async function detectInstalledApps(isInstalled) {
  */
 export const METRICS = [
   { key: 'heartRate', label: 'cœur', watch: true },
-  { key: 'restingHeartRate', label: 'FC repos', watch: true },
-  { key: 'heartRateVariability', label: 'VFC', watch: true },
-  { key: 'oxygenSaturation', label: 'SpO₂', watch: true },
+  { key: 'restingHeartRate', label: 'cœur au repos', watch: true },
+  { key: 'heartRateVariability', label: 'variabilité cardiaque', watch: true },
+  { key: 'oxygenSaturation', label: 'oxygène du sang', watch: true },
   { key: 'sleep', label: 'sommeil', watch: true },
   { key: 'steps', label: 'pas', watch: true },
   { key: 'calories', label: 'dépense' },
