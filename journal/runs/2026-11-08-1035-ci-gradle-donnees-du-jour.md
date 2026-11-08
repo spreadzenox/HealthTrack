@@ -26,6 +26,15 @@
 - Script lancé depuis la session : 2 × 504 puis succès officiel, empreinte vérifiée. Le check « Build APK » de la PR le
   prouve en CI.
 
-## Suite
+## Résultat CI (PR #830, NON MERGÉE)
+- L'étape Gradle marche en CI (« Gradle prêt (empreinte vérifiée) » en 11 s, malgré les 504).
+- Mais « Build APK » échoue plus loin, 2 fois : `kotlin-compiler-embeddable-2.1.0.jar`, que Maven Central redirige vers
+  github.com/JetBrains/kotlin/releases, répond 504. C'est la même panne des téléchargements de releases GitHub, vue
+  depuis les runners (depuis la session, le fichier répond 200). Garde-fou : pas de merge sans « Build APK » vert.
+
+## Suite (run suivant, en premier)
+- Relancer les jobs en échec de #830 (`gh api -X POST …/actions/runs/<id>/rerun-failed-jobs`) ; si « Build APK » est
+  vert, merger #830 (remise à jour sur main d'abord), puis fermer #829. Si la panne GitHub dure, envisager un cache
+  Gradle (`actions/setup-java` avec `cache: gradle`) pour ne plus dépendre du réseau à chaque construction.
 - Après merge : vérifier la release (taille de l'APK), « Play — AAB » et l'émulateur ; fermer #829 si inutile.
 - POLISH-SIM-2c (« Pas · hier »), 5, 6, 12, 13, 7, 9.
