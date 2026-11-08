@@ -80,16 +80,18 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
   // Lecture du visage (consigne du 19/10 au soir) : rafales du déverrouillage des 30 derniers jours (assez pour les Analyses « humeur estimée »), un sourire qui
   // suit un peu la note du jour ; RNG séparé. Jamais d'image, seulement les indices (format de FaceRecord.java).
   const faceRand = mulberry32(seed + 6007)
-  // Les 3 derniers jours portent aussi la valence / l'éveil du modèle embarqué (étape 2, téléchargé depuis peu).
+  // Les 14 derniers jours portent aussi la valence / l'éveil et les expressions du modèle embarqué (habitude : 3 jours).
   const expressions = (score, f) => {
     const raw = {
-      exHappiness: Math.max(0.02, 0.25 + 0.12 * (score - 2.6) + f() * 2), exNeutral: 0.5 + f() * 2,
-      exSurprise: 0.06, exSadness: Math.max(0.01, 0.07 - 0.03 * (score - 2.6)), exAnger: 0.03, exFear: 0.02,
-      exDisgust: 0.02, exContempt: 0.03,
+      exHappiness: Math.max(0.02, 0.25 + 0.15 * (score - 2.6) + f() * 2), exNeutral: 0.5 + f() * 2,
+      exSurprise: 0.06 + f() / 2, exSadness: Math.max(0.01, 0.08 - 0.07 * (score - 2.6) + f()), exAnger: 0.03, exFear: 0.02,
+      exDisgust: 0.02, exContempt: Math.max(0.01, 0.04 + f() / 2),
     }
     const sum = Object.values(raw).reduce((s, v) => s + v, 0)
     return Object.fromEntries(Object.entries(raw).map(([k, v]) => [k, v / sum]))
   }
+  // Éveil selon l'heure (calme au réveil et le soir, plus animé à midi) : des lectures étalées dans « Humeur et éveil ».
+  const AROUSAL_AT = { 8: -0.35, 10: -0.05, 13: 0.15, 16: 0.05, 19: -0.25 }
   const pushFaceBursts = (day, score, withAffect = false) => {
     for (const h of [8, 10, 13, 16, 19]) {
       const t = at(day, h, Math.floor(faceRand() * 50))
@@ -109,7 +111,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
             // Lumière du visage (I127b) : correcte le jour, pénombre à 19 h (lecture comptée un peu moins).
             light: h === 19 ? 0.22 : 0.48,
             // Duo B0 + MobileFaceNet (I126) : moyenne des deux et leur écart de valence, souvent faible.
-            ...(withAffect ? { valence: 0.1 + 0.15 * (score - 2.6) + f() * 2, arousal: -0.1 + f() * 3, affectFrames: valid, affectGap: 0.08 + Math.abs(f()), affectModels: 2 } : {}),
+            ...(withAffect ? { valence: 0.1 + 0.15 * (score - 2.6) + f() * 5, arousal: AROUSAL_AT[h] + f() * 4, affectFrames: valid, affectGap: 0.08 + Math.abs(f()), affectModels: 2 } : {}),
             // Probabilités des 8 expressions (POL-2, FaceAffect.EXPRESSIONS) : surtout neutre et joie, qui suit la note.
             ...(withAffect ? expressions(score, f) : {}),
           },
@@ -306,7 +308,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       at: at(day, 21, 30),
       payload: { score: Math.max(0, Math.min(5, Math.round(score))), ...(tags.length > 0 && { tags }) },
     })
-    if (i <= 29) pushFaceBursts(day, score, i <= 2)
+    if (i <= 29) pushFaceBursts(day, score, i <= 13)
     prevTags = tags
     prevWorkout = workout
 

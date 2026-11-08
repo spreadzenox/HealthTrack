@@ -12,6 +12,8 @@ import { moodFaceBursts } from './faceBursts'
 import { expressionMix, habitualMix, habitShifts, pointDetail, wellbeingHistory } from './mood/wellbeingHistory'
 import { toDisplay } from './mood/wellbeingScale'
 import { gutLevelLabel } from './today'
+import { formatDuration } from '../utils/format'
+import { appLocale } from '../i18n/locale.js'
 
 const DAY_MS = 86_400_000
 const HABIT_DAYS = 28
@@ -136,4 +138,64 @@ export function latestReadingDay(entries, now = new Date()) {
     if (best === null || at > best) best = at
   }
   return best === null ? null : localDateKey(new Date(best).toISOString())
+}
+
+// ─── « Ce qui a pu peser ce jour-là » (correction T4) ─────────────────────────
+
+const fmtInt = (v) => Math.round(v).toLocaleString(appLocale())
+const HABIT = 'que d’habitude'
+const WHEN = { short: '', medium: ' ces derniers jours', long: ' ces dernières semaines' }
+const FODMAP_WORD = {
+  fructans: 'fructanes', gos: 'GOS', fructose: 'fructose en excès', lactose: 'lactose', sorbitol: 'sorbitol', mannitol: 'mannitol',
+}
+const verres = (g) => {
+  if (g <= 0) return 'aucun verre'
+  if (g < 5) return 'moins d’un verre'
+  const n = Math.round(g / 10) || 1
+  return `${n} verre${n > 1 ? 's' : ''}`
+}
+// Par facteur : (plus ?) → début de phrase, et la valeur dite entre parenthèses.
+const quantity = (more, less) => (up) => `${up ? 'Plus' : 'Moins'} ${up ? more : less}`
+const PHRASES = {
+  sleepMinutes: { say: (up) => `Nuits plus ${up ? 'longues' : 'courtes'}`, value: formatDuration },
+  steps: { say: quantity('de pas', 'de pas'), value: fmtInt },
+  activityCalories: { say: quantity('d’activité', 'd’activité'), value: (v) => `${fmtInt(v)} kcal` },
+  screen_minutes: { say: quantity('d’écran', 'd’écran'), value: formatDuration },
+  screen_late_minutes: { say: quantity('d’écran tard le soir', 'd’écran tard le soir'), value: formatDuration },
+  social_minutes: { say: quantity('de réseaux sociaux', 'de réseaux sociaux'), value: formatDuration },
+  kcal: { say: quantity('de calories mangées', 'de calories mangées'), value: (v) => `${fmtInt(v)} kcal` },
+  fiber_g: { say: quantity('de fibres', 'de fibres'), value: (v) => `${fmtInt(v)} g` },
+  sugar_g: { say: quantity('de sucres', 'de sucres'), value: (v) => `${fmtInt(v)} g` },
+  fat_g: { say: quantity('de lipides', 'de lipides'), value: (v) => `${fmtInt(v)} g` },
+  alcohol_g: { say: quantity('d’alcool', 'd’alcool'), value: verres },
+  restingHR: { say: (up) => `FC au repos plus ${up ? 'haute' : 'basse'}`, value: (v) => `${fmtInt(v)} bpm` },
+  hrv_ms: { say: (up) => `VFC plus ${up ? 'haute' : 'basse'}`, value: (v) => `${fmtInt(v)} ms` },
+  weather_sunshine_h: { say: quantity('de soleil', 'de soleil'), value: (v) => `${fmtInt(v)} h` },
+  weather_temp_max_c: { say: (up) => `Plus ${up ? 'chaud' : 'frais'}`, value: (v) => `${fmtInt(v)} °C` },
+  weather_pressure_change_hpa: { say: (up) => `Pression plus ${up ? 'changeante' : 'stable'}`, value: (v) => `${fmtInt(v)} hPa` },
+}
+for (const [g, word] of Object.entries(FODMAP_WORD)) {
+  // Un nombre de repas n'a de sens que sur le jour même et la veille (au-delà, une moyenne par jour) ; jamais « 0 repas »
+  PHRASES[`fodmap_${g}`] = {
+    say: quantity(`de repas riches en ${word}`, `de repas riches en ${word}`),
+    value: (v, horizon) => (horizon === 'short' && Math.round(v) >= 1 ? `${fmtInt(v)} repas` : ''),
+  }
+}
+
+/**
+ * Ce qui s'est passé, dit avec la valeur du facteur sur sa fenêtre (« Nuits plus courtes que d'habitude (6 h 21) »,
+ * « Plus d'alcool que d'habitude (1 verre) ») ; l'horizon moyen ou long le précise. Facteur inconnu : son libellé.
+ * @param {{ key: string, label: string, horizon?: string, value?: number, usual?: number }} c  une contribution du jour
+ */
+export function contributionText(c) {
+  const p = PHRASES[c?.key]
+  if (!p || !isNum(c.value) || !isNum(c.usual) || c.value === c.usual) return c?.label ?? ''
+  const shown = p.value(Math.max(0, c.value), c.horizon)
+  return `${p.say(c.value > c.usual)} ${HABIT}${WHEN[c.horizon] ?? ''}${shown ? ` (${shown})` : ''}`
+}
+
+/** Points sur 5 avec leur signe et l'unité : « −0,29 pt ». */
+export function formatPoints(v) {
+  const n = Math.abs(v).toLocaleString(appLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return `${v > 0 ? '+' : '−'}${n} pt`
 }

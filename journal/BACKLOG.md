@@ -47,12 +47,18 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   Jour s'ouvre sur le dernier jour qui a une lecture ou une note (`latestReadingDay`), plus sur un « aujourd'hui » vide
   la nuit ; la note n'est plus dite deux fois avec deux chiffres (« note 3,4 » en tête et « 3,3 noté ») : une seule
   fois, « votre note 3,4 » sous la valeur du bien-être.
-- [ ] **T3-a** (polish, constat des captures) Démo, vue Jour : l'étoile n'a pas le trait gris de l'habitude ni la
-  phrase « plus de… que d'habitude », et « Humeur et éveil » montre un seul point sans la zone de l'habitude, alors que
-  la maquette les a. Vérifier si c'est la démo (lectures trop semblables, habitude des 28 jours absente) ou le calcul.
-- [ ] **T3-b** (polish) « Ce qui a pu peser » : la maquette dit l'unité (« −0,29 pt ») et la valeur du jour
-  (« Nuit plus courte que d'habitude (6 h 21) ») ; l'app affiche « Sommeil +0,6 » sans unité ni valeur.
-- [ ] **T3-c** (polish) Valeurs en IBM Plex Mono : « 3,4  /5 » a une espace trop large avant « /5 » (Jour et Semaine).
+- [x] **T4 / T3-a à T3-c** ✅ 08/11 04:35 (écarts relevés par l'orchestrateur le 08/11 vers 03:30) : la cause de T3-a
+  était la démo (valence, éveil et expressions presque constants, valence sur 3 jours seulement) : démo refaite (éveil
+  selon l'heure, expressions qui suivent la note, 14 jours de valence et d'expressions), l'étoile a le trait gris et
+  « Humeur et éveil » un point par lecture, la moyenne et l'ellipse de l'habitude. Légendes de la maquette (« Le trait
+  gris montre votre habitude. », « Chaque point est une lecture ; la zone grise, votre habitude. »). « Ce qui a pu
+  peser » dit ce qui s'est passé avec la valeur (`contributionText` : « Nuits plus courtes que d'habitude (6 h 21) »,
+  « Plus d'alcool que d'habitude (1 verre) », « ces derniers jours » pour l'horizon moyen) et « −0,29 pt ». « 3,4/5 »
+  sans grande espace. Planches refaites dans `maquettes/agir-tendances/comparaison/`.
+- [ ] **T4-suite** (polish) La valeur de « Ce qui a pu peser » est la moyenne de la fenêtre du facteur (jour même et
+  veille pour le court terme) : d'où « Nuits » au pluriel. Si le propriétaire veut « Nuit plus courte (6 h 21) » au
+  singulier comme la maquette, exposer la valeur du seul jour dans `dayContributions`. Libellés des axes de la carte
+  Humeur et éveil encore tournés à la verticale (horizontaux dans la maquette).
 
 ## 🧭 Décisions du propriétaire du 07/11 au soir (mode polish, intégrations, personas, méta-leçons) — détail : `PRODUIT.md` § 0
 

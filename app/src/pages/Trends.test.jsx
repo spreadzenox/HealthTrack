@@ -81,10 +81,14 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(detail).toHaveTextContent('Plus de tristesse')
     expect(within(detail).getByRole('img', { name: 'Humeur et éveil : 2 lectures' })).toBeInTheDocument()
     expect(detail).toHaveTextContent('Éveil plutôt calme, moins que d’habitude')
+    // T4 : les légendes de la maquette, l'habitude étant connue
+    expect(detail).toHaveTextContent('Plus de tristesse, moins de mépris que d’habitude. Le trait gris montre votre habitude.')
+    expect(detail).toHaveTextContent('Chaque point est une lecture ; la zone grise, votre habitude.')
     // contributions lues au premier jour touché (budget de lectures)
     const weigh = await within(detail).findByRole('region', { name: 'Ce qui a pu peser ce jour-là' })
-    expect(within(weigh).getByText('Sommeil').closest('li')).toHaveAttribute('data-tone', 'night')
-    expect(weigh).toHaveTextContent('−0,4')
+    // T4 : ce qui s'est passé, avec la valeur, et l'unité « pt »
+    expect(within(weigh).getByText('Nuits plus courtes que d’habitude (5 h)').closest('li')).toHaveAttribute('data-tone', 'night')
+    expect(weigh).toHaveTextContent('−0,40 pt')
     expect(detail.textContent).not.toMatch(/diagnostic|cause/i)
   })
 

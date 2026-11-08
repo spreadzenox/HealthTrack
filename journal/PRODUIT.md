@@ -42,7 +42,8 @@
 > - **Corrections Tendances (07/11 vers 23:50, v896)** : T1 à l'ouverture une courbe dès qu'une mesure le peut, grandes
 >   puces sinon ; T2 ✅ 08/11 01:35 vue Jour comme la maquette « Agir et Tendances » (captures dans `maquettes/agir-tendances/`) ; T3 ✅
 >   08/11 02:35 captures côte à côte (`maquettes/agir-tendances/comparaison/`), vue Jour ouverte sur le dernier jour
->   qui a des lectures. T1 livré le 08/11 00:35. Reste en polish : T3-a à T3-c (BACKLOG).
+>   qui a des lectures. T1 livré le 08/11 00:35. T4 ✅ 08/11 04:35 (étoile avec l'habitude, un point par lecture,
+>   « Nuits plus courtes que d'habitude (6 h 21) » et « pt », planches refaites).
 
 ## 1. Décisions (résumé fidèle)
 
