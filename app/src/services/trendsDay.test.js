@@ -98,8 +98,9 @@ describe('« Ce qui a pu peser » dit ce qui s’est passé (T4)', () => {
     expect(contributionText(c('fodmap_fructans', 2, 0.5))).toMatch(/^Plus de repas riches en fructanes que d’habitude \(2 repas\)$/)
   })
   it('corps et météo : plus haut, plus bas, plus chaud', () => {
-    expect(contributionText(c('restingHR', 64, 58))).toBe('FC au repos plus haute que d’habitude (64 bpm)')
-    expect(contributionText(c('hrv_ms', 30, 45))).toBe('VFC plus basse que d’habitude (30 ms)')
+    expect(contributionText(c('restingHR', 64, 58))).toBe('Cœur au repos plus rapide que d’habitude (64 bpm)')
+    expect(contributionText(c('restingHR', 52, 58))).toBe('Cœur au repos plus lent que d’habitude (52 bpm)')
+    expect(contributionText(c('hrv_ms', 30, 45))).toBe('Variabilité cardiaque plus basse que d’habitude (30 ms)')
     expect(contributionText(c('weather_temp_max_c', 8, 14))).toBe('Plus frais que d’habitude (8 °C)')
   })
   it('facteur inconnu : son libellé seul', () => {
