@@ -8,6 +8,11 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 🧊 **Alpha : pas de nouvel envoi avant le 09/11 au soir (08/11 20:15)** : 100918 (nouvel accueil) est en examen
+> chez Google ; un gel (`review-freeze.json`, jusqu'au 09/11 22:00, heure de Paris) retient l'envoi de ce soir 23:45,
+> qui aurait pu le renvoyer en fin de file. Le test interne reçoit toujours chaque version. L'envoi du 09/11 à 23:45
+> repart normalement, avec les changements faits d'ici là (dont les Tendances de #842).
+
 > 🔤 **Tendances : le cœur en toutes lettres (08/11 19:35)** : « Ce qui a pu peser ce jour-là » dit « Cœur au repos plus
 > rapide que d'habitude (64 bpm) » et « Variabilité cardiaque plus basse… », plus « FC » ni « VFC » (POLISH-SIM-6b).
 > Le test sur émulateur A56, rouge après le nouvel accueil (#838) parce qu'il attendait l'ancien premier écran,
