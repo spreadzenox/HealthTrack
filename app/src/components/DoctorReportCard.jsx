@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { FEATURES } from '../config/distribution'
 import { useEntitlement } from '../hooks/useEntitlement'
-import { REPORT_DEFAULT_WEEKS, REPORT_PERIODS } from '../services/report/buildReport'
+import { REPORT_DEFAULT_WEEKS, REPORT_PERIODS, defaultReportWeeks } from '../services/report/buildReport'
 import { createReportPdf, saveAndShareReport } from '../services/report/createReportPdf'
-import { countEntries } from '../storage/localHealthStorage'
+import { countEntries, getFirstEntryAt } from '../storage/localHealthStorage'
 import { GUT_TYPE } from '../services/today'
 
 /** Notes du ventre et repas enregistrés : sans aucun des deux, le rapport serait vide. */
@@ -13,14 +13,26 @@ async function countReportEntries() {
   return gut + food
 }
 
+/** Première note du ventre ou premier repas : la période proposée ne dépasse pas les jours d'usage. */
+async function firstReportEntryAt() {
+  const dates = (await Promise.all([getFirstEntryAt(GUT_TYPE), getFirstEntryAt('food')])).filter(Boolean)
+  return dates.length ? dates.sort()[0] : null
+}
+
 /**
  * « Rapport PDF pour mon médecin » (N6b), en bas d'Analyses et dans Données : période de 2, 4 ou 12 semaines, bien-être
  * estimé exclu sauf case cochée (donnée sensible et estimation), puis fichier dans Documents et feuille de partage.
  * Premium sur la version Play (offert pendant le lancement) ; libre en sideload. Sans aucune note du ventre ni aucun
  * repas, pas de rapport vide : une phrase dit quand il se remplit (un comptage en échec laisse le bouton), et pas de
- * « Débloquer » sur la version Play tant qu'il n'y a rien à mettre dedans (POL-PLAY-79).
+ * « Débloquer » sur la version Play tant qu'il n'y a rien à mettre dedans (POL-PLAY-79). La période proposée est la
+ * plus courte qui couvre les jours d'usage (POLISH-SIM-12), sauf si la personne en a déjà choisi une.
  */
-export default function DoctorReportCard({ create = createReportPdf, save = saveAndShareReport, count = countReportEntries }) {
+export default function DoctorReportCard({
+  create = createReportPdf,
+  save = saveAndShareReport,
+  count = countReportEntries,
+  firstAt = firstReportEntryAt,
+}) {
   const [ent] = useEntitlement()
   const premium = !FEATURES.billing || ent.premium
   const [open, setOpen] = useState(false)
@@ -29,6 +41,20 @@ export default function DoctorReportCard({ create = createReportPdf, save = save
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState(null)
   const [empty, setEmpty] = useState(false)
+  const chosen = useRef(false)
+  const card = useRef(null)
+  const { hash } = useLocation()
+
+  // Depuis Agir (« votre rapport médecin ») : la carte vient à l'écran.
+  useEffect(() => {
+    if (hash === '#rapport-medecin') card.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
+  }, [hash])
+
+  useEffect(() => {
+    let alive = true
+    firstAt().then((at) => { if (alive && !chosen.current) setWeeks(defaultReportWeeks(at)) }, () => {})
+    return () => { alive = false }
+  }, [firstAt])
 
   useEffect(() => {
     let alive = true
@@ -53,7 +79,7 @@ export default function DoctorReportCard({ create = createReportPdf, save = save
   }
 
   return (
-    <article className="today-card fodmap-card report-card" data-testid="doctor-report">
+    <article id="rapport-medecin" ref={card} className="today-card fodmap-card report-card" data-testid="doctor-report">
       <span className="today-card-title">Rapport PDF pour mon médecin</span>
       <p className="today-card-text">
         Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et
@@ -80,7 +106,7 @@ export default function DoctorReportCard({ create = createReportPdf, save = save
                   name="report-weeks"
                   value={w}
                   checked={w === weeks}
-                  onChange={() => setWeeks(w)}
+                  onChange={() => { chosen.current = true; setWeeks(w) }}
                 />
                 <span className="mono">{w} sem.</span>
               </label>

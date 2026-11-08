@@ -9,7 +9,9 @@ describe('Agir (ORG-1, ORG-1b)', () => {
   it('au départ : un état vide simple, et la phrase du rapport médecin', async () => {
     wrap({ challenges: [], gut: [], pistes: null })
     expect(await screen.findByText('Rien en cours pour l’instant')).toBeInTheDocument()
-    expect(screen.getByText('Tous vos essais, vérifiés ou non, figurent dans votre rapport médecin.')).toBeInTheDocument()
+    expect(screen.getByText(/Tous vos essais, vérifiés ou non, figurent dans votre/)).toBeInTheDocument()
+    // POLISH-SIM-12 : le rapport dont parle Agir s'ouvre d'un geste
+    expect(screen.getByRole('link', { name: 'rapport médecin' })).toHaveAttribute('href', '/data#rapport-medecin')
     expect(screen.queryByRole('button')).toBeNull()
     // POLISH-SIM-5 : ce qui remplira l'écran, ce qu'est un essai, et où voir l'avancement
     expect(screen.getByText(/l’essayer ici quelques jours/)).toBeInTheDocument()

@@ -14,6 +14,11 @@
 > ([Agir](maquettes/agir-tendances/comparaison/agir-vide-clair.png) · [Digestion](maquettes/agir-tendances/comparaison/analyses-digestion-attente-clair.png)).
 > Constat des personas (POLISH-SIM-5).
 
+> 📄 **Rapport médecin depuis Agir (08/11 16:35)** : « rapport médecin », en bas d'Agir, ouvre la carte du rapport
+> dans Données ; la période proposée suit vos jours d'usage (2 semaines si vous avez commencé il y a moins de 15 jours,
+> au lieu de 4 semaines surtout vides). Constat des personas (POLISH-SIM-12). La PR #835 (Analyses et Agir avant les
+> premiers résultats), laissée verte par le run de 15:35 faute de permission, est mergée.
+
 > 🔤 **VFC et FC au repos en toutes lettres (08/11 14:35)** : dans Tendances, sous la courbe, « VFC nuit : variabilité
 > de la fréquence cardiaque pendant la nuit, en millisecondes » ([capture](maquettes/agir-tendances/comparaison/semaine-vfc-clair.png)) ;
 > Sources dit « cœur au repos », « variabilité cardiaque », « oxygène du sang ». Au passage, « attendu » ne coiffe plus
@@ -362,6 +367,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 16:35 — [Rapport depuis Agir](runs/2026-11-08-1635-rapport-depuis-agir.md) | 🎨 | Merge de #835 (verte, non mergée au run précédent) ; POLISH-SIM-12 : lien Agir → rapport médecin, période bornée aux jours d'usage ; tests, captures |
 | 08/11 15:35 — [Avant les premiers résultats](runs/2026-11-08-1535-attente-analyses.md) | 🎨 | POLISH-SIM-5 : comptes à rebours en jours notés, jours de gêne « vous en avez N », Agir vide qui mène à Analyses ; tests, captures claire et sombre |
 | 08/11 14:35 — [VFC en toutes lettres](runs/2026-11-08-1435-noms-en-toutes-lettres.md) | 🎨 | POLISH-SIM-6 : nom complet de VFC et FC au repos sous la courbe de Tendances, mots simples dans Sources ; « attendu » seulement avec un futur tracé |
 | 08/11 13:35 — [Tendances : « attendu »](runs/2026-11-08-1335-tendances-attendu.md) | 🎨 | POLISH-SIM-13 : le mot « attendu » au-dessus de la partie pointillée de la courbe ; test, captures claire et sombre |

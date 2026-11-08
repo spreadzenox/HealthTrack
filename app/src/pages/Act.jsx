@@ -183,7 +183,9 @@ export default function Act({ read = readAct, now }) {
           <Section title="Terminés" items={done} />
         </>
       )}
-      <p className="act-report">Tous vos essais, vérifiés ou non, figurent dans votre rapport médecin.</p>
+      <p className="act-report">
+        Tous vos essais, vérifiés ou non, figurent dans votre <Link to="/data#rapport-medecin">rapport médecin</Link>.
+      </p>
     </section>
   )
 }
