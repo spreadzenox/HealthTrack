@@ -44,16 +44,29 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
   const step = dates.length > 14 ? 7 : 1
   const colW = (W - PAD.l - PAD.r) / Math.max(1, dates.length - 1)
   const fmtAxis = (u, v) => (u === '/5' ? String(Math.round(v)) : Math.round(v).toLocaleString(appLocale()))
+  // POLISH-SIM-3 : avec deux axes, chacun prend la couleur de sa courbe (si une seule couleur porte cette unité).
+  const axisTone = (u) => {
+    if (units.length < 2) return undefined
+    const tones = [...new Set(keys.filter((k) => trendMeasure(k).unit === u).map((k) => trendMeasure(k).tone))]
+    return tones.length === 1 ? tones[0] : undefined
+  }
   return (
     <svg className="trends-chart" viewBox={`0 0 ${W} ${H}`} role="img"
       aria-label={`Courbe de ${keys.map((k) => trendMeasure(k).label).join(', ')}`}>
       {units.map((u, i) => {
         const s = yOf[u]
         const ticks = u === '/5' ? [1, 3, 5] : [s.lo, (s.lo + s.hi) / 2, s.hi]
-        return ticks.map((t) => (
-          <text key={`${u}-${t}`} className="trends-axis mono" x={i === 0 ? PAD.l - 6 : W - PAD.r + 6} y={s.y(t) + 3}
-            textAnchor={i === 0 ? 'end' : 'start'}>{fmtAxis(u, t)}</text>
-        ))
+        const ax = i === 0 ? PAD.l - 6 : W - PAD.r + 6
+        const anchor = i === 0 ? 'end' : 'start'
+        const tone = axisTone(u)
+        return [
+          <text key={`${u}-unit`} className="trends-axis trends-axis-unit" data-tone={tone} x={ax} y={PAD.t - 6}
+            textAnchor={anchor}>{u}</text>,
+          ...ticks.map((t) => (
+            <text key={`${u}-${t}`} className="trends-axis mono" data-tone={tone} x={ax} y={s.y(t) + 3}
+              textAnchor={anchor}>{fmtAxis(u, t)}</text>
+          )),
+        ]
       })}
       {units.length && <line className="trends-grid" x1={PAD.l} x2={W - PAD.r} y1={yOf[units[0]].y(units[0] === '/5' ? 3 : (yOf[units[0]].lo + yOf[units[0]].hi) / 2)} y2={yOf[units[0]].y(units[0] === '/5' ? 3 : (yOf[units[0]].lo + yOf[units[0]].hi) / 2)} />}
       {dates.includes(today) && (

@@ -55,6 +55,19 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(screen.getByRole('img', { name: 'Courbe de Bien-être, Sommeil' })).toBeInTheDocument()
   })
 
+  it('POLISH-SIM-3 : chaque axe dit son unité ; avec deux axes, chacun prend la couleur de sa courbe', async () => {
+    const { container } = renderAt('/tendances')
+    await screen.findByRole('img', { name: 'Courbe de Bien-être' })
+    const units = () => [...container.querySelectorAll('.trends-axis-unit')]
+    expect(units().map((u) => u.textContent)).toEqual(['/5'])
+    expect(units()[0]).not.toHaveAttribute('data-tone')
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une mesure' }))
+    fireEvent.click(within(screen.getByRole('list', { name: 'Mesures à ajouter' })).getByRole('button', { name: /Sommeil/ }))
+    expect(units().map((u) => [u.textContent, u.getAttribute('data-tone')])).toEqual([['/5', 'mint'], ['h', 'night']])
+    const sleepTicks = [...container.querySelectorAll('.trends-axis[data-tone="night"]')]
+    expect(sleepTicks.length).toBeGreaterThan(1)
+  })
+
   it('toucher un jour passé montre sa valeur, jamais un « attendu » ; un jour futur, l’attendu et sa fourchette', async () => {
     renderAt('/tendances')
     await screen.findByRole('img', { name: /Courbe/ })

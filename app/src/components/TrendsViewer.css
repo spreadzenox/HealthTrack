@@ -131,6 +131,15 @@ button.trends-chip {
   fill: var(--text-muted);
 }
 
+/* POLISH-SIM-3 : unité en tête d'axe ; avec deux axes, couleur de la courbe. */
+.trends-axis[data-tone] {
+  fill: var(--tone-label);
+}
+
+.trends-axis-unit {
+  font-weight: 600;
+}
+
 .trends-grid {
   stroke: var(--border);
 }

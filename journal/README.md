@@ -12,6 +12,10 @@
 > erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
 > Alpha (livraison continue) » → Run workflow (main). Je ne peux pas le lancer moi-même depuis la session.
 
+> 📏 **Tendances : chaque axe dit son unité (08/11 05:35)** : « /5 », « h », « pas », « ms », « bpm » en haut de l'axe ;
+> avec deux courbes, chaque axe prend la couleur de la sienne ([clair](maquettes/agir-tendances/comparaison/semaine-deux-axes-clair.png) ·
+> [sombre](maquettes/agir-tendances/comparaison/semaine-deux-axes-sombre.png)). Constat des personas (POLISH-SIM-3).
+
 > 📸 **Tendances T4 livré (08/11 04:35), captures à côté de la maquette** : [démo, Jour](maquettes/agir-tendances/comparaison/jour-demo.png) ·
 > [2 jours, clair et sombre](maquettes/agir-tendances/comparaison/jour-2-jours.png). L'étoile a le trait gris de votre
 > habitude, « Humeur et éveil » un point par lecture, la moyenne et l'ellipse grise de l'habitude (il manquait surtout
@@ -301,6 +305,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 05:35 — [Tendances : unités des axes](runs/2026-11-08-0535-tendances-unites-axes.md) | 🎨 | POLISH-SIM-3 : unité en tête de chaque axe, couleur de sa courbe avec deux axes ; captures clair et sombre |
 | 08/11 04:35 — [Tendances T4](runs/2026-11-08-0435-tendances-t4.md) | 🎨 | Étoile et Humeur et éveil avec l'habitude (démo refaite) ; « Ce qui a pu peser » dit ce qui s'est passé, en « pt » ; légendes de la maquette ; planches refaites |
 | 08/11 03:35 — [Personas : premier passage complet](runs/2026-11-08-0335-personas-passage.md) | 🎨 | Outil `npm run persona` ; 7 personas simulées avant l'envoi du soir ; erreur du repas décrit effacée à l'ajout manuel ; POLISH-SIM-2 à 9 au BACKLOG |
 | 08/11 02:35 — [Tendances T3](runs/2026-11-08-0235-tendances-t3.md) | 🎨 | Captures démo / 2 jours / maquette côte à côte ; vue Jour ouverte sur le dernier jour qui a des lectures ; note dite une fois ; `--history-days` dans `npm run visual` ; écarts restants T3-a à c au BACKLOG |

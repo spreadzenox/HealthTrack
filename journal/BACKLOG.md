@@ -74,8 +74,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] **POLISH-SIM-2** Le petit « + » (AUJ-6) ne fait rien de visible quand le bandeau d'ajout est déjà à l'écran
   (4 personas sur 7) : au moins un retour visible (le bandeau s'anime déjà : le rendre perceptible) ; sinon proposer
   au propriétaire de le retirer sous « Vos données du jour » (rien à y ajouter à la main).
-- [ ] **POLISH-SIM-3** Tendances : unité sur l'axe (h, ms, pas, bpm) ; avec deux courbes, l'axe prend la couleur de sa
-  courbe.
+- [x] **POLISH-SIM-3** ✅ 08/11 05:35 : unité en tête de chaque axe (/5, h, pas, ms, bpm) ; avec deux axes, chacun
+  prend la couleur de sa courbe (test de page, captures `comparaison/semaine-deux-axes-*.png`).
+- [ ] **POLISH-SIM-3b** Graduations de Tendances en valeurs rondes (« 4 651 », « 11 759 » pas ; heures arrondies à
+  l'entier, « 6 / 7 / 9 » sur des nuits de 6 h 20 à 8 h 40).
 - [ ] **POLISH-SIM-4** Détail d'un jour : « Bien-être 3,2 » et « votre note 3,4 » côte à côte sans explication ; dire
   l'échelle du confort digestif (5 = calme).
 - [ ] **POLISH-SIM-5** Analyses et Agir vides pendant 28 jours : une phrase sur ce qui les remplit et quand ; compte à
