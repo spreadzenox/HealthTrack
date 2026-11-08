@@ -20,6 +20,12 @@
   (`journal/maquettes/agir-tendances/comparaison/agir-vide-*.png`, `analyses-digestion-attente-clair.png`).
 - Nouveautés : `2026-11-08-1535-attente-analyses.json`.
 
+## Merge
+- PR #835 : checks requis verts (Frontend (Vitest), Build APK, relais, protocole montre, émulateurs API 28/32/34) ;
+  les deux tests Samsung A56 (API 35, 36) encore en cours au moment du merge.
+- **Non mergée** : le merge par l'API a été refusé par le mode de permission de la session (« merge sans revue »).
+  Rien n'a été contourné. Le run suivant (ou le propriétaire) la merge si elle est toujours verte et à jour sur main.
+
 ## Suite
 - POLISH-SIM-12 (PDF depuis Agir, période bornée aux jours d'usage), POLISH-SIM-2 (c) « Pas · hier ».
 - Envoi Alpha de ce soir 23:45 (version des testeurs ; peut partir en retard chez GitHub).
