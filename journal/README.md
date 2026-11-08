@@ -12,6 +12,13 @@
 > erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
 > Alpha (livraison continue) » → Run workflow (main). Je ne peux pas le lancer moi-même depuis la session.
 
+> 📸 **Tendances T4 livré (08/11 04:35), captures à côté de la maquette** : [démo, Jour](maquettes/agir-tendances/comparaison/jour-demo.png) ·
+> [2 jours, clair et sombre](maquettes/agir-tendances/comparaison/jour-2-jours.png). L'étoile a le trait gris de votre
+> habitude, « Humeur et éveil » un point par lecture, la moyenne et l'ellipse grise de l'habitude (il manquait surtout
+> dans les données de démo, trop régulières : refaites). « Ce qui a pu peser » dit ce qui s'est passé : « Nuits plus
+> longues que d'habitude (8 h 10) », « FC au repos plus basse que d'habitude (59 bpm) », en « pt ». « 3,3/5 » sans le
+> grand blanc. Écart restant (polish) : « Nuits » au pluriel, car la valeur est la moyenne du jour et de la veille.
+
 > 🧪 **Premier passage complet des personas (décision C, 08/11 03:35), avant l'envoi de ce soir** : 7 personas
 > simulées, une par profil, matériel tiré selon les parts de marché, aux jours 1, 14 ou 45 ; elles ne voient que des
 > captures. [Synthèse et rapports](simulations/2026-11-08-0340-synthese.md). Corrigé tout de suite : le message rouge
@@ -294,6 +301,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 04:35 — [Tendances T4](runs/2026-11-08-0435-tendances-t4.md) | 🎨 | Étoile et Humeur et éveil avec l'habitude (démo refaite) ; « Ce qui a pu peser » dit ce qui s'est passé, en « pt » ; légendes de la maquette ; planches refaites |
 | 08/11 03:35 — [Personas : premier passage complet](runs/2026-11-08-0335-personas-passage.md) | 🎨 | Outil `npm run persona` ; 7 personas simulées avant l'envoi du soir ; erreur du repas décrit effacée à l'ajout manuel ; POLISH-SIM-2 à 9 au BACKLOG |
 | 08/11 02:35 — [Tendances T3](runs/2026-11-08-0235-tendances-t3.md) | 🎨 | Captures démo / 2 jours / maquette côte à côte ; vue Jour ouverte sur le dernier jour qui a des lectures ; note dite une fois ; `--history-days` dans `npm run visual` ; écarts restants T3-a à c au BACKLOG |
 | 08/11 01:35 — [Tendances T2](runs/2026-11-08-0135-tendances-t2.md) | 🎨 | Vue Jour de la maquette (points des lectures, losange de la note, même fiche qu'en Semaine, ‹ › jour par jour) ; ancien historique retiré ; captures de la maquette enfin versionnées. Cron Alpha du 07/11 non déclenché (voir le run) |

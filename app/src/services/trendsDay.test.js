@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { dayFaceDetail, dayReadingsView, latestReadingDay, shiftsSentence, vaSentence } from './trendsDay'
+import { contributionText, dayFaceDetail, dayReadingsView, formatPoints, latestReadingDay, shiftsSentence, vaSentence } from './trendsDay'
 import { EXPRESSIONS } from './mood/wellbeingHistory'
 
 const ex = (over = {}) => Object.fromEntries(EXPRESSIONS.map(({ key }) => [key, over[key] ?? (key === 'exNeutral' ? 0.5 : 0.5 / 7)]))
@@ -80,5 +80,33 @@ describe('Jour ouvert par défaut (T3)', () => {
   it('ignore le futur et les autres entrées ; null sans rien', () => {
     expect(latestReadingDay([burst(5, 9, {}), burst(7, 20, {}), { type: 'sleep', at: new Date(2026, 10, 7, 1).toISOString() }], new Date(2026, 10, 7, 2))).toBe('2026-11-05')
     expect(latestReadingDay([], new Date(2026, 10, 7, 2))).toBeNull()
+  })
+})
+
+describe('« Ce qui a pu peser » dit ce qui s’est passé (T4)', () => {
+  const c = (key, value, usual, horizon = 'short', points = -0.3) => ({ key, label: key, theme: 'sleep', horizon, points, value, usual })
+  it('sommeil : nuits plus courtes ou plus longues, avec la durée', () => {
+    expect(contributionText(c('sleepMinutes', 381, 450))).toBe('Nuits plus courtes que d’habitude (6 h 21)')
+    expect(contributionText(c('sleepMinutes', 500, 450, 'medium'))).toBe('Nuits plus longues que d’habitude ces derniers jours (8 h 20)')
+  })
+  it('alcool en verres, écran tard en durée, pas et FODMAP en quantité', () => {
+    expect(contributionText(c('alcohol_g', 10, 0))).toBe('Plus d’alcool que d’habitude (1 verre)')
+    expect(contributionText(c('alcohol_g', 3, 0))).toBe('Plus d’alcool que d’habitude (moins d’un verre)')
+    expect(contributionText(c('screen_late_minutes', 45, 20, 'long'))).toBe('Plus d’écran tard le soir que d’habitude ces dernières semaines (45 min)')
+    expect(contributionText(c('steps', 4210, 7000))).toMatch(/^Moins de pas que d’habitude \(4\s210\)$/)
+    expect(contributionText(c('fodmap_lactose', 0, 0.4, 'long'))).toBe('Moins de repas riches en lactose que d’habitude ces dernières semaines')
+    expect(contributionText(c('fodmap_fructans', 2, 0.5))).toMatch(/^Plus de repas riches en fructanes que d’habitude \(2 repas\)$/)
+  })
+  it('corps et météo : plus haut, plus bas, plus chaud', () => {
+    expect(contributionText(c('restingHR', 64, 58))).toBe('FC au repos plus haute que d’habitude (64 bpm)')
+    expect(contributionText(c('hrv_ms', 30, 45))).toBe('VFC plus basse que d’habitude (30 ms)')
+    expect(contributionText(c('weather_temp_max_c', 8, 14))).toBe('Plus frais que d’habitude (8 °C)')
+  })
+  it('facteur inconnu : son libellé seul', () => {
+    expect(contributionText({ key: 'inconnu', label: 'Autre', value: 1, usual: 0, horizon: 'short' })).toBe('Autre')
+  })
+  it('valeur en points sur 5, avec l’unité « pt »', () => {
+    expect(formatPoints(-0.29)).toBe('−0,29 pt')
+    expect(formatPoints(0.4)).toBe('+0,40 pt')
   })
 })

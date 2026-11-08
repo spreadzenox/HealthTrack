@@ -426,3 +426,10 @@ button.trends-chip {
   font-size: 0.78rem;
   color: var(--text-muted);
 }
+
+.trends-detail-unit {
+  margin-left: 2px;
+  font-size: 0.8em;
+  font-weight: 400;
+  color: var(--text-muted);
+}

@@ -5,7 +5,7 @@
  * et « Ce qui a pu peser ce jour-là » (les 3 plus grandes contributions du modèle d'Analyses, barres de part et d'autre
  * de zéro, couleur du thème). Des estimations de l'expression du visage, jamais un diagnostic.
  */
-import { appLocale } from '../i18n/locale.js'
+import { contributionText, formatPoints } from '../services/trendsDay'
 
 const pct = (p) => `${Math.round(p * 100)} %`
 const THEME_TONE = { wellbeing: 'mint', digestion: 'peach', nutrition: 'peach', activity: 'lilac', sleep: 'night', body: 'rose', context: 'stone' }
@@ -77,21 +77,23 @@ export function MoodMap({ points, day, habit }) {
   )
 }
 
-/** « Ce qui a pu peser ce jour-là » : barres de part et d'autre de zéro, en points sur 5, couleur du thème. */
+/**
+ * « Ce qui a pu peser ce jour-là » : ce qui s'est passé (« Nuits plus courtes que d'habitude (6 h 21) », T4), barres de
+ * part et d'autre de zéro, en points sur 5 (« −0,29 pt »), couleur du thème.
+ */
 export function ContributionBars({ items }) {
   const max = Math.max(...items.map((c) => Math.abs(c.points)), 0.1)
-  const fmt = (v) => `${v > 0 ? '+' : '−'}${Math.abs(v).toLocaleString(appLocale(), { maximumFractionDigits: 1, minimumFractionDigits: 1 })}`
   return (
     <ul className="tdd-contrib">
       {items.map((c) => (
         <li key={c.key} data-tone={THEME_TONE[c.theme] ?? 'stone'}>
-          <span className="tdd-contrib-label">{c.label}</span>
+          <span className="tdd-contrib-label">{contributionText(c)}</span>
           <span className="tdd-contrib-track" aria-hidden="true">
             <span className="tdd-contrib-zero" />
             <span className="tdd-contrib-bar"
               style={c.points >= 0 ? { left: '50%', width: `${(c.points / max) * 50}%` } : { right: '50%', width: `${(-c.points / max) * 50}%` }} />
           </span>
-          <span className="tdd-contrib-value mono">{fmt(c.points)}</span>
+          <span className="tdd-contrib-value mono">{formatPoints(c.points)}</span>
         </li>
       ))}
     </ul>
@@ -109,14 +111,20 @@ export default function TrendsDayDetail({ face, contributions }) {
         <section className="tdd-block" aria-label="Expressions du visage">
           <h3 className="tdd-title">Expressions du visage</h3>
           <ExpressionStar mix={face.mix} />
-          {face.shifts && <p className="tdd-text">{face.shifts}</p>}
+          {(face.shifts || face.mix.habitDays) && (
+            <p className="tdd-text">
+              {[face.shifts && `${face.shifts}.`, face.mix.habitDays && 'Le trait gris montre votre habitude.'].filter(Boolean).join(' ')}
+            </p>
+          )}
         </section>
       )}
       {face?.points?.length > 0 && (
         <section className="tdd-block" aria-label="Humeur et éveil">
           <h3 className="tdd-title">Humeur et éveil</h3>
           <MoodMap points={face.points} day={face.day} habit={face.habit} />
-          {face.vaText && <p className="tdd-text">{face.vaText}</p>}
+          <p className="tdd-text">
+            {[face.vaText && `${face.vaText}.`, face.habit ? 'Chaque point est une lecture ; la zone grise, votre habitude.' : 'Chaque point est une lecture.'].filter(Boolean).join(' ')}
+          </p>
         </section>
       )}
       {contributions?.length > 0 && (

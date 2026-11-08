@@ -91,7 +91,7 @@
 
 .tdd-contrib li {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 2fr auto;
+  grid-template-columns: minmax(0, 1.7fr) minmax(48px, 1fr) auto;
   align-items: center;
   gap: 8px;
   padding: 4px 0;
