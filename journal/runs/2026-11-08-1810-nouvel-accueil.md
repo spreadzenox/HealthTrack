@@ -27,6 +27,12 @@
   non rangés. Tests : base identique avant et après, « Passer » et la fin rendent les vraies données, un plantage ferme
   la visite. « Voir un exemple » en bas d'Aujourd'hui, Journal, Analyses et Agir les 14 premiers jours.
 
+## CI
+- Après #838, les deux jobs « HealthTrack sur Samsung A56 » (API 35 et 36) de main échouaient : les scripts
+  `.github/scripts/play-cold-start.sh` et `play-release/smoke.mjs` attendaient le premier écran de l'ancien accueil
+  (« Comprenez ce qui va… »). Repère changé en « Bienvenue dans » dans #841. Leçon : chercher aussi dans `.github/`
+  les textes d'un écran qu'on remplace.
+
 ## Vérification de la carte 3 (cas où les données sortent) contre le code
 - Trouvés : relais IA (variante play, Vertex UE) ; **Gemini avec la clé de la personne (variante sideload)** — le texte
   dit alors « lu par l'IA de Google, avec votre clé » (pas « en Europe ») ; export / rapport ; avis (relais) ; météo
@@ -50,6 +56,17 @@ période, visite en sombre). Chaque capture a été regardée.
   plein écran) ; pas de ligne appareil « Galaxy Watch 7 » (Health Connect ne donne que le nom de l'app).
 - Mesures : une app installée mais silencieuse donne aussi ses raisons « pas partagée ».
 
+## Envoi aux testeurs
+- #841 mergée à 19:38 ; sur `c04e4fc` (v607, APK 34,6 Mo), « Build & Release », « Tests », émulateurs et « Play — AAB »
+  verts. « Play — Alpha (livraison continue) » lancé à la main (workflow_dispatch, 19:52) : **versionCode 100918 placé
+  sur l'alpha** (même AAB que le test interne ; avant : 100898). Google l'examine (quelques heures à 2 jours) ;
+  l'API ne dit pas quand l'examen est fini (Play Console → Vue d'ensemble de la publication). Le cron de 23:45 ne
+  renverra rien de plus si seul le journal change.
+
+## Ligne pour l'orchestrateur
+Accueil ACC-1 à ACC-10 livré et mergé : #838, #840, #841 ; Alpha 100918 envoyé à 19:52 (en examen chez Google).
+Reste : question au propriétaire sur l'exemple du jour 14 (aucun lien net) ; écarts mineurs listés ci-dessus ; iPhone
+à vérifier par la routine iOS (Santé, visage à l'ouverture).
+
 ## Suite
-- Envoi Alpha lancé à la main dès que tout est vert (voir le résumé pour le versionCode).
 - iPhone : vérifier « Santé » et la lecture à l'ouverture seulement (POUR-IOS.md).
