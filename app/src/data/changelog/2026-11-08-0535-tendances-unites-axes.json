@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-08",
+  "kind": "amélioration",
+  "title": "Tendances : chaque axe dit son unité",
+  "items": [
+    "En haut de chaque axe : /5, h, pas, ms ou bpm.",
+    "Avec deux courbes, chaque axe prend la couleur de la sienne."
+  ]
+}
