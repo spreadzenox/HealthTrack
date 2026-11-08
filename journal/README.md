@@ -9,8 +9,8 @@
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
 > 📅 **Invitation des testeurs aujourd'hui (08/11) : Gold offert jusqu'au 2 décembre inclus** (J = 08/11 + 14 jours
-> + 10 jours de marge ; `until` = `2026-12-02T23:00:00Z`, posé le 08/11 12:35). Le relais est redéployé par le merge,
-> sans mise à jour de l'app : l'app affiche « jusqu'au 2 déc. ». Texte à envoyer :
+> + 10 jours de marge ; `until` = `2026-12-02T23:00:00Z`, posé le 08/11 12:35). Le relais déployé le sert (vérifié : « premium=true
+> source=launch jusqu'au 2026-12-02 »), sans mise à jour de l'app : l'app affiche « jusqu'au 2 déc. ». Texte à envoyer :
 > [`INVITATION-TESTEURS.md`](INVITATION-TESTEURS.md) §3 (à jour). Rappel du jour 7 vers le 15/11.
 
 > 🔧 **CI de main réparée (08/11 12:35)** : la panne de téléchargement chez GitHub (504 sur Gradle puis sur le
