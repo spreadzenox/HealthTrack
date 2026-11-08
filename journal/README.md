@@ -8,6 +8,12 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> ⏳ **Avant les premiers résultats (08/11 15:35)** : Analyses et Aujourd'hui disent « Encore 25 jours notés avant vos
+> premiers résultats » (le compte bouge quand vous notez, pas avec le calendrier) ; Digestion dit « Il faut aussi 5 jours
+> avec une gêne ou une douleur notée : vous en avez 1. » ; Agir vide explique ce qui viendra et mène à vos analyses
+> ([Agir](maquettes/agir-tendances/comparaison/agir-vide-clair.png) · [Digestion](maquettes/agir-tendances/comparaison/analyses-digestion-attente-clair.png)).
+> Constat des personas (POLISH-SIM-5).
+
 > 🔤 **VFC et FC au repos en toutes lettres (08/11 14:35)** : dans Tendances, sous la courbe, « VFC nuit : variabilité
 > de la fréquence cardiaque pendant la nuit, en millisecondes » ([capture](maquettes/agir-tendances/comparaison/semaine-vfc-clair.png)) ;
 > Sources dit « cœur au repos », « variabilité cardiaque », « oxygène du sang ». Au passage, « attendu » ne coiffe plus
@@ -356,6 +362,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 15:35 — [Avant les premiers résultats](runs/2026-11-08-1535-attente-analyses.md) | 🎨 | POLISH-SIM-5 : comptes à rebours en jours notés, jours de gêne « vous en avez N », Agir vide qui mène à Analyses ; tests, captures claire et sombre |
 | 08/11 14:35 — [VFC en toutes lettres](runs/2026-11-08-1435-noms-en-toutes-lettres.md) | 🎨 | POLISH-SIM-6 : nom complet de VFC et FC au repos sous la courbe de Tendances, mots simples dans Sources ; « attendu » seulement avec un futur tracé |
 | 08/11 13:35 — [Tendances : « attendu »](runs/2026-11-08-1335-tendances-attendu.md) | 🎨 | POLISH-SIM-13 : le mot « attendu » au-dessus de la partie pointillée de la courbe ; test, captures claire et sombre |
 | 08/11 12:35 — [Gold jusqu'au 2/12, CI réparée](runs/2026-11-08-1235-until-j08-ci.md) | 🔧 | `until` posé au 2 décembre (invitation du 08/11) ; #830 mergée, CI de main reconstruite ; 100906 jamais construite (panne) ; note Alpha du 07/11 corrigée (partie avec 3 h de retard) |

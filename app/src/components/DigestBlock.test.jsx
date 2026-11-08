@@ -18,7 +18,7 @@ describe('DigestBlock (AUJ-4)', () => {
   it('avant les analyses : le compte à rebours, ce qu’elles cherchent, N/28 et « Noter ma digestion »', async () => {
     const onNote = vi.fn()
     wrap({ onNote, read: async () => [note(1), note(2), note(3, 'pain')] })
-    expect(await screen.findByRole('heading', { name: 'Vos analyses digestives arrivent dans 25 jours' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Encore 25 jours notés avant vos analyses digestives' })).toBeInTheDocument()
     expect(screen.getByText(/cherchera quels facteurs sont statistiquement liés à votre confort digestif\./)).toBeInTheDocument()
     expect(screen.getByText('3/28')).toBeInTheDocument()
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '3')

@@ -47,7 +47,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
   it('avant les résultats : un seul compte à rebours, la phrase du propriétaire et « Noter maintenant »', async () => {
     renderPage({}, { outcomes: { wellbeing: lockedOutcome(5), digestion: lockedOutcome(0) } })
     const card = await screen.findByTestId('reco-countdown-wellbeing')
-    expect(within(card).getByRole('heading')).toHaveTextContent('Vos premiers résultats arrivent dans 9 jours')
+    expect(within(card).getByRole('heading')).toHaveTextContent('Encore 9 jours notés avant vos premiers résultats')
     expect(card).toHaveTextContent('Notez votre bien-être chaque jour : Halcya cherchera ensuite quels facteurs sont statistiquement liés à votre bien-être.')
     expect(within(card).getByRole('button', { name: 'Noter maintenant' })).toBeInTheDocument()
     expect(document.body.textContent).not.toMatch(/Sur quelques semaines|Autres liens repérés|Bientôt|Dans les heures|Benjamini/)
@@ -85,9 +85,11 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
   it('Digestion : même structure ; les jours de gêne manquants sont dits ; « Noter maintenant » ouvre la fenêtre de l’Accueil', async () => {
     renderPage({ view: 'gut' }, readyResults)
     const card = await screen.findByTestId('reco-countdown-digestion')
-    expect(card).toHaveTextContent('Vos premiers résultats arrivent dans 25 jours')
+    expect(card).toHaveTextContent('Encore 25 jours notés avant vos premiers résultats')
     expect(card).toHaveTextContent('statistiquement liés à votre confort digestif')
-    expect(card).toHaveTextContent('4 jours de plus avec une gêne ou une douleur notée')
+    // POLISH-SIM-5 : on voit que la gêne notée compte (1 sur 5), sans « 4 jours de plus » ambigu
+    expect(card).toHaveTextContent('Il faut aussi 5 jours avec une gêne ou une douleur notée : vous en avez 1.')
+    expect(card).not.toHaveTextContent('de plus avec une gêne')
     fireEvent.click(within(card).getByRole('button', { name: 'Noter maintenant' }))
     expect(screen.getByTestId('where')).toHaveTextContent('/ digestion')
   })
