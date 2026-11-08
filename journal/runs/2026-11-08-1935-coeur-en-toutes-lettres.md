@@ -15,6 +15,8 @@
   « VFC plus haute/basse » → « Variabilité cardiaque plus haute/basse ». Sous la courbe, l'abréviation reste avec sa
   glose (POLISH-SIM-6).
 - Test (TDD, rouge avant le code) : `services/trendsDay.test.js` (3 attentes).
+- Vérifs : 3 282 tests verts, lint sans nouvelle erreur, build, `npm run visual -- --routes=/tendances --click=Jour` lu :
+  [capture](../maquettes/agir-tendances/comparaison/jour-ce-qui-a-pu-peser-coeur.png) (« Cœur au repos plus lent que d’habitude (60 bpm) »).
 - Non touché : `dayDeviations.js` (Aujourd'hui, « FC au repos plus haute ») : à voir avec le propriétaire ou un
   constat des personas, l'écran Aujourd'hui est dans le périmètre de la session Accueil ce soir.
 
