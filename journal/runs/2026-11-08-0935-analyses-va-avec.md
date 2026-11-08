@@ -23,3 +23,9 @@ unité ; habitude de sommeil 7 h 19 sur l'Accueil, 7 h 17 dans le Journal.
 ## Restes (polish, BACKLOG)
 - POLISH-SIM-2 (petit « + », ligne Sommeil qui ne s'ouvre pas), 5 (Analyses et Agir vides), 6 (jargon), 12 (PDF), 13
   (« attendu »), 7, 9.
+
+## Après le merge (#828)
+- « Build & Release », « Play — AAB » et l'émulateur ont échoué trois fois : le wrapper Gradle n'obtenait pas
+  `gradle-8.11.1-all.zip` en 10 s (services.gradle.org lent : 1 Mo en 11 s depuis la session ; pas une erreur du code).
+- Correctif : `networkTimeout=120000` dans `gradle-wrapper.properties` (PR « [Auto] CI : délai de téléchargement de
+  Gradle »), prouvé par le check « Build APK » de la PR, puis release vérifiée.

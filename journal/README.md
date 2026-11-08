@@ -16,6 +16,7 @@
 > aux effets favorables (Pas +0,2) ; chaque valeur dit « pt » comme Tendances
 > ([capture](maquettes/agir-tendances/comparaison/analyses-va-avec-sombre.png)). Dans le Journal, l'habitude de la carte
 > d'hier est celle d'Aujourd'hui (plus de 7 h 19 d'un côté, 7 h 17 de l'autre). Constats des personas (POLISH-SIM-10, 11).
+> Après le merge, le serveur de Gradle trop lent a fait échouer la release (délai de 10 s) : délai porté à 120 s.
 
 > 🧪 **Deux simulations de personas (08/11 08:35)** : « Tout mesurer » (Android seul, J1) et « Stressé et pressé »
 > (Galaxy Watch, J14). [Synthèse](simulations/2026-11-08-0835-synthese.md). Nouveaux constats en polish :
