@@ -57,9 +57,9 @@ describe('MyDevices', () => {
       hc('Gadgetbridge', day(0), 'sleep'),
     ]
     render(<MyDevices detect={async () => [app('gadgetbridge')]} loadEntries={async () => entries} now={NOW} />)
-    expect(await screen.findByText(/Dernières mesures il y a 1 h · cœur, VFC, sommeil/)).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('VFC : plus rien depuis 5 jours')
-    expect(screen.getByText(/Jamais reçu en 30 jours : FC repos, SpO₂, pas\./)).toBeInTheDocument()
+    expect(await screen.findByText(/Dernières mesures il y a 1 h · cœur, variabilité cardiaque, sommeil/)).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Variabilité cardiaque : plus rien depuis 5 jours')
+    expect(screen.getByText(/Jamais reçu en 30 jours : cœur au repos, oxygène du sang, pas\./)).toBeInTheDocument()
   })
 
   it('navigateur (pas de détection) : sources réelles seulement, sans bouton « Ouvrir »', async () => {

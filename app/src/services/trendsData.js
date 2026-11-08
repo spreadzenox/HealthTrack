@@ -20,14 +20,19 @@ export const TREND_PERIODS = {
 const n1 = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: 1, minimumFractionDigits: 1 })
 const n0 = (v) => Math.round(v).toLocaleString(appLocale())
 
-/** Mesures du visualiseur, dans l'ordre du menu « + ». `tone` = couleur du thème (src/theme/themes.js). */
+/**
+ * Mesures du visualiseur, dans l'ordre du menu « + ». `tone` = couleur du thème (src/theme/themes.js).
+ * `gloss` : le nom en toutes lettres d'une abréviation, dit une fois sous les mesures affichées (POLISH-SIM-6).
+ */
 export const TREND_MEASURES = [
   { key: 'wellbeing', label: 'Bien-être', unit: '/5', tone: 'mint', state: true, fmt: (v) => `${n1(v)} /5` },
   { key: 'digestion', label: 'Confort digestif', unit: '/5', tone: 'peach', state: true, fmt: (v) => `${n1(v)} /5` },
   { key: 'sleep', label: 'Sommeil', unit: 'h', tone: 'night', field: 'sleepMinutes', scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },
   { key: 'steps', label: 'Pas', unit: 'pas', tone: 'lilac', field: 'steps', fmt: (v) => n0(v) },
-  { key: 'hrv', label: 'VFC nuit', unit: 'ms', tone: 'rose', field: 'hrv', fmt: (v) => `${n0(v)} ms` },
-  { key: 'restingHr', label: 'FC au repos', unit: 'bpm', tone: 'rose', field: 'restingHr', fmt: (v) => `${n0(v)} bpm` },
+  { key: 'hrv', label: 'VFC nuit', unit: 'ms', tone: 'rose', field: 'hrv', fmt: (v) => `${n0(v)} ms`,
+    gloss: 'variabilité de la fréquence cardiaque pendant la nuit, en millisecondes' },
+  { key: 'restingHr', label: 'FC au repos', unit: 'bpm', tone: 'rose', field: 'restingHr', fmt: (v) => `${n0(v)} bpm`,
+    gloss: 'fréquence cardiaque au repos, en battements par minute' },
   { key: 'screen', label: 'Écran', unit: 'h', tone: 'stone', field: 'screenMinutes', scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },
 ]
 export const trendMeasure = (key) => TREND_MEASURES.find((m) => m.key === key) ?? null

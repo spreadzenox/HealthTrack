@@ -90,7 +90,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   digestif rappelle « 5 = calme » (`detailSource`, trendsData.js, 4 tests ; capture `comparaison/jour-note-et-visage.png`).
 - [ ] **POLISH-SIM-5** Analyses et Agir vides pendant 28 jours : une phrase sur ce qui les remplit et quand ; compte à
   rebours compris (« encore 19 jours notés ») ; « 4 jours de plus avec une gêne » à réécrire.
-- [ ] **POLISH-SIM-6** Jargon : VFC, FC au repos, SpO₂ en toutes lettres une fois (Journal, Tendances), unités claires.
+- [x] **POLISH-SIM-6** ✅ 08/11 14:35 : dans Tendances, une ligne sous la courbe donne le nom complet et l'unité de « VFC
+  nuit » et « FC au repos » (`gloss`, TrendsViewer) ; le Journal ouvre cette courbe (une seule maison). Sources : « cœur
+  au repos », « variabilité cardiaque », « oxygène du sang ». Corrigé au passage : « attendu » seulement s'il y a un futur tracé.
 - [ ] **POLISH-SIM-7** Rejouer les personas « maigrir » et « stressé » avec leur objectif d'onboarding (l'outil ne le
   fixait pas) avant de juger l'Accueil trop centré sur la digestion.
 - [ ] **POLISH-SIM-8** (proposition au propriétaire, avec maquette ; pas de code en mode polish) Poids sur l'Accueil et

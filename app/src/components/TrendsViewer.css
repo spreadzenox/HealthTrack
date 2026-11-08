@@ -212,6 +212,20 @@ button.trends-chip {
   color: var(--text-muted);
 }
 
+/* POLISH-SIM-6 : nom en toutes lettres des abréviations affichées */
+.trends-gloss {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.trends-gloss-term {
+  font-weight: 600;
+}
+
 .trends-detail {
   margin-top: 10px;
   padding: 10px 12px;

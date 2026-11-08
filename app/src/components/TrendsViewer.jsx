@@ -83,8 +83,8 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
           <text x={x(today)} y={H - 6} textAnchor="middle">auj.</text>
         </g>
       )}
-      {/* POLISH-SIM-13 : la partie pointillée dit ce qu'elle est, une fois, au-dessus du futur. */}
-      {dates.includes(today) && dates.indexOf(today) < dates.length - 1 && (
+      {/* POLISH-SIM-13 : la partie pointillée dit ce qu'elle est, une fois, au-dessus du futur (seulement s'il est tracé). */}
+      {dates.includes(today) && keys.some((k) => series[k].some((p) => p.date > today)) && (
         <text className="trends-future-label" x={(x(today) + x(dates[dates.length - 1])) / 2} y={PAD.t - 6}
           textAnchor="middle">attendu</text>
       )}
@@ -376,6 +376,14 @@ export default function TrendsViewer({
           {selected
             ? <DayDetail data={data} keys={shown} date={selected} onClose={() => setSelected(null)} extra={dayExtra?.(selected, shown) ?? null} marks={marks} />
             : <p className="trends-hint">Touchez un jour pour son détail.</p>}
+          {shown.some((k) => trendMeasure(k).gloss) && (
+            // POLISH-SIM-6 : une abréviation dit son nom en toutes lettres une fois, ici
+            <ul className="trends-gloss">
+              {shown.map(trendMeasure).filter((m) => m.gloss).map((m) => (
+                <li key={m.key}><span className="trends-gloss-term">{m.label}</span> : {m.gloss}</li>
+              ))}
+            </ul>
+          )}
         </>
       ) : data.available.length ? (
         // T1 : aucune mesure choisie → les courbes disponibles en grandes puces, bien visibles

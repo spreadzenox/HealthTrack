@@ -8,6 +8,11 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 🔤 **VFC et FC au repos en toutes lettres (08/11 14:35)** : dans Tendances, sous la courbe, « VFC nuit : variabilité
+> de la fréquence cardiaque pendant la nuit, en millisecondes » ([capture](maquettes/agir-tendances/comparaison/semaine-vfc-clair.png)) ;
+> Sources dit « cœur au repos », « variabilité cardiaque », « oxygène du sang ». Au passage, « attendu » ne coiffe plus
+> une courbe sans partie future (VFC, pas). Constat des personas (POLISH-SIM-6).
+
 > ✏️ **Tendances : la partie pointillée dit « attendu » (08/11 13:35)** : après « auj. », le mot « attendu » coiffe la
 > courbe d'après vos habitudes ([clair](maquettes/agir-tendances/comparaison/semaine-attendu-clair.png) ·
 > [sombre](maquettes/agir-tendances/comparaison/semaine-attendu-sombre.png)). Constat des personas (POLISH-SIM-13).
@@ -351,6 +356,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 14:35 — [VFC en toutes lettres](runs/2026-11-08-1435-noms-en-toutes-lettres.md) | 🎨 | POLISH-SIM-6 : nom complet de VFC et FC au repos sous la courbe de Tendances, mots simples dans Sources ; « attendu » seulement avec un futur tracé |
 | 08/11 13:35 — [Tendances : « attendu »](runs/2026-11-08-1335-tendances-attendu.md) | 🎨 | POLISH-SIM-13 : le mot « attendu » au-dessus de la partie pointillée de la courbe ; test, captures claire et sombre |
 | 08/11 12:35 — [Gold jusqu'au 2/12, CI réparée](runs/2026-11-08-1235-until-j08-ci.md) | 🔧 | `until` posé au 2 décembre (invitation du 08/11) ; #830 mergée, CI de main reconstruite ; 100906 jamais construite (panne) ; note Alpha du 07/11 corrigée (partie avec 3 h de retard) |
 | 08/11 11:35 — [CI : miroir Maven](runs/2026-11-08-1135-ci-miroir-maven.md) | 🛠️ | Kotlin en 504 chez GitHub : miroir Google de Maven Central avant mavenCentral() ; reprise de #830, checks verts, merge refusé par le garde-fou de la session |

@@ -174,7 +174,7 @@ describe('sourceCoverage (« qui envoie quoi »)', () => {
     ]
     const cov = sourceCoverage(entries, NOW)
     const vfc = cov.find((m) => m.key === 'heartRateVariability')
-    expect(vfc).toMatchObject({ label: 'VFC', habitual: true, stopped: true, gapDays: 4 })
+    expect(vfc).toMatchObject({ label: 'variabilité cardiaque', habitual: true, stopped: true, gapDays: 4 })
     expect(cov.find((m) => m.key === 'heartRate')).toMatchObject({ habitual: true, stopped: false, gapDays: 0 })
     // ordre d'affichage : cœur avant VFC
     expect(cov.map((m) => m.key)).toEqual(['heartRate', 'heartRateVariability'])
@@ -203,7 +203,7 @@ describe('sourceCoverage (« qui envoie quoi »)', () => {
 
   it('montre : mesures courantes jamais reçues ; balance : rien à réclamer', () => {
     const watch = sourceCoverage([hr('2026-10-12T05:00:00Z'), { at: '2026-10-12T05:00:00Z', type: 'sleep' }], NOW)
-    expect(missingWatchMetrics(watch)).toEqual(['FC repos', 'VFC', 'SpO₂', 'pas'])
+    expect(missingWatchMetrics(watch)).toEqual(['cœur au repos', 'variabilité cardiaque', 'oxygène du sang', 'pas'])
     expect(missingWatchMetrics(sourceCoverage([{ at: '2026-10-12T05:00:00Z', type: 'weight' }], NOW))).toEqual([])
   })
 
@@ -211,7 +211,7 @@ describe('sourceCoverage (« qui envoie quoi »)', () => {
     const entries = daily(10, 0, (at) => ({ source: 'health_connect', at, type: 'heart_rate', payload: { sourceName: 'Gadgetbridge', subtype: 'heartRateVariability' } }))
     const [gb] = summarizeHealthConnectSources(entries, NOW)
     expect(gb.metrics).toHaveLength(1)
-    expect(gb.metrics[0]).toMatchObject({ label: 'VFC', days: 10, habitual: true, stopped: false })
+    expect(gb.metrics[0]).toMatchObject({ label: 'variabilité cardiaque', days: 10, habitual: true, stopped: false })
   })
 })
 
