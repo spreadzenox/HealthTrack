@@ -26,6 +26,8 @@
 > visite : [Aujourd'hui](maquettes/accueil/comparaison/11-visite-aujourdhui.png), [Journal](maquettes/accueil/comparaison/12-visite-journal.png),
 > [Analyses](maquettes/accueil/comparaison/13-visite-analyses.png), [Digestion](maquettes/accueil/comparaison/14-visite-digestion.png),
 > [Agir](maquettes/accueil/comparaison/15-visite-agir.png) ; sombre : [`maquettes/accueil/app/`](maquettes/accueil/app/).
+> **Envoyé aux testeurs** : versionCode **100918** placé sur Alpha à 19:52 (lancé à la main, tout vert), en examen
+> chez Google (quelques heures à 2 jours). PR #838, #840, #841.
 > Trois cartes (bienvenue, trois onglets, quand vos données sortent du téléphone), « Qu'est-ce qui vous amène ? » à
 > choix multiple (six personas), un seul écran « Branchez vos sources » (Health Connect d'un geste, carte Huawei si
 > Huawei Santé est installée, météo et temps d'écran en interrupteurs), « Voici ce que Halcya recevra » (reçu, en
