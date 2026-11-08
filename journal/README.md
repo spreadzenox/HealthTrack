@@ -13,6 +13,27 @@
 > [sombre](maquettes/agir-tendances/comparaison/jour-humeur-eveil-sombre.png)). Reste de T4 : « Nuits plus longues (7 h 46) »
 > est la moyenne des derniers jours ; dites-moi si vous voulez la nuit du seul jour, au singulier, comme la maquette.
 
+> 🚪 **Le nouvel accueil est là (chantier du 08/11 au soir, votre maquette v3)** — captures côte à côte avec la
+> maquette : [tuto](maquettes/accueil/comparaison/01-tuto1.png) · [confidentialité](maquettes/accueil/comparaison/03-tuto3.png) ·
+> [objectifs](maquettes/accueil/comparaison/04-goal.png) · [sources](maquettes/accueil/comparaison/05-sources.png) ·
+> [ce qui arrive](maquettes/accueil/comparaison/06-found.png) · [visage](maquettes/accueil/comparaison/07-face.png) ·
+> [première note](maquettes/accueil/comparaison/08-first.png) · [Gold](maquettes/accueil/comparaison/09-premium.png) ·
+> visite : [Aujourd'hui](maquettes/accueil/comparaison/11-visite-aujourdhui.png), [Journal](maquettes/accueil/comparaison/12-visite-journal.png),
+> [Analyses](maquettes/accueil/comparaison/13-visite-analyses.png), [Digestion](maquettes/accueil/comparaison/14-visite-digestion.png),
+> [Agir](maquettes/accueil/comparaison/15-visite-agir.png) ; sombre : [`maquettes/accueil/app/`](maquettes/accueil/app/).
+> Trois cartes (bienvenue, trois onglets, quand vos données sortent du téléphone), « Qu'est-ce qui vous amène ? » à
+> choix multiple (six personas), un seul écran « Branchez vos sources » (Health Connect d'un geste, carte Huawei si
+> Huawei Santé est installée, météo et temps d'écran en interrupteurs), « Voici ce que Halcya recevra » (reçu, en
+> partie ou pas partagée, avec la raison), le visage en deux tuiles, la première note en cinq visages, « Gold est
+> offert pendant le test ». Puis la **visite guidée sur les vrais écrans** : l'écran réel, puis « Voir dans 14 jours »
+> le remplit de données fictives (étiquette « Exemple · données fictives », compteur jour 1 → jour 14), jamais écrites
+> dans votre base. « Voir un exemple », en bas des écrans encore vides, la relance. Premières pistes au jour 14,
+> digestion au jour 28, partout. **Une question pour vous** : avec des données de démonstration, le moteur ne trouve
+> encore aucun lien net au jour 14 ; la visite montre donc « Aucun lien assez net pour l'instant » dans Pistes et un
+> Agir sans essai (le détail « Ce qui va avec » se remplit). Gardez-vous cet exemple honnête, ou voulez-vous un exemple
+> fabriqué avec un lien net ? **Vérification de la carte « quand vos données sortent »** : le code fait aussi sortir,
+> dans la version sideload seulement, la photo vers Gemini avec votre clé (le texte le dit alors, sans « en Europe »).
+
 > 👟 **Aujourd'hui : seulement les pas du jour (08/11 17:35)** : « Vos données du jour » n'affiche plus « Pas · hier » ;
 > la ligne vient dès que les pas d'aujourd'hui arrivent (le sommeil et la VFC gardent la nuit d'avant). Constat des
 > personas, 2 sur 2 (POLISH-SIM-2c). Ce soir 23:45, la version des testeurs part sur Alpha (le cron de GitHub peut
@@ -377,6 +398,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 18:10 — [Nouvel accueil](runs/2026-11-08-1810-nouvel-accueil.md) | 🚪 | Chantier accueil : #838 (ACC-1 à 4, 6, 7, 9), #840 (ACC-5, 10), visite guidée (ACC-8) ; captures côte à côte avec la maquette ; envoi Alpha à la main |
 | 08/11 17:35 — [Pas du jour](runs/2026-11-08-1735-pas-du-jour.md) | 🎨 | POLISH-SIM-2c : plus de « Pas · hier » dans « Vos données du jour » ; tests, captures |
 | 08/11 18:35 — [Humeur et éveil](runs/2026-11-08-1835-humeur-eveil-libelles.md) | 🎨 | T4-suite : « désagréable » / « agréable » à l'horizontale (maquette) ; test, captures claires et sombres |
 | 08/11 16:35 — [Rapport depuis Agir](runs/2026-11-08-1635-rapport-depuis-agir.md) | 🎨 | Merge de #835 (verte, non mergée au run précédent) ; POLISH-SIM-12 : lien Agir → rapport médecin, période bornée aux jours d'usage ; tests, captures |

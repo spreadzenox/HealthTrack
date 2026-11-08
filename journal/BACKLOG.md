@@ -42,17 +42,20 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **ACC-4** « Branchez vos sources » : Health Connect / Santé d'un geste (divulgation au-dessus du bouton), carte
   Huawei si Huawei Santé ou Honor Santé est installée (« Relier ma montre » → Sources à la fin de l'accueil),
   interrupteurs Météo et Temps d'écran. Même PR.
-- [ ] **ACC-5** « Voici ce que Halcya recevra » : appareils (`sourceName`, apps installées silencieuses avec leur
-  réglage) et tuiles des 30 jours livrés dans la PR 1 ; **reste** : mesures groupées par thème avec statut reçu / en
-  partie / pas partagée et leur raison (`src/devices/deviceCapabilities.js`, tiré de `PERSONAS.md`).
+- [x] **ACC-5** « Voici ce que Halcya recevra » : appareils (`sourceName`, apps installées silencieuses avec leur
+  réglage), mesures groupées par thème avec reçu / en partie / pas partagée et la raison
+  (`src/devices/deviceCapabilities.js`, tiré des 15 configurations), tuiles des 30 jours — #838, #840.
 - [x] **ACC-6** Visage : deux tuiles (déverrouillage mis en avant, Android ; ouverture), divulgation en 5 lignes,
   « Activer » / « Plus tard », notification annoncée sous les boutons. Même PR.
 - [x] **ACC-7** Première note : 5 visages, « Et votre ventre ? » avec digestion ou cycle, « Enregistrer » crée de
   vraies entrées. Même PR.
-- [ ] **ACC-8** Visite guidée sur les vrais écrans, données fictives jamais écrites dans la base, « Voir un exemple ».
+- [x] **ACC-8** Visite guidée sur les vrais écrans (13 étapes, digestion avec digestion ou cycle), données fictives en
+  mémoire (`src/storage/exampleMode.js`), jamais écrites dans la base, « Voir un exemple » les 14 premiers jours — PR
+  de la visite. Reste (question au propriétaire) : au jour 14 l'exemple ne montre aucun lien net (moteur honnête).
 - [x] **ACC-9** Play en période de lancement : écran court « Gold est offert pendant le test » (date du relais) ;
   sinon l'abonnement actuel, sans la croix qui doublait « Continuer gratuitement ». Même PR.
-- [ ] **ACC-10** Calendrier unique : premières pistes jour 14, digestion jour 28 (une constante, un test).
+- [x] **ACC-10** Calendrier unique `src/config/firstResults.js` (jour 14, jour 28), lu par le moteur, Aujourd'hui,
+  l'abonnement et la visite ; « vers le 21e jour » retiré, test — #840.
 
 ## 📈 Corrections du propriétaire du 07/11 vers 23:50 — Journal › Tendances (v896) — PRIORITÉ DES RUNS DE CODE (seule une CI cassée passe avant)
 
