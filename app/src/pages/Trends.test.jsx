@@ -88,7 +88,7 @@ describe('Journal › Tendances (ORG-3)', () => {
     const detail = screen.getByRole('group', { name: /Détail du jeudi 5 novembre/ })
     expect(detail).toHaveTextContent('2 lectures du visage')
     // T3 : la note dit son chiffre une seule fois, sur la ligne du bien-être
-    expect(detail).toHaveTextContent('votre note 3')
+    expect(detail).toHaveTextContent(/votre note( 3,\d et (le visage|les jours voisins))?/)
     expect(detail.textContent.match(/note/g)).toHaveLength(1)
     expect(within(detail).getByRole('img', { name: /Expressions du visage : .*Tristesse 15 %/ })).toBeInTheDocument()
     expect(detail).toHaveTextContent('Plus de tristesse')

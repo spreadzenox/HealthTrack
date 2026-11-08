@@ -12,6 +12,10 @@
 > erreur). L'envoi de ce soir 08/11 à 23:45 prendra la dernière version. S'il saute encore : onglet Actions → « Play —
 > Alpha (livraison continue) » → Run workflow (main). Je ne peux pas le lancer moi-même depuis la session.
 
+> 🔎 **Tendances : bien-être et note expliqués (08/11 07:35)** : quand le bien-être du jour (3,3) diffère de votre
+> note (3,4), la ligne dit « votre note 3,4 et le visage » (ou « et les jours voisins » sans lecture) ; le confort
+> digestif rappelle « 5 = calme » ([capture](maquettes/agir-tendances/comparaison/jour-note-et-visage.png)). Constat des personas (POLISH-SIM-4).
+
 > 📏 **Tendances : graduations rondes (08/11 06:35)** : 4 000, 6 000, 8 000 pas ; 6, 7, 8, 9 h, au lieu de « 4 651 » ou
 > « 6 / 7 / 9 » (POLISH-SIM-3b). **Chaque axe dit son unité (08/11 05:35)** : « /5 », « h », « pas », « ms », « bpm » en haut de l'axe ;
 > avec deux courbes, chaque axe prend la couleur de la sienne ([clair](maquettes/agir-tendances/comparaison/semaine-deux-axes-clair.png) ·
@@ -306,6 +310,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 07:35 — [Tendances : bien-être et note](runs/2026-11-08-0735-tendances-bien-etre-note.md) | 🎨 | POLISH-SIM-4 : la ligne du bien-être dit ce qui se mêle à la note ; « 5 = calme » pour le confort digestif ; capture |
 | 08/11 06:35 — [Tendances : graduations rondes](runs/2026-11-08-0635-tendances-graduations.md) | 🎨 | POLISH-SIM-3b : axes sur des valeurs rondes et régulières (pas de 1, 2, 2,5 ou 5 × 10ⁿ) ; captures clair et sombre refaites |
 | 08/11 05:35 — [Tendances : unités des axes](runs/2026-11-08-0535-tendances-unites-axes.md) | 🎨 | POLISH-SIM-3 : unité en tête de chaque axe, couleur de sa courbe avec deux axes ; captures clair et sombre |
 | 08/11 04:35 — [Tendances T4](runs/2026-11-08-0435-tendances-t4.md) | 🎨 | Étoile et Humeur et éveil avec l'habitude (démo refaite) ; « Ce qui a pu peser » dit ce qui s'est passé, en « pt » ; légendes de la maquette ; planches refaites |
