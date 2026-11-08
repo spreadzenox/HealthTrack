@@ -13,12 +13,12 @@
 
 .tour-shade {
   inset: 0;
-  background: rgba(10, 20, 18, 0.6);
+  background: var(--scrim);
 }
 
 .tour-spot {
   border-radius: var(--radius-card);
-  box-shadow: 0 0 0 9999px rgba(10, 20, 18, 0.6);
+  box-shadow: 0 0 0 9999px var(--scrim);
   outline: 2px solid var(--color-brand);
   transition: top 0.2s, left 0.2s, width 0.2s, height 0.2s;
 }
@@ -67,7 +67,7 @@
   border-radius: var(--radius-card);
   background: var(--color-bg);
   color: var(--text);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 28px var(--shadow);
 }
 
 .tour-title {

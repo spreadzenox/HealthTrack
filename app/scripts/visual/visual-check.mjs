@@ -1383,6 +1383,8 @@ async function main() {
             await page.waitForTimeout(700)
           }
         }
+        // --settle=2500 : laisse finir calculs et animations après les clics (visite guidée, ACC-8)
+        if (args.settle) await page.waitForTimeout(Number(args.settle))
         // Tous les chevrons « détails » et volets <details> ouverts d'un coup (relecture des textes dépliés, SLOP-1b-8).
         if (args['open-details']) {
           await page.evaluate(() => {

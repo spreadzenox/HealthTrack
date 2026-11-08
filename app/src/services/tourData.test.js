@@ -30,6 +30,12 @@ describe('données fictives de la visite (ACC-8)', () => {
     expect(gut.filter((e) => e.payload.level !== 'calm').length).toBeGreaterThanOrEqual(5)
   })
 
+  it('rien dans le futur : la note du soir d’aujourd’hui est ramenée à tout à l’heure', () => {
+    const list = buildTourEntries({ days: 14, now: NOW })
+    expect(list.every((e) => Date.parse(e.at) <= NOW.getTime())).toBe(true)
+    expect(list.some((e) => e.type === 'wellbeing' && new Date(e.at).toDateString() === NOW.toDateString())).toBe(true)
+  })
+
   it('aucune entrée n’a d’identifiant : elles ne visent jamais la base', () => {
     expect(buildTourEntries({ days: 14, now: NOW }).every((e) => e.id === undefined)).toBe(true)
   })

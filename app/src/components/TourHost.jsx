@@ -5,6 +5,8 @@
 import { Suspense, lazy, useCallback, useEffect, useState } from 'react'
 import { loadOnboarding } from '../settings/onboarding'
 import { TOUR_START_EVENT } from '../services/tour'
+// Chargé d'emblée, comme tout le CSS (la visite elle-même est chargée à la demande)
+import './GuidedTour.css'
 
 const GuidedTour = lazy(() => import('./GuidedTour'))
 

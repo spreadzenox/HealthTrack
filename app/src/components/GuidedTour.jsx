@@ -10,8 +10,9 @@ import { enterExampleMode, exitExampleMode } from '../storage/exampleMode'
 import { buildTourEntries, receivedMeasures } from '../services/tourData'
 import { goalsOf, loadOnboarding, saveOnboarding, wantsGut } from '../settings/onboarding'
 import { isFaceSenseEnabled } from '../services/faceSense'
+import { getWeatherSettings } from '../services/weatherSync'
+import { getPhoneUsageSettings } from '../services/phoneUsageSync'
 import { tourSteps } from '../services/tour'
-import './GuidedTour.css'
 
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
@@ -58,6 +59,12 @@ function Tour({ onEnd }) {
   const [revealing, setRevealing] = useState(false)
   const shownDays = useRef(0)
 
+  // « Voir un exemple » se cache pendant la visite
+  useEffect(() => {
+    document.body.classList.add('tour-open')
+    return () => document.body.classList.remove('tour-open')
+  }, [])
+
   // Ce que la personne reçoit vraiment (ACC-5), lu dans sa base avant tout exemple
   useEffect(() => {
     let alive = true
@@ -66,7 +73,15 @@ function Tour({ onEnd }) {
       .then((received) => {
         if (!alive) return
         const s = loadOnboarding()
-        setCtx({ received, hc: received.size > 0 || s.health === 'granted' || s.huawei === 'pair', face: isFaceSenseEnabled(), gut: wantsGut(goalsOf(s)) })
+        setCtx({
+          received,
+          hc: received.size > 0 || s.health === 'granted' || s.huawei === 'pair',
+          face: isFaceSenseEnabled(),
+          gut: wantsGut(goalsOf(s)),
+          weather: getWeatherSettings().enabled,
+          screen: getPhoneUsageSettings().enabled,
+          huawei: s.huawei === 'pair',
+        })
       })
     return () => {
       alive = false
@@ -82,9 +97,9 @@ function Tour({ onEnd }) {
     if (!step.days) {
       exitExampleMode()
       shownDays.current = 0
-    } else if (shownDays.current !== step.days) {
-      shownDays.current = step.days
-      enterExampleMode(buildTourEntries({ days: step.days, received: ctx.received, face: ctx.face }))
+    } else if (shownDays.current !== (step.dataDays ?? step.days)) {
+      shownDays.current = step.dataDays ?? step.days
+      enterExampleMode(buildTourEntries({ ...ctx, days: shownDays.current }))
     }
   }, [step, ctx, navigate])
 
