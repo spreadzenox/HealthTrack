@@ -137,9 +137,12 @@ export default function Premium({ context = null, onClose = null }) {
     <section className="paywall">
       <div className="paywall-top">
         <span className="paywall-tag">{launch ? 'gold' : 'premium'}</span>
-        <button type="button" className="paywall-close" onClick={close} aria-label="Fermer">
-          ×
-        </button>
+        {/* Accueil (ACC-9) : « Continuer gratuitement », en bas, suffit ; la croix le doublait */}
+        {!onboarding && (
+          <button type="button" className="paywall-close" onClick={close} aria-label="Fermer">
+            ×
+          </button>
+        )}
       </div>
 
       <h2 className="paywall-title">{launch ? 'Gold offert pendant le test' : 'Comprendre vos bons et mauvais jours'}</h2>

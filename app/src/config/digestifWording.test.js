@@ -9,7 +9,8 @@ import { join, relative } from 'node:path'
  * ventre » reste reconnu) ne sont pas des textes affichés.
  */
 const APP = join(import.meta.dirname, '..', '..')
-const ALLOWED = [/recommendations\/ventre/, /mal au ventre/, /signals:/]
+// « Et votre ventre ? » (première note de l'accueil, ACC-7) : texte exact validé par le propriétaire le 08/11
+const ALLOWED = [/recommendations\/ventre/, /mal au ventre/, /signals:/, /Et votre ventre ?/]
 
 function files(dir, out = []) {
   for (const f of readdirSync(dir)) {

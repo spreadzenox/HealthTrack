@@ -31,7 +31,7 @@ const billing = vi.hoisted(() => ({ loadPlans: vi.fn() }))
 vi.mock('../services/playBilling', async (importOriginal) => ({ ...(await importOriginal()), ...billing }))
 
 import Onboarding from './Onboarding'
-import { loadOnboarding, saveOnboarding } from '../settings/onboarding'
+import { FLOW_VERSION, loadOnboarding, saveOnboarding } from '../settings/onboarding'
 
 function renderAt() {
   return render(
@@ -45,9 +45,10 @@ function renderAt() {
 }
 
 const cont = () => screen.getByRole('button', { name: 'Continuer' })
-const heading = () => screen.getByRole('heading', { name: 'Votre bien-être, estimé tout seul' })
+const heading = () => screen.getByRole('heading', { name: 'Votre bien-être, sans rien noter' })
+const atFace = (extra = {}) => saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'face', goals: ['gut'], ...extra })
 
-describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
+describe('Nouvel accueil (ACC-6) : lecture du visage facultative', () => {
   beforeEach(() => {
     localStorage.clear()
     vi.clearAllMocks()
@@ -56,153 +57,135 @@ describe('Onboarding (jalon 4c-2) : lecture du visage facultative', () => {
     face.enabled = false
     face.status = null
     billing.loadPlans.mockResolvedValue([])
-    trial.runFaceTrial.mockResolvedValue({ outcome: 'read', estimate: { label: 'plutôt bien', note: 3.4, low: 2.9, high: 3.9 } })
+    trial.runFaceTrial.mockResolvedValue({ outcome: 'read', estimate: { label: 'plutôt bien', note: 3.4, low: 2.9, hi: 3.9 } })
   })
 
-  it('placée après la montre et avant le premier geste ; facultative', () => {
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
+  it('après « ce qui a été trouvé », avant la première note ; divulgation en cinq lignes ; compteur 05/06', () => {
+    atFace()
     renderAt()
     expect(heading()).toBeInTheDocument()
-    expect(screen.getByText('06/08')).toBeInTheDocument()
-    expect(screen.getByText(/Il ne remplace pas l’avis d’un médecin/)).toBeInTheDocument()
-    expect(screen.getByText(/quand vous déverrouillez le téléphone/)).toBeInTheDocument()
-    expect(cont()).toBeEnabled()
-    fireEvent.click(cont())
-    expect(screen.getByRole('heading', { name: 'Comment va votre digestion ?' })).toBeInTheDocument()
+    expect(screen.getByText('05/06')).toBeInTheDocument()
+    for (const t of ['Ce qui est lu', 'Ce qui est gardé', 'Où', 'Ce que c’est', 'Comment l’arrêter']) expect(screen.getByText(t)).toBeInTheDocument()
+    expect(screen.getByText(/pas un avis médical/)).toBeInTheDocument()
+    expect(screen.getByText('À chaque déverrouillage')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Activer' })).toHaveClass('btn-primary')
+    // un seul bouton plein tant qu'aucun choix n'est fait
+    expect(screen.queryByRole('button', { name: 'Continuer' })).not.toBeInTheDocument()
   })
 
-  it('absente quand le téléphone ne sait pas lire le visage', () => {
+  it('absente quand le téléphone ne sait pas lire le visage (compteur 05/05)', () => {
     face.available = false
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'first' })
     renderAt()
-    expect(screen.getByRole('heading', { name: 'Comment va votre digestion ?' })).toBeInTheDocument()
-    expect(screen.getByText('06/07')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Comment vous sentez-vous maintenant ?' })).toBeInTheDocument()
+    expect(screen.getByText('05/05')).toBeInTheDocument()
   })
 
-  it('« Plus tard » ne demande rien', () => {
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
+  it('« Plus tard » passe à la suite sans rien demander', () => {
+    atFace()
     renderAt()
     fireEvent.click(screen.getByRole('button', { name: 'Plus tard' }))
     expect(trial.runFaceTrial).not.toHaveBeenCalled()
-    expect(screen.queryByText('Avant d’autoriser la caméra')).not.toBeInTheDocument()
-    expect(loadOnboarding().face).toBe('later')
-    expect(screen.getByText('Vous pourrez l’activer plus tard depuis l’onglet Sources.')).toBeInTheDocument()
+    expect(loadOnboarding()).toMatchObject({ face: 'later', unlockLater: true })
+    expect(screen.getByRole('heading', { name: 'Comment vous sentez-vous maintenant ?' })).toBeInTheDocument()
   })
 
-  it('« Essayer maintenant » : divulgation puis lecture d’essai et son estimation', async () => {
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
+  it('« Activer » lance la lecture d’un geste (la divulgation est sur l’écran) ; puis « Continuer »', async () => {
+    atFace()
     renderAt()
-    fireEvent.click(screen.getByRole('button', { name: 'Essayer maintenant' }))
-    expect(screen.getByText('Avant d’autoriser la caméra')).toBeInTheDocument()
-    expect(trial.runFaceTrial).not.toHaveBeenCalled()
-    fireEvent.click(screen.getByRole('button', { name: 'J’accepte, autoriser la caméra' }))
-    await waitFor(() => expect(screen.getByText(/Lecture faite : plutôt bien/)).toBeInTheDocument())
-    expect(screen.getByText('3,7 / 5')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Activer' }))
+    await waitFor(() => expect(loadOnboarding().face).toBe('on'))
     expect(trial.runFaceTrial).toHaveBeenCalledOnce()
-    expect(loadOnboarding().face).toBe('on')
-    expect(screen.queryByRole('button', { name: 'Essayer maintenant' })).not.toBeInTheDocument()
-  })
-
-  it('« Pas maintenant » dans la divulgation : rien n’est demandé à Android', async () => {
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
-    renderAt()
-    fireEvent.click(screen.getByRole('button', { name: 'Essayer maintenant' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Pas maintenant' }))
-    await waitFor(() => expect(loadOnboarding().face).toBe('later'))
-    expect(trial.runFaceTrial).not.toHaveBeenCalled()
+    expect(screen.getByText('C’est activé.')).toBeInTheDocument()
+    expect(cont()).toBeEnabled()
   })
 
   it('caméra refusée : le dit, rien d’activé, on peut réessayer', async () => {
     trial.runFaceTrial.mockResolvedValue({ outcome: 'denied', estimate: null })
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
+    atFace()
     renderAt()
-    fireEvent.click(screen.getByRole('button', { name: 'Essayer maintenant' }))
-    fireEvent.click(screen.getByRole('button', { name: 'J’accepte, autoriser la caméra' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Activer' }))
     await waitFor(() => expect(screen.getByText(/Accès à la caméra refusé/)).toBeInTheDocument())
-    expect(screen.getByRole('button', { name: 'Essayer maintenant' })).toBeInTheDocument()
-  })
-
-  it('variante play : divulgation « à l’ouverture de l’app »', async () => {
-    variant.name = 'play'
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
-    renderAt()
-    expect(screen.getByText(/quand vous ouvrez l’app/)).toBeInTheDocument()
-    fireEvent.click(await screen.findByRole('button', { name: 'Essayer maintenant' }))
-    expect(screen.getByText(/Quand vous ouvrez/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Activer' })).toBeInTheDocument()
+    expect(cont()).toBeEnabled()
   })
 
   it('déjà activée : le dit sans redemander', () => {
     face.enabled = true
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
+    atFace()
     renderAt()
-    expect(screen.getByText('La lecture du visage est déjà activée.')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Essayer maintenant' })).not.toBeInTheDocument()
+    expect(screen.getByText('C’est activé.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Activer' })).not.toBeInTheDocument()
   })
 
-  describe('variante play avec la lecture au déverrouillage (demande du 31/10)', () => {
+  describe('variante play', () => {
     beforeEach(() => {
       variant.name = 'play'
+    })
+
+    it('avec la lecture au déverrouillage : deux tuiles, le déverrouillage choisi d’avance, la notification annoncée', async () => {
       face.status = { mode: 'app_open', unlockAvailable: true, unlock: false }
-      saveOnboarding({ goal: 'gut', watch: 'none', step: 5 })
-    })
-
-    it('met le déverrouillage en avant : « Activer » principal, « Plus tard » bien visible, rien de précoché', async () => {
+      atFace()
       renderAt()
-      const activate = await screen.findByRole('button', { name: 'Activer' })
-      expect(activate).toHaveClass('btn-primary')
-      expect(screen.getByRole('button', { name: 'Plus tard' })).toHaveClass('btn')
-      expect(screen.getByText('À chaque déverrouillage')).toBeInTheDocument()
-      expect(screen.getByText(/une estimation plus solide/)).toBeInTheDocument()
-      expect(screen.getByText(/à chaque déverrouillage du téléphone/)).toBeInTheDocument()
-      expect(screen.queryByRole('button', { name: 'Essayer maintenant' })).not.toBeInTheDocument()
-      expect(screen.queryByText(/%/)).not.toBeInTheDocument()
+      expect(await screen.findByText('À chaque déverrouillage')).toBeInTheDocument()
+      expect(screen.getByText('Quand vous ouvrez Halcya')).toBeInTheDocument()
+      expect(screen.getByRole('radio', { name: /À chaque déverrouillage/ })).toBeChecked()
+      expect(screen.getByText(/Android vous demandera ensuite les notifications/)).toBeInTheDocument()
       expect(loadOnboarding().face).toBeUndefined()
-      expect(face.startFaceUnlock).not.toHaveBeenCalled()
-      // un seul bouton plein à l'écran tant qu'aucun choix n'est fait
-      expect(screen.queryByRole('button', { name: 'Continuer' })).not.toBeInTheDocument()
-    })
-
-    it('« Plus tard » passe à l’écran suivant sans rien demander', async () => {
-      renderAt()
-      await screen.findByRole('button', { name: 'Activer' })
-      fireEvent.click(screen.getByRole('button', { name: 'Plus tard' }))
-      expect(screen.getByRole('heading', { name: 'Comment va votre digestion ?' })).toBeInTheDocument()
-      expect(loadOnboarding().face).toBe('later')
-      // seul ce « Plus tard » ouvre droit au rappel de l'Accueil (POL-PLAY-84)
-      expect(loadOnboarding().unlockLater).toBe(true)
-      expect(trial.runFaceTrial).not.toHaveBeenCalled()
-      expect(face.startFaceUnlock).not.toHaveBeenCalled()
-    })
-
-    it('« Activer » : divulgation complète d’abord, puis lecture d’essai par le déverrouillage', async () => {
-      renderAt()
-      fireEvent.click(await screen.findByRole('button', { name: 'Activer' }))
-      expect(screen.getByText('Avant d’activer la lecture du visage')).toBeInTheDocument()
-      expect(screen.getByText(/Aucune image n’est conservée/)).toBeInTheDocument()
-      expect(screen.getByText(/bouton « Arrêter »/)).toBeInTheDocument()
-      expect(trial.runFaceTrial).not.toHaveBeenCalled()
-      fireEvent.click(screen.getByRole('button', { name: 'J’accepte, activer' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Activer' }))
       await waitFor(() => expect(loadOnboarding().face).toBe('on'))
-      expect(cont()).toBeEnabled()
       const opts = trial.runFaceTrial.mock.calls[0][0]
       await opts.start('plugin')
       expect(face.startFaceUnlock).toHaveBeenCalledWith('plugin')
     })
 
-    it('refus respecté : « Plus tard » et « Pas maintenant » ne demandent rien', async () => {
+    it('« Quand vous ouvrez Halcya » choisi : lecture à l’ouverture, sans annonce de notification', async () => {
+      face.status = { mode: 'app_open', unlockAvailable: true, unlock: false }
+      atFace()
       renderAt()
-      fireEvent.click(await screen.findByRole('button', { name: 'Activer' }))
-      fireEvent.click(screen.getByRole('button', { name: 'Pas maintenant' }))
-      await waitFor(() => expect(loadOnboarding().face).toBe('later'))
-      expect(trial.runFaceTrial).not.toHaveBeenCalled()
-      expect(loadOnboarding().unlockLater).toBeUndefined()
+      fireEvent.click(await screen.findByRole('radio', { name: /Quand vous ouvrez Halcya/ }))
+      expect(screen.queryByText(/Android vous demandera ensuite les notifications/)).not.toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'Activer' }))
+      await waitFor(() => expect(loadOnboarding().face).toBe('on'))
+      expect(trial.runFaceTrial.mock.calls[0][0]).toBeUndefined()
     })
 
-    it('version play sans l’interrupteur : l’écran habituel, sans mise en avant', async () => {
+    it('sans l’interrupteur faceUnlockPlay : seulement « Quand vous ouvrez Halcya »', async () => {
       face.status = { mode: 'app_open', unlockAvailable: false }
+      atFace()
       renderAt()
-      expect(await screen.findByRole('button', { name: 'Essayer maintenant' })).toBeInTheDocument()
+      expect(await screen.findByText('Quand vous ouvrez Halcya')).toBeInTheDocument()
       expect(screen.queryByText('À chaque déverrouillage')).not.toBeInTheDocument()
     })
+  })
+})
+
+describe('Nouvel accueil (ACC-9) : Gold pendant le test, abonnement sinon', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+    variant.name = 'play'
+    face.available = false
+    billing.loadPlans.mockResolvedValue([])
+  })
+
+  it('période de lancement : un écran court « Gold est offert pendant le test », date du relais, puis Aujourd’hui', async () => {
+    localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'launch', launchUntil: '2026-12-02T23:00:00Z' }))
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'premium' })
+    renderAt()
+    expect(screen.getByText('06/06')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Gold est offert pendant le test' })).toBeInTheDocument()
+    expect(screen.getByText(/jusqu’au .*déc.* inclus\. Aucune carte bancaire n’est demandée\./)).toBeInTheDocument()
+    fireEvent.click(cont())
+    expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
+    expect(loadOnboarding().done).toBe(true)
+  })
+
+  it('hors période : l’écran d’abonnement, sans croix qui double « Continuer gratuitement »', async () => {
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'premium' })
+    renderAt()
+    expect(screen.queryByRole('button', { name: 'Fermer' })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Continuer gratuitement' }))
+    expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
   })
 })

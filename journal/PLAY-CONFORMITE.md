@@ -247,6 +247,23 @@ ventre (« ce qui va avec vos bons et mauvais jours ») ; rien n'est envoyé à 
   avant le premier envoi), **Health Connect** (avant la boîte de Google, avec la permission d'historique, jalon 8),
   **Bluetooth** (montre, avant « Appareils à proximité »).
 
+### 3 bis. Nouvel accueil du 08/11 (ACC-4, ACC-6) : divulgation écrite au-dessus de chaque bouton
+
+- Plus de feuille de divulgation dans l'accueil : chaque accès a son texte sur l'écran même, juste au-dessus de son
+  bouton, et le bouton est l'accord (geste explicite, rien de précoché, refus sans effet sur la suite).
+  - Health Connect : « Halcya lit vos pas, votre sommeil, ce que vos appareils mesurent et vos 30 derniers jours.
+    Elle n'écrit rien et n'envoie rien. Vous choisissez type par type. » → « Connecter Health Connect » (fenêtre
+    d'Android, avec l'historique de plus de 30 jours).
+  - Météo : « votre ville, à quelques kilomètres près : le téléphone demande votre position approximative » →
+    interrupteur.
+  - Temps d'écran : « le temps passé sur le téléphone, le soir surtout, sans rien lire de ce que vous y faites. Android
+    ouvre un réglage : activez-y Halcya. » → interrupteur.
+  - Visage : « Ce qui est lu / Ce qui est gardé / Où / Ce que c'est / Comment l'arrêter » (5 lignes), puis « Activer »
+    (principal) et « Plus tard » ; sous les boutons, si le déverrouillage est choisi : « Android vous demandera ensuite
+    les notifications : pendant la lecture, Halcya affiche la sienne. »
+- Ailleurs (Sources, Paramètres), les feuilles « J'accepte, … » restent. Test-garde : `permissionDisclosures.test.js`
+  (cas INLINE pour l'accueil).
+
 ## 4. Suite (dans `BACKLOG.md`)
 
 1. ✅ **3b-2 (21/10 10:30)** : manifeste `play` qui retire `FaceSenseService`, `FaceResumeJob`,

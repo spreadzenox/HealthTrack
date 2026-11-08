@@ -47,12 +47,10 @@ describe('divulgations avant les autorisations sensibles', () => {
     ['src/components/FaceSenseCard.jsx', /startFaceSense\(/, /askConsent\(appOpen \? 'camera_app_open' : 'camera'\)/],
     ['src/components/FaceSenseCard.jsx', /startFaceUnlock\(/, "askConsent('camera_unlock')"],
     ['src/components/WeatherCard.jsx', /getPosition\(\)/, "askConsent('location')"],
-    ['src/pages/Onboarding.jsx', /getApproxPosition\(\)/, "askConsent('location')"],
     ['src/components/PhoneUsageCard.jsx', /openSettings\(\)/, "askConsent('usage')"],
     ['src/pages/Food.jsx', /analyzeMealPhoto\(/, "askConsent('ai_meal')"],
     ['src/components/NewMealForm.jsx', /analyzeMealDescription\(/, "askConsent('ai_meal')"],
     ['src/components/StoolPhotoLine.jsx', /analyzeStoolPhoto\(/, "askConsent('ai_stool')"],
-    ['src/pages/Onboarding.jsx', /requestPermissions\(\)/, "askConsent('health_connect')"],
     ['src/pages/Connectors.jsx', /requestPermissions\(\)/, "askConsent('health_connect')"],
   ]
   it.each(GUARDED)('%s demande l’accord avant la demande à Android', (file, request, consent) => {
@@ -60,6 +58,20 @@ describe('divulgations avant les autorisations sensibles', () => {
     expect(code).toMatch(request)
     if (consent instanceof RegExp) expect(code).toMatch(consent)
     else expect(code).toContain(consent)
+  })
+
+  // Nouvel accueil (ACC-4, ACC-6, 08/11) : chaque divulgation est écrite juste au-dessus de son bouton, sur l'écran
+  // même (règles Play : divulgation visible et geste explicite) ; le bouton est l'accord.
+  const INLINE = [
+    [/requestPermissions\(\)/, /Elle n’écrit rien et\s+n’envoie rien\. Vous choisissez type par type\./],
+    [/getApproxPosition\(\)/, /votre ville, à quelques kilomètres près : le téléphone demande votre position approximative/],
+    [/openPhoneUsageAccessSettings\(\)/, /sans rien lire de ce que vous y faites\. Android ouvre un\s+réglage : activez-y/],
+    [/runFaceTrial\(/, /l’image est effacée aussitôt, seul le score de la lecture reste/],
+  ]
+  it.each(INLINE)('accueil : %s a sa divulgation écrite sur l’écran', (request, text) => {
+    const code = fs.readFileSync(path.resolve('src/pages/Onboarding.jsx'), 'utf8')
+    expect(code).toMatch(request)
+    expect(code).toMatch(text)
   })
 
   it('aucun autre écran ne lit la position ni ne démarre la caméra sans divulgation', () => {
@@ -70,7 +82,7 @@ describe('divulgations avant les autorisations sensibles', () => {
       if (!/\.jsx?$/.test(d.name) || /\.test\./.test(d.name)) return
       const code = fs.readFileSync(p, 'utf8')
       if (/getCurrentPosition\(|getApproxPosition\(|startFaceSense\(|openPhoneUsageAccessSettings\(/.test(code) && !/askConsent\(/.test(code)
-        && !/^src\/services\//.test(path.relative(path.resolve(), p))) offenders.push(path.relative(path.resolve(), p))
+        && !/^src\/services\//.test(path.relative(path.resolve(), p)) && !p.endsWith('pages/Onboarding.jsx')) offenders.push(path.relative(path.resolve(), p))
     })
     walk(path.resolve('src'))
     expect(offenders).toEqual([])

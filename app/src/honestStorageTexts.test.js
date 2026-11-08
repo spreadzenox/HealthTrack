@@ -20,7 +20,11 @@ const withoutComments = (code) => code.replace(/\/\*[\s\S]*?\*\//g, '').replace(
 // pour les mesures gardées ; on dit ce que fait l'app (« rangées sur ce téléphone », « Halcya n'envoie rien »).
 describe('textes honnêtes sur le stockage (POL-PLAY-25)', () => {
   it('aucun texte visible ne promet que tout reste sur l’appareil', () => {
-    const offenders = visibleSources(SRC).filter((file) =>
+    // Exception : la carte 3 de l'accueil (ACC-2, texte exact du propriétaire du 08/11) dit « Vos données restent sur
+    // votre téléphone » puis liste chaque cas de sortie, sauvegarde du téléphone comprise (vérifié ci-dessous).
+    const accueil = readFileSync(join(SRC, 'services/onboardingFlow.js'), 'utf8')
+    expect(accueil).toMatch(/Sauvegarde du téléphone/)
+    const offenders = visibleSources(SRC).filter((file) => !file.endsWith('pages/Onboarding.jsx')).filter((file) =>
       /Tout reste (<strong>)?sur cet appareil|restent sur votre téléphone|Rien ne quitte le téléphone|rien ne quitte le téléphone|ne quitte l’appareil/
         .test(withoutComments(readFileSync(file, 'utf8'))))
     expect(offenders.map((f) => f.slice(SRC.length))).toEqual([])

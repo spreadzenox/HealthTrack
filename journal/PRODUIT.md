@@ -18,6 +18,17 @@
 > Méta-leçons B (conception, 7 à 11, et leçon de design 18) : `DESIGN.md` § 9 ; C (travail de la routine, 12 à 17) :
 > charte de `README.md`.
 
+> **Chantier accueil du 08/11 au soir** (détail et cases : `BACKLOG.md`, ACC-1 à ACC-10). Mots du propriétaire
+> (08/11 vers 13:30) : « Non, aujourd'hui, ce sur quoi on va travailler, ça va être l'ensemble du tutoriel d'accueil. Je pense qu'on peut le rework complètement aujourd'hui. Quand à la première installation, il y a beaucoup de choses qui se passent, mais je suis pas du tout convaincu. J'aimerais bien faire un petit tutoriel qui explique bien comment fonctionne l'app, etc. La première installation qui permet à la personne de brancher toutes ses sources etc., etc. Et ensuite d'avoir potentiellement une petite preview en fait de ce que donnera l'application une fois qu'elle aura des données. » Il veut que ce soit « prêt avant minuit ce soir ». Maquette v3 validée le 08/11 vers
+> 18:00 : « C'est parfait go développer faut que ce soit up ce soir à minuit ». Décisions qu'elle porte :
+> D1 l'écran « Que voulez-vous suivre ? » disparaît ; D2 la détection remplace « Avez-vous une montre ? », météo et
+> temps d'écran sur le même écran ; D3 la visite guidée sur la vraie app (ACC-8) remplace l'aperçu dessiné, relancée
+> par « Voir un exemple » ; D4 ce que l'appareil mesure sans le partager est montré, avec la raison ; D5 le rappel du
+> soir n'est pas proposé pendant l'accueil ; D6 écran court « Gold est offert pendant le test » sur Android pendant la
+> période de lancement, écran d'abonnement actuel sur iPhone ; D7 tout l'accueil ce soir ; D8 jour 14 et jour 28
+> partout ; D9 « Mon cycle » met en avant le ventre et les douleurs, l'app ne lit pas le cycle ce soir (le lire depuis
+> Health Connect ou Santé = proposition pour plus tard, avec la déclaration Google, jamais sans son accord).
+
 > **Décisions du propriétaire du 07/11 au soir** (inscrites au run du 08/11 00:35 ; détail et étapes dans `BACKLOG.md`,
 > section « Décisions du 07/11 au soir ») :
 > - **(A) Mode polish dès le 09/11** (Android et iPhone, à partir de la version des testeurs du 08/11 au soir) : plus de

@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nouvel accueil Halcya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Mise en page : à gauche le choix du matériel, au centre le téléphone qui joue l'accueil, à droite les notes de l'écran.
+   La page suit le thème du lecteur ; le téléphone montre toujours l'app en thème clair (son thème par défaut). */
+:root {
+  --bg: #eef2f0;
+  --panel: #ffffff;
+  --line: #dfe6e3;
+  --ink: #10231d;
+  --ink-2: #4a5e57;
+  --accent: #0b7a5e;
+  --on-accent: #ffffff;
+  --warn: #9a4a10;
+  --font-display: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c1613; --panel: #13211c; --line: #2a3b35; --ink: #e8f1ed; --ink-2: #a7bab3;
+    --accent: #3fc79c; --on-accent: #06231a; --warn: #f0a46b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c1613; --panel: #13211c; --line: #2a3b35; --ink: #e8f1ed; --ink-2: #a7bab3;
+  --accent: #3fc79c; --on-accent: #06231a; --warn: #f0a46b; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.45; }
+button { font: inherit; }
+button:focus-visible, select:focus-visible, [data-act]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 22px 16px 56px; display: grid; gap: 18px; }
+.intro { display: grid; gap: 6px; max-width: 70ch; }
+.intro h1 { font-family: var(--font-display); font-weight: 800; font-size: 26px; margin: 0; text-wrap: balance; }
+.intro p { margin: 0; color: var(--ink-2); }
+.layout { display: grid; grid-template-columns: 300px 380px minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 1100px) { .layout { grid-template-columns: 380px minmax(0, 1fr); } .side { grid-column: 1 / -1; } }
+@media (max-width: 780px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.box { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 16px; display: grid; gap: 12px; }
+.box h2 { font-family: var(--font-display); font-size: 17px; margin: 0; }
+.box p { margin: 0; }
+.muted { color: var(--ink-2); font-size: 14px; }
+.cfgs { display: grid; gap: 6px; max-height: 520px; overflow-y: auto; padding-right: 2px; }
+@media (max-width: 1100px) { .cfgs { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); max-height: none; } }
+.cfg { text-align: left; border: 1.5px solid var(--line); background: transparent; color: var(--ink); border-radius: 12px; padding: 8px 10px; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; }
+.cfg b { font-size: 14.5px; }
+.cfg .os { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-2); }
+.cfg .w { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-2); align-self: center; grid-row: 1 / span 2; grid-column: 2; }
+.cfg.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.cfg-group { font-family: var(--font-mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); margin-top: 6px; }
+@media (max-width: 1100px) { .cfg-group { grid-column: 1 / -1; } }
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+.seg button { border: 0; background: transparent; color: var(--ink-2); border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: 14px; cursor: pointer; }
+.seg button.on { background: var(--accent); color: var(--on-accent); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.linkbtn { border: 0; background: transparent; color: var(--accent); font-weight: 700; cursor: pointer; padding: 6px 2px; font-size: 14.5px; }
+.stage { display: grid; gap: 10px; justify-items: center; }
+.stepper { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.stepper button { border: 1.5px solid var(--line); background: var(--panel); color: var(--ink-2); border-radius: 999px; padding: 4px 10px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.stepper button.on { border-color: var(--accent); color: var(--accent); }
+.notes h3 { font-size: 15px; margin: 4px 0 0; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.notes li { font-size: 14.5px; }
+.tagline { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); }
+.decisions ol { margin: 0; padding-left: 22px; display: grid; gap: 10px; }
+.decisions li { font-size: 15px; }
+.decisions li b { font-family: var(--font-mono); font-size: 13px; }
+.board { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 18px; }
+.board .cell { display: grid; gap: 6px; justify-items: center; }
+.board .cell .cap { font-size: 14px; color: var(--ink-2); font-weight: 600; }
+
+/* ---------- Le téléphone : l'app Halcya, thème clair, tokens de journal/DESIGN.md ---------- */
+.phone {
+  --a-bg: #ffffff; --a-surface: #f4f6f5; --a-border: #e3e8e6; --a-ink: #10231d; --a-ink2: #4a5e57; --a-brand: #0b7a5e;
+  --mint-bg: #e3f5ee; --mint-label: #0b6b53; --peach-bg: #ffebdd; --peach-label: #8a3a12;
+  --lilac-bg: #ece9ff; --lilac-label: #4b3fc9; --night-bg: #e4eaf7; --night-label: #2c3f7a;
+  --rose-bg: #fbe6ee; --rose-label: #a3214f; --stone-bg: #eef0ef; --stone-label: #4a5550;
+  --amber: #ffb84d; --mint-vif: #5ee0b5;
+  width: 360px; max-width: 100%; min-height: 740px; background: var(--a-bg); color: var(--a-ink);
+  border: 8px solid #10231d; border-radius: 40px; overflow: hidden; position: relative; display: flex; flex-direction: column;
+  color-scheme: light; font-size: 15.5px;
+}
+.statusbar { display: flex; justify-content: space-between; align-items: center; padding: 8px 20px 4px; font-family: var(--font-mono); font-size: 12px; color: var(--a-ink2); }
+.screen { flex: 1; display: flex; flex-direction: column; padding: 6px 20px 18px; gap: 14px; min-height: 0; }
+.topline { display: flex; align-items: center; gap: 10px; min-height: 28px; }
+.topline .back { border: 0; background: transparent; color: var(--a-ink); font-size: 22px; line-height: 1; padding: 2px 6px 2px 0; cursor: pointer; }
+.topline .bar { flex: 1; height: 4px; background: var(--a-border); border-radius: 4px; overflow: hidden; }
+.topline .bar span { display: block; height: 100%; background: var(--a-brand); }
+.topline .cnt { font-family: var(--font-mono); font-size: 12px; color: var(--a-ink2); }
+.topline .skip { border: 0; background: transparent; color: var(--a-ink2); font-weight: 600; font-size: 14px; cursor: pointer; }
+.h1 { font-family: var(--font-display); font-weight: 800; font-size: 25px; line-height: 1.15; margin: 0; text-wrap: balance; }
+.lead { margin: 0; color: var(--a-ink2); }
+.grow { flex: 1; }
+.btn { border: 0; border-radius: 999px; min-height: 52px; padding: 12px 20px; font-weight: 700; font-size: 16px; background: var(--a-brand); color: #fff; cursor: pointer; width: 100%; }
+.btn.sec { background: transparent; color: var(--a-ink); border: 2px solid var(--a-ink); }
+.btn.small { min-height: 40px; padding: 8px 16px; font-size: 14.5px; width: auto; }
+.btn.small.sec { border-width: 1.5px; }
+.btn:disabled { opacity: .4; cursor: default; }
+.btns { display: grid; gap: 10px; }
+.fine { font-size: 12.5px; color: var(--a-ink2); text-align: center; margin: 0; }
+.ill { border-radius: 22px; display: grid; place-items: center; padding: 18px 10px; }
+.ill svg { max-width: 100%; height: auto; display: block; }
+.dots { display: flex; gap: 6px; justify-content: center; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--a-border); }
+.dots i.on { background: var(--a-brand); width: 20px; border-radius: 4px; }
+.tri { display: grid; gap: 8px; }
+.tri .t { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 16px; }
+.tri .t b { display: block; font-size: 15px; }
+.tri .t span { font-size: 13.5px; color: var(--a-ink2); }
+.tri .t .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: #fff; }
+.choice { display: grid; grid-template-columns: 26px 1fr 22px; gap: 12px; align-items: center; border: 2px solid var(--a-border); border-radius: 18px; padding: 13px 14px; cursor: pointer; background: #fff; text-align: left; color: var(--a-ink); width: 100%; }
+.choice .num { font-family: var(--font-mono); font-size: 12px; color: var(--a-ink2); }
+.choice b { display: block; font-size: 16px; }
+.choice span.h { font-size: 13.5px; color: var(--a-ink2); }
+.choice .radio { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--a-border); }
+.choice.on { border-color: var(--a-brand); background: #f3fbf8; }
+.choice.on .radio { border: 7px solid var(--a-brand); }
+.src { border-radius: 20px; padding: 14px; display: grid; gap: 8px; }
+.src .row { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+.src .who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.src .who b { font-size: 15.5px; display: block; }
+.src .who span { font-size: 13px; color: var(--a-ink2); }
+.src .ic { width: 36px; height: 36px; flex: none; border-radius: 11px; display: grid; place-items: center; background: #fff; }
+.src p { margin: 0; font-size: 13.5px; color: var(--a-ink2); }
+.src.main { border: 2px solid var(--a-brand); background: #f3fbf8; }
+.ok { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--mint-label); background: var(--mint-bg); border-radius: 10px; padding: 3px 8px; white-space: nowrap; }
+.toggle { width: 46px; height: 28px; border-radius: 999px; border: 0; background: var(--a-border); position: relative; cursor: pointer; flex: none; }
+.toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: left .15s; }
+.toggle.on { background: var(--a-brand); }
+.toggle.on::after { left: 21px; }
+@media (prefers-reduced-motion: reduce) { .toggle::after { transition: none; } }
+.found { display: grid; gap: 8px; }
+.dev { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 16px; background: var(--a-surface); }
+.dev b { font-size: 15px; display: block; }
+.dev span { font-size: 13px; color: var(--a-ink2); }
+.mgroup { display: grid; gap: 6px; }
+.mgroup h4 { margin: 0; font-size: 12px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .05em; }
+.meas { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 9px 12px; border-radius: 14px; align-items: center; }
+.meas b { font-size: 14.5px; font-weight: 600; }
+.meas .st { font-family: var(--font-mono); font-size: 11.5px; font-weight: 600; border-radius: 9px; padding: 2px 7px; background: #fff; white-space: nowrap; }
+.meas .why { grid-column: 1 / -1; font-size: 12.5px; color: var(--a-ink2); }
+.meas.x { background: #fff; border: 1.5px dashed var(--a-border); }
+.meas.x b { color: var(--a-ink2); }
+.notmeasured { font-size: 12.5px; color: var(--a-ink2); }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.fact { border-radius: 16px; padding: 10px 12px; display: grid; gap: 2px; }
+.fact .v { font-family: var(--font-mono); font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.fact .l { font-size: 12.5px; }
+.facecard { border-radius: 22px; background: var(--mint-bg); padding: 16px; display: grid; gap: 12px; }
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mode { border-radius: 16px; background: #fff; padding: 10px; display: grid; gap: 6px; border: 2px solid transparent; }
+.mode.best { border-color: var(--mint-label); }
+.mode b { font-size: 13.5px; }
+.mode .dotsline { display: flex; gap: 3px; flex-wrap: wrap; }
+.mode .dotsline i { width: 7px; height: 7px; border-radius: 50%; background: var(--mint-label); }
+.disclo { display: grid; gap: 6px; font-size: 13.5px; }
+.disclo div { display: grid; grid-template-columns: 92px 1fr; gap: 8px; }
+.disclo dt, .disclo .k { font-weight: 700; }
+.feel { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.feel button { border: 2px solid var(--a-border); background: #fff; border-radius: 16px; padding: 10px 0 8px; cursor: pointer; display: grid; justify-items: center; gap: 4px; color: var(--a-ink); }
+.feel button span { font-size: 11.5px; color: var(--a-ink2); }
+.feel button.on { border-color: var(--mint-label); background: var(--mint-bg); }
+.feel.gut button.on { border-color: var(--peach-label); background: var(--peach-bg); }
+.feel.gut { grid-template-columns: repeat(3, 1fr); }
+.qlabel { font-weight: 700; font-size: 15px; margin: 0; }
+.prev { border-radius: 22px; border: 2px solid var(--a-border); padding: 12px; display: grid; gap: 10px; background: #fff; }
+.prev .ex { font-family: var(--font-mono); font-size: 11px; color: var(--a-ink2); text-transform: uppercase; letter-spacing: .06em; }
+.prev h5 { margin: 0; font-size: 16px; font-weight: 800; font-family: var(--font-display); }
+.pcard { border-radius: 16px; padding: 10px 12px; display: grid; gap: 6px; }
+.pcard .t { font-size: 12px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .05em; }
+.pcard p { margin: 0; font-size: 14px; }
+.pcard .eff { font-family: var(--font-mono); font-weight: 600; font-size: 13px; }
+.mini { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
+.mini div { background: var(--a-surface); border-radius: 12px; padding: 7px 9px; display: grid; gap: 1px; }
+.mini .v { font-family: var(--font-mono); font-weight: 600; font-size: 15px; }
+.mini .l { font-size: 11.5px; color: var(--a-ink2); }
+.mini .d { font-family: var(--font-mono); font-size: 11px; }
+.timeline { display: grid; gap: 6px; }
+.timeline div { display: grid; grid-template-columns: 74px 1fr; gap: 8px; font-size: 13.5px; align-items: baseline; }
+.timeline .when { font-family: var(--font-mono); font-size: 12px; color: var(--a-ink2); }
+.tabsbar { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--a-border); padding: 8px 4px 10px; margin: 0 -20px -18px; }
+.tabsbar span { text-align: center; font-size: 11px; color: var(--a-ink2); display: grid; justify-items: center; gap: 3px; }
+.tabsbar span i { width: 20px; height: 20px; border-radius: 6px; border: 1.8px solid currentColor; display: block; }
+.tabsbar span.on { color: var(--a-brand); font-weight: 700; }
+.sheet-bg { position: absolute; inset: 0; background: rgba(16, 35, 29, .45); display: flex; align-items: flex-end; z-index: 5; }
+.sheet { background: #fff; width: 100%; border-radius: 22px 22px 0 0; padding: 18px 18px 20px; display: grid; gap: 12px; }
+.sheet.ios { background: #f2f2f7; }
+.sheet .sys { font-family: var(--font-mono); font-size: 10.5px; color: #8a8f8d; text-transform: uppercase; letter-spacing: .06em; }
+.sheet h4 { margin: 0; font-size: 17px; }
+.sheet ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; max-height: 260px; overflow: auto; }
+.sheet li { display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 6px 2px; border-bottom: 1px solid #eceeed; }
+.sheet .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sheet .sysbtn { border: 0; border-radius: 999px; padding: 11px; font-weight: 700; cursor: pointer; background: #e7ebea; color: #10231d; }
+.sheet .sysbtn.prim { background: #1a73e8; color: #fff; }
+.sheet.ios .sysbtn.prim { background: #007aff; }
+.pairing { display: grid; gap: 10px; justify-items: center; text-align: center; }
+.pairing .pulse { width: 64px; height: 64px; border-radius: 50%; background: var(--rose-bg); display: grid; place-items: center; }
+.home-card { border-radius: 20px; padding: 14px; display: grid; gap: 8px; }
+.addbar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.addbar span { flex: none; border-radius: 999px; padding: 7px 11px; font-size: 13px; font-weight: 700; background: var(--a-surface); }
+.board .phone { min-height: 700px; }
+.shots { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; }
+.shots figure { margin: 0; flex: none; width: 200px; display: grid; gap: 6px; }
+.shots img { width: 200px; height: auto; border-radius: 16px; border: 1px solid var(--line); display: block; }
+.shots figcaption { font-size: 13px; color: var(--ink-2); }
+.flaws { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14.5px; }
+.privacy { display: grid; gap: 7px; }
+.privacy h4 { margin: 4px 0 0; font-size: 11.5px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--a-ink2); }
+.privacy .it { display: grid; gap: 1px; padding: 8px 12px; border-radius: 14px; background: var(--a-surface); }
+.privacy .it b { font-size: 14px; }
+.privacy .it span { font-size: 12.5px; color: var(--a-ink2); }
+.choice.compact { padding: 10px 12px; grid-template-columns: 1fr 22px; }
+.choice.compact b { font-size: 15px; }
+.choice .box { width: 22px; height: 22px; border-radius: 7px; border: 2px solid var(--a-border); display: grid; place-items: center; }
+.choice.on .box { background: var(--a-brand); border-color: var(--a-brand); }
+.choice.on .box::after { content: ''; width: 10px; height: 5px; border-left: 2.5px solid #fff; border-bottom: 2.5px solid #fff; transform: translateY(-2px) rotate(-45deg); }
+.disclo a { color: var(--a-brand); font-weight: 700; }
+.screen.tourscreen { padding: 0; gap: 0; }
+.tourwrap { position: relative; width: 100%; aspect-ratio: 412 / 915; overflow: hidden; background: #fff; }
+.tourwrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.tourwrap img.later { clip-path: inset(0 0 100% 0); }
+.tourwrap.filled img.later { clip-path: inset(0 0 0 0); }
+.tourwrap.anim img.later { transition: clip-path 1.2s cubic-bezier(.45,.05,.2,1); }
+.spot { position: absolute; border-radius: 16px; box-shadow: 0 0 0 9999px rgba(10,25,20,.56); outline: 2px solid #5ee0b5; pointer-events: none; transition: top .45s ease, left .45s ease, width .45s ease, height .45s ease; }
+.bubble { position: absolute; left: 12px; right: 12px; background: #fff; border-radius: 18px; padding: 12px 14px; display: grid; gap: 6px; box-shadow: 0 10px 30px rgba(0,0,0,.28); font-size: 14px; z-index: 4; }
+.bubble b { font-size: 15.5px; font-family: var(--font-display); }
+.bubble p { margin: 0; color: var(--a-ink2); }
+.bubble .row { display: flex; gap: 8px; justify-content: flex-end; align-items: center; margin-top: 4px; }
+.bubble .row .btn { width: auto; min-height: 42px; padding: 8px 16px; font-size: 14.5px; }
+.bubble .skipt { margin-right: auto; border: 0; background: transparent; color: var(--a-ink2); font-weight: 600; font-size: 13.5px; cursor: pointer; padding: 0; }
+.daychip { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--mint-label); background: var(--mint-bg); border-radius: 999px; padding: 2px 9px; justify-self: start; }
+.daychip.gut { color: var(--peach-label); background: var(--peach-bg); }
+.exbadge { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: #10231d; color: #fff; font-family: var(--font-mono); font-size: 10.5px; padding: 4px 10px; border-radius: 999px; letter-spacing: .05em; white-space: nowrap; z-index: 3; text-transform: uppercase; }
+@media (prefers-reduced-motion: reduce) { .tourwrap.anim img.later, .spot { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <h1>Nouvel accueil de Halcya</h1>
+    <p>Choisissez un matériel, puis parcourez l'accueil dans le téléphone comme le verrait une personne qui vient d'installer l'app. Les boutons du téléphone marchent : autorisations simulées, montre à relier, visite guidée de la vraie app. Version 3 (08/11 vers 18:15) : vos retours de 17:40 sont appliqués, ils sont listés en bas de la page avec les décisions.</p>
+  </header>
+
+  <div class="toolbar">
+    <div class="seg" role="tablist" aria-label="Affichage">
+      <button type="button" id="view-play" data-view="play" class="on" role="tab" aria-selected="true">Parcourir</button>
+      <button type="button" id="view-board" data-view="board" role="tab" aria-selected="false">Tous les écrans</button>
+    </div>
+    <button type="button" class="linkbtn" id="restart">Recommencer l'accueil</button>
+  </div>
+
+  <div class="layout" id="layout">
+    <aside class="box side" aria-labelledby="cfg-title">
+      <h2 id="cfg-title">Le matériel de la personne</h2>
+      <p class="muted">Les 15 configurations des personas, avec leur part estimée parmi les utilisateurs probables.</p>
+      <div class="cfgs" id="cfgs"></div>
+    </aside>
+
+    <section class="stage" aria-label="Téléphone">
+      <div class="stepper" id="stepper"></div>
+      <div id="phone-slot"></div>
+    </section>
+
+    <section class="box notes" id="notes" aria-live="polite"></section>
+  </div>
+
+  <section class="box" id="board-wrap" hidden>
+    <h2>Tous les écrans de ce parcours</h2>
+    <p class="muted" id="board-sub"></p>
+    <div class="board" id="board"></div>
+  </section>
+
+  <section class="box decisions" aria-labelledby="dec-title">
+    <h2 id="dec-title">Décisions pour vous</h2>
+    <p class="muted">Répondez dans la conversation avec le numéro (par exemple « D1 oui, D3 non »). Rien n'est codé avant votre accord.</p>
+    <h3 style="margin:10px 0 6px;font-size:15px">Vos retours de 17:40, appliqués</h3>
+    <ul class="muted" style="margin:0 0 12px;padding-left:20px;display:grid;gap:3px">
+      <li>Carte 3 : la liste des cas où les données sortent du téléphone, et quand l’IA sert.</li>
+      <li>Objectif : choix multiple, une option par persona.</li>
+      <li>Visage : image effacée aussitôt ; « une estimation de votre bien-être par un modèle, pas un avis médical » ; « Comment l’arrêter » avec le lien vers Paramètres.</li>
+      <li>Aperçu inventé et page « essai » retirés : visite guidée sur la vraie app, avec des données fictives.</li>
+    </ul>
+    <ol id="decisions"></ol>
+  </section>
+
+  <section class="box" aria-labelledby="cmp-title">
+    <h2 id="cmp-title">Avant, après</h2>
+    <div id="compare"></div>
+  </section>
+</div>
+
+<script>
+/* ===================== Données ===================== */
+const MEAS = [
+  { k: 'steps', l: 'Pas', th: 'lilac' },
+  { k: 'sleep', l: 'Durée du sommeil', th: 'night' },
+  { k: 'phases', l: 'Phases du sommeil', th: 'night' },
+  { k: 'hr', l: 'Fréquence cardiaque', th: 'rose' },
+  { k: 'rhr', l: 'FC au repos', th: 'rose' },
+  { k: 'hrv', l: 'VFC', th: 'rose' },
+  { k: 'temp', l: 'Température', th: 'rose' },
+  { k: 'spo2', l: 'Oxygène du sang', th: 'rose' },
+  { k: 'weight', l: 'Poids', th: 'rose' },
+  { k: 'bp', l: 'Tension', th: 'rose' },
+  { k: 'cycle', l: 'Cycle', th: 'rose' },
+];
+const THEMES = { lilac: 'Activité', night: 'Sommeil', rose: 'Corps' };
+// y reçu · p en partie · x mesuré mais pas partagé · q à vérifier · n pas mesuré (journal/PERSONAS.md, 07/11)
+const CFG = [
+  { id: 1, os: 'android', name: 'Android seul', ex: 'Samsung, Xiaomi, Honor, Pixel', w: '33 %',
+    m: 'y p n n n n n n n n n', devs: [['Ce téléphone', 'pas et sommeil estimé, par Samsung Health ou Google Fit', 'phone']],
+    why: { sleep: 'estimé d’après l’usage du téléphone' } },
+  { id: 2, os: 'ios', name: 'iPhone seul', ex: 'iPhone 12 à 17', w: '23 %',
+    m: 'y p n n n n n n n n p', devs: [['Cet iPhone', 'pas et heures de coucher, par Santé', 'phone']],
+    why: { sleep: 'les heures de coucher réglées sur l’iPhone', cycle: 'si vous le notez dans Santé' } },
+  { id: 3, os: 'ios', name: 'iPhone + Apple Watch', ex: 'Watch SE 3, Series 10 à 12, Ultra', w: '11 %',
+    m: 'y y y y y y p y n n p', devs: [['Apple Watch Series 10', 'par Santé', 'watch'], ['Cet iPhone', 'pas, par Santé', 'phone']],
+    why: { temp: 'la nuit, au poignet (Series 8 et suivantes)', cycle: 'noté par vous, ou estimé par la température' } },
+  { id: 4, os: 'android', name: 'Samsung + Galaxy Watch', ex: 'Galaxy Watch 7 et 8, Watch FE, Fit3', w: '8 %',
+    m: 'y y y y x x x y n x q', devs: [['Galaxy Watch 7', 'par Samsung Health', 'watch']], brand: 'Samsung',
+    why: { rhr: 'Samsung ne la partage pas avec Health Connect', hrv: 'votre montre la mesure, Samsung ne la partage avec aucune app', temp: 'réservée aux partenaires de Samsung', bp: 'réservée aux partenaires de Samsung', cycle: 'à vérifier sur un vrai téléphone' } },
+  { id: 5, os: 'android', name: 'Téléphone + balance ou tensiomètre', ex: 'Withings, Xiaomi, Renpho, Omron', w: '4 %',
+    m: 'y p n n n n n n p p n', devs: [['Balance Withings Body', 'par l’app Withings', 'scale'], ['Ce téléphone', 'pas, par Samsung Health', 'phone']],
+    why: { sleep: 'estimé d’après l’usage du téléphone', weight: 'Withings demande Withings+ pour les comptes créés depuis le 12/10', bp: 'Omron : oui ; Withings : Withings+' } },
+  { id: 6, os: 'android', name: 'Android + Xiaomi', ex: 'Smart Band 9 et 10, Redmi Watch 5', w: '4 %',
+    m: 'y y y p x x n x n n q', devs: [['Xiaomi Smart Band 9', 'par Mi Fitness', 'band']], brand: 'Xiaomi',
+    why: { hr: 'seulement pendant l’effort', rhr: 'Xiaomi ne la partage pas', hrv: 'votre bracelet la mesure, Xiaomi ne la partage avec aucune app', spo2: 'mesurée, jamais partagée par Xiaomi', cycle: 'à vérifier' } },
+  { id: 7, os: 'android', name: 'Android + Huawei', ex: 'Watch GT 5 et 6, Watch Fit 4, Band 10', w: '2,5 %',
+    m: 'y p p y p p p p n n q', devs: [['Huawei Watch GT 6', 'reliée directement en Bluetooth', 'watch']], huawei: true,
+    why: { sleep: 'sommeil détaillé : en cours chez Halcya', phases: 'en cours chez Halcya', rhr: 'en cours chez Halcya', hrv: 'en cours chez Halcya', temp: 'en cours chez Halcya', spo2: 'en cours chez Halcya', cycle: 'à vérifier' } },
+  { id: 8, os: 'android', name: 'Android + Garmin', ex: 'Forerunner, Venu, vivoactive', w: '2,5 %',
+    m: 'y y y y y x x x p n q', devs: [['Garmin Forerunner 265', 'par Garmin Connect', 'watch']], brand: 'Garmin',
+    why: { hrv: 'votre montre la mesure, Garmin ne la partage pas avec Health Connect', temp: 'Garmin ne la partage pas', spo2: 'Garmin ne la partage pas', weight: 'balance Garmin Index : oui', cycle: 'à vérifier' } },
+  { id: 9, os: 'ios', name: 'iPhone + Garmin', ex: 'coureurs, cyclistes', w: '2,5 %',
+    m: 'y y p y y x x x n n q', devs: [['Garmin Venu 3', 'par Garmin Connect et Santé', 'watch']], brand: 'Garmin',
+    why: { phases: 'selon le modèle', hrv: 'votre montre la mesure, Garmin ne la partage pas avec Santé', temp: 'Garmin ne la partage pas', spo2: 'Garmin ne la partage pas', cycle: 'à vérifier' } },
+  { id: 10, os: 'ios', name: 'iPhone + bracelet d’une autre marque', ex: 'Fitbit, Xiaomi, Huawei, Amazfit', w: '2,5 %',
+    m: 'y p p p p x x x n n n', devs: [['Fitbit Charge 6', 'par Google Health et Santé', 'band']], brand: 'la marque du bracelet',
+    why: { sleep: 'Fitbit : complet ; Huawei et Xiaomi : la durée seulement', phases: 'selon la marque', hr: 'Huawei : en partie', rhr: 'selon la marque', hrv: 'aucune de ces marques ne la partage avec Santé', temp: 'pas partagée avec Santé', spo2: 'pas partagée avec Santé' } },
+  { id: 11, os: 'ios', name: 'iPhone + Apple Watch + Withings', ex: 'balance Body, tensiomètre BPM', w: '2 %',
+    m: 'y y y y y y p y p p p', devs: [['Apple Watch Series 11', 'par Santé', 'watch'], ['Balance Withings Body', 'par Withings et Santé', 'scale']],
+    why: { temp: 'la nuit, au poignet', weight: 'Withings+ pour les comptes créés depuis le 12/10', bp: 'Withings+ pour les comptes créés depuis le 12/10', cycle: 'noté par vous, ou estimé par la température' } },
+  { id: 12, os: 'android', name: 'Android + autre montre', ex: 'Amazfit, Honor, Polar, Coros', w: '2 %',
+    m: 'y p p p p x x p n n n', devs: [['Amazfit Balance', 'par Zepp', 'watch']], brand: 'la marque de la montre',
+    why: { sleep: 'Amazfit : complet ; Polar, Coros : en partie', hrv: 'pas partagée avec Health Connect', temp: 'pas partagée', spo2: 'Amazfit : oui ; les autres : non' } },
+  { id: 13, os: 'android', name: 'Android + Fitbit ou Pixel Watch', ex: 'Charge 6, Inspire 3, Pixel Watch 3 et 4', w: '1 %',
+    m: 'y y y y y q q x n n q', devs: [['Pixel Watch 3', 'par Google Health', 'watch']], brand: 'Google',
+    why: { hrv: 'à vérifier sur un vrai téléphone', temp: 'à vérifier', spo2: 'Google la lit mais ne la partage pas', cycle: 'à vérifier' } },
+  { id: 14, os: 'ios', name: 'iPhone + Oura', ex: '± Apple Watch, ± Natural Cycles', w: '1 %',
+    m: 'y y y y x x x x n n p', devs: [['Bague Oura', 'par l’app Oura et Santé', 'ring']], brand: 'Oura',
+    why: { rhr: 'Oura ne la partage pas avec Santé', hrv: 'votre bague la mesure, Oura ne la partage pas avec Santé', temp: 'Oura ne la partage pas avec Santé', spo2: 'Oura ne la partage pas avec Santé', cycle: 'Natural Cycles écrit le cycle dans Santé' } },
+  { id: 15, os: 'android', name: 'Niche « tout mesurer »', ex: 'Whoop, Ultrahuman, Galaxy Ring', w: '1 %',
+    m: 'y y y y p p p p n n n', devs: [['Bague Ultrahuman', 'par Health Connect', 'ring'], ['Galaxy Ring', 'par Samsung Health', 'ring']],
+    why: { rhr: 'selon l’appareil', hrv: 'Ultrahuman : oui ; Whoop : par son API seulement', temp: 'selon l’appareil', spo2: 'selon l’appareil' } },
+];
+CFG.forEach((c) => { const a = c.m.split(' '); c.st = {}; MEAS.forEach((m, i) => { c.st[m.k] = a[i]; }); });
+const ST = { y: 'reçu', p: 'en partie', x: 'pas partagé', q: 'à vérifier' };
+
+const GOALS = [
+  { id: 'gut', l: 'Ma digestion', h: 'ballonnements, SII, inconforts', p: 'Ventre et données ; Ventre, sans technique' },
+  { id: 'cycle', l: 'Mon cycle', h: 'règles, douleurs, endométriose', p: 'Endométriose (et ventre)' },
+  { id: 'stress', l: 'Mon stress et mon sommeil', h: 'fatigue, nuits, charge mentale', p: 'Stressé et pressé' },
+  { id: 'sport', l: 'Mon sport et ma récupération', h: 'entraînements, cœur, repos', p: 'Sportif' },
+  { id: 'care', l: 'Prendre soin de moi', h: 'alimentation, poids, forme', p: 'Prendre soin de soi, maigrir' },
+  { id: 'all', l: 'Tout mesurer', h: 'toutes mes montres et mesures au même endroit', p: 'Tout mesurer' },
+];
+const wantsGut = (st) => st.goals.includes('gut') || st.goals.includes('cycle');
+
+/* ===================== État ===================== */
+const fresh = () => ({ step: 0, tuto: 0, goals: [], tv: 0, anim: false, hc: 'idle', huawei: 'idle', weather: false, screen: false, face: null, faceMode: 'unlock', feel: null, gut: null, prev: 0, sheet: null });
+const S = { cfg: CFG[0], view: 'play', ...fresh() };
+const isIOS = () => S.cfg.os === 'ios';
+const hub = () => (isIOS() ? 'Santé' : 'Health Connect');
+
+function stepsFor() {
+  return ['tuto', 'goal', 'sources', 'found', 'face', 'first', 'premium', 'tour'];
+}
+const STEP_LABEL = { tuto: 'Découvrir', goal: 'Objectif', sources: 'Sources', found: 'Ce qui arrive', face: 'Visage', first: 'Premier geste', premium: 'Gold', tour: 'Visite guidée' };
+
+/* ===================== Petits dessins ===================== */
+const IC = {
+  phone: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10231d" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>',
+  watch: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10231d" stroke-width="1.8" stroke-linecap="round"><rect x="6.5" y="6.5" width="11" height="11" rx="3"/><path d="M9 6.5 9.6 2.5h4.8L15 6.5M9 17.5l.6 4h4.8l.6-4M12 10v2.2l1.4 1"/></svg>',
+  band: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10231d" stroke-width="1.8" stroke-linecap="round"><rect x="8.5" y="5" width="7" height="14" rx="3.5"/><path d="M10 2.5h4M10 21.5h4"/></svg>',
+  ring: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10231d" stroke-width="1.8"><ellipse cx="12" cy="13" rx="7" ry="6"/><ellipse cx="12" cy="13" rx="4.2" ry="3.4"/></svg>',
+  scale: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10231d" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8.5 9a5 5 0 0 1 7 0M12 9.5l1.5-1.5"/></svg>',
+  health: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b6b53" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/><path d="M8 12h2l1-2 2 4 1-2h2"/></svg>',
+  cloud: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a5550" stroke-width="1.8" stroke-linecap="round"><path d="M7 18h10a4 4 0 0 0 .5-7.97A6 6 0 0 0 6 11a3.5 3.5 0 0 0 1 7z"/></svg>',
+  screen: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a5550" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M12 8v4l2.5 1.5"/></svg>',
+  face: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b6b53" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M9 10h.01M15 10h.01M8.8 14.2c1.8 1.8 4.6 1.8 6.4 0"/></svg>',
+  lock: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10231d" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>',
+};
+
+function moodFace(level, size = 30) {
+  const mouth = ['M10 21c2.5-3 9.5-3 12 0', 'M10.5 20.5c2-1.5 9-1.5 11 0', 'M11 20h10', 'M10.5 19.5c2 1.5 9 1.5 11 0', 'M10 19c2.5 3.2 9.5 3.2 12 0'][level];
+  return `<svg width="${size}" height="${size}" viewBox="0 0 32 32" fill="none" stroke="#0b6b53" stroke-width="2" stroke-linecap="round"><circle cx="16" cy="16" r="13"/><path d="M12 13h.01M20 13h.01"/><path d="${mouth}"/></svg>`;
+}
+
+function illTuto(i) {
+  if (i === 0) return `<div class="ill" style="background:var(--mint-bg)"><svg viewBox="0 0 280 150" width="280" height="150">
+    <g font-family="IBM Plex Mono, monospace" font-size="10" fill="#4a5e57">
+      <rect x="8" y="10" width="62" height="30" rx="10" fill="#ffebdd"/><text x="18" y="29">repas</text>
+      <rect x="8" y="50" width="62" height="30" rx="10" fill="#e4eaf7"/><text x="16" y="69">sommeil</text>
+      <rect x="8" y="90" width="62" height="30" rx="10" fill="#fbe6ee"/><text x="20" y="109">montre</text>
+      <rect x="8" y="128" width="62" height="18" rx="9" fill="#ffffff"/><text x="18" y="141">ressenti</text>
+    </g>
+    <path d="M72 25 C110 25 112 75 140 75 M72 65 L140 75 M72 105 C110 105 112 75 140 75 M72 137 C112 137 112 80 140 76" fill="none" stroke="#6fa893" stroke-width="1.6"/>
+    <rect x="140" y="40" width="132" height="72" rx="16" fill="#ffffff"/>
+    <path d="M152 92 C170 92 175 66 192 70 C210 74 214 54 232 56 C246 58 250 50 262 48" fill="none" stroke="#0b7a5e" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="232" cy="56" r="5" fill="#ffb84d"/>
+    <text x="152" y="58" font-family="Figtree, sans-serif" font-size="11" font-weight="700" fill="#10231d">vos journées</text>
+  </svg></div>`;
+  if (i === 1) return `<div class="tri">
+    <div class="t" style="background:var(--stone-bg)"><span class="ic">${IC.phone}</span><div><b>Journal</b><span>voir vos journées, vos repas, vos mesures</span></div></div>
+    <div class="t" style="background:var(--mint-bg)"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b6b53" stroke-width="1.9" stroke-linecap="round"><path d="M4 18 9 12l4 3 7-8"/><circle cx="20" cy="7" r="1.5" fill="#0b6b53"/></svg></span><div><b>Analyses</b><span>les liens que Halcya trouve dans vos données</span></div></div>
+    <div class="t" style="background:var(--peach-bg)"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8a3a12" stroke-width="1.9" stroke-linecap="round"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-9V3"/><path d="M7.5 15h9"/></svg></span><div><b>Agir</b><span>vérifier une piste par un essai de deux semaines</span></div></div>
+  </div>`;
+  return `<div class="ill" style="background:var(--stone-bg)"><svg viewBox="0 0 280 140" width="280" height="140">
+    <rect x="100" y="12" width="80" height="116" rx="16" fill="#ffffff" stroke="#10231d" stroke-width="2"/>
+    <rect x="124" y="56" width="32" height="26" rx="6" fill="#e3f5ee" stroke="#0b6b53" stroke-width="2"/>
+    <path d="M131 56v-6a9 9 0 0 1 18 0v6" fill="none" stroke="#0b6b53" stroke-width="2"/>
+    <path d="M186 50 C215 40 230 46 250 36" fill="none" stroke="#b9dccd" stroke-width="2" stroke-dasharray="4 4"/>
+    <rect x="232" y="22" width="40" height="26" rx="8" fill="#ffffff" stroke="#b9dccd"/>
+    <text x="240" y="39" font-family="IBM Plex Mono, monospace" font-size="10" fill="#4a5e57">IA</text>
+    <text x="196" y="74" font-family="Figtree, sans-serif" font-size="10" fill="#4a5e57">seulement</text>
+    <text x="196" y="87" font-family="Figtree, sans-serif" font-size="10" fill="#4a5e57">si vous le</text>
+    <text x="196" y="100" font-family="Figtree, sans-serif" font-size="10" fill="#4a5e57">demandez</text>
+  </svg></div>`;
+}
+
+/* ===================== Écrans ===================== */
+function topline(i, n, opts = {}) {
+  const back = i > 0 ? '<button type="button" class="back" data-act="back" aria-label="Retour">‹</button>' : '<span style="width:14px"></span>';
+  const skip = opts.skip ? `<button type="button" class="skip" data-act="${opts.skip}">Passer</button>` : '';
+  return `<div class="topline">${back}<div class="bar"><span style="width:${Math.round(((i + 1) / n) * 100)}%"></span></div><span class="cnt">${String(i + 1).padStart(2, '0')}/${String(n).padStart(2, '0')}</span>${skip}</div>`;
+}
+
+const SCREENS = {
+  tuto(st) {
+    const pages = [
+      ['Bienvenue dans Halcya', 'Vos repas, votre sommeil, votre montre et votre ressenti, au même endroit.'],
+      ['Halcya cherche ce qui va avec vos bons et mauvais jours', 'Trois onglets, trois usages.'],
+      ['Vos données restent sur votre téléphone', 'Elles n’en sortent que dans ces cas :'],
+    ];
+    const [t, l] = pages[st.tuto];
+    const last = st.tuto === 2;
+    if (last) return `${topline(0, 7)}
+      <h1 class="h1">${t}</h1>
+      <p class="lead">${l}</p>
+      <div class="privacy">
+        <h4>Quand vous le demandez</h4>
+        <div class="it"><b>Analyser un repas ou une photo de selles</b><span>La photo ou le texte est lu par une IA de Google, en Europe. Halcya n’en garde rien.</span></div>
+        <div class="it"><b>Exporter vos données, partager le rapport pour votre médecin</b><span>Le fichier part là où vous l’envoyez.</span></div>
+        <div class="it"><b>Envoyer votre avis</b><span>Le texte que vous écrivez et la version de l’app.</span></div>
+        <h4>Si vous l’activez</h4>
+        <div class="it"><b>Météo</b><span>Votre position, à quelques kilomètres près.</span></div>
+        <div class="it"><b>Sauvegarde du téléphone</b><span>Une copie chiffrée, comme pour vos autres apps.</span></div>
+      </div>
+      <p class="fine" style="text-align:left">La lecture du visage se fait sur le téléphone : aucune image n’en sort. Pour l’abonnement, seul un numéro anonyme est vérifié. Halcya ne pose pas de diagnostic. En continuant, vous confirmez avoir 18 ans ou plus.</p>
+      <div class="grow"></div>
+      <div class="dots">${[0, 1, 2].map((i) => `<i class="${i === st.tuto ? 'on' : ''}"></i>`).join('')}</div>
+      <div class="btns"><button type="button" class="btn" data-act="tuto-next">Commencer</button></div>`;
+    return `${topline(0, 7, { skip: 'tuto-skip' })}
+      ${illTuto(st.tuto)}
+      <h1 class="h1">${t}</h1>
+      <p class="lead">${l}</p>
+      <div class="grow"></div>
+      <div class="dots">${[0, 1, 2].map((i) => `<i class="${i === st.tuto ? 'on' : ''}"></i>`).join('')}</div>
+      <div class="btns"><button type="button" class="btn" data-act="tuto-next">${last ? 'Commencer' : 'Suivant'}</button></div>
+`;
+  },
+  goal(st) {
+    return `${topline(1, 7)}
+      <h1 class="h1">Qu’est-ce qui vous amène ?</h1>
+      <p class="lead">Cochez tout ce qui compte pour vous. Halcya vous le montrera d’abord.</p>
+      <div style="display:grid;gap:8px" role="group" aria-label="Ce qui vous amène">${GOALS.map((g) => { const on = st.goals.includes(g.id); return `<button type="button" class="choice compact ${on ? 'on' : ''}" data-act="goal" data-v="${g.id}" aria-pressed="${on}"><span><b>${g.l}</b><span class="h">${g.h}</span></span><span class="box"></span></button>`; }).join('')}</div>
+      <div class="grow"></div>
+      <button type="button" class="btn" data-act="next">Continuer</button>
+      <p class="fine">Vous pourrez le changer dans Paramètres.</p>`;
+  },
+  sources(st) {
+    const c = st.cfg;
+    const hcOk = st.hc === 'granted';
+    const hcCard = `<div class="src main">
+        <div class="row"><div class="who"><span class="ic">${IC.health}</span><div><b>${hub()}</b><span>${isIOS() ? 'votre iPhone et votre montre' : 'votre téléphone, vos montres, bagues et balances'}</span></div></div>
+        ${hcOk ? '<span class="ok">connecté</span>' : ''}</div>
+        <p>Halcya lit vos pas, votre sommeil, ce que vos appareils mesurent et vos 30 derniers jours. Elle n’écrit rien et n’envoie rien. Vous choisissez type par type.</p>
+        ${hcOk ? '' : `<button type="button" class="btn small" data-act="hc">${st.hc === 'denied' ? 'Réessayer' : 'Connecter ' + hub()}</button>`}
+        ${st.hc === 'denied' ? '<p>Sans cet accès, Halcya vivra de vos notes et de votre visage. Vous pourrez le donner plus tard dans Sources.</p>' : ''}
+      </div>`;
+    const hwCard = c.huawei ? `<div class="src" style="background:var(--rose-bg)">
+        <div class="row"><div class="who"><span class="ic">${IC.watch}</span><div><b>Montre Huawei trouvée</b><span>Huawei Santé est installée sur ce téléphone</span></div></div>
+        ${st.huawei === 'linked' ? '<span class="ok">reliée</span>' : ''}</div>
+        <p>Huawei ne partage pas avec Health Connect : Halcya peut lire votre montre directement, en Bluetooth, sans la retirer de Huawei Santé.</p>
+        ${st.huawei === 'linked' ? '' : '<button type="button" class="btn small" data-act="huawei">Relier ma montre</button>'}
+      </div>` : '';
+    return `${topline(2, 7)}
+      <h1 class="h1">Branchez vos sources</h1>
+      <p class="lead">Chaque accès se donne ici, d’un geste, et se retire quand vous voulez.</p>
+      ${hcCard}${hwCard}
+      <div class="src" style="background:var(--stone-bg)">
+        <div class="row"><div class="who"><span class="ic">${IC.cloud}</span><div><b>Météo</b><span>votre ville, à quelques kilomètres près</span></div></div>
+        <button type="button" class="toggle ${st.weather ? 'on' : ''}" data-act="weather" aria-pressed="${st.weather}" aria-label="Météo"></button></div>
+      </div>
+      <div class="src" style="background:var(--stone-bg)">
+        <div class="row"><div class="who"><span class="ic">${IC.screen}</span><div><b>Temps d’écran</b><span>${isIOS() ? 'iOS 26.4 ou plus récent' : 'le temps passé sur le téléphone, le soir surtout'}</span></div></div>
+        <button type="button" class="toggle ${st.screen ? 'on' : ''}" data-act="screen" aria-pressed="${st.screen}" aria-label="Temps d’écran"></button></div>
+      </div>
+      <div class="grow"></div>
+      <button type="button" class="btn" data-act="next">Continuer</button>
+      <p class="fine">D’autres sources se trouvent dans l’onglet Sources.</p>`;
+  },
+  found(st) {
+    const c = st.cfg;
+    const hcOk = st.hc === 'granted';
+    const hwOk = !c.huawei || st.huawei === 'linked';
+    const connected = hcOk || (c.huawei && st.huawei === 'linked');
+    if (!connected) {
+      return `${topline(3, 7)}
+        <h1 class="h1">Votre téléphone suffit pour commencer</h1>
+        <p class="lead">Sans ${hub()}, Halcya part de vos notes, de vos repas et, si vous l’activez, de votre visage.</p>
+        <div class="dev"><span class="ic">${IC.phone}</span><div><b>Ce que vous noterez</b><span>bien-être, digestion, repas en photo</span></div></div>
+        <div class="grow"></div>
+        <div class="btns"><button type="button" class="btn sec" data-act="back">Connecter ${hub()}</button><button type="button" class="btn" data-act="next">Continuer sans</button></div>`;
+    }
+    const devs = c.devs.filter((d) => (c.huawei ? (d[2] === 'watch' ? hwOk : hcOk) : true));
+    const groups = {};
+    MEAS.forEach((m) => {
+      let s = c.st[m.k];
+      if (c.huawei && st.huawei !== 'linked' && m.k !== 'steps' && m.k !== 'sleep') s = 'n';
+      if (c.huawei && st.huawei !== 'linked' && m.k === 'sleep') s = 'p';
+      if (s === 'n') return;
+      (groups[m.th] = groups[m.th] || []).push({ ...m, s });
+    });
+    const notMeasured = MEAS.filter((m) => c.st[m.k] === 'n').map((m) => m.l.toLowerCase());
+    const bg = { lilac: 'var(--lilac-bg)', night: 'var(--night-bg)', rose: 'var(--rose-bg)' };
+    const lab = { lilac: 'var(--lilac-label)', night: 'var(--night-label)', rose: 'var(--rose-label)' };
+    const blocks = Object.keys(THEMES).filter((k) => groups[k]).map((k) => `<div class="mgroup"><h4 style="color:${lab[k]}">${THEMES[k]}</h4>
+      ${groups[k].map((m) => {
+        const why = (c.why && c.why[m.k]) || (c.huawei && st.huawei !== 'linked' && m.k === 'sleep' ? 'estimé par le téléphone ; la montre donnera plus' : '');
+        return m.s === 'x'
+          ? `<div class="meas x"><b>${m.l}</b><span class="st">pas partagée</span>${why ? `<span class="why">${why}</span>` : ''}</div>`
+          : `<div class="meas" style="background:${bg[k]}"><b>${m.l}</b><span class="st" style="color:${lab[k]}">${ST[m.s]}</span>${why && m.s !== 'y' ? `<span class="why">${why}</span>` : ''}</div>`;
+      }).join('')}</div>`).join('');
+    return `${topline(3, 7)}
+      <h1 class="h1">Voici ce que Halcya recevra</h1>
+      <div class="found">${devs.map((d) => `<div class="dev"><span class="ic">${IC[d[2]]}</span><div><b>${d[0]}</b><span>${d[1]}</span></div></div>`).join('')}</div>
+      ${blocks}
+      ${notMeasured.length ? `<p class="notmeasured">Pas mesuré par vos appareils : ${notMeasured.join(', ')}.</p>` : ''}
+      <div class="facts">${factTiles(c, st).join('')}</div>
+      <p class="fine">Vos 30 derniers jours sont importés. Halcya les comparera à votre digestion et à votre bien-être.</p>
+      <button type="button" class="btn" data-act="next">Continuer</button>`;
+  },
+  face(st) {
+    const ios = isIOS();
+    return `${topline(4, 7)}
+      <h1 class="h1">Votre bien-être, sans rien noter</h1>
+      <p class="lead">Quand vous regardez votre téléphone, Halcya peut lire votre expression quelques secondes et en tirer une estimation de votre bien-être.</p>
+      <div class="facecard">
+        <div class="modes">
+          ${ios ? '' : `<div class="mode best"><b>À chaque déverrouillage</b><div class="dotsline">${'<i></i>'.repeat(24)}</div><span class="fine" style="text-align:left">une vingtaine de lectures par jour</span></div>`}
+          <div class="mode ${ios ? 'best' : ''}" ${ios ? 'style="grid-column:1/-1"' : ''}><b>Quand vous ouvrez Halcya</b><div class="dotsline">${'<i></i>'.repeat(4)}</div><span class="fine" style="text-align:left">quelques lectures par jour</span></div>
+        </div>
+        <div class="disclo">
+          <div><span class="k">Ce qui est lu</span><span>l’expression du visage, par la caméra avant</span></div>
+          <div><span class="k">Ce qui est gardé</span><span>l’image est effacée aussitôt, seul le score de la lecture reste</span></div>
+          <div><span class="k">Où</span><span>sur ce téléphone, et dans sa sauvegarde si elle est activée</span></div>
+          <div><span class="k">Ce que c’est</span><span>une estimation de votre bien-être par un modèle, pas un avis médical</span></div>
+          <div><span class="k">Comment l’arrêter</span><span>à tout moment, dans <a href="#" data-act="noop">Paramètres</a></span></div>
+        </div>
+      </div>
+      <div class="grow"></div>
+      <div class="btns"><button type="button" class="btn" data-act="face-on">Activer</button><button type="button" class="btn sec" data-act="face-later">Plus tard</button></div>
+      ${ios ? '' : '<p class="fine">Android vous demandera ensuite les notifications : pendant la lecture, Halcya affiche la sienne.</p>'}`;
+  },
+  first(st) {
+    const gut = wantsGut(st);
+    const lbl = ['Mal', 'Bof', 'Neutre', 'Bien', 'Très bien'];
+    return `${topline(5, 7)}
+      <h1 class="h1">Comment vous sentez-vous maintenant ?</h1>
+      <p class="lead">Votre première note. Les premiers jours, elle sert aussi à régler l’estimation du visage sur vous.</p>
+      <div class="feel">${lbl.map((l, i) => `<button type="button" class="${st.feel === i ? 'on' : ''}" data-act="feel" data-v="${i}" aria-label="${l}">${moodFace(i)}<span>${l}</span></button>`).join('')}</div>
+      ${gut ? `<p class="qlabel">Et votre ventre ?</p><div class="feel gut">${['Calme', 'Gêné', 'Douloureux'].map((l, i) => `<button type="button" class="${st.gut === i ? 'on' : ''}" data-act="gut" data-v="${i}"><b style="font-size:14px">${l}</b></button>`).join('')}</div>` : ''}
+      <div class="grow"></div>
+      <button type="button" class="btn" data-act="next" ${st.feel == null || (gut && st.gut == null) ? 'disabled' : ''}>Enregistrer</button>`;
+  },
+  premium(st) {
+    if (isIOS()) {
+      return `${topline(6, 7)}
+        <h1 class="h1">Silver et Gold</h1>
+        <p class="lead">L’écran d’abonnement actuel de l’iPhone, inchangé : les formules, l’essai, puis « Plus tard ».</p>
+        <div class="src" style="background:var(--stone-bg)"><p>Ici, l’écran d’achat actuel, tel qu’il est dans la build 905.</p></div>
+        <div class="grow"></div>
+        <div class="btns"><button type="button" class="btn" data-act="next">Plus tard</button></div>`;
+    }
+    return `${topline(6, 7)}
+      <h1 class="h1">Gold est offert pendant le test</h1>
+      <p class="lead">Toutes les analyses, sans rien payer, jusqu’au 2 décembre inclus. Aucune carte bancaire n’est demandée.</p>
+      <div class="src" style="background:var(--mint-bg)"><div class="row"><div class="who"><span class="ic">${IC.face}</span><div><b>Gold</b><span>20 analyses par jour, rapport pour votre médecin</span></div></div><span class="ok">offert</span></div></div>
+      <div class="grow"></div>
+      <button type="button" class="btn" data-act="next">Continuer</button>`;
+  },
+  tour(st) {
+    const B = tourBeats(st);
+    const b = B[Math.min(st.tv, B.length - 1)];
+    const later = b.phase === 'later';
+    const [x, y, w, hh] = b.box || [0, 0, 0, 0];
+    const below = b.box ? y + hh / 2 < 52 : false;
+    const pos = !b.box ? 'bottom:12%' : below ? `top:calc(${y + hh}% + 10px)` : `bottom:calc(${100 - y}% + 10px)`;
+    const chip = later && b.day ? `<span class="daychip ${b.day === 28 ? 'gut' : ''}" data-day="${b.day}">${st.anim ? 'jour 1' : 'jour ' + b.day}</span>` : '';
+    const last = st.tv >= B.length - 1;
+    return `<div class="tourwrap ${later && !st.anim ? 'filled' : ''}" data-anim="${later && st.anim ? 1 : 0}">
+        <img class="now" src="tour/${b.now}.jpg" alt="${b.alt}, votre écran aujourd’hui">
+        <img class="later" src="tour/${b.later}.jpg" alt="${b.alt}, exemple avec des données fictives">
+        ${later ? '<span class="exbadge">Exemple · données fictives</span>' : ''}
+        ${b.box ? `<div class="spot" style="left:${x}%;top:${y}%;width:${w}%;height:${hh}%"></div>` : '<div class="spot" style="left:0;top:0;width:0;height:0"></div>'}
+        <div class="bubble" style="${pos}" role="dialog" aria-label="Visite guidée">
+          ${chip}<b>${b.t}</b><p>${b.p}</p>
+          <div class="row">${last ? '' : '<button type="button" class="skipt" data-act="tour-end">Passer la visite</button>'}<button type="button" class="btn" data-act="${last ? 'tour-end' : 'tour-next'}">${b.cta}</button></div>
+        </div>
+      </div>`;
+  },
+};
+
+/* Visite guidée : vraies captures de l'app v913 (variante play), vides puis remplies de données fictives. Boîtes en % de l'écran. */
+function tourBeats(st) {
+  const c = st.cfg;
+  const hc = st.hc === 'granted' || (c.huawei && st.huawei === 'linked');
+  const B = [];
+  const T = (page, now, later, alt) => (phase, box, t, p, cta, day) => B.push({ page, now, later, alt, phase, box, t, p, cta, day });
+  const today = T('today', 'e-today', 'd-today', 'Aujourd’hui');
+  today('now', [3.4, 12.4, 93.2, 53], 'Votre écran Aujourd’hui', hc ? 'Vos 30 derniers jours arrivent. Le reste se remplit au fil des jours.' : 'Pour l’instant, il attend vos premières notes.', 'Voir dans 14 jours');
+  today('later', [3.6, 22.4, 92.8, 24.8], 'Votre bien-être du jour', st.face === 'on' ? 'Lu par la caméra quand vous regardez votre téléphone, et par vos notes.' : 'D’après vos notes. Avec la lecture du visage, il se remplit tout seul.', 'Suivant', 14);
+  today('later', [3.6, 48.2, 92.8, 31.8], 'Vos mesures du jour', hc ? 'Ce que vos appareils envoient, comparé à vos habitudes.' : 'Avec Health Connect ou une montre, vos nuits et vos pas s’affichent ici.', 'Suivant', 14);
+  const journal = T('journal', 'e-journal', 'd-journal', 'Journal');
+  journal('now', [3.4, 13.4, 93.2, 31], 'Le Journal', 'Chacune de vos journées sera gardée ici.', 'Voir dans 14 jours');
+  journal('later', [3.6, 30, 92.8, 33.6], 'Une journée d’un coup d’œil', 'Sommeil, pas, cœur, repas et notes au même endroit.', 'Suivant', 14);
+  const ana = T('analyses', 'e-reco', 'd-reco', 'Analyses');
+  ana('now', [3.6, 19.8, 92.8, 26.6], 'Les analyses', 'Elles démarrent après 14 jours notés.', 'Voir au jour 14');
+  ana('later', [3.6, 22.4, 92.8, 15.8], 'Au jour 14 : vos premières pistes', 'Ce qui va avec vos bons et vos mauvais jours. Des pistes, pas des causes.', 'Suivant', 14);
+  ana('later', [3.6, 39.8, 92.8, 53], 'Le détail de chaque piste', 'De combien chaque facteur joue sur votre bien-être, en points sur 5.', 'Suivant', 14);
+  if (wantsGut(st)) {
+    const gut = T('digestion', 'e-ventre', 'd-ventre', 'Analyses, digestion');
+    gut('now', [3.6, 19.8, 92.8, 32.2], 'Votre digestion', 'Ses analyses demandent 28 jours notés, dont 5 avec une gêne.', 'Voir au jour 28');
+    gut('later', [3.6, 29.5, 92.8, 63.5], 'Au jour 28 : ce qui va avec votre ventre', 'Repas, sommeil, écran : ce qui va avec vos jours calmes et vos jours de gêne.', 'Suivant', 28);
+  }
+  const agir = T('agir', 'e-agir', 'd-agir', 'Agir');
+  agir('now', [3.6, 16.4, 92.8, 17.6], 'Agir', 'Ici, vous vérifierez une piste par vous-même.', 'Voir au jour 14');
+  agir('later', [3.6, 19.4, 92.8, 10.2], 'Vérifier par un essai', 'Halcya vous propose deux semaines d’essai, puis compare avant et après.', 'Revenir à mes données', 14);
+  today('now', [1, 93.4, 19, 6.4], 'À vous', 'Pour revoir cette visite : « Voir un exemple », en bas des écrans encore vides.', 'Terminer');
+  return B;
+}
+
+function factTiles(c, st) {
+  const out = [];
+  const okS = (k) => c.st[k] === 'y' || c.st[k] === 'p';
+  const hwBlocked = c.huawei && st.huawei !== 'linked';
+  out.push(`<div class="fact" style="background:var(--lilac-bg)"><span class="v">7 840</span><span class="l">pas par jour</span></div>`);
+  if (okS('sleep')) out.push(`<div class="fact" style="background:var(--night-bg)"><span class="v">6 h 52</span><span class="l">de sommeil par nuit${c.st.sleep === 'p' || hwBlocked ? ', estimé' : ''}</span></div>`);
+  if (!hwBlocked && c.st.rhr === 'y') out.push(`<div class="fact" style="background:var(--rose-bg)"><span class="v">58 bpm</span><span class="l">FC au repos</span></div>`);
+  if (!hwBlocked && c.st.hrv === 'y') out.push(`<div class="fact" style="background:var(--rose-bg)"><span class="v">41 ms</span><span class="l">VFC la nuit</span></div>`);
+  if (c.st.weight === 'p' || c.st.weight === 'y') out.push(`<div class="fact" style="background:var(--rose-bg)"><span class="v">68,4 kg</span><span class="l">dernier poids</span></div>`);
+  return out.slice(0, 4);
+}
+
+/* ===================== Fenêtres du système (simulées) ===================== */
+function sheetHTML(st) {
+  if (st.sheet === 'hc') {
+    const ios = isIOS();
+    const items = ['Pas', 'Sommeil', 'Fréquence cardiaque', 'FC au repos', 'Variabilité cardiaque', 'Température', 'Oxygène du sang', 'Poids', 'Tension', 'Cycle menstruel', 'Exercices'];
+    return `<div class="sheet-bg"><div class="sheet ${ios ? 'ios' : ''}" role="dialog" aria-label="Autorisation du système">
+      <span class="sys">écran du système, simulé</span>
+      <h4>${ios ? '« Halcya » souhaite accéder à vos données de santé' : 'Autoriser Halcya à lire les données de Health Connect ?'}</h4>
+      <ul>${ios ? '<li><b>Activer toutes les catégories</b><span>›</span></li>' : '<li><b>Tout autoriser</b><span>●</span></li>'}${items.map((i) => `<li>${i}<span>${ios ? '●' : '✓'}</span></li>`).join('')}${ios ? '' : '<li>Données de plus de 30 jours<span>✓</span></li>'}</ul>
+      <div class="row2"><button type="button" class="sysbtn" data-act="hc-deny">${ios ? 'Ne pas autoriser' : 'Annuler'}</button><button type="button" class="sysbtn prim" data-act="hc-ok">Autoriser</button></div>
+    </div></div>`;
+  }
+  if (st.sheet === 'huawei') {
+    return `<div class="sheet-bg"><div class="sheet" role="dialog" aria-label="Relier la montre">
+      <div class="pairing"><div class="pulse">${IC.watch}</div><h4>Huawei Watch GT 6 trouvée</h4>
+      <p class="muted" style="color:#4a5e57">Gardez la montre près du téléphone. Elle reste reliée à Huawei Santé.</p></div>
+      <div class="row2"><button type="button" class="sysbtn" data-act="sheet-close">Annuler</button><button type="button" class="sysbtn prim" data-act="huawei-ok">Relier</button></div>
+    </div></div>`;
+  }
+  if (st.sheet === 'face') {
+    return `<div class="sheet-bg"><div class="sheet" role="dialog" aria-label="Autorisation caméra">
+      <span class="sys">écran du système, simulé</span>
+      <h4>Autoriser Halcya à utiliser la caméra ?</h4>
+      <div class="row2"><button type="button" class="sysbtn" data-act="sheet-close">Refuser</button><button type="button" class="sysbtn prim" data-act="face-ok">Autoriser</button></div>
+    </div></div>`;
+  }
+  if (st.sheet === 'notif') {
+    return `<div class="sheet-bg"><div class="sheet" role="dialog" aria-label="Autorisation des notifications">
+      <span class="sys">écran du système, simulé (Android 13 et plus)</span>
+      <h4>Autoriser Halcya à vous envoyer des notifications ?</h4>
+      <p class="muted" style="color:#4a5e57;margin:0">Annoncé sur l’écran précédent, sous les boutons.</p>
+      <div class="row2"><button type="button" class="sysbtn" data-act="notif-ok">Ne pas autoriser</button><button type="button" class="sysbtn prim" data-act="notif-ok">Autoriser</button></div>
+    </div></div>`;
+  }
+  return '';
+}
+
+/* ===================== Notes par écran ===================== */
+function notesFor(id, st) {
+  const c = st.cfg; const ios = isIOS();
+  const N = {
+    tuto: { why: ['Le tutoriel que vous demandez : ce que fait l’app, ses trois onglets et la confidentialité, en trois cartes à faire glisser.', 'Carte 3 refaite (votre retour) : les données restent sur le téléphone, puis la liste complète des cas où elles en sortent, et quand l’IA sert. Tirée du code de v913 : relais (repas, selles, avis, abonnement), météo, export, sauvegarde.', '« Passer » mène seulement à l’objectif. Dans v906, « Passer » termine tout l’accueil d’un coup, autorisations comprises.'],
+      was: ['v906 entre directement sur « Qu’est-ce qui vous amène ? », avec trois tuiles chiffrées (0 Mo, 2–48 h, 1 geste) que personne ne lit au premier écran.'] },
+    goal: { why: ['Choix multiple (votre retour) : une option par persona. Ma digestion (Ventre et données, Ventre sans technique), Mon cycle (Endométriose), Mon stress et mon sommeil (Stressé et pressé), Mon sport (Sportif), Prendre soin de moi (Prendre soin de soi, maigrir), Tout mesurer.', 'Les suivis en découlent et se changent dans Paramètres. « Continuer » n’est jamais grisé : sans choix, Halcya montre tout.', 'Mon cycle : l’app ne lit pas encore le cycle (voir D9). Ce soir, ce choix met en avant le ventre et les douleurs.'],
+      was: ['v906 pose deux questions de suite : l’objectif, puis « Que voulez-vous suivre ? » (cinq cases). La seconde disparaît (D1) : ce choix est enregistré mais l’app ne le lit nulle part.'] },
+    sources: { why: [`Un seul écran pour tous les accès. Chaque carte dit ce qui est lu juste au-dessus de son bouton : c’est la divulgation que Google demande avant chaque autorisation.`, ios ? 'Sur iPhone, la carte principale est Santé.' : 'Sur Android, la carte principale est Health Connect.', c.huawei ? 'La carte Huawei n’apparaît que si l’app Huawei Santé est installée ou si une montre Huawei est déjà appairée au téléphone.' : 'Pas de carte Huawei : elle n’apparaît que si une montre Huawei est trouvée.'],
+      was: ['v906 demande d’abord « Avez-vous une montre ? » (trois choix), puis un écran Health Connect, puis un écran Météo. Trois écrans deviennent un (D2).', 'Dans v906, « Continuer » reste grisé sur l’écran Health Connect tant qu’on n’a pas ouvert la divulgation et répondu « Pas maintenant ». Ici, on peut toujours continuer.', 'Choisir Huawei dans v906 ne mène à rien de précis : l’app finit sur l’onglet Sources, sans rien mettre en avant.'],
+      how: [ios ? 'Santé ne dit rien avant l’autorisation ; ensuite, Halcya liste les sources et les appareils qui ont écrit des données (le nom de la montre compris).' : 'Avant l’autorisation, Android permet de savoir si une app connue est installée (Samsung Health, Garmin Connect, Huawei Santé, Mi Fitness, Withings, Oura…), si on la déclare. Après, Health Connect donne l’app d’origine de chaque donnée.'] },
+    found: { why: ['La réponse à « qu’est-ce que Halcya va faire de ma montre ? ». Chaque mesure est rangée dans sa couleur : lilas activité, bleu nuit sommeil, rose corps.', c.brand ? `Les mesures en pointillés sont mesurées par l’appareil mais ${c.brand} ne les partage pas. On le dit, plutôt que de laisser croire que Halcya les oublie (D4).` : 'Rien n’est caché : ce qui arrive en partie est dit, avec la raison.', 'Les tuiles du bas reprennent l’ancien « Vos 30 derniers jours ».'],
+      was: ['v906 montre « Vos 30 derniers jours » (pas, sommeil…) seulement avec une montre Health Connect et l’accès donné.'],
+      how: ['Le tableau vient de journal/PERSONAS.md (15 configurations, 07/11). Dans l’app : un catalogue par appareil, croisé avec ce qui est vraiment arrivé ces 30 derniers jours.'] },
+    face: { why: ['Textes revus (votre retour et celui de votre bêta-testeuse) : l’image est effacée aussitôt, « une estimation de votre bien-être par un modèle, pas un avis médical », « Comment l’arrêter » avec le lien vers Paramètres. La notification est annoncée sous les boutons, sur Android.', 'L’écran dédié que vous aviez demandé le 31/10 (P28), plus visuel : les points montrent pourquoi le déverrouillage donne une estimation plus solide.', 'Divulgation complète (AI Act), « Activer » en principal, « Plus tard » bien visible, rien de précoché. Sur Android, la demande de notification est annoncée ici (aujourd’hui elle arrive sans prévenir).', ios ? 'Sur iPhone, seulement à l’ouverture de l’app (à confirmer avec la routine iOS).' : 'Sur Android, le déverrouillage est proposé en premier.'],
+      was: ['Même écran dans v906, mais la divulgation est une longue feuille de six paragraphes, et la demande de notification n’est pas annoncée.'] },
+    first: { why: ['La première donnée : la personne a déjà quelque chose dans son journal en arrivant.', wantsGut(st) ? 'Digestion ou cycle cochés : on demande aussi le ventre.' : 'Si Ma digestion ou Mon cycle est coché, on demande aussi le ventre.'],
+      was: ['Gardé de v906 (« premier geste »).'] },
+    tour: { why: ['Comme le tutoriel d’un jeu (votre retour) : la visite se fait dans la vraie app, sur les vrais écrans. D’abord l’écran de la personne tel qu’il est, puis le même écran qui se remplit de données fictives, avec le jour où il ressemblera à ça : 14 jours pour le bien-être, 28 pour la digestion.', 'Rien n’est réinventé : ce sont les vrais écrans de l’app, nourris par un jeu de données fictives gardé en mémoire, jamais écrit dans les données de la personne.', 'Dans l’app, les données fictives suivent son matériel : sans VFC chez elle, pas de VFC dans l’exemple. L’étape digestion n’apparaît que si Ma digestion ou Mon cycle est coché.'],
+      was: ['v906 n’a ni visite ni aperçu. La maquette précédente dessinait trois écrans inventés, dont un essai : retirés à votre demande.'],
+      how: ['Les images sont de vraies captures de l’app v913 (variante play) : écrans vides, puis données de démonstration du dépôt. Elles ne changent pas avec le matériel choisi à gauche ; seuls les textes changent.', 'Ensuite, « Voir un exemple » en bas des écrans encore vides relance la visite.'] },
+    premium: { why: [ios ? 'iPhone : l’écran d’abonnement actuel, inchangé (la période offerte y est finie depuis le 06/11).' : 'Android : un seul écran qui dit que Gold est offert jusqu’au 2 décembre, sans formule ni prix.'],
+      was: ['v906 ouvre la page Premium complète en fin d’accueil.'] },
+  }[id];
+  const li = (a) => a.map((x) => `<li>${x}</li>`).join('');
+  return `<h2>${STEP_LABEL[id]}</h2>
+    <span class="tagline">${c.name} · ${ios ? 'iPhone' : 'Android'} · ${c.w} des utilisateurs</span>
+    <h3>Pourquoi</h3><ul>${li(N.why)}</ul>
+    <h3>Dans v906</h3><ul>${li(N.was)}</ul>
+    ${N.how ? `<h3>Comment l’app le sait</h3><ul>${li(N.how)}</ul>` : ''}`;
+}
+
+/* ===================== Rendu ===================== */
+const nb = (html) => html.replace(/ ([?:!;»])/g, ' $1').replace(/« /g, '« ');
+function phoneHTML(st, id) {
+  const ios = st.cfg.os === 'ios';
+  const html = SCREENS[id](st);
+  return `<div class="phone"><div class="statusbar"><span>9:41</span><span>${ios ? 'iPhone' : 'Android'}</span></div><div class="screen ${id === 'tour' ? 'tourscreen' : ''}">${nb(html)}</div>${nb(sheetHTML(st))}</div>`;
+}
+
+function renderCfgs() {
+  const el = document.getElementById('cfgs');
+  const groups = [['Sans montre', [1, 2, 5]], ['Avec une montre, une bague ou un bracelet', [3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]]];
+  el.innerHTML = groups.map(([g, ids]) => `<div class="cfg-group">${g}</div>` + ids.map((id) => { const c = CFG.find((x) => x.id === id); return `<button type="button" class="cfg ${S.cfg.id === id ? 'on' : ''}" data-cfg="${id}" aria-pressed="${S.cfg.id === id}"><b>${c.name}</b><span class="w">${c.w}</span><span class="os">${c.os === 'ios' ? 'iPhone' : 'Android'} · ${c.ex}</span></button>`; }).join('')).join('');
+}
+
+function render() {
+  renderCfgs();
+  const steps = stepsFor();
+  const id = steps[S.step];
+  document.getElementById('stepper').innerHTML = steps.map((s, i) => `<button type="button" class="${i === S.step ? 'on' : ''}" data-jump="${i}">${String(i + 1).padStart(2, '0')} ${STEP_LABEL[s]}</button>`).join('');
+  document.getElementById('phone-slot').innerHTML = phoneHTML(S, id);
+  const tw = document.querySelector('#phone-slot .tourwrap[data-anim="1"]');
+  if (tw) {
+    S.anim = false;
+    const chip = tw.querySelector('.daychip');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { tw.classList.add('filled'); if (chip) chip.textContent = 'jour ' + chip.dataset.day; }
+    else {
+      requestAnimationFrame(() => requestAnimationFrame(() => { tw.classList.add('anim', 'filled'); }));
+      if (chip) { const n = Number(chip.dataset.day); const t0 = performance.now(); const tick = (t) => { const k = Math.min(1, (t - t0) / 1200); chip.textContent = 'jour ' + Math.max(1, Math.round(1 + (n - 1) * k)); if (k < 1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); }
+    }
+  }
+  document.getElementById('notes').innerHTML = notesFor(id, S);
+  const board = S.view === 'board';
+  document.getElementById('layout').hidden = board;
+  document.getElementById('board-wrap').hidden = !board;
+  document.getElementById('view-play').classList.toggle('on', !board);
+  document.getElementById('view-board').classList.toggle('on', board);
+  document.getElementById('view-play').setAttribute('aria-selected', String(!board));
+  document.getElementById('view-board').setAttribute('aria-selected', String(board));
+  if (board) renderBoard();
+}
+
+function renderBoard() {
+  const base = { ...S, ...fresh(), goals: ['gut'], hc: 'granted', huawei: 'linked', weather: true, screen: true, face: 'on', feel: 3, gut: 0 };
+  const cells = [];
+  [0, 1, 2].forEach((t) => cells.push(['01 Découvrir, carte ' + (t + 1), { ...base, tuto: t, hc: 'idle', huawei: 'idle', weather: false, screen: false }, 'tuto']));
+  cells.push(['02 Objectif', { ...base, goals: ['gut', 'stress'] }, 'goal']);
+  cells.push(['03 Sources, avant', { ...base, hc: 'idle', huawei: 'idle', weather: false, screen: false }, 'sources']);
+  cells.push(['03 Sources, après', base, 'sources']);
+  cells.push(['04 Ce qui arrive', base, 'found']);
+  cells.push(['05 Visage', base, 'face']);
+  cells.push(['06 Premier geste', base, 'first']);
+  cells.push(['07 Gold', base, 'premium']);
+  tourBeats(base).forEach((b, i) => cells.push([`Visite ${String(i + 1).padStart(2, '0')}, ${b.alt}${b.phase === 'later' ? ', jour ' + b.day : ', maintenant'}`, { ...base, tv: i }, 'tour']));
+  document.getElementById('board-sub').textContent = `${S.cfg.name} (${S.cfg.os === 'ios' ? 'iPhone' : 'Android'}), objectif digestion, toutes les sources acceptées, visite guidée étape par étape. Changez de matériel dans « Parcourir ».`;
+  document.getElementById('board').innerHTML = cells.map(([cap, st, id]) => `<div class="cell"><span class="cap">${cap}</span>${phoneHTML(st, id)}</div>`).join('');
+}
+
+/* ===================== Actions ===================== */
+function go(n) { const steps = stepsFor(); S.step = Math.max(0, Math.min(steps.length - 1, n)); S.sheet = null; render(); }
+document.addEventListener('click', (e) => {
+  const cfgBtn = e.target.closest('[data-cfg]');
+  if (cfgBtn) { S.cfg = CFG.find((c) => c.id === Number(cfgBtn.dataset.cfg)); Object.assign(S, fresh()); render(); return; }
+  const jump = e.target.closest('[data-jump]');
+  if (jump) { go(Number(jump.dataset.jump)); return; }
+  const v = e.target.closest('[data-view]');
+  if (v) { S.view = v.dataset.view; render(); return; }
+  if (e.target.closest('#restart')) { Object.assign(S, fresh()); S.view = 'play'; render(); return; }
+  const a = e.target.closest('[data-act]');
+  if (!a || a.closest('.board')) return;
+  const act = a.dataset.act;
+  const val = a.dataset.v;
+  switch (act) {
+    case 'back': if (S.step === 0 && S.tuto > 0) { S.tuto -= 1; render(); } else go(S.step - 1); break;
+    case 'next': if (stepsFor()[S.step + 1] === 'tour') { S.tv = 0; } go(S.step + 1); break;
+    case 'tour-next': { const B = tourBeats(S); const a0 = B[S.tv]; const a1 = B[S.tv + 1]; S.tv += 1; S.anim = !!(a1 && a1.phase === 'later' && a0.phase === 'now'); render(); break; }
+    case 'tour-end': S.tv = 0; S.step = 0; Object.assign(S, fresh()); render(); break;
+    case 'noop': e.preventDefault(); break;
+    case 'tuto-next': if (S.tuto < 2) { S.tuto += 1; render(); } else go(1); break;
+    case 'tuto-skip': go(1); break;
+    case 'goal': S.goals = S.goals.includes(val) ? S.goals.filter((g) => g !== val) : [...S.goals, val]; render(); break;
+    case 'hc': S.sheet = 'hc'; render(); break;
+    case 'hc-ok': S.hc = 'granted'; S.sheet = null; render(); break;
+    case 'hc-deny': S.hc = 'denied'; S.sheet = null; render(); break;
+    case 'huawei': S.sheet = 'huawei'; render(); break;
+    case 'huawei-ok': S.huawei = 'linked'; S.sheet = null; render(); break;
+    case 'sheet-close': S.sheet = null; render(); break;
+    case 'weather': S.weather = !S.weather; render(); break;
+    case 'screen': S.screen = !S.screen; render(); break;
+    case 'face-on': S.sheet = 'face'; render(); break;
+    case 'face-ok': S.face = 'on'; if (isIOS()) { S.sheet = null; go(S.step + 1); } else { S.sheet = 'notif'; render(); } break;
+    case 'notif-ok': S.sheet = null; go(S.step + 1); break;
+    case 'face-later': S.face = 'later'; go(S.step + 1); break;
+    case 'feel': S.feel = Number(val); render(); break;
+    case 'gut': S.gut = Number(val); render(); break;
+    default: break;
+  }
+});
+
+/* ===================== Décisions et comparaison ===================== */
+const DEC = [
+  ['D1', 'Supprimer l’écran « Que voulez-vous suivre ? » : les suivis découlent de l’objectif et se changent dans Paramètres.'],
+  ['D2', 'Remplacer « Avez-vous une montre ? » par la détection : Halcya trouve elle-même vos appareils après l’accès à Health Connect ou Santé. Météo et temps d’écran rejoignent le même écran.'],
+  ['D3', 'Remplacé par votre retour : visite guidée sur la vraie app avec des données fictives (14 jours pour le bien-être, 28 pour la digestion), relancée par « Voir un exemple » sur les écrans vides. Elle passe en dernier ce soir : si elle n’est pas sûre à 22:30, elle part demain.'],
+  ['D4', 'Montrer honnêtement ce que l’appareil mesure mais ne partage pas (VFC de Samsung, Garmin, Xiaomi, Oura), avec la raison en une ligne.'],
+  ['D5', 'Le rappel du soir (noter sa digestion) : le proposer pendant l’accueil, ou seulement plus tard, depuis le bloc digestion d’Aujourd’hui ?'],
+  ['D6', 'Gold en fin d’accueil : un écran court sur Android pendant le test ; sur iPhone, l’écran d’abonnement actuel. Ou rien du tout pendant le test ?'],
+  ['D7', 'Ce soir : livrer tout l’accueil d’un coup avant minuit (une session dédiée, comme le chantier du 07/11), ou d’abord les écrans 01 à 04 et l’aperçu demain ?'],
+  ['D9', 'Mon cycle : l’app ne lit pas encore le cycle. Ce soir, ce choix met en avant le ventre et les douleurs. Lire le cycle depuis Health Connect ou Santé demande une autorisation de plus et une déclaration à Google : plus tard, sur proposition ?'],
+  ['D8', 'Un seul calendrier partout : premières pistes au jour 14, analyses de la digestion au jour 28. Aujourd’hui, l’accueil et l’abonnement disent « vers 21 jours », Aujourd’hui dit 28 et Analyses dit 14.'],
+];
+const SHOTS = [
+  ['01-goal', '01 Objectif, avec les trois tuiles chiffrées'], ['02-tracks', '02 Que voulez-vous suivre ?'], ['03-watch', '03 Avez-vous une montre ?'],
+  ['04-health', '04 Health Connect'], ['04b-health-disclosure', '04 Sa divulgation'], ['05-aha', '05 Vos 30 derniers jours'],
+  ['06-weather', '06 Météo'], ['07-face-pitch', '07 Lecture du visage'], ['07b-face-disclosure', '07 Sa divulgation'],
+  ['08-gesture-gut', '08 Premier geste'], ['09b-premium-launch', '09 Gold offert'], ['10-after-end-today', 'Arrivée sur Aujourd’hui'],
+];
+const FLAWS = [
+  'L’écran « Que voulez-vous suivre ? » enregistre un choix que l’app ne lit nulle part.',
+  'Sur l’écran Health Connect, « Continuer » reste grisé tant qu’on n’a pas ouvert la divulgation et répondu « Pas maintenant ».',
+  '« Passer » termine tout l’accueil d’un coup, autorisations et abonnement compris.',
+  'Activer la lecture du visage demande aussi les notifications, sans l’annoncer.',
+  'Choisir une montre Huawei ne mène à rien de précis : l’app finit sur Sources, sans rien mettre en avant.',
+  'Trois délais différents : « vers 21 jours » dans l’accueil et l’abonnement, 28 jours sur Aujourd’hui, 14 jours dans Analyses.',
+  'Sans Health Connect sur le téléphone, l’écran Health Connect s’affiche quand même, juste pour s’excuser.',
+  'Sur l’écran Gold, la croix et « Continuer gratuitement » font la même chose.',
+  'Le code partagé ne dit jamais « Santé » : sur iPhone, c’est l’app iOS qui doit remplacer Health Connect, à vérifier avec la routine iOS.',
+];
+document.getElementById('decisions').innerHTML = DEC.map(([k, t]) => `<li><b>${k}</b> ${nb(t)}</li>`).join('');
+document.getElementById('compare').innerHTML = nb(`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px">
+  <div><h3 style="margin:0 0 6px;font-size:15px">v906 (aujourd’hui)</h3><ol class="muted" style="margin:0;padding-left:20px;display:grid;gap:3px">
+    <li>Qu’est-ce qui vous amène ? (avec trois tuiles chiffrées)</li><li>Que voulez-vous suivre ?</li><li>Avez-vous une montre ?</li><li>Health Connect</li><li>Vos 30 derniers jours (si accès)</li><li>Météo</li><li>Lecture du visage</li><li>Premier geste</li><li>Premium</li></ol>
+    <p class="muted" style="margin-top:6px">Jusqu’à 9 écrans, aucun tutoriel, aucun aperçu, rien sur ce que la montre ne partage pas.</p></div>
+  <div><h3 style="margin:0 0 6px;font-size:15px">Proposition</h3><ol class="muted" style="margin:0;padding-left:20px;display:grid;gap:3px">
+    <li>Découvrir Halcya (3 cartes, « Passer »)</li><li>Qu’est-ce qui vous amène ?</li><li>Branchez vos sources (un écran)</li><li>Voici ce que Halcya recevra</li><li>Lecture du visage</li><li>Premier geste</li><li>Aperçu avec données fictives</li><li>Gold</li></ol>
+    <p class="muted" style="margin-top:6px">8 écrans, toujours le même nombre : le compteur ne change plus en route.</p></div>
+</div>
+<h3 style="margin:18px 0 8px;font-size:15px">L’accueil de v906, en captures (Android, version Play)</h3>
+<div class="shots">${SHOTS.map(([f, c]) => `<figure><img src="v906/${f}.jpg" alt="${c}" loading="lazy" width="200"><figcaption>${c}</figcaption></figure>`).join('')}</div>
+<h3 style="margin:18px 0 8px;font-size:15px">Ce qui ne va pas dans v906</h3>
+<ul class="flaws">${FLAWS.map((f) => `<li>${f}</li>`).join('')}</ul>`);
+
+render();
+</script>
+</body>
+</html>

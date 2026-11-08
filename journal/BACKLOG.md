@@ -21,6 +21,39 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🚪 Chantier accueil du 08/11 au soir (ACC-1 à ACC-10) — PRIORITÉ ABSOLUE de la session du soir
+
+Mots du propriétaire (08/11 vers 13:30) : « Non, aujourd'hui, ce sur quoi on va travailler, ça va être l'ensemble du tutoriel d'accueil. Je pense qu'on peut le rework complètement aujourd'hui. Quand à la première installation, il y a beaucoup de choses qui se passent, mais je suis pas du tout convaincu. J'aimerais bien faire un petit tutoriel qui explique bien comment fonctionne l'app, etc. La première installation qui permet à la personne de brancher toutes ses sources etc., etc. Et ensuite d'avoir potentiellement une petite preview en fait de ce que donnera l'application une fois qu'elle aura des données. » Il veut que ce soit « prêt avant minuit ce soir ».
+Le 08/11 vers 18:00, sur la maquette v3 : « C'est parfait go développer faut que ce soit up ce soir à minuit ».
+Maquette validée : artefact « Nouvel accueil Halcya » (https://claude.ai/artifact/D83X3qWWhqU1NofwnihmDZ), copie et
+textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maquette-v3.html`, captures
+`android-samsung-watch-*` et `iphone-seul-*`). Décisions D1 à D9 : `PRODUIT.md`.
+
+- [x] **ACC-1** Parcours fixe tuto → goal → sources → found → face (si possible) → first → premium (play), compteur
+  calculé une fois, « Continuer » jamais bloqué, « ‹ » partout sauf au premier écran, « Passer » sur les cartes 1 et 2
+  du tuto seulement (mène à la carte 3) ; migration de `healthtrack_onboarding` (`flow: 2`, ancien `goal` lu, accueil
+  fini jamais relancé) — PR « [Auto] Nouvel accueil (ACC-1 à 4, 6, 7, 9) ».
+- [x] **ACC-2** Tuto en 3 cartes (glisser, points, « Suivant » puis « Commencer ») ; carte 3 : les cas où les données
+  sortent, vérifiés contre le code (relais IA / Gemini avec la clé en sideload, export et rapport, avis, météo,
+  sauvegarde ; abonnement = numéro anonyme). Même PR.
+- [x] **ACC-3** Objectifs à choix multiple (gut, cycle, stress, sport, care, all) dans `goals` ; ancien `goal` lu
+  (gut → [gut], energy → [stress], all → [all]) ; carte ventre si gut ou cycle ; Paramètres en cases ; « Que
+  voulez-vous suivre ? » retiré (`tracks` déduit, lu nulle part). Même PR.
+- [x] **ACC-4** « Branchez vos sources » : Health Connect / Santé d'un geste (divulgation au-dessus du bouton), carte
+  Huawei si Huawei Santé ou Honor Santé est installée (« Relier ma montre » → Sources à la fin de l'accueil),
+  interrupteurs Météo et Temps d'écran. Même PR.
+- [ ] **ACC-5** « Voici ce que Halcya recevra » : appareils (`sourceName`, apps installées silencieuses avec leur
+  réglage) et tuiles des 30 jours livrés dans la PR 1 ; **reste** : mesures groupées par thème avec statut reçu / en
+  partie / pas partagée et leur raison (`src/devices/deviceCapabilities.js`, tiré de `PERSONAS.md`).
+- [x] **ACC-6** Visage : deux tuiles (déverrouillage mis en avant, Android ; ouverture), divulgation en 5 lignes,
+  « Activer » / « Plus tard », notification annoncée sous les boutons. Même PR.
+- [x] **ACC-7** Première note : 5 visages, « Et votre ventre ? » avec digestion ou cycle, « Enregistrer » crée de
+  vraies entrées. Même PR.
+- [ ] **ACC-8** Visite guidée sur les vrais écrans, données fictives jamais écrites dans la base, « Voir un exemple ».
+- [x] **ACC-9** Play en période de lancement : écran court « Gold est offert pendant le test » (date du relais) ;
+  sinon l'abonnement actuel, sans la croix qui doublait « Continuer gratuitement ». Même PR.
+- [ ] **ACC-10** Calendrier unique : premières pistes jour 14, digestion jour 28 (une constante, un test).
+
 ## 📈 Corrections du propriétaire du 07/11 vers 23:50 — Journal › Tendances (v896) — PRIORITÉ DES RUNS DE CODE (seule une CI cassée passe avant)
 
 > Ses mots : « L'onglet tendance je suis pas du tout convaincu en v896. Déjà quand tu cliques dessus tu arrives par
