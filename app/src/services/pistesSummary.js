@@ -4,6 +4,7 @@
  * calcul, ce qu'il montre (titres seulement), et l'Accueil le relit sans rien recalculer. Un résumé d'un jour ou
  * deux reste juste à l'échelle de pistes qui demandent des semaines de données.
  */
+import { isExampleMode } from '../storage/exampleMode'
 import { getHiddenLinks, gutLinkKey } from '../settings/hiddenLinks'
 
 export const PISTES_SUMMARY_KEY = 'healthtrack_pistes_summary'
@@ -44,6 +45,7 @@ export function pisteTouchingToday(summary, dayItems) {
 }
 
 export function rememberPistesSummary(analysis, now = new Date()) {
+  if (isExampleMode()) return
   try {
     const summary = summarizePistes(analysis)
     if (summary) localStorage.setItem(PISTES_SUMMARY_KEY, JSON.stringify({ ...summary, at: now.toISOString() }))

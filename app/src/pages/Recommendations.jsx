@@ -11,6 +11,7 @@
  * Retirés : l'historique, « Sur quelques semaines », « Autres liens repérés », « Bientôt » et l'analyse « dans les
  * heures ». Des liens statistiques, jamais une cause ni un diagnostic.
  */
+import SeeExample from '../components/SeeExample'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AnalysesTabs from '../components/AnalysesTabs'
@@ -19,6 +20,7 @@ import WellbeingPrompt from '../components/WellbeingPrompt'
 import GutEveningReminder from '../components/GutEveningReminder'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
+import { isExampleMode } from '../storage/exampleMode'
 import { THEME_TONE, pistesTitles, resultsView } from '../services/resultsView'
 import { eveningNotePlugin } from '../services/eveningNote'
 import { APP_NAME } from '../config/brand'
@@ -38,6 +40,7 @@ const pts = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleStr
 
 /** Mémorise les titres des pistes pour l'Accueil et Agir (sans recalcul de leur côté). */
 function rememberTitles(results) {
+  if (isExampleMode()) return
   try {
     localStorage.setItem(PISTES_SUMMARY_KEY, JSON.stringify({ ...pistesTitles(results), at: new Date().toISOString() }))
   } catch {
@@ -232,6 +235,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} />}
       {outcome === 'digestion' && v.state === 'results' && <DoctorReportCard />}
       <HowItWorks />
+      <SeeExample />
       <WellbeingPrompt open={!!noteOpen} initialMode={noteOpen === 'reminder' ? 'reminder' : 'now'} onClose={() => setNoteOpen(false)} />
     </section>
   )

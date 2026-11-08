@@ -1,3 +1,4 @@
+import SeeExample from '../components/SeeExample'
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import { eveningNotePlugin } from '../services/eveningNote'
@@ -141,7 +142,7 @@ export default function Dashboard() {
         </div>
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}
-
+      <SeeExample />
     </section>
   )
 }

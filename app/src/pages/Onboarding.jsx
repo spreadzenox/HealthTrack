@@ -810,7 +810,9 @@ export default function Onboarding() {
 
   const end = () => {
     const s = finishOnboarding('completed')
-    // La montre Huawei s'appaire depuis Sources (long, pas au milieu de l'accueil).
+    // La montre Huawei s'appaire depuis Sources (long, pas au milieu de l'accueil) ; sinon la visite guidée (ACC-8)
+    // s'ouvre sur Aujourd'hui. Elle reste relançable par « Voir un exemple ».
+    if (s.huawei !== 'pair') saveOnboarding({ tour: 'pending' })
     navigate(s.huawei === 'pair' ? '/connectors' : '/', { replace: true })
   }
 

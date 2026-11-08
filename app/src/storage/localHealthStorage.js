@@ -14,6 +14,7 @@
 import { getBodySettings, setBodySettings, sanitizeBodySettings } from '../settings/bodySettings'
 import { getHiddenLinks, setHiddenLinks, sanitizeHiddenLinks } from '../settings/hiddenLinks'
 import { bumpDataRevision } from './dataRevision'
+import { exampleEntries, isExampleMode, readExample, waitForRealData } from './exampleMode'
 import { AGG_STORE, DENSE_SERIES, markDirty, readAggregatedEntries } from './dailyAggregates'
 import { APP_NAME } from '../config/brand'
 
@@ -67,6 +68,7 @@ function openDB() {
  * @returns {Promise<Array<{ id: number, type: string, source: string, at: string, payload: object, created_at: string }>>}
  */
 export async function listEntries(opts = {}) {
+  if (isExampleMode()) return readExample(opts)
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
@@ -163,6 +165,7 @@ export async function getLatestEntryAt(source) {
  * @returns {Promise<string|null>}
  */
 export async function getFirstEntryAt(type) {
+  if (isExampleMode()) return readExample({ type, limit: Infinity }).at(-1)?.at ?? null
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
@@ -218,6 +221,7 @@ function existingDedupKeys(db, entries, now) {
  * @returns {Promise<{ inserted: number, skipped: number }>}
  */
 export async function upsertEntries(newEntries) {
+  await waitForRealData()
   if (!newEntries || newEntries.length === 0) return { inserted: 0, skipped: 0 }
 
   const db = await openDB()
@@ -269,6 +273,7 @@ export async function upsertEntries(newEntries) {
  * @returns {Promise<{ removed: number, added: number }>}
  */
 export async function rewriteSourceEntries(source, rewrite) {
+  await waitForRealData()
   const db = await openDB()
   const now = new Date().toISOString()
   let removed = 0
@@ -314,6 +319,7 @@ export async function rewriteSourceEntries(source, rewrite) {
  * @returns {Promise<number>} id
  */
 export async function createEntry(entry) {
+  await waitForRealData()
   const db = await openDB()
   const now = new Date().toISOString()
   const at = entry.at || now
@@ -343,6 +349,7 @@ export async function createEntry(entry) {
  * @returns {Promise<number>}
  */
 export async function countAllEntries() {
+  if (isExampleMode()) return exampleEntries().length
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
@@ -360,6 +367,7 @@ export async function countAllEntries() {
  * @returns {Promise<number>}
  */
 export async function countEntries({ type, since, until } = {}) {
+  if (isExampleMode()) return readExample({ type, since, until, limit: Infinity }).length
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
@@ -415,6 +423,7 @@ export const ANALYSIS_LIMITS = {
  * @returns {Promise<Array<{ id: number, type: string, source: string, at: string, payload: object, created_at: string }>>}
  */
 export async function listEntriesForAnalysis() {
+  if (isExampleMode()) return readExample({ limit: Infinity })
   const { types: TYPE_LIMITS, subtypes: SUBTYPE_LIMITS, default: DEFAULT_LIMIT } = ANALYSIS_LIMITS
 
   const db = await openDB()
@@ -508,6 +517,7 @@ export async function listEntriesForAnalysis() {
  * @returns {Promise<void>}
  */
 export async function deleteEntry(id) {
+  await waitForRealData()
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction([STORE_NAME, AGG_STORE], 'readwrite')
@@ -530,6 +540,7 @@ export async function deleteEntry(id) {
  * @returns {Promise<number>} nombre d'entrées effacées
  */
 export async function deleteAllEntries() {
+  await waitForRealData()
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction([STORE_NAME, AGG_STORE], 'readwrite')
@@ -556,6 +567,7 @@ export async function deleteAllEntries() {
  * @returns {Promise<void>}
  */
 export async function updateEntry(id, changes = {}) {
+  await waitForRealData()
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction([STORE_NAME, AGG_STORE], 'readwrite')
@@ -716,6 +728,7 @@ function restoreProfile(profile, merge) {
  * @returns {Promise<{ imported: number, skipped: number, invalid: number, profileRestored: boolean }>}
  */
 export async function importFromJson(json, opts = {}) {
+  await waitForRealData()
   const { entries, invalid, profile, hiddenLinks } = parseBackup(json)
   if (entries.length === 0) return { imported: 0, skipped: 0, invalid, profileRestored: false }
 

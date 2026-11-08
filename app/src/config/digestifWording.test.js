@@ -10,7 +10,7 @@ import { join, relative } from 'node:path'
  */
 const APP = join(import.meta.dirname, '..', '..')
 // « Et votre ventre ? » (première note de l'accueil, ACC-7) : texte exact validé par le propriétaire le 08/11
-const ALLOWED = [/recommendations\/ventre/, /mal au ventre/, /signals:/, /Et votre ventre ?/]
+const ALLOWED = [/recommendations\/ventre/, /mal au ventre/, /signals:/, /Et votre ventre ?/, /ce qui va avec votre ventre/]
 
 function files(dir, out = []) {
   for (const f of readdirSync(dir)) {

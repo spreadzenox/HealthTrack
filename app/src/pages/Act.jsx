@@ -3,6 +3,7 @@
  * En cours (essais et test FODMAP), Mes habitudes, Proposés par vos analyses (« Commencer »), Terminés ; une section
  * vide ne s'affiche pas. Au départ, un état vide simple. En bas : vos essais figurent dans votre rapport médecin.
  */
+import SeeExample from '../components/SeeExample'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
@@ -186,6 +187,7 @@ export default function Act({ read = readAct, now }) {
       <p className="act-report">
         Tous vos essais, vérifiés ou non, figurent dans votre <Link to="/data#rapport-medecin">rapport médecin</Link>.
       </p>
+      <SeeExample />
     </section>
   )
 }
