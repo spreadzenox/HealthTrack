@@ -51,28 +51,32 @@ export function ExpressionStar({ mix }) {
 
 /** Carte valence × éveil : désagréable / agréable, calme / animé ; coins tendu, enjoué, las, détendu. */
 export function MoodMap({ points, day, habit }) {
-  const S = 200
-  const P = 18
-  const x = (v) => P + ((v + 1) / 2) * (S - 2 * P)
-  const y = (a) => P + ((1 - (a + 1) / 2)) * (S - 2 * P)
-  const k = (S - 2 * P) / 2
+  // Carré de C × C, centré ; à gauche et à droite, la place de « désagréable » et « agréable » écrits à l'horizontale.
+  const W = 280
+  const C = 156
+  const L = (W - C) / 2
+  const T = 18
+  const H = C + 2 * T
+  const k = C / 2
+  const x = (v) => L + ((v + 1) / 2) * C
+  const y = (a) => T + ((1 - (a + 1) / 2)) * C
   return (
-    <svg className="tdd-map" viewBox={`0 0 ${S} ${S}`} role="img"
+    <svg className="tdd-map" viewBox={`0 0 ${W} ${H}`} role="img"
       aria-label={`Humeur et éveil : ${points.length} lectures`}>
-      <rect className="tdd-map-frame" x={P} y={P} width={S - 2 * P} height={S - 2 * P} rx="10" />
-      <line className="tdd-map-axis" x1={S / 2} x2={S / 2} y1={P} y2={S - P} />
-      <line className="tdd-map-axis" x1={P} x2={S - P} y1={S / 2} y2={S / 2} />
+      <rect className="tdd-map-frame" x={L} y={T} width={C} height={C} rx="10" />
+      <line className="tdd-map-axis" x1={W / 2} x2={W / 2} y1={T} y2={T + C} />
+      <line className="tdd-map-axis" x1={L} x2={L + C} y1={H / 2} y2={H / 2} />
       {habit && <ellipse className="tdd-map-habit" cx={x(habit.v)} cy={y(habit.a)} rx={Math.max(4, habit.sv * k)} ry={Math.max(4, habit.sa * k)} />}
       {points.map((p, i) => <circle key={i} className="tdd-map-dot" cx={x(p.v)} cy={y(p.a)} r="3" />)}
       {day && <circle className="tdd-map-mean" cx={x(day.v)} cy={y(day.a)} r="6" />}
-      <text className="tdd-map-corner" x={P + 6} y={P + 13}>tendu</text>
-      <text className="tdd-map-corner" x={S - P - 6} y={P + 13} textAnchor="end">enjoué</text>
-      <text className="tdd-map-corner" x={P + 6} y={S - P - 6}>las</text>
-      <text className="tdd-map-corner" x={S - P - 6} y={S - P - 6} textAnchor="end">détendu</text>
-      <text className="tdd-map-edge" x={S / 2} y={P - 5} textAnchor="middle">animé</text>
-      <text className="tdd-map-edge" x={S / 2} y={S - 4} textAnchor="middle">calme</text>
-      <text className="tdd-map-edge" x={4} y={S / 2 + 3} transform={`rotate(-90 9 ${S / 2})`} textAnchor="middle">désagréable</text>
-      <text className="tdd-map-edge" x={S - 4} y={S / 2 + 3} transform={`rotate(90 ${S - 9} ${S / 2})`} textAnchor="middle">agréable</text>
+      <text className="tdd-map-corner" x={L + 6} y={T + 13}>tendu</text>
+      <text className="tdd-map-corner" x={L + C - 6} y={T + 13} textAnchor="end">enjoué</text>
+      <text className="tdd-map-corner" x={L + 6} y={T + C - 6}>las</text>
+      <text className="tdd-map-corner" x={L + C - 6} y={T + C - 6} textAnchor="end">détendu</text>
+      <text className="tdd-map-edge" x={W / 2} y={T - 5} textAnchor="middle">animé</text>
+      <text className="tdd-map-edge" x={W / 2} y={H - 3} textAnchor="middle">calme</text>
+      <text className="tdd-map-edge" x={L - 6} y={H / 2 + 3} textAnchor="end">désagréable</text>
+      <text className="tdd-map-edge" x={L + C + 6} y={H / 2 + 3} textAnchor="start">agréable</text>
     </svg>
   )
 }
