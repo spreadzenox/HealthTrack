@@ -750,8 +750,8 @@ function LaunchStep({ until }) {
       <span className="paywall-tag">gold</span>
       <h1 className="onb-title">Gold est offert pendant le test</h1>
       <p className="onb-lead">
-        Toutes les analyses, sans rien payer{until ? `, jusqu’au ${lastLaunchDay(until)} inclus` : ''}. Aucune carte bancaire
-        n’est demandée.
+        Gold est la formule payante de Halcya, avec toutes les analyses. Comme l’app est encore en test, vous l’avez sans
+        rien payer{until ? `, jusqu’au ${lastLaunchDay(until)} inclus` : ''}. Aucune carte bancaire n’est demandée.
       </p>
       <div className="onb-card onb-gold">
         <span className="onb-card-title">Gold</span>
