@@ -58,7 +58,10 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     const pistes = await screen.findByRole('region', { name: 'Pistes à tester' })
     expect(within(pistes).getAllByRole('listitem').map((li) => li.querySelector('.reco-piste-title').textContent)).toEqual(['Sommeil', 'Pas'])
     expect(within(pistes).getAllByRole('link', { name: 'Essayer dans Agir' })[0]).toHaveAttribute('href', '/agir')
-    const weigh = screen.getByRole('region', { name: 'Ce qui pèse sur votre bien-être' })
+    // titre neutre : la liste montre aussi ce qui va avec les bons jours ; valeurs en « pt » comme Tendances
+    expect(screen.queryByRole('region', { name: /pèse/ })).toBeNull()
+    const weigh = screen.getByRole('region', { name: 'Ce qui va avec votre bien-être' })
+    for (const v of weigh.querySelectorAll('.reco-effect-value')) expect(v.textContent).toMatch(/^[+−]?\d+,\d\u00a0pt$/)
     expect(weigh).toHaveTextContent('Court terme')
     expect(weigh).toHaveTextContent('Moyen terme')
     expect(within(weigh).getByText('Sommeil').closest('li')).toHaveAttribute('data-tone', 'night')

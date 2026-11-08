@@ -76,15 +76,19 @@ function median(values) {
  * `since` (TS-2) : mesure → jour du dernier changement durable ; la norme ne prend que les jours depuis ce changement
  * (toujours 7 au moins : un changement n'est confirmé que 7 jours après). Un changement postérieur au jour comparé
  * est ignoré.
+ * `dayKey` (POLISH-SIM-11) : compare plutôt la valeur de ce jour passé à la même habitude qu'aujourd'hui (même fenêtre,
+ * même chiffre que l'Accueil) ; un jour passé est fini (les cumuls en moins se disent). Hors de la fenêtre : aucune norme.
  * @returns {{ ready: boolean, norms: Record<string, { usual: string, value: string, direction: 'up'|'down'|null,
  *   text: string | null, score: number }> }}
  */
-export function measureNorms(days, now = new Date(), { since = {} } = {}) {
+export function measureNorms(days, now = new Date(), { since = {}, dayKey = null } = {}) {
   const today = localDateKey(now.toISOString())
   const from = localDateKey(new Date(now.getTime() - DEVIATION_WINDOW_DAYS * DAY_MS).toISOString())
+  const pastDay = dayKey && dayKey < today ? dayKey : null
+  if (pastDay && pastDay < from) return { ready: false, norms: {} }
   const past = (days || []).filter((d) => d?.dateKey >= from && d.dateKey < today)
-  const todaySummary = (days || []).find((d) => d?.dateKey === today)?.summary || {}
-  const evening = now.getHours() >= CUMULATIVE_FROM_HOUR
+  const todaySummary = (days || []).find((d) => d?.dateKey === (pastDay || today))?.summary || {}
+  const evening = pastDay ? true : now.getHours() >= CUMULATIVE_FROM_HOUR
 
   let ready = false
   const norms = {}

@@ -807,7 +807,8 @@
 
 .reco-effect-value {
   font-size: 0.85rem;
-  min-width: 3.2em;
+  min-width: 4.4em;
+  white-space: nowrap;
   text-align: right;
 }
 

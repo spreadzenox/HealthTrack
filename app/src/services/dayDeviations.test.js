@@ -94,6 +94,20 @@ describe('measureNorms (AUJ-3 : l’écart à votre norme sur chaque mesure)', (
     expect(norms.sleep).toMatchObject({ direction: 'down', text: 'Nuit plus courte' })
   })
 
+  it('POLISH-SIM-11 : un jour passé récent reprend l’habitude d’aujourd’hui (un seul chiffre entre Accueil et Journal)', () => {
+    const days = history(usual, { sleepMinutes: 425 })
+    days.push({ dateKey: key(6), summary: { sleepMinutes: 300 } }) // hors de la fenêtre d'aujourd'hui
+    const todayUsual = measureNorms(days, NOW).norms.sleep.usualValue
+    const yesterday = measureNorms(days, NOW, { dayKey: key(20) }).norms.sleep
+    expect(yesterday.usualValue).toBe(todayUsual)
+    expect(yesterday.value).toBe('7 h')
+    // un jour passé est fini : les pas en moins se disent même à midi
+    const low = measureNorms([...days.filter((d) => d.dateKey !== key(19)), { dateKey: key(19), summary: { steps: 2000 } }], NOW, { dayKey: key(19) })
+    expect(low.norms.steps.direction).toBe('down')
+    // hors de la fenêtre (plus de 14 jours) : pas de norme d'aujourd'hui
+    expect(measureNorms(days, NOW, { dayKey: key(6) }).norms).toEqual({})
+  })
+
   it('rien avant 7 jours d’historique', () => {
     const { ready, norms } = measureNorms(history(usual, { sleepMinutes: 330 }, DEVIATION_MIN_PAST_DAYS - 1), NOW)
     expect(ready).toBe(false)
