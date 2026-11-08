@@ -8,6 +8,11 @@
 > rebâtie et FODMAP par sous-groupe, réintroduction guidée et rapport PDF, lecture du visage au déverrouillage dans la
 > version Play, textes « slop IA » réécrits, Silver et Gold, abonnements iPhone côté relais ; v279 → v438).
 
+> 👟 **Aujourd'hui : seulement les pas du jour (08/11 17:35)** : « Vos données du jour » n'affiche plus « Pas · hier » ;
+> la ligne vient dès que les pas d'aujourd'hui arrivent (le sommeil et la VFC gardent la nuit d'avant). Constat des
+> personas, 2 sur 2 (POLISH-SIM-2c). Ce soir 23:45, la version des testeurs part sur Alpha (le cron de GitHub peut
+> partir avec du retard).
+
 > ⏳ **Avant les premiers résultats (08/11 15:35)** : Analyses et Aujourd'hui disent « Encore 25 jours notés avant vos
 > premiers résultats » (le compte bouge quand vous notez, pas avec le calendrier) ; Digestion dit « Il faut aussi 5 jours
 > avec une gêne ou une douleur notée : vous en avez 1. » ; Agir vide explique ce qui viendra et mène à vos analyses
@@ -367,6 +372,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 08/11 17:35 — [Pas du jour](runs/2026-11-08-1735-pas-du-jour.md) | 🎨 | POLISH-SIM-2c : plus de « Pas · hier » dans « Vos données du jour » ; tests, captures |
 | 08/11 16:35 — [Rapport depuis Agir](runs/2026-11-08-1635-rapport-depuis-agir.md) | 🎨 | Merge de #835 (verte, non mergée au run précédent) ; POLISH-SIM-12 : lien Agir → rapport médecin, période bornée aux jours d'usage ; tests, captures |
 | 08/11 15:35 — [Avant les premiers résultats](runs/2026-11-08-1535-attente-analyses.md) | 🎨 | POLISH-SIM-5 : comptes à rebours en jours notés, jours de gêne « vous en avez N », Agir vide qui mène à Analyses ; tests, captures claire et sombre |
 | 08/11 14:35 — [VFC en toutes lettres](runs/2026-11-08-1435-noms-en-toutes-lettres.md) | 🎨 | POLISH-SIM-6 : nom complet de VFC et FC au repos sous la courbe de Tendances, mots simples dans Sources ; « attendu » seulement avec un futur tracé |

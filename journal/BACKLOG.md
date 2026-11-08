@@ -74,8 +74,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   ajouté à la main (elle laissait croire que l'enregistrement avait raté).
 - [x] **POLISH-SIM-2 (a, b)** ✅ 08/11 10:35 : chaque ligne de « Vos données du jour » ouvre sa courbe dans Tendances
   (`?mesure=sleep|hrv|restingHr|steps|screen|wellbeing|digestion`) ; le « + » entoure 1,6 s les boutons du bandeau
-  (anneau sans mouvement, visible même animations réduites). Reste (c) : « Pas · hier » quand on cherche aujourd'hui.
-- [ ] **POLISH-SIM-2** (d'origine) Le petit « + » (AUJ-6) ne fait rien de visible quand le bandeau d'ajout est déjà à l'écran
+  (anneau sans mouvement, visible même animations réduites).
+- [x] **POLISH-SIM-2c** ✅ 08/11 17:35 : « Vos données du jour » ne reprend plus les pas de la veille (un total de la
+  journée ; « Pas · hier » faisait chercher ceux du jour, 2 personas sur 2). Sommeil et VFC gardent « nuit d'avant » / « hier ».
+- [x] **POLISH-SIM-2** (d'origine) ✅ soldé par 2 (a, b) et 2c. Le petit « + » (AUJ-6) ne fait rien de visible quand le bandeau d'ajout est déjà à l'écran
   (4 personas sur 7) : au moins un retour visible (le bandeau s'anime déjà : le rendre perceptible) ; sinon proposer
   au propriétaire de le retirer sous « Vos données du jour » (rien à y ajouter à la main). Confirmé le 08/11 08:35
   (2 sur 2) ; la ligne Sommeil ne s'ouvre pas non plus (l'ouvrir sur Tendances › Sommeil) ; « Pas · hier » : la
