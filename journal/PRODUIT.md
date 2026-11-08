@@ -292,6 +292,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **08/11 11:35** — CI de main réparée (panne GitHub 504 sur Gradle puis le compilateur Kotlin) : miroir Google de Maven Central et téléchargement de Gradle avec reprises (#830).
 - **07/11 09:35** — **TESTEUR-1c** : carte menthe « Votre journée » en tête de l'Accueil (titre en deux mots, échelle 1 à 5, d'où il vient, étiquettes), qui remplace le titre et la carte « Bien-être estimé » ; toucher → historique ; « Pas encore d'avis » avec un seul bouton.
 - **07/11 17:35** — **Publication quotidienne (décision du 07/11 vers 17:30)** : CD-ALPHA-6, « Play — Alpha » envoie chaque soir à 23:45 (Paris) la dernière version de main dont « Build & Release » a réussi, si elle a changé ; plus d'envoi à chaque merge ni d'espacement de 24 h. iPhone : soumission quotidienne de la dernière build TestFlight au groupe externe et à l'examen bêta d'Apple, transmise à la routine iOS (`POUR-IOS.md`). Ce soir : la version qui contient le chantier du soir.
 - **07/11 16:35** — **Nouvelle organisation (revue du 07/11 vers 16:30)** consignée : leçons 13 à 17 dans `DESIGN.md` § 9, étapes ORG-1 à ORG-7 (onglet Agir, Journal › Tendances visualiseur, Analyses Bien-être / Digestion, nouvelle méthode à trois horizons avec banc de simulation, classement des sources) et compléments AUJ-1b, AUJ-4b, AUJ-9 dans `BACKLOG.md`. **AUJ-2** livré : bloc « Bien-être aujourd'hui » (valeur sur 5, nombre de lectures, courbe du jour), sans verdict ; phrase d'intro retirée.

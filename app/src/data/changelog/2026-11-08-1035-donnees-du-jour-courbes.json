@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-08",
+  "kind": "amélioration",
+  "title": "Aujourd’hui : chaque mesure ouvre sa courbe",
+  "items": [
+    "Touchez une ligne de « Vos données du jour » (sommeil, pas, écran…) : sa courbe s’ouvre dans Tendances.",
+    "Le petit « + » entoure un instant les boutons d’ajout, même quand ils sont déjà à l’écran."
+  ]
+}

@@ -30,8 +30,18 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-.today-data-item:last-child {
+.today-data-items > li:last-child .today-data-item {
   border-bottom: 0;
+}
+
+.today-data-item.is-link {
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.today-data-item.is-link:active {
+  background: rgba(var(--tint-rgb), 0.05);
 }
 
 .today-data-icon {

@@ -30,6 +30,17 @@
   }
 }
 
+/* POLISH-SIM-2 : retour visible même quand le bandeau est déjà à l'écran (4 personas sur 7 n'avaient rien vu) ; un
+   anneau de couleur, sans mouvement, donc aussi quand le téléphone réduit les animations. */
+.add-strip.is-called .add-chip {
+  animation: chip-called 1.6s ease-out;
+}
+
+@keyframes chip-called {
+  0%, 60% { box-shadow: 0 0 0 3px var(--accent); }
+  100% { box-shadow: 0 0 0 3px transparent; }
+}
+
 @keyframes strip-called {
   0% { transform: scale(1); }
   30% { transform: scale(1.03); }

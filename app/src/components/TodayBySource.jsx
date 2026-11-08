@@ -22,6 +22,10 @@ const ICONS = {
 }
 /** Clé du thème de chaque ligne (src/theme/themes.js). */
 const THEME_KEYS = { screen: 'screenMinutes', cigarettes: 'phone' }
+/** Courbe de chaque ligne dans Journal › Tendances (POLISH-SIM-2 : une ligne touchée ouvre sa courbe). */
+const TREND_KEYS = {
+  sleep: 'sleep', hrv: 'hrv', restingHr: 'restingHr', steps: 'steps', screen: 'screen', wellbeing: 'wellbeing', gut: 'digestion',
+}
 
 /**
  * @param {{ tiles: object[], summary: object | null, entries: object[], showGut?: boolean, now?: Date,
@@ -68,7 +72,8 @@ export default function TodayBySource({
           {items.map((i) => {
             const n = norms[i.key]
             return (
-              <li key={i.key} className="today-data-item" data-tone={measureTone(THEME_KEYS[i.key] ?? i.key)}>
+              <li key={i.key} data-tone={measureTone(THEME_KEYS[i.key] ?? i.key)}>
+                <Row trend={TREND_KEYS[i.key]}>
                 <span className="today-data-icon"><LineIcon name={ICONS[i.key] ?? 'dots'} size={20} /></span>
                 <span className="today-data-label">
                   {i.label}
@@ -83,6 +88,7 @@ export default function TodayBySource({
                     <span>d’habitude <span className="mono">{n.usualValue}</span></span>
                   </span>
                 )}
+                </Row>
               </li>
             )
           })}
@@ -98,4 +104,10 @@ export default function TodayBySource({
       )}
     </section>
   )
+}
+
+/** Une ligne : un lien vers sa courbe quand Tendances en a une, sinon un simple bloc. */
+function Row({ trend, children }) {
+  if (!trend) return <div className="today-data-item">{children}</div>
+  return <Link to={`/tendances?mesure=${trend}`} className="today-data-item is-link">{children}</Link>
 }

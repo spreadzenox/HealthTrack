@@ -4,6 +4,9 @@ buildscript {
     
     repositories {
         google()
+        // Miroir Google de Maven Central d'abord (08/11 : Maven Central renvoyait le compilateur Kotlin vers
+        // GitHub, en 504 pendant des heures ; CI rouge). Mêmes artefacts ; mavenCentral() reste en secours.
+        maven { url 'https://maven-central.storage-download.googleapis.com/maven2/' }
         mavenCentral()
     }
     dependencies {
@@ -21,6 +24,9 @@ apply from: "variables.gradle"
 allprojects {
     repositories {
         google()
+        // Miroir Google de Maven Central d'abord (08/11 : Maven Central renvoyait le compilateur Kotlin vers
+        // GitHub, en 504 pendant des heures ; CI rouge). Mêmes artefacts ; mavenCentral() reste en secours.
+        maven { url 'https://maven-central.storage-download.googleapis.com/maven2/' }
         mavenCentral()
     }
     configurations.all {
