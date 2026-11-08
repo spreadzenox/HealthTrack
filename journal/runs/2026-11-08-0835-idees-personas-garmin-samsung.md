@@ -19,6 +19,9 @@ Aucune PR « [Auto] » ouverte, CI de main verte (be3409a, #826). Pas de nouvell
 
 ## Vérifications
 - `npx vitest run scripts/persona/personaData.test.mjs` : 7 verts ; `npm run test` : voir la PR.
+- Constat : `.gitignore` ignorait tous les `.png` ; les 40 captures du passage de 03:40 n'ont jamais été commitées
+  (liens morts dans ses rapports). Exception ajoutée pour `journal/simulations/captures/` ; celles de ce run sont
+  dans le dépôt.
 
 ## Suite
 - Run de code suivant : corrections du propriétaire du 08/11 s'il y en a, sinon POLISH-SIM-10 et 11 (petits, sûrs).
