@@ -76,8 +76,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   au propriétaire de le retirer sous « Vos données du jour » (rien à y ajouter à la main).
 - [x] **POLISH-SIM-3** ✅ 08/11 05:35 : unité en tête de chaque axe (/5, h, pas, ms, bpm) ; avec deux axes, chacun
   prend la couleur de sa courbe (test de page, captures `comparaison/semaine-deux-axes-*.png`).
-- [ ] **POLISH-SIM-3b** Graduations de Tendances en valeurs rondes (« 4 651 », « 11 759 » pas ; heures arrondies à
-  l'entier, « 6 / 7 / 9 » sur des nuits de 6 h 20 à 8 h 40).
+- [x] **POLISH-SIM-3b** ✅ 08/11 06:35 : graduations rondes et régulières (`services/niceAxis.js` : pas de 1, 2, 2,5 ou
+  5 × 10ⁿ, 3 à 5 graduations, domaine étendu ; « 4 000 / 6 000 / … / 12 000 » pas, « 6 / 7 / 8 / 9 » h ; demi-heures
+  avec une décimale). Tests unitaires et de page ; captures `comparaison/semaine-deux-axes-*.png` refaites.
 - [ ] **POLISH-SIM-4** Détail d'un jour : « Bien-être 3,2 » et « votre note 3,4 » côte à côte sans explication ; dire
   l'échelle du confort digestif (5 = calme).
 - [ ] **POLISH-SIM-5** Analyses et Agir vides pendant 28 jours : une phrase sur ce qui les remplit et quand ; compte à

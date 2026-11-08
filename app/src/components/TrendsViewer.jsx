@@ -8,6 +8,7 @@
 import { useMemo, useState } from 'react'
 import { buildTrendSeries, canAdd, changeMarks, trendMeasure, unitsOf } from '../services/trendsData'
 import { appLocale } from '../i18n/locale.js'
+import { niceAxis } from '../services/niceAxis'
 import LineIcon from './LineIcon'
 import TrendsDayDetail from './TrendsDayDetail'
 
@@ -21,14 +22,17 @@ const shortDay = (k) => {
 }
 const longDay = (k) => new Date(`${k}T12:00:00`).toLocaleDateString(appLocale(), { weekday: 'long', day: 'numeric', month: 'long' })
 
-/** Domaine d'une unité : 1 à 5 pour les notes, sinon les valeurs visibles avec une marge. */
+/**
+ * Domaine et graduations d'une unité : 1 à 5 pour les notes, sinon les valeurs visibles avec une petite marge,
+ * étendues à des graduations rondes (POLISH-SIM-3b : « 4 000 / 8 000 / 12 000 » plutôt que « 4 651 / 11 759 »).
+ */
 function domainOf(unit, values) {
-  if (unit === '/5') return [1, 5]
-  if (!values.length) return [0, 1]
+  if (unit === '/5') return { lo: 1, hi: 5, ticks: [1, 3, 5] }
+  if (!values.length) return { lo: 0, hi: 1, ticks: [0, 1] }
   const lo = Math.min(...values)
   const hi = Math.max(...values)
-  const pad = (hi - lo || Math.abs(hi) || 1) * 0.15
-  return [Math.max(0, lo - pad), hi + pad]
+  const pad = (hi - lo) * 0.05
+  return niceAxis(Math.max(0, lo - pad), hi + pad)
 }
 
 function Chart({ data, keys, selected, onSelect, marks = [] }) {
@@ -38,12 +42,12 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
   const yOf = {}
   for (const u of units) {
     const vals = keys.filter((k) => trendMeasure(k).unit === u).flatMap((k) => series[k].flatMap((p) => [p.value, p.low, p.high])).filter(Number.isFinite)
-    const [lo, hi] = domainOf(u, vals)
-    yOf[u] = { lo, hi, y: (v) => PAD.t + (1 - (v - lo) / (hi - lo || 1)) * (H - PAD.t - PAD.b) }
+    const { lo, hi, ticks } = domainOf(u, vals)
+    yOf[u] = { lo, hi, ticks, y: (v) => PAD.t + (1 - (v - lo) / (hi - lo || 1)) * (H - PAD.t - PAD.b) }
   }
   const step = dates.length > 14 ? 7 : 1
   const colW = (W - PAD.l - PAD.r) / Math.max(1, dates.length - 1)
-  const fmtAxis = (u, v) => (u === '/5' ? String(Math.round(v)) : Math.round(v).toLocaleString(appLocale()))
+  const fmtAxis = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: 1 })
   // POLISH-SIM-3 : avec deux axes, chacun prend la couleur de sa courbe (si une seule couleur porte cette unité).
   const axisTone = (u) => {
     if (units.length < 2) return undefined
@@ -55,7 +59,7 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
       aria-label={`Courbe de ${keys.map((k) => trendMeasure(k).label).join(', ')}`}>
       {units.map((u, i) => {
         const s = yOf[u]
-        const ticks = u === '/5' ? [1, 3, 5] : [s.lo, (s.lo + s.hi) / 2, s.hi]
+        const { ticks } = s
         const ax = i === 0 ? PAD.l - 6 : W - PAD.r + 6
         const anchor = i === 0 ? 'end' : 'start'
         const tone = axisTone(u)
@@ -64,11 +68,15 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
             textAnchor={anchor}>{u}</text>,
           ...ticks.map((t) => (
             <text key={`${u}-${t}`} className="trends-axis mono" data-tone={tone} x={ax} y={s.y(t) + 3}
-              textAnchor={anchor}>{fmtAxis(u, t)}</text>
+              textAnchor={anchor}>{fmtAxis(t)}</text>
           )),
         ]
       })}
-      {units.length && <line className="trends-grid" x1={PAD.l} x2={W - PAD.r} y1={yOf[units[0]].y(units[0] === '/5' ? 3 : (yOf[units[0]].lo + yOf[units[0]].hi) / 2)} y2={yOf[units[0]].y(units[0] === '/5' ? 3 : (yOf[units[0]].lo + yOf[units[0]].hi) / 2)} />}
+      {units.length > 0 && (() => {
+        const t0 = yOf[units[0]].ticks
+        const mid = t0[Math.floor(t0.length / 2)]
+        return <line className="trends-grid" x1={PAD.l} x2={W - PAD.r} y1={yOf[units[0]].y(mid)} y2={yOf[units[0]].y(mid)} />
+      })()}
       {dates.includes(today) && (
         <g className="trends-today">
           <line x1={x(today)} x2={x(today)} y1={PAD.t - 4} y2={H - PAD.b} />
