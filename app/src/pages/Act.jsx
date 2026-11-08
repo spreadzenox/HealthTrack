@@ -143,7 +143,8 @@ export default function Act({ read = readAct, now }) {
       {empty ? (
         <div className="today-card act-empty">
           <p className="act-empty-title">Rien en cours pour l’instant</p>
-          <p className="act-empty-text">Quand vos analyses repèrent une piste, vous pourrez la vérifier ici par un essai.</p>
+          <p className="act-empty-text">Quand vos analyses repèrent une piste, vous pourrez l’essayer ici quelques jours pour voir si elle compte pour vous.</p>
+          <Link to="/recommendations" className="act-empty-link">Où en sont vos analyses</Link>
         </div>
       ) : (
         <>

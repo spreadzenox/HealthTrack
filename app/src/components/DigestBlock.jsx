@@ -129,7 +129,7 @@ export default function DigestBlock({ onNote, read = readGutNotes, summary: summ
       ) : (
         <>
           <h2 id="digest-title" className="digest-title">
-            {keepWhole(`Vos analyses digestives arrivent dans ${bar.remaining} jour${bar.remaining > 1 ? 's' : ''}`)}
+            {keepWhole(`Encore ${bar.remaining} jour${bar.remaining > 1 ? 's' : ''} noté${bar.remaining > 1 ? 's' : ''} avant vos analyses digestives`)}
           </h2>
           <p className="digest-text">
             {APP_NAME} cherchera quels facteurs sont statistiquement liés à votre confort digestif.

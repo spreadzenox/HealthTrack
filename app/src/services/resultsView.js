@@ -17,7 +17,7 @@ export const THEME_TONE = { wellbeing: 'mint', digestion: 'peach', nutrition: 'p
 /**
  * @param {object | null} outcome  OutcomeResult du contrat
  * @returns {{ state: 'loading'|'locked'|'results', daysLeft?: number|null, progress?: { have, need },
- *   symptomsLeft?: number, pistes?: object[], weigh?: object[] | null, nextLock?: object | null, lookOnly?: object[] }}
+ *   symptomsLeft?: number, symptoms?: { have, need }, pistes?: object[], weigh?: object[] | null, nextLock?: object | null, lookOnly?: object[] }}
  */
 export function resultsView(outcome) {
   if (!outcome) return { state: 'loading' }
@@ -32,6 +32,9 @@ export function resultsView(outcome) {
       daysLeft: outcome.daysToFirst,
       progress: short ? { have: Math.min(short.daysHave, short.daysNeeded), need: short.daysNeeded } : null,
       symptomsLeft,
+      ...(outcome.symptomDaysNeeded != null
+        ? { symptoms: { have: Math.min(outcome.symptomDays ?? 0, outcome.symptomDaysNeeded), need: outcome.symptomDaysNeeded } }
+        : {}),
     }
   }
   const ready = horizons.filter((h) => h.status === 'ready')

@@ -11,6 +11,9 @@ describe('Agir (ORG-1, ORG-1b)', () => {
     expect(await screen.findByText('Rien en cours pour l’instant')).toBeInTheDocument()
     expect(screen.getByText('Tous vos essais, vérifiés ou non, figurent dans votre rapport médecin.')).toBeInTheDocument()
     expect(screen.queryByRole('button')).toBeNull()
+    // POLISH-SIM-5 : ce qui remplira l'écran, ce qu'est un essai, et où voir l'avancement
+    expect(screen.getByText(/l’essayer ici quelques jours/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Où en sont vos analyses' })).toHaveAttribute('href', '/recommendations')
   })
 
   it('un groupe FODMAP repéré par une analyse digestive est proposé, avec « Commencer »', async () => {

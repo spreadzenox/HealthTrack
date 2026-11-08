@@ -88,8 +88,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [x] **POLISH-SIM-4** ✅ 08/11 07:35 : la ligne du bien-être dit ce qui se mêle à la note (« votre note 3,4 et le
   visage », « … et les jours voisins » sans lecture ; « votre note » seule si les chiffres sont égaux) ; le confort
   digestif rappelle « 5 = calme » (`detailSource`, trendsData.js, 4 tests ; capture `comparaison/jour-note-et-visage.png`).
-- [ ] **POLISH-SIM-5** Analyses et Agir vides pendant 28 jours : une phrase sur ce qui les remplit et quand ; compte à
-  rebours compris (« encore 19 jours notés ») ; « 4 jours de plus avec une gêne » à réécrire.
+- [x] **POLISH-SIM-5** ✅ 08/11 15:35 : comptes à rebours en jours notés (« Encore 25 jours notés avant vos premiers
+  résultats » dans Analyses, « … avant vos analyses digestives » sur Aujourd'hui) ; « Il faut aussi 5 jours avec une gêne
+  ou une douleur notée : vous en avez 1. » ; Agir vide : « l'essayer ici quelques jours pour voir si elle compte pour
+  vous » et « Où en sont vos analyses » (→ Analyses). Tests de page ; captures `comparaison/agir-vide-*.png`,
+  `analyses-digestion-attente-clair.png`. Reste (idée, pas en polish) : un aperçu utile avant 28 jours.
 - [x] **POLISH-SIM-6** ✅ 08/11 14:35 : dans Tendances, une ligne sous la courbe donne le nom complet et l'unité de « VFC
   nuit » et « FC au repos » (`gloss`, TrendsViewer) ; le Journal ouvre cette courbe (une seule maison). Sources : « cœur
   au repos », « variabilité cardiaque », « oxygène du sang ». Corrigé au passage : « attendu » seulement s'il y a un futur tracé.

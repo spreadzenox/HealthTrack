@@ -49,7 +49,7 @@ function Countdown({ outcome, view, onNote, onReminder }) {
   const w = WORDS[outcome]
   const n = view.daysLeft
   const title = n != null && n > 0
-    ? `Vos premiers résultats arrivent dans ${n} jour${n > 1 ? 's' : ''}`
+    ? `Encore ${n} jour${n > 1 ? 's' : ''} noté${n > 1 ? 's' : ''} avant vos premiers résultats`
     : 'Vos premiers résultats arrivent bientôt'
   return (
     <section className="today-card reco-countdown" data-testid={`reco-countdown-${outcome}`} aria-labelledby={`reco-cd-${outcome}`}>
@@ -66,9 +66,9 @@ function Countdown({ outcome, view, onNote, onReminder }) {
           <p className="pistes-count"><span className="mono">{view.progress.have}/{view.progress.need}</span> jours</p>
         </>
       )}
-      {outcome === 'digestion' && view.symptomsLeft > 0 && (
+      {outcome === 'digestion' && view.symptomsLeft > 0 && view.symptoms && (
         <p className="today-card-text">
-          Il faut aussi <span className="mono">{view.symptomsLeft}</span> jour{view.symptomsLeft > 1 ? 's' : ''} de plus avec une gêne ou une douleur notée.
+          Il faut aussi <span className="mono">{view.symptoms.need}</span> jours avec une gêne ou une douleur notée : vous en avez <span className="mono">{view.symptoms.have}</span>.
         </p>
       )}
       <button type="button" className="reco-cta" onClick={onNote}>Noter maintenant</button>
