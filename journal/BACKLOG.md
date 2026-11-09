@@ -204,8 +204,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   pâle) n'a que 3,72:1 (outil visuel, 09/11 14:35) ; viser ≥ 4,5:1 avec les tokens.
 - [x] **POLISH-SIM-27** ✅ 09/11 15:35 : un niveau estimé d'après les pas se lit « Modérément actif d’après vos pas » (détail au toucher) ; test rouge puis vert ; captures `runs/captures/2026-11-09-1535-activite-pas-*`. Profil nutrition : « Automatique » devient « Modérément actif » sans dire pourquoi ; ajouter
   « (d'après vos pas) ».
-- [ ] **POLISH-SIM-28** Tendances Sommeil / VFC : la ligne grise de l'habitude n'est pas nommée ; un libellé
-  « d'habitude » au bout (comme « attendu », POLISH-SIM-13).
+- [x] **POLISH-SIM-28** ✅ 09/11 16:35 : la « ligne grise » n'était pas une habitude mais l'unique ligne de grille
+  (graduation du milieu) ; un libellé « d'habitude » aurait été faux. La grille suit maintenant chaque graduation de
+  l'axe de gauche (comme la vue Jour) ; test rouge puis vert ; captures `runs/captures/2026-11-09-1635-grille-tendances-*`.
+  Règle : un trait seul se lit comme une référence ; un repère sans sens ne doit pas ressembler à une donnée.
 - [ ] **PROP-OBJECTIF** (proposition au propriétaire avec maquette, run « idées » ; pas de code sans accord)
   Aujourd'hui selon l'objectif coché : sans « Ma digestion » ni « Mon cycle », « Digestion » quitte le bandeau
   d'ajout, « Repas » n'est plus le seul bouton plein et la carte « Mes repas du jour » se replie après 14 jours sans
