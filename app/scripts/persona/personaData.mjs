@@ -46,16 +46,33 @@ function withSourceName(entry, equipment) {
 }
 
 /**
+ * Profil de saisie (POLISH-SIM-9, 09/11) : `full` = la personne note repas, ventre et bien-être comme dans la démo ;
+ * `few` = persona pressée (« ne notera presque rien ») : aucun repas, ventre, selles ni cigarette, une note de
+ * bien-être un jour sur trois ; ce que le téléphone lit seul (visage) et les imports restent.
+ */
+export const NOTES = ['full', 'few']
+const LOGGED = new Set(['food', 'gut', 'stool', 'cigarette', 'fodmap_challenge'])
+
+function keepForNotes(entry, notes) {
+  if (notes === 'full') return true
+  if (LOGGED.has(entry.type)) return false
+  if (entry.type !== 'wellbeing') return true
+  const d = new Date(entry.at)
+  return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000) % 3 === 0
+}
+
+/**
  * Jour d'usage : jour 1 = installation du jour (aucune saisie dans l'app, l'onboarding n'est pas fait ; une montre
  * apporte ses 30 derniers jours importés) ; jour N = N jours de données (aujourd'hui compris).
  */
-export function personaEntries(entries, { day, equipment, now = new Date() }) {
+export function personaEntries(entries, { day, equipment, notes = 'full', now = new Date() }) {
+  if (!NOTES.includes(notes)) throw new Error(`Profil de saisie inconnu : ${notes} (attendu : ${NOTES.join(', ')})`)
   const start = (n) => { const d = new Date(now); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (n - 1)); return d }
   const from = day <= 1 ? start(30) : start(day)
   return entries.filter((e) => {
     const at = new Date(e.at)
     if (at < from || at > now) return false
     if (day <= 1 && APP_TYPES.has(e.type)) return false
-    return keepForEquipment(e, equipment)
+    return keepForEquipment(e, equipment) && keepForNotes(e, notes)
   }).map((e) => withSourceName(e, equipment))
 }

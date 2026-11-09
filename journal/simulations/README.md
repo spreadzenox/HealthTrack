@@ -12,7 +12,7 @@ note ce qu'il comprend ou non, captures à l'appui. Personas et configurations :
 
 ## Outil (PERSONAS-1, 08/11)
 
-`npm run persona -- --day=14 --equipment=watch --port=7811 --out=<dossier>` (dans `app/`) lance la variante play
+`npm run persona -- --day=14 --equipment=watch --goals=care --notes=few --port=7811 --out=<dossier>` (dans `app/`) lance la variante play
 dans un téléphone simulé avec les données de démo que la persona aurait (`scripts/persona/personaData.mjs`, testé) :
 **jour 1** = premier lancement (le nouvel accueil s'ouvre au premier écran même si 30 jours sont déjà importés ; corrigé le 08/11 20:35 : avant, il était sauté), aucune saisie ; **jour N** = N jours de
 données. **Matériel** : `phone` (pas et calories), `watch` (Health Connect sans VFC : Samsung, Garmin, Xiaomi),
@@ -22,6 +22,13 @@ gestes HTTP (`/tap?text=…`, `/tap?x=&y=`, `/type`, `/scroll`, `/back`, `/full`
 il ne lit jamais le code. Consigne donnée aux agents : `brief.md`. Tirage : persona uniforme, configuration au
 prorata des poids, moment uniforme parmi 1, 14, 45 ; une configuration iPhone est jouée sur l'apparence Android
 (même code).
+
+**Objectif et saisie (POLISH-SIM-7 et 9, 09/11)** : `--goals=` coche les objectifs de l'accueil pour un jour > 1
+(`gut`, `cycle`, `stress`, `sport`, `care`, `all` ; au jour 1 l'agent les choisit lui-même). Correspondance :
+Ventre (1, 2) → `gut` ; Endométriose → `cycle,gut` ; Tout mesurer → `all` ; Sportif → `sport` ; Prendre soin de soi →
+`care` ; Stressé et pressé → `stress`. `--notes=few` (Stressé et pressé) : aucun repas ni ventre, une note de
+bien-être un jour sur trois ; le visage et les imports restent. Dire à l'agent que Health Connect, le sommeil estimé
+et la lecture du visage n'existent pas dans la version web.
 
 ## Modèle de rapport
 

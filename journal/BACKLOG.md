@@ -146,8 +146,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-6** ✅ 08/11 14:35 : dans Tendances, une ligne sous la courbe donne le nom complet et l'unité de « VFC
   nuit » et « FC au repos » (`gloss`, TrendsViewer) ; le Journal ouvre cette courbe (une seule maison). Sources : « cœur
   au repos », « variabilité cardiaque », « oxygène du sang ». Corrigé au passage : « attendu » seulement s'il y a un futur tracé.
-- [ ] **POLISH-SIM-7** Rejouer les personas « maigrir » et « stressé » avec leur objectif d'onboarding (l'outil ne le
-  fixait pas) avant de juger l'Accueil trop centré sur la digestion.
+- [x] **POLISH-SIM-7** ✅ 09/11 08:35 : outil `--goals=` et `--notes=few` ; rejouées (Prendre soin de soi · J45 · `care` ;
+  Stressé · J14 · `stress`, presque rien noté). Verdict : oui, Aujourd'hui reste centré sur les repas et la digestion
+  même avec ces objectifs (captures `simulations/captures/2026-11-09-0835-*/accueil*.png`) → PROP-OBJECTIF et
+  POLISH-SIM-20 à 29.
 - [ ] **POLISH-SIM-8** (proposition au propriétaire, avec maquette ; pas de code en mode polish) Poids sur l'Accueil et
   dans Tendances ; phases du sommeil ; cycle et douleur pelvienne (persona Endométriose) ; export CSV.
 - [x] **POLISH-SIM-10** ✅ 08/11 09:35 : « Ce qui va avec votre bien-être / confort digestif » (titre neutre) et
@@ -181,9 +183,39 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   vérifier dans le relais qu'un échec ne décompte pas (peut venir de l'analyse factice de l'outil).
 - [x] **TEND-VIDE** ✅ 09/11 06:35 : Journal › Tendances sur historique vierge : le message seul, sans « Jour / Semaine / Mois » qui ne montraient rien (`TrendsViewer`, test de page ; captures `runs/captures/2026-11-09-0635-tendances-vide-*.png`).
 - [x] **INTRO-TITRE** ✅ 09/11 07:35 (revue `--play` de ce run) : la phrase d'introduction des pages `food-page` (Sources, Données, Paramètres, Licences, Montre) partageait la règle de `.section-title` (gras 600, même taille) : « Les apps et appareils… » et « Mes appareils » se lisaient comme deux titres. Règle propre en graisse normale (`Food.css`, test `pageIntroStyle.test.js` rouge puis vert) ; « Version gratuite. Vos notes et vos imports restent, avec ou sans abonnement. » (ancienne phrase bancale). Reste vu : dans Paramètres, « Apparence » (500) et « Abonnement » (600) n'ont pas la même graisse de titre.
-- [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`) et fixer
-  l'objectif d'onboarding de la persona ; profil de saisie par persona (« Stressé » ne note pas de repas) ; dire aux
-  agents que Health Connect et le sommeil estimé n'existent pas dans la version web. Fait le 08/11 20:35 : le jour 1 ouvre le nouvel accueil même
+- [ ] **POLISH-SIM-20** (rouvre POLISH-SIM-14) Visite guidée « Voir un exemple » : la **moitié basse de l'écran est
+  encore blanche** sous la bulle « Votre bien-être du jour » (capture `simulations/captures/2026-11-09-0835-stresse-presse-J14/exemple-jour10.png`,
+  outil à 412×915). Reproduire avec `npm run persona` puis corriger ; vérifier sur l'émulateur A56.
+- [ ] **POLISH-SIM-21** « Voir un exemple » propose « Voir dans 14 jours » puis l'étiquette dit « jour 10 » : un seul
+  jour, celui annoncé (persona Stressé, J14).
+- [ ] **POLISH-SIM-22** Aujourd'hui › Vos données du jour : la **VFC nuit (51 ms) n'a pas son « d'habitude »**,
+  alors que le sommeil et le Journal l'ont. Même ligne que le sommeil.
+- [ ] **POLISH-SIM-23** Analyses : l'unité « pt » n'est expliquée nulle part (« points de bien-être, sur 5 ») ; une
+  ligne sous le titre, une fois. « Comment c'est calculé » : deux phrases simples d'abord (« modèle régularisé »,
+  « fenêtres 7 à 27 jours » repliés) ; « Moyen terme : dans 7 jours de notes » à vérifier (dit-il bien des jours notés ?).
+- [ ] **POLISH-SIM-24** Journal › Jours : « dépense 2 285 kcal » à côté de « 479 kcal » de repas notés suggère un gros
+  déficit ; dire « repas incomplets ? » comme Nutrition le fait déjà (une information, une maison : reprendre la même
+  règle).
+- [ ] **POLISH-SIM-25** « Autre chose › Décrire un repas » ouvre la page Repas générale : ouvrir directement le champ
+  « Décrire ».
+- [ ] **POLISH-SIM-26** Note de bien-être : « Elle propose des précisions, elle n'est pas gardée » incompris (persona
+  Stressé) ; reformuler en une phrase concrète.
+- [ ] **POLISH-SIM-27** Profil nutrition : « Automatique » devient « Modérément actif » sans dire pourquoi ; ajouter
+  « (d'après vos pas) ».
+- [ ] **POLISH-SIM-28** Tendances Sommeil / VFC : la ligne grise de l'habitude n'est pas nommée ; un libellé
+  « d'habitude » au bout (comme « attendu », POLISH-SIM-13).
+- [ ] **PROP-OBJECTIF** (proposition au propriétaire avec maquette, run « idées » ; pas de code sans accord)
+  Aujourd'hui selon l'objectif coché : sans « Ma digestion » ni « Mon cycle », « Digestion » quitte le bandeau
+  d'ajout, « Repas » n'est plus le seul bouton plein et la carte « Mes repas du jour » se replie après 14 jours sans
+  repas ; avec « Prendre soin de moi », le poids a une place (rejoint POLISH-SIM-8) ; avec « Mon stress et mon
+  sommeil », une ligne qui dit la nuit et la VFC par rapport à l'habitude. Deux personas sur deux l'ont relevé (09/11).
+  À étudier dans la même maquette : Agir vide après 14 et 45 jours (« Rien en cours ») ; Analyses qui n'a que le
+  bien-être comme mesure suivie (sommeil ou VFC comme résultat : vérifier la règle 5 avant de proposer) ; synthèse
+  « ce mois-ci et le mois dernier » dans Tendances. Un essai générique (« se coucher plus tôt ») heurte la règle 6 :
+  seulement comme hypothèse de départ dite comme telle.
+- [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`). Fait le
+  09/11 08:35 : objectif d'onboarding (`--goals`), profil de saisie (`--notes=few`), consigne aux agents sur ce qui
+  n'existe pas dans la version web. Fait le 08/11 20:35 : le jour 1 ouvre le nouvel accueil même
   avec 30 jours importés. Fait le 08/11 08:35 : nom de
   source réaliste par matériel, Galaxy Watch sans FC au repos ni température, champs date et heure en français.
 - [ ] **INTEG-1a** Note `protocoles/garmin-samsung.md` (08/11 08:35) : Samsung Health Data SDK (température cutanée,

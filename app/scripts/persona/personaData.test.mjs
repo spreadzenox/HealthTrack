@@ -54,6 +54,21 @@ describe('personaEntries', () => {
     expect(demo.some((e) => e.payload?.sourceName === 'Gadgetbridge')).toBe(true)
   })
 
+  it('saisie « peu » (persona pressée) : ni repas ni ventre, quelques notes de bien-être, visage gardé', () => {
+    const all = personaEntries(demo, { day: 45, equipment: 'watch', now })
+    const few = personaEntries(demo, { day: 45, equipment: 'watch', now, notes: 'few' })
+    expect([...types(few)].some((t) => ['food', 'gut', 'stool', 'cigarette', 'fodmap_challenge'].includes(t))).toBe(false)
+    const notes = (list) => new Set(list.filter((e) => e.type === 'wellbeing').map((e) => e.at.slice(0, 10))).size
+    expect(notes(few)).toBeGreaterThan(0)
+    expect(notes(few)).toBeLessThanOrEqual(Math.ceil(notes(all) / 3))
+    expect(few.filter((e) => e.type === 'face_burst').length).toBe(all.filter((e) => e.type === 'face_burst').length)
+    expect(types(few).has('sleep')).toBe(true)
+  })
+
+  it('refuse un profil de saisie inconnu', () => {
+    expect(() => personaEntries(demo, { day: 14, equipment: 'phone', now, notes: 'jamais' })).toThrow(/inconnu/)
+  })
+
   it('refuse un matériel inconnu', () => {
     expect(() => keepForEquipment({ type: 'sleep' }, 'tablette')).toThrow(/inconnu/)
   })

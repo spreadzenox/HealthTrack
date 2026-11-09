@@ -57,6 +57,15 @@
 > [après](runs/captures/2026-11-09-0735-intro-sources-apres-clair.png) ·
 > [sombre](runs/captures/2026-11-09-0735-intro-donnees-apres-sombre.png)).
 
+> 🧑‍🤝‍🧑 **Personas avec leur objectif (09/11 08:35, run « idées »)** : « Prendre soin de soi » (iPhone seul, 45 jours)
+> et « Stressé et pressé » (Pixel Watch, 14 jours, presque rien noté) ont rejoué avec l'objectif coché à l'accueil.
+> Verdict des deux : l'écran Aujourd'hui reste centré sur les repas et la digestion
+> ([stressé](simulations/captures/2026-11-09-0835-stresse-presse-J14/accueil.png) ·
+> [prendre soin](simulations/captures/2026-11-09-0835-prendre-soin-maigrir-J45/accueil-apres.png)). Changer cela
+> touche la structure : une maquette vous sera proposée ce soir (PROP-OBJECTIF), rien n'est codé sans votre accord.
+> Les petits défauts (bande blanche de la visite, VFC sans « d'habitude », « pt » non expliqué…) partent aux runs de
+> code ([synthèse](simulations/2026-11-09-0835-synthese.md)).
+
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **Tendances › Jour** (question du 08/11) : « Nuits plus longues (7 h 46) » est la moyenne des derniers jours ;
   voulez-vous la nuit du seul jour, au singulier, comme la maquette ?
@@ -75,6 +84,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 08:35 — [Personas et objectif](runs/2026-11-09-0835-idees-personas-objectifs.md) | 💡 | Outil : objectif d'accueil et persona pressée ; 2 simulations (Prendre soin de soi J45, Stressé J14) ; Aujourd'hui ne suit pas l'objectif → maquette PROP-OBJECTIF ce soir ; POLISH-SIM-20 à 28. Rien à faire de votre côté |
 | 09/11 07:35 — [Intro ≠ titre](runs/2026-11-09-0735-intro-titre.md) | 🎨 | INTRO-TITRE : la phrase d'introduction de Sources, Données, Paramètres, Licences et Montre n'a plus le style d'un titre ; phrase d'abonnement reformulée ; test rouge puis vert, captures avant/après. Rien à faire de votre côté |
 | 09/11 06:35 — [Tendances vierge](runs/2026-11-09-0635-tendances-vide.md) | 🎨 | PR #855 du run précédent mergée ; Tendances sur historique vierge : le message seul ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 05:35 — [Boutons d'ajout en grande police](runs/2026-11-09-0535-bandeau-grande-police.md) | 🎨 | GRANDE-POLICE-1 soldée : cases du bandeau d'ajout à la largeur de la police, « + 1 cigarette » à la ligne ; le contrôle visuel ne confond plus un libellé sur deux lignes avec un débordement ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |

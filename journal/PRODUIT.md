@@ -55,7 +55,7 @@
 >   `npm run persona` livré, `PERSONAS.md` recopié ; premier passage complet fait avant l'envoi du 08/11 au soir
 >   (synthèse `simulations/2026-11-08-0340-synthese.md`, POLISH-SIM-1 corrigé, POLISH-SIM-3 corrigé le 08/11 05:35, POLISH-SIM-3b le 08/11 06:35, POLISH-SIM-4 le 08/11 07:35, POLISH-SIM-10 et 11 le 08/11 09:35, POLISH-SIM-5 le 08/11 15:35, POLISH-SIM-12 le 08/11 16:35,
 >   les autres au BACKLOG). **08/11 20:35** : premier passage d'une persona sur le nouvel accueil (l'outil le sautait au
->   jour 1, corrigé) et Sportif J45 ; POLISH-SIM-14 à 19 (synthèse `simulations/2026-11-08-2035-synthese.md`).
+>   jour 1, corrigé) et Sportif J45 ; POLISH-SIM-14 à 19 (synthèse `simulations/2026-11-08-2035-synthese.md`). **09/11 08:35** : Prendre soin de soi J45 et Stressé J14 avec leur objectif d'accueil (outil `--goals`, `--notes=few`) ; Aujourd'hui ne suit pas l'objectif → PROP-OBJECTIF (maquette au propriétaire) ; POLISH-SIM-20 à 28 (synthèse `simulations/2026-11-09-0835-synthese.md`).
 > - **(D) Méta-leçons** : A ci-dessus, B dans `DESIGN.md` § 9, C dans la charte.
 > - **(E) Envoi quotidien aux testeurs** : Android à 23:45 (CD-ALPHA-6) ; iPhone, examen bêta quotidien (routine iOS).
 >   Envoi refusé : erreur exacte en tête du résumé, rien contourné.
