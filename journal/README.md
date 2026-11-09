@@ -92,6 +92,14 @@
 > ([clair](runs/captures/2026-11-09-1435-phrase-bien-etre-clair.png) ·
 > [sombre](runs/captures/2026-11-09-1435-phrase-bien-etre-sombre.png)).
 
+> 📏 **Agir : le graphique d'un essai comme la maquette (10/11 00:35)** : « Résultat en cours » range maintenant les
+> lendemains « Avec » et « Sans » sur deux lignes d'une même échelle, resserrée sur vos valeurs ; la ligne « Écart »
+> a ses repères (−1, 0, +1) et une phrase dit l'écart : « Après 11 lendemains : −0,1 point, entre −1,4 et +1,2. »
+> ([clair](runs/captures/2026-11-10-0035-essai-axes-clair.png) · [sombre](runs/captures/2026-11-10-0035-essai-axes-sombre.png)
+> · [essai du sommeil au jour 13](runs/captures/2026-11-10-0035-essai-axes-sommeil-clair.png)). Les captures liées
+> des runs de 21:35, 22:35 et 23:35 n'avaient pas été enregistrées (liens morts) ; celles-ci montrent l'état actuel.
+> Part sur Alpha à la fin du gel.
+
 > 📐 **Agir : le résultat dessiné dès le premier jour (09/11 23:35)** : au début d'un essai, « Résultat en cours »
 > empilait trois phrases. Il montre maintenant ses axes Avec / Sans et la ligne « Écart » vides, avec une seule phrase
 > ([clair](runs/captures/2026-11-09-2335-essai-vide-clair.png) · [sombre](runs/captures/2026-11-09-2335-essai-vide-sombre.png)).
@@ -165,6 +173,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 00:35 — [Agir : le graphique d'un essai comme la maquette](runs/2026-11-10-0035-essai-axes.md) | 🎨 | POLISH-ESSAI-AXES : Avec / Sans en lignes sur une échelle commune, Écart gradué, phrase « Après N lendemains : … » ; option `--trial` de l'outil visuel ; test rouge puis vert, captures claires et sombres. Captures des 3 runs précédents jamais commitées (règle `git add -f` ajoutée à la charte). Rien à faire de votre côté |
 | 09/11 23:35 — [Agir : résultat dessiné dès le jour 1](runs/2026-11-09-2335-essai-vide.md) | 🎨 | POLISH-ESSAI-VIDE et POLISH-ESSAI-CLASSE : graphique vide avec axes et piste « Écart », une seule phrase ; classe SVG renommée ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 22:35 — [Agir : le résultat en premier](runs/2026-11-09-2235-essai-ordre.md) | 🎨 | POLISH-ESSAI-ORDRE : « Résultat en cours » avant « Les 14 jours », légende avec la consigne ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 21:35 — [Agir : les 14 jours en deux semaines](runs/2026-11-09-2135-essai-grille.md) | 🎨 | POLISH-ESSAI-GRILLE : page d'un essai, « Les 14 jours » en 2 × 7 cases numérotées, ✓ / – au coin, comme la maquette ; test rouge puis vert, captures claires et sombres. Le run « idées » de 20:35 n'a rien laissé : PROP-OBJECTIF reste à faire. Rien à faire de votre côté |
@@ -582,7 +591,10 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
    l'app, ce qui a changé en coulisses, les points d'attention, une ligne dans le tableau des runs.
    Écrit pour l'utilisateur (clair, concret, sans jargon). Nouvelle semaine ISO (lundi, heure de
    Paris) → déplacer l'ancien bloc dans `semaines/AAAA-Sww.md` et repartir d'un bloc vide.
-4. Commit(s) clairs, push, PR vers `main` intitulée `[Auto] <résumé>`, corps = résumé du run.
+4. Commit(s) clairs, push, PR vers `main` intitulée `[Auto] <résumé>`, corps = résumé du run. Les captures
+   (`journal/runs/captures/*.png`, `simulations/captures/`) sont ignorées par `.gitignore` (`*.png`) : les ajouter
+   avec **`git add -f`**, puis vérifier avec `git ls-files` que chaque capture citée dans le résumé existe (les runs
+   du 09/11 21:35 à 23:35 l'avaient oublié : liens morts).
 5. Attendre la CI (s'abonner à l'activité de la PR, pas de boucle d'attente) : **Frontend (Vitest)**
    et **Build APK** doivent être verts (*Build APK* échoue = la release échouera aussi). Les jobs
    émulateur sont longs : les attendre seulement si le changement touche `android/`, Capacitor

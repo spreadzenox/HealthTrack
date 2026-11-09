@@ -235,7 +235,11 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   « Écart » vide (ligne de base), une seule phrase (« Chaque point : … »).
 - [x] **POLISH-ESSAI-CLASSE** ✅ 09/11 23:35 : lignes du graphique SVG en `trial-chart-line` (la grille du calendrier
   garde `trial-grid`).
-- [ ] **POLISH-ESSAI-AXES** (vu le 09/11 23:35) : la maquette (`maquettes/agir-tendances/essai-en-cours.png`) range Avec
+- [x] **POLISH-ESSAI-AXES** ✅ 10/11 00:35 (un seul SVG : Avec et Sans en lignes sur une échelle resserrée, pas d'un
+  demi-point ; Écart gradué ±1 ou ±2 avec fourchette ; phrase « Après N lendemains : … point, entre … et … » ; captures
+  `runs/captures/2026-11-10-0035-essai-axes-*` ; outil visuel `--trial=N [--trial-factor=alcohol]`). Restent vus : la
+  maquette ajoute « La fourchette se resserre chaque jour. » (non repris : texte de plus) ; les valeurs de démo sont
+  souvent des notes entières, les points se superposent (normal, pas de dispersion inventée). Vu le 09/11 23:35 : la maquette (`maquettes/agir-tendances/essai-en-cours.png`) range Avec
   et Sans en deux lignes sur un axe horizontal commun (2,5 → 4,0) aligné sur la piste « Écart » (−1 / 0 / +1 gradués),
   avec la phrase « Après N lendemains : +0,3 point, entre … et … ». L'app dessine deux colonnes verticales de 1 à 5 et
   une piste « Écart » sans graduation. Rapprocher le graphique de la maquette (un run).

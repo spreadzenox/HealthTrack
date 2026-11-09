@@ -23,6 +23,9 @@
  *   npm run visual -- --radar              # simule un début d'infection (« Radar forme » en alerte)
  *   npm run visual -- --radar=explained    # … avec « Voyage » noté chaque jour (« Probablement lié à… »)
  *   npm run visual -- --routes=/connectors --hrv-gap  # plus de VFC depuis 4 jours (« qui envoie quoi »)
+ *   npm run visual -- --play --routes=/agir --trial=8 --click="Dormir au moins"  # essai du sommeil au jour 8
+ *                                          sur 14 (tirage fixe), sur les données de démo (POLISH-ESSAI-AXES) ;
+ *                                          --trial-factor=alcohol --click="alcool" : facteur sans mesure
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *   npm run visual -- --routes=/tendances --history-days=2  # historique presque vide : seules les données des 2 derniers
  *                                          jours (aujourd'hui et hier) sont gardées (T3, captures à côté de la maquette)
@@ -1199,6 +1202,23 @@ async function main() {
       const from = dayStart(9)
       const to = dayStart(3)
       entries = entries.filter((e) => e.type !== 'wellbeing' || new Date(e.at) < from || new Date(e.at) >= to)
+    }
+    if (args.trial) {
+      // Essai du sommeil commencé il y a N − 1 jours (jour N sur 14), tirage fixe 7 avec / 7 sans (POLISH-ESSAI-AXES)
+      const n = Math.min(14, Math.max(1, Number(args.trial) || 8))
+      const start = new Date(); start.setHours(9, 0, 0, 0); start.setDate(start.getDate() - (n - 1))
+      const key = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      const flags = [true, false, false, true, true, false, true, false, true, false, false, true, true, false]
+      const schedule = flags.map((w, i) => { const d = new Date(start); d.setDate(d.getDate() + i); return { date: key(d), with: w } })
+      // --trial-factor=alcohol : un facteur sans mesure, chaque lendemain compte (fourchette visible)
+      const alcohol = args['trial-factor'] === 'alcohol'
+      entries.push({ type: 'trial', source: 'app_trial', at: start.toISOString(), payload: {
+        factor: alcohol
+          ? { key: 'alcohol', label: 'Alcool', theme: 'nutrition', outcome: 'wellbeing', effect: -0.3, center: null, change: 0 }
+          : { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, change: 30 },
+        direction: alcohol ? 'less' : 'more', threshold: alcohol ? null : 450, schedule, answers: {}, startedAt: start.toISOString(), endedAt: null,
+        kept: false, removedAt: null, nudgedAt: null,
+      } })
     }
     if (args['history-days']) {
       // Historique presque vide : seules les entrées des N derniers jours (aujourd'hui compris) restent (T3).

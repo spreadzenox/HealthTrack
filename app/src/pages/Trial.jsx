@@ -20,57 +20,82 @@ const readChanges = () => getAnalysis('changes').catch(() => null)
 const fr1 = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: 1, minimumFractionDigits: 1 })
 const signed = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${fr1(Math.abs(v))}`
 
-/** Points Avec / Sans du lendemain, moyennes, et barre « Écart » avec fourchette. */
-function ResultChart({ result, scale }) {
-  const W = 300
-  const H = 120
-  const y = (v) => 10 + (1 - (scale(v) - 1) / 4) * (H - 20)
-  const col = { with: 90, without: 210 }
-  const jitter = (i) => ((i % 5) - 2) * 6
+const fr = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: 1 })
+const tick = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${fr(Math.abs(v))}`
+
+/**
+ * POLISH-ESSAI-AXES (maquette `essai-en-cours.png`) : Avec et Sans en deux lignes sur un axe horizontal commun,
+ * resserré sur les valeurs reçues (graduations d'un demi-point), puis la piste « Écart » graduée (−1 / 0 / +1)
+ * avec sa fourchette, dans le même dessin.
+ */
+function valueDomain(values) {
+  if (!values.length) return { lo: 1, hi: 5, step: 1 }
+  let lo = Math.max(1, Math.floor((Math.min(...values) - 0.2) * 2) / 2)
+  let hi = Math.min(5, Math.ceil((Math.max(...values) + 0.2) * 2) / 2)
+  while (hi - lo < 1.5) {
+    if (lo > 1) lo -= 0.5
+    if (hi - lo < 1.5 && hi < 5) hi += 0.5
+  }
+  return { lo, hi, step: hi - lo > 2 ? 1 : 0.5 }
+}
+
+function ResultChart({ result, scale, scaleDelta }) {
+  const W = 320
+  const X0 = 56
+  const X1 = W - 16
+  const ROW = { with: 20, without: 50 }
+  const shown = { with: result.with.map(scale), without: result.without.map(scale) }
+  const { lo, hi, step } = valueDomain([...shown.with, ...shown.without])
+  const x = (v) => X0 + ((v - lo) / (hi - lo)) * (X1 - X0)
+  const ticks = []
+  for (let t = lo; t <= hi + 1e-9; t += step) ticks.push(Math.round(t * 2) / 2)
+  const hasDiff = result.diff != null
+  const span = hasDiff ? Math.max(1, Math.ceil(Math.abs(scaleDelta(result.low))), Math.ceil(Math.abs(scaleDelta(result.high)))) : 1
+  const dx = (d) => X0 + ((d + span) / (2 * span)) * (X1 - X0)
+  const DY = 104
   return (
-    <svg className="trial-chart" viewBox={`0 0 ${W} ${H + 18}`} role="img"
+    <svg className="trial-chart" viewBox={`0 0 ${W} 134`} role="img"
       aria-label={`Lendemains avec : ${result.with.length}, sans : ${result.without.length}`}>
-      {[1, 3, 5].map((t) => (
+      {ticks.map((t) => (
         <g key={t}>
-          <line className="trial-chart-line" x1={40} x2={W - 20} y1={10 + (1 - (t - 1) / 4) * (H - 20)} y2={10 + (1 - (t - 1) / 4) * (H - 20)} />
-          <text className="trial-axis mono" x={30} y={13 + (1 - (t - 1) / 4) * (H - 20)} textAnchor="end">{t}</text>
+          <line className="trial-chart-line" x1={x(t)} x2={x(t)} y1={6} y2={64} />
+          <text className="trial-axis mono" x={x(t)} y={80} textAnchor="middle">{fr(t)}</text>
         </g>
       ))}
-      {[['with', result.with, result.meanWith], ['without', result.without, result.meanWithout]].map(([k, vals, m]) => (
-        <g key={k} className={`trial-col is-${k}`}>
-          {vals.map((v, i) => <circle key={i} className="trial-pt" cx={col[k] + jitter(i)} cy={y(v)} r="4" />)}
-          {m != null && <line className="trial-mean" x1={col[k] - 22} x2={col[k] + 22} y1={y(m)} y2={y(m)} />}
-          <text className="trial-axis" x={col[k]} y={H + 14} textAnchor="middle">{k === 'with' ? 'Avec' : 'Sans'}</text>
-        </g>
-      ))}
+      {['with', 'without'].map((k) => {
+        const m = k === 'with' ? result.meanWith : result.meanWithout
+        return (
+          <g key={k} className={`trial-col is-${k}`}>
+            <text className="trial-row-label" x={0} y={ROW[k] + 4}>{k === 'with' ? 'Avec' : 'Sans'}</text>
+            {m != null && <line className="trial-mean" x1={x(scale(m))} x2={x(scale(m))} y1={ROW[k] - 11} y2={ROW[k] + 11} />}
+            {shown[k].map((v, i) => <circle key={i} className="trial-pt" cx={x(v)} cy={ROW[k]} r="5" />)}
+          </g>
+        )
+      })}
+      <g className={`trial-diff${hasDiff ? '' : ' is-empty'}`}>
+        <text className="trial-row-label" x={0} y={DY + 4}>Écart</text>
+        <line className="trial-diff-base" x1={X0} x2={X1} y1={DY} y2={DY} />
+        <line className="trial-diff-zero" x1={dx(0)} x2={dx(0)} y1={DY - 8} y2={DY + 8} />
+        {hasDiff && (
+          <>
+            <rect className="trial-diff-range" x={dx(scaleDelta(result.low))} y={DY - 6}
+              width={Math.max(2, dx(scaleDelta(result.high)) - dx(scaleDelta(result.low)))} height={12} rx={6} />
+            <circle className="trial-diff-dot" cx={dx(scaleDelta(result.diff))} cy={DY} r="6" />
+          </>
+        )}
+        {[-span, 0, span].map((t) => (
+          <text key={t} className="trial-axis mono" x={dx(t)} y={DY + 24} textAnchor="middle">{tick(t)}</text>
+        ))}
+      </g>
     </svg>
   )
 }
 
-/** POLISH-ESSAI-VIDE : avant 3 lendemains de chaque sorte, la piste « Écart » s'affiche vide (zéro seul). */
-function DiffBar({ result, scaleDelta }) {
-  if (result.diff == null) {
-    return (
-      <div className="trial-diff is-empty">
-        <span className="trial-diff-label">Écart</span>
-        <span className="trial-diff-track" aria-hidden="true"><span className="trial-diff-zero" /></span>
-        <span className="trial-diff-value mono" aria-hidden="true" />
-      </div>
-    )
-  }
-  const max = Math.max(1, Math.abs(scaleDelta(result.low)), Math.abs(scaleDelta(result.high)))
-  const pos = (v) => `${50 + (scaleDelta(v) / max) * 50}%`
-  return (
-    <div className="trial-diff">
-      <span className="trial-diff-label">Écart</span>
-      <span className="trial-diff-track" aria-hidden="true">
-        <span className="trial-diff-zero" />
-        <span className="trial-diff-range" style={{ left: pos(result.low), right: `calc(100% - ${pos(result.high)})` }} />
-        <span className="trial-diff-dot" style={{ left: pos(result.diff) }} />
-      </span>
-      <span className="trial-diff-value mono">{signed(scaleDelta(result.diff))}</span>
-    </div>
-  )
+/** « Après 6 lendemains : +0,3 point, entre −0,2 et +0,9. » (maquette) */
+function diffSentence(result, scaleDelta) {
+  const d = scaleDelta(result.diff)
+  const n = result.with.length + result.without.length
+  return `Après ${n} lendemains : ${signed(d)} ${Math.abs(d) >= 2 ? 'points' : 'point'}, entre ${signed(scaleDelta(result.low))} et ${signed(scaleDelta(result.high))}.`
 }
 
 export default function Trial({ read = readTrialsData, readTrialChanges = readChanges, now }) {
@@ -145,8 +170,8 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
           {s.done ? (s.verdict === 'verified' ? 'Vérifié par votre essai' : 'Pas d’effet net') : 'Résultat en cours'}
         </h2>
         {/* POLISH-ESSAI-VIDE : axes Avec / Sans et piste Écart dès le premier jour, comme la maquette */}
-        <ResultChart result={s.result} scale={scale} />
-        <DiffBar result={s.result} scaleDelta={scaleDelta} />
+        <ResultChart result={s.result} scale={scale} scaleDelta={scaleDelta} />
+        {s.result.diff != null && <p className="act-card-detail trial-diff-text">{diffSentence(s.result, scaleDelta)}</p>}
         {s.result.diff == null && s.result.with.length + s.result.without.length > 0 && (
           <p className="act-card-detail">L’écart s’affiche dès {RESULT_MIN_EACH} lendemains de chaque sorte.</p>
         )}
