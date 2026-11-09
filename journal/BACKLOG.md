@@ -224,8 +224,12 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   jour avec. »). Tests rouges puis verts ; captures `runs/captures/2026-11-09-1935-*`. Reste vu, non fait : l'étiquette du thème
   (« Sommeil », « Digestion ») en haut à droite des cartes de la maquette ; la couleur de la carte dit déjà le thème
   (une information, une maison) : à juger aux personas avant d'ajouter.
-- [ ] **POLISH-ESSAI-GRILLE** (écart à la maquette `essai-en-cours.png`, vu le 09/11 19:35) : page d'un essai, les 14
+- [x] **POLISH-ESSAI-GRILLE** ✅ 09/11 21:35 (écart à la maquette `essai-en-cours.png`, vu le 09/11 19:35) : page d'un essai, les 14
   pastilles se rangent en 13 + 1 à 412 px ; la maquette montre deux lignes de 7 numérotées (semaine 1, semaine 2).
+  Fait : « Les 14 jours », cases numérotées en 2 × 7, ✓ / – au coin (captures `runs/captures/2026-11-09-2135-*`).
+- [ ] **POLISH-ESSAI-ORDRE** (écart à la maquette `essai-en-cours.png`, vu le 09/11 21:35) : la maquette met « Résultat en
+  cours » avant « Les 14 jours » et sa légende reprend la consigne (« ● avant 23 h ○ comme d'habitude ✓ tenu · – pas
+  tenu ») au lieu de « Pleine : jour avec. Contour : jour sans. »
 - [x] **INTRO-TITRE (reste)** ✅ 09/11 18:35 : vérifié au navigateur, les six titres de Paramètres ont la même graisse
   (600, 16 px, Figtree) ; l'écart vu le 09/11 07:35 n'existe pas. Rien changé.
 - [ ] **PROP-OBJECTIF** (proposition au propriétaire avec maquette, run « idées » ; pas de code sans accord)

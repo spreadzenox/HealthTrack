@@ -128,7 +128,8 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
         </article>
       )}
       <article className="today-card trial-calendar">
-        <TrialDots days={s.calendar} />
+        <h2 className="act-section-title">Les {s.calendar.length} jours</h2>
+        <TrialDots days={s.calendar} grid />
         <p className="act-card-detail">Pleine : jour avec. Contour : jour sans. ✓ tenu, – pas tenu.</p>
       </article>
       <article className="today-card trial-result" aria-label="Résultat">
