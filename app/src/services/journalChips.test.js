@@ -81,7 +81,7 @@ describe('chipValueBreaks — grande police (GRANDE-POLICE-1)', () => {
 
   it('garde le texte lu identique', () => {
     for (const v of ['≈ 1 039 kcal', '68 à 82 bpm', '37, normal', '120/80 mmHg']) {
-      expect(chipValueBreaks(v).replace(/ /g, ' ')).toBe(v.replace(/ /g, ' '))
+      expect(chipValueBreaks(v).replace(/\u00a0/g, ' ')).toBe(v.replace(/\u00a0/g, ' '))
     }
   })
 

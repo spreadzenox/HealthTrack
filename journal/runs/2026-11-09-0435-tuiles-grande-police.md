@@ -22,7 +22,7 @@ Format A56 en police ×1,3 : `overflow-wrap: anywhere` sur la valeur des tuiles 
 - Nouveautés : `2026-11-09-0435-tuiles-grande-police.json`.
 
 ## Vérifs
-- `npm run test`, `npm run lint`, `npm run build`, `npm run visual` (voir PR).
+- `npm run test` (3323 verts), `npm run lint` (0 erreur après échappement de deux espaces insécables du test), `npm run build`, `npm run visual`.
 - `/journal` : A56 normal, A56 ×1,3 clair et sombre, 320×700 ×1,3 : aucun débordement signalé. Captures
   `runs/captures/2026-11-09-0435-tuiles-grande-police-{clair,sombre}.png` relues. En ×1,3, « ≈ » seul sur sa ligne
   au-dessus de « 1 039 kcal » quand il y a deux repas : lisible, gardé.
