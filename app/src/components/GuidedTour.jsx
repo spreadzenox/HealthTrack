@@ -141,13 +141,14 @@ function Tour({ onEnd }) {
 
   return (
     <div className="tour" role="dialog" aria-modal="true" aria-labelledby="tour-title">
+      {/* Le rideau d'abord : le voile le couvre, l'écran se remplit sous lui (jamais une bande claire, POLISH-SIM-20) */}
+      {revealing && <div className="tour-curtain" aria-hidden="true" />}
       <Spotlight selector={revealing ? null : step.anchor} stepKey={i} />
       {step.days && (
         <div className="tour-badge">
           Exemple · données fictives · <DayCounter key={`${i}-${step.days}`} days={step.days} animate={animate} />
         </div>
       )}
-      {revealing && <div className="tour-curtain" aria-hidden="true" />}
       <div className="tour-bubble">
         <h2 id="tour-title" className="tour-title">{step.title}</h2>
         <p className="tour-text">{step.text}</p>

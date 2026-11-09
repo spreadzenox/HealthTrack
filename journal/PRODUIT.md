@@ -348,6 +348,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **08/11 17:35** — **Seulement les pas du jour** (POLISH-SIM-2c) : « Vos données du jour » ne reprend plus les pas d'hier (2 personas sur 2 cherchaient ceux du jour).
 - **08/11 16:35** — **Rapport médecin depuis Agir** (POLISH-SIM-12) : lien « rapport médecin » d'Agir vers la carte de Données ; période proposée bornée aux jours d'usage (2 semaines sous 15 jours).
 - **08/11 21:35** — **Analyses : une seule unité par facteur** (POLISH-SIM-16) : « 1 500 pas de plus » sur les trois horizons ; un effet plus grand que l'échelle dit « pas assez de données ».
+- **09/11 09:35** — **Visite guidée sans bande blanche** (POLISH-SIM-20, 21) : le rideau de « Voir dans 14 jours » passe sous le voile ; « jour 10 » était un artefact de l'outil des personas (corrigé).
 - **09/11 07:35** — **Intro ≠ titre** (INTRO-TITRE) : sur Sources, Données, Paramètres, Licences et Montre, la phrase d'introduction était stylée comme un titre de section ; texte normal désormais ; « Version gratuite. Vos notes et vos imports restent, avec ou sans abonnement. »
 - **09/11 06:35** — **Tendances vierge épurée** (TEND-VIDE) : sans aucune mesure, le message seul, sans boutons de période.
 - **09/11 05:35** — **Bandeau d'ajout lisible en grande police** (GRANDE-POLICE-1 soldée) : « Digestion » et « + 1 cigarette » tiennent dans leur case à 320 px en police ×1,3 ; rien ne change en taille normale.
