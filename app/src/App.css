@@ -658,8 +658,9 @@
 }
 
 .wellbeing-circle-selected {
-  background: rgba(var(--brand-rgb), 0.2);
-  color: var(--accent);
+  /* POLISH-CONTRASTE-NOTE : couple du thème bien-être, ≥ 4,5:1 en clair et en sombre (tokens.test.js) */
+  background: var(--mint-bg);
+  color: var(--mint-label);
 }
 
 .wellbeing-circle-dot {
@@ -672,8 +673,8 @@
 }
 
 .wellbeing-circle-selected .wellbeing-circle-dot {
-  border-color: var(--accent);
-  background: var(--accent);
+  border-color: var(--mint-label);
+  background: var(--mint-label);
   transform: scale(1.08);
 }
 

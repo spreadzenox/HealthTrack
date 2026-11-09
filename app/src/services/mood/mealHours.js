@@ -27,7 +27,8 @@ const BIN_H = 3
 const H_MS = 3600000
 const PERMUTATIONS = 4000
 
-const round2 = (v) => Math.round(v * 100) / 100
+// `+ 0` : un -0 (petit décalage négatif arrondi) devient 0, sinon le cache JSON le relit autrement (09/11).
+export const round2 = (v) => Math.round(v * 100) / 100 + 0
 const mean = (v) => v.reduce((s, x) => s + x, 0) / v.length
 
 /** Générateur pseudo-aléatoire à graine (mulberry32) : même résultat à chaque calcul. */

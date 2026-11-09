@@ -89,6 +89,12 @@
 > ([clair](runs/captures/2026-11-09-1435-phrase-bien-etre-clair.png) ·
 > [sombre](runs/captures/2026-11-09-1435-phrase-bien-etre-sombre.png)).
 
+> 🟢 **Note de bien-être plus lisible (09/11 17:35)** : le chiffre de la note choisie (« 4 » vert sur vert pâle) était
+> trop peu contrasté en thème clair (3,72:1). Il prend les couleurs du thème bien-être, vérifiées au-dessus de 4,5:1 en
+> clair et en sombre ([clair](runs/captures/2026-11-09-1735-contraste-note-clair.png) ·
+> [sombre](runs/captures/2026-11-09-1735-contraste-note-sombre.png)). Au passage, un test qui échouait certains jours
+> (un « -0 » dans l'analyse des heures de repas) est corrigé.
+
 > 📏 **Tendances : une vraie grille (09/11 16:35)** : une persona prenait la ligne grise du graphique pour « votre
 > habitude ». C'était la seule ligne de grille, au milieu de l'axe. Il y en a maintenant une par graduation, comme une
 > grille ordinaire ([clair](runs/captures/2026-11-09-1635-grille-tendances-clair.png) ·
@@ -132,6 +138,7 @@
 |---|---|---|
 | 09/11 14:35 — [Note de bien-être : la phrase expliquée](runs/2026-11-09-1435-phrase-bien-etre.md) | 🎨 | POLISH-SIM-26 : phrase sous « En une phrase » reformulée ; test rouge puis vert, captures claires et sombres (variante play) ; contraste faible du chiffre de la note choisie relevé au BACKLOG. Rien à faire de votre côté |
 | 09/11 15:35 — [Profil nutrition : niveau d'activité expliqué](runs/2026-11-09-1535-activite-pas.md) | 🎨 | POLISH-SIM-27 : « d’après vos pas » visible sans toucher ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
+| 09/11 17:35 — [Note de bien-être : contraste](runs/2026-11-09-1735-contraste-note.md) | 🎨 | POLISH-CONTRASTE-NOTE : couple mint-bg / mint-label (≥ 4,5:1 clair et sombre) ; -0 normalisé dans `mealHours` (test du cache rouge ce jour-là sur main). Rien à faire de votre côté |
 | 09/11 16:35 — [Tendances : une grille lisible](runs/2026-11-09-1635-grille-tendances.md) | 🎨 | POLISH-SIM-28 : la ligne grise isolée n'était pas une habitude ; grille à chaque graduation ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 13:35 — [Décrire un repas](runs/2026-11-09-1335-decrire-repas.md) | 🎨 | POLISH-SIM-25 : « Décrire un repas » et « Décrire le repas » ouvrent directement le champ de description ; tests rouges puis verts, captures claires et sombres (variante play) ; tests du relais rouges depuis 12:00 UTC (certificats de test datés de l'heure de la CI) réparés. Rien à faire de votre côté |
 | 09/11 12:35 — [Repas incomplets](runs/2026-11-09-1235-repas-incomplets.md) | 🎨 | POLISH-SIM-24 : tuile Repas « repas incomplets ? » sous la moitié de la dépense du jour, règle partagée avec Nutrition ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |

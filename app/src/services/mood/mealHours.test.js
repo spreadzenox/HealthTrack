@@ -77,3 +77,11 @@ describe('mealHoursEffect — bien-être dans les heures après un repas (ANALYS
     expect(signFlipP([0.2, -0.2, 0.1, -0.1, 0.05, -0.05, 0.3, -0.3, 0.01, -0.01])).toBeGreaterThan(0.5)
   })
 })
+
+describe('round2 (cache des analyses, 09/11)', () => {
+  it('ne rend jamais -0, que JSON relirait comme 0', async () => {
+    const { round2 } = await import('./mealHours')
+    expect(Object.is(round2(-0.001), 0)).toBe(true)
+    expect(round2(-0.256)).toBe(-0.26)
+  })
+})
