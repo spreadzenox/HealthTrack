@@ -70,7 +70,14 @@
 > devenait blanc pendant une seconde (l'animation qui remplit l'écran passait au-dessus du voile sombre). Il reste
 > maintenant assombri ([avant](runs/captures/2026-11-09-0935-visite-avant-light-milieu.png) ·
 > [après](runs/captures/2026-11-09-0935-visite-apres-light-milieu.png)). Le « jour 10 » vu par une persona venait de sa
-> capture prise trop tôt : l'étiquette finit bien à « jour 14 ».
+> capture prise trop tôt : l'étiquette finit bien à « jour 14 ». Mergé au run suivant (#859).
+
+> 💓 **VFC : « d'habitude » aussi quand elle date d'hier (09/11 10:35)** : le matin, tant que la montre n'a pas envoyé
+> la nuit, Aujourd'hui reprend la VFC d'hier, mais sans repère (« 51 ms, c'est bien ou pas ? », persona Stressé). Elle
+> a maintenant son « d'habitude 49 ms », comme le sommeil, et sa flèche si l'écart est net
+> ([avant](runs/captures/2026-11-09-1035-vfc-habitude-avant-clair.png) ·
+> [après](runs/captures/2026-11-09-1035-vfc-habitude-clair.png) ·
+> [sombre](runs/captures/2026-11-09-1035-vfc-habitude-sombre.png)).
 
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **Tendances › Jour** (question du 08/11) : « Nuits plus longues (7 h 46) » est la moyenne des derniers jours ;
@@ -90,6 +97,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 10:35 — [VFC d'hier avec son habitude](runs/2026-11-09-1035-vfc-habitude.md) | 🎨 | PR #859 du run précédent mergée ; POLISH-SIM-22 : une mesure reprise d'hier (VFC, sommeil « nuit d'avant ») a son « d'habitude » ; test rouge puis vert, captures avant/après claires et sombres. Rien à faire de votre côté |
 | 09/11 09:35 — [Visite sans bande blanche](runs/2026-11-09-0935-visite-sans-bande.md) | 🎨 | POLISH-SIM-20 : le rideau de « Voir dans 14 jours » passe sous le voile ; POLISH-SIM-21 était un artefact de l'outil (corrigé) ; test rouge puis vert, captures avant/après ; PR #859 verte, merge refusé par les permissions de la session : à merger au run suivant |
 | 09/11 08:35 — [Personas et objectif](runs/2026-11-09-0835-idees-personas-objectifs.md) | 💡 | Outil : objectif d'accueil et persona pressée ; 2 simulations (Prendre soin de soi J45, Stressé J14) ; Aujourd'hui ne suit pas l'objectif → maquette PROP-OBJECTIF ce soir ; POLISH-SIM-20 à 28. Rien à faire de votre côté |
 | 09/11 07:35 — [Intro ≠ titre](runs/2026-11-09-0735-intro-titre.md) | 🎨 | INTRO-TITRE : la phrase d'introduction de Sources, Données, Paramètres, Licences et Montre n'a plus le style d'un titre ; phrase d'abonnement reformulée ; test rouge puis vert, captures avant/après. Rien à faire de votre côté |

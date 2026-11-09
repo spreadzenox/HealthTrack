@@ -188,7 +188,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   outil à 412×915). Reproduire avec `npm run persona` puis corriger ; vérifier sur l'émulateur A56.
 - [x] **POLISH-SIM-21** ✅ 09/11 09:35 : artefact de l'outil (capture à 600 ms, compteur de 900 ms) ; l'étiquette finit bien à « jour 14 » (capture `runs/captures/2026-11-09-0935-visite-apres-light-fin.png`) ; `persona-browse.mjs` attend désormais la fin de l'animation. « Voir un exemple » propose « Voir dans 14 jours » puis l'étiquette dit « jour 10 » : un seul
   jour, celui annoncé (persona Stressé, J14).
-- [ ] **POLISH-SIM-22** Aujourd'hui › Vos données du jour : la **VFC nuit (51 ms) n'a pas son « d'habitude »**,
+- [x] **POLISH-SIM-22** ✅ 09/11 10:35 : la VFC n'était pas encore arrivée ce matin-là, la ligne reprenait celle d'hier (« · hier ») et la norme ne comparait que la valeur du jour. `TodayBySource.jsx` compare une valeur reprise de la veille (« hier », « nuit d'avant ») à la même habitude (`measureNorms` avec `dayKey`, comme le Journal) ; test rouge puis vert ; captures `runs/captures/2026-11-09-1035-vfc-habitude-*.png`. Aujourd'hui › Vos données du jour : la **VFC nuit (51 ms) n'a pas son « d'habitude »**,
   alors que le sommeil et le Journal l'ont. Même ligne que le sommeil.
 - [ ] **POLISH-SIM-23** Analyses : l'unité « pt » n'est expliquée nulle part (« points de bien-être, sur 5 ») ; une
   ligne sous le titre, une fois. « Comment c'est calculé » : deux phrases simples d'abord (« modèle régularisé »,

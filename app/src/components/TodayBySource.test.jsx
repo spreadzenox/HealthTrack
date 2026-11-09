@@ -87,6 +87,19 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
     expect(within(row).getByLabelText('Nuit plus courte')).toHaveTextContent('↓')
   })
 
+  it('VFC reprise d’hier : son « d’habitude » aussi, comparé à la nuit d’hier (POLISH-SIM-22)', async () => {
+    // 14 nuits de VFC vers 48 ms jusqu’au 20/10 ; rien encore pour la nuit du 21 (montre pas synchronisée)
+    const hist = []
+    for (let d = 6; d <= 20; d++) {
+      const v = d === 20 ? 62 : 46 + (d % 3) * 2
+      hist.push({ type: 'heart_rate', at: new Date(2026, 9, d, 4).toISOString(), payload: { subtype: 'heartRateVariability', value: v } })
+    }
+    wrap({ tiles: [{ key: 'hrv', label: 'VFC nuit', value: '62 ms', when: 'hier', sources: [] }], readNorms: async () => hist })
+    const row = screen.getByText('62 ms').closest('li')
+    await waitFor(() => expect(row).toHaveTextContent('d’habitude 48 ms'))
+    expect(within(row).getByLabelText('VFC de la nuit plus haute')).toHaveTextContent('↑')
+  })
+
   it('rien du jour : rien du tout (premier jour)', () => {
     const { container } = wrap({ tiles: tiles.map((t) => ({ ...t, value: null })) })
     expect(container).toBeEmptyDOMElement()
