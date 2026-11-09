@@ -46,6 +46,11 @@
 > ([clair](runs/captures/2026-11-09-0535-bandeau-grande-police-clair.png) ·
 > [sombre](runs/captures/2026-11-09-0535-bandeau-grande-police-sombre.png)).
 
+> 📈 **Tendances au tout début (09/11 06:35)** : sans aucune mesure, l'onglet affichait Jour / Semaine / Mois qui ne
+> montraient rien. Il ne dit plus que « Vos courbes apparaîtront après 3 jours de mesures. »
+> ([clair](runs/captures/2026-11-09-0635-tendances-vide-clair.png) · [sombre](runs/captures/2026-11-09-0635-tendances-vide-sombre.png)).
+> Au passage, les boutons d'ajout en grande police (run de 05:35) sont mergés.
+
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **Tendances › Jour** (question du 08/11) : « Nuits plus longues (7 h 46) » est la moyenne des derniers jours ;
   voulez-vous la nuit du seul jour, au singulier, comme la maquette ?
@@ -64,6 +69,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 06:35 — [Tendances vierge](runs/2026-11-09-0635-tendances-vide.md) | 🎨 | PR #855 du run précédent mergée ; Tendances sur historique vierge : le message seul ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 05:35 — [Boutons d'ajout en grande police](runs/2026-11-09-0535-bandeau-grande-police.md) | 🎨 | GRANDE-POLICE-1 soldée : cases du bandeau d'ajout à la largeur de la police, « + 1 cigarette » à la ligne ; le contrôle visuel ne confond plus un libellé sur deux lignes avec un débordement ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 04:35 — [Valeurs en grande police](runs/2026-11-09-0435-tuiles-grande-police.md) | 🎨 | GRANDE-POLICE-1 (tuiles du Journal) : nombre et unité jamais séparés, coupure seulement entre deux morceaux ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 03:35 — [Onglets petit écran](runs/2026-11-09-0335-onglets-petit-ecran.md) | 🎨 | NAV-LIBELLE-320 : libellés des onglets entiers en grande police ; le contrôle visuel voit désormais les libellés coupés ; test, captures claires et sombres. Rien à faire de votre côté |

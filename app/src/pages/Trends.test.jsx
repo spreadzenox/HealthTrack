@@ -227,4 +227,10 @@ describe('Journal › Tendances (ORG-3)', () => {
     fireEvent.click(within(pick).getByRole('button', { name: /Pas/ }))
     expect(screen.getByRole('img', { name: 'Courbe de Pas' })).toBeInTheDocument()
   })
+  it('historique vierge : seulement le message, sans Jour / Semaine / Mois qui ne montreraient rien (revue 09/11)', async () => {
+    renderWith('/tendances', { st: null, d: [], f: [] })
+    expect(await screen.findByText('Vos courbes apparaîtront après 3 jours de mesures.')).toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: 'Période' })).toBeNull()
+    expect(screen.queryByRole('list', { name: 'Mesures affichées' })).toBeNull()
+  })
 })

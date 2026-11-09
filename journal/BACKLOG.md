@@ -179,6 +179,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   peu technique (écran ACC-9).
 - [x] **POLISH-SIM-19** ✅ 09/11 01:35 : c'était réel côté relais (un repas sans aliment reconnu ou « pas un repas » prenait un crédit). Désormais rendu (`mealHasItems`, `relay/src/server.js`), quota du jour gardé ; test relais rouge puis vert. « 19 analyses IA restantes » après un seul essai sans résultat (« Aucun aliment reconnu ») :
   vérifier dans le relais qu'un échec ne décompte pas (peut venir de l'analyse factice de l'outil).
+- [x] **TEND-VIDE** ✅ 09/11 06:35 : Journal › Tendances sur historique vierge : le message seul, sans « Jour / Semaine / Mois » qui ne montraient rien (`TrendsViewer`, test de page ; captures `runs/captures/2026-11-09-0635-tendances-vide-*.png`).
 - [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`) et fixer
   l'objectif d'onboarding de la persona ; profil de saisie par persona (« Stressé » ne note pas de repas) ; dire aux
   agents que Health Connect et le sommeil estimé n'existent pas dans la version web. Fait le 08/11 20:35 : le jour 1 ouvre le nouvel accueil même
