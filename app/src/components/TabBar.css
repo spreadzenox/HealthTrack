@@ -69,7 +69,14 @@
   border-radius: 12px;
 }
 
+/* Le libellé rapetisse avec la largeur de l'onglet (NAV-LIBELLE-320) : à 320 px en grande police, « Aujourd’hui »
+   et « Analyses » restent entiers. À la taille du Galaxy A56 et en police normale, `0.72rem` reste plus petit et prime. */
+.tabbar-link {
+  container-type: inline-size;
+}
+
 .tabbar-label {
+  font-size: min(1em, 17cqi);
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -122,6 +129,7 @@
 /* Sous-onglets du Journal et d'Analyses (ORG-3c, revue du 07/11) : des onglets soulignés sur toute la largeur, au-dessus
    des réglages de chaque page (qui restent petits, dans leurs cartes). Cibles ≥ 44 px. */
 .journal-tabs {
+  container-type: inline-size;
   display: flex;
   margin: 0 0 14px;
   border-bottom: 1px solid var(--border);
@@ -142,6 +150,9 @@
   text-decoration: none;
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
+  /* Même règle que la barre du bas (NAV-LIBELLE-320) : en grande police, « Nutrition » et « Tendances » ne se
+     touchent plus (4,5 % de la rangée ≈ 18 % d'un onglet sur quatre) ; en police normale, la taille d'origine prime. */
+  font-size: min(1em, 4.5cqi);
 }
 
 .journal-tab.active {
