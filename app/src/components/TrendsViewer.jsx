@@ -72,11 +72,11 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
           )),
         ]
       })}
-      {units.length > 0 && (() => {
-        const t0 = yOf[units[0]].ticks
-        const mid = t0[Math.floor(t0.length / 2)]
-        return <line className="trends-grid" x1={PAD.l} x2={W - PAD.r} y1={yOf[units[0]].y(mid)} y2={yOf[units[0]].y(mid)} />
-      })()}
+      {/* POLISH-SIM-28 : une ligne de grille par graduation (comme la vue Jour) ; seule au milieu, elle se lisait
+          comme une « habitude ». */}
+      {units.length > 0 && yOf[units[0]].ticks.map((t) => (
+        <line key={`grid-${t}`} className="trends-grid" x1={PAD.l} x2={W - PAD.r} y1={yOf[units[0]].y(t)} y2={yOf[units[0]].y(t)} />
+      ))}
       {dates.includes(today) && (
         <g className="trends-today">
           <line x1={x(today)} x2={x(today)} y1={PAD.t - 4} y2={H - PAD.b} />

@@ -93,6 +93,16 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(container.querySelector('.trends-gloss')).toBeNull()
   })
 
+  it('POLISH-SIM-28 : la grille suit chaque graduation de l’axe de gauche, aucune ligne grise isolée', async () => {
+    const { container } = renderAt('/tendances')
+    await screen.findByRole('img', { name: 'Courbe de Bien-être' })
+    const grid = [...container.querySelectorAll('.trends-chart .trends-grid')].map((l) => l.getAttribute('y1'))
+    const ticks = [...container.querySelectorAll('.trends-chart .trends-axis.mono[text-anchor="end"]')]
+    expect(ticks.length).toBeGreaterThan(1)
+    expect(grid).toHaveLength(ticks.length)
+    ticks.forEach((t, i) => expect(Number(grid[i])).toBeCloseTo(Number(t.getAttribute('y')) - 3, 5))
+  })
+
   it('POLISH-SIM-13 : la partie pointillée après « auj. » commence par le mot « attendu »', async () => {
     const { container } = renderAt('/tendances')
     await screen.findByRole('img', { name: 'Courbe de Bien-être' })
