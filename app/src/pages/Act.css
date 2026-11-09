@@ -251,73 +251,50 @@ button.act-card-action {
 
 .trial-pt {
   fill: var(--tone-label, var(--text));
-  fill-opacity: 0.7;
+  fill-opacity: 0.85;
 }
 
 .trial-col.is-without .trial-pt {
-  fill: none;
+  fill: var(--surface);
+  fill-opacity: 1;
   stroke: var(--tone-label, var(--text));
-  stroke-width: 1.5;
+  stroke-width: 2;
 }
 
 .trial-mean {
   stroke: var(--text);
-  stroke-width: 2;
+  stroke-width: 3;
 }
 
-.trial-diff {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.trial-diff-label {
+/* POLISH-ESSAI-AXES : libellés des lignes et piste « Écart » dans le même dessin */
+.trial-row-label {
+  font-size: 12px;
   font-weight: 700;
+  fill: var(--text);
 }
 
-.trial-diff-track {
-  position: relative;
-  height: 14px;
+.trial-diff-base {
+  stroke: var(--text-muted);
+  stroke-opacity: 0.45;
 }
 
-/* POLISH-ESSAI-VIDE : piste vide, une ligne de base fine */
-.trial-diff.is-empty .trial-diff-track::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 6px;
-  border-top: 1px dashed var(--text-muted);
-  opacity: 0.45;
+.trial-diff.is-empty .trial-diff-base {
+  stroke-dasharray: 3 3;
 }
 
 .trial-diff-zero {
-  position: absolute;
-  left: 50%;
-  top: -3px;
-  bottom: -3px;
-  border-left: 1px solid var(--text-muted);
+  stroke: var(--text-muted);
 }
 
 .trial-diff-range {
-  position: absolute;
-  top: 5px;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--tone-label, var(--text-muted));
-  opacity: 0.45;
+  fill: var(--tone-label, var(--text-muted));
+  fill-opacity: 0.3;
 }
 
 .trial-diff-dot {
-  position: absolute;
-  top: 1px;
-  width: 12px;
-  height: 12px;
-  margin-left: -6px;
-  border-radius: 50%;
-  background: var(--tone-label, var(--text));
+  fill: var(--tone-label, var(--text));
+  stroke: var(--surface);
+  stroke-width: 2;
 }
 
 .trial-stop {

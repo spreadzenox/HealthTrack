@@ -10,13 +10,13 @@ import { saveTrial } from '../services/trialsData'
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30 } }
 const payload = { ...createTrial(sleep, { now: new Date(2026, 10, 1, 9) }), schedule: [...Array(14)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 })) }
 
-const renderTrial = (now, extra = {}, changes = null) => render(
+const renderTrial = (now, extra = {}, changes = null, wellbeing = new Map([['2026-11-02', 3.5], ['2026-11-03', 2]])) => render(
   <MemoryRouter initialEntries={['/agir/essai/7']}>
     <Routes>
       <Route path="/agir/essai/:id" element={<Trial now={now} readTrialChanges={async () => changes} read={async () => ({
         trials: [{ id: 7, type: 'trial', payload: { ...payload, ...extra } }],
         summaries: new Map([['2026-11-01', { sleepMinutes: 470 }]]),
-        outcomes: { wellbeing: new Map([['2026-11-02', 3.5], ['2026-11-03', 2]]), digestion: new Map() },
+        outcomes: { wellbeing, digestion: new Map() },
       })} />} />
     </Routes>
   </MemoryRouter>,
@@ -67,12 +67,38 @@ describe('Un essai (ORG-8)', () => {
     expect(chart).toHaveTextContent('Avec')
     expect(chart).toHaveTextContent('Sans')
     expect(chart.querySelectorAll('.trial-pt')).toHaveLength(0)
-    expect(chart.querySelectorAll('.trial-chart-line')).toHaveLength(3)
+    // POLISH-ESSAI-AXES : un axe horizontal commun, gradué
+    expect(chart.querySelectorAll('.trial-chart-line').length).toBeGreaterThanOrEqual(3)
     expect(card.querySelector('.trial-diff')).toHaveTextContent('Écart')
     expect(card.querySelector('.trial-diff-dot')).toBeNull()
     expect(card.querySelectorAll('p.act-card-detail')).toHaveLength(1)
     expect(screen.queryByText(/Le premier point arrive/)).not.toBeInTheDocument()
     expect(screen.queryByText(/dès 3 lendemains/)).not.toBeInTheDocument()
+  })
+
+  it('POLISH-ESSAI-AXES : Avec et Sans en lignes sur un axe commun, Écart gradué, phrase de l’écart', async () => {
+    const wb = new Map([['2026-11-02', 3.5], ['2026-11-04', 3.6], ['2026-11-06', 3.7], ['2026-11-03', 3.0], ['2026-11-05', 3.1], ['2026-11-07', 3.2]])
+    renderTrial(new Date(2026, 10, 8, 10), {}, null, wb)
+    const card = (await screen.findByRole('heading', { name: 'Résultat en cours' })).closest('article')
+    const chart = card.querySelector('svg.trial-chart')
+    // Les points d'une même ligne partagent la même hauteur ; Avec au-dessus de Sans
+    const ys = (k) => [...chart.querySelectorAll(`.trial-col.is-${k} .trial-pt`)].map((c) => Number(c.getAttribute('cy')))
+    expect(ys('with')).toHaveLength(3)
+    expect(new Set(ys('with')).size).toBe(1)
+    expect(new Set(ys('without')).size).toBe(1)
+    expect(ys('with')[0]).toBeLessThan(ys('without')[0])
+    // Avec (mieux) plus à droite que Sans
+    const xs = (k) => [...chart.querySelectorAll(`.trial-col.is-${k} .trial-pt`)].map((c) => Number(c.getAttribute('cx')))
+    expect(Math.min(...xs('with'))).toBeGreaterThan(Math.max(...xs('without')))
+    // Graduations en demi-points, à la française
+    expect(chart).toHaveTextContent('3,5')
+    // Écart gradué −1 / 0 / +1, dans le même dessin
+    const diff = chart.querySelector('.trial-diff')
+    expect(diff).toHaveTextContent('Écart')
+    expect(diff).toHaveTextContent('−1')
+    expect(diff).toHaveTextContent('+1')
+    expect(diff.querySelector('.trial-diff-dot')).not.toBeNull()
+    expect(screen.getByText(/^Après 6 lendemains : \+0,\d points?, entre [−+]?\d,\d et [−+]?\d,\d\.$/)).toBeInTheDocument()
   })
 
   it('à la fin : le verdict et « Garder cette habitude »', async () => {

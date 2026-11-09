@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-10",
+  "kind": "amélioration",
+  "title": "Agir : le résultat d'un essai plus lisible",
+  "items": [
+    "Sur la page d'un essai, les lendemains « Avec » et « Sans » sont maintenant sur deux lignes d'une même échelle, et l'écart a ses repères (−1, 0, +1).",
+    "Une phrase dit l'écart et sa fourchette, par exemple « Après 6 lendemains : +0,3 point, entre −0,2 et +0,9. »"
+  ]
+}
