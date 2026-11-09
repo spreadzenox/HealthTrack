@@ -9,7 +9,7 @@ import { VertexError } from '../src/vertex.js'
 
 const INSTALL = 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'
 const USAGE = { promptTokenCount: 42000, cachedContentTokenCount: 0, thoughtsTokenCount: 2500, candidatesTokenCount: 300 }
-const answer = (model) => ({ parsed: { not_food: false, ingredients: [] }, model, location: 'eu', spent: [{ model, usageMetadata: USAGE }] })
+const answer = (model) => ({ parsed: { not_food: false, ingredients: [{ ingredient: 'Pomme, crue', quantity_g: 150 }] }, model, location: 'eu', spent: [{ model, usageMetadata: USAGE }] })
 
 function fakeVertex(model, { fail = null } = {}) {
   const calls = []

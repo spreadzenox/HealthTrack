@@ -100,6 +100,12 @@ const SMALL_BODY_BYTES = 64 * 1024
 /** Notification V2 de l'App Store : trois JWS emboîtés (environ 20 Ko en pratique). */
 const NOTIFICATION_BODY_BYTES = 96 * 1024
 
+/** Le modèle a-t-il reconnu au moins un aliment ? (« not_food » ou liste vide : rien à décompter) */
+export function mealHasItems(parsed) {
+  if (!parsed || parsed.not_food === true || !Array.isArray(parsed.ingredients)) return false
+  return parsed.ingredients.some((it) => String(it?.ingredient ?? '').trim())
+}
+
 /** Valide la demande et prépare les parties envoyées au modèle. */
 export function buildRequest(body, ingredientNames) {
   if (body?.kind === 'photo') {
@@ -644,7 +650,13 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
       // l'analyse de test du workflow (« ci-smoke-<run> », une installation neuve à chaque fois) n'est pas comptée
       if (credit?.firstUse && !installId.startsWith('ci-smoke-')) log({ event: 'first_credit', plan: credit.plan, ...(testDevice ? { testlab: true } : {}), testnet, testenv: testEnv })
       const payload = { parsed, model, quota: { remaining: slot.remaining, resetAt: slot.resetAt } }
-      if (credit) {
+      // Repas sans résultat (« pas un repas », aucun aliment reconnu) : l'analyse n'est pas décomptée, comme une photo
+      // de selles illisible ; le quota du jour reste pris, il protège le budget (POLISH-SIM-19)
+      if (credit?.ok && kind !== 'stool' && !mealHasItems(parsed)) {
+        credits.refund(installId, { premium })
+        await persistCredits(installId)
+        payload.credits = credits.peek(installId, { premium, tier, reported: null })
+      } else if (credit) {
         const { ok: _ok, firstUse: _first, ...state } = credit
         payload.credits = state
       }

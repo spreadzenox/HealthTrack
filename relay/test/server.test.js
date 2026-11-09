@@ -212,6 +212,31 @@ test('crédits : un état rapporté par l\'app plus restrictif est gardé ; Vert
   })
 })
 
+test('crédits : repas sans aliment reconnu ou « pas un repas » → crédit rendu, quota du jour pris (POLISH-SIM-19)', async () => {
+  const { createCredits } = await import('../src/credits.js')
+  const credits = createCredits({ welcome: 10, freeMonthly: 15, premiumDaily: 10 })
+  const answers = [
+    { not_food: false, dish: 'Repas', ingredients: [] },
+    { not_food: true, reason: 'Ce n’est pas un repas.' },
+    { not_food: false, ingredients: [{ ingredient: '  ', quantity_g: 10 }] },
+    { not_food: false, dish: 'Pomme', ingredients: [{ ingredient: 'Pomme, crue', quantity_g: 150 }] },
+  ]
+  const vertex = { generateJson: async () => ({ parsed: answers.shift(), model: 'm-lite', location: 'europe-west1' }) }
+  const quota = createQuota({ globalPerDay: 100, installPerDay: 10, globalPerMinute: 100 })
+  await withServer({ vertex, credits, quota }, async (url) => {
+    const start = (await (await fetch(`${url}/v1/credits`, { headers: { 'X-Install-Id': INSTALL } })).json()).credits.remaining
+    for (let i = 0; i < 3; i += 1) {
+      const body = await (await post(url, { kind: 'text', description: 'rien' })).json()
+      assert.equal(body.credits.remaining, start)
+      assert.equal(body.quota.remaining, 10 - (i + 1))
+    }
+    const peek = await (await fetch(`${url}/v1/credits`, { headers: { 'X-Install-Id': INSTALL } })).json()
+    assert.equal(peek.credits.remaining, start)
+    const ok = await (await post(url, { kind: 'text', description: 'une pomme' })).json()
+    assert.equal(ok.credits.remaining, start - 1)
+  })
+})
+
 test('Play Integrity : jeton transmis à la garde ; refus en enforce → 403 sans appeler le modèle ni consommer de quota', async () => {
   const calls = []
   const seen = []
