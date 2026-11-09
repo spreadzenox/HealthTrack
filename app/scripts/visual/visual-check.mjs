@@ -293,6 +293,15 @@ function findTextOverflow() {
       const text = (el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 40)
       if (text && !out.includes(text)) out.push(text)
     }
+    // Libellé coupé par des points de suspension à l'intérieur (ex. « Aujourd'… » de la barre du bas, NAV-LIBELLE-320)
+    for (const inner of el.querySelectorAll('*')) {
+      const ist = getComputedStyle(inner)
+      if (ist.textOverflow !== 'ellipsis' || inner.clientWidth === 0) continue
+      if (inner.scrollWidth > inner.clientWidth + 1) {
+        const text = '…' + (inner.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 40)
+        if (!out.includes(text)) out.push(text)
+      }
+    }
   }
   return out.slice(0, 8)
 }

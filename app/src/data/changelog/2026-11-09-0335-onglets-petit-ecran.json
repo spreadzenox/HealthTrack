@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-09",
+  "kind": "correctif",
+  "title": "Onglets lisibles en entier sur petit écran",
+  "items": [
+    "Avec une grande taille de police, « Aujourd'hui » et « Analyses » ne sont plus coupés dans la barre du bas, et les onglets du Journal ne se touchent plus."
+  ]
+}

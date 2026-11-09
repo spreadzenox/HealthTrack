@@ -30,6 +30,11 @@
 > [sombre](runs/captures/2026-11-09-0235-repas-sans-photo-sombre.png)). À tester : touchez Repas puis revenez en
 > arrière sans photo.
 
+> 🔤 **Onglets entiers sur petit écran (09/11 03:35)** : avec une grande police d'Android, la barre du bas coupait
+> « Aujourd'… » et « Analys… », et les onglets du Journal se touchaient (« NutritionTendances »). Les libellés
+> rapetissent maintenant juste assez pour tenir ; rien ne change à la taille normale de votre A56
+> ([clair](runs/captures/2026-11-09-0335-onglets-320-clair.png) · [sombre](runs/captures/2026-11-09-0335-onglets-320-sombre.png)).
+
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **Tendances › Jour** (question du 08/11) : « Nuits plus longues (7 h 46) » est la moyenne des derniers jours ;
   voulez-vous la nuit du seul jour, au singulier, comme la maquette ?
@@ -48,6 +53,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 03:35 — [Onglets petit écran](runs/2026-11-09-0335-onglets-petit-ecran.md) | 🎨 | NAV-LIBELLE-320 : libellés des onglets entiers en grande police ; le contrôle visuel voit désormais les libellés coupés ; test, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 02:35 — [Repas sans photo](runs/2026-11-09-0235-repas-sans-photo.md) | 🎨 | POLISH-SIM-17 : appareil photo fermé sans photo → « Décrire le repas » ; tests, captures claires et sombres. À tester sur votre téléphone |
 | 09/11 01:35 — [Analyse sans résultat](runs/2026-11-09-0135-analyse-sans-resultat.md) | 🎨 | POLISH-SIM-19 : un repas sans aliment reconnu ne prend plus de crédit IA (relais, test rouge puis vert). Rien à faire de votre côté |
 | 09/11 00:35 — [Gold expliqué](runs/2026-11-09-0035-gold-explique.md) | 🎨 | Archive S45 ; POLISH-SIM-18 : l'écran Gold de l'accueil dit ce qu'est Gold et de quel test on parle ; compteur du tuto conforme à la maquette ; test, captures claires et sombres. Rien à faire de votre côté |

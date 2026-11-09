@@ -348,6 +348,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **08/11 17:35** — **Seulement les pas du jour** (POLISH-SIM-2c) : « Vos données du jour » ne reprend plus les pas d'hier (2 personas sur 2 cherchaient ceux du jour).
 - **08/11 16:35** — **Rapport médecin depuis Agir** (POLISH-SIM-12) : lien « rapport médecin » d'Agir vers la carte de Données ; période proposée bornée aux jours d'usage (2 semaines sous 15 jours).
 - **08/11 21:35** — **Analyses : une seule unité par facteur** (POLISH-SIM-16) : « 1 500 pas de plus » sur les trois horizons ; un effet plus grand que l'échelle dit « pas assez de données ».
+- **09/11 03:35** — **Onglets entiers sur petit écran** (NAV-LIBELLE-320) : barre du bas et sous-onglets lisibles à 320 px en grande police ; contrôle visuel qui voit les libellés coupés.
 - **09/11 02:35** — **Repas : secours sans photo** (POLISH-SIM-17) : appareil photo fermé sans photo → bandeau « Aucune photo prise. Décrire le repas ».
 - **09/11 01:35** — **Analyse IA sans résultat non décomptée** (POLISH-SIM-19) : « pas un repas » ou aucun aliment reconnu → crédit rendu par le relais (le quota du jour reste pris, il protège le budget).
 - **09/11 00:35** — **Mode polish ouvert ; Gold expliqué à l'accueil** (POLISH-SIM-18) : « Gold est la formule payante de Halcya… Comme l’app est encore en test, vous l’avez sans rien payer » ; compteur du tuto conforme à la maquette.
