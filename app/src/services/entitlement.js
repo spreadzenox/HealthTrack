@@ -223,7 +223,7 @@ export function describeEntitlement(ent) {
     default:
       break
   }
-  return 'Version gratuite. Ce que vous notez et importez le reste, avec ou sans abonnement.'
+  return 'Version gratuite. Vos notes et vos imports restent, avec ou sans abonnement.'
 }
 
 /**

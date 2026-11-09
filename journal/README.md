@@ -51,6 +51,12 @@
 > ([clair](runs/captures/2026-11-09-0635-tendances-vide-clair.png) · [sombre](runs/captures/2026-11-09-0635-tendances-vide-sombre.png)).
 > Au passage, les boutons d'ajout en grande police (run de 05:35) sont mergés.
 
+> 🔠 **Pages plus lisibles (09/11 07:35)** : sur Sources, Vos données et Paramètres, la phrase d'introduction était en
+> gras, comme un titre : « Mes appareils » se confondait avec elle. Elle est maintenant en texte normal
+> ([avant](runs/captures/2026-11-09-0735-intro-sources-avant-clair.png) ·
+> [après](runs/captures/2026-11-09-0735-intro-sources-apres-clair.png) ·
+> [sombre](runs/captures/2026-11-09-0735-intro-donnees-apres-sombre.png)).
+
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **Tendances › Jour** (question du 08/11) : « Nuits plus longues (7 h 46) » est la moyenne des derniers jours ;
   voulez-vous la nuit du seul jour, au singulier, comme la maquette ?
@@ -69,6 +75,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 07:35 — [Intro ≠ titre](runs/2026-11-09-0735-intro-titre.md) | 🎨 | INTRO-TITRE : la phrase d'introduction de Sources, Données, Paramètres, Licences et Montre n'a plus le style d'un titre ; phrase d'abonnement reformulée ; test rouge puis vert, captures avant/après. Rien à faire de votre côté |
 | 09/11 06:35 — [Tendances vierge](runs/2026-11-09-0635-tendances-vide.md) | 🎨 | PR #855 du run précédent mergée ; Tendances sur historique vierge : le message seul ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 05:35 — [Boutons d'ajout en grande police](runs/2026-11-09-0535-bandeau-grande-police.md) | 🎨 | GRANDE-POLICE-1 soldée : cases du bandeau d'ajout à la largeur de la police, « + 1 cigarette » à la ligne ; le contrôle visuel ne confond plus un libellé sur deux lignes avec un débordement ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 04:35 — [Valeurs en grande police](runs/2026-11-09-0435-tuiles-grande-police.md) | 🎨 | GRANDE-POLICE-1 (tuiles du Journal) : nombre et unité jamais séparés, coupure seulement entre deux morceaux ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
