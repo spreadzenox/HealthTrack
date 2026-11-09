@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 import process from 'node:process'
 import { describe, expect, it } from 'vitest'
 import { chipTheme, chipValueBreaks, summaryChips, watchStressBand } from './journalChips'
+import { isLikelyIncompleteEnergy } from './nutritionIntakeCompare'
 
 describe('summaryChips — repas', () => {
   const meals = (s) => summaryChips(s).find(([label]) => /repas$/i.test(label))
@@ -12,6 +13,18 @@ describe('summaryChips — repas', () => {
     expect(meals({ meals: 3, mealKcal: 1450 })[0]).toBe('3 repas')
     expect(meals({ meals: 3, mealKcal: 1450 })[1]).not.toMatch(/ /)
     expect(meals({ meals: 2, mealKcal: 0 })).toEqual(['Repas', '2'])
+  })
+
+  it('signale des repas incomplets face à la dépense du jour, avec la règle de Nutrition (POLISH-SIM-24)', () => {
+    // 479 kcal mangés pour 2 285 dépensés : sous la moitié, « repas incomplets ? » plutôt qu'un faux gros déficit
+    expect(meals({ meals: 1, mealKcal: 479, burnedKcal: 2285 })).toEqual(['Repas', '≈\u00a0479\u00a0kcal', 'repas incomplets\u00a0?'])
+    expect(meals({ meals: 3, mealKcal: 1450, burnedKcal: 2285 })).toHaveLength(2)
+    // Sans dépense mesurée, aucune comparaison n'est affichée, donc rien à nuancer
+    expect(meals({ meals: 1, mealKcal: 479 })).toHaveLength(2)
+    expect(isLikelyIncompleteEnergy(479, 2285)).toBe(true)
+    expect(isLikelyIncompleteEnergy(1200, 2285)).toBe(false)
+    expect(isLikelyIncompleteEnergy(0, 2285)).toBe(false)
+    expect(isLikelyIncompleteEnergy(479, 0)).toBe(false)
   })
 
   it('« 3 repas » garde la couleur pêche des repas', () => {

@@ -343,13 +343,14 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays 
       </h4>
       {chips.length > 0 && (
         <dl className="day-summary">
-          {chips.map(([label, value]) => {
+          {chips.map(([label, value, note]) => {
             const key = chipKey(label)
-            const n = norms[NORM_KEYS[key]]
+            const n = note ? null : norms[NORM_KEYS[key]]
             return (
               <div key={label} className="day-summary-item" data-theme={chipTheme(label)}>
                 <dt><LineIcon name={CHIP_ICONS[key] ?? 'dots'} size={14} />{label}</dt>
                 <dd>{chipValueBreaks(value)}</dd>
+                {note && <dd className="day-summary-usual">{note}</dd>}
                 {n?.direction && (
                   <dd className="day-summary-usual" aria-label={n.text}>
                     {n.direction === 'up' ? '↑' : '↓'} d’habitude <span className="mono">{n.usualValue}</span>

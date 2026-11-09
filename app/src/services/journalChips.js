@@ -4,6 +4,7 @@ import { formatScreenMinutes } from './phoneUsage'
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
 import { measureTone } from '../theme/themes'
+import { isLikelyIncompleteEnergy } from './nutritionIntakeCompare'
 
 const frNumber = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: 1 })
 
@@ -95,7 +96,13 @@ export function summaryChips(s) {
   if (s.wellbeing?.count > 1) chips.push(['Bien-être', `${frNumber(Math.round(toDisplay(s.wellbeing.average) * 10) / 10)} / 5`])
   if (s.meals > 0) {
     // Le nombre passe dans le titre (« 3 repas ») : la valeur tient sur une ligne (POL-PLAY-8)
-    if (s.mealKcal > 0) chips.push([s.meals > 1 ? `${s.meals} repas` : 'Repas', `≈\u00a0${fr(s.mealKcal)}\u00a0kcal`])
+    // Face à la dépense du jour, des repas non notés feraient croire à un gros déficit (POLISH-SIM-24) : même
+    // règle que Nutrition, une note sous la valeur au lieu de la ligne « d'habitude »
+    const incomplete = isLikelyIncompleteEnergy(s.mealKcal, s.burnedKcal)
+    if (s.mealKcal > 0) {
+      const chip = [s.meals > 1 ? `${s.meals} repas` : 'Repas', `≈\u00a0${fr(s.mealKcal)}\u00a0kcal`]
+      chips.push(incomplete ? [...chip, 'repas incomplets\u00a0?'] : chip)
+    }
     else chips.push(['Repas', String(s.meals)])
   }
   if (s.screenMinutes != null) chips.push(['Écran', formatScreenMinutes(s.screenMinutes)])

@@ -348,6 +348,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **08/11 17:35** — **Seulement les pas du jour** (POLISH-SIM-2c) : « Vos données du jour » ne reprend plus les pas d'hier (2 personas sur 2 cherchaient ceux du jour).
 - **08/11 16:35** — **Rapport médecin depuis Agir** (POLISH-SIM-12) : lien « rapport médecin » d'Agir vers la carte de Données ; période proposée bornée aux jours d'usage (2 semaines sous 15 jours).
 - **08/11 21:35** — **Analyses : une seule unité par facteur** (POLISH-SIM-16) : « 1 500 pas de plus » sur les trois horizons ; un effet plus grand que l'échelle dit « pas assez de données ».
+- **09/11 12:35** — **Journal : « repas incomplets ? »** (POLISH-SIM-24) : tuile Repas sous la moitié de la dépense du jour, même règle que Nutrition.
 - **09/11 11:35** — **Analyses : « pt » expliqué** (POLISH-SIM-23) : unité dite une fois, « Comment c'est calculé » en deux phrases puis « Le détail », « encore N jours notés ».
 - **09/11 10:35** — **VFC d'hier avec son habitude** (POLISH-SIM-22) : sur Aujourd'hui, une mesure reprise de la veille (VFC, sommeil « nuit d'avant ») est comparée à votre habitude comme celle du jour.
 - **09/11 09:35** — **Visite guidée sans bande blanche** (POLISH-SIM-20, 21) : le rideau de « Voir dans 14 jours » passe sous le voile ; « jour 10 » était un artefact de l'outil des personas (corrigé).
