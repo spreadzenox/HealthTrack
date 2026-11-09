@@ -127,6 +127,47 @@
   box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--text);
 }
 
+/* POLISH-ESSAI-GRILLE : page d'un essai, cases numérotées, 7 par ligne (une semaine), comme la maquette. */
+.trial-grid {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.trial-dots.is-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.trial-dots.is-grid .trial-dot {
+  position: relative;
+  width: auto;
+  height: auto;
+  aspect-ratio: 1;
+  max-width: 48px;
+  border-radius: 10px;
+  font-family: var(--font-mono, inherit);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.trial-dot-mark {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-surface, var(--color-bg));
+  color: var(--text);
+  font-size: 0.65rem;
+  box-shadow: 0 0 0 1px var(--color-border, transparent);
+}
+
 .act-drift {
   display: grid;
   gap: 6px;

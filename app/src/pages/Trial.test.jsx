@@ -37,6 +37,16 @@ describe('Un essai (ORG-8)', () => {
     expect(screen.getByText('Pourquoi des jours tirés au sort ?')).toBeInTheDocument()
   })
 
+  it('POLISH-ESSAI-GRILLE : « Les 14 jours » en deux semaines de 7, numérotées', async () => {
+    renderTrial(new Date(2026, 10, 3, 10))
+    expect(await screen.findByRole('heading', { name: 'Les 14 jours' })).toBeInTheDocument()
+    const weeks = screen.getAllByRole('list', { name: /^Semaine \d/ })
+    expect(weeks).toHaveLength(2)
+    expect(weeks.map((w) => w.querySelectorAll('li').length)).toEqual([7, 7])
+    expect(screen.getByLabelText(/1 novembre : avec, tenu/)).toHaveTextContent('1✓')
+    expect(screen.getByLabelText(/14 novembre : sans/)).toHaveTextContent('14')
+  })
+
   it('à la fin : le verdict et « Garder cette habitude »', async () => {
     renderTrial(new Date(2026, 10, 20, 10))
     expect(await screen.findByRole('heading', { name: 'Pas d’effet net' })).toBeInTheDocument()
