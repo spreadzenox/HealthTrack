@@ -11,6 +11,7 @@ import { sourcesSentence, todayBySource } from '../services/today'
 import { buildDailyJournal } from '../services/dailyJournal'
 import { dayDeviations, measureNorms, normSinceFromChanges, readDeviationEntries } from '../services/dayDeviations'
 import { lastAnalysis } from '../services/analysisRunner'
+import { localDateKey } from '../services/analysisEngine'
 import { measureTone } from '../theme/themes'
 import LineIcon from './LineIcon'
 import StripPlus from './StripPlus'
@@ -22,6 +23,8 @@ const ICONS = {
 }
 /** Clé du thème de chaque ligne (src/theme/themes.js). */
 const THEME_KEYS = { screen: 'screenMinutes', cigarettes: 'phone' }
+/** Moments d’une valeur reprise de la veille (services/today.js `measureTiles`). */
+const FROM_YESTERDAY = new Set(['hier', 'nuit d’avant'])
 /** Courbe de chaque ligne dans Journal › Tendances (POLISH-SIM-2 : une ligne touchée ouvre sa courbe). */
 const TREND_KEYS = {
   sleep: 'sleep', hrv: 'hrv', restingHr: 'restingHr', steps: 'steps', screen: 'screen', wellbeing: 'wellbeing', gut: 'digestion',
@@ -35,18 +38,23 @@ const TREND_KEYS = {
 export default function TodayBySource({
   tiles, summary, entries, showGut = false, now, readNorms = readDeviationEntries, onItems,
 }) {
-  const [norms, setNorms] = useState({})
+  const [norms, setNorms] = useState({ today: {}, yesterday: {} })
   const refresh = useCallback(async () => {
     try {
       const days = buildDailyJournal(await readNorms())
       const at = now || new Date()
       // TS-2 : la norme repart du dernier changement durable, pris dans le dernier calcul connu (aucun calcul ici)
       const options = { since: normSinceFromChanges(lastAnalysis('changes')) }
-      setNorms(measureNorms(days, at, options).norms)
+      // POLISH-SIM-22 : une mesure reprise d’hier (montre pas encore synchronisée) se compare à la même habitude
+      const yesterday = localDateKey(new Date(at.getTime() - 86_400_000).toISOString())
+      setNorms({
+        today: measureNorms(days, at, options).norms,
+        yesterday: measureNorms(days, at, { ...options, dayKey: yesterday }).norms,
+      })
       const dev = dayDeviations(days, at, options)
       onItems?.(dev.ready ? dev.items : [])
     } catch {
-      setNorms({})
+      setNorms({ today: {}, yesterday: {} })
       onItems?.([])
     }
   }, [readNorms, now, onItems])
@@ -70,7 +78,7 @@ export default function TodayBySource({
       <div className="today-data">
         <ul className="today-data-items">
           {items.map((i) => {
-            const n = norms[i.key]
+            const n = (FROM_YESTERDAY.has(i.when) ? norms.yesterday : norms.today)[i.key]
             return (
               <li key={i.key} data-tone={measureTone(THEME_KEYS[i.key] ?? i.key)}>
                 <Row trend={TREND_KEYS[i.key]}>
