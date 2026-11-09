@@ -78,6 +78,12 @@
 > ([capture](runs/captures/2026-11-09-1135-analyses-pt-clair.png) ·
 > [calcul](runs/captures/2026-11-09-1135-analyses-calcul-sombre.png)).
 
+> 🍽️ **Journal : « repas incomplets ? » (09/11 12:35)** : « Dépense 2 285 kcal » à côté de « Repas ≈ 479 kcal »
+> faisait croire à un gros déficit. Quand les repas notés font moins de la moitié de la dépense du jour, la tuile Repas
+> dit maintenant « repas incomplets ? », avec la même règle que la page Nutrition
+> ([clair](runs/captures/2026-11-09-1235-repas-incomplets-clair.png) ·
+> [sombre](runs/captures/2026-11-09-1235-repas-incomplets-sombre.png)).
+
 > 💓 **VFC : « d'habitude » aussi quand elle date d'hier (09/11 10:35)** : le matin, tant que la montre n'a pas envoyé
 > la nuit, Aujourd'hui reprend la VFC d'hier, mais sans repère (« 51 ms, c'est bien ou pas ? », persona Stressé). Elle
 > a maintenant son « d'habitude 49 ms », comme le sommeil, et sa flèche si l'écart est net
@@ -103,6 +109,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 12:35 — [Repas incomplets](runs/2026-11-09-1235-repas-incomplets.md) | 🎨 | POLISH-SIM-24 : tuile Repas « repas incomplets ? » sous la moitié de la dépense du jour, règle partagée avec Nutrition ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 11:35 — [Analyses : « pt » expliqué](runs/2026-11-09-1135-analyses-pt.md) | 🎨 | POLISH-SIM-23 : unité « pt » dite une fois, « Comment c'est calculé » en deux phrases puis « Le détail », « encore N jours notés » ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 11:05 — [Relais iOS : expiration des anciennes builds](runs/2026-11-09-1105-relais-ios-expiration.md) | 📨 | Run court : votre décision du 09/11 vers 11:00 relayée mot pour mot dans POUR-IOS.md (expirer la 896.376 puis soumettre la 918.396 ; règle durable : expirer les builds TestFlight qui ne servent plus, en gardant la 844.344, la dernière build distribuée aux testeurs et celle en examen). Rien d'autre touché. Rien à faire de votre côté |
 | 09/11 10:35 — [VFC d'hier avec son habitude](runs/2026-11-09-1035-vfc-habitude.md) | 🎨 | PR #859 du run précédent mergée ; POLISH-SIM-22 : une mesure reprise d'hier (VFC, sommeil « nuit d'avant ») a son « d'habitude » ; test rouge puis vert, captures avant/après claires et sombres. Rien à faire de votre côté |

@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-09",
+  "kind": "amélioration",
+  "title": "Journal : repas incomplets signalés",
+  "items": [
+    "Quand les repas notés d'une journée font moins de la moitié de la dépense du jour, la tuile Repas dit « repas incomplets ? », comme la page Nutrition."
+  ]
+}

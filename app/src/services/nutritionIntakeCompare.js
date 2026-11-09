@@ -28,6 +28,14 @@ const GROUPS = [
 
 /** Sous ce ratio énergie moyenne / besoins, des repas manquent probablement. */
 const INCOMPLETE_ENERGY_RATIO = 0.5
+
+/**
+ * Des repas manquent probablement : l'énergie notée est sous la moitié de la référence (besoins en Nutrition,
+ * dépense du jour dans le Journal, POLISH-SIM-24). Une seule règle pour les deux écrans.
+ */
+export function isLikelyIncompleteEnergy(eatenKcal, referenceKcal) {
+  return eatenKcal > 0 && referenceKcal > 0 && eatenKcal < referenceKcal * INCOMPLETE_ENERGY_RATIO
+}
 /** Au-delà de 10 % du poids mangé sans teneur mesurée par Ciqual, l’apport affiché est un minimum (N2b). */
 const PARTIAL_UNKNOWN_SHARE = 0.1
 
@@ -113,7 +121,7 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
   const energyPerDay = (totals.energy_kcal ?? 0) / divisor
   const energyTarget = dailyTargets.energy_kcal || 0
   const fmt = new Intl.DateTimeFormat(appLocale(), { day: 'numeric', month: 'short' })
-  const likelyIncomplete = mealCount > 0 && energyTarget > 0 && energyPerDay < energyTarget * INCOMPLETE_ENERGY_RATIO
+  const likelyIncomplete = mealCount > 0 && isLikelyIncompleteEnergy(energyPerDay, energyTarget)
   // POL-PLAY-75 : des repas manquent → « bas » ou « proche » ne voudraient rien dire (l'apport réel est plus élevé) ;
   // « atteint » et « limite dépassée » restent vrais malgré les repas manquants ; « sous la limite » non (POL-PLAY-97).
   if (likelyIncomplete) {

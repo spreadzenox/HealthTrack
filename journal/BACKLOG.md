@@ -193,7 +193,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-23** ✅ 09/11 11:35 : ligne « pt : points de votre note de bien-être, sur 5. » (ou « de confort digestif ») sous le premier titre à barres, une fois ; « Comment c'est calculé » = deux phrases simples, méthode sous « Le détail » ; « Moyen terme : dans N jours de notes » comptait bien des jours notés (`daysHave` = jours du résultat connus), devient « encore N jours notés » comme le compte à rebours ; tests `Recommendations.test.jsx` rouges puis verts ; captures `runs/captures/2026-11-09-1135-analyses-*`. Analyses : l'unité « pt » n'est expliquée nulle part (« points de bien-être, sur 5 ») ; une
   ligne sous le titre, une fois. « Comment c'est calculé » : deux phrases simples d'abord (« modèle régularisé »,
   « fenêtres 7 à 27 jours » repliés) ; « Moyen terme : dans 7 jours de notes » à vérifier (dit-il bien des jours notés ?).
-- [ ] **POLISH-SIM-24** Journal › Jours : « dépense 2 285 kcal » à côté de « 479 kcal » de repas notés suggère un gros
+- [x] **POLISH-SIM-24** ✅ 09/11 12:35 : règle unique `isLikelyIncompleteEnergy` (sous la moitié de la référence) partagée par Nutrition et le Journal ; la tuile Repas dit « repas incomplets ? » face à la dépense du jour ; test rouge puis vert ; captures `runs/captures/2026-11-09-1235-repas-incomplets-*`. Journal › Jours : « dépense 2 285 kcal » à côté de « 479 kcal » de repas notés suggère un gros
   déficit ; dire « repas incomplets ? » comme Nutrition le fait déjà (une information, une maison : reprendre la même
   règle).
 - [ ] **POLISH-SIM-25** « Autre chose › Décrire un repas » ouvre la page Repas générale : ouvrir directement le champ
