@@ -32,8 +32,8 @@ import { keepWhole } from '../utils/keepWhole'
 import './Recommendations.css'
 
 const WORDS = {
-  wellbeing: { what: 'votre bien-être', note: 'votre bien-être', weigh: 'Ce qui va avec votre bien-être' },
-  digestion: { what: 'votre confort digestif', note: 'votre digestion', weigh: 'Ce qui va avec votre confort digestif' },
+  wellbeing: { what: 'votre bien-être', note: 'votre bien-être', weigh: 'Ce qui va avec votre bien-être', scale: 'de bien-être' },
+  digestion: { what: 'votre confort digestif', note: 'votre digestion', weigh: 'Ce qui va avec votre confort digestif', scale: 'de confort digestif' },
 }
 
 const pts = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`
@@ -121,8 +121,14 @@ function EffectList({ factors }) {
   return <ul className="reco-effects">{factors.map((f) => <EffectBar key={`${f.key}-${f.horizon}`} f={f} max={max} />)}</ul>
 }
 
+/** POLISH-SIM-23 : l'unité « pt » dite une fois, sous le premier titre qui a des barres. */
+function Unit({ w }) {
+  return <p className="reco-unit">pt : points de votre note {w.scale}, sur 5.</p>
+}
+
 function Results({ outcome, view, locked }) {
   const w = WORDS[outcome]
+  const showWeigh = !locked && view.weigh && view.weigh.length > 0
   return (
     <>
       <section className="reco-block" aria-labelledby={`reco-pistes-${outcome}`}>
@@ -149,9 +155,10 @@ function Results({ outcome, view, locked }) {
           <p className="today-card-text">Aucun lien assez net pour l’instant sur ce que vous pouvez changer.</p>
         )}
       </section>
-      {!locked && view.weigh && view.weigh.length > 0 && (
+      {showWeigh && (
         <section className="reco-block" aria-labelledby={`reco-weigh-${outcome}`}>
           <h3 id={`reco-weigh-${outcome}`} className="reco-section-title">{w.weigh}</h3>
+          <Unit w={w} />
           {view.weigh.map((h) => (
             <div key={h.id} className="reco-horizon">
               <p className="reco-horizon-title">{h.label} <span className="reco-horizon-window">{h.window}</span></p>
@@ -164,12 +171,13 @@ function Results({ outcome, view, locked }) {
       {!locked && view.lookOnly.length > 0 && (
         <section className="reco-block" aria-labelledby={`reco-look-${outcome}`}>
           <h3 id={`reco-look-${outcome}`} className="reco-section-title">À regarder, pas à changer</h3>
+          {!showWeigh && <Unit w={w} />}
           <EffectList factors={view.lookOnly} />
         </section>
       )}
       {view.nextLock && (
         <p className="reco-next">
-          {view.nextLock.label} : dans <span className="mono">{view.nextLock.daysLeft}</span> jour{view.nextLock.daysLeft > 1 ? 's' : ''} de notes.
+          {view.nextLock.label} : encore <span className="mono">{view.nextLock.daysLeft}</span> jour{view.nextLock.daysLeft > 1 ? 's' : ''} noté{view.nextLock.daysLeft > 1 ? 's' : ''}.
         </p>
       )}
     </>
@@ -178,18 +186,30 @@ function Results({ outcome, view, locked }) {
 
 function HowItWorks() {
   const [open, setOpen] = useState(false)
+  const [more, setMore] = useState(false)
   return (
     <div className="reco-how">
       <button type="button" className="reco-how-link" aria-expanded={open} onClick={() => setOpen(!open)}>
         Comment c’est calculé
       </button>
       {open && (
+        <p className="reco-how-text" data-testid="reco-how-simple">
+          {APP_NAME} compare vos jours notés à ce que vous avez fait le jour même et les semaines d’avant. Un lien
+          n’est montré que s’il revient sur plusieurs semaines, et tout est calculé sur le téléphone.
+        </p>
+      )}
+      {open && (
+        <button type="button" className="reco-how-link" aria-expanded={more} onClick={() => setMore(!more)}>
+          Le détail
+        </button>
+      )}
+      {open && more && (
         <p className="reco-how-text">
           Une ligne par jour. Chaque facteur est regardé sur trois fenêtres avant le jour mesuré : le jour même et la
           veille, de 2 à 6 jours avant, de 7 à 27 jours avant. Un modèle régularisé tient compte du jour de la semaine,
           des jours malades ou en voyage et de la tendance. Un lien n’est dit net que s’il tient quand on retire des
           semaines entières, et les effets ne sont montrés que si le modèle prévoit mieux que « demain comme
-          aujourd’hui ». Tout est calculé sur le téléphone.
+          aujourd’hui ».
         </p>
       )}
     </div>
