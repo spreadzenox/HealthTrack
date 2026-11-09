@@ -820,6 +820,12 @@
   text-align: right;
 }
 
+.reco-unit {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 .reco-legend {
   display: flex;
   align-items: center;

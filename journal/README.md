@@ -72,6 +72,12 @@
 > [après](runs/captures/2026-11-09-0935-visite-apres-light-milieu.png)). Le « jour 10 » vu par une persona venait de sa
 > capture prise trop tôt : l'étiquette finit bien à « jour 14 ». Mergé au run suivant (#859).
 
+> 📊 **Analyses : « pt » expliqué (09/11 11:35)** : une ligne sous « Ce qui va avec votre bien-être » dit « pt : points
+> de votre note de bien-être, sur 5 » (une seule fois sur la page). « Comment c'est calculé » s'ouvre sur deux phrases
+> simples ; le modèle et ses fenêtres sont sous « Le détail ». Le prochain horizon dit « encore 12 jours notés »
+> ([capture](runs/captures/2026-11-09-1135-analyses-pt-clair.png) ·
+> [calcul](runs/captures/2026-11-09-1135-analyses-calcul-sombre.png)).
+
 > 💓 **VFC : « d'habitude » aussi quand elle date d'hier (09/11 10:35)** : le matin, tant que la montre n'a pas envoyé
 > la nuit, Aujourd'hui reprend la VFC d'hier, mais sans repère (« 51 ms, c'est bien ou pas ? », persona Stressé). Elle
 > a maintenant son « d'habitude 49 ms », comme le sommeil, et sa flèche si l'écart est net
@@ -97,6 +103,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 11:35 — [Analyses : « pt » expliqué](runs/2026-11-09-1135-analyses-pt.md) | 🎨 | POLISH-SIM-23 : unité « pt » dite une fois, « Comment c'est calculé » en deux phrases puis « Le détail », « encore N jours notés » ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 11:05 — [Relais iOS : expiration des anciennes builds](runs/2026-11-09-1105-relais-ios-expiration.md) | 📨 | Run court : votre décision du 09/11 vers 11:00 relayée mot pour mot dans POUR-IOS.md (expirer la 896.376 puis soumettre la 918.396 ; règle durable : expirer les builds TestFlight qui ne servent plus, en gardant la 844.344, la dernière build distribuée aux testeurs et celle en examen). Rien d'autre touché. Rien à faire de votre côté |
 | 09/11 10:35 — [VFC d'hier avec son habitude](runs/2026-11-09-1035-vfc-habitude.md) | 🎨 | PR #859 du run précédent mergée ; POLISH-SIM-22 : une mesure reprise d'hier (VFC, sommeil « nuit d'avant ») a son « d'habitude » ; test rouge puis vert, captures avant/après claires et sombres. Rien à faire de votre côté |
 | 09/11 09:35 — [Visite sans bande blanche](runs/2026-11-09-0935-visite-sans-bande.md) | 🎨 | POLISH-SIM-20 : le rideau de « Voir dans 14 jours » passe sous le voile ; POLISH-SIM-21 était un artefact de l'outil (corrigé) ; test rouge puis vert, captures avant/après ; PR #859 verte, merge refusé par les permissions de la session : à merger au run suivant |

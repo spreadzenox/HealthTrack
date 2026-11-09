@@ -68,7 +68,13 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(within(weigh).getByText('Temps d’écran').closest('li')).toHaveClass('is-unsure')
     expect(within(weigh).queryByText('VFC')).toBeNull()
     expect(within(screen.getByRole('region', { name: 'À regarder, pas à changer' })).getByText('VFC')).toBeInTheDocument()
-    expect(screen.getByText(/Long terme : dans/)).toHaveTextContent('12')
+    // POLISH-SIM-23 : des jours notés, comme le compte à rebours
+    expect(screen.getByText(/Long terme : encore/)).toHaveTextContent('Long terme : encore 12 jours notés.')
+    // POLISH-SIM-23 : l'unité « pt » est dite une fois, sous le premier titre à barres
+    const units = document.querySelectorAll('.reco-unit')
+    expect(units).toHaveLength(1)
+    expect(weigh).toContainElement(units[0])
+    expect(units[0]).toHaveTextContent('pt : points de votre note de bien-être, sur 5.')
     expect(document.body.textContent).not.toMatch(/cause|diagnostic/i)
     // l'Accueil et Agir relisent les titres
     expect(JSON.parse(localStorage.getItem(PISTES_SUMMARY_KEY)).levers).toEqual(['Sommeil', 'Pas'])
@@ -95,6 +101,14 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     const how = await screen.findByRole('button', { name: 'Comment c’est calculé' })
     expect(how).toHaveAttribute('aria-expanded', 'false')
     fireEvent.click(how)
+    // POLISH-SIM-23 : deux phrases simples d'abord, la méthode repliée
+    const text = screen.getByTestId('reco-how-simple')
+    expect(text).toHaveTextContent('Halcya compare vos jours notés à ce que vous avez fait le jour même et les semaines d’avant.')
+    expect(text.textContent).not.toMatch(/régularisé|fenêtre|27/)
+    expect(screen.queryByText(/Une ligne par jour/)).toBeNull()
+    const more = screen.getByRole('button', { name: 'Le détail' })
+    fireEvent.click(more)
+    expect(more).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByText(/Une ligne par jour/)).toBeInTheDocument()
   })
 
