@@ -43,7 +43,7 @@
   text-transform: none;
 }
 
-/* Le même écran se remplit de haut en bas */
+/* Le même écran se remplit de haut en bas, sous le voile (rideau placé avant lui dans le DOM, POLISH-SIM-20) */
 .tour-curtain {
   position: fixed;
   inset: 0;

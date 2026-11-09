@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-09",
+  "kind": "correctif",
+  "title": "Visite guidée sans bande blanche",
+  "items": [
+    "Quand l'exemple « dans 14 jours » se remplit, le bas de l'écran reste assombri au lieu de devenir blanc pendant une seconde."
+  ]
+}

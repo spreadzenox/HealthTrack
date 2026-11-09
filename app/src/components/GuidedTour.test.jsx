@@ -156,4 +156,16 @@ describe('visite guidée : étiquette et projecteur (POLISH-SIM-14)', () => {
       vi.useRealTimers()
     }
   })
+
+  it('pendant « Voir dans 14 jours », l’écran qui se remplit reste sous le voile : jamais de bande claire (POLISH-SIM-20)', async () => {
+    saveOnboarding({ done: true, goals: ['stress'], tour: 'pending' })
+    renderTour()
+    fireEvent.click(await screen.findByRole('button', { name: 'Voir dans 14 jours' }))
+    const curtain = document.querySelector('.tour-curtain')
+    const shade = document.querySelector('.tour-shade')
+    expect(curtain).not.toBeNull()
+    expect(shade).not.toBeNull()
+    // Même contexte d'empilement, sans z-index : le voile, peint après le rideau, le couvre
+    expect(curtain.compareDocumentPosition(shade) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
 })
