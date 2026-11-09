@@ -6,6 +6,9 @@
  * renvoie une capture de l'écran : l'agent qui simule la persona ne voit que ces captures, jamais le code.
  *
  *   node scripts/persona/persona-browse.mjs --day=14 --equipment=watch --port=7801 --out=/tmp/sim-1 [--dark] [--sideload]
+ *     [--goals=care,stress]   objectifs cochés à l'accueil (jour > 1 ; au jour 1 l'agent les choisit lui-même) :
+ *                             gut, cycle, stress, sport, care, all (POLISH-SIM-7)
+ *     [--notes=few]           profil de saisie : full (défaut) ou few (persona pressée, presque rien de noté)
  *
  * Gestes (GET, réponse JSON { shot, url } ; la capture est un PNG à lire) :
  *   /start                     capture de l'écran actuel
@@ -36,6 +39,8 @@ const args = Object.fromEntries(process.argv.slice(2).map((a) => {
 }))
 const day = Number(args.day || 14)
 const equipment = String(args.equipment || 'phone')
+const goals = args.goals ? String(args.goals).split(',').filter(Boolean) : []
+const notes = String(args.notes || 'full')
 const port = Number(args.port || 7801)
 const vitePort = port + 100
 const outDir = resolve(String(args.out || join(APP_DIR, '.persona')))
@@ -93,17 +98,17 @@ if (day === 1) {
   })
 }
 if (day > 1) {
-  await context.addInitScript(({ doneAt, latestId }) => {
+  await context.addInitScript(({ doneAt, latestId, goals }) => {
     if (!localStorage.getItem('healthtrack_onboarding')) {
-      localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'completed', doneAt, step: 6, maxStep: 6 }))
+      localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'completed', doneAt, step: 6, maxStep: 6, goals, flow: 2 }))
       // L'onboarding marque toutes les Nouveautés comme lues : pas de « 258 autres changements » (artefact du 08/11)
       localStorage.setItem('healthtrack-whats-new-last-seen', latestId)
     }
-  }, { doneAt: new Date(Date.now() - (day - 1) * 86400000).toISOString(), latestId })
+  }, { doneAt: new Date(Date.now() - (day - 1) * 86400000).toISOString(), latestId, goals })
 }
 const page = await context.newPage()
 await page.goto(base, { waitUntil: 'load' })
-const entries = personaEntries(generateDemoEntries(), { day, equipment })
+const entries = personaEntries(generateDemoEntries(), { day, equipment, notes })
 await page.evaluate(async (list) => {
   await new Promise((res) => { const q = indexedDB.deleteDatabase('HealthTrack'); q.onsuccess = q.onerror = q.onblocked = () => res() })
   if (list.length) await (await import('/src/storage/localHealthStorage.js')).upsertEntries(list)
