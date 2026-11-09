@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-09",
+  "kind": "correctif",
+  "variants": ["play"],
+  "title": "Analyse IA sans résultat : non décomptée",
+  "items": [
+    "Quand l'IA ne reconnaît aucun aliment dans une photo ou une description, l'analyse ne compte plus dans vos analyses restantes."
+  ]
+}

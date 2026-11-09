@@ -177,7 +177,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-18** ✅ 09/11 00:35 : « 01/06 » sur les trois cartes conforme à la maquette v3 (« 01/07 » sur chaque carte : le tuto est un seul écran, les points disent la carte), rien changé ; écran Gold : « Gold est la formule payante de Halcya, avec toutes les analyses. Comme l’app est encore en test, vous l’avez sans rien payer, jusqu’au … inclus. » ; test ; captures `runs/captures/2026-11-09-0035-gold-{clair,sombre}.png`. Accueil : les trois cartes du tuto affichent toutes « 01/06 » (voulu par ACC-1 ? à confirmer
   contre la maquette v3, sinon 01 à 03) ; « Gold » et « pendant le test » sans un mot d'explication pour une persona
   peu technique (écran ACC-9).
-- [ ] **POLISH-SIM-19** « 19 analyses IA restantes » après un seul essai sans résultat (« Aucun aliment reconnu ») :
+- [x] **POLISH-SIM-19** ✅ 09/11 01:35 : c'était réel côté relais (un repas sans aliment reconnu ou « pas un repas » prenait un crédit). Désormais rendu (`mealHasItems`, `relay/src/server.js`), quota du jour gardé ; test relais rouge puis vert. « 19 analyses IA restantes » après un seul essai sans résultat (« Aucun aliment reconnu ») :
   vérifier dans le relais qu'un échec ne décompte pas (peut venir de l'analyse factice de l'outil).
 - [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`) et fixer
   l'objectif d'onboarding de la persona ; profil de saisie par persona (« Stressé » ne note pas de repas) ; dire aux

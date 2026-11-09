@@ -19,6 +19,11 @@
 > Le compteur « 01/06 » sur les trois cartes du début est voulu (la maquette fait pareil : les trois cartes sont un
 > seul écran, les points disent la carte). Part sur Alpha ce soir 23:45 (fin du gel à 22:00).
 
+> 🧾 **Analyse IA sans résultat : plus décomptée (09/11 01:35)** : une persona voyait « 19 analyses restantes » après
+> un seul essai où l'IA n'avait reconnu aucun aliment. C'était bien le relais qui comptait l'essai. Désormais, « pas un
+> repas » ou aucun aliment reconnu vous rend l'analyse (comme une photo de selles illisible). Le relais se redéploie
+> seul au merge ; rien à faire de votre côté.
+
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **Tendances › Jour** (question du 08/11) : « Nuits plus longues (7 h 46) » est la moyenne des derniers jours ;
   voulez-vous la nuit du seul jour, au singulier, comme la maquette ?
@@ -37,6 +42,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 01:35 — [Analyse sans résultat](runs/2026-11-09-0135-analyse-sans-resultat.md) | 🎨 | POLISH-SIM-19 : un repas sans aliment reconnu ne prend plus de crédit IA (relais, test rouge puis vert). Rien à faire de votre côté |
 | 09/11 00:35 — [Gold expliqué](runs/2026-11-09-0035-gold-explique.md) | 🎨 | Archive S45 ; POLISH-SIM-18 : l'écran Gold de l'accueil dit ce qu'est Gold et de quel test on parle ; compteur du tuto conforme à la maquette ; test, captures claires et sombres. Rien à faire de votre côté |
 
 ---
