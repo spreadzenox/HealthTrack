@@ -286,6 +286,15 @@ export default function TrendsViewer({
   }
   // TS-2 : repères « changement » en vue Mois
   const marks = period === 'month' ? changeMarks(changes, shown, data.dates) : []
+  // Revue du 09/11 : historique vierge (aucune courbe, aucune lecture ni note) → le message seul, sans Jour / Semaine /
+  // Mois qui ne montreraient rien
+  if (!data.available.length && !initialDay) {
+    return (
+      <article className="today-card trends-card">
+        <p className="trends-empty">Vos courbes apparaîtront après 3 jours de mesures.</p>
+      </article>
+    )
+  }
   return (
     <article className="today-card trends-card">
       <div className="trends-controls">
