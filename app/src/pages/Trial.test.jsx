@@ -25,7 +25,9 @@ const renderTrial = (now, extra = {}, changes = null) => render(
 describe('Un essai (ORG-8)', () => {
   it('la consigne du jour, le calendrier, la question seulement si les données manquent', async () => {
     renderTrial(new Date(2026, 10, 3, 10))
-    expect(await screen.findByText(/Aujourd’hui, jour avec : dormir au moins 7 h 30/)).toBeInTheDocument()
+    // POLISH-AGIR-TITRES : la consigne est le titre ; la carte du jour ne la répète pas
+    expect(await screen.findByRole('heading', { level: 1, name: 'Dormir au moins 7 h 30' })).toBeInTheDocument()
+    expect(screen.getByText('Aujourd’hui, jour avec.')).toBeInTheDocument()
     expect(screen.getByLabelText(/1 novembre : avec, tenu/)).toHaveTextContent('✓')
     expect(screen.getByText('Nous n’avons pas reçu vos données de sommeil pour hier soir.')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Oui' }))

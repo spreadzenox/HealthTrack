@@ -216,6 +216,16 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   `runs/captures/2026-11-09-1835-agir-propose-*`. Restent vus : la réintroduction FODMAP proposée dit « Tester les
   fructanes » (maquette : « Réintroduction : les fructanes », avec le tag du thème) ; un essai en cours garde le nom du
   facteur (« Sommeil ») comme titre, la maquette y met la consigne (« Se coucher avant 23 h »).
+- [x] **POLISH-AGIR-TITRES** ✅ 09/11 19:35 (restes de POLISH-AGIR-PROPOSE, maquette `maquettes/agir-tendances/`) :
+  un essai en cours, terminé et sa page ont pour titre la consigne des jours « avec » (« Dormir au moins 7 h 30 »),
+  plus le nom du facteur ; la carte en cours dit « Jour 8 sur 14. Aujourd’hui, jour avec. » (ou « jour sans : comme
+  d’habitude », mots de la page de l'essai) ; la réintroduction FODMAP proposée, en cours ou terminée s'appelle
+  « Réintroduction : les fructanes » ; la carte du jour de la page d'essai ne répète plus la consigne (« Aujourd’hui,
+  jour avec. »). Tests rouges puis verts ; captures `runs/captures/2026-11-09-1935-*`. Reste vu, non fait : l'étiquette du thème
+  (« Sommeil », « Digestion ») en haut à droite des cartes de la maquette ; la couleur de la carte dit déjà le thème
+  (une information, une maison) : à juger aux personas avant d'ajouter.
+- [ ] **POLISH-ESSAI-GRILLE** (écart à la maquette `essai-en-cours.png`, vu le 09/11 19:35) : page d'un essai, les 14
+  pastilles se rangent en 13 + 1 à 412 px ; la maquette montre deux lignes de 7 numérotées (semaine 1, semaine 2).
 - [x] **INTRO-TITRE (reste)** ✅ 09/11 18:35 : vérifié au navigateur, les six titres de Paramètres ont la même graisse
   (600, 16 px, Figtree) ; l'écart vu le 09/11 07:35 n'existe pas. Rien changé.
 - [ ] **PROP-OBJECTIF** (proposition au propriétaire avec maquette, run « idées » ; pas de code sans accord)
