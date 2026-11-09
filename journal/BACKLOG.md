@@ -208,6 +208,16 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   (graduation du milieu) ; un libellé « d'habitude » aurait été faux. La grille suit maintenant chaque graduation de
   l'axe de gauche (comme la vue Jour) ; test rouge puis vert ; captures `runs/captures/2026-11-09-1635-grille-tendances-*`.
   Règle : un trait seul se lit comme une référence ; un repère sans sens ne doit pas ressembler à une donnée.
+- [x] **POLISH-AGIR-PROPOSE** ✅ 09/11 18:35 (écart à la maquette `maquettes/agir-tendances/agir.png`) : une carte
+  « Proposés par vos analyses » disait « Tester : sommeil / Lien repéré avec votre bien-être, court terme. ». Elle dit
+  la consigne des jours « avec » de l'essai qui démarrera (« Dormir au moins 7 h 53 », « Un peu moins d’alcool que
+  d’habitude ») et « Lien repéré : +0,2 point de bien-être pour 40 min de sommeil de plus. 14 jours, un jour sur deux
+  tiré au sort. » (`proposal`, `services/trials.js`) ; tests rouges puis verts ; captures
+  `runs/captures/2026-11-09-1835-agir-propose-*`. Restent vus : la réintroduction FODMAP proposée dit « Tester les
+  fructanes » (maquette : « Réintroduction : les fructanes », avec le tag du thème) ; un essai en cours garde le nom du
+  facteur (« Sommeil ») comme titre, la maquette y met la consigne (« Se coucher avant 23 h »).
+- [x] **INTRO-TITRE (reste)** ✅ 09/11 18:35 : vérifié au navigateur, les six titres de Paramètres ont la même graisse
+  (600, 16 px, Figtree) ; l'écart vu le 09/11 07:35 n'existe pas. Rien changé.
 - [ ] **PROP-OBJECTIF** (proposition au propriétaire avec maquette, run « idées » ; pas de code sans accord)
   Aujourd'hui selon l'objectif coché : sans « Ma digestion » ni « Mon cycle », « Digestion » quitte le bandeau
   d'ajout, « Repas » n'est plus le seul bouton plein et la carte « Mes repas du jour » se replie après 14 jours sans

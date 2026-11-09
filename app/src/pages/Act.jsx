@@ -13,7 +13,7 @@ import { readPistesSummary } from '../services/pistesSummary'
 import { actSections } from '../services/act'
 import { getAnalysis } from '../services/analysisRunner'
 import { resultsView, THEME_TONE } from '../services/resultsView'
-import { createTrial, habitStatus, instruction, trialStatus, TRIAL_DAYS } from '../services/trials'
+import { createTrial, habitStatus, instruction, proposal, trialStatus, TRIAL_DAYS } from '../services/trials'
 import { readTrialsData, saveNewTrial, saveTrial } from '../services/trialsData'
 import LineIcon from '../components/LineIcon'
 import TrialDots from '../components/TrialDots'
@@ -118,8 +118,7 @@ export default function Act({ read = readAct, now }) {
     const v = resultsView(data.results?.outcomes?.[o])
     return (v.pistes ?? []).filter((f) => !f.key.startsWith('fodmap_') && !busyKeys.has(f.key)).map((f) => ({
       id: `propose-${o}-${f.key}`, factor: f, tone: THEME_TONE[f.theme] ?? 'stone',
-      title: `Tester : ${f.label.toLowerCase()}`,
-      detail: `Lien repéré avec votre ${o === 'digestion' ? 'confort digestif' : 'bien-être'}, ${f.horizonLabel.toLowerCase()}.`,
+      ...proposal(f, o),
     }))
   })
   const done = [

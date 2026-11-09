@@ -350,6 +350,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **08/11 21:35** — **Analyses : une seule unité par facteur** (POLISH-SIM-16) : « 1 500 pas de plus » sur les trois horizons ; un effet plus grand que l'échelle dit « pas assez de données ».
 - **09/11 12:35** — **Journal : « repas incomplets ? »** (POLISH-SIM-24) : tuile Repas sous la moitié de la dépense du jour, même règle que Nutrition.
 - **09/11 17:35** — **Note de bien-être : contraste** (POLISH-CONTRASTE-NOTE) : chiffre de la note choisie aux couleurs du thème bien-être, ≥ 4,5:1.
+- **09/11 18:35** — **Agir : essais proposés concrets** (POLISH-AGIR-PROPOSE, écart à la maquette validée) : « Dormir au moins 7 h 53 » et « Lien repéré : +0,2 point de bien-être pour 40 min de sommeil de plus. 14 jours, un jour sur deux tiré au sort. » au lieu de « Tester : sommeil · court terme ».
 - **09/11 16:35** — **Tendances : grille lisible** (POLISH-SIM-28) : une ligne de grille par graduation ; la ligne grise isolée se lisait comme une habitude.
 - **09/11 15:35** — **Profil nutrition : niveau d'activité expliqué** (POLISH-SIM-27) : « Modérément actif d’après vos pas » quand le niveau vient des pas.
 - **09/11 14:35** — **Note de bien-être : la phrase expliquée** (POLISH-SIM-26) : « Halcya en tire une note et des précisions à vous proposer ; la phrase n’est pas enregistrée. »
