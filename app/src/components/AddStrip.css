@@ -5,7 +5,9 @@
 
 .add-strip-row {
   display: grid;
-  grid-auto-columns: minmax(68px, 1fr);
+  /* GRANDE-POLICE-1 : la largeur minimale d'une case suit la police (4,25rem = 68 px en taille normale, rien ne
+     change) ; en grande police, « Digestion » garde sa marge et le bandeau défile un peu plus tôt. */
+  grid-auto-columns: minmax(max(68px, 4.25rem), 1fr);
   grid-auto-flow: column;
   gap: 8px;
   /* Jusqu'à six gestes (AUJ-1b) : au-delà de la largeur de l'écran, le bandeau défile ; le bouton coupé au bord
@@ -65,9 +67,11 @@
   border-radius: 18px;
   background: var(--color-surface);
   color: var(--color-ink);
+  /* « + 1 cigarette » dépassait de sa case en grande police : retour à la ligne entre les mots. */
   font-size: 0.8125rem;
   font-weight: 700;
   line-height: 1.15;
+  white-space: normal;
 }
 .add-chip-slot .cigarette-quick-add-ok,
 .add-chip-slot .cigarette-quick-add-error {

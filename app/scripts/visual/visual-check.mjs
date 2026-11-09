@@ -41,6 +41,7 @@
  *   npm run visual -- --routes=/food --food-analysis
  *                                          --food-analysis=fodmap : lentilles, oignon, ail (FODMAP avant d'enregistrer, N4)
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
+ *   npm run visual -- --routes=/ --scroll-end=.add-strip-row  # rangée horizontale défilée jusqu'au bout (GRANDE-POLICE-1)
  *   npm run visual -- --routes=/ --meal-photo-cancel  # appareil photo fermé sans photo : « Décrire le repas » (POLISH-SIM-17)
  *   npm run visual -- --routes=/food --meal-text       # repas décrit en texte, réponse Gemini factice
  *   npm run visual -- --routes=/food --meal-text=form  # formulaire de description, avant l'envoi
@@ -284,9 +285,22 @@ function findTextOverflow() {
     const st = getComputedStyle(el)
     if (st.display === 'none' || st.visibility === 'hidden' || el.clientWidth === 0) continue
     const boxed = parseFloat(st.borderLeftWidth) > 0 || !/rgba\(0, 0, 0, 0\)|transparent/.test(st.backgroundColor)
-    const range = document.createRange()
-    range.selectNodeContents(el)
-    const textWidth = range.getBoundingClientRect().width
+    // Largeur du texte lui-même (rectangles des lignes de texte), pas celle des boîtes qui l'entourent : un libellé
+    // sur deux lignes dans une case flex remplit sa case sans toucher les bords (« Autre chose », GRANDE-POLICE-1).
+    let left = Infinity
+    let right = -Infinity
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      if (!node.textContent.trim()) continue
+      const range = document.createRange()
+      range.selectNodeContents(node)
+      for (const r of range.getClientRects()) {
+        if (r.width === 0) continue
+        left = Math.min(left, r.left)
+        right = Math.max(right, r.right)
+      }
+    }
+    const textWidth = right > left ? right - left : 0
     // Texte plus large que le cadre, ou (bouton à bord ou à fond) collé à moins de 4 px de chaque bord
     const tight = boxed ? textWidth > el.clientWidth - 8 : false
     if (el.scrollWidth > el.clientWidth + 1 || tight) {
@@ -1397,6 +1411,11 @@ async function main() {
         if (args['meal-photo-cancel']) {
           await page.evaluate(() => document.querySelector('[data-testid="meal-photo-input"]')?.dispatchEvent(new Event('cancel')))
           await page.waitForTimeout(400)
+        }
+        // --scroll-end=.add-strip-row : fait défiler une rangée horizontale jusqu'au bout (cases cachées du bandeau d'ajout)
+        if (args['scroll-end']) {
+          await page.evaluate((sel) => document.querySelectorAll(sel).forEach((el) => { el.scrollLeft = el.scrollWidth }), String(args['scroll-end']))
+          await page.waitForTimeout(300)
         }
         // --settle=2500 : laisse finir calculs et animations après les clics (visite guidée, ACC-8)
         if (args.settle) await page.waitForTimeout(Number(args.settle))
