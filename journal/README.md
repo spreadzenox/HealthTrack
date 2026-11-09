@@ -24,6 +24,12 @@
 > repas » ou aucun aliment reconnu vous rend l'analyse (comme une photo de selles illisible). Le relais se redéploie
 > seul au merge ; rien à faire de votre côté.
 
+> 📷 **Repas : un secours si l'appareil photo ne s'ouvre pas (09/11 02:35)** : deux personas sur deux touchaient
+> « Repas » sans rien voir se passer quand l'appareil photo se fermait. Désormais un bandeau dit « Aucune photo prise. »
+> avec « Décrire le repas » ([clair](runs/captures/2026-11-09-0235-repas-sans-photo-clair.png) ·
+> [sombre](runs/captures/2026-11-09-0235-repas-sans-photo-sombre.png)). À tester : touchez Repas puis revenez en
+> arrière sans photo.
+
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **Tendances › Jour** (question du 08/11) : « Nuits plus longues (7 h 46) » est la moyenne des derniers jours ;
   voulez-vous la nuit du seul jour, au singulier, comme la maquette ?
@@ -42,6 +48,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 02:35 — [Repas sans photo](runs/2026-11-09-0235-repas-sans-photo.md) | 🎨 | POLISH-SIM-17 : appareil photo fermé sans photo → « Décrire le repas » ; tests, captures claires et sombres. À tester sur votre téléphone |
 | 09/11 01:35 — [Analyse sans résultat](runs/2026-11-09-0135-analyse-sans-resultat.md) | 🎨 | POLISH-SIM-19 : un repas sans aliment reconnu ne prend plus de crédit IA (relais, test rouge puis vert). Rien à faire de votre côté |
 | 09/11 00:35 — [Gold expliqué](runs/2026-11-09-0035-gold-explique.md) | 🎨 | Archive S45 ; POLISH-SIM-18 : l'écran Gold de l'accueil dit ce qu'est Gold et de quel test on parle ; compteur du tuto conforme à la maquette ; test, captures claires et sombres. Rien à faire de votre côté |
 

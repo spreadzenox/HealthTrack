@@ -37,6 +37,26 @@ describe('MealPhotoButton (TESTEUR-4b)', () => {
     expect(takePendingMealPhoto()).toBeNull()
   })
 
+  it('offers to describe the meal when the camera closes without a photo (POLISH-SIM-17)', () => {
+    renderBtn()
+    const input = inputOf(screen.getByRole('button', { name: 'Photo du repas' }))
+    expect(screen.queryByRole('status')).toBeNull()
+    fireEvent(input, new Event('cancel'))
+    const hint = screen.getByRole('status')
+    expect(hint).toHaveTextContent('Aucune photo prise.')
+    expect(screen.getByRole('link', { name: 'Décrire le repas' })).toHaveAttribute('href', '/food')
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer' }))
+    expect(screen.queryByRole('status')).toBeNull()
+  })
+
+  it('hides the hint once a photo is taken', () => {
+    renderBtn()
+    const input = inputOf(screen.getByRole('button', { name: 'Photo du repas' }))
+    fireEvent(input, new Event('cancel'))
+    fireEvent.change(input, { target: { files: [new File(['x'], 'r.jpg', { type: 'image/jpeg' })] } })
+    expect(screen.queryByRole('status')).toBeNull()
+  })
+
   it('opens the field from the keyboard', () => {
     renderBtn()
     const btn = screen.getByRole('button')
