@@ -1049,3 +1049,8 @@ button.pastel-tile { width: 100%; border: 0; font: inherit; font-weight: 700; te
 /* Champ photo caché derrière un bouton (TESTEUR-4b, MealPhotoButton). */
 .visually-hidden-input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; pointer-events: none; }
 label.pastel-tile { cursor: pointer; }
+/* Appareil photo fermé sans photo (POLISH-SIM-17) : bandeau au-dessus de la barre d'onglets, secours « Décrire ». */
+.meal-photo-missed { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--safe-bottom, 0px) + 84px); z-index: 40; display: flex; align-items: center; gap: 12px; width: min(440px, calc(100vw - 32px)); padding: 10px 8px 10px 16px; border-radius: 16px; background: var(--surface); color: var(--text); border: 1px solid var(--border); box-shadow: 0 6px 24px var(--shadow); font-size: 0.95rem; }
+.meal-photo-missed > span { flex: 1; }
+.meal-photo-missed-link { font-weight: 700; color: var(--peach-label); text-decoration: underline; min-height: 44px; display: inline-flex; align-items: center; }
+.meal-photo-missed-close { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: inherit; cursor: pointer; }

@@ -41,6 +41,7 @@
  *   npm run visual -- --routes=/food --food-analysis
  *                                          --food-analysis=fodmap : lentilles, oignon, ail (FODMAP avant d'enregistrer, N4)
  *                                          # analyse photo simulée (réponse Gemini factice) sur /food
+ *   npm run visual -- --routes=/ --meal-photo-cancel  # appareil photo fermé sans photo : « Décrire le repas » (POLISH-SIM-17)
  *   npm run visual -- --routes=/food --meal-text       # repas décrit en texte, réponse Gemini factice
  *   npm run visual -- --routes=/food --meal-text=form  # formulaire de description, avant l'envoi
  *   npm run visual -- --routes=/food --meal-text --search=ail  # … recherche d'un aliment dans l'éditeur du repas
@@ -1382,6 +1383,11 @@ async function main() {
             await button.click({ force })
             await page.waitForTimeout(700)
           }
+        }
+        // --meal-photo-cancel : appareil photo fermé sans photo depuis le bouton Repas (POLISH-SIM-17)
+        if (args['meal-photo-cancel']) {
+          await page.evaluate(() => document.querySelector('[data-testid="meal-photo-input"]')?.dispatchEvent(new Event('cancel')))
+          await page.waitForTimeout(400)
         }
         // --settle=2500 : laisse finir calculs et animations après les clics (visite guidée, ACC-8)
         if (args.settle) await page.waitForTimeout(Number(args.settle))
