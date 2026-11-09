@@ -245,7 +245,10 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
     known('age') && <span>{profile.age} ans</span>,
     <span className="nutrition-profile-activity">
       <Sourced
-        value={activityLevel(profile.activity).label}
+        // POLISH-SIM-27 : un niveau estimé dit d'où il vient sans qu'on ait à le toucher ; le détail reste au toucher.
+        value={origins.activity === 'steps'
+          ? `${activityLevel(profile.activity).label} d’après vos pas`
+          : activityLevel(profile.activity).label}
         hint={origins.activity === 'steps'
           ? `(≈ ${formatInt(profile.meanSteps)} pas/jour sur ${profile.stepsDays} jours)`
           : origins.activity === 'default' ? '(par défaut)' : null}
