@@ -20,5 +20,10 @@
 ## Vérifs
 - `npm run test` (3 331 verts), `npm run build`, `npm run lint` (0 erreur, comme avant), `npm run visual` (toutes les pages ok).
 
+## Merge
+- PR #859 : tous les checks verts (Vitest, Build APK, relais, Java, perf, émulateurs API 28 à 36). **Merge refusé par
+  le contrôle des permissions de la session** (« Merge Without Review ») : non contourné. PR laissée ouverte, à merger
+  par le run suivant (après remise à jour sur origin/main) ou par le propriétaire.
+
 ## Suite
 - POLISH-SIM-22 (VFC nuit sans « d'habitude »), puis 23, 24.

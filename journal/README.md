@@ -90,7 +90,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
-| 09/11 09:35 — [Visite sans bande blanche](runs/2026-11-09-0935-visite-sans-bande.md) | 🎨 | POLISH-SIM-20 : le rideau de « Voir dans 14 jours » passe sous le voile ; POLISH-SIM-21 était un artefact de l'outil (corrigé) ; test rouge puis vert, captures avant/après. Rien à faire de votre côté |
+| 09/11 09:35 — [Visite sans bande blanche](runs/2026-11-09-0935-visite-sans-bande.md) | 🎨 | POLISH-SIM-20 : le rideau de « Voir dans 14 jours » passe sous le voile ; POLISH-SIM-21 était un artefact de l'outil (corrigé) ; test rouge puis vert, captures avant/après ; PR #859 verte, merge refusé par les permissions de la session : à merger au run suivant |
 | 09/11 08:35 — [Personas et objectif](runs/2026-11-09-0835-idees-personas-objectifs.md) | 💡 | Outil : objectif d'accueil et persona pressée ; 2 simulations (Prendre soin de soi J45, Stressé J14) ; Aujourd'hui ne suit pas l'objectif → maquette PROP-OBJECTIF ce soir ; POLISH-SIM-20 à 28. Rien à faire de votre côté |
 | 09/11 07:35 — [Intro ≠ titre](runs/2026-11-09-0735-intro-titre.md) | 🎨 | INTRO-TITRE : la phrase d'introduction de Sources, Données, Paramètres, Licences et Montre n'a plus le style d'un titre ; phrase d'abonnement reformulée ; test rouge puis vert, captures avant/après. Rien à faire de votre côté |
 | 09/11 06:35 — [Tendances vierge](runs/2026-11-09-0635-tendances-vide.md) | 🎨 | PR #855 du run précédent mergée ; Tendances sur historique vierge : le message seul ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
