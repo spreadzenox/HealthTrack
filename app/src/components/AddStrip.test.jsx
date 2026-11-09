@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom'
 import AddStrip from './AddStrip'
 
 const view = (props) => render(
@@ -52,6 +52,24 @@ describe('AddStrip (nouvel écran Aujourd’hui du 07/11) : le seul endroit pour
     const dialog = screen.getByRole('dialog', { name: 'Autre chose' })
     expect(within(dialog).getByRole('button', { name: '+ 1 cigarette' })).toBeInTheDocument()
     expect(within(dialog).getByRole('link', { name: /Décrire un repas/ })).toHaveAttribute('href', '/food')
+  })
+
+  it('« Décrire un repas » ouvre directement le champ de description (POLISH-SIM-25)', () => {
+    function FoodProbe() {
+      const { state } = useLocation()
+      return <p>food {state?.describeMeal ? 'décrire' : 'page'}</p>
+    }
+    render(
+      <MemoryRouter>
+        <Routes>
+          <Route path="/" element={<AddStrip onWellbeing={() => {}} />} />
+          <Route path="/food" element={<FoodProbe />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Autre chose' }))
+    fireEvent.click(screen.getByRole('link', { name: /Décrire un repas/ }))
+    expect(screen.getByText('food décrire')).toBeInTheDocument()
   })
 
   it('sans fenêtre de digestion fournie, pas de bouton « Digestion »', () => {

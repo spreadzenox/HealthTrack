@@ -1402,6 +1402,8 @@ async function main() {
           let force = false
           if (!(await button.count())) (button = page.getByRole('radio', { name: target }).first()), (force = true)
           if (!(await button.count())) (button = page.getByRole('checkbox', { name: target }).first()), (force = true)
+          // lien (« Autre chose > Décrire un repas », POLISH-SIM-25)
+          if (!(await button.count())) (button = page.getByRole('link', { name: target }).first()), (force = false)
           if (await button.count()) {
             await button.click({ force })
             await page.waitForTimeout(700)

@@ -196,7 +196,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-24** ✅ 09/11 12:35 : règle unique `isLikelyIncompleteEnergy` (sous la moitié de la référence) partagée par Nutrition et le Journal ; la tuile Repas dit « repas incomplets ? » face à la dépense du jour ; test rouge puis vert ; captures `runs/captures/2026-11-09-1235-repas-incomplets-*`. Journal › Jours : « dépense 2 285 kcal » à côté de « 479 kcal » de repas notés suggère un gros
   déficit ; dire « repas incomplets ? » comme Nutrition le fait déjà (une information, une maison : reprendre la même
   règle).
-- [ ] **POLISH-SIM-25** « Autre chose › Décrire un repas » ouvre la page Repas générale : ouvrir directement le champ
+- [x] **POLISH-SIM-25** ✅ 09/11 13:35 : les deux liens « Décrire » passent `describeMeal` à la page Repas, qui ouvre le formulaire avec le champ « Décrivez votre repas » déjà actif ; tests rouges puis verts ; captures `runs/captures/2026-11-09-1335-decrire-repas-*`. « Autre chose › Décrire un repas » ouvre la page Repas générale : ouvrir directement le champ
   « Décrire ».
 - [ ] **POLISH-SIM-26** Note de bien-être : « Elle propose des précisions, elle n'est pas gardée » incompris (persona
   Stressé) ; reformuler en une phrase concrète.

@@ -105,6 +105,7 @@ export default function Food() {
   const startQuickMeal = (meal) => {
     setQuickSaved(false)
     setEditingId(null)
+    setFocusDescription(false)
     // nonce : un nouveau « Refaire » remplace le formulaire ouvert, même pour un repas au même nom
     setQuickMeal({ title: 'Nouveau repas', items: [], ...meal, nonce: Date.now() })
   }
@@ -125,6 +126,17 @@ export default function Food() {
     navigate(location.pathname, { replace: true, state: null })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [redoFromNav])
+
+  // POLISH-SIM-25 : « Décrire un repas » (Autre chose, ou appareil photo fermé sans photo) ouvre directement le champ.
+  const describeFromNav = Boolean(location.state?.describeMeal)
+  const [focusDescription, setFocusDescription] = useState(false)
+  useEffect(() => {
+    if (!describeFromNav) return
+    startQuickMeal()
+    setFocusDescription(true)
+    navigate(location.pathname, { replace: true, state: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [describeFromNav])
 
   const handleFile = (f) => {
     if (!f?.type?.startsWith('image/')) return
@@ -310,7 +322,8 @@ export default function Food() {
           title={quickMeal.title}
           dish={quickMeal.dish}
           initialItems={quickMeal.items}
-          onCancel={() => setQuickMeal(null)}
+          autoFocusDescription={focusDescription}
+          onCancel={() => { setQuickMeal(null); setFocusDescription(false) }}
           onSaved={() => {
             setQuickMeal(null)
             setQuickSaved(true)

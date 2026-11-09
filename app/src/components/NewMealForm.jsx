@@ -26,7 +26,7 @@ export default function NewMealForm(props) {
   )
 }
 
-function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
+function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFocusDescription = false }) {
   const [items, setItems] = useState(() => itemsForEditing(initialItems))
   // FODMAP du repas en cours de saisie (N4), seulement avec l'objectif « Mon ventre »
   const [showFodmap] = useState(() => gutCardMode() !== 'hide')
@@ -125,6 +125,7 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel }) {
             rows={2}
             maxLength={MEAL_TEXT_MAX_LENGTH}
             placeholder="Ex. : 2 œufs au plat, une tartine beurrée et un café"
+            autoFocus={autoFocusDescription}
             value={description}
             disabled={describing || saving}
             onChange={(e) => setDescription(e.target.value)}

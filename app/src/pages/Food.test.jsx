@@ -542,6 +542,19 @@ describe('Food — décrire un repas en quelques mots', () => {
     spy.mockRestore()
   })
 
+  it('arrivée par « Décrire un repas » : le champ de description est ouvert et prêt (POLISH-SIM-25)', async () => {
+    const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+    setGeminiApiKey('KEY')
+    render(
+      <MemoryRouter initialEntries={[{ pathname: '/food', state: { describeMeal: true } }]}>
+        <Food />
+      </MemoryRouter>,
+    )
+    const field = await screen.findByLabelText(/Décrivez votre repas/i)
+    expect(field).toHaveFocus()
+    expect(screen.queryByRole('button', { name: /Décrire ou saisir sans photo/i })).toBeNull()
+  })
+
   it('affiche l’erreur de Gemini et laisse la saisie manuelle possible', async () => {
     const { setGeminiApiKey } = await import('../settings/geminiApiKey')
     setGeminiApiKey('KEY')
