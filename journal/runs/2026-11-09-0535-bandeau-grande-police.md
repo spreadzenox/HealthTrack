@@ -33,3 +33,8 @@ normale. Contraire au but d'une grande police ; retiré.
 
 ## Suite
 - Polish : POLISH-SIM-7 / 9 (outil personas, runs « idées »), INTEG-1 (proposition Garmin / Samsung au propriétaire).
+
+## Merge
+PR #855 : Frontend (Vitest), Build APK, Relais, Bord à bord, WebView API 28, perf verts (émulateurs A56 encore en
+cours). Le merge squash a été refusé par le filtre de permissions de la session (« Merge Without Review ») : PR
+laissée ouverte, prête. Le run suivant (ou le propriétaire) la merge après avoir remis la branche à jour sur main.
