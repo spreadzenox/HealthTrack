@@ -347,3 +347,32 @@ button.act-card-action {
   font-weight: 600;
   text-decoration: none;
 }
+
+/* POLISH-ESSAI-ORDRE : légende du calendrier, avec la consigne des jours « avec », comme la maquette. */
+.trial-legend {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.trial-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.trial-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--tone-label, var(--text-muted));
+}
+
+.trial-legend-dot.is-with {
+  background: var(--tone-label, var(--text-muted));
+}

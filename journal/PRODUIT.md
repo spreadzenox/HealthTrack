@@ -351,6 +351,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **09/11 12:35** — **Journal : « repas incomplets ? »** (POLISH-SIM-24) : tuile Repas sous la moitié de la dépense du jour, même règle que Nutrition.
 - **09/11 17:35** — **Note de bien-être : contraste** (POLISH-CONTRASTE-NOTE) : chiffre de la note choisie aux couleurs du thème bien-être, ≥ 4,5:1.
 - **09/11 21:35** — **Agir : les 14 jours en deux semaines** (POLISH-ESSAI-GRILLE) : page d'un essai, cases numérotées en 2 × 7 avec ✓ / – au coin, comme la maquette.
+- **09/11 22:35** — **Agir : le résultat en premier** (POLISH-ESSAI-ORDRE) : « Résultat en cours » avant « Les 14 jours », légende qui reprend la consigne.
 - **09/11 19:35** — **Agir : chaque essai porte sa consigne** (POLISH-AGIR-TITRES, restes de l'écart à la maquette) : essai en cours, terminé et page d'essai titrés « Dormir au moins 7 h 30 » (plus « Sommeil ») ; « Réintroduction : les fructanes » au lieu de « Tester les fructanes » / « Test FODMAP : Fructanes ».
 - **09/11 18:35** — **Agir : essais proposés concrets** (POLISH-AGIR-PROPOSE, écart à la maquette validée) : « Dormir au moins 7 h 53 » et « Lien repéré : +0,2 point de bien-être pour 40 min de sommeil de plus. 14 jours, un jour sur deux tiré au sort. » au lieu de « Tester : sommeil · court terme ».
 - **09/11 16:35** — **Tendances : grille lisible** (POLISH-SIM-28) : une ligne de grille par graduation ; la ligne grise isolée se lisait comme une habitude.

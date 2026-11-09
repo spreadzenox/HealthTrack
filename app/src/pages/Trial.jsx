@@ -99,6 +99,9 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
   // Bien-être stocké de 0 à 5 : affiché de 1 à 5 ; le confort digestif l'est déjà
   const scale = outcomeId === 'wellbeing' ? (v) => toDisplay(v) : (v) => v
   const scaleDelta = outcomeId === 'wellbeing' ? (d) => toDisplay(d) - toDisplay(0) : (d) => d
+  // POLISH-ESSAI-ORDRE : la légende reprend la consigne (« ● dormir au moins 7 h 30 »), comme la maquette
+  const consigne = instruction(t, true)
+  const withLabel = consigne.charAt(0).toLowerCase() + consigne.slice(1)
   const what = outcomeId === 'digestion' ? 'votre confort digestif' : 'votre bien-être'
   // TS-2 : un changement durable du résultat suivi pendant l'essai fausse la comparaison ; on le dit
   const crossed = crossingChanges(changes?.[outcomeId], t.schedule[0].date, t.schedule[t.schedule.length - 1].date)
@@ -127,11 +130,6 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
           </div>
         </article>
       )}
-      <article className="today-card trial-calendar">
-        <h2 className="act-section-title">Les {s.calendar.length} jours</h2>
-        <TrialDots days={s.calendar} grid />
-        <p className="act-card-detail">Pleine : jour avec. Contour : jour sans. ✓ tenu, – pas tenu.</p>
-      </article>
       <article className="today-card trial-result" aria-label="Résultat">
         <h2 className="act-section-title">
           {s.done ? (s.verdict === 'verified' ? 'Vérifié par votre essai' : 'Pas d’effet net') : 'Résultat en cours'}
@@ -148,6 +146,15 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
             {what.charAt(0).toUpperCase() + what.slice(1)} a changé de niveau pendant l’essai : l’écart est à lire avec prudence.
           </p>
         )}
+      </article>
+      <article className="today-card trial-calendar">
+        <h2 className="act-section-title">Les {s.calendar.length} jours</h2>
+        <TrialDots days={s.calendar} grid />
+        <ul className="trial-legend" aria-label="Légende">
+          <li><span className="trial-legend-dot is-with" aria-hidden="true" />{withLabel}</li>
+          <li><span className="trial-legend-dot" aria-hidden="true" />comme d’habitude</li>
+          <li>✓ tenu · – pas tenu</li>
+        </ul>
       </article>
       {s.done && !t.kept && (
         <button type="button" className="reco-cta" onClick={keep}>Garder cette habitude</button>

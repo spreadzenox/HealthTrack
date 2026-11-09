@@ -92,6 +92,12 @@
 > ([clair](runs/captures/2026-11-09-1435-phrase-bien-etre-clair.png) ·
 > [sombre](runs/captures/2026-11-09-1435-phrase-bien-etre-sombre.png)).
 
+> 🔝 **Agir : le résultat d'un essai en premier (09/11 22:35)** : comme sur la maquette, « Résultat en cours » passe
+> avant le calendrier, et la légende des 14 jours dit la consigne (« ● dormir au moins 7 h 53 ○ comme d'habitude ✓ tenu
+> · – pas tenu ») au lieu de « Pleine : jour avec. Contour : jour sans. »
+> ([clair](runs/captures/2026-11-09-2235-essai-ordre-clair.png) · [sombre](runs/captures/2026-11-09-2235-essai-ordre-sombre.png)).
+> Part sur Alpha à la fin du gel.
+
 > 🗓️ **Agir : les 14 jours d'un essai en deux semaines (09/11 21:35)** : sur la page d'un essai, les 14 ronds sans
 > numéro se rangeaient en 13 + 1. Comme sur la maquette, ce sont maintenant « Les 14 jours », numérotés, en deux lignes
 > de 7, avec ✓ ou – au coin ([clair](runs/captures/2026-11-09-2135-essai-grille-clair.png) ·
@@ -154,6 +160,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 22:35 — [Agir : le résultat en premier](runs/2026-11-09-2235-essai-ordre.md) | 🎨 | POLISH-ESSAI-ORDRE : « Résultat en cours » avant « Les 14 jours », légende avec la consigne ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 21:35 — [Agir : les 14 jours en deux semaines](runs/2026-11-09-2135-essai-grille.md) | 🎨 | POLISH-ESSAI-GRILLE : page d'un essai, « Les 14 jours » en 2 × 7 cases numérotées, ✓ / – au coin, comme la maquette ; test rouge puis vert, captures claires et sombres. Le run « idées » de 20:35 n'a rien laissé : PROP-OBJECTIF reste à faire. Rien à faire de votre côté |
 | 09/11 19:55 — [Relais iOS : 896 expirée](runs/2026-11-09-1955-relais-ios-896-expiree.md) | 📨 | Run court : votre réponse « 896 expirée » relayée mot pour mot dans POUR-IOS.md (vérifier l'expiration de la 896.376, soumettre la 918.396 ou plus récente à « Testeurs Halcya », puis nettoyer les anciennes builds selon la règle de 11:05). Rien d'autre touché. Rien à faire de votre côté |
 | 09/11 19:05 — [Gel Alpha prolongé](runs/2026-11-09-1905-gel-alpha-prolonge.md) | 🧊 | Run court : 100918 toujours en examen ; gel prolongé de 24 h (jusqu'au 10/11 22:00 Paris) selon votre décision du 09/11 vers 18:40, car un envoi pendant l'examen peut renvoyer l'app en fin de file ; test ajouté (envoi du 09/11 retenu, celui du 10/11 part). Pour lever plus tôt : dites-le à l'orchestrateur |
