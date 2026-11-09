@@ -47,6 +47,18 @@ describe('Un essai (ORG-8)', () => {
     expect(screen.getByLabelText(/14 novembre : sans/)).toHaveTextContent('14')
   })
 
+  it('POLISH-ESSAI-ORDRE : « Résultat en cours » avant « Les 14 jours », légende avec la consigne', async () => {
+    renderTrial(new Date(2026, 10, 3, 10))
+    const result = await screen.findByRole('heading', { name: 'Résultat en cours' })
+    const days = screen.getByRole('heading', { name: 'Les 14 jours' })
+    expect(result.compareDocumentPosition(days) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const legend = screen.getByRole('list', { name: 'Légende' })
+    expect(legend).toHaveTextContent('dormir au moins 7 h 30')
+    expect(legend).toHaveTextContent('comme d’habitude')
+    expect(legend).toHaveTextContent('✓ tenu · – pas tenu')
+    expect(screen.queryByText(/Pleine : jour avec/)).not.toBeInTheDocument()
+  })
+
   it('à la fin : le verdict et « Garder cette habitude »', async () => {
     renderTrial(new Date(2026, 10, 20, 10))
     expect(await screen.findByRole('heading', { name: 'Pas d’effet net' })).toBeInTheDocument()
