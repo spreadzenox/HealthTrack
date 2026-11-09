@@ -200,7 +200,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   « Décrire ».
 - [x] **POLISH-SIM-26** ✅ 09/11 14:35 : « Halcya en tire une note et des précisions à vous proposer ; la phrase n’est pas enregistrée. » ; test rouge puis vert ; captures `runs/captures/2026-11-09-1435-phrase-bien-etre-*`. Note de bien-être : « Elle propose des précisions, elle n'est pas gardée » incompris (persona
   Stressé) ; reformuler en une phrase concrète.
-- [ ] **POLISH-CONTRASTE-NOTE** Note de bien-être, thème clair : le chiffre de la note choisie (« 4 » vert sur fond vert
+- [x] **POLISH-CONTRASTE-NOTE** ✅ 09/11 17:35 : `.wellbeing-circle-selected` sur `--mint-bg` / `--mint-label` (couple vérifié par `tokens.test.js`), rond plein de la même couleur ; test `wellbeingNoteContrast.test.js` rouge puis vert ; plus d'alerte de l'outil visuel ; captures `runs/captures/2026-11-09-1735-contraste-note-*`. Note de bien-être, thème clair : le chiffre de la note choisie (« 4 » vert sur fond vert
   pâle) n'a que 3,72:1 (outil visuel, 09/11 14:35) ; viser ≥ 4,5:1 avec les tokens.
 - [x] **POLISH-SIM-27** ✅ 09/11 15:35 : un niveau estimé d'après les pas se lit « Modérément actif d’après vos pas » (détail au toucher) ; test rouge puis vert ; captures `runs/captures/2026-11-09-1535-activite-pas-*`. Profil nutrition : « Automatique » devient « Modérément actif » sans dire pourquoi ; ajouter
   « (d'après vos pas) ».
