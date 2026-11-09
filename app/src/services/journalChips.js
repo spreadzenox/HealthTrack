@@ -57,6 +57,15 @@ export function watchStressBand(score) {
   return 'élevé'
 }
 
+/**
+ * Points de coupure d'une valeur de tuile (GRANDE-POLICE-1) : en grande police, « 2 285 kcal » se coupait en
+ * « kca / l ». Un nombre reste collé à son unité ; la ligne ne se coupe qu'après « ≈ », « , », « à » ou « / » (« 68 à »
+ * puis « 82 bpm »). Le texte lu ne change pas, seules les espaces deviennent insécables.
+ */
+export function chipValueBreaks(value) {
+  return String(value).replace(/ /g, '\u00a0').replace(/(^≈|,|\u00a0à|\u00a0\/)\u00a0/g, '$1 ')
+}
+
 /** Résumé chiffré d'une journée : seules les valeurs disponibles sont affichées. */
 export function summaryChips(s) {
   const chips = []

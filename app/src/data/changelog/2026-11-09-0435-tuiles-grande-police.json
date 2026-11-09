@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-09",
+  "kind": "correctif",
+  "title": "Valeurs du Journal entières en grande police",
+  "items": [
+    "Avec une grande taille de police, les valeurs des jours (« 2 285 kcal », « 68 à 82 bpm ») ne se coupent plus en plein mot."
+  ]
+}

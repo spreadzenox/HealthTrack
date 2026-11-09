@@ -17,7 +17,7 @@ import { SOURCE_LABELS, gutLevelLabel, isGutDayNote } from '../services/today'
 import { stoolEntryLabel } from '../services/stool'
 import { INITIAL_DAYS, MORE_DAYS, loadJournalEntries } from '../services/journalEntries'
 import { appLocale } from '../i18n/locale.js'
-import { chipKey, chipTheme, summaryChips } from '../services/journalChips'
+import { chipKey, chipTheme, chipValueBreaks, summaryChips } from '../services/journalChips'
 import { measureNorms, normSinceFromChanges, readDeviationEntries } from '../services/dayDeviations'
 import { lastAnalysis } from '../services/analysisRunner'
 import LineIcon from './LineIcon'
@@ -349,7 +349,7 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays 
             return (
               <div key={label} className="day-summary-item" data-theme={chipTheme(label)}>
                 <dt><LineIcon name={CHIP_ICONS[key] ?? 'dots'} size={14} />{label}</dt>
-                <dd>{value}</dd>
+                <dd>{chipValueBreaks(value)}</dd>
                 {n?.direction && (
                   <dd className="day-summary-usual" aria-label={n.text}>
                     {n.direction === 'up' ? '↑' : '↓'} d’habitude <span className="mono">{n.usualValue}</span>
