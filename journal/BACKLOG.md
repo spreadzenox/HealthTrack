@@ -231,10 +231,14 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   cours » avant « Les 14 jours » et sa légende reprend la consigne (« ● avant 23 h ○ comme d'habitude ✓ tenu · – pas
   tenu ») au lieu de « Pleine : jour avec. Contour : jour sans. »
   Fait : résultat avant le calendrier, légende avec la consigne (captures `runs/captures/2026-11-09-2235-*`).
-- [ ] **POLISH-ESSAI-VIDE** (vu le 09/11 22:35) : « Résultat en cours » sans point empile trois phrases ; la maquette
-  montre les axes Avec / Sans et l'Écart. Proposer le graphique vide avec ses axes et une seule phrase.
-- [ ] **POLISH-ESSAI-CLASSE** (technique) : `trial-grid` désigne à la fois les lignes du graphique SVG et la grille du
-  calendrier dans `Trial.jsx` ; renommer la classe des lignes SVG.
+- [x] **POLISH-ESSAI-VIDE** ✅ 09/11 23:35 : sans point, le graphique s'affiche avec ses axes Avec / Sans et une piste
+  « Écart » vide (ligne de base), une seule phrase (« Chaque point : … »).
+- [x] **POLISH-ESSAI-CLASSE** ✅ 09/11 23:35 : lignes du graphique SVG en `trial-chart-line` (la grille du calendrier
+  garde `trial-grid`).
+- [ ] **POLISH-ESSAI-AXES** (vu le 09/11 23:35) : la maquette (`maquettes/agir-tendances/essai-en-cours.png`) range Avec
+  et Sans en deux lignes sur un axe horizontal commun (2,5 → 4,0) aligné sur la piste « Écart » (−1 / 0 / +1 gradués),
+  avec la phrase « Après N lendemains : +0,3 point, entre … et … ». L'app dessine deux colonnes verticales de 1 à 5 et
+  une piste « Écart » sans graduation. Rapprocher le graphique de la maquette (un run).
 - [x] **INTRO-TITRE (reste)** ✅ 09/11 18:35 : vérifié au navigateur, les six titres de Paramètres ont la même graisse
   (600, 16 px, Figtree) ; l'écart vu le 09/11 07:35 n'existe pas. Rien changé.
 - [ ] **PROP-OBJECTIF** (proposition au propriétaire avec maquette, run « idées » ; pas de code sans accord)
