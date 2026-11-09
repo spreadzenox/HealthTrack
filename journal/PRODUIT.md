@@ -349,6 +349,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **08/11 16:35** — **Rapport médecin depuis Agir** (POLISH-SIM-12) : lien « rapport médecin » d'Agir vers la carte de Données ; période proposée bornée aux jours d'usage (2 semaines sous 15 jours).
 - **08/11 21:35** — **Analyses : une seule unité par facteur** (POLISH-SIM-16) : « 1 500 pas de plus » sur les trois horizons ; un effet plus grand que l'échelle dit « pas assez de données ».
 - **09/11 12:35** — **Journal : « repas incomplets ? »** (POLISH-SIM-24) : tuile Repas sous la moitié de la dépense du jour, même règle que Nutrition.
+- **09/11 15:35** — **Profil nutrition : niveau d'activité expliqué** (POLISH-SIM-27) : « Modérément actif d’après vos pas » quand le niveau vient des pas.
 - **09/11 14:35** — **Note de bien-être : la phrase expliquée** (POLISH-SIM-26) : « Halcya en tire une note et des précisions à vous proposer ; la phrase n’est pas enregistrée. »
 - **09/11 13:35** — **« Décrire un repas » ouvre le champ** (POLISH-SIM-25) : depuis « Autre chose » ou le bandeau « Aucune photo prise. », le champ de description est ouvert et actif.
 - **09/11 11:35** — **Analyses : « pt » expliqué** (POLISH-SIM-23) : unité dite une fois, « Comment c'est calculé » en deux phrases puis « Le détail », « encore N jours notés ».

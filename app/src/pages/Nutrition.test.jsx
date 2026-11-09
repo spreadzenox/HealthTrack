@@ -280,8 +280,9 @@ describe('Nutrition page', () => {
     loadNutritionEntries.mockResolvedValue(days)
     localStorage.setItem('healthtrack_body_profile', JSON.stringify({ heightCm: 165 }))
     render(<MemoryRouter><Nutrition /></MemoryRouter>)
-    expect(await screen.findByText('Très actif')).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Très actif' }))
+    // POLISH-SIM-27 : la raison du niveau estimé se lit sans toucher (« Automatique » devenu « Très actif »).
+    expect(await screen.findByText('Très actif d’après vos pas')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Très actif d’après vos pas' }))
     expect(screen.getByText(/11\s000 pas\/jour sur 10 jours/)).toBeInTheDocument()
     loadNutritionEntries.mockResolvedValue([])
   })
