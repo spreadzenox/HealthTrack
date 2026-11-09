@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Act from './Act'
+import { createTrial } from '../services/trials'
 
 const wrap = (data) => render(<MemoryRouter><Act read={async () => ({ trialsData: null, results: null, ...data })} /></MemoryRouter>)
 
@@ -21,7 +22,7 @@ describe('Agir (ORG-1, ORG-1b)', () => {
   it('un groupe FODMAP repéré par une analyse digestive est proposé, avec « Commencer »', async () => {
     wrap({ challenges: [], gut: [], pistes: { gut: ['Fructanes → digestion'], levers: [] } })
     const section = await screen.findByRole('region', { name: 'Proposés par vos analyses' })
-    const link = screen.getByRole('link', { name: /Tester les fructanes/ })
+    const link = screen.getByRole('link', { name: /Réintroduction : les fructanes/ })
     expect(section).toContainElement(link)
     expect(link).toHaveAttribute('href', '/reintroduction')
     expect(link).toHaveTextContent('Commencer')
@@ -48,5 +49,21 @@ describe('Agir (ORG-1, ORG-1b)', () => {
     const section = await screen.findByRole('region', { name: 'Proposés par vos analyses' })
     expect(section).toHaveTextContent('Un peu moins d’alcool que d’habitude')
     expect(section).toHaveTextContent('Lien repéré : −0,3 point de confort digestif pour 1 verre de plus.')
+  })
+
+  it('POLISH-AGIR-TITRES : un essai en cours ou terminé a pour titre sa consigne, comme la maquette', async () => {
+    const f = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30 } }
+    const now = new Date(2026, 10, 9, 12)
+    const live = createTrial(f, { now: new Date(2026, 10, 2, 9), rng: () => 0 })
+    const ended = { ...createTrial({ ...f, key: 'alcohol', label: 'Alcool', theme: 'food', effect: -0.3, center: null }, { now: new Date(2026, 9, 1, 9) }), endedAt: '2026-10-15T09:00:00.000Z' }
+    const trialsData = { trials: [{ id: 1, payload: live }, { id: 2, payload: ended }], summaries: new Map(), outcomes: { wellbeing: new Map(), digestion: new Map() } }
+    render(<MemoryRouter><Act now={now} read={async () => ({ challenges: [], gut: [], pistes: null, results: null, trialsData })} /></MemoryRouter>)
+    const current = await screen.findByRole('region', { name: 'En cours' })
+    const link = screen.getByRole('link', { name: /Dormir au moins 7 h 30/ })
+    expect(current).toContainElement(link)
+    expect(link).toHaveTextContent(/Jour 8 sur 14\. Aujourd’hui, jour (avec|sans)/)
+    expect(current).not.toHaveTextContent(/^Sommeil/)
+    const done = screen.getByRole('region', { name: 'Terminés' })
+    expect(done).toHaveTextContent('Un peu moins d’alcool que d’habitude')
   })
 })

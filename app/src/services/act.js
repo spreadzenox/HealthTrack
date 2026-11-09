@@ -9,8 +9,9 @@ import { challengeSummary } from './fodmapReminder'
 
 const norm = (s) => String(s || '').toLowerCase()
 
-/** « Tester les fructanes », « Tester le lactose ». */
+/** « Réintroduction : les fructanes », « Réintroduction : le lactose » (maquette Agir validée). */
 const THE = { fructans: 'les fructanes', gos: 'les GOS', fructose: 'le fructose', lactose: 'le lactose', sorbitol: 'le sorbitol', mannitol: 'le mannitol' }
+const reintro = (id, label) => `Réintroduction : ${THE[id] ?? label}`
 
 /** Groupes FODMAP cités par les pistes digestives (« Fructanes → digestion »). */
 export function fodmapGroupsInPistes(gutTitles) {
@@ -26,7 +27,7 @@ export function fodmapGroupsInPistes(gutTitles) {
 export function actSections({ challenges = [], gut = [], pistes = null, now = new Date() }) {
   const live = currentChallenge(challenges, gut, now)
   const current = live
-    ? [{ id: 'fodmap-live', title: `Test FODMAP : ${FODMAP_GROUPS.find((g) => g.id === live.entry.payload.group)?.label ?? ''}`.trim(), detail: challengeSummary(live), to: '/reintroduction' }]
+    ? [{ id: 'fodmap-live', title: reintro(live.entry.payload.group, FODMAP_GROUPS.find((g) => g.id === live.entry.payload.group)?.label ?? ''), detail: challengeSummary(live), to: '/reintroduction' }]
     : []
 
   const results = groupResults(challenges, gut, now)
@@ -38,13 +39,13 @@ export function actSections({ challenges = [], gut = [], pistes = null, now = ne
     const detail = g.perFood
       ? foods.map(([food, v]) => `${findFood(g.id, food)?.label ?? food} : ${v.tag}`).join(' · ')
       : r.verdict?.tag ?? ''
-    done.push({ id: `fodmap-${g.id}`, title: `Test FODMAP : ${g.label}`, detail, to: '/reintroduction' })
+    done.push({ id: `fodmap-${g.id}`, title: reintro(g.id, g.label), detail, to: '/reintroduction' })
   }
 
   const busy = current.length > 0
   const proposed = fodmapGroupsInPistes(pistes?.gut)
     .filter((g) => !done.some((d) => d.id === `fodmap-${g.id}`) && !(busy && live.entry.payload.group === g.id))
-    .map((g) => ({ id: `fodmap-${g.id}`, title: `Tester ${THE[g.id] ?? g.label}`, detail: `Vos analyses digestives repèrent un lien avec ${g.hint}.`, to: '/reintroduction' }))
+    .map((g) => ({ id: `fodmap-${g.id}`, title: reintro(g.id, g.label), detail: `Vos analyses digestives repèrent un lien avec ${g.hint}.`, to: '/reintroduction' }))
 
   return { current, proposed, done }
 }

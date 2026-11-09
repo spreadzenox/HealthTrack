@@ -108,12 +108,12 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
   return (
     <section className="act-page trial-page" data-tone={THEME_TONE[t.factor.theme] ?? 'stone'}>
       <p className="act-back"><Link to="/agir">← Agir</Link></p>
-      <h1 className="page-title">{t.factor.label}</h1>
+      <h1 className="page-title">{instruction(t, true)}</h1>
       {!s.done && (
         <article className="today-card trial-today">
           <p className="trial-day">Jour <span className="mono">{s.dayIndex}</span> sur <span className="mono">{TRIAL_DAYS}</span></p>
           <p className="trial-instruction">
-            Aujourd’hui, jour {s.todayDay?.with ? 'avec' : 'sans'} : {instruction(t, s.todayDay?.with ?? false).toLowerCase()}
+            {s.todayDay?.with ? 'Aujourd’hui, jour avec.' : 'Aujourd’hui, jour sans : comme d’habitude.'}
           </p>
         </article>
       )}

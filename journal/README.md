@@ -92,6 +92,11 @@
 > ([clair](runs/captures/2026-11-09-1435-phrase-bien-etre-clair.png) ·
 > [sombre](runs/captures/2026-11-09-1435-phrase-bien-etre-sombre.png)).
 
+> ✅ **Agir : chaque essai porte sa consigne (09/11 19:35)** : un essai en cours ou terminé s'appelait « Sommeil ». Comme
+> sur la maquette, il s'appelle maintenant par ce qu'il faut faire (« Dormir au moins 7 h 30 ») et dit « Aujourd’hui,
+> jour avec. » ou « jour sans : comme d’habitude » ; une réintroduction s'appelle « Réintroduction : les fructanes »
+> ([proposé](runs/captures/2026-11-09-1935-agir-titres-clair.png) · [essai, sombre](runs/captures/2026-11-09-1935-essai-titre-sombre.png)).
+
 > 🎯 **Agir : des essais concrets (09/11 18:35)** : une piste proposée disait « Tester : sommeil · court terme ». Comme
 > sur la maquette validée, elle dit maintenant quoi faire et ce qui a été repéré : « Dormir au moins 7 h 53 » ·
 > « Lien repéré : +0,2 point de bien-être pour 40 min de sommeil de plus. 14 jours, un jour sur deux tiré au sort. »
@@ -147,6 +152,7 @@
 | 09/11 19:05 — [Gel Alpha prolongé](runs/2026-11-09-1905-gel-alpha-prolonge.md) | 🧊 | Run court : 100918 toujours en examen ; gel prolongé de 24 h (jusqu'au 10/11 22:00 Paris) selon votre décision du 09/11 vers 18:40, car un envoi pendant l'examen peut renvoyer l'app en fin de file ; test ajouté (envoi du 09/11 retenu, celui du 10/11 part). Pour lever plus tôt : dites-le à l'orchestrateur |
 | 09/11 14:35 — [Note de bien-être : la phrase expliquée](runs/2026-11-09-1435-phrase-bien-etre.md) | 🎨 | POLISH-SIM-26 : phrase sous « En une phrase » reformulée ; test rouge puis vert, captures claires et sombres (variante play) ; contraste faible du chiffre de la note choisie relevé au BACKLOG. Rien à faire de votre côté |
 | 09/11 15:35 — [Profil nutrition : niveau d'activité expliqué](runs/2026-11-09-1535-activite-pas.md) | 🎨 | POLISH-SIM-27 : « d’après vos pas » visible sans toucher ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
+| 09/11 19:35 — [Agir : chaque essai porte sa consigne](runs/2026-11-09-1935-agir-titres.md) | 🎨 | POLISH-AGIR-TITRES : consigne en titre des essais (cartes et page), « Réintroduction : les fructanes » ; tests rouges puis verts, captures claires et sombres ; émulateur A56 de main relancé (jobs jamais démarrés côté GitHub). Rien à faire de votre côté |
 | 09/11 18:35 — [Agir : essais proposés concrets](runs/2026-11-09-1835-agir-propose.md) | 🎨 | POLISH-AGIR-PROPOSE : consigne et effet chiffré comme la maquette ; tests rouges puis verts, captures claires et sombres (variante play). Rien à faire de votre côté |
 | 09/11 17:35 — [Note de bien-être : contraste](runs/2026-11-09-1735-contraste-note.md) | 🎨 | POLISH-CONTRASTE-NOTE : couple mint-bg / mint-label (≥ 4,5:1 clair et sombre) ; -0 normalisé dans `mealHours` (test du cache rouge ce jour-là sur main). Rien à faire de votre côté |
 | 09/11 16:35 — [Tendances : une grille lisible](runs/2026-11-09-1635-grille-tendances.md) | 🎨 | POLISH-SIM-28 : la ligne grise isolée n'était pas une habitude ; grille à chaque graduation ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |

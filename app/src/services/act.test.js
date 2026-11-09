@@ -13,7 +13,7 @@ describe('Agir (ORG-1, ORG-1b)', () => {
     expect(fodmapGroupsInPistes(['Fructanes → digestion']).map((g) => g.id)).toEqual(['fructans'])
     expect(fodmapGroupsInPistes(['Café → digestion'])).toEqual([])
     const s = actSections({ pistes: { gut: ['Lactose → digestion'] }, now: NOW })
-    expect(s.proposed).toEqual([expect.objectContaining({ id: 'fodmap-lactose', title: 'Tester le lactose', to: '/reintroduction' })])
+    expect(s.proposed).toEqual([expect.objectContaining({ id: 'fodmap-lactose', title: 'Réintroduction : le lactose', to: '/reintroduction' })])
   })
 
   it('un test en cours passe dans « En cours » et n’est plus proposé', () => {
@@ -21,7 +21,7 @@ describe('Agir (ORG-1, ORG-1b)', () => {
     const challenges = [{ type: 'fodmap_challenge', at: payload.startedAt, payload }]
     const s = actSections({ challenges, pistes: { gut: ['Lactose → digestion'] }, now: NOW })
     expect(s.current).toHaveLength(1)
-    expect(s.current[0].title).toBe('Test FODMAP : Lactose')
+    expect(s.current[0].title).toBe('Réintroduction : le lactose')
     expect(s.proposed).toEqual([])
   })
 })
