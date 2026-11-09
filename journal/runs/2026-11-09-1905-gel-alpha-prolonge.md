@@ -1,5 +1,9 @@
 # Run 09/11 19:05 — Alpha : gel prolongé jusqu'au 10/11 au soir (examen de 100918)
 
+> ⚠️ **PR #870 non mergée par ce run** : checks « Frontend (Vitest) » et « Build APK » verts à 18:15 UTC et branche à
+> jour sur main, mais le merge a été refusé par les permissions de la session (merge sans relecture). Elle doit être
+> mergée (squash) avant 22:30 UTC par le propriétaire ou l'orchestrateur, sinon l'envoi Alpha de 22:45 UTC partira.
+
 **Type** : infra (run court « gel Alpha prolongé », lancé par l'orchestrateur).
 
 ## Contexte
