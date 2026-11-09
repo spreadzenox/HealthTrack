@@ -8,6 +8,9 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🧊 **Gel Alpha prolongé jusqu'au 10/11 22:00 (Paris)**, pour ne pas renvoyer 100918 en fin de file. Pour le lever plus
+> tôt (100918 publiée dans la Play Console), dites-le à l'orchestrateur.
+
 > 🧽 **Mode polish depuis ce matin (votre décision (A) du 07/11)** : plus de nouvelle fonction ; seulement bugs,
 > polissage, textes en trop et retraits. Une idée de fonction vous arrivera en proposition avec une maquette, jamais
 > codée sans votre accord. Seule exception : les intégrations (Garmin et Samsung d'abord).
@@ -17,7 +20,7 @@
 > analyses. Comme l'app est encore en test, vous l'avez sans rien payer, jusqu'au 2 déc. 2026 inclus. »
 > ([clair](runs/captures/2026-11-09-0035-gold-clair.png) · [sombre](runs/captures/2026-11-09-0035-gold-sombre.png)).
 > Le compteur « 01/06 » sur les trois cartes du début est voulu (la maquette fait pareil : les trois cartes sont un
-> seul écran, les points disent la carte). Part sur Alpha ce soir 23:45 (fin du gel à 22:00).
+> seul écran, les points disent la carte). Part sur Alpha à la fin du gel (prolongé jusqu'au 10/11 22:00).
 
 > 🧾 **Analyse IA sans résultat : plus décomptée (09/11 01:35)** : une persona voyait « 19 analyses restantes » après
 > un seul essai où l'IA n'avait reconnu aucun aliment. C'était bien le relais qui comptait l'essai. Désormais, « pas un
@@ -141,6 +144,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 19:05 — [Gel Alpha prolongé](runs/2026-11-09-1905-gel-alpha-prolonge.md) | 🧊 | Run court : 100918 toujours en examen ; gel prolongé de 24 h (jusqu'au 10/11 22:00 Paris) selon votre décision du 09/11 vers 18:40, car un envoi pendant l'examen peut renvoyer l'app en fin de file ; test ajouté (envoi du 09/11 retenu, celui du 10/11 part). Pour lever plus tôt : dites-le à l'orchestrateur |
 | 09/11 14:35 — [Note de bien-être : la phrase expliquée](runs/2026-11-09-1435-phrase-bien-etre.md) | 🎨 | POLISH-SIM-26 : phrase sous « En une phrase » reformulée ; test rouge puis vert, captures claires et sombres (variante play) ; contraste faible du chiffre de la note choisie relevé au BACKLOG. Rien à faire de votre côté |
 | 09/11 15:35 — [Profil nutrition : niveau d'activité expliqué](runs/2026-11-09-1535-activite-pas.md) | 🎨 | POLISH-SIM-27 : « d’après vos pas » visible sans toucher ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 18:35 — [Agir : essais proposés concrets](runs/2026-11-09-1835-agir-propose.md) | 🎨 | POLISH-AGIR-PROPOSE : consigne et effet chiffré comme la maquette ; tests rouges puis verts, captures claires et sombres (variante play). Rien à faire de votre côté |
