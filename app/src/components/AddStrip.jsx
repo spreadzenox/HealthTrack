@@ -83,7 +83,7 @@ export default function AddStrip({
       {open === 'other' && (
         <Sheet title="Autre chose" onClose={close}>
           <div className="add-sheet-list">
-            <Link to="/food" className="add-sheet-item">
+            <Link to="/food" state={{ describeMeal: true }} className="add-sheet-item">
               <LineIcon name="pen" size={20} />
               Décrire un repas
             </Link>

@@ -78,6 +78,11 @@
 > ([capture](runs/captures/2026-11-09-1135-analyses-pt-clair.png) ·
 > [calcul](runs/captures/2026-11-09-1135-analyses-calcul-sombre.png)).
 
+> ✍️ **« Décrire un repas » ouvre le champ (09/11 13:35)** : depuis « Autre chose » (ou le bandeau « Aucune photo
+> prise. »), on arrivait sur la page Repas générale et il fallait encore toucher « Décrire ». Le champ « Décrivez
+> votre repas » est maintenant ouvert et prêt à écrire ([clair](runs/captures/2026-11-09-1335-decrire-repas-clair.png) ·
+> [sombre](runs/captures/2026-11-09-1335-decrire-repas-sombre.png)).
+
 > 🍽️ **Journal : « repas incomplets ? » (09/11 12:35)** : « Dépense 2 285 kcal » à côté de « Repas ≈ 479 kcal »
 > faisait croire à un gros déficit. Quand les repas notés font moins de la moitié de la dépense du jour, la tuile Repas
 > dit maintenant « repas incomplets ? », avec la même règle que la page Nutrition
@@ -109,6 +114,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 13:35 — [Décrire un repas](runs/2026-11-09-1335-decrire-repas.md) | 🎨 | POLISH-SIM-25 : « Décrire un repas » et « Décrire le repas » ouvrent directement le champ de description ; tests rouges puis verts, captures claires et sombres (variante play) ; tests du relais rouges depuis 12:00 UTC (certificats de test datés de l'heure de la CI) réparés. Rien à faire de votre côté |
 | 09/11 12:35 — [Repas incomplets](runs/2026-11-09-1235-repas-incomplets.md) | 🎨 | POLISH-SIM-24 : tuile Repas « repas incomplets ? » sous la moitié de la dépense du jour, règle partagée avec Nutrition ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 11:35 — [Analyses : « pt » expliqué](runs/2026-11-09-1135-analyses-pt.md) | 🎨 | POLISH-SIM-23 : unité « pt » dite une fois, « Comment c'est calculé » en deux phrases puis « Le détail », « encore N jours notés » ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 11:05 — [Relais iOS : expiration des anciennes builds](runs/2026-11-09-1105-relais-ios-expiration.md) | 📨 | Run court : votre décision du 09/11 vers 11:00 relayée mot pour mot dans POUR-IOS.md (expirer la 896.376 puis soumettre la 918.396 ; règle durable : expirer les builds TestFlight qui ne servent plus, en gardant la 844.344, la dernière build distribuée aux testeurs et celle en examen). Rien d'autre touché. Rien à faire de votre côté |

@@ -23,20 +23,31 @@ const ssl = (...args) => execFileSync('openssl', args, { cwd: dir, stdio: ['igno
 const LEAF_EXT = '1.2.840.113635.100.6.11.1=ASN1:NULL'
 const INTER_EXT = '1.2.840.113635.100.6.2.1=ASN1:NULL'
 
+// Certificats datés du passé (fixe), pas de l'heure de la CI : les transactions de test sont signées à une date
+// fixe (NOW), et une chaîne créée après cette date la rendait « hors de sa période de validité » (CI rouge le 09/11).
+writeFileSync(join(dir, 'ca.cnf'), [
+  '[ca]', 'default_ca = test_ca', '[test_ca]', 'database = index.txt', 'new_certs_dir = .', 'serial = serial',
+  'policy = any', 'default_md = sha256', 'unique_subject = no', 'copy_extensions = none', '[any]', 'commonName = supplied', '',
+].join('\n'))
+writeFileSync(join(dir, 'index.txt'), '')
+writeFileSync(join(dir, 'serial'), '01\n')
+const issue = (csr, out, ext, ca) => ssl('ca', '-batch', '-config', 'ca.cnf', '-notext', '-startdate', '20250101000000Z',
+  '-enddate', '20351231000000Z', '-extfile', ext, '-in', csr, '-out', out,
+  ...(ca ? ['-cert', ca.cert, '-keyfile', ca.key] : ['-selfsign', '-keyfile', csr.replace('.csr', '.key')]))
+
 /** Chaîne racine → intermédiaire → feuille (EC P-256), avec ou sans les marqueurs de l'App Store. */
 function chain(name, { leafOid = true, interOid = true } = {}) {
   const f = (s) => `${name}-${s}`
   for (const k of ['root', 'inter', 'leaf']) ssl('ecparam', '-name', 'prime256v1', '-genkey', '-noout', '-out', f(`${k}.key`))
-  ssl('req', '-x509', '-new', '-key', f('root.key'), '-subj', `/CN=${name} Test Root`, '-days', '3650', '-out', f('root.pem'),
-    '-addext', 'basicConstraints=critical,CA:TRUE', '-addext', 'keyUsage=critical,keyCertSign,cRLSign')
+  writeFileSync(join(dir, f('root.ext')), 'basicConstraints=critical,CA:TRUE\nkeyUsage=critical,keyCertSign,cRLSign\n')
   writeFileSync(join(dir, f('inter.ext')), `basicConstraints=critical,CA:TRUE\nkeyUsage=critical,keyCertSign,cRLSign\n${interOid ? INTER_EXT : ''}\n`)
   writeFileSync(join(dir, f('leaf.ext')), `basicConstraints=critical,CA:FALSE\nkeyUsage=critical,digitalSignature\n${leafOid ? LEAF_EXT : ''}\n`)
-  ssl('req', '-new', '-key', f('inter.key'), '-subj', `/CN=${name} Test Intermediate`, '-out', f('inter.csr'))
-  ssl('x509', '-req', '-in', f('inter.csr'), '-CA', f('root.pem'), '-CAkey', f('root.key'), '-CAcreateserial', '-days', '3650',
-    '-extfile', f('inter.ext'), '-out', f('inter.pem'))
-  ssl('req', '-new', '-key', f('leaf.key'), '-subj', `/CN=${name} Test Signing`, '-out', f('leaf.csr'))
-  ssl('x509', '-req', '-in', f('leaf.csr'), '-CA', f('inter.pem'), '-CAkey', f('inter.key'), '-CAcreateserial', '-days', '3650',
-    '-extfile', f('leaf.ext'), '-out', f('leaf.pem'))
+  for (const [k, cn] of [['root', 'Root'], ['inter', 'Intermediate'], ['leaf', 'Signing']]) {
+    ssl('req', '-new', '-key', f(`${k}.key`), '-subj', `/CN=${name} Test ${cn}`, '-out', f(`${k}.csr`))
+  }
+  issue(f('root.csr'), f('root.pem'), f('root.ext'))
+  issue(f('inter.csr'), f('inter.pem'), f('inter.ext'), { cert: f('root.pem'), key: f('root.key') })
+  issue(f('leaf.csr'), f('leaf.pem'), f('leaf.ext'), { cert: f('inter.pem'), key: f('inter.key') })
   const pem = (k) => readFileSync(join(dir, f(k)), 'utf8')
   const der = (k) => new X509Certificate(pem(k)).raw.toString('base64')
   return { rootPem: pem('root.pem'), leafKey: pem('leaf.key'), x5c: [der('leaf.pem'), der('inter.pem'), der('root.pem')] }

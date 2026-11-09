@@ -52,7 +52,7 @@ export default function MealPhotoButton({ className, children, theme }) {
       {missed && (
         <div className="meal-photo-missed" role="status">
           <span>Aucune photo prise.</span>
-          <Link to="/food" className="meal-photo-missed-link">Décrire le repas</Link>
+          <Link to="/food" state={{ describeMeal: true }} className="meal-photo-missed-link">Décrire le repas</Link>
           <button type="button" className="meal-photo-missed-close" aria-label="Fermer" onClick={() => setMissed(false)}>
             <LineIcon name="close" size={18} />
           </button>
