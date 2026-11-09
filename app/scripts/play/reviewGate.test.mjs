@@ -45,6 +45,17 @@ describe('envois examinés par Google, espacés (CD-ALPHA-5)', () => {
     expect(nightly('2026-11-09T22:45:00Z').send).toBe(true)
   })
 
+  it('le gel livré, prolongé (100918 toujours en examen) : retient l’envoi Alpha du 09/11 23:45, pas celui du 10/11', () => {
+    if (freeze.until == null) return
+    expect(Number.isFinite(Date.parse(freeze.until))).toBe(true)
+    expect(freeze.why).not.toBe('')
+    if (freeze.until !== '2026-11-10T21:00:00Z') return
+    // Envoi du soir de « Play — Alpha » (cron 22:45 UTC, NIGHTLY_MIN_HOURS = 0) : seul le gel peut le retenir.
+    const nightly = (iso) => decideReviewed({ sends: [], now: Date.parse(iso), minHours: 0, freezeUntil: freeze.until })
+    expect(nightly('2026-11-09T22:45:00Z')).toMatchObject({ send: false, frozen: true })
+    expect(nightly('2026-11-10T22:45:00Z').send).toBe(true)
+  })
+
   it('dernier envoi : seule l’étape d’envoi réussie compte', () => {
     const runs = [
       run('aaa', '2026-11-03T10:00:00Z', 'success', '2026-11-03T10:05:00Z'),
