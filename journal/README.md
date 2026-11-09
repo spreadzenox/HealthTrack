@@ -92,6 +92,11 @@
 > ([clair](runs/captures/2026-11-09-1435-phrase-bien-etre-clair.png) ·
 > [sombre](runs/captures/2026-11-09-1435-phrase-bien-etre-sombre.png)).
 
+> 📐 **Agir : le résultat dessiné dès le premier jour (09/11 23:35)** : au début d'un essai, « Résultat en cours »
+> empilait trois phrases. Il montre maintenant ses axes Avec / Sans et la ligne « Écart » vides, avec une seule phrase
+> ([clair](runs/captures/2026-11-09-2335-essai-vide-clair.png) · [sombre](runs/captures/2026-11-09-2335-essai-vide-sombre.png)).
+> Part sur Alpha à la fin du gel.
+
 > 🔝 **Agir : le résultat d'un essai en premier (09/11 22:35)** : comme sur la maquette, « Résultat en cours » passe
 > avant le calendrier, et la légende des 14 jours dit la consigne (« ● dormir au moins 7 h 53 ○ comme d'habitude ✓ tenu
 > · – pas tenu ») au lieu de « Pleine : jour avec. Contour : jour sans. »
@@ -160,6 +165,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 23:35 — [Agir : résultat dessiné dès le jour 1](runs/2026-11-09-2335-essai-vide.md) | 🎨 | POLISH-ESSAI-VIDE et POLISH-ESSAI-CLASSE : graphique vide avec axes et piste « Écart », une seule phrase ; classe SVG renommée ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 22:35 — [Agir : le résultat en premier](runs/2026-11-09-2235-essai-ordre.md) | 🎨 | POLISH-ESSAI-ORDRE : « Résultat en cours » avant « Les 14 jours », légende avec la consigne ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 21:35 — [Agir : les 14 jours en deux semaines](runs/2026-11-09-2135-essai-grille.md) | 🎨 | POLISH-ESSAI-GRILLE : page d'un essai, « Les 14 jours » en 2 × 7 cases numérotées, ✓ / – au coin, comme la maquette ; test rouge puis vert, captures claires et sombres. Le run « idées » de 20:35 n'a rien laissé : PROP-OBJECTIF reste à faire. Rien à faire de votre côté |
 | 09/11 19:55 — [Relais iOS : 896 expirée](runs/2026-11-09-1955-relais-ios-896-expiree.md) | 📨 | Run court : votre réponse « 896 expirée » relayée mot pour mot dans POUR-IOS.md (vérifier l'expiration de la 896.376, soumettre la 918.396 ou plus récente à « Testeurs Halcya », puis nettoyer les anciennes builds selon la règle de 11:05). Rien d'autre touché. Rien à faire de votre côté |

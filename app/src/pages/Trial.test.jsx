@@ -59,6 +59,22 @@ describe('Un essai (ORG-8)', () => {
     expect(screen.queryByText(/Pleine : jour avec/)).not.toBeInTheDocument()
   })
 
+  it('POLISH-ESSAI-VIDE : sans point, le graphique vide avec ses axes et une seule phrase', async () => {
+    renderTrial(new Date(2026, 10, 1, 10))
+    const card = (await screen.findByRole('heading', { name: 'Résultat en cours' })).closest('article')
+    const chart = card.querySelector('svg.trial-chart')
+    expect(chart).not.toBeNull()
+    expect(chart).toHaveTextContent('Avec')
+    expect(chart).toHaveTextContent('Sans')
+    expect(chart.querySelectorAll('.trial-pt')).toHaveLength(0)
+    expect(chart.querySelectorAll('.trial-chart-line')).toHaveLength(3)
+    expect(card.querySelector('.trial-diff')).toHaveTextContent('Écart')
+    expect(card.querySelector('.trial-diff-dot')).toBeNull()
+    expect(card.querySelectorAll('p.act-card-detail')).toHaveLength(1)
+    expect(screen.queryByText(/Le premier point arrive/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/dès 3 lendemains/)).not.toBeInTheDocument()
+  })
+
   it('à la fin : le verdict et « Garder cette habitude »', async () => {
     renderTrial(new Date(2026, 10, 20, 10))
     expect(await screen.findByRole('heading', { name: 'Pas d’effet net' })).toBeInTheDocument()

@@ -238,8 +238,9 @@ button.act-card-action {
   height: auto;
 }
 
-.trial-grid {
-  stroke: var(--border);
+.trial-chart-line {
+  stroke: var(--text-muted);
+  stroke-opacity: 0.45;
   stroke-dasharray: 2 4;
 }
 
@@ -279,6 +280,17 @@ button.act-card-action {
 .trial-diff-track {
   position: relative;
   height: 14px;
+}
+
+/* POLISH-ESSAI-VIDE : piste vide, une ligne de base fine */
+.trial-diff.is-empty .trial-diff-track::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 6px;
+  border-top: 1px dashed var(--text-muted);
+  opacity: 0.45;
 }
 
 .trial-diff-zero {

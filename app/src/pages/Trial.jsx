@@ -32,7 +32,7 @@ function ResultChart({ result, scale }) {
       aria-label={`Lendemains avec : ${result.with.length}, sans : ${result.without.length}`}>
       {[1, 3, 5].map((t) => (
         <g key={t}>
-          <line className="trial-grid" x1={40} x2={W - 20} y1={10 + (1 - (t - 1) / 4) * (H - 20)} y2={10 + (1 - (t - 1) / 4) * (H - 20)} />
+          <line className="trial-chart-line" x1={40} x2={W - 20} y1={10 + (1 - (t - 1) / 4) * (H - 20)} y2={10 + (1 - (t - 1) / 4) * (H - 20)} />
           <text className="trial-axis mono" x={30} y={13 + (1 - (t - 1) / 4) * (H - 20)} textAnchor="end">{t}</text>
         </g>
       ))}
@@ -47,7 +47,17 @@ function ResultChart({ result, scale }) {
   )
 }
 
+/** POLISH-ESSAI-VIDE : avant 3 lendemains de chaque sorte, la piste « Écart » s'affiche vide (zéro seul). */
 function DiffBar({ result, scaleDelta }) {
+  if (result.diff == null) {
+    return (
+      <div className="trial-diff is-empty">
+        <span className="trial-diff-label">Écart</span>
+        <span className="trial-diff-track" aria-hidden="true"><span className="trial-diff-zero" /></span>
+        <span className="trial-diff-value mono" aria-hidden="true" />
+      </div>
+    )
+  }
   const max = Math.max(1, Math.abs(scaleDelta(result.low)), Math.abs(scaleDelta(result.high)))
   const pos = (v) => `${50 + (scaleDelta(v) / max) * 50}%`
   return (
@@ -134,12 +144,12 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
         <h2 className="act-section-title">
           {s.done ? (s.verdict === 'verified' ? 'Vérifié par votre essai' : 'Pas d’effet net') : 'Résultat en cours'}
         </h2>
-        {s.result.with.length + s.result.without.length > 0
-          ? <ResultChart result={s.result} scale={scale} />
-          : <p className="act-card-detail">Le premier point arrive le lendemain du premier jour.</p>}
-        {s.result.diff != null
-          ? <DiffBar result={s.result} scaleDelta={scaleDelta} />
-          : <p className="act-card-detail">L’écart s’affiche dès {RESULT_MIN_EACH} lendemains de chaque sorte.</p>}
+        {/* POLISH-ESSAI-VIDE : axes Avec / Sans et piste Écart dès le premier jour, comme la maquette */}
+        <ResultChart result={s.result} scale={scale} />
+        <DiffBar result={s.result} scaleDelta={scaleDelta} />
+        {s.result.diff == null && s.result.with.length + s.result.without.length > 0 && (
+          <p className="act-card-detail">L’écart s’affiche dès {RESULT_MIN_EACH} lendemains de chaque sorte.</p>
+        )}
         <p className="act-card-detail">Chaque point : {what} le lendemain d’un jour avec ou sans.</p>
         {crossed.length > 0 && (
           <p className="trial-crossed" role="note">
