@@ -40,6 +40,12 @@
 > son unité ; rien ne change en taille normale ([clair](runs/captures/2026-11-09-0435-tuiles-grande-police-clair.png) ·
 > [sombre](runs/captures/2026-11-09-0435-tuiles-grande-police-sombre.png)).
 
+> 🔘 **Boutons d'ajout lisibles en grande police (09/11 05:35)** : à 320 px avec la grande police d'Android,
+> « Digestion » touchait le bord de son bouton et « + 1 cigarette » en sortait. Les boutons s'élargissent avec la
+> police (le bandeau défile un peu plus tôt) ; rien ne change en taille normale sur votre A56
+> ([clair](runs/captures/2026-11-09-0535-bandeau-grande-police-clair.png) ·
+> [sombre](runs/captures/2026-11-09-0535-bandeau-grande-police-sombre.png)).
+
 **Toujours en attente de vous (repris de la semaine dernière)**
 - **Tendances › Jour** (question du 08/11) : « Nuits plus longues (7 h 46) » est la moyenne des derniers jours ;
   voulez-vous la nuit du seul jour, au singulier, comme la maquette ?
@@ -58,6 +64,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 09/11 05:35 — [Boutons d'ajout en grande police](runs/2026-11-09-0535-bandeau-grande-police.md) | 🎨 | GRANDE-POLICE-1 soldée : cases du bandeau d'ajout à la largeur de la police, « + 1 cigarette » à la ligne ; le contrôle visuel ne confond plus un libellé sur deux lignes avec un débordement ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 04:35 — [Valeurs en grande police](runs/2026-11-09-0435-tuiles-grande-police.md) | 🎨 | GRANDE-POLICE-1 (tuiles du Journal) : nombre et unité jamais séparés, coupure seulement entre deux morceaux ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 03:35 — [Onglets petit écran](runs/2026-11-09-0335-onglets-petit-ecran.md) | 🎨 | NAV-LIBELLE-320 : libellés des onglets entiers en grande police ; le contrôle visuel voit désormais les libellés coupés ; test, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 02:35 — [Repas sans photo](runs/2026-11-09-0235-repas-sans-photo.md) | 🎨 | POLISH-SIM-17 : appareil photo fermé sans photo → « Décrire le repas » ; tests, captures claires et sombres. À tester sur votre téléphone |
