@@ -374,7 +374,7 @@ export default function WellbeingPrompt({ open = false, onClose, entry, initialM
             </div>
           ) : (
             <p className="wellbeing-tags-hint">
-              Elle propose des précisions, elle n’est pas gardée.
+              Halcya en tire une note et des précisions à vous proposer ; la phrase n’est pas enregistrée.
             </p>
           )}
 
