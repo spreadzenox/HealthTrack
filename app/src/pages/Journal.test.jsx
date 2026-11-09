@@ -163,7 +163,8 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
 
   function summaryValue(label) {
     const term = screen.getByText(label, { selector: 'dt' })
-    return term.nextElementSibling.textContent
+    // Espaces insécables entre nombre et unité (GRANDE-POLICE-1) : on compare le texte lu
+    return term.nextElementSibling.textContent.replace(/\u00a0/g, ' ')
   }
 
   it('groups entries by day, most recent first, with the date in French', async () => {

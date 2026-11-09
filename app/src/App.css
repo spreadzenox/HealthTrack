@@ -381,6 +381,8 @@
   border-radius: var(--radius-tag);
   padding: 6px 9px;
   min-width: 0;
+  /* GRANDE-POLICE-1 : la valeur suit la largeur de sa tuile (cqi) */
+  container-type: inline-size;
 }
 
 .day-summary-item dt {
@@ -403,11 +405,13 @@
 .day-summary-item dd {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--text);
-  overflow-wrap: anywhere;
+  /* GRANDE-POLICE-1 : coupure seulement entre deux morceaux (chipValueBreaks), jamais en plein mot (« kca / l ») ; le
+     plus long morceau (« 120/80 mmHg », 11 signes mono) tient dans la tuile, taille d'origine en plafond. */
+  font-size: min(0.8rem, 15cqi);
+  overflow-wrap: normal;
 }
 
 /* Une couleur par thème (leçon 12, AUJ-8 ; src/theme/themes.js) : menthe = bien-être, pêche = digestion, lilas =

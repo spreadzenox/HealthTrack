@@ -1,5 +1,8 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import process from 'node:process'
 import { describe, expect, it } from 'vitest'
-import { chipTheme, summaryChips, watchStressBand } from './journalChips'
+import { chipTheme, chipValueBreaks, summaryChips, watchStressBand } from './journalChips'
 
 describe('summaryChips — repas', () => {
   const meals = (s) => summaryChips(s).find(([label]) => /repas$/i.test(label))
@@ -55,5 +58,53 @@ describe('summaryChips — stress de la montre (POL-PLAY-15)', () => {
   it('suit l’échelle de la montre aux bornes', () => {
     expect([1, 29, 30, 59, 60, 79, 80, 99].map(watchStressBand))
       .toEqual(['détendu', 'détendu', 'normal', 'normal', 'moyen', 'moyen', 'élevé', 'élevé'])
+  })
+})
+
+describe('chipValueBreaks — grande police (GRANDE-POLICE-1)', () => {
+  const NB = ' '
+  const breaks = (v) => chipValueBreaks(v).split(' ')
+
+  it('ne sépare jamais un nombre de son unité', () => {
+    expect(breaks('2\u202f285 kcal')).toEqual([`2\u202f285${NB}kcal`])
+    expect(breaks('36,6 °C')).toEqual([`36,6${NB}°C`])
+    expect(breaks('14 /min')).toEqual([`14${NB}/min`])
+    expect(breaks('8 h 21')).toEqual([`8${NB}h${NB}21`])
+  })
+
+  it('coupe seulement entre deux morceaux qui se lisent seuls', () => {
+    expect(breaks('68 à 82 bpm')).toEqual([`68${NB}à`, `82${NB}bpm`])
+    expect(breaks('37, normal')).toEqual(['37,', 'normal'])
+    expect(breaks('11° / 1°')).toEqual([`11°${NB}/`, '1°'])
+    expect(breaks(`≈${NB}1\u202f039${NB}kcal`)).toEqual(['≈', `1\u202f039${NB}kcal`])
+  })
+
+  it('garde le texte lu identique', () => {
+    for (const v of ['≈ 1 039 kcal', '68 à 82 bpm', '37, normal', '120/80 mmHg']) {
+      expect(chipValueBreaks(v).replace(/\u00a0/g, ' ')).toBe(v.replace(/\u00a0/g, ' '))
+    }
+  })
+
+  it('chaque tuile du jour garde ses morceaux courts (≤ 11 signes)', () => {
+    const chips = summaryChips({
+      sleepMinutes: 501, steps: 8585, restingHr: 60, hrv: 51, respiratoryRate: 14.4, temperatureC: 36.6,
+      skinTempC: 33.7, watchStress: 37, heartRate: { min: 68, max: 82 }, burnedKcal: 2285, meals: 2, mealKcal: 1039,
+      screenMinutes: 236, bloodPressure: { systolic: 120, diastolic: 80 },
+    })
+    for (const [, value] of chips) {
+      for (const part of chipValueBreaks(value).split(' ')) expect(part.length).toBeLessThanOrEqual(11)
+    }
+  })
+})
+
+describe('tuiles du Journal en grande police (GRANDE-POLICE-1, CSS)', () => {
+  const css = readFileSync(resolve(process.cwd(), 'src/App.css'), 'utf8')
+  const rule = (sel) => css.match(new RegExp(`\\n${sel.replace(/\./g, '\\.')}\\s*\\{([^}]*)\\}`))?.[1] ?? ''
+
+  it('la valeur ne se coupe jamais en plein mot et suit la largeur de sa tuile', () => {
+    expect(rule('.day-summary-item')).toMatch(/container-type:\s*inline-size/)
+    const dd = rule('.day-summary-item dd')
+    expect(dd).not.toMatch(/overflow-wrap:\s*anywhere/)
+    expect(dd).toMatch(/font-size:\s*min\(0\.8rem, \d+cqi\)/)
   })
 })
