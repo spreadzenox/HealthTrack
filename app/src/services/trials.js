@@ -83,6 +83,23 @@ export function instruction(trial, withDay = true) {
   return trial.direction === 'more' ? `Un peu plus ${of} que d’habitude` : `Un peu moins ${of} que d’habitude`
 }
 
+const pts = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`
+const OUTCOME_WORDS = { wellbeing: 'de bien-être', digestion: 'de confort digestif' }
+
+/**
+ * Carte « Proposés par vos analyses » (maquette Agir validée, POLISH-AGIR-PROPOSE) : la consigne des jours « avec »
+ * de l'essai qui démarrera (« Dormir au moins 7 h 30 ») et l'effet chiffré de la piste.
+ */
+export function proposal(factor, outcome = factor.outcome) {
+  const draft = createTrial({ ...factor, outcome }, { rng: () => 0 })
+  const what = factor.usualChange?.text
+  const effect = isNum(factor.effect) && what ? ` : ${pts(factor.effect)} point ${OUTCOME_WORDS[outcome] ?? 'de bien-être'} pour ${what}` : ''
+  return {
+    title: instruction(draft, true),
+    detail: `Lien repéré${effect}. ${TRIAL_DAYS} jours, un jour sur deux tiré au sort.`,
+  }
+}
+
 /** Tenu d'après les données (true / false), ou null si la mesure manque. */
 function heldFromData(trial, day, summaries) {
   const m = MEASURED[trial.factor.key]

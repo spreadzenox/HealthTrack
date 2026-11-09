@@ -33,8 +33,20 @@ describe('Agir (ORG-1, ORG-1b)', () => {
     const results = { outcomes: { wellbeing: { status: 'ready', beatsPersistence: true, horizons: { short: { id: 'short', label: 'Court terme', status: 'ready', daysHave: 30, daysNeeded: 14, factors: [f] } } } } }
     const { unmount } = wrap({ challenges: [], gut: [], pistes: null, results })
     const section = await screen.findByRole('region', { name: 'Proposés par vos analyses' })
-    expect(section).toHaveTextContent('Tester : sommeil')
+    // POLISH-AGIR-PROPOSE (maquette validée) : la consigne concrète et l'effet chiffré, pas « Tester : sommeil, court terme »
+    expect(section).toHaveTextContent('Dormir au moins 7 h 30')
+    expect(section).toHaveTextContent('Lien repéré : +0,4 point de bien-être pour 30 min de sommeil de plus. 14 jours, un jour sur deux tiré au sort.')
+    expect(section).not.toHaveTextContent(/Tester : sommeil|court terme/i)
     expect(screen.getByRole('button', { name: 'Commencer' })).toBeInTheDocument()
     unmount()
+  })
+
+  it('POLISH-AGIR-PROPOSE : un facteur noté à la main se propose dans son sens, confort digestif nommé', async () => {
+    const f = { key: 'alcohol', label: 'Alcool', theme: 'food', actionable: true, net: true, outcome: 'digestion', horizon: 'short', effect: -0.3, low: -0.5, high: -0.1, usualChange: { amount: 1, text: '1 verre de plus' } }
+    const results = { outcomes: { digestion: { status: 'ready', beatsPersistence: true, horizons: { short: { id: 'short', label: 'Court terme', status: 'ready', daysHave: 30, daysNeeded: 14, factors: [f] } } } } }
+    wrap({ challenges: [], gut: [], pistes: null, results })
+    const section = await screen.findByRole('region', { name: 'Proposés par vos analyses' })
+    expect(section).toHaveTextContent('Un peu moins d’alcool que d’habitude')
+    expect(section).toHaveTextContent('Lien repéré : −0,3 point de confort digestif pour 1 verre de plus.')
   })
 })
