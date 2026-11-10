@@ -316,8 +316,11 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-35** Outil des personas : `--equipment=watch` (Galaxy Watch) sans SpO2 (« Jamais reçu : oxygène
   du sang ») ; source « Samsung Health » sur un Pixel en `phone`. Aligner sur `PERSONAS.md` ; vérifier aussi « dernières
   mesures il y a 2 jours » face aux pas d'hier.
-- [ ] **POLISH-SIM-36** Journal : la tuile Sommeil ne s'ouvre pas (l'ouvrir sur Tendances › Sommeil, comme Aujourd'hui) ;
-  le « … » d'une note de digestion n'offre que « Supprimer ».
+- [x] **POLISH-SIM-36** ✅ 10/11 16:35 (1re moitié) Journal : la tuile Sommeil ne s'ouvrait pas. Chaque tuile du jour
+  qui a une courbe (Sommeil, Pas, VFC nuit, FC au repos, Écran, Bien-être) ouvre Tendances sur cette mesure, comme
+  Aujourd'hui ; tuile entière touchable (≥ 44 px) ; test rouge puis vert.
+- [ ] **POLISH-SIM-36b** Journal : le « … » d'une note de digestion n'offre que « Supprimer » (offrir « Modifier »,
+  comme une note de bien-être). Possible ensuite : ouvrir Tendances sur le jour touché (paramètre de date).
 - [ ] **POLISH-SIM-37** Vos données : dire le format de l'export (JSON) ; Analyses › Digestion « Voir un exemple » ouvre
   la visite générale au lieu d'un exemple digestion.
 - [ ] **PROP-SIM-10** (proposition avec maquette, pas de code sans accord ; rejoint POLISH-SIM-8) noter ses règles et

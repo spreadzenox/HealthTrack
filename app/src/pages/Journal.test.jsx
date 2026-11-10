@@ -306,6 +306,16 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(document.querySelector('.entry-card')).toBeNull()
   })
 
+  it('ouvre la courbe d’une mesure du jour dans Tendances, comme Aujourd’hui (POLISH-SIM-36)', async () => {
+    await renderEntries([
+      { type: 'sleep', source: 'health_connect', at: '2026-04-10T23:00:00', payload: { durationMinutes: 390, sleepState: 'asleep' } },
+      { type: 'calories', source: 'health_connect', at: '2026-04-11T00:00:00', payload: { value: 2233, period: 'day' } },
+    ])
+    expect(screen.getByRole('link', { name: /Sommeil.*courbe/ })).toHaveAttribute('href', '/tendances?mesure=sleep')
+    // Sans courbe dans Tendances (dépense) : une simple tuile, aucun lien
+    expect(screen.queryByRole('link', { name: /Dépense/ })).toBeNull()
+  })
+
   it('summarises watch measurements instead of listing one card per sample', async () => {
     await renderEntries([
       { type: 'steps', source: 'health_connect', at: '2026-04-10T00:00:00', payload: { value: 8200, period: 'day' } },

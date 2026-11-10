@@ -385,6 +385,11 @@
   container-type: inline-size;
 }
 
+/* POLISH-SIM-36 : la tuile entière ouvre sa courbe (lien étiré sur toute la tuile) */
+.day-summary-item:has(.day-summary-link) { position: relative; min-height: 44px; }
+.day-summary-link { position: absolute; inset: 0; border-radius: inherit; }
+.day-summary-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 .day-summary-item dt {
   display: flex;
   align-items: center;

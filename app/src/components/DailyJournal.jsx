@@ -1,6 +1,6 @@
 import { formatNote } from '../services/mood/wellbeingScale'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import WellbeingPrompt from './WellbeingPrompt'
 import EntryActionsToggle from './EntryActionsToggle'
 import DeleteEntryButton from './DeleteEntryButton'
@@ -32,6 +32,10 @@ const CHIP_ICONS = {
 }
 /** Mesure du résumé → mesure comparée à votre norme (dayDeviations, AUJ-3b). */
 const NORM_KEYS = { sleepMinutes: 'sleep', hrv: 'hrv', restingHr: 'restingHr', steps: 'steps', screenMinutes: 'screen' }
+/** Mesure du résumé → sa courbe dans Journal › Tendances (POLISH-SIM-36 : une tuile touchée l'ouvre, comme Aujourd'hui). */
+const TREND_KEYS = {
+  sleepMinutes: 'sleep', steps: 'steps', hrv: 'hrv', restingHr: 'restingHr', screenMinutes: 'screen', wellbeing: 'wellbeing',
+}
 /** Jours relus pour les normes : 14 jours avant le plus ancien jour affiché (14 jours de journal au plus). */
 const NORM_EXTRA_DAYS = 15
 
@@ -350,7 +354,12 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays 
             return (
               <div key={label} className="day-summary-item" data-theme={chipTheme(label)}>
                 <dt><LineIcon name={CHIP_ICONS[key] ?? 'dots'} size={14} />{label}</dt>
-                <dd>{monoDigits(chipValueBreaks(value))}</dd>
+                <dd>
+                  {monoDigits(chipValueBreaks(value))}
+                  {TREND_KEYS[key] && (
+                    <Link to={`/tendances?mesure=${TREND_KEYS[key]}`} className="day-summary-link" aria-label={`${label} : ${value}. Voir la courbe`} />
+                  )}
+                </dd>
                 {note && <dd className="day-summary-usual">{note}</dd>}
                 {n?.direction && (
                   <dd className="day-summary-usual" aria-label={n.text}>

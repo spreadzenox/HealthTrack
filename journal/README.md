@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 👆 **Journal : toucher une tuile ouvre sa courbe (10/11 16:35)** : une persona touchait « Sommeil » dans le Journal
+> sans que rien ne se passe. Comme sur Aujourd'hui, les tuiles Sommeil, Pas, VFC nuit, FC au repos, Écran et Bien-être
+> ouvrent maintenant Tendances sur leur mesure ; l'apparence ne change pas
+> ([clair](runs/captures/2026-11-10-1635-journal-tuiles-clair.png) · [sombre](runs/captures/2026-11-10-1635-journal-tuiles-sombre.png)).
+> Part ce soir (23:45). À tester : Journal › Jours, touchez « Sommeil ».
+
 > 🥗 **Analyses s'ouvre sur Digestion (10/11 15:35)** : avec l'objectif « Ma digestion » (ou « Mon cycle »), une persona
 > arrivait sur Bien-être et cherchait son ventre. L'onglet s'ouvre maintenant sur Digestion, Bien-être reste à côté
 > ([capture](runs/captures/2026-11-10-1535-analyses-digestion.png)). Le test sur émulateur A56 de 14:58 a échoué au
@@ -261,6 +267,8 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 17:35 — [Deux PR prêtes mergées](runs/2026-11-10-1735-merge-prs.md) | 🔧 | #894 (Analyses s'ouvre sur Digestion) mergée, release v653 ; #895 (tuiles du Journal) remise à jour sur main et vérifiée. Rien à faire de votre côté |
+| 10/11 16:35 — [Journal : les tuiles ouvrent leur courbe](runs/2026-11-10-1635-journal-tuiles.md) | 🎨 | POLISH-SIM-36 : les tuiles du jour qui ont une courbe ouvrent Tendances sur leur mesure, tuile entière touchable ; test rouge puis vert, captures claires et sombres. Reste POLISH-SIM-36b. Rien à faire de votre côté |
 | 10/11 15:35 — [Analyses s'ouvre sur Digestion](runs/2026-11-10-1535-analyses-digestion.md) | 🎨 | POLISH-SIM-33 : avec « Ma digestion » ou « Mon cycle », l'onglet Analyses ouvre Digestion ; test rouge puis vert, vérifié dans Chromium. Émulateur A56 relancé (panne de téléchargement). Rien à faire de votre côté |
 | 10/11 14:35 — [Deux personas, liens pas assez nets en gris](runs/2026-11-10-1435-analyses-gris.md) | 🎨 | Simulations Endométriose J14 et Ventre et données J45 (POLISH-SIM-31 à 37, PROP-SIM-10) ; POLISH-SIM-30 : dans Analyses, un lien pas assez net a son chiffre en gris ; test, captures. Rien à faire de votre côté |
 | 10/11 13:35 — [Fiche du Store : captures à jour](runs/2026-11-10-1335-fiche-captures.md) | 🎨 | LISTING-CAPTURES : 7 captures refaites (Aujourd'hui, Tendances, Analyses, Agir avec essai, Repas, Réintroduction, Journal) ; options propres à chaque capture ; test contre les routes de redirection (rouge puis vert). Rien à faire de votre côté |
