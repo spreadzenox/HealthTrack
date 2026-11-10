@@ -177,7 +177,7 @@ export default function StoolPhotoLine({ features = FEATURES }) {
           </div>
           {estimatedType ? (
             <p className="stool-photo-estimate">
-              Estimé : <span className="mono">type {estimatedType.n}</span> · {estimatedType.text}
+              Estimé : <span className="stool-estimated-type">type <span className="mono">{estimatedType.n}</span></span> · {estimatedType.text}
               {estimate.confidence === 'low' ? ' (forme peu nette, vérifiez)' : ''}
             </p>
           ) : (

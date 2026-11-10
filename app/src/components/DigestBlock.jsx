@@ -20,6 +20,7 @@ import LineIcon from './LineIcon'
 import StripPlus from './StripPlus'
 import { keepWhole } from '../utils/keepWhole'
 import './DigestBlock.css'
+import { monoDigits } from '../utils/monoDigits'
 
 const DAY_MS = 86_400_000
 /** Les 28 derniers jours (et un peu plus) suffisent au compte à rebours. */
@@ -46,8 +47,8 @@ function DayNotes({ notes }) {
       {notes.map((n) => (
         <span key={n.at} className={`digest-day-dot is-${n.payload.level}`} style={{ left: left(n) }} />
       ))}
-      <span className="digest-day-tick mono" style={{ left: 0 }}>{start} h</span>
-      <span className="digest-day-tick mono" style={{ right: 0 }}>{end} h</span>
+      <span className="digest-day-tick" style={{ left: 0 }}><span className="mono">{start}</span> h</span>
+      <span className="digest-day-tick" style={{ right: 0 }}><span className="mono">{end}</span> h</span>
     </Link>
   )
 }
@@ -80,7 +81,7 @@ function TodayIntake({ meals }) {
       <span className="digest-intake-values">
         {INTAKE.map(([k, label, unit]) => (
           <span key={k} className="digest-intake-value">
-            <span className="mono">{fmt(totals[k])}{unit ? `\u00a0${unit}` : ''}</span> {label}
+            <span>{monoDigits(fmt(totals[k]))}{unit ? `\u00a0${unit}` : ''}</span> {label}
           </span>
         ))}
       </span>

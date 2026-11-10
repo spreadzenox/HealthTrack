@@ -260,6 +260,12 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   compte ce débord dans « CIBLE < 44 px » ; test `profileCompact.test.js` rouge puis vert ; captures
   `runs/captures/2026-11-10-0435-profil-serre-*`. Vus sans défaut : Repas, Analyses › Digestion, Plus, Nouveautés,
   Premium (formules hors période de lancement).
+- [x] **MONO-MOTS** ✅ 10/11 06:35 (suite de MONO-CHIFFRES) : mots encore en mono retirés : étiquettes « premium »
+  (Réintroduction, rapport médecin), nom du groupe et « résultat » de la Réintroduction, « Jour 1 » des portions,
+  étapes du déroulé, « d'après vos notes digestives », « jour 14 » de la visite, « type 4 » des selles, « 6 h » de la
+  frise digestive, « ≈ 480 kcal » des repas, « pt » d'Analyses, valeur de Tendances (« 3,3 »). Test garde-fou : aucun
+  `.mono` avec une lettre sur l'écran des portions. Reste (mineur) : règles CSS qui mettent en mono des étiquettes
+  entières (`.paywall-tag`, `.watch-data-tag`, `.nutrition-partial-tag`, `.mood-chip`, `.reco-meta-line`, Onboarding).
 - [x] **MONO-CHIFFRES** ✅ 10/11 05:35 (revue `--play` du run, leçon 11 « police mono pour les chiffres seulement ») :
   « 6 h 30 », « d'habitude 49 ms » (Aujourd'hui), tuiles du Journal (« 37, normal », « 69 à 83 bpm », « 10 085 »),
   quantités des repas (« 150 g »), Tendances (valeur, fourchette, « +0,4 pt », « 31 % » de l'étoile) et « 1 847 entrées »

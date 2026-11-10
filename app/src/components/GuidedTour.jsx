@@ -34,7 +34,7 @@ function DayCounter({ days, animate }) {
       clearTimeout(end)
     }
   }, [days, animate])
-  return <span className="tour-day mono">jour {day}</span>
+  return <span className="tour-day">jour <span className="mono">{day}</span></span>
 }
 
 const sameRect = (a, b) => a && b && a.top === b.top && a.left === b.left && a.width === b.width && a.height === b.height

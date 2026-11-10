@@ -224,7 +224,7 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
               <span className="trends-detail-label">{m.label}</span>
               {m.unit === '/5' ? (
                 // T3-c : le chiffre en mono, « /5 » en petit texte normal (pas de grand espace de la police mono)
-                <span className="trends-detail-value"><span className="mono">{m.fmt(p.value).replace(/\s\/5$/, '')}</span><span className="trends-detail-unit">/5</span></span>
+                <span className="trends-detail-value"><span>{monoDigits(m.fmt(p.value).replace(/\s\/5$/, ''))}</span><span className="trends-detail-unit">/5</span></span>
               ) : <span className="trends-detail-value">{monoDigits(m.fmt(p.value))}</span>}
               {future && Number.isFinite(p.low) && (
                 <span className="trends-detail-range">{monoDigits(`${m.fmt(p.low)} à ${m.fmt(p.high)}`)}</span>

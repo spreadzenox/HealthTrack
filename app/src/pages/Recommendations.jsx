@@ -110,7 +110,7 @@ function EffectBar({ f, max }) {
         <span className="reco-effect-range" style={{ left: pos(Math.max(-max, f.low)), right: `calc(100% - ${pos(Math.min(max, f.high))})` }} />
         <span className="reco-effect-bar" style={{ left: pos(left), right: `calc(100% - ${pos(right)})` }} />
       </span>
-      <span className="reco-effect-value mono" aria-label={`${pts(f.effect)} point sur 5${f.net ? '' : ', pas assez net'}`}>{pts(f.effect)}&nbsp;pt</span>
+      <span className="reco-effect-value" aria-label={`${pts(f.effect)} point sur 5${f.net ? '' : ', pas assez net'}`}><span className="mono">{pts(f.effect)}</span>&nbsp;pt</span>
     </li>
   )
 }

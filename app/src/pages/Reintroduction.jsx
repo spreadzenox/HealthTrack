@@ -27,6 +27,7 @@ import {
   minuteToTime, portionReminderAvailable, portionReminderPrefs, setPortionReminder, timeToMinute,
 } from '../services/fodmapReminder'
 import { appLocale } from '../i18n/locale.js'
+import { monoDigits } from '../utils/monoDigits'
 
 /** Notes du ventre relues : assez loin pour couvrir un test, sa pause et un redémarrage. */
 const GUT_WINDOW_DAYS = 120
@@ -62,7 +63,7 @@ function groupTag(group, result) {
 
 function GroupTag({ group, result }) {
   const tag = groupTag(group, result)
-  return tag ? <span className="fodmap-tag mono">{tag}</span> : null
+  return tag ? <span className="fodmap-tag">{monoDigits(tag)}</span> : null
 }
 
 function Disclaimer() {
@@ -91,7 +92,7 @@ function Timeline({ challenge, status }) {
     <ol className="fodmap-timeline" aria-label="Déroulé du test">
       {steps.map((s) => (
         <li key={s.key} className={`fodmap-step is-${s.state}`}>
-          <span className="fodmap-step-label mono">{s.label}</span>
+          <span className="fodmap-step-label">{monoDigits(s.label)}</span>
           <span className="fodmap-step-text">{s.text}</span>
         </li>
       ))}
@@ -199,13 +200,13 @@ function Prepare({ group, food, start, onBack, onStart, busy }) {
     <>
       <p className="fodmap-back"><button type="button" className="fodmap-link" onClick={onBack}>← Autre groupe</button></p>
       <article className="today-card fodmap-card">
-        <p className="fodmap-kicker mono">{g.label}</p>
+        <p className="fodmap-kicker">{g.label}</p>
         <h3 className="today-card-title">{f.label}{f.example.toLowerCase() !== f.label.toLowerCase() && ` (${f.example})`}</h3>
         <fieldset className="fodmap-plan">
           <legend>Vos portions</legend>
           {[0, 1, 2].map((i) => (
             <label key={i} className="fodmap-plan-row">
-              <span className="mono">Jour {i + 1}</span>
+              <span className="fodmap-plan-day">Jour <span className="mono">{i + 1}</span></span>
               <input
                 type="text" inputMode="decimal" value={amounts[i]} aria-label={`Portion du jour ${i + 1}`}
                 onChange={(e) => setAmounts((prev) => prev.map((v, k) => (k === i ? e.target.value : v)))}
@@ -250,7 +251,7 @@ function Running({ challenge, status, busy, onDose, onAnswer, onRestart, onAband
   return (
     <>
       <article className="today-card fodmap-card" aria-labelledby="fodmap-run-title">
-        <p className="fodmap-kicker mono">{findGroup(challenge.group).label} · test en cours</p>
+        <p className="fodmap-kicker">{findGroup(challenge.group).label} · test en cours</p>
         <h3 id="fodmap-run-title" className="today-card-title">
           {status.state === 'paused' ? `${f.label} : test en pause` : `${f.label} · jour ${status.day}`}
         </h3>
@@ -301,7 +302,7 @@ function Running({ challenge, status, busy, onDose, onAnswer, onRestart, onAband
 function Result({ challenge, status }) {
   return (
     <article className="today-card fodmap-card fodmap-result" aria-labelledby="fodmap-result-title">
-      <p className="fodmap-kicker mono">{findGroup(challenge.group).label} · résultat</p>
+      <p className="fodmap-kicker">{findGroup(challenge.group).label} · résultat</p>
       <h3 id="fodmap-result-title" className="fodmap-verdict">{verdictSentence(challenge, status.verdict)}</h3>
       <Timeline challenge={challenge} status={status} />
       {status.verdict?.id !== 'tolerated' && (
@@ -322,7 +323,7 @@ function Result({ challenge, status }) {
 function Locked() {
   return (
     <article className="today-card fodmap-card">
-      <span className="fodmap-tag fodmap-tag--lead mono">premium</span>
+      <span className="fodmap-tag fodmap-tag--lead">premium</span>
       <h3 className="today-card-title">Testez vos aliments, un groupe à la fois</h3>
       <p className="today-card-text">
         Trois jours de portions croissantes, puis le résultat en une phrase, par exemple « Blé : une portion
@@ -448,7 +449,7 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
                   <li key={c.entry.id ?? c.entry.payload.startedAt}>{verdictSentence(c.entry.payload, c.status.verdict)}</li>
                 ))}
               </ul>
-              <p className="fodmap-tag mono">d’après vos notes digestives</p>
+              <p className="fodmap-tag">d’après vos notes digestives</p>
             </article>
           )}
           <Disclaimer />
