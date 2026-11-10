@@ -29,6 +29,16 @@ describe('captures de la fiche Play', () => {
     for (const [route] of SCREENSHOTS) expect(paths, route).toContain(route)
   })
 
+  it('aucune route n’est une redirection (la capture montrerait un autre écran que son nom)', () => {
+    const app = readFileSync(resolve(root, 'src/App.jsx'), 'utf8')
+    const redirects = new Set([...app.matchAll(/path="([^"]+)" element={<Navigate/g)].map((m) => `/${m[1]}`))
+    for (const [route] of SCREENSHOTS) expect(redirects.has(route), route).toBe(false)
+  })
+
+  it('les options propres à une capture sont des options de `npm run visual`', () => {
+    for (const [, , , extra = []] of SCREENSHOTS) for (const a of extra) expect(a).toMatch(/^--[a-z-]+(=.+)?$/)
+  })
+
   it('aucun nom d’onglet périmé et des captures de la variante play avec un abonnement', () => {
     for (const [, , file] of SCREENSHOTS) expect(file).not.toMatch(/pistes/)
     expect(SCREENSHOT_ARGS).toContain('--play')
