@@ -65,7 +65,6 @@
   flex-shrink: 0;
   padding: 2px 8px;
   border-radius: var(--radius-tag);
-  font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--text-muted);
   background: rgba(var(--tint-rgb), 0.06);
@@ -85,13 +84,11 @@
 }
 
 .watch-data-value strong {
-  font-family: var(--font-mono);
   font-weight: 600;
 }
 
 .watch-data-date,
 .watch-data-meta {
-  font-family: var(--font-mono);
   font-size: 0.78rem;
   color: var(--text-muted);
 }

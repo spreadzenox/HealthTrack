@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-10",
+  "kind": "amélioration",
+  "title": "Montre et accueil : mots dans la police du texte",
+  "items": [
+    "Sur l'écran de la montre, « reçu », « rien », les dates et le nombre de mesures reprennent la police du texte, comme « reçu » et vos 30 derniers jours pendant l'accueil ; seuls les chiffres gardent leur police à chasse fixe."
+  ]
+}

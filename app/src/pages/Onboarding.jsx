@@ -50,6 +50,7 @@ import { GOLD_AI_DAILY } from '../config/premiumBenefits'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { STATUS_LABEL, measureStatuses } from '../devices/deviceCapabilities'
 import { lastLaunchDay } from '../services/entitlement'
+import { monoDigits } from '../utils/monoDigits'
 
 const withTimeout = (promise, ms, fallback) =>
   Promise.race([promise, new Promise((resolve) => setTimeout(() => resolve(fallback), ms))])
@@ -485,7 +486,7 @@ function FoundStep({ health, imported, onImported, installed, huawei, onConnect 
             <span style={{ width: `${pct(progress)}%` }} />
           </div>
           <p className="onb-import-line">
-            Import de vos 30 derniers jours{progress ? ` · ${progress.done}/${progress.total}` : '…'}
+            {monoDigits(`Import de vos 30 derniers jours${progress ? ` · ${progress.done}/${progress.total}` : '…'}`)}
           </p>
         </>
       )}
@@ -524,7 +525,7 @@ function FoundStep({ health, imported, onImported, installed, huawei, onConnect 
           <ul className="onb-facts">
             {facts.map((f) => (
               <li key={f.key} className={`onb-fact onb-fact--${f.key}`}>
-                <span className="onb-fact-value">{f.value}</span>
+                <span className="onb-fact-value">{monoDigits(f.value)}</span>
                 <span className="onb-fact-label">{f.label}</span>
                 {!sharedSource && <span className="onb-fact-source">{f.source}</span>}
               </li>
