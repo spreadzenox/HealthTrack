@@ -244,7 +244,7 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
       {marks.filter((c) => c.date === date).map((c) => (
         <div key={c.key} className="trends-change-detail" data-tone={c.tone}>
           <p className="trends-detail-title">Changement durable : {c.label.toLowerCase()}</p>
-          <p className="trends-detail-note">Niveau avant <span className="mono">{c.before}</span>, après <span className="mono">{c.after}</span></p>
+          <p className="trends-detail-note">Niveau avant {monoDigits(c.before)}, après {monoDigits(c.after)}</p>
           {c.sameTime.length > 0 && <p className="trends-detail-note">Au même moment : {c.sameTime.join(', ').toLowerCase()}</p>}
         </div>
       ))}

@@ -23,8 +23,8 @@ describe('Bloc bien-être du jour (AUJ-2)', () => {
   it('la donnée, pas un verdict : valeur sur 5, nombre de lectures, courbe du jour ; toucher ouvre l’historique', () => {
     view({ data: face(3.25) })
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Bien-être aujourd’hui')
-    expect(screen.getByText('3,6')).toBeInTheDocument()
-    expect(screen.getByText('/5')).toBeInTheDocument()
+    expect(document.querySelector('.day-status-number')).toHaveTextContent('3,6')
+    expect(document.querySelector('.day-status-max')).toHaveTextContent('/5')
     expect(screen.getByText('D’après 3 lectures du visage')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Bien-être aujourd’hui/ })).toHaveAttribute('href', '/tendances?mesure=wellbeing')
     expect(document.querySelectorAll('.day-curve-dot')).toHaveLength(3)
@@ -34,6 +34,13 @@ describe('Bloc bien-être du jour (AUJ-2)', () => {
     expect(document.querySelector('.day-breath')).toBeNull()
     // AUJ-6 : un seul bouton, le petit « + » qui remonte au bandeau
     expect(screen.getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Ajouter une note de bien-être'])
+  })
+
+  it('MONO-VIRGULE : seuls les chiffres de la note sont en mono (« 3,6 », pas « 3 , 6 »)', () => {
+    view({ data: face(3.25) })
+    const monos = [...document.querySelectorAll('.day-status-value .mono')].map((m) => m.textContent)
+    expect(monos).toEqual(['3', '6', '5'])
+    expect(document.querySelector('.day-status-value').textContent).toBe('3,6/5')
   })
 
   it('VENTRE-BE-2 retiré : la digestion n’est plus citée dans la provenance', () => {

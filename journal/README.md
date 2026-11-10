@@ -16,6 +16,11 @@
 > Google (un envoi remplace la version de la piste et annule l'examen en cours, sans file d'attente). Le script d'envoi
 > le demande maintenant explicitement. Aucun gel ne sera remis sans votre demande. Rien à faire de votre côté.
 
+> 🔢 **Note du jour : « 3,2 », plus « 3 , 2 » (10/11 10:35)** : sur Aujourd'hui, la grande note de bien-être avait des
+> blancs autour de la virgule (toute la valeur était dans la police des chiffres). Corrigé aussi pour « +0,4 pt »
+> d'Analyses et les niveaux avant/après de Tendances ([clair](runs/captures/2026-11-10-1035-mono-virgule-carte-clair.png) ·
+> [sombre](runs/captures/2026-11-10-1035-mono-virgule-carte-sombre.png)). Part avec l'envoi du soir (23:45).
+
 > 🧽 **Mode polish depuis ce matin (votre décision (A) du 07/11)** : plus de nouvelle fonction ; seulement bugs,
 > polissage, textes en trop et retraits. Une idée de fonction vous arrivera en proposition avec une maquette, jamais
 > codée sans votre accord. Seule exception : les intégrations (Garmin et Samsung d'abord).
@@ -233,6 +238,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 10:35 — [Note du jour sans blancs autour de la virgule](runs/2026-11-10-1035-mono-virgule.md) | 🎨 | MONO-VIRGULE : « 3 , 2 /5 » devient « 3,2/5 » sur Aujourd'hui ; « +0,4 pt » d'Analyses et niveaux avant/après de Tendances aussi ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 10/11 09:45 — [Alpha : remplacer l'examen en cours](runs/2026-11-10-0945-alpha-remplace-examen.md) | 🔧 | CD-ALPHA-7 : votre demande du 10/11 vers 10:15 (« retirer de la file toutes les versions précédentes ») est déjà ce que fait Google ; l'envoi le dit maintenant explicitement (`changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT`), tests adaptés. Rien à faire de votre côté |
 | 10/11 09:40 — [Alpha : gel levé, envoi immédiat](runs/2026-11-10-0940-alpha-maintenant.md) | 🧊 | Run court : gel Alpha levé (`until` = `null`) selon votre décision du 10/11 vers 09:35 (« Ne prolonge pas et meme lance la publication android alpha maintenant ») ; test ajouté ; envoi « Play — Alpha » lancé à la main après le merge : 100962 placé sur l'alpha (en examen chez Google). Envoi nocturne normal ensuite. Rien à faire de votre côté |
 | 10/11 09:35 — [Montre et accueil : mots hors mono](runs/2026-11-10-0935-mono-mots-3.md) | 🎨 | MONO-MOTS-3 : écran Montre, « partiel » de Nutrition et accueil hors mono sauf les chiffres ; 10 règles CSS mortes retirées ; test garde-fou rouge puis vert. Rien à faire de votre côté |

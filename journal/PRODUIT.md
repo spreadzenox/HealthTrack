@@ -357,6 +357,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **10/11 01:35** — **Réintroduction rangée sous Agir** (POLISH-REINTRO-AGIR) : plus d'onglets d'Analyses sans onglet actif, retour « ← Agir » comme la page d'un essai.
 - **10/11 02:35** — **Barres de progression vides lisibles** (POLISH-BARRE-VIDE) : un point de départ foncé, à zéro le rail seul ne se lit plus comme une barre pleine.
 - **10/11 03:35** — **Tendances : la nuit même, au singulier** (T4-suite) : « Nuit plus courte que d'habitude (6 h 21) », comme la maquette.
+- **10/11 10:35** — **Note du jour sans blancs autour de la virgule** (MONO-VIRGULE) : « 3,2 » sur Aujourd'hui, « +0,4 pt » d'Analyses et niveaux avant/après de Tendances ; seuls les chiffres en mono.
 - **10/11 09:35** — **Montre et accueil : mots dans la police du texte** (MONO-MOTS-3, fin du chantier mono) : étiquettes « reçu » / « rien », dates et « mesures sur 7 j » de l'écran Montre, « partiel » de Nutrition, chiffres et étiquettes de l'accueil hors mono sauf les chiffres ; 10 règles CSS mortes retirées.
 - **10/11 07:35** — **Abonnement : mots dans la police du texte** (MONO-MOTS-2) : « premium », « / an », « par mois », « −50 % », « jour 12 » hors mono ; colonnes de jours de Tendances en bande continue.
 - **10/11 06:35** — **Mots dans la police du texte** (MONO-MOTS, leçon 11) : « premium », « Jour 1 », nom du groupe, « type 4 », « pt », « kcal » hors mono (Réintroduction, rapport médecin, visite, Analyses, repas, Tendances).
