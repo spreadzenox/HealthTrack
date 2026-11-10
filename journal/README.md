@@ -8,8 +8,7 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
-> 🧊 **Gel Alpha prolongé jusqu'au 10/11 22:00 (Paris)**, pour ne pas renvoyer 100918 en fin de file. Pour le lever plus
-> tôt (100918 publiée dans la Play Console), dites-le à l'orchestrateur.
+> 🧊 **Gel Alpha levé le 10/11 matin à la demande du propriétaire ; envoi Alpha lancé à la main (résultat ci-dessous). Envoi nocturne normal ensuite.**
 
 > 🧽 **Mode polish depuis ce matin (votre décision (A) du 07/11)** : plus de nouvelle fonction ; seulement bugs,
 > polissage, textes en trop et retraits. Une idée de fonction vous arrivera en proposition avec une maquette, jamais
@@ -20,7 +19,7 @@
 > analyses. Comme l'app est encore en test, vous l'avez sans rien payer, jusqu'au 2 déc. 2026 inclus. »
 > ([clair](runs/captures/2026-11-09-0035-gold-clair.png) · [sombre](runs/captures/2026-11-09-0035-gold-sombre.png)).
 > Le compteur « 01/06 » sur les trois cartes du début est voulu (la maquette fait pareil : les trois cartes sont un
-> seul écran, les points disent la carte). Part sur Alpha à la fin du gel (prolongé jusqu'au 10/11 22:00).
+> seul écran, les points disent la carte). Part sur Alpha avec l'envoi lancé à la main le 10/11 matin (gel levé).
 
 > 🧾 **Analyse IA sans résultat : plus décomptée (09/11 01:35)** : une persona voyait « 19 analyses restantes » après
 > un seul essai où l'IA n'avait reconnu aucun aliment. C'était bien le relais qui comptait l'essai. Désormais, « pas un
@@ -221,6 +220,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 09:40 — [Alpha : gel levé, envoi immédiat](runs/2026-11-10-0940-alpha-maintenant.md) | 🧊 | Run court : gel Alpha levé (`until` = `null`) selon votre décision du 10/11 vers 09:35 (« Ne prolonge pas et meme lance la publication android alpha maintenant ») ; test ajouté ; envoi « Play — Alpha » lancé à la main après le merge (résultat dans le compte rendu). Envoi nocturne normal ensuite. Rien à faire de votre côté |
 | 10/11 09:15 — [Relais iOS : déploiement continu](runs/2026-11-10-0915-relais-ios-deploiement-continu.md) | 📨 | Run court : votre réponse (« j'aimerais qu'elle le fasse tout seul… ») relayée mot pour mot dans POUR-IOS.md : chaque build TestFlight traitée part aux « Testeurs Halcya » et à l'examen bêta dès qu'elle est prête, puis la routine iOS lance elle-même le nettoyage réel des anciennes builds (restent la 844.344, la build des testeurs et la plus récente). Rien d'autre touché. Rien à faire de votre côté |
 | 10/11 09:10 — [Relais iOS : nettoyage fait](runs/2026-11-10-0910-relais-ios-nettoyage.md) | 📨 | Run court : votre réponse de 09:05 (nettoyage fait, dernière build chez les testeurs externes, accord d'Apple immédiat avec le même numéro de version) relayée mot pour mot en tête de `POUR-IOS.md` ; la routine iOS vérifiera les builds restantes. Rien à faire de votre côté |
 | 10/11 06:35 — [Mots dans la police du texte](runs/2026-11-10-0635-mono-mots.md) | 🎨 | MONO-MOTS : étiquettes et unités hors mono dans 9 composants (Réintroduction, rapport médecin, visite, selles, frise digestive, repas, Analyses, Tendances) ; test garde-fou rouge puis vert, captures claires et sombres. Rien à faire de votre côté |

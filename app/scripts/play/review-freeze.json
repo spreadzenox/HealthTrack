@@ -1,1 +1,1 @@
-{ "until": "2026-11-10T21:00:00Z", "why": "Examen de 100918 toujours en cours le 09/11 au soir. Décision du propriétaire du 09/11 vers 18:40 : prolonger seulement si un envoi pendant l'examen pose problème chez Google, or un envoi peut renvoyer l'app en fin de file. Levé plus tôt si le propriétaire voit 100918 publiée." }
+{ "until": null, "why": "Gel levé le 10/11 vers 09:35 à la demande du propriétaire (« Ne prolonge pas et meme lance la publication android alpha maintenant ») : envoi Alpha immédiat, puis envoi nocturne normal." }

@@ -56,6 +56,10 @@ describe('envois examinés par Google, espacés (CD-ALPHA-5)', () => {
     expect(nightly('2026-11-10T22:45:00Z').send).toBe(true)
   })
 
+  it('gel levé (until = null) : l’envoi Alpha part tout de suite', () => {
+    expect(decideReviewed({ sends: [], now: Date.parse('2026-11-10T09:00:00Z'), minHours: 0, freezeUntil: null }).send).toBe(true)
+  })
+
   it('dernier envoi : seule l’étape d’envoi réussie compte', () => {
     const runs = [
       run('aaa', '2026-11-03T10:00:00Z', 'success', '2026-11-03T10:05:00Z'),
