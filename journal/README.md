@@ -8,6 +8,13 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🩸 **Cycle : la brique de base est posée (10/11 19:35, votre « Ok cycle »)** : règles (avec le flux), saignements
+> et symptômes du cycle ont maintenant leur place dans les données du téléphone, comprises par l'export et l'import
+> (aucune migration, anciens fichiers intacts). Rien ne s'affiche encore. Prochaines étapes, une par run : la ligne
+> « Règles · 2e jour · flux moyen » dans Journal › Jours, puis la saisie en un geste depuis Aujourd'hui, puis la
+> lecture Health Connect (elle vous demandera d'ajouter le type « règles » dans la déclaration Health Connect de la
+> Play Console : le chemin exact vous arrivera au moment voulu). Rien à faire de votre côté pour l'instant.
+
 > ✏️ **Journal : modifier une note de digestion (10/11 18:35)** : une persona ne pouvait que supprimer une note
 > « Gêne » saisie par erreur. Le « … » propose maintenant « Modifier » : Calme, Gêne ou Douleur sur place, avec les
 > mêmes boutons que sur Aujourd'hui, l'heure est gardée ([clair](runs/captures/2026-11-10-1835-digestion-modifier-clair.png) ·
@@ -273,6 +280,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 19:35 — [Cycle : brique partagée](runs/2026-11-10-1935-cycle-brique.md) | 🧱 | CYCLE-1a : règles, saignements et symptômes rangés en entrées `cycle` (sans migration), jour des règles et jour du cycle calculés, export / import testés ; rien d'affiché. Rien à faire de votre côté |
 | 10/11 18:55 — [Relais iOS : cycle accepté](runs/2026-11-10-1855-relais-ios-cycle.md) | 📨 | Décision « Ok cycle » relayée à la routine iOS (POUR-IOS.md) : Android fait d'abord la brique partagée (CYCLE-*), puis iOS lit le cycle dans Santé. Rien à faire de votre côté |
 | 10/11 18:35 — [Journal : modifier une note de digestion](runs/2026-11-10-1835-digestion-modifier.md) | 🎨 | POLISH-SIM-36b : « Modifier » dans le « … » d'une note de digestion, choix sur place, heure gardée ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 10/11 17:35 — [Deux PR prêtes mergées](runs/2026-11-10-1735-merge-prs.md) | 🔧 | #894 (Analyses s'ouvre sur Digestion) mergée, release v653 ; #895 (tuiles du Journal) remise à jour sur main et vérifiée. Rien à faire de votre côté |
