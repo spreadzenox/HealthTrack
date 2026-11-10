@@ -351,7 +351,6 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **09/11 12:35** — **Journal : « repas incomplets ? »** (POLISH-SIM-24) : tuile Repas sous la moitié de la dépense du jour, même règle que Nutrition.
 - **09/11 17:35** — **Note de bien-être : contraste** (POLISH-CONTRASTE-NOTE) : chiffre de la note choisie aux couleurs du thème bien-être, ≥ 4,5:1.
 - **09/11 21:35** — **Agir : les 14 jours en deux semaines** (POLISH-ESSAI-GRILLE) : page d'un essai, cases numérotées en 2 × 7 avec ✓ / – au coin, comme la maquette.
-- **10/11 09:45** — **Alpha : un envoi remplace l'examen en cours** (CD-ALPHA-7, décision du 10/11 vers 10:15) : déjà le comportement de Google, rendu explicite dans `publish.mjs` (`CANCEL_IN_REVIEW_AND_SUBMIT`). Plus aucun gel Alpha sauf demande du propriétaire.
 - **09/11 22:35** — **Agir : le résultat en premier** (POLISH-ESSAI-ORDRE) : « Résultat en cours » avant « Les 14 jours », légende qui reprend la consigne.
 - **09/11 23:35** — **Agir : résultat dessiné dès le jour 1** (POLISH-ESSAI-VIDE) : axes Avec / Sans et piste « Écart » vides, une seule phrase.
 - **10/11 00:35** — **Agir : le graphique d'un essai comme la maquette** (POLISH-ESSAI-AXES) : Avec / Sans en lignes sur une échelle commune, Écart gradué, phrase de l'écart et de sa fourchette.
@@ -363,6 +362,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **10/11 06:35** — **Mots dans la police du texte** (MONO-MOTS, leçon 11) : « premium », « Jour 1 », nom du groupe, « type 4 », « pt », « kcal » hors mono (Réintroduction, rapport médecin, visite, Analyses, repas, Tendances).
 - **10/11 05:35** — **Chiffres sans grands blancs** (MONO-CHIFFRES, leçon 11) : seules les suites de chiffres en mono ; « 6 h 30 », « 49 ms », « 31 % » sans les blancs de la police à chasse fixe (Aujourd'hui, Journal, repas, Tendances, Vos données).
 - **10/11 04:35** — **Nutrition : « Votre profil » resserré** (POLISH-PROFIL-SERRE) : lignes à la hauteur du texte, cible tactile de 44 px gardée par un débord invisible.
+- **10/11 09:45** — **Alpha : un envoi remplace l'examen en cours** (CD-ALPHA-7, décision du 10/11 vers 10:15) : déjà le comportement de Google, rendu explicite dans `publish.mjs` (`CANCEL_IN_REVIEW_AND_SUBMIT`). Plus aucun gel Alpha sauf demande du propriétaire.
 - **09/11 19:35** — **Agir : chaque essai porte sa consigne** (POLISH-AGIR-TITRES, restes de l'écart à la maquette) : essai en cours, terminé et page d'essai titrés « Dormir au moins 7 h 30 » (plus « Sommeil ») ; « Réintroduction : les fructanes » au lieu de « Tester les fructanes » / « Test FODMAP : Fructanes ».
 - **09/11 18:35** — **Agir : essais proposés concrets** (POLISH-AGIR-PROPOSE, écart à la maquette validée) : « Dormir au moins 7 h 53 » et « Lien repéré : +0,2 point de bien-être pour 40 min de sommeil de plus. 14 jours, un jour sur deux tiré au sort. » au lieu de « Tester : sommeil · court terme ».
 - **09/11 16:35** — **Tendances : grille lisible** (POLISH-SIM-28) : une ligne de grille par graduation ; la ligne grise isolée se lisait comme une habitude.
