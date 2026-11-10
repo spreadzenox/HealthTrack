@@ -319,8 +319,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-36** ✅ 10/11 16:35 (1re moitié) Journal : la tuile Sommeil ne s'ouvrait pas. Chaque tuile du jour
   qui a une courbe (Sommeil, Pas, VFC nuit, FC au repos, Écran, Bien-être) ouvre Tendances sur cette mesure, comme
   Aujourd'hui ; tuile entière touchable (≥ 44 px) ; test rouge puis vert.
-- [ ] **POLISH-SIM-36b** Journal : le « … » d'une note de digestion n'offre que « Supprimer » (offrir « Modifier »,
-  comme une note de bien-être). Possible ensuite : ouvrir Tendances sur le jour touché (paramètre de date).
+- [x] **POLISH-SIM-36b** ✅ 10/11 18:35 Journal : le « … » d'une note de digestion n'offrait que « Supprimer ».
+  « Modifier » ouvre sur place Calme / Gêne / Douleur (mêmes choix que la carte ventre), heure et portée gardées ;
+  test rouge puis vert. Reste (possible) : ouvrir Tendances sur le jour touché (paramètre de date).
 - [ ] **POLISH-SIM-37** Vos données : dire le format de l'export (JSON) ; Analyses › Digestion « Voir un exemple » ouvre
   la visite générale au lieu d'un exemple digestion.
 - [ ] **PROP-SIM-10** (proposition avec maquette, pas de code sans accord ; rejoint POLISH-SIM-8) noter ses règles et

@@ -1065,3 +1065,17 @@ label.pastel-tile { cursor: pointer; }
 .meal-photo-missed > span { flex: 1; }
 .meal-photo-missed-link { font-weight: 700; color: var(--peach-label); text-decoration: underline; min-height: 44px; display: inline-flex; align-items: center; }
 .meal-photo-missed-close { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: inherit; cursor: pointer; }
+
+/* POLISH-SIM-36b : modifier une note digestive sur place, mêmes choix que la carte ventre d'Aujourd'hui. */
+.entry-gut-edit {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  margin-bottom: -8px;
+}
+
+.entry-gut-edit .gut-choices {
+  align-self: stretch;
+  margin-top: 4px;
+}
