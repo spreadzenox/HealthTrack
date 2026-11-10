@@ -27,6 +27,17 @@ describe('TabBar', () => {
     ])
   })
 
+  it.each([
+    [['gut'], '/recommendations/ventre'],
+    [['cycle', 'sport'], '/recommendations/ventre'],
+    [['stress'], '/recommendations'],
+    [['all'], '/recommendations'],
+  ])('opens Analyses on the tab of the goal %j (POLISH-SIM-33)', (goals, href) => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals }))
+    renderAt('/')
+    expect(screen.getByRole('link', { name: 'Analyses' })).toHaveAttribute('href', href)
+  })
+
   it('marks only the current tab as the current page', () => {
     renderAt('/food')
     expect(screen.getByRole('link', { name: 'Journal' })).toHaveAttribute('aria-current', 'page')

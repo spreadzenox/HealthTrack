@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import { goalsOf, wantsGut } from '../settings/onboarding'
 import './TabBar.css'
 
 const ICONS = {
@@ -45,6 +46,15 @@ const TABS = [
   { to: '/connectors', label: 'Sources', icon: 'sources', paths: ['/connectors', '/montre'] },
 ]
 
+/**
+ * Analyses s'ouvre sur Digestion pour qui a choisi « Ma digestion » ou « Mon cycle » (POLISH-SIM-33) : l'onglet
+ * Bien-être reste à un geste.
+ */
+function tabTarget(tab) {
+  if (tab.to === '/recommendations' && wantsGut(goalsOf())) return '/recommendations/ventre'
+  return tab.to
+}
+
 export default function TabBar() {
   const { pathname } = useLocation()
   const isUnder = (p) => pathname === p || pathname.startsWith(p + '/')
@@ -58,7 +68,7 @@ export default function TabBar() {
         return (
           <Link
             key={tab.to}
-            to={tab.to}
+            to={tabTarget(tab)}
             aria-current={active ? 'page' : undefined}
             className={'tabbar-link' + (active ? ' active' : '')}
           >
