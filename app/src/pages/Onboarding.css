@@ -118,17 +118,6 @@
   color: var(--text-muted);
 }
 
-.onb-tile-num {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 4px;
-  /* « 1 geste » reste sur une ligne, comme « 0 Mo » et « 2–48 h » (revue 320 px). */
-  white-space: nowrap;
-}
-
 /* Boîte étroite (useNarrowBox) : un repère par ligne, le chiffre à gauche du texte. */
 .onb-tiles--stacked {
   grid-template-columns: 1fr;
@@ -138,17 +127,6 @@
   display: flex;
   align-items: baseline;
   gap: 10px;
-}
-
-.onb-tiles--stacked .onb-tile-num {
-  flex: 0 0 4.6em;
-  margin-bottom: 0;
-}
-
-@media (max-width: 340px) {
-  .onb-tile-num {
-    font-size: 0.88rem;
-  }
 }
 
 .onb-choices {
@@ -187,12 +165,6 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-}
-
-.onb-choice-num {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-muted);
 }
 
 .onb-choice-text {
@@ -284,7 +256,6 @@
 
 .onb-import-line {
   margin: 0;
-  font-family: var(--font-mono);
   font-size: 0.85rem;
   color: var(--text-muted);
 }
@@ -319,7 +290,6 @@
 }
 
 .onb-fact-value {
-  font-family: var(--font-mono);
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text);
@@ -331,13 +301,11 @@
 
 .onb-facts-source {
   margin: 0;
-  font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--text-muted);
 }
 
 .onb-fact-source {
-  font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--mint-label);
 }
@@ -361,10 +329,6 @@
   color: var(--color-ink);
   font-weight: 600;
   font-size: 1rem;
-}
-
-.onb-gesture-btn.mono {
-  font-family: var(--font-mono);
 }
 
 .onb-gesture-btn.is-selected {
@@ -796,7 +760,6 @@
 }
 
 .onb-measure-status {
-  font-family: var(--font-mono);
   font-size: 0.75rem;
   padding: 2px 8px;
   border-radius: var(--radius-pill);

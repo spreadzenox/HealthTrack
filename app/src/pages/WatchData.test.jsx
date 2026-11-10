@@ -27,8 +27,9 @@ describe('WatchData (écran « Montre », M5)', () => {
     expect(await screen.findByText('2 types sur 13 reçus ces 7 derniers jours')).toBeInTheDocument()
     const list = screen.getByRole('list', { name: 'Données de la montre' })
     expect(within(list).getAllByRole('listitem')).toHaveLength(13)
-    expect(within(list).getByText('35 ms')).toBeInTheDocument()
-    expect(within(list).getByText('33,6 °C')).toBeInTheDocument()
+    // MONO-MOTS-3 : la valeur est coupée en nœuds (chiffres en mono), on lit son texte entier
+    const values = [...list.querySelectorAll('.watch-data-value strong')].map((e) => e.textContent)
+    expect(values).toEqual(expect.arrayContaining(['35 ms', '33,6 °C']))
     // POL-PLAY-81 : un type sans rien ni lecture tient sur une ligne (plus 11 fois la même phrase)
     expect(within(list).queryByText('Rien reçu depuis 30 jours.')).toBeNull()
     expect(list.querySelectorAll('.watch-data-row--compact')).toHaveLength(11)
@@ -38,6 +39,14 @@ describe('WatchData (écran « Montre », M5)', () => {
     // Une seule lecture de la base, sur 30 jours
     expect(load).toHaveBeenCalledTimes(1)
     expect(load).toHaveBeenCalledWith(NOW)
+  })
+
+  it('MONO-MOTS-3 : seuls les chiffres sont en police mono (valeur, date, nombre sur 7 jours)', async () => {
+    renderPage(async () => ENTRIES)
+    const list = await screen.findByRole('list', { name: 'Données de la montre' })
+    const mono = [...list.querySelectorAll('.mono')].map((e) => e.textContent)
+    expect(mono).toEqual(expect.arrayContaining(['35', '33', '6']))
+    expect(mono.filter((t) => /\p{L}/u.test(t))).toEqual([])
   })
 
   it('montre l’issue de la dernière lecture de la synchro', async () => {

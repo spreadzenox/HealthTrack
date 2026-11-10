@@ -12,15 +12,6 @@
   margin: 0 0 20px;
 }
 
-/* ─── En-tête : ligne mono (POL-7) ──────────────────────────────────────── */
-
-.reco-meta-line {
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  color: var(--text-muted);
-  margin: 0 0 4px;
-}
-
 .reco-explore {
   font-size: 0.82rem;
   margin: 0 0 16px;
@@ -191,35 +182,6 @@
 .reco-advice-card .details-toggle {
   flex-shrink: 0;
   align-self: flex-start;
-}
-
-/* VC-23 : badge de solidité, une seule échelle (piste solide menthe · à confirmer pêche · trop tôt pour dire gris) */
-.reco-evidence {
-  display: inline-block;
-  margin-top: 6px;
-  padding: 2px 8px;
-  margin-right: 8px;
-  border-radius: 10px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  background: rgba(var(--tint-rgb), 0.06);
-}
-
-.reco-evidence-solid {
-  color: var(--mint-label);
-  background: var(--mint-bg);
-}
-
-.reco-evidence-tentative {
-  color: var(--peach-label);
-  background: var(--peach-bg);
-}
-
-.reco-evidence-early {
-  color: var(--text-muted);
-  background: var(--color-bg);
 }
 
 .reco-empty-levers {
@@ -486,18 +448,12 @@
   gap: 10px;
 }
 
-
-
-
-
 .reco-tag-diff-neg,
 .reco-tag-diff-pos {
   color: var(--text);
   font-weight: 600;
   white-space: nowrap;
 }
-
-
 
 /* Habitudes et effets décalés sous les liens avec l'humeur estimée (visage) */
 .reco-face-habits {
@@ -574,26 +530,6 @@
   font-size: 0.88rem;
   color: var(--text);
   line-height: 1.4;
-}
-
-.reco-link-meta {
-  margin: 2px 0 0;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  line-height: 1.45;
-  color: var(--text-muted);
-}
-
-.reco-link-src {
-  display: inline-block;
-  margin-top: 6px;
-  margin-right: 8px;
-  padding: 2px 8px;
-  border-radius: 10px;
-  background: var(--mint-bg);
-  color: var(--mint-label);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
 }
 
 .reco-link-also {

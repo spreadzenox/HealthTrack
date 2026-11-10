@@ -269,8 +269,12 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **MONO-MOTS-2** ✅ 10/11 07:35 : paywall (`.paywall-tag`, prix, « par mois », badge, frise de l'essai) hors mono sauf
   les chiffres, test garde-fou (DOM et CSS). Colonnes de jours de Tendances : `data-scrub` (bande jointive, plus
   d'avertissement « CIBLE < 44 px »).
-- [ ] **MONO-MOTS-3** (mineur) Reste en mono avec des mots : `.watch-data-tag/-date/-meta`, `.reco-meta-line`,
-  `.reco-evidence`, `.reco-link-meta/-src`, `.nutrition-partial-tag`, `.mood-chip`, Onboarding (9 règles).
+- [x] **MONO-MOTS-3** ✅ 10/11 09:35 : écran Montre (`.watch-data-tag/-date/-meta`, valeur via `monoDigits`),
+  `.nutrition-partial-tag`, accueil (`.onb-import-line`, `.onb-fact-value` via `monoDigits`, `.onb-fact(s)-source`,
+  `.onb-measure-status`) hors mono ; règles mortes retirées (`.reco-meta-line`, `.reco-evidence*`, `.reco-link-meta/-src`,
+  `.mood-chip(s)`, `.mood-chip-gut`, `.onb-tile-num`, `.onb-choice-num`, `.onb-gesture-btn.mono`). Test garde-fou
+  `src/monoMots3.test.js` (rouge puis vert) et test DOM de l'écran Montre ; captures `runs/captures/2026-11-10-0935-mono-mots-3-*`.
+  Reste voulu en mono : le compteur « 04/05 » de l'accueil (chiffres seuls).
 - [x] **MONO-CHIFFRES** ✅ 10/11 05:35 (revue `--play` du run, leçon 11 « police mono pour les chiffres seulement ») :
   « 6 h 30 », « d'habitude 49 ms » (Aujourd'hui), tuiles du Journal (« 37, normal », « 69 à 83 bpm », « 10 085 »),
   quantités des repas (« 150 g »), Tendances (valeur, fourchette, « +0,4 pt », « 31 % » de l'étoile) et « 1 847 entrées »

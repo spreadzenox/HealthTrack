@@ -11,6 +11,7 @@ import { WATCH_SOURCE } from '../devices/huawei/sync'
 import { getWatchAutoSyncState } from '../services/watchAutoSync'
 import { formatAt } from '../utils/format'
 import { formatAgo } from '../utils/timeAgo'
+import { monoDigits } from '../utils/monoDigits'
 import '../Food.css'
 import './WatchData.css'
 
@@ -87,7 +88,7 @@ export default function WatchData({ load = defaultLoad, now = clock }) {
                 </div>
                 {r.last ? (
                   <p className="watch-data-value">
-                    <strong>{r.last.value}</strong> <span className="watch-data-date">· {formatAt(r.last.at)}</span>
+                    <strong>{monoDigits(r.last.value)}</strong> <span className="watch-data-date">· {monoDigits(formatAt(r.last.at))}</span>
                   </p>
                 ) : compact ? null : (
                   <p className="watch-data-empty">
@@ -96,7 +97,7 @@ export default function WatchData({ load = defaultLoad, now = clock }) {
                 )}
                 {(r.last || r.read) && (
                   <p className="watch-data-meta">
-                    {[r.last && `${r.count} ${r.unit} sur ${COVERAGE_DAYS} j`, r.read && `dernière lecture : ${r.read.label}`].filter(Boolean).join(' · ')}
+                    {monoDigits([r.last && `${r.count} ${r.unit} sur ${COVERAGE_DAYS} j`, r.read && `dernière lecture : ${r.read.label}`].filter(Boolean).join(' · '))}
                   </p>
                 )}
               </li>
