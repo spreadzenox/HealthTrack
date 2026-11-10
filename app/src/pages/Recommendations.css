@@ -746,6 +746,13 @@
   min-width: 4.4em;
   white-space: nowrap;
   text-align: right;
+  font-weight: 600;
+}
+
+/* Simulation du 10/11 : sur une petite barre le hachurage ne se voit pas ; le chiffre le dit aussi. */
+.reco-effect-value.is-unsure {
+  font-weight: 400;
+  color: var(--text-muted);
 }
 
 /* POLISH-SIM-16 : effet plus grand que l'échelle, pas de chiffre. */

@@ -111,7 +111,7 @@ function EffectBar({ f, max }) {
         <span className="reco-effect-range" style={{ left: pos(Math.max(-max, f.low)), right: `calc(100% - ${pos(Math.min(max, f.high))})` }} />
         <span className="reco-effect-bar" style={{ left: pos(left), right: `calc(100% - ${pos(right)})` }} />
       </span>
-      <span className="reco-effect-value" aria-label={`${pts(f.effect)} point sur 5${f.net ? '' : ', pas assez net'}`}>{monoDigits(pts(f.effect))}&nbsp;pt</span>
+      <span className={`reco-effect-value${f.net ? '' : ' is-unsure'}`} aria-label={`${pts(f.effect)} point sur 5${f.net ? '' : ', pas assez net'}`}>{monoDigits(pts(f.effect))}&nbsp;pt</span>
     </li>
   )
 }
@@ -166,7 +166,7 @@ function Results({ outcome, view, locked }) {
               <EffectList factors={h.factors} />
             </div>
           ))}
-          <p className="reco-legend"><span className="reco-legend-unsure" aria-hidden="true" /> hachuré : pas assez net</p>
+          <p className="reco-legend"><span className="reco-legend-unsure" aria-hidden="true" /> hachuré, chiffre en gris : pas assez net</p>
         </section>
       )}
       {!locked && view.lookOnly.length > 0 && (
