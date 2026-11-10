@@ -10,7 +10,6 @@
  * donnée, gratuite). La variante sideload n'a pas d'abonnement et garde tout.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import AnalysesTabs from '../components/AnalysesTabs'
 import { Link, useSearchParams } from 'react-router-dom'
 import { GutCard } from '../components/TodayCards'
 import LineIcon from '../components/LineIcon'
@@ -402,7 +401,7 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
 
   return (
     <section className="fodmap-page">
-      <AnalysesTabs />
+      <p className="act-back"><Link to="/agir">← Agir</Link></p>
       <h2 className="page-title">Réintroduction guidée</h2>
       {!view && <div className="loading"><div className="spinner" aria-hidden /></div>}
       {error && <p className="error-msg" role="alert">{error}</p>}

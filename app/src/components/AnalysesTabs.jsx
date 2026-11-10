@@ -8,8 +8,8 @@ const ITEMS = [
 
 /**
  * Sous-onglets de « Analyses » (retours du propriétaire du 04/11, point 4) : ce qui porte sur le bien-être, ce qui
- * porte sur le ventre, la réintroduction FODMAP et les tendances (sorties du Journal). Ventre et FODMAP seulement
- * pour qui suit son ventre, comme la carte de l'Accueil (POL-4) : rien n'est effacé.
+ * porte sur le ventre. La réintroduction FODMAP est rangée sous Agir (ORG-*, POLISH-REINTRO-AGIR) ; Digestion
+ * seulement pour qui suit son ventre, comme la carte de l'Accueil (POL-4) : rien n'est effacé.
  */
 export default function AnalysesTabs() {
   const { pathname } = useLocation()

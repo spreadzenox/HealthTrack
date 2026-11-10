@@ -243,6 +243,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   et Sans en deux lignes sur un axe horizontal commun (2,5 → 4,0) aligné sur la piste « Écart » (−1 / 0 / +1 gradués),
   avec la phrase « Après N lendemains : +0,3 point, entre … et … ». L'app dessine deux colonnes verticales de 1 à 5 et
   une piste « Écart » sans graduation. Rapprocher le graphique de la maquette (un run).
+- [x] **POLISH-REINTRO-AGIR** ✅ 10/11 01:35 (revue `--play` du run) : `/reintroduction`, rangée sous Agir (TabBar),
+  affichait encore `AnalysesTabs` (« Bien-être · Digestion », aucun actif) : reste de l'ancienne organisation (04/11).
+  Retiré, retour « ← Agir » (`act-back`, comme `Trial.jsx`) ; test rouge puis vert ; captures
+  `runs/captures/2026-11-10-0135-reintro-agir-*`. Vus sans changement : Réglages, Sources, Vos données, Premium.
 - [x] **INTRO-TITRE (reste)** ✅ 09/11 18:35 : vérifié au navigateur, les six titres de Paramètres ont la même graisse
   (600, 16 px, Figtree) ; l'écart vu le 09/11 07:35 n'existe pas. Rien changé.
 - [ ] **PROP-OBJECTIF** (proposition au propriétaire avec maquette, run « idées » ; pas de code sans accord)
