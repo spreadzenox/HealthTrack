@@ -48,6 +48,14 @@ téléphone ; page de confidentialité mise à jour quand quelque chose s'affich
   PRODUIT.md §4 et en tête du résumé), puis attendre sa confirmation transmise par le prompt. Si la Play Console ne
   propose le type qu'après l'avoir vu dans une version : cette version en test interne seulement, Alpha retenue.
   Sécurité des données inchangée (rien ne quitte le téléphone).
+  **Préparé le 10/11 20:35 (run idées)** : le plugin `@capgo/capacitor-health` 8.4.5 ne connaît aucun type de cycle
+  (aucun « menstruation » dans ses sources). Il faut donc un petit pont natif à nous (Java, `connect-client` 1.1.0 déjà
+  dans les dépendances du plugin) : `MenstruationPeriodRecord` et `MenstruationFlowRecord`, une seule autorisation
+  `android.permission.health.READ_MENSTRUATION` demandée avec les autres, 30 jours puis l'historique comme les autres types.
+  Découpage : **CYCLE-3a** pont natif + tests sur enregistrements synthétiques (variante sideload seulement : la
+  permission n'est pas ajoutée au manifeste play, `check-play-manifest.sh` le vérifie) ; **CYCLE-3b** après « P48 fait » :
+  permission dans la variante play, justification ajoutée à `PLAY-CONFORMITE.md` (tableau des types), confidentialité.
+  Geste du propriétaire rédigé : P48 dans `PRODUIT.md` §4.
 - [ ] **CYCLE-4** (plus tard) Analyses : le cycle comme contexte de la digestion (variable X, règle 5), jamais une
   cause ni un diagnostic.
 
@@ -346,6 +354,8 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-35** Outil des personas : `--equipment=watch` (Galaxy Watch) sans SpO2 (« Jamais reçu : oxygène
   du sang ») ; source « Samsung Health » sur un Pixel en `phone`. Aligner sur `PERSONAS.md` ; vérifier aussi « dernières
   mesures il y a 2 jours » face aux pas d'hier.
+  Complété le 10/11 20:35 : « Samsung Health · Reçu » aussi pour une Amazfit (`watch`) et un iPhone (`phone`), à côté
+  de « Health Connect n'est pas sur ce téléphone ». Faux relais corrigé le même run (crédits 20 sur 20, `ingredients`).
 - [x] **POLISH-SIM-36** ✅ 10/11 16:35 (1re moitié) Journal : la tuile Sommeil ne s'ouvrait pas. Chaque tuile du jour
   qui a une courbe (Sommeil, Pas, VFC nuit, FC au repos, Écran, Bien-être) ouvre Tendances sur cette mesure, comme
   Aujourd'hui ; tuile entière touchable (≥ 44 px) ; test rouge puis vert.
@@ -354,6 +364,21 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   test rouge puis vert. Reste (possible) : ouvrir Tendances sur le jour touché (paramètre de date).
 - [ ] **POLISH-SIM-37** Vos données : dire le format de l'export (JSON) ; Analyses › Digestion « Voir un exemple » ouvre
   la visite générale au lieu d'un exemple digestion.
+- [ ] **POLISH-SIM-38** (2 sur 2, `simulations/2026-11-10-2035-synthese.md`) Accueil, 2e carte du tuto : « Trois onglets,
+  trois usages » alors que la barre en a cinq (Aujourd'hui et Sources en plus). Dire « Trois usages » ou nommer ce que
+  font Aujourd'hui et Sources ; test du texte.
+- [ ] **POLISH-SIM-39** (2 sur 2) Visite guidée : « Voir dans 14 jours » ne dit pas ce qu'on verra (« Voir un exemple » ?) ;
+  l'exemple affiche « Encore 18 jours » à J14 alors que le vrai compte au J1 dit 27 (ou 13) : caler le compte fictif.
+- [ ] **POLISH-SIM-40** (2 sur 2, à reproduire d'abord) Aujourd'hui › « Vos données du jour » : pas (et FC de la montre)
+  absents au J1 alors que Journal › Jours les montre ; Bien-être y fait doublon avec la carte du dessus.
+- [ ] **POLISH-SIM-41** (Endométriose J1) Feuille Digestion : deux lignes « dans l'ensemble » et « À l'instant » aux
+  mêmes boutons, sans dire laquelle choisir.
+- [ ] **POLISH-SIM-42** (Endométriose J1) « Autre chose » propose « + 1 cigarette » sans objectif tabac.
+- [ ] **POLISH-SIM-43** (Stressé J1) Agir dit « quelques jours », l'accueil « un essai de deux semaines » : une durée.
+- [ ] **POLISH-SIM-44** (Stressé J1) L'accueil renvoie à « Paramètres », la roue ouvre « Réglages » : un seul nom.
+- [ ] **POLISH-SIM-45** (Stressé J1, à vérifier) Journal › Jours : tuiles « Écran » et « Météo » au J1 sans source
+  branchée (données de démo ou vraie valeur ?). Idée liée (proposition, pas de code) : à J1 avec 2 mois de montre,
+  Analyses ne montre que « Encore 13 jours notés ».
 - [ ] **PROP-SIM-10** (proposition avec maquette, pas de code sans accord ; rejoint POLISH-SIM-8) noter ses règles et
   relier cycle et douleurs (« Mon cycle » ne débloque rien de visible) ; type et zone de la gêne ; essai lancé soi-même
   dans Agir ; aperçu du rapport PDF ; export CSV ; groupes FODMAP plus visibles dans Repas et Analyses.
