@@ -100,7 +100,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   peser » dit ce qui s'est passé avec la valeur (`contributionText` : « Nuits plus courtes que d'habitude (6 h 21) »,
   « Plus d'alcool que d'habitude (1 verre) », « ces derniers jours » pour l'horizon moyen) et « −0,29 pt ». « 3,4/5 »
   sans grande espace. Planches refaites dans `maquettes/agir-tendances/comparaison/`.
-- [ ] **T4-suite** (polish) La valeur de « Ce qui a pu peser » est la moyenne de la fenêtre du facteur (jour même et
+- [x] **T4-suite** ✅ 10/11 03:35 (`dayValue` au court terme ; « Nuit plus courte/longue que d'habitude (6 h 21) » quand la nuit même va dans le même sens que la fenêtre, sinon le pluriel ; tests) (polish) La valeur de « Ce qui a pu peser » est la moyenne de la fenêtre du facteur (jour même et
   veille pour le court terme) : d'où « Nuits » au pluriel. Si le propriétaire veut « Nuit plus courte (6 h 21) » au
   singulier comme la maquette, exposer la valeur du seul jour dans `dayContributions`. ~~Libellés des axes de la carte
   Humeur et éveil encore tournés à la verticale~~ ✅ 08/11 18:35 : horizontaux de part et d'autre du carré, comme la

@@ -116,6 +116,7 @@ export const CONTRACT_VERSION = 1
  * @property {number} points        coefficient × écart du facteur ce jour-là (points sur 5, signé)
  * @property {number} value         valeur du facteur ce jour-là (sur la fenêtre de l'horizon)
  * @property {number} usual         valeur habituelle
+ * @property {number} [dayValue]  au court terme : valeur du seul jour (T4-suite)
  */
 
 export const OUTCOMES = [
@@ -701,7 +702,8 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
  * @param {object[]} entries
  * @param {string} dateKey   AAAA-MM-JJ
  * @param {{ outcome?: OutcomeId, max?: number, days?: Map }} [options]
- * @returns {DayContribution[]}  `horizon` = l'horizon qui pèse le plus pour ce facteur ce jour-là
+ * @returns {DayContribution[]}  `horizon` = l'horizon qui pèse le plus pour ce facteur ce jour-là ; `dayValue` = la
+ *   valeur du seul jour, au court terme
  */
 export function dayContributions(results, entries, dateKey, { outcome = 'wellbeing', max = 3, days: givenDays } = {}) {
   const out = results?.outcomes?.[outcome]
@@ -727,7 +729,11 @@ export function dayContributions(results, entries, dateKey, { outcome = 'wellbei
   for (const { f, total, top } of byKey.values()) {
     const points = Math.round(total * 100) / 100 + 0
     if (points === 0) continue
-    list.push({ key: f.key, label: f.label, theme: f.theme, horizon: top.horizon, points, value: top.value, usual: top.usual })
+    const c = { key: f.key, label: f.label, theme: f.theme, horizon: top.horizon, points, value: top.value, usual: top.usual }
+    // T4-suite : au court terme, la valeur du seul jour (« Nuit plus courte que d'habitude (6 h 21) »).
+    const dayValue = top.horizon === 'short' ? days.get(dateKey)?.[f.key] : null
+    if (isNum(dayValue)) c.dayValue = dayValue
+    list.push(c)
   }
   return list.sort((a, b) => Math.abs(b.points) - Math.abs(a.points)).slice(0, max)
 }
