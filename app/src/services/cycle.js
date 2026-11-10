@@ -142,6 +142,20 @@ export function cycleByDay(entries, dateKeys = []) {
   return out
 }
 
+/**
+ * L'entrée « jour de règles » du jour `dateKey` (la plus récente s'il y en a plusieurs), ou null : la saisie
+ * d'Aujourd'hui (CYCLE-2) la corrige plutôt que d'en ajouter une deuxième.
+ */
+export function periodEntryOn(entries, dateKey) {
+  let found = null
+  for (const e of entries || []) {
+    if (e?.type !== CYCLE_TYPE || e.payload?.subtype !== 'period' || !e.at) continue
+    if (localDateKey(e.at) !== dateKey) continue
+    if (!found || stamp(e) >= stamp(found)) found = e
+  }
+  return found
+}
+
 /** Le cycle a-t-il au moins une donnée ? */
 export function hasCycleData(entries) {
   return (entries || []).some((e) => e?.type === CYCLE_TYPE)

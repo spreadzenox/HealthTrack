@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   CYCLE_TYPE, cycleByDay, cycleLineParts, cycleVisible, daysBetween, hasCycleData, MAX_CYCLE_DAY,
-  periodEntry, spottingEntry, symptomEntry,
+  periodEntry, periodEntryOn, spottingEntry, symptomEntry,
 } from './cycle'
 import { localDateKey } from './analysisEngine'
 
@@ -104,5 +104,17 @@ describe('cycle : dédoublonnage de l’import', () => {
     const all = [periodEntry(day), spottingEntry(day), symptomEntry(day, 'cramps'), symptomEntry(day, 'fatigue')]
     expect(new Set(all.map((e) => `${e.source}|${e.at}|${e.type}`)).size).toBe(4)
     expect(all.every((e) => localDateKey(e.at) === day)).toBe(true)
+  })
+})
+
+describe('periodEntryOn (CYCLE-2)', () => {
+  it('rend la saisie de règles du jour, la plus récente, et rien d’autre', () => {
+    const a = { ...periodEntry('2026-11-10', 'light'), id: 1, created_at: '2026-11-10T08:00:00Z' }
+    const b = { ...periodEntry('2026-11-10', 'heavy'), id: 2, created_at: '2026-11-10T09:00:00Z' }
+    const s = { ...symptomEntry('2026-11-10', 'cramps'), id: 3 }
+    const y = { ...periodEntry('2026-11-09', 'medium'), id: 4 }
+    expect(periodEntryOn([a, b, s, y], '2026-11-10').id).toBe(2)
+    expect(periodEntryOn([s, y], '2026-11-10')).toBeNull()
+    expect(periodEntryOn(null, '2026-11-10')).toBeNull()
   })
 })

@@ -76,4 +76,17 @@ describe('AddStrip (nouvel écran Aujourd’hui du 07/11) : le seul endroit pour
     view({ digestion: null })
     expect(screen.queryByRole('button', { name: 'Digestion' })).toBeNull()
   })
+
+  it('CYCLE-2 : « Règles » seulement quand le cycle est suivi, avant « Autre chose », et ouvre « Mes règles »', () => {
+    const { unmount } = view()
+    expect(screen.queryByRole('button', { name: 'Règles' })).toBeNull()
+    unmount()
+    view({ period: <section data-testid="period" /> })
+    const strip = screen.getByRole('region', { name: 'Ajouter' })
+    const labels = within(strip).getAllByRole('button').map((b) => b.textContent.trim())
+    expect(labels).toEqual(['Repas', 'Bien-être', 'Digestion', 'Règles', 'Autre chose'])
+    fireEvent.click(screen.getByRole('button', { name: 'Règles' }))
+    const dialog = screen.getByRole('dialog', { name: 'Mes règles' })
+    expect(within(dialog).getByTestId('period')).toBeInTheDocument()
+  })
 })

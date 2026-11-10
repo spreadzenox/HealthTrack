@@ -43,8 +43,16 @@ téléphone ; page de confidentialité mise à jour quand quelque chose s'affich
   Symptômes « Constipation » et « Diarrhée » ajoutés en fin de `SYMPTOMS` (demande iOS, minutes inchangées, test).
   Option `--cycle` de `npm run visual`. Pas d'entrée Nouveautés : rien ne s'affiche tant qu'on ne peut rien saisir
   (CYCLE-2 l'ajoutera).
-- [ ] **CYCLE-2** Saisie des règles à la main en un geste depuis le bandeau d'ajout d'Aujourd'hui (flux en option,
-  « … » Modifier / Supprimer dans le Journal), visible si `cycleVisible`.
+- [x] **CYCLE-2** ✅ 10/11 22:35 Bouton « Règles » (goutte, rose framboise = corps) dans le bandeau d'ajout
+  d'Aujourd'hui, avant « Autre chose », visible avec « Mon cycle » ou dès qu'une donnée de cycle existe. Fenêtre
+  « Mes règles » (`PeriodSheet.jsx`) : un geste (Léger / Moyen / Abondant, ou « Sans préciser le flux ») enregistre le
+  jour de règles d'aujourd'hui ; déjà noté : flux coché, « Aujourd'hui, 2e jour des règles », un autre flux corrige la
+  même entrée (`periodEntryOn`, aucun doublon), « Retirer » l'efface. Règles lues ailleurs (future source Health
+  Connect) : affichées, non modifiables ici. Confidentialité (« règles et symptômes du cycle si vous les notez ») et
+  Nouveautés.
+- [ ] **CYCLE-2b** Journal › Jours : « … » sur la ligne « Règles » (Modifier le flux / Supprimer), comme les notes de
+  digestion ; puis les symptômes du cycle en un geste dans « Mes règles » (chips, `symptomEntry`) et un jour passé
+  (hier) — une étape par run.
 - [ ] **CYCLE-3** Lecture de `MenstruationPeriodRecord` / `MenstruationFlowRecord` dans Health Connect (source
   `health_connect`, mêmes entrées). **Bloqué par une action du propriétaire** : ajouter le type à la déclaration
   Health Connect de la Play Console (P48, chemin exact et justification à préparer au début de l'étape dans

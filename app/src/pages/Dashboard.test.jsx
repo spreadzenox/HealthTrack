@@ -274,4 +274,22 @@ describe('Dashboard', () => {
       await waitFor(() => expect(screen.queryByRole('note')).toBeNull())
     })
   })
+
+  it('CYCLE-2 : « Règles » dans le bandeau avec « Mon cycle », ou dès qu’une donnée de cycle existe', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const { unmount } = renderDashboard()
+    await loaded()
+    expect(screen.queryByRole('button', { name: 'Règles' })).toBeNull()
+    unmount()
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['cycle'] }))
+    const second = renderDashboard()
+    expect(await screen.findByRole('button', { name: 'Règles' })).toBeInTheDocument()
+    second.unmount()
+    localStorage.removeItem('healthtrack_onboarding')
+    listEntries.mockImplementation(async (opts = {}) => (opts.type === 'cycle'
+      ? [{ id: 1, type: 'cycle', source: 'app_cycle', at: new Date().toISOString(), payload: { subtype: 'period', flow: 'light' } }]
+      : []))
+    renderDashboard()
+    expect(await screen.findByRole('button', { name: 'Règles' })).toBeInTheDocument()
+  })
 })

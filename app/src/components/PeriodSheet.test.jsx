@@ -1,0 +1,83 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import PeriodSheet from './PeriodSheet'
+
+vi.mock('../storage/localHealthStorage', () => ({
+  listEntries: vi.fn(),
+  createEntry: vi.fn(),
+  updateEntry: vi.fn(),
+  deleteEntry: vi.fn(),
+}))
+
+const now = () => new Date(2026, 10, 10, 18, 0)
+const noon = (d) => new Date(2026, 10, d, 12, 0).toISOString()
+
+describe('PeriodSheet : noter ses règles en un geste (CYCLE-2)', () => {
+  let store
+  beforeEach(async () => {
+    store = await import('../storage/localHealthStorage')
+    vi.clearAllMocks()
+    store.listEntries.mockResolvedValue([])
+    store.createEntry.mockResolvedValue(1)
+  })
+
+  it('un flux touché enregistre le jour de règles d’aujourd’hui, à midi, sur le téléphone', async () => {
+    const events = vi.fn()
+    window.addEventListener('health-entries-updated', events)
+    render(<PeriodSheet now={now} />)
+    const moyen = await screen.findByRole('button', { name: 'Moyen' })
+    await waitFor(() => expect(moyen).toBeEnabled())
+    fireEvent.click(moyen)
+    await waitFor(() => expect(store.createEntry).toHaveBeenCalledTimes(1))
+    expect(store.createEntry).toHaveBeenCalledWith({
+      type: 'cycle', source: 'app_cycle', at: noon(10), payload: { subtype: 'period', flow: 'medium' },
+    })
+    await waitFor(() => expect(events).toHaveBeenCalled())
+    window.removeEventListener('health-entries-updated', events)
+  })
+
+  it('« Sans préciser le flux » enregistre un flux inconnu', async () => {
+    render(<PeriodSheet now={now} />)
+    const btn = await screen.findByRole('button', { name: 'Sans préciser le flux' })
+    await waitFor(() => expect(btn).toBeEnabled())
+    fireEvent.click(btn)
+    await waitFor(() => expect(store.createEntry).toHaveBeenCalledWith(expect.objectContaining({
+      payload: { subtype: 'period', flow: 'unknown' },
+    })))
+  })
+
+  it('déjà noté : le flux est coché, le jour des règles affiché, un autre flux corrige sans doublon, « Retirer » efface', async () => {
+    store.listEntries.mockResolvedValue([
+      { id: 7, type: 'cycle', source: 'app_cycle', at: noon(9), payload: { subtype: 'period', flow: 'heavy' } },
+      { id: 8, type: 'cycle', source: 'app_cycle', at: noon(10), payload: { subtype: 'period', flow: 'light' } },
+    ])
+    render(<PeriodSheet now={now} />)
+    expect(await screen.findByText(/jour des règles/)).toHaveTextContent('Aujourd’hui, 2e jour des règles')
+    expect(screen.getByRole('button', { name: 'Léger' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByRole('button', { name: 'Sans préciser le flux' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Abondant' }))
+    await waitFor(() => expect(store.updateEntry).toHaveBeenCalledWith(8, { payload: { subtype: 'period', flow: 'heavy' } }))
+    expect(store.createEntry).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'Retirer' }))
+    await waitFor(() => expect(store.deleteEntry).toHaveBeenCalledWith(8))
+  })
+
+  it('règles lues ailleurs (Health Connect) : affichées, pas modifiables ici', async () => {
+    store.listEntries.mockResolvedValue([
+      { id: 9, type: 'cycle', source: 'health_connect', at: noon(10), payload: { subtype: 'period', flow: 'medium' } },
+    ])
+    render(<PeriodSheet now={now} />)
+    expect(await screen.findByText(/jour des règles/)).toHaveTextContent('Aujourd’hui, 1er jour des règles')
+    expect(screen.getByRole('button', { name: 'Moyen' })).toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'Retirer' })).toBeNull()
+  })
+
+  it('erreur d’enregistrement : un message, rien d’autre', async () => {
+    store.createEntry.mockRejectedValue(new Error('x'))
+    render(<PeriodSheet now={now} />)
+    const btn = await screen.findByRole('button', { name: 'Léger' })
+    await waitFor(() => expect(btn).toBeEnabled())
+    fireEvent.click(btn)
+    expect(await screen.findByRole('alert')).toHaveTextContent('Enregistrement impossible. Réessayez.')
+  })
+})

@@ -22,6 +22,10 @@ import { headerLine, measureTiles } from '../services/today'
 import { gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
 import AddStrip from '../components/AddStrip'
+import PeriodSheet from '../components/PeriodSheet'
+import { listEntries } from '../storage/localHealthStorage'
+import { CYCLE_TYPE, cycleVisible } from '../services/cycle'
+import { goalsOf } from '../settings/onboarding'
 
 export default function Dashboard() {
   // Entrées des derniers jours : tuiles du jour et compteur de cigarettes (le journal des jours est dans l'onglet Journal)
@@ -54,6 +58,16 @@ export default function Dashboard() {
     setUnlockReminder(false)
   }, [])
   const days = useMemo(() => buildDailyJournal(entries), [entries])
+  // CYCLE-2 : « Règles » dans le bandeau avec « Mon cycle », ou dès qu'une donnée de cycle existe
+  const [cycleOn, setCycleOn] = useState(() => cycleVisible(goalsOf(), false))
+  useEffect(() => {
+    if (cycleOn) return undefined
+    let alive = true
+    listEntries({ type: CYCLE_TYPE, limit: 1 })
+      .then((rows) => { if (alive && rows.length) setCycleOn(true) })
+      .catch(() => {})
+    return () => { alive = false }
+  }, [cycleOn])
 
   const loadEntries = useCallback(async (isCancelled = () => false) => {
     try {
@@ -111,6 +125,7 @@ export default function Dashboard() {
         onWellbeing={() => setWellbeingOpen(true)}
         digestion={<GutCard title="Ma digestion" details={details} onToggleDetails={toggleDetails} />}
         stool={gutMode !== 'hide' ? <StoolPhotoLine /> : null}
+        period={cycleOn ? <PeriodSheet /> : null}
         cigarette={!loading && <CigaretteQuickAdd />}
         cigaretteInStrip={!loading && shouldShowCigaretteCounter(entries)}
       />
