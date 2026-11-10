@@ -250,6 +250,9 @@ export function buildDailyJournal(entries) {
         day.cigarettes += isNum(p.count) && p.count > 0 ? p.count : 1
         day.items.push(e)
         break
+      case 'cycle':
+        // Cycle (CYCLE-1b) : une ligne résumée sous le titre du jour, jamais une saisie brute
+        break
       case 'food':
         day.meals += 1
         day.mealKcal += mealKcal(p.items)

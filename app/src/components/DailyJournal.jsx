@@ -24,6 +24,10 @@ import { lastAnalysis } from '../services/analysisRunner'
 import LineIcon from './LineIcon'
 import { monoDigits } from '../utils/monoDigits'
 import { useStackedChoices } from '../hooks/useStackedChoices'
+import Ordinal from './Ordinal'
+import { listEntries } from '../storage/localHealthStorage'
+import { CYCLE_TYPE, MAX_CYCLE_DAY, SYMPTOM_LABELS, cycleByDay, cycleLineParts, cycleVisible, hasCycleData } from '../services/cycle'
+import { goalsOf } from '../settings/onboarding'
 import './TodayCards.css'
 
 /** Icône de chaque mesure du jour (ORG-2, leçon 9 : une icône pour toutes les mesures). */
@@ -39,6 +43,38 @@ const NORM_KEYS = { sleepMinutes: 'sleep', hrv: 'hrv', restingHr: 'restingHr', s
 const TREND_KEYS = {
   sleepMinutes: 'sleep', steps: 'steps', hrv: 'hrv', restingHr: 'restingHr', screenMinutes: 'screen', wellbeing: 'wellbeing',
 }
+/** Jours de cycle relus : le jour du cycle compte depuis les dernières règles (60 jours au plus) + 14 jours de journal. */
+const CYCLE_READ_DAYS = MAX_CYCLE_DAY + 16
+
+/** Cycle jour par jour (CYCLE-1b), ou null tant que « Mon cycle » n'est pas coché et sans donnée de cycle. */
+async function readCycle() {
+  const since = new Date()
+  since.setDate(since.getDate() - CYCLE_READ_DAYS)
+  const list = await listEntries({ type: CYCLE_TYPE, since: since.toISOString(), limit: 5000 })
+  if (!cycleVisible(goalsOf(), hasCycleData(list))) return null
+  return (dateKeys) => cycleByDay(list, dateKeys)
+}
+
+/** « Règles · 2e jour · flux moyen · Crampes » sous le titre du jour. */
+function CycleLine({ info }) {
+  const parts = cycleLineParts(info)
+  const symptoms = (info?.symptoms || []).map((s) => SYMPTOM_LABELS[s]).filter(Boolean)
+  if (!parts && !symptoms.length) return null
+  const bits = []
+  if (parts) {
+    bits.push(parts.label)
+    if (parts.periodDay) bits.push(<><Ordinal n={parts.periodDay} /> jour</>)
+    if (parts.flow) bits.push(parts.flow)
+  }
+  if (symptoms.length) bits.push(symptoms.join(', '))
+  return (
+    <p className="day-cycle">
+      <LineIcon name="drop" size={14} />
+      <span>{bits.map((b, i) => <span key={i}>{i > 0 && ' · '}{b}</span>)}</span>
+    </p>
+  )
+}
+
 /** Jours relus pour les normes : 14 jours avant le plus ancien jour affiché (14 jours de journal au plus). */
 const NORM_EXTRA_DAYS = 15
 
@@ -396,7 +432,7 @@ function EntryItem({ e, measuredScreen, onEdit, editingMealId, onEditMeal, onRed
   )
 }
 
-function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays = null, normSince = {} }) {
+function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays = null, normSince = {}, cycle = null }) {
   const { title, date } = dayHeading(day.dateKey)
   const norms = normsOf(normDays, day.dateKey, normSince)
   const chips = summaryChips(day.summary)
@@ -405,7 +441,11 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays 
     <li className="day-card">
       <h4 className="day-card-title">
         {title} <span className="day-card-date">{date}</span>
+        {cycle?.cycleDay && !cycle.period && (
+          <span className="day-card-cycle"><Ordinal n={cycle.cycleDay} /> jour du cycle</span>
+        )}
       </h4>
+      <CycleLine info={cycle} />
       {chips.length > 0 && (
         <dl className="day-summary">
           {chips.map(([label, value, note]) => {
@@ -490,6 +530,19 @@ export default function DailyJournal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [entries, hiddenKey, nutritionTable],
   )
+  // CYCLE-1b : règles et jour du cycle, lus à part (le jour du cycle remonte aux dernières règles)
+  const [cycleOf, setCycleOf] = useState(null)
+  useEffect(() => {
+    let alive = true
+    const load = () => readCycle().then((f) => { if (alive) setCycleOf(() => f) }).catch(() => {})
+    load()
+    window.addEventListener('health-entries-updated', load)
+    return () => {
+      alive = false
+      window.removeEventListener('health-entries-updated', load)
+    }
+  }, [])
+  const cycleDays = useMemo(() => (cycleOf ? cycleOf(days.map((d) => d.dateKey)) : null), [cycleOf, days])
 
   // Fenêtre complète (14 jours) lue ? Un ref : les rechargements après écriture gardent la même fenêtre.
   const fullWindow = useRef(false)
@@ -569,6 +622,7 @@ export default function DailyJournal() {
                 day={day}
                 normDays={normDays}
                 normSince={normSince}
+                cycle={cycleDays?.get(day.dateKey) ?? null}
                 onEdit={setEditingWellbeing}
                 editingMealId={editingMealId}
                 onEditMeal={setEditingMealId}

@@ -29,6 +29,7 @@
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *   npm run visual -- --routes=/tendances --history-days=2  # historique presque vide : seules les données des 2 derniers
  *                                          jours (aujourd'hui et hier) sont gardées (T3, captures à côté de la maquette)
+ *   npm run visual -- --routes=/journal --cycle  # règles hier et avant-hier, symptômes : ligne « Règles » (CYCLE-1b)
  *   npm run visual -- --routes=/ --calibration  # notes de bien-être d'hier seulement : calibration de départ
  *                                          en cours (BE-BIAIS-2, 1 jour sur 3, note du jour demandée)
  *   npm run visual -- --routes=/ --pistes-summary   # pistes déjà repérées : la carte lilas cite celle qui touche
@@ -1262,6 +1263,15 @@ async function main() {
       for (const n of [0, 1, 2]) {
         entries.push({ type: 'wellbeing', source: 'app_wellbeing', at: daysAgo(n, 8).toISOString(), payload: { score: 3, tags: ['travel'] } })
       }
+    }
+    if (args.cycle) {
+      // Cycle (CYCLE-1b) : règles il y a 29 jours, puis hier et avant-hier (flux abondant, moyen), symptômes
+      // d'hier ; aujourd'hui : 3e jour du cycle (données synthétiques).
+      const period = (n, flow) => ({ type: 'cycle', source: 'app_cycle', at: daysAgo(n, 12).toISOString(), payload: { subtype: 'period', flow } })
+      entries.push(period(29, 'medium'), period(28, 'light'), period(2, 'heavy'), period(1, 'medium'))
+      // Une minute par symptôme, comme symptomEntry : l'import dédoublonne sur (source, date, type)
+      const symptom = (n, symptom, minute) => ({ type: 'cycle', source: 'app_cycle', at: new Date(daysAgo(n, 12).getTime() + minute * 60000).toISOString(), payload: { subtype: 'symptom', symptom } })
+      entries.push(symptom(1, 'cramps', 2), symptom(1, 'bloating', 4))
     }
     if (args['gut-links']) {
       // Bilans du soir du ventre (I170) chaque jour, gêne plus fréquente les jours avec de la banane : une piste

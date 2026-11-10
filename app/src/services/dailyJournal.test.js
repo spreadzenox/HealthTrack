@@ -385,3 +385,13 @@ describe('buildDailyJournal — téléphone', () => {
     expect(days.map((d) => d.dateKey)).toEqual(['2026-10-11'])
   })
 })
+
+describe('buildDailyJournal : cycle (CYCLE-1b)', () => {
+  it('une note de cycle fait apparaître le jour sans être listée comme saisie', () => {
+    const days = buildDailyJournal([
+      { id: 1, type: 'cycle', source: 'app_cycle', at: '2026-10-02T10:00:00.000Z', payload: { subtype: 'period', flow: 'medium' } },
+    ])
+    expect(days).toHaveLength(1)
+    expect(days[0].items).toEqual([])
+  })
+})

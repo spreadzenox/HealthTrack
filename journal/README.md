@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🩸 **Cycle dans le Journal (10/11 21:35)** : Journal › Jours montre maintenant, sous le titre d'un jour de règles,
+> « Règles · 2e jour · flux moyen » et les symptômes notés, et à côté de la date des autres jours « 3e jour du cycle »
+> ([clair](runs/captures/2026-11-10-2135-cycle-journal-clair.png) · [sombre](runs/captures/2026-11-10-2135-cycle-journal-sombre.png),
+> données de démo). Vous ne le verrez pas encore : il faut d'abord pouvoir noter ses règles (prochaine étape, depuis
+> Aujourd'hui). Constipation et diarrhée rejoignent les symptômes du cycle, à la demande de la routine iPhone.
+
 > 🧪 **Deux personas au premier lancement (10/11 20:35)** : « Stressé et pressé » (Android et montre Amazfit) et
 > « Endométriose » (iPhone seul) ont fait l'accueil complet. Elles s'y retrouvent, mais relèvent « Trois onglets » quand
 > la barre en a cinq, un « Voir dans 14 jours » flou, des pas absents d'Aujourd'hui, et la persona Endométriose ne
@@ -290,6 +296,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 21:35 — [Cycle dans le Journal](runs/2026-11-10-2135-cycle-journal.md) | 🧱 | CYCLE-1b : ligne « Règles · 2e jour · flux moyen » et jour du cycle dans Journal › Jours (seulement avec des données de cycle) ; constipation et diarrhée ajoutées aux symptômes (demande iOS). Rien à faire de votre côté |
 | 10/11 20:35 — [Deux personas au jour 1](runs/2026-11-10-2035-personas-j1.md) | 💡 | Simulations Stressé et pressé J1 et Endométriose J1 : POLISH-SIM-38 à 45 ; faux relais de l'outil corrigé ; P48 (cycle dans Health Connect) rédigée, pas encore à faire. Une question : compteur « 01/06 » du tuto |
 | 10/11 19:35 — [Cycle : brique partagée](runs/2026-11-10-1935-cycle-brique.md) | 🧱 | CYCLE-1a : règles, saignements et symptômes rangés en entrées `cycle` (sans migration), jour des règles et jour du cycle calculés, export / import testés ; rien d'affiché. Rien à faire de votre côté |
 | 10/11 18:55 — [Relais iOS : cycle accepté](runs/2026-11-10-1855-relais-ios-cycle.md) | 📨 | Décision « Ok cycle » relayée à la routine iOS (POUR-IOS.md) : Android fait d'abord la brique partagée (CYCLE-*), puis iOS lit le cycle dans Santé. Rien à faire de votre côté |

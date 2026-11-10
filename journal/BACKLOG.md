@@ -36,10 +36,13 @@ téléphone ; page de confidentialité mise à jour quand quelque chose s'affich
   période), jour du cycle (rien avant les premières règles ni au-delà de 60 jours), saignement hors règles qui ne
   commence pas de cycle, saisie la plus récente gagnante. `cycleVisible(goals, hasData)` : rien tant que « Mon
   cycle » n'est pas coché et qu'il n'y a aucune donnée. Données : « N notes de cycle » dans l'aperçu d'import.
-- [ ] **CYCLE-1b** Journal › Jours : ligne « Règles · 2e jour · flux moyen » (ordinal par `<Ordinal>`) et jour du
-  cycle à côté de la date (« J12 » ou « 12e jour du cycle », à caler sur la maquette iOS), seulement si
-  `cycleVisible` ; entrées `cycle` hors de la liste des saisies (résumé, comme le sommeil) ; test rouge puis vert ;
-  captures claires et sombres avec et sans « Mon cycle ».
+- [x] **CYCLE-1b** ✅ 10/11 21:35 Journal › Jours : sous le titre du jour, « Règles · 2e jour · flux moyen » (ordinal
+  par `<Ordinal>`, icône goutte rose framboise = corps) suivie des symptômes du jour ; à côté de la date, « 3e jour du
+  cycle » les jours sans règles (inutile un jour de règles, la ligne le dit). Entrées `cycle` résumées, jamais listées
+  en saisie brute ; lues à part sur 76 jours (le jour du cycle remonte aux dernières règles). Rien sans `cycleVisible`.
+  Symptômes « Constipation » et « Diarrhée » ajoutés en fin de `SYMPTOMS` (demande iOS, minutes inchangées, test).
+  Option `--cycle` de `npm run visual`. Pas d'entrée Nouveautés : rien ne s'affiche tant qu'on ne peut rien saisir
+  (CYCLE-2 l'ajoutera).
 - [ ] **CYCLE-2** Saisie des règles à la main en un geste depuis le bandeau d'ajout d'Aujourd'hui (flux en option,
   « … » Modifier / Supprimer dans le Journal), visible si `cycleVisible`.
 - [ ] **CYCLE-3** Lecture de `MenstruationPeriodRecord` / `MenstruationFlowRecord` dans Health Connect (source
