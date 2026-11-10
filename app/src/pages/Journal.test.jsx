@@ -615,3 +615,50 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(screen.queryByRole('button', { name: 'Refaire ce repas' })).not.toBeInTheDocument()
   })
 })
+
+describe('Journal — cycle (CYCLE-1b)', () => {
+  const key = (daysAgo) => {
+    const d = new Date()
+    d.setDate(d.getDate() - daysAgo)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  }
+
+  beforeEach(async () => {
+    localStorage.clear()
+    const { countEntries } = await import('../storage/localHealthStorage')
+    countEntries.mockResolvedValue(0)
+  })
+
+  it('« Règles · 2e jour · flux moyen » en ligne, jamais en saisie brute, et le jour du cycle à côté de la date', async () => {
+    const { periodEntry, symptomEntry } = await import('../services/cycle')
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const entries = [
+      { id: 1, ...periodEntry(key(2), 'heavy') },
+      { id: 2, ...periodEntry(key(1), 'medium') },
+      { id: 3, ...symptomEntry(key(1), 'cramps') },
+      { id: 4, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } },
+    ]
+    listEntries.mockImplementation(async (o = {}) => (o.type ? entries.filter((e) => e.type === o.type) : entries))
+    renderJournal()
+    const line = await screen.findByText((_, el) => el?.classList?.contains('day-cycle') && /Règles · 2e jour · flux moyen/.test(el.textContent))
+    expect(line.textContent).toMatch(/Crampes/)
+    expect(document.querySelector('.entry-payload')).toBeNull()
+    expect(screen.queryByText('cycle')).toBeNull()
+    // Aujourd'hui : pas de règles, 3e jour du cycle à côté de la date
+    const today = document.querySelector('.day-card-cycle')
+    expect(today.textContent).toBe('3e jour du cycle')
+    expect(document.querySelectorAll('.day-card-cycle')).toHaveLength(1)
+  })
+
+  it('rien du cycle sans donnée de cycle, même avec « Mon cycle »', async () => {
+    localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ done: true, goals: ['cycle'] }))
+    const { listEntries } = await import('../storage/localHealthStorage')
+    listEntries.mockResolvedValue([
+      { id: 4, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } },
+    ])
+    renderJournal()
+    await waitFor(() => expect(document.querySelector('.entry-score')).toBeInTheDocument())
+    expect(document.querySelector('.day-cycle')).toBeNull()
+    expect(document.querySelector('.day-card-cycle')).toBeNull()
+  })
+})

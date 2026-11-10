@@ -21,6 +21,17 @@ describe('cycle : saisies', () => {
     expect(() => symptomEntry('2026-11-01', 'migraine-aura')).toThrow()
   })
 
+  it('constipation et diarrhée en fin de liste : les minutes des symptômes existants ne bougent pas', async () => {
+    const { SYMPTOMS, SYMPTOM_LABELS } = await import('./cycle')
+    expect(SYMPTOMS.slice(0, 5)).toEqual(['cramps', 'pelvic_pain', 'bloating', 'headache', 'fatigue'])
+    expect(SYMPTOMS.slice(5)).toEqual(['constipation', 'diarrhea'])
+    expect(SYMPTOM_LABELS.constipation).toBe('Constipation')
+    expect(SYMPTOM_LABELS.diarrhea).toBe('Diarrhée')
+    expect(new Date(symptomEntry('2026-11-01', 'cramps').at).getMinutes()).toBe(2)
+    const minutes = SYMPTOMS.map((s) => new Date(symptomEntry('2026-11-01', s).at).getMinutes())
+    expect(new Set(minutes).size).toBe(SYMPTOMS.length)
+  })
+
   it('daysBetween ignore le changement d’heure', () => {
     expect(daysBetween('2026-10-24', '2026-10-26')).toBe(2)
     expect(daysBetween('2026-03-28', '2026-03-30')).toBe(2)

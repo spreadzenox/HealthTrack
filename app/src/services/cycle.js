@@ -6,7 +6,8 @@
  * - `{ type: 'cycle', payload: { subtype: 'period', flow } }` : un jour de règles (flux léger, moyen, abondant ou
  *   inconnu) ;
  * - `{ type: 'cycle', payload: { subtype: 'spotting' } }` : saignement hors des règles (ne commence pas de cycle) ;
- * - `{ type: 'cycle', payload: { subtype: 'symptom', symptom } }` : un symptôme du cycle ce jour-là.
+ * - `{ type: 'cycle', payload: { subtype: 'symptom', symptom } }` : un symptôme du cycle ce jour-là
+ *   (sept : crampes, douleur pelvienne, ballonnements, maux de tête, fatigue, constipation, diarrhée).
  * Les données restent sur le téléphone. Le cycle est un contexte (variable X), jamais une cause ni un diagnostic.
  */
 import { localDateKey } from './analysisEngine'
@@ -18,13 +19,16 @@ export const CYCLE_SOURCE = 'app_cycle'
 export const FLOWS = ['light', 'medium', 'heavy', 'unknown']
 export const FLOW_LABELS = { light: 'flux léger', medium: 'flux moyen', heavy: 'flux abondant', unknown: null }
 
-export const SYMPTOMS = ['cramps', 'pelvic_pain', 'bloating', 'headache', 'fatigue']
+// Ajouts en fin de liste seulement : la minute de saisie d'un symptôme dépend de sa place (symptomEntry)
+export const SYMPTOMS = ['cramps', 'pelvic_pain', 'bloating', 'headache', 'fatigue', 'constipation', 'diarrhea']
 export const SYMPTOM_LABELS = {
   cramps: 'Crampes',
   pelvic_pain: 'Douleur pelvienne',
   bloating: 'Ballonnements',
   headache: 'Maux de tête',
   fatigue: 'Fatigue',
+  constipation: 'Constipation',
+  diarrhea: 'Diarrhée',
 }
 
 /** Jours sans règles tolérés à l'intérieur d'une même période (un jour oublié ne coupe pas les règles en deux). */

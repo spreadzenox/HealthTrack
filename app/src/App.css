@@ -369,6 +369,25 @@
   color: var(--text-muted);
 }
 
+.day-card-cycle {
+  margin-left: 6px;
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--rose-label);
+}
+.day-card-cycle::before { content: '· '; color: var(--text-muted); }
+
+/* CYCLE-1b : règles et symptômes du jour (rose framboise = corps) */
+.day-cycle {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: -4px 0 10px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+.day-cycle > svg { flex: none; margin-top: 2px; color: var(--rose-label); }
+
 .day-summary {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
