@@ -245,3 +245,12 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     expect(await screen.findByText(/Les notifications sont bloquées/)).toBeInTheDocument()
   })
 })
+
+describe('POLISH-REINTRO-AGIR : la réintroduction est rangée sous Agir', () => {
+  it('pas de sous-onglets d’Analyses, un retour « ← Agir » comme la page d’un essai', async () => {
+    renderPage(makeStore())
+    await screen.findByRole('button', { name: /Lactose/ })
+    expect(screen.queryByRole('navigation', { name: 'Analyses' })).toBeNull()
+    expect(screen.getByRole('link', { name: '← Agir' })).toHaveAttribute('href', '/agir')
+  })
+})

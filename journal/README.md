@@ -92,6 +92,13 @@
 > ([clair](runs/captures/2026-11-09-1435-phrase-bien-etre-clair.png) ·
 > [sombre](runs/captures/2026-11-09-1435-phrase-bien-etre-sombre.png)).
 
+> ↩️ **Réintroduction : rangée sous Agir (10/11 01:35)** : la page « Réintroduction guidée » s'ouvre depuis Agir, mais
+> affichait encore en haut les onglets d'Analyses (« Bien-être · Digestion »), aucun sélectionné. Elle a maintenant
+> un retour « ← Agir », comme la page d'un essai ([avant](runs/captures/2026-11-10-0135-reintro-agir-avant-clair.png) ·
+> [après](runs/captures/2026-11-10-0135-reintro-agir-play-clair.png) ·
+> [sombre](runs/captures/2026-11-10-0135-reintro-agir-play-sombre.png) ·
+> [groupes](runs/captures/2026-11-10-0135-reintro-agir-groupes-clair.png)).
+
 > 📏 **Agir : le graphique d'un essai comme la maquette (10/11 00:35)** : « Résultat en cours » range maintenant les
 > lendemains « Avec » et « Sans » sur deux lignes d'une même échelle, resserrée sur vos valeurs ; la ligne « Écart »
 > a ses repères (−1, 0, +1) et une phrase dit l'écart : « Après 11 lendemains : −0,1 point, entre −1,4 et +1,2. »
@@ -173,6 +180,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 01:35 — [Réintroduction rangée sous Agir](runs/2026-11-10-0135-reintro-agir.md) | 🎨 | POLISH-REINTRO-AGIR : plus d'onglets d'Analyses sur la réintroduction (reste de l'ancienne organisation), retour « ← Agir » ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 10/11 00:35 — [Agir : le graphique d'un essai comme la maquette](runs/2026-11-10-0035-essai-axes.md) | 🎨 | POLISH-ESSAI-AXES : Avec / Sans en lignes sur une échelle commune, Écart gradué, phrase « Après N lendemains : … » ; option `--trial` de l'outil visuel ; test rouge puis vert, captures claires et sombres. Captures des 3 runs précédents jamais commitées (règle `git add -f` ajoutée à la charte). Rien à faire de votre côté |
 | 09/11 23:35 — [Agir : résultat dessiné dès le jour 1](runs/2026-11-09-2335-essai-vide.md) | 🎨 | POLISH-ESSAI-VIDE et POLISH-ESSAI-CLASSE : graphique vide avec axes et piste « Écart », une seule phrase ; classe SVG renommée ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 09/11 22:35 — [Agir : le résultat en premier](runs/2026-11-09-2235-essai-ordre.md) | 🎨 | POLISH-ESSAI-ORDRE : « Résultat en cours » avant « Les 14 jours », légende avec la consigne ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
