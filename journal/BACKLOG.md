@@ -324,7 +324,16 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   (`decideNightly`, 7 tests dans `alphaGate.test.mjs`). Plus d'envoi à chaque merge ni à 07:13 ; plus d'espacement de
   24 h (CD-ALPHA-2 remplacé : le rythme quotidien en tient lieu) ; gel (`review-freeze.json`) et `ALPHA_AUTO` gardés ;
   `workflow_dispatch` gardé. Le test interne reçoit toujours chaque version.
-- [ ] **CD-ALPHA-7** (suite de CD-ALPHA-6) : la porte de 24 h de la fiche (07:23 UTC) et des abonnements (07:33 UTC)
+- [x] **CD-ALPHA-7b** ✅ 10/11 12:35 : soldé. Constat : la fiche n'était plus partie depuis le 03/11 (gel puis porte de
+  24 h comptant l'alpha du jour) ; titre « Halcya — digestion & bien-être » (#785) et avantages des abonnements
+  (#816) en attente. Fiche et abonnements passent au **passage du soir** (crons 22:23 et 22:33 UTC, juste avant
+  l'alpha de 22:45) sans espacement, gel gardé ; un merge attend ce soir-là (un seul examen par jour) ; lancement à la
+  main immédiat (`decideEvening`, `reviewGate.mjs` ; 5 tests rouges puis verts). À vérifier demain : bilan des deux
+  workflows du 10/11 au soir (« envoi de la fiche du Store »).
+- [ ] **LISTING-CAPTURES** (polish, vu le 10/11 12:35) : les captures de la fiche datent du 03/11 (#646), avant le nouvel
+  écran Aujourd'hui, Agir et Tendances (07/11) et l'accueil (08/11). Les refaire sur la version actuelle (données de
+  démo), elles partiront au passage du soir.
+- [x] ~~**CD-ALPHA-7** (suite de CD-ALPHA-6) : la porte de 24 h de la fiche (07:23 UTC) et des abonnements (07:33 UTC)
   compte encore l'envoi d'Alpha de la veille (≈ 8 h 40 avant) : avec un envoi Alpha chaque soir, leurs changements ne
   partiraient plus. À régler : les faire partir dans le même créneau du soir que l'alpha (juste avant 23:45), ou ne
   compter pour eux que leurs propres envois. Vérifier le premier soir (07/11 22:45 UTC) le bilan du workflow.

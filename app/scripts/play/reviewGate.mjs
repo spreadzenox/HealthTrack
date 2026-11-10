@@ -4,8 +4,9 @@
  * D'après l'aide de la Play Console, le délai d'examen court depuis le dernier changement envoyé pour l'app : une
  * version sur l'alpha, la fiche du Store ou les abonnements (le test interne excepté). Un envoi pendant l'examen peut
  * renvoyer l'app en fin de file. Les trois workflows qui envoient ces changements (« Play — Alpha », « Play — fiche du
- * Store », « Play — abonnements ») attendent donc `minHours` (24 par défaut) après le dernier d'entre eux ; un envoi
- * reporté part au passage quotidien du workflow (07:xx UTC) dès que le délai est écoulé.
+ * Store », « Play — abonnements ») attendaient donc `minHours` (24 par défaut) après le dernier d'entre eux. Depuis
+ * l'envoi Alpha de chaque soir (CD-ALPHA-6, `NIGHTLY_MIN_HOURS` = 0), fiche et abonnements partent au passage du soir
+ * (`decideEvening`) ; `decideReviewed` sert encore au gel et à `decideAlpha`.
  *
  * Chaque envoi remplace la version de la piste : la validation de l'edit annule l'examen en cours puis envoie la
  * nouvelle version (`changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT`, explicite dans publish.mjs depuis le 10/11).
@@ -15,6 +16,24 @@
  */
 
 export const DEFAULT_MIN_HOURS = 24
+
+/**
+ * Passage du soir de la fiche et des abonnements (CD-ALPHA-7, 10/11) : 22:23 et 22:33 UTC, juste avant l'envoi Alpha
+ * de 22:45 UTC. L'alpha partant chaque soir, l'espacement de 24 h les retenait pour toujours (fiche en attente depuis
+ * le 03/11). Comme l'alpha, ils ne gardent que le gel ; un merge attend ce passage, pour qu'un seul examen par jour
+ * réunisse version, fiche et abonnements (chaque envoi annule l'examen en cours, choix du propriétaire du 10/11).
+ */
+export const EVENING_UTC = '22:23'
+
+/** `event` : événement GitHub (`push`, `schedule`, `workflow_dispatch`). Renvoie { send } comme `decideReviewed`. */
+export function decideEvening({ event, now = Date.now(), freezeUntil = null }) {
+  const frozen = decideReviewed({ sends: [], now, minHours: 0, freezeUntil })
+  if (!frozen.send) return frozen
+  if (event === 'push') {
+    return { send: false, deferred: true, reason: `envoi au passage du soir (${EVENING_UTC} UTC), avec la version Alpha du jour` }
+  }
+  return { send: true }
+}
 
 /** Workflows dont l'envoi est examiné, avec le nom exact de l'étape qui envoie (sa réussite = un envoi). */
 export const REVIEWED_WORKFLOWS = {

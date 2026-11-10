@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { decideReviewed, lastSent, hasNewContent, REVIEWED_WORKFLOWS } from './reviewGate.mjs'
+import { decideReviewed, decideEvening, lastSent, hasNewContent, REVIEWED_WORKFLOWS, EVENING_UTC } from './reviewGate.mjs'
 import freeze from './review-freeze.json'
 
 const step = REVIEWED_WORKFLOWS.listing.step
@@ -79,5 +79,43 @@ describe('envois examinés par Google, espacés (CD-ALPHA-5)', () => {
     expect(hasNewContent('listing', ['app/store/data-safety/answers.mjs'])).toBe(false)
     expect(hasNewContent('subscriptions', ['app/src/config/premiumBenefits.js'])).toBe(true)
     expect(hasNewContent('subscriptions', ['app/store/x.png', 'app/scripts/play/subscriptions.test.mjs'])).toBe(false)
+  })
+
+  describe('fiche et abonnements : au passage du soir, avec la version Alpha (CD-ALPHA-7, 10/11)', () => {
+    const at = (iso) => Date.parse(iso)
+
+    it('l’envoi Alpha de la veille ne retient plus la fiche (elle partait jamais avec un envoi chaque soir)', () => {
+      // 100962 sur l’alpha le 10/11 à 09:54 ; passage du soir le même jour à 22:23 UTC.
+      expect(decideEvening({ event: 'schedule', now: at('2026-11-10T22:23:00Z') }).send).toBe(true)
+    })
+
+    it('un merge ne part pas en pleine journée : il attend le passage du soir (un seul examen par jour)', () => {
+      const d = decideEvening({ event: 'push', now: at('2026-11-10T11:00:00Z') })
+      expect(d).toMatchObject({ send: false, deferred: true })
+      expect(d.reason).toMatch(/passage du soir/)
+    })
+
+    it('lancement à la main : envoi tout de suite', () => {
+      expect(decideEvening({ event: 'workflow_dispatch', now: at('2026-11-10T11:00:00Z') }).send).toBe(true)
+    })
+
+    it('le gel retient tout, même à la main', () => {
+      const freezeUntil = '2026-11-12T00:00:00Z'
+      expect(decideEvening({ event: 'schedule', now: at('2026-11-10T22:23:00Z'), freezeUntil })).toMatchObject({ send: false, frozen: true })
+      expect(decideEvening({ event: 'workflow_dispatch', now: at('2026-11-10T22:23:00Z'), freezeUntil }).send).toBe(false)
+    })
+
+    it('les crons du soir passent avant l’alpha (22:45 UTC)', async () => {
+      const { readFileSync } = await import('node:fs')
+      const { resolve } = await import('node:path')
+      const cron = (f) => readFileSync(resolve(process.cwd(), '../.github/workflows', f), 'utf8').match(/cron: "(\d+) (\d+) \* \* \*"/).slice(1).map(Number)
+      const [am, ah] = cron('play-alpha.yml')
+      for (const f of ['play-listing.yml', 'play-subscriptions.yml']) {
+        const [m, h] = cron(f)
+        expect(h * 60 + m).toBeLessThan(ah * 60 + am)
+        expect(h * 60 + m).toBeGreaterThanOrEqual(ah * 60 + am - 30)
+      }
+      expect(EVENING_UTC).toBe('22:23')
+    })
   })
 })
