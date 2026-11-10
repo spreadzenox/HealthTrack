@@ -308,8 +308,8 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   retrouver (Tendances › Jour).
 - [ ] **POLISH-SIM-32** Compteur « 9/28 jours » de la digestion à J45 : dire la fenêtre (« sur les 28 derniers jours »
   ou « depuis le début ») ; vérifier que le jeu de démo J45 de l'outil a bien 45 jours de digestion.
-- [ ] **POLISH-SIM-33** Analyses s'ouvre sur Bien-être alors que l'objectif choisi est « Ma digestion » : ouvrir
-  l'onglet Digestion pour cet objectif.
+- [x] **POLISH-SIM-33** ✅ 10/11 15:35 : Analyses s'ouvrait sur Bien-être avec l'objectif « Ma digestion » ; l'onglet
+  du bas mène à Digestion avec « Ma digestion » ou « Mon cycle » (`TabBar`, test rouge puis vert).
 - [ ] **POLISH-SIM-34** Tendances › Sommeil, détail du jour : « Plus de soleil que d'habitude (8 h) −1,43 pt » un
   10 novembre, quand Analyses donne le soleil « pas assez net » : vérifier la donnée de soleil de démo et la règle
   « net » de « Ce qui a pu peser ».
