@@ -299,6 +299,30 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   bien-être comme mesure suivie (sommeil ou VFC comme résultat : vérifier la règle 5 avant de proposer) ; synthèse
   « ce mois-ci et le mois dernier » dans Tendances. Un essai générique (« se coucher plus tôt ») heurte la règle 6 :
   seulement comme hypothèse de départ dite comme telle.
+- [x] **POLISH-SIM-30** ✅ 10/11 14:35 (2 personas sur 2, `simulations/2026-11-10-1435-synthese.md`) : Analyses, le
+  hachurage « pas assez net » ne se voyait pas sur les petites barres ; chiffre en gris pour un lien pas assez net,
+  légende « hachuré, chiffre en gris : pas assez net » ; test rouge puis vert. Reste (idée) : toucher une ligne pour
+  voir la fourchette chiffrée et le nombre de jours.
+- [ ] **POLISH-SIM-31** Aujourd'hui dit « 3/5 d'après 3 lectures du visage » alors que le Journal du jour ne montre
+  aucune lecture : vérifier (données de démo ou vrai écart) ; une information, une maison, mais le nombre doit se
+  retrouver (Tendances › Jour).
+- [ ] **POLISH-SIM-32** Compteur « 9/28 jours » de la digestion à J45 : dire la fenêtre (« sur les 28 derniers jours »
+  ou « depuis le début ») ; vérifier que le jeu de démo J45 de l'outil a bien 45 jours de digestion.
+- [ ] **POLISH-SIM-33** Analyses s'ouvre sur Bien-être alors que l'objectif choisi est « Ma digestion » : ouvrir
+  l'onglet Digestion pour cet objectif.
+- [ ] **POLISH-SIM-34** Tendances › Sommeil, détail du jour : « Plus de soleil que d'habitude (8 h) −1,43 pt » un
+  10 novembre, quand Analyses donne le soleil « pas assez net » : vérifier la donnée de soleil de démo et la règle
+  « net » de « Ce qui a pu peser ».
+- [ ] **POLISH-SIM-35** Outil des personas : `--equipment=watch` (Galaxy Watch) sans SpO2 (« Jamais reçu : oxygène
+  du sang ») ; source « Samsung Health » sur un Pixel en `phone`. Aligner sur `PERSONAS.md` ; vérifier aussi « dernières
+  mesures il y a 2 jours » face aux pas d'hier.
+- [ ] **POLISH-SIM-36** Journal : la tuile Sommeil ne s'ouvre pas (l'ouvrir sur Tendances › Sommeil, comme Aujourd'hui) ;
+  le « … » d'une note de digestion n'offre que « Supprimer ».
+- [ ] **POLISH-SIM-37** Vos données : dire le format de l'export (JSON) ; Analyses › Digestion « Voir un exemple » ouvre
+  la visite générale au lieu d'un exemple digestion.
+- [ ] **PROP-SIM-10** (proposition avec maquette, pas de code sans accord ; rejoint POLISH-SIM-8) noter ses règles et
+  relier cycle et douleurs (« Mon cycle » ne débloque rien de visible) ; type et zone de la gêne ; essai lancé soi-même
+  dans Agir ; aperçu du rapport PDF ; export CSV ; groupes FODMAP plus visibles dans Repas et Analyses.
 - [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`). Fait le
   09/11 08:35 : objectif d'onboarding (`--goals`), profil de saisie (`--notes=few`), consigne aux agents sur ce qui
   n'existe pas dans la version web. Fait le 08/11 20:35 : le jour 1 ouvre le nouvel accueil même

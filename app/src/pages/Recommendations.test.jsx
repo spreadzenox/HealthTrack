@@ -66,6 +66,10 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(weigh).toHaveTextContent('Moyen terme')
     expect(within(weigh).getByText('Sommeil').closest('li')).toHaveAttribute('data-tone', 'night')
     expect(within(weigh).getByText('Temps d’écran').closest('li')).toHaveClass('is-unsure')
+    // simulation du 10/11 : sur une petite barre le hachurage ne se voit pas ; le chiffre passe en gris
+    expect(within(weigh).getByText('Temps d’écran').closest('li').querySelector('.reco-effect-value')).toHaveClass('is-unsure')
+    expect(within(weigh).getByText('Sommeil').closest('li').querySelector('.reco-effect-value')).not.toHaveClass('is-unsure')
+    expect(weigh.querySelector('.reco-legend')).toHaveTextContent('hachuré, chiffre en gris : pas assez net')
     expect(within(weigh).queryByText('VFC')).toBeNull()
     expect(within(screen.getByRole('region', { name: 'À regarder, pas à changer' })).getByText('VFC')).toBeInTheDocument()
     // POLISH-SIM-23 : des jours notés, comme le compte à rebours
