@@ -260,6 +260,15 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   compte ce débord dans « CIBLE < 44 px » ; test `profileCompact.test.js` rouge puis vert ; captures
   `runs/captures/2026-11-10-0435-profil-serre-*`. Vus sans défaut : Repas, Analyses › Digestion, Plus, Nouveautés,
   Premium (formules hors période de lancement).
+- [x] **MONO-CHIFFRES** ✅ 10/11 05:35 (revue `--play` du run, leçon 11 « police mono pour les chiffres seulement ») :
+  « 6 h 30 », « d'habitude 49 ms » (Aujourd'hui), tuiles du Journal (« 37, normal », « 69 à 83 bpm », « 10 085 »),
+  quantités des repas (« 150 g »), Tendances (valeur, fourchette, « +0,4 pt », « 31 % » de l'étoile) et « 1 847 entrées »
+  étaient entièrement en mono : unités, espaces et virgule y prenaient une chasse fixe. `utils/monoDigits` ne met en
+  mono que les suites de chiffres (signe compris) ; l'espace des milliers reste un nœud de texte (nom accessible
+  inchangé), le groupe d'avant prend 0,12 em de marge ; `.mono` aussi dans `tokens.css` (pages chargées à la demande).
+  Tests rouges puis verts ; captures `runs/captures/2026-11-10-0535-mono-chiffres-*`. Restent vus, non faits : étiquettes
+  en mono qui sont des mots (« premium » de Vos données, `fodmap-tag`, `fodmap-kicker` de la Réintroduction) ; « 3,3 »
+  du détail de Tendances (virgule mono) ; à reprendre avec `monoDigits` au prochain run.
 - [x] **INTRO-TITRE (reste)** ✅ 09/11 18:35 : vérifié au navigateur, les six titres de Paramètres ont la même graisse
   (600, 16 px, Figtree) ; l'écart vu le 09/11 07:35 n'existe pas. Rien changé.
 - [ ] **PROP-OBJECTIF** (proposition au propriétaire avec maquette, run « idées » ; pas de code sans accord)

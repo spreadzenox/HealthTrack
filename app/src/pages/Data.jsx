@@ -8,6 +8,7 @@ import { APP_NAME } from '../config/brand'
 import DoctorReportCard from '../components/DoctorReportCard'
 import '../Food.css'
 import { appLocale, localeDate } from '../i18n/locale.js'
+import { monoDigits } from '../utils/monoDigits'
 
 async function isAndroidNative() {
   try {
@@ -222,7 +223,7 @@ export default function Data() {
               : 'Un fichier rangé dans Documents.'}
           </p>
           {entryCount > 0 && (
-            <p className="data-count mono">{plural(entryCount, 'entrée')} et votre profil</p>
+            <p className="data-count">{monoDigits(plural(entryCount, 'entrée'))} et votre profil</p>
           )}
           <button type="button" className="btn" onClick={handleExport} disabled={nothingToExport}>
             Télécharger la sauvegarde

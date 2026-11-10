@@ -16,6 +16,7 @@ import { measureTone } from '../theme/themes'
 import LineIcon from './LineIcon'
 import StripPlus from './StripPlus'
 import './TodayBySource.css'
+import { monoDigits } from '../utils/monoDigits'
 
 const ICONS = {
   sleep: 'moon', hrv: 'pulse', restingHr: 'heart', steps: 'steps', screen: 'phone',
@@ -87,13 +88,13 @@ export default function TodayBySource({
                   {i.label}
                   {i.when && <span className="today-data-when"> · {i.when}</span>}
                 </span>
-                <span className="today-data-value mono">{i.value}</span>
+                <span className="today-data-value">{monoDigits(i.value)}</span>
                 {n && (
                   <span className={`today-data-usual${n.direction ? ' is-notable' : ''}`}>
                     {n.direction && (
                       <span className="today-data-arrow mono" aria-label={n.text}>{n.direction === 'up' ? '↑' : '↓'}</span>
                     )}
-                    <span>d’habitude <span className="mono">{n.usualValue}</span></span>
+                    <span>d’habitude <span className="today-data-usual-value">{monoDigits(n.usualValue)}</span></span>
                   </span>
                 )}
                 </Row>

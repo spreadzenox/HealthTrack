@@ -4,6 +4,9 @@ import { BrowserRouter } from 'react-router-dom'
 import Data from './Data'
 import { APP_NAME } from '../config/brand'
 
+// MONO-CHIFFRES : le nombre est dans son propre span (mono), on lit la ligne entière.
+const countText = (re) => (_, el) => el?.classList?.contains('data-count') && re.test(el.textContent)
+
 vi.mock('../storage/localHealthStorage', () => ({
   exportToJson: vi.fn(),
   importFromJson: vi.fn(),
@@ -383,7 +386,7 @@ describe('Data page — ce que contient la sauvegarde (POL-PLAY-79)', () => {
     const { countAllEntries } = await import('../storage/localHealthStorage')
     countAllEntries.mockResolvedValue(1918)
     renderData()
-    expect(await screen.findByText(/1\s918 entrées et votre profil/)).toBeInTheDocument()
+    expect(await screen.findByText(countText(/1\s918 entrées et votre profil/))).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Télécharger la sauvegarde' })).toBeEnabled()
   })
 
@@ -392,7 +395,7 @@ describe('Data page — ce que contient la sauvegarde (POL-PLAY-79)', () => {
     countAllEntries.mockResolvedValue(3)
     countEntries.mockImplementation(async ({ type } = {}) => (type === 'context' ? 1 : 0))
     renderData()
-    expect(await screen.findByText(/2 entrées et votre profil/)).toBeInTheDocument()
+    expect(await screen.findByText(countText(/2 entrées et votre profil/))).toBeInTheDocument()
     countAllEntries.mockResolvedValue(1)
     await act(async () => { window.dispatchEvent(new CustomEvent('health-entries-updated')) })
     expect(await screen.findByText(/Rien à sauvegarder pour l’instant/)).toBeInTheDocument()
@@ -405,7 +408,7 @@ describe('Data page — ce que contient la sauvegarde (POL-PLAY-79)', () => {
     renderData()
     await screen.findByText(/Rien à sauvegarder/)
     await act(async () => { window.dispatchEvent(new CustomEvent('health-entries-updated')) })
-    expect(await screen.findByText(/12 entrées et votre profil/)).toBeInTheDocument()
+    expect(await screen.findByText(countText(/12 entrées et votre profil/))).toBeInTheDocument()
   })
 
   it('si le comptage échoue, l’export reste possible', async () => {

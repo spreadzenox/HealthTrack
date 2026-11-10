@@ -404,7 +404,8 @@
 
 .day-summary-item dd {
   margin: 0;
-  font-family: var(--font-mono);
+  /* MONO-CHIFFRES (10/11) : seuls les nombres sont en mono (span .mono de monoDigits), unités et mots en Figtree. */
+  font-family: var(--font-sans);
   font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--text);
@@ -537,7 +538,7 @@
 
 .meal-item-qty {
   flex-shrink: 0;
-  font-family: var(--font-mono);
+  /* MONO-CHIFFRES : « 150 g », le nombre seul en mono */
   font-size: 0.85em;
   color: var(--text-muted);
   white-space: nowrap;

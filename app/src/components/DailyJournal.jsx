@@ -21,6 +21,7 @@ import { chipKey, chipTheme, chipValueBreaks, summaryChips } from '../services/j
 import { measureNorms, normSinceFromChanges, readDeviationEntries } from '../services/dayDeviations'
 import { lastAnalysis } from '../services/analysisRunner'
 import LineIcon from './LineIcon'
+import { monoDigits } from '../utils/monoDigits'
 
 /** Icône de chaque mesure du jour (ORG-2, leçon 9 : une icône pour toutes les mesures). */
 const CHIP_ICONS = {
@@ -349,11 +350,11 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays 
             return (
               <div key={label} className="day-summary-item" data-theme={chipTheme(label)}>
                 <dt><LineIcon name={CHIP_ICONS[key] ?? 'dots'} size={14} />{label}</dt>
-                <dd>{chipValueBreaks(value)}</dd>
+                <dd>{monoDigits(chipValueBreaks(value))}</dd>
                 {note && <dd className="day-summary-usual">{note}</dd>}
                 {n?.direction && (
                   <dd className="day-summary-usual" aria-label={n.text}>
-                    {n.direction === 'up' ? '↑' : '↓'} d’habitude <span className="mono">{n.usualValue}</span>
+                    {n.direction === 'up' ? '↑' : '↓'} d’habitude <span style={{ whiteSpace: 'nowrap' }}>{monoDigits(n.usualValue)}</span>
                   </dd>
                 )}
               </div>

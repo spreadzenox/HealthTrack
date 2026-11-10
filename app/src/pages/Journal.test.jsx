@@ -91,7 +91,8 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     const [opts] = listEntries.mock.calls.filter(([o]) => !o?.type)[0]
     expect(sinceDays(opts)).toBeGreaterThan(3)
     expect(sinceDays(opts)).toBeLessThan(4)
-    expect(screen.getByText('8 h', { exact: false })).toBeInTheDocument()
+    // MONO-CHIFFRES : « 8 h » est découpé (le chiffre en mono) ; on lit le texte entier de la tuile
+    expect(screen.getByText((_, el) => el?.tagName === 'DD' && /^8\s?h/.test(el.textContent))).toBeInTheDocument()
     expect(document.querySelectorAll('.entry-score')).toHaveLength(1)
   })
 
@@ -212,7 +213,7 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
       { type: 'food', source: 'app_food', at: '2025-03-01T12:00:00Z', payload: { items: [{ ingredient: 'rice', quantity: '1 cup' }] } },
     ])
     expect(screen.getByText(/rice/)).toBeInTheDocument()
-    expect(screen.getByText(/1 cup/)).toBeInTheDocument()
+    expect(screen.getByText((_, el) => el?.classList?.contains('meal-item-qty') && /1 cup/.test(el.textContent))).toBeInTheDocument()
     expect(summaryValue('Repas')).toBe('1')
   })
 
