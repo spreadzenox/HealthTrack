@@ -174,3 +174,7 @@
 [data-tone='night'] { --tone-bg: var(--night-bg); --tone-text: var(--night-text); --tone-label: var(--night-label); --tone-track: var(--night-track); }
 [data-tone='rose'] { --tone-bg: var(--rose-bg); --tone-text: var(--rose-text); --tone-label: var(--rose-label); --tone-track: var(--rose-track); }
 [data-tone='stone'] { --tone-bg: var(--stone-bg); --tone-text: var(--stone-text); --tone-label: var(--stone-label); --tone-track: var(--stone-track); }
+
+/* Chiffres en mono, partout (leçon 11) : utilisé par `utils/monoDigits` dans des pages chargées à la demande. */
+.mono { font-family: var(--font-mono); }
+.mono-sep { margin-inline-end: 0.12em; }

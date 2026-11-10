@@ -1,4 +1,5 @@
 import { frenchLigatures, shortFoodName } from '../utils/format'
+import { monoDigits } from '../utils/monoDigits'
 
 /**
  * Aliments d'un repas, un par ligne, quantité à droite en mono (Journal et page Repas). Remplace la liste « à la
@@ -13,7 +14,7 @@ export default function MealItemList({ items, max, moreLabel = (n) => `+${n}`, m
       {items.slice(0, max).map((item, i) => (
         <li key={i} title={frenchLigatures(item.ingredient)}>
           <span className="meal-item-name">{shortFoodName(item.ingredient)}</span>
-          {item.quantity && <span className="meal-item-qty">{item.quantity}</span>}
+          {item.quantity && <span className="meal-item-qty">{monoDigits(item.quantity)}</span>}
         </li>
       ))}
       {items.length > max && <li className={moreClassName}>{moreLabel(items.length - max)}</li>}

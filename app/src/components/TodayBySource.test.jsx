@@ -4,6 +4,9 @@ import { BrowserRouter } from 'react-router-dom'
 import TodayBySource from './TodayBySource'
 import { sourcesSentence } from '../services/today'
 
+// MONO-CHIFFRES : la valeur est découpée (chiffres en mono) ; on la retrouve par son texte complet.
+const valueEl = (t) => screen.getByText((_, el) => el?.classList?.contains('today-data-value') && el.textContent === t)
+
 const NOW = new Date(2026, 9, 21, 12)
 const at = (h) => new Date(2026, 9, 21, h).toISOString()
 const noHistory = async () => []
@@ -35,11 +38,11 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
     wrap({ tiles, summary: { screenMinutes: 45 } })
     expect(screen.getByRole('heading', { name: 'Vos données du jour' })).toBeInTheDocument()
     expect(screen.queryByRole('region', { name: 'Montre' })).toBeNull()
-    const sleep = screen.getByText('7 h 32').closest('li')
+    const sleep = valueEl('7 h 32').closest('li')
     expect(sleep).toHaveAttribute('data-tone', 'night')
     expect(sleep.querySelector('[data-icon="moon"]')).not.toBeNull()
-    expect(screen.getByText('3 456').closest('li')).toHaveAttribute('data-tone', 'lilac')
-    expect(screen.getByText('45 min').closest('li')).toHaveAttribute('data-tone', 'stone')
+    expect(valueEl('3 456').closest('li')).toHaveAttribute('data-tone', 'lilac')
+    expect(valueEl('45 min').closest('li')).toHaveAttribute('data-tone', 'stone')
   })
 
   it('chaque ligne ouvre sa courbe dans Tendances (POLISH-SIM-2)', () => {
@@ -73,7 +76,7 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
       { type: 'gut', at: at(10), payload: { level: 'pain' } },
     ]
     const { unmount } = wrap({ entries, summary: { meals: 1 }, showGut: true })
-    expect(screen.getByText('5/5').closest('li')).toHaveAttribute('data-tone', 'mint')
+    expect(valueEl('5/5').closest('li')).toHaveAttribute('data-tone', 'mint')
     expect(screen.getByText('Douleur').closest('li')).toHaveAttribute('data-tone', 'peach')
     unmount()
     wrap({ entries, summary: { meals: 1 }, showGut: false })
@@ -82,9 +85,16 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
 
   it('dès 7 jours d’historique, l’écart à votre norme sur la mesure (flèche seulement si net)', async () => {
     wrap({ tiles: [{ ...tiles[0], value: '5 h 30' }], readNorms: async () => sleepHistory(330) })
-    const row = screen.getByText('5 h 30').closest('li')
+    const row = valueEl('5 h 30').closest('li')
     await waitFor(() => expect(row).toHaveTextContent('d’habitude 7 h 10'))
     expect(within(row).getByLabelText('Nuit plus courte')).toHaveTextContent('↓')
+  })
+
+  it('mono pour les chiffres seulement : « h » et « ms » dans la police du texte (leçon 11, MONO-CHIFFRES)', async () => {
+    wrap({ tiles: [{ ...tiles[0], value: '5 h 30' }], readNorms: async () => sleepHistory(330) })
+    const row = valueEl('5 h 30').closest('li')
+    await waitFor(() => expect(row).toHaveTextContent('d’habitude 7 h 10'))
+    expect([...row.querySelectorAll('.mono:not(.today-data-arrow)')].map((s) => s.textContent)).toEqual(['5', '30', '7', '10'])
   })
 
   it('VFC reprise d’hier : son « d’habitude » aussi, comparé à la nuit d’hier (POLISH-SIM-22)', async () => {
@@ -95,7 +105,7 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
       hist.push({ type: 'heart_rate', at: new Date(2026, 9, d, 4).toISOString(), payload: { subtype: 'heartRateVariability', value: v } })
     }
     wrap({ tiles: [{ key: 'hrv', label: 'VFC nuit', value: '62 ms', when: 'hier', sources: [] }], readNorms: async () => hist })
-    const row = screen.getByText('62 ms').closest('li')
+    const row = valueEl('62 ms').closest('li')
     await waitFor(() => expect(row).toHaveTextContent('d’habitude 48 ms'))
     expect(within(row).getByLabelText('VFC de la nuit plus haute')).toHaveTextContent('↑')
   })

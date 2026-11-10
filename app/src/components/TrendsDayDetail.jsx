@@ -6,6 +6,7 @@
  * de zéro, couleur du thème). Des estimations de l'expression du visage, jamais un diagnostic.
  */
 import { contributionText, formatPoints } from '../services/trendsDay'
+import { monoDigits } from '../utils/monoDigits'
 
 const pct = (p) => `${Math.round(p * 100)} %`
 const THEME_TONE = { wellbeing: 'mint', digestion: 'peach', nutrition: 'peach', activity: 'lilac', sleep: 'night', body: 'rose', context: 'stone' }
@@ -41,7 +42,7 @@ export function ExpressionStar({ mix }) {
         return (
           <text key={it.key} className="tdd-star-label" x={x} y={y} textAnchor="middle">
             <tspan x={x} dy="-0.2em">{it.label}</tspan>
-            <tspan x={x} dy="1.15em" className="tdd-star-pct">{pct(it.p)}</tspan>
+            <tspan x={x} dy="1.15em" className="tdd-star-pct">{Math.round(it.p * 100)}</tspan><tspan>{'\u202f%'}</tspan>
           </text>
         )
       })}
@@ -97,7 +98,7 @@ export function ContributionBars({ items }) {
             <span className="tdd-contrib-bar"
               style={c.points >= 0 ? { left: '50%', width: `${(c.points / max) * 50}%` } : { right: '50%', width: `${(-c.points / max) * 50}%` }} />
           </span>
-          <span className="tdd-contrib-value mono">{formatPoints(c.points)}</span>
+          <span className="tdd-contrib-value">{monoDigits(formatPoints(c.points))}</span>
         </li>
       ))}
     </ul>
