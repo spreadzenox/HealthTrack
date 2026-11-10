@@ -36,6 +36,7 @@ import {
 } from './localHealthStorage'
 import { importPendingFaceBursts } from '../services/faceBursts'
 import { APP_NAME } from '../config/brand'
+import { cycleByDay, periodEntry, symptomEntry } from '../services/cycle'
 
 describe('createEntry / listEntries', () => {
   it('stores an entry and retrieves it', async () => {
@@ -243,6 +244,18 @@ describe('exportToJson / importFromJson', () => {
     const entries = await listEntries({})
     expect(entries.length).toBe(1)
     expect(entries[0].payload.value).toBe(1000)
+  })
+
+  it('cycle (CYCLE-1) : règles et symptômes exportés et réimportés tels quels, sans doublon en « Ajouter »', async () => {
+    const cycle = [periodEntry('2026-10-01', 'heavy'), periodEntry('2026-10-02', 'medium'), symptomEntry('2026-10-01', 'cramps')]
+    await upsertEntries(cycle)
+    const json = await exportToJson()
+    globalThis.indexedDB = new IDBFactory()
+    expect(await importFromJson(json)).toMatchObject({ imported: 3 })
+    const back = await listEntries({ type: 'cycle' })
+    expect(cycleByDay(back).get('2026-10-02')).toMatchObject({ period: true, periodDay: 2, flow: 'medium' })
+    expect(await importFromJson(json, { merge: true })).toMatchObject({ imported: 0, skipped: 3 })
+    expect(parseBackup(json).byType.cycle).toBe(3)
   })
 
   it('exports every entry, beyond the per-type analysis limits (no silent data loss)', async () => {

@@ -21,6 +21,36 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🩸 Cycle (décision du propriétaire du 10/11 vers 18:50 : « Ok cycle ») — exception au mode polish
+
+Réponse aux propositions « lire le cycle depuis l'app Santé » (routine iOS, `journal/maquettes/cycle-sante/PROPOSITION.md`
+de HealthTrack-iOS) et PROP-SIM-10 pour sa partie cycle (« Mon cycle » ne débloque rien de visible). Maquettes iOS
+comme référence visuelle, sans nouvelle validation. Une étape testable par run. Les données de cycle restent sur le
+téléphone ; page de confidentialité mise à jour quand quelque chose s'affiche ou se lit.
+
+- [x] **CYCLE-1a** ✅ 10/11 19:35 Brique partagée, rien d'affiché : `services/cycle.js`. Stockage en entrées ordinaires
+  `type: 'cycle'` (`subtype` `period` + `flow` léger / moyen / abondant / inconnu, `spotting`, `symptom` parmi 5) :
+  **aucune migration de schéma**, donc export / import JSON et anciennes versions inchangés (test aller-retour,
+  « Ajouter » sans doublon). Saisie à midi local, une minute par sous-type pour que le dédoublonnage (source, date,
+  type) garde règles et symptômes d'un même jour. `cycleByDay` : jour des règles (un jour oublié ne coupe pas la
+  période), jour du cycle (rien avant les premières règles ni au-delà de 60 jours), saignement hors règles qui ne
+  commence pas de cycle, saisie la plus récente gagnante. `cycleVisible(goals, hasData)` : rien tant que « Mon
+  cycle » n'est pas coché et qu'il n'y a aucune donnée. Données : « N notes de cycle » dans l'aperçu d'import.
+- [ ] **CYCLE-1b** Journal › Jours : ligne « Règles · 2e jour · flux moyen » (ordinal par `<Ordinal>`) et jour du
+  cycle à côté de la date (« J12 » ou « 12e jour du cycle », à caler sur la maquette iOS), seulement si
+  `cycleVisible` ; entrées `cycle` hors de la liste des saisies (résumé, comme le sommeil) ; test rouge puis vert ;
+  captures claires et sombres avec et sans « Mon cycle ».
+- [ ] **CYCLE-2** Saisie des règles à la main en un geste depuis le bandeau d'ajout d'Aujourd'hui (flux en option,
+  « … » Modifier / Supprimer dans le Journal), visible si `cycleVisible`.
+- [ ] **CYCLE-3** Lecture de `MenstruationPeriodRecord` / `MenstruationFlowRecord` dans Health Connect (source
+  `health_connect`, mêmes entrées). **Bloqué par une action du propriétaire** : ajouter le type à la déclaration
+  Health Connect de la Play Console (P48, chemin exact et justification à préparer au début de l'étape dans
+  PRODUIT.md §4 et en tête du résumé), puis attendre sa confirmation transmise par le prompt. Si la Play Console ne
+  propose le type qu'après l'avoir vu dans une version : cette version en test interne seulement, Alpha retenue.
+  Sécurité des données inchangée (rien ne quitte le téléphone).
+- [ ] **CYCLE-4** (plus tard) Analyses : le cycle comme contexte de la digestion (variable X, règle 5), jamais une
+  cause ni un diagnostic.
+
 ## 🚪 Chantier accueil du 08/11 au soir (ACC-1 à ACC-10) — PRIORITÉ ABSOLUE de la session du soir
 
 Mots du propriétaire (08/11 vers 13:30) : « Non, aujourd'hui, ce sur quoi on va travailler, ça va être l'ensemble du tutoriel d'accueil. Je pense qu'on peut le rework complètement aujourd'hui. Quand à la première installation, il y a beaucoup de choses qui se passent, mais je suis pas du tout convaincu. J'aimerais bien faire un petit tutoriel qui explique bien comment fonctionne l'app, etc. La première installation qui permet à la personne de brancher toutes ses sources etc., etc. Et ensuite d'avoir potentiellement une petite preview en fait de ce que donnera l'application une fois qu'elle aura des données. » Il veut que ce soit « prêt avant minuit ce soir ».
