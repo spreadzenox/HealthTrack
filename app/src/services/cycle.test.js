@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   CYCLE_TYPE, cycleByDay, cycleLineParts, cycleVisible, daysBetween, hasCycleData, MAX_CYCLE_DAY,
-  periodEntry, periodEntryOn, spottingEntry, symptomEntry,
+  periodEntry, periodEntryOn, spottingEntry, symptomEntry, symptomEntriesOn,
 } from './cycle'
 import { localDateKey } from './analysisEngine'
 
@@ -116,5 +116,20 @@ describe('periodEntryOn (CYCLE-2)', () => {
     expect(periodEntryOn([a, b, s, y], '2026-11-10').id).toBe(2)
     expect(periodEntryOn([s, y], '2026-11-10')).toBeNull()
     expect(periodEntryOn(null, '2026-11-10')).toBeNull()
+  })
+})
+
+describe('cycle : symptômes d’un jour (CYCLE-2c)', () => {
+  it('donne l’entrée de chaque symptôme noté ce jour-là, la plus récente, et ignore les autres jours et sous-types', () => {
+    const a = { ...symptomEntry('2026-11-10', 'cramps'), id: 1 }
+    const b = { ...symptomEntry('2026-11-10', 'cramps'), id: 2, updated_at: '2026-11-10T13:00:00Z' }
+    const c = { ...symptomEntry('2026-11-09', 'fatigue'), id: 3 }
+    const d = { ...periodEntry('2026-11-10', 'light'), id: 4 }
+    const e = { ...symptomEntry('2026-11-10', 'bloating'), id: 5 }
+    const map = symptomEntriesOn([a, b, c, d, e], '2026-11-10')
+    expect([...map.keys()].sort()).toEqual(['bloating', 'cramps'])
+    expect(map.get('bloating').id).toBe(5)
+    expect(map.get('cramps').id).toBe(2)
+    expect(symptomEntriesOn(null, '2026-11-10').size).toBe(0)
   })
 })

@@ -64,6 +64,26 @@
 .period-choices .gut-choice[aria-pressed='true'] { border-color: var(--rose-label); }
 .period-choices .gut-choice[aria-pressed='true'] .gut-choice-radio { background: var(--rose-label); }
 .period-sheet-more { display: flex; justify-content: center; margin-top: 12px; }
+.period-sheet-symptoms-title { margin-top: 20px; }
+.period-symptoms { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.period-symptom {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+.period-symptom[aria-pressed='true'] {
+  border-color: var(--rose-label);
+  background: var(--rose-bg);
+  color: var(--rose-label);
+  font-weight: 600;
+}
+.period-symptom:disabled { cursor: default; }
 .period-sheet-error { color: var(--color-danger); margin: 8px 0 0; }
 
 /* Cigarette (compteur actif) : une case du bandeau comme les autres. */

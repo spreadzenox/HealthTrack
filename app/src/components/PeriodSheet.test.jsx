@@ -98,4 +98,37 @@ describe('PeriodSheet : noter ses règles en un geste (CYCLE-2)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Annuler' }))
     expect(done).toHaveBeenCalledTimes(2)
   })
+
+  it('symptômes (CYCLE-2c) : un geste note un symptôme du jour, un second le retire, ceux d’une autre source restent', async () => {
+    store.listEntries.mockResolvedValue([
+      { id: 11, type: 'cycle', source: 'app_cycle', at: new Date(2026, 10, 10, 12, 3).toISOString(), payload: { subtype: 'symptom', symptom: 'pelvic_pain' } },
+      { id: 12, type: 'cycle', source: 'health_connect', at: noon(10), payload: { subtype: 'symptom', symptom: 'fatigue' } },
+      { id: 13, type: 'cycle', source: 'app_cycle', at: noon(9), payload: { subtype: 'symptom', symptom: 'cramps' } },
+    ])
+    render(<PeriodSheet now={now} />)
+    const group = await screen.findByRole('group', { name: 'Symptômes' })
+    const crampes = screen.getByRole('button', { name: 'Crampes' })
+    await waitFor(() => expect(crampes).toBeEnabled())
+    expect(group).toContainElement(crampes)
+    expect(crampes).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: 'Douleur pelvienne' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Fatigue' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Fatigue' })).toBeDisabled()
+    fireEvent.click(crampes)
+    await waitFor(() => expect(store.createEntry).toHaveBeenCalledWith({
+      type: 'cycle', source: 'app_cycle', at: new Date(2026, 10, 10, 12, 2).toISOString(),
+      payload: { subtype: 'symptom', symptom: 'cramps' },
+    }))
+    fireEvent.click(screen.getByRole('button', { name: 'Douleur pelvienne' }))
+    await waitFor(() => expect(store.deleteEntry).toHaveBeenCalledWith(11))
+  })
+
+  it('un jour passé (Journal) : seulement le flux, pas les symptômes', async () => {
+    store.listEntries.mockResolvedValue([
+      { id: 8, type: 'cycle', source: 'app_cycle', at: noon(9), payload: { subtype: 'period', flow: 'light' } },
+    ])
+    render(<PeriodSheet now={now} dateKey="2026-11-09" onDone={vi.fn()} />)
+    await screen.findByText(/jour des règles/)
+    expect(screen.queryByRole('group', { name: 'Symptômes' })).toBeNull()
+  })
 })

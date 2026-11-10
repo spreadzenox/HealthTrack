@@ -156,6 +156,23 @@ export function periodEntryOn(entries, dateKey) {
   return found
 }
 
+/**
+ * Symptômes du cycle notés le jour `dateKey` : symptôme → entrée (la plus récente). « Mes règles » (CYCLE-2c) s'en
+ * sert pour cocher les symptômes déjà notés et retirer celui qu'on décoche.
+ * @returns {Map<string, object>}
+ */
+export function symptomEntriesOn(entries, dateKey) {
+  const out = new Map()
+  for (const e of entries || []) {
+    const p = e?.payload
+    if (e?.type !== CYCLE_TYPE || p?.subtype !== 'symptom' || !SYMPTOMS.includes(p.symptom) || !e.at) continue
+    if (localDateKey(e.at) !== dateKey) continue
+    const prev = out.get(p.symptom)
+    if (!prev || stamp(e) >= stamp(prev)) out.set(p.symptom, e)
+  }
+  return out
+}
+
 /** Le cycle a-t-il au moins une donnée ? */
 export function hasCycleData(entries) {
   return (entries || []).some((e) => e?.type === CYCLE_TYPE)
