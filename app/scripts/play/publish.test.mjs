@@ -25,7 +25,7 @@ const happy = () => ({
   [`GET ${EDITS}/E1/details`]: { body: { defaultLanguage: 'fr-FR' } },
   [`POST ${UPLOAD_API}/${PKG}/edits/E1/bundles?uploadType=media`]: { body: { versionCode: 350, sha256: 'ab' } },
   [`PUT ${EDITS}/E1/tracks/internal`]: { body: {} },
-  [`POST ${EDITS}/E1:commit`]: { body: { id: 'E1' } },
+  [`POST ${EDITS}/E1:commit?changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT`]: { body: { id: 'E1' } },
   [`DELETE ${EDITS}/E1`]: { body: {} },
 })
 
@@ -67,13 +67,14 @@ describe('envoi Google Play (jalon 3c)', () => {
 
   it('validation qui exige changesNotSentForReview : relance avec le paramètre', async () => {
     const routes = happy()
-    routes[`POST ${EDITS}/E1:commit`] = {
+    routes[`POST ${EDITS}/E1:commit?changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT`] = {
       status: 400,
       body: { error: { message: 'Changes cannot be sent for review automatically. Please set the query parameter changesNotSentForReview to true.' } },
     }
     routes[`POST ${EDITS}/E1:commit?changesNotSentForReview=true`] = { body: {} }
-    const { fetchImpl } = fakePlay(routes)
+    const { fetchImpl, calls } = fakePlay(routes)
     expect((await publishBundle(args(fetchImpl))).notSentForReview).toBe(true)
+    expect(calls.at(-1).key).toBe(`POST ${EDITS}/E1:commit?changesNotSentForReview=true`)
   })
 
   it('versionCode déjà envoyé (relance d’un run) : abandonne l’edit sans erreur', async () => {
@@ -107,7 +108,7 @@ describe('envoi Google Play (jalon 3c)', () => {
     expect(r).toMatchObject({ outcome: 'published', track: 'alpha', status: 'completed', reusedBundle: true, testersAdded: false })
     const put = calls.find((c) => c.key === `PUT ${EDITS}/E1/tracks/alpha`)
     expect(JSON.parse(put.init.body).releases[0].versionCodes).toEqual(['350'])
-    expect(calls.at(-1).key).toBe(`POST ${EDITS}/E1:commit`)
+    expect(calls.at(-1).key).toBe(`POST ${EDITS}/E1:commit?changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT`)
   })
 
   it('livraison continue (reuseOnly) : aucun AAB importé, la version du test interne passe sur l’alpha', async () => {
@@ -115,7 +116,7 @@ describe('envoi Google Play (jalon 3c)', () => {
     const r = await publishBundle(args(fetchImpl, { track: 'alpha', aab: undefined, reuseOnly: true }))
     expect(r).toMatchObject({ outcome: 'published', track: 'alpha', status: 'completed', reusedBundle: true })
     expect(calls.some((c) => c.key.includes('/bundles'))).toBe(false)
-    expect(calls.at(-1).key).toBe(`POST ${EDITS}/E1:commit`)
+    expect(calls.at(-1).key).toBe(`POST ${EDITS}/E1:commit?changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT`)
   })
 
   it('reuseOnly hors alpha : refusé avant tout appel', async () => {
@@ -217,7 +218,7 @@ describe('fichier de correspondance R8 (POL-PLAY-10)', () => {
     expect(r.mapping).toBe('uploaded')
     const keys = calls.map((c) => c.key)
     expect(keys.indexOf(`POST ${MAPPING_URL}`)).toBe(3)
-    expect(keys.at(-1)).toBe(`POST ${EDITS}/E1:commit`)
+    expect(keys.at(-1)).toBe(`POST ${EDITS}/E1:commit?changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT`)
     expect(calls[3].init.headers['Content-Type']).toBe('application/octet-stream')
     expect(calls[3].init.body).toEqual(new Uint8Array([9]))
   })
@@ -312,7 +313,7 @@ describe('lecture au déverrouillage en test interne (P28, 27/10)', () => {
     const { fetchImpl, calls } = fakePlay(routes)
     await expect(publishBundle(args(fetchImpl, { privateTrack: true }))).rejects.toThrow(/seul propriétaire/)
     expect(calls.some((c) => c.key.startsWith('PUT'))).toBe(false)
-    expect(calls.some((c) => c.key === `POST ${EDITS}/E1:commit`)).toBe(false)
+    expect(calls.some((c) => c.key === `POST ${EDITS}/E1:commit?changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT`)).toBe(false)
     expect(calls.at(-1).key).toBe(`DELETE ${EDITS}/E1`)
   })
 

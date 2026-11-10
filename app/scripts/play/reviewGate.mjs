@@ -7,6 +7,9 @@
  * Store », « Play — abonnements ») attendent donc `minHours` (24 par défaut) après le dernier d'entre eux ; un envoi
  * reporté part au passage quotidien du workflow (07:xx UTC) dès que le délai est écoulé.
  *
+ * Chaque envoi remplace la version de la piste : la validation de l'edit annule l'examen en cours puis envoie la
+ * nouvelle version (`changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT`, explicite dans publish.mjs depuis le 10/11).
+ *
  * Gel (`review-freeze.json`, champ `until`) : rien ne part avant cette date, par exemple pendant l'examen de la
  * demande d'accès à la production (P30). La routine le règle par une PR ; il ne touche pas l'app.
  */

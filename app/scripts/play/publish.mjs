@@ -14,6 +14,8 @@ export const UPLOAD_API = 'https://androidpublisher.googleapis.com/upload/androi
 /** Pistes autorisées : jamais « production ». */
 export const ALLOWED_TRACKS = ['internal', 'alpha']
 export const NOTES_MAX = 500
+/** Validation de l'edit : un examen en cours est annulé et la nouvelle version envoyée à sa place (edits.commit). */
+export const CHANGES_IN_REVIEW_BEHAVIOR = 'CANCEL_IN_REVIEW_AND_SUBMIT'
 /** Groupe Google des testeurs du test fermé (piste alpha), ajouté à la piste s'il manque. */
 export const ALPHA_TESTERS_GROUP = 'halcya-testeurs@googlegroups.com'
 /**
@@ -250,7 +252,9 @@ export async function publishBundle({ packageName, aab, mapping, versionCode, tr
 
     let notSentForReview = false
     try {
-      await call(fetchImpl, 'Validation de l’edit', `${editUrl}:commit`, { method: 'POST', token })
+      // Google remplace la version de la piste et annule l'examen en cours avant d'envoyer la nouvelle (valeur par
+      // défaut de l'API, rendue explicite à la demande du propriétaire du 10/11 : pas de file d'anciennes versions).
+      await call(fetchImpl, 'Validation de l’edit', `${editUrl}:commit?changesInReviewBehavior=${CHANGES_IN_REVIEW_BEHAVIOR}`, { method: 'POST', token })
     } catch (err) {
       if (!(err instanceof PlayApiError && /changesNotSentForReview/.test(err.apiMessage))) throw err
       notSentForReview = true
