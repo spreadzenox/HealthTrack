@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 👆 **Journal : toucher une tuile ouvre sa courbe (10/11 16:35)** : une persona touchait « Sommeil » dans le Journal
+> sans que rien ne se passe. Comme sur Aujourd'hui, les tuiles Sommeil, Pas, VFC nuit, FC au repos, Écran et Bien-être
+> ouvrent maintenant Tendances sur leur mesure ; l'apparence ne change pas
+> ([clair](runs/captures/2026-11-10-1635-journal-tuiles-clair.png) · [sombre](runs/captures/2026-11-10-1635-journal-tuiles-sombre.png)).
+> Part ce soir (23:45). À tester : Journal › Jours, touchez « Sommeil ».
+
 > 🩶 **Analyses : les liens pas assez nets se voient tous (10/11 14:35)** : deux personas sur deux croyaient « nettes »
 > les lignes aux petites barres, où le hachurage ne se voit pas. Leur chiffre est maintenant en gris
 > ([capture](runs/captures/2026-11-10-1435-analyses-gris-1.png)). Les mêmes simulations (Endométriose J14, Ventre et
@@ -256,6 +262,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 16:35 — [Journal : les tuiles ouvrent leur courbe](runs/2026-11-10-1635-journal-tuiles.md) | 🎨 | POLISH-SIM-36 : les tuiles du jour qui ont une courbe ouvrent Tendances sur leur mesure, tuile entière touchable ; test rouge puis vert, captures claires et sombres. Reste POLISH-SIM-36b. Rien à faire de votre côté |
 | 10/11 14:35 — [Deux personas, liens pas assez nets en gris](runs/2026-11-10-1435-analyses-gris.md) | 🎨 | Simulations Endométriose J14 et Ventre et données J45 (POLISH-SIM-31 à 37, PROP-SIM-10) ; POLISH-SIM-30 : dans Analyses, un lien pas assez net a son chiffre en gris ; test, captures. Rien à faire de votre côté |
 | 10/11 13:35 — [Fiche du Store : captures à jour](runs/2026-11-10-1335-fiche-captures.md) | 🎨 | LISTING-CAPTURES : 7 captures refaites (Aujourd'hui, Tendances, Analyses, Agir avec essai, Repas, Réintroduction, Journal) ; options propres à chaque capture ; test contre les routes de redirection (rouge puis vert). Rien à faire de votre côté |
 | 10/11 12:35 — [Fiche du Store au passage du soir](runs/2026-11-10-1235-fiche-passage-soir.md) | 🔧 | CD-ALPHA-7b : la fiche (nouveau titre) et les abonnements n'étaient plus envoyés depuis le 03/11 ; ils partent chaque soir juste avant la version Alpha s'ils ont changé ; 5 tests rouges puis verts. Rien à faire de votre côté |
