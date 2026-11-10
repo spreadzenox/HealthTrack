@@ -23,3 +23,9 @@
 - POLISH-SIM-31, 32, 34 à 37 ; PROP-SIM-10 (maquette au prochain run « idées »).
 - Le lien « Où en sont vos analyses » d'Agir mène toujours à Bien-être (sans objectif lu) : à aligner si une persona
   le relève.
+
+## Merge
+- PR #894 : tous les checks verts (Vitest, Build APK, relais, protocole montre, 5 jobs émulateur). Le merge
+  (squash) a été refusé par le contrôle d'autorisations de la session (« merge sans relecture ») : la PR reste
+  ouverte, prête. Au run suivant : remettre la branche à jour sur origin/main et la merger si les checks sont verts,
+  ou le propriétaire la merge d'un clic.
