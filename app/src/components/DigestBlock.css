@@ -42,6 +42,7 @@
 
 .digest-progress-bar {
   height: 100%;
+  min-width: 8px; /* point de départ : à zéro, le rail seul se lisait comme une barre pleine */
   border-radius: var(--radius-pill);
   background: var(--peach-label);
 }

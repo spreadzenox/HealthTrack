@@ -99,6 +99,13 @@
 > [sombre](runs/captures/2026-11-10-0135-reintro-agir-play-sombre.png) ·
 > [groupes](runs/captures/2026-11-10-0135-reintro-agir-groupes-clair.png)).
 
+> ⚪ **Barres de progression vides lisibles (10/11 02:35)** : au premier jour, « 0/28 jours avec une note digestive »
+> s'affichait sous une barre qui paraissait pleine (le rail orange seul). La barre a maintenant un point de départ
+> foncé : vide, elle se voit vide (même chose pour le compte à rebours d'Analyses)
+> ([clair](runs/captures/2026-11-10-0235-barre-vide-aujourdhui-clair.png) ·
+> [sombre](runs/captures/2026-11-10-0235-barre-vide-aujourdhui-sombre.png) ·
+> [Analyses](runs/captures/2026-11-10-0235-barre-vide-analyses-clair.png)).
+
 > 📏 **Agir : le graphique d'un essai comme la maquette (10/11 00:35)** : « Résultat en cours » range maintenant les
 > lendemains « Avec » et « Sans » sur deux lignes d'une même échelle, resserrée sur vos valeurs ; la ligne « Écart »
 > a ses repères (−1, 0, +1) et une phrase dit l'écart : « Après 11 lendemains : −0,1 point, entre −1,4 et +1,2. »
@@ -180,6 +187,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 02:35 — [Barres de progression vides lisibles](runs/2026-11-10-0235-barre-vide.md) | 🎨 | POLISH-BARRE-VIDE : à 0/28, la barre paraissait pleine ; un point de départ de la hauteur du rail (Aujourd'hui et Analyses) ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 10/11 01:35 — [Réintroduction rangée sous Agir](runs/2026-11-10-0135-reintro-agir.md) | 🎨 | POLISH-REINTRO-AGIR : plus d'onglets d'Analyses sur la réintroduction (reste de l'ancienne organisation), retour « ← Agir » ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 10/11 00:35 — [Agir : le graphique d'un essai comme la maquette](runs/2026-11-10-0035-essai-axes.md) | 🎨 | POLISH-ESSAI-AXES : Avec / Sans en lignes sur une échelle commune, Écart gradué, phrase « Après N lendemains : … » ; option `--trial` de l'outil visuel ; test rouge puis vert, captures claires et sombres. Captures des 3 runs précédents jamais commitées (règle `git add -f` ajoutée à la charte). Rien à faire de votre côté |
 | 09/11 23:35 — [Agir : résultat dessiné dès le jour 1](runs/2026-11-09-2335-essai-vide.md) | 🎨 | POLISH-ESSAI-VIDE et POLISH-ESSAI-CLASSE : graphique vide avec axes et piste « Écart », une seule phrase ; classe SVG renommée ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
