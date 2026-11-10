@@ -11,6 +11,7 @@ import MealPhotoButton from './MealPhotoButton'
 import LineIcon from './LineIcon'
 import StripPlus from './StripPlus'
 import './TodayMeals.css'
+import { monoDigits } from '../utils/monoDigits'
 
 const hhmm = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 
@@ -34,7 +35,7 @@ export default function TodayMeals({ entries, now }) {
                 <Link to="/food" className="today-meal">
                   <span className="today-meal-time mono">{hhmm(e.at)}</span>
                   <span className="today-meal-name">{mealTitle(e)}</span>
-                  {kcal > 0 && <span className="today-meal-kcal mono">≈&nbsp;{kcal.toLocaleString(appLocale())}&nbsp;kcal</span>}
+                  {kcal > 0 && <span className="today-meal-kcal">≈&nbsp;{monoDigits(kcal.toLocaleString(appLocale()))}&nbsp;kcal</span>}
                   <LineIcon name="chevron" size={18} className="today-meal-chevron" />
                 </Link>
               </li>

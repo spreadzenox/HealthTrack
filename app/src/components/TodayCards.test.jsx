@@ -51,7 +51,7 @@ describe('GutCard', () => {
     wrap(<GutCard read={read} details onToggleDetails={() => {}} now={morning} />)
     expect(await screen.findByText('Dernière note : Calme, à 08:15.')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Calme' })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByText('7 jours · 1 note : 1 calme · 6 jours sans note')).toBeInTheDocument()
+    expect(document.querySelector('.today-details-line')).toHaveTextContent('7 jours · 1 note : 1 calme · 6 jours sans note')
   })
 
   it('« Quand consulter » : une phrase fixe dans les détails, jamais sans eux (POL-PLAY-60)', async () => {

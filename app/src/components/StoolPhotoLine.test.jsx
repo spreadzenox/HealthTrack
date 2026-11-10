@@ -9,6 +9,9 @@ vi.mock('../services/stoolPhoto', () => ({ analyzeStoolPhoto: (...a) => analyzeS
 
 import StoolPhotoLine from './StoolPhotoLine'
 
+// « type 4 » : le chiffre seul en mono (leçon 11), le texte est donc en deux nœuds
+const findEstimated = (t) => screen.findByText((_, el) => el?.classList?.contains('stool-estimated-type') && el.textContent === t)
+
 const PLAY = { aiRelay: true }
 const SIDELOAD = { aiRelay: false }
 const photo = () => new File(['x'], 'p.jpg', { type: 'image/jpeg' })
@@ -36,7 +39,7 @@ describe('forme des selles estimée par photo, dans le Journal (SELLES-PHOTO-2)'
     analyzeStoolPhoto.mockResolvedValue({ readable: true, bristol: 4, form: 'normal', confidence: 'high' })
     const { input } = await takePhoto()
     expect(input.getAttribute('capture')).toBe('environment')
-    await screen.findByText('type 4')
+    await findEstimated('type 4')
     expect(localStorage.getItem('halcya_ai_stool_consent')).toBe('1')
   })
 
@@ -51,7 +54,7 @@ describe('forme des selles estimée par photo, dans le Journal (SELLES-PHOTO-2)'
   it('la forme estimée est présélectionnée ; rien n’est enregistré avant « Enregistrer »', async () => {
     analyzeStoolPhoto.mockResolvedValue({ readable: true, bristol: 4, form: 'normal', confidence: 'high' })
     await takePhoto()
-    await screen.findByText('type 4')
+    await findEstimated('type 4')
     expect(screen.getByRole('button', { name: 'Normales' })).toHaveAttribute('aria-pressed', 'true')
     expect(createEntry).not.toHaveBeenCalled()
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
@@ -67,7 +70,7 @@ describe('forme des selles estimée par photo, dans le Journal (SELLES-PHOTO-2)'
   it('corrigée par la personne : sa forme est enregistrée, la proposition reste à côté', async () => {
     analyzeStoolPhoto.mockResolvedValue({ readable: true, bristol: 6, form: 'loose', confidence: 'medium' })
     await takePhoto()
-    await screen.findByText('type 6')
+    await findEstimated('type 6')
     fireEvent.click(screen.getByRole('button', { name: 'Dures' }))
     expect(screen.getByRole('button', { name: 'Dures' })).toHaveAttribute('aria-pressed', 'true')
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
@@ -104,7 +107,7 @@ describe('forme des selles estimée par photo, dans le Journal (SELLES-PHOTO-2)'
     localStorage.setItem('healthtrack_gemini_api_key', 'cle')
     analyzeStoolPhoto.mockResolvedValue({ readable: true, bristol: 2, form: 'hard', confidence: 'low' })
     await takePhoto(SIDELOAD)
-    await screen.findByText('type 2')
+    await findEstimated('type 2')
     expect(analyzeStoolPhoto.mock.calls[0][1]).toBe(SIDELOAD)
   })
 
@@ -134,7 +137,7 @@ describe('forme des selles estimée par photo, dans le Journal (SELLES-PHOTO-2)'
       expect(await screen.findByText('Vous avez corrigé 2 estimations sur 5.')).toBeInTheDocument()
       fireEvent.click(screen.getByRole('button', { name: /Selles : estimer la forme avec une photo/ }))
       fireEvent.change(container.querySelector('input[type="file"]'), { target: { files: [photo()] } })
-      await screen.findByText('type 4')
+      await findEstimated('type 4')
       expect(screen.getByText('Souvent corrigée chez vous : vérifiez la forme.')).toBeInTheDocument()
     })
   })

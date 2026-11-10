@@ -66,6 +66,9 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     expect(document.body.textContent.match(/diététicienne/g)).toHaveLength(1)
     // Une phrase : en Figtree, jamais en mono (DESIGN.md, POL-PLAY-51)
     expect(note).not.toHaveClass('mono')
+    // MONO-MOTS (leçon 11) : groupe, « Jour 1 »… en police du texte ; seuls les chiffres en mono
+    const monoWithLetters = [...document.querySelectorAll('.mono')].map((e) => e.textContent).filter((t) => /\p{L}/u.test(t))
+    expect(monoWithLetters).toEqual([])
     fireEvent.change(screen.getByLabelText('Portion du jour 3'), { target: { value: '2,5' } })
     fireEvent.click(screen.getByRole('button', { name: 'Commencer aujourd’hui' }))
     await waitFor(() => expect(store.create).toHaveBeenCalledTimes(1))

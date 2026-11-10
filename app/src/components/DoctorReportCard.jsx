@@ -85,7 +85,7 @@ export default function DoctorReportCard({
         Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et
         c’est vous qui l’envoyez.
       </p>
-      {!premium && <span className="fodmap-tag mono">premium</span>}
+      {!premium && <span className="fodmap-tag">premium</span>}
       {!premium && !empty && <Link to="/premium" className="btn fodmap-cta">Débloquer</Link>}
       {empty && (
         <p className="fodmap-note">Le rapport se remplit dès votre première note digestive ou votre premier repas.</p>
@@ -108,7 +108,7 @@ export default function DoctorReportCard({
                   checked={w === weeks}
                   onChange={() => { chosen.current = true; setWeeks(w) }}
                 />
-                <span className="mono">{w} sem.</span>
+                <span><span className="mono">{w}</span> sem.</span>
               </label>
             ))}
           </fieldset>

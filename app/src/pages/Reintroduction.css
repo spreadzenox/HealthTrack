@@ -185,9 +185,10 @@ button.fodmap-group:focus-visible,
   margin: 6px 0;
 }
 
-.fodmap-plan-row .mono {
-  width: 52px;
-  font-size: 0.8rem;
+.fodmap-plan-day {
+  flex: none;
+  width: 56px;
+  font-size: 0.92rem;
 }
 
 .fodmap-plan-row input {

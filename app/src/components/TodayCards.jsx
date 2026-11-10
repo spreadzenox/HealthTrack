@@ -27,6 +27,7 @@ import LineIcon from './LineIcon'
 import { useStackedChoices } from '../hooks/useStackedChoices'
 import './TodayCards.css'
 import { appLocale, localeDate } from '../i18n/locale.js'
+import { monoDigits } from '../utils/monoDigits'
 
 const DAY_MS = 86_400_000
 
@@ -180,7 +181,7 @@ export function GutCard({
           <StoolLine />
         </div>
       )}
-      {details && entries && <p className="today-details-line mono">{gutWeekLine(summary)}</p>}
+      {details && entries && <p className="today-details-line">{monoDigits(gutWeekLine(summary))}</p>}
       {details && <p className="gut-consult-note">{WHEN_TO_SEE_DOCTOR}</p>}
     </section>
   )
