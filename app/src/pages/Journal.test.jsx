@@ -661,4 +661,43 @@ describe('Journal — cycle (CYCLE-1b)', () => {
     expect(document.querySelector('.day-cycle')).toBeNull()
     expect(document.querySelector('.day-card-cycle')).toBeNull()
   })
+
+  it('« … » sur la ligne « Règles » : Modifier le flux sur place, ou Supprimer (CYCLE-2b)', async () => {
+    const { periodEntry } = await import('../services/cycle')
+    const { listEntries, updateEntry, deleteEntry } = await import('../storage/localHealthStorage')
+    updateEntry.mockResolvedValue(undefined)
+    deleteEntry.mockResolvedValue(undefined)
+    const entries = [
+      { id: 1, ...periodEntry(key(2), 'heavy') },
+      { id: 2, ...periodEntry(key(1), 'medium') },
+      { id: 4, type: 'wellbeing', source: 'app_wellbeing', at: new Date().toISOString(), payload: { score: 3 } },
+    ]
+    listEntries.mockImplementation(async (o = {}) => (o.type ? entries.filter((e) => e.type === o.type) : entries))
+    renderJournal()
+    const actions = await screen.findAllByRole('button', { name: 'Actions pour ces règles' })
+    expect(actions).toHaveLength(2)
+    // Hier (2e jour) : le premier « … » de la liste, jours les plus récents d'abord
+    fireEvent.click(actions[0])
+    fireEvent.click(screen.getByRole('button', { name: 'Modifier ces règles' }))
+    const abondant = await screen.findByRole('button', { name: 'Abondant' })
+    await waitFor(() => expect(abondant).toBeEnabled())
+    fireEvent.click(abondant)
+    await waitFor(() => expect(updateEntry).toHaveBeenCalledWith(2, { payload: { subtype: 'period', flow: 'heavy' } }))
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Abondant' })).toBeNull())
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Actions pour ces règles' })[0])
+    fireEvent.click(screen.getByRole('button', { name: 'Supprimer ces règles' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer' }))
+    await waitFor(() => expect(deleteEntry).toHaveBeenCalledWith(2))
+  })
+
+  it('règles venues d’une autre source : pas de « … »', async () => {
+    const { periodEntry } = await import('../services/cycle')
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const entries = [{ id: 1, ...periodEntry(key(1), 'medium', 'health_connect') }]
+    listEntries.mockImplementation(async (o = {}) => (o.type ? entries.filter((e) => e.type === o.type) : entries))
+    renderJournal()
+    await screen.findByText((_, el) => el?.classList?.contains('day-cycle') && /Règles/.test(el.textContent))
+    expect(screen.queryByRole('button', { name: 'Actions pour ces règles' })).toBeNull()
+  })
 })
