@@ -20,8 +20,16 @@
 - Rien dans `app/src`, pas d'entrée Nouveautés.
 
 ## Envoi Alpha
-- Lancé à la main (`workflow_dispatch` de « Play — Alpha (livraison continue) » sur main) juste après le merge.
-- Résultat : voir le commentaire de la PR et la mise à jour de ce compte rendu.
+- PR #886 mergée (squash) après « Frontend (Vitest) » et « Build APK » verts ; gel levé vérifié sur main.
+- Lancé une fois à la main (`workflow_dispatch` sur main) :
+  [exécution 42785591067](https://github.com/spreadzenox/HealthTrack/actions/runs/42785591067), **succès**
+  (08:49 → 08:54 UTC).
+- Résumé de l'exécution : commit `d7a5916` · versionCode **100962** · alpha avant : 100918 · test interne : 100965 ;
+  décision « envoi de 100962 » (85 fichiers de l'app modifiés depuis 100918) ; ✅ 100962 placé sur l'alpha (même AAB
+  que le test interne), en examen chez Google (quelques heures à 2 jours) avant d'arriver aux testeurs.
+- État des pistes : test interne 100965 (déployée) ; test fermé (Alpha) 100962 (déployée). « déployée » = validée
+  par l'envoi ; l'API ne dit pas si Google a fini l'examen.
+- 100962 remplace 100918 sur l'alpha : c'est elle que Google examine désormais.
 
 ## Reste
 - Envoi nocturne normal ensuite (23:45, heure de Paris), sans gel.
