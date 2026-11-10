@@ -48,6 +48,14 @@ téléphone ; page de confidentialité mise à jour quand quelque chose s'affich
   PRODUIT.md §4 et en tête du résumé), puis attendre sa confirmation transmise par le prompt. Si la Play Console ne
   propose le type qu'après l'avoir vu dans une version : cette version en test interne seulement, Alpha retenue.
   Sécurité des données inchangée (rien ne quitte le téléphone).
+  **Préparé le 10/11 20:35 (run idées)** : le plugin `@capgo/capacitor-health` 8.4.5 ne connaît aucun type de cycle
+  (aucun « menstruation » dans ses sources). Il faut donc un petit pont natif à nous (Java, `connect-client` 1.1.0 déjà
+  dans les dépendances du plugin) : `MenstruationPeriodRecord` et `MenstruationFlowRecord`, une seule autorisation
+  `android.permission.health.READ_MENSTRUATION` demandée avec les autres, 30 jours puis l'historique comme les autres types.
+  Découpage : **CYCLE-3a** pont natif + tests sur enregistrements synthétiques (variante sideload seulement : la
+  permission n'est pas ajoutée au manifeste play, `check-play-manifest.sh` le vérifie) ; **CYCLE-3b** après « P48 fait » :
+  permission dans la variante play, justification ajoutée à `PLAY-CONFORMITE.md` (tableau des types), confidentialité.
+  Geste du propriétaire rédigé : P48 dans `PRODUIT.md` §4.
 - [ ] **CYCLE-4** (plus tard) Analyses : le cycle comme contexte de la digestion (variable X, règle 5), jamais une
   cause ni un diagnostic.
 
