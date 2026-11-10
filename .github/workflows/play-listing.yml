@@ -4,8 +4,8 @@
 # Connexion sans clé (Workload Identity Federation, main uniquement). Ne touche à aucune piste ni version :
 # la mise en production reste le geste du propriétaire. Accès refusé → avertissement (droit « fiche du Store »
 # manquant pour gh-deployer), pas d'échec.
-# Envois espacés (CD-ALPHA-5, 05/11) : comme l'alpha, un envoi examiné par Google 24 h au plus après le dernier
-# (alpha, fiche ou abonnements) ; sinon il est reporté au passage quotidien (app/scripts/play/reviewGate.mjs).
+# Passage du soir (CD-ALPHA-7, 10/11) : envoi juste avant l'alpha de 23:45 (Paris), si le contenu a changé, pour un
+# seul examen par jour ; un merge attend ce passage ; gel respecté (app/scripts/play/reviewGate.mjs, decideEvening).
 name: Play — fiche du Store
 
 on:
@@ -16,7 +16,7 @@ on:
       - "app/scripts/play/listing*.mjs"
       - ".github/workflows/play-listing.yml"
   schedule:
-    - cron: "23 7 * * *"  # envoi reporté par la porte des 24 h (CD-ALPHA-5), seulement s'il attend
+    - cron: "23 22 * * *"  # 23:23 à Paris, juste avant l'alpha (22:45 UTC) : envoie seulement si la fiche a changé
   workflow_dispatch:
 
 permissions:
@@ -57,12 +57,11 @@ jobs:
           access_token_scopes: https://www.googleapis.com/auth/androidpublisher
           create_credentials_file: false
 
-      - name: Délai entre deux envois examinés par Google
+      - name: Passage du soir et gel (envois examinés par Google)
         id: gate
         working-directory: app
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          PLAY_ACCESS_TOKEN: ${{ steps.play-token.outputs.access_token }}
         run: node scripts/play/review-gate-cli.mjs listing
 
       - name: Envoyer la fiche (Google Play)

@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🏷️ **Fiche du Store : elle repart, chaque soir avec la version (10/11 12:35)** : la fiche n'était plus envoyée à
+> Google depuis le 03/11. Le délai de 24 h entre deux envois comptait la version Alpha de chaque soir et la retenait
+> pour toujours ; votre nouveau titre « Halcya — digestion & bien-être » et les avantages à jour des abonnements
+> attendaient. Fiche et abonnements partent maintenant juste avant la version du soir (23:23 et 23:33, Paris), s'ils
+> ont changé : un seul examen par jour. Premier envoi ce soir. Rien à faire de votre côté.
+
 > 🧊 **Gel Alpha levé le 10/11 matin à la demande du propriétaire ; envoi Alpha lancé à la main (résultat ci-dessous). Envoi nocturne normal ensuite.**
 > Résultat : **100962 placé sur l'alpha** le 10/11 à 09:54 (Paris), en examen chez Google avant d'arriver aux testeurs
 > ([exécution](https://github.com/spreadzenox/HealthTrack/actions/runs/42785591067)).
@@ -238,6 +244,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 12:35 — [Fiche du Store au passage du soir](runs/2026-11-10-1235-fiche-passage-soir.md) | 🔧 | CD-ALPHA-7b : la fiche (nouveau titre) et les abonnements n'étaient plus envoyés depuis le 03/11 ; ils partent chaque soir juste avant la version Alpha s'ils ont changé ; 5 tests rouges puis verts. Rien à faire de votre côté |
 | 10/11 10:35 — [Note du jour sans blancs autour de la virgule](runs/2026-11-10-1035-mono-virgule.md) | 🎨 | MONO-VIRGULE : « 3 , 2 /5 » devient « 3,2/5 » sur Aujourd'hui ; « +0,4 pt » d'Analyses et niveaux avant/après de Tendances aussi ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 10/11 09:45 — [Alpha : remplacer l'examen en cours](runs/2026-11-10-0945-alpha-remplace-examen.md) | 🔧 | CD-ALPHA-7 : votre demande du 10/11 vers 10:15 (« retirer de la file toutes les versions précédentes ») est déjà ce que fait Google ; l'envoi le dit maintenant explicitement (`changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT`), tests adaptés. Rien à faire de votre côté |
 | 10/11 09:40 — [Alpha : gel levé, envoi immédiat](runs/2026-11-10-0940-alpha-maintenant.md) | 🧊 | Run court : gel Alpha levé (`until` = `null`) selon votre décision du 10/11 vers 09:35 (« Ne prolonge pas et meme lance la publication android alpha maintenant ») ; test ajouté ; envoi « Play — Alpha » lancé à la main après le merge : 100962 placé sur l'alpha (en examen chez Google). Envoi nocturne normal ensuite. Rien à faire de votre côté |
