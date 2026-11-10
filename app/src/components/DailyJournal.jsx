@@ -13,7 +13,8 @@ import { formatDuration, workoutTypeLabel, workoutDetailParts } from '../utils/f
 import { buildDailyJournal, dayHeading } from '../services/dailyJournal'
 import { mealKcal } from '../services/mealEditing'
 import { useNutritionTable } from '../data/nutritionTable'
-import { SOURCE_LABELS, gutLevelLabel, isGutDayNote } from '../services/today'
+import { SOURCE_LABELS, GUT_LEVELS, gutLevelLabel, isGutDayNote } from '../services/today'
+import { updateEntry } from '../storage/localHealthStorage'
 import { stoolEntryLabel } from '../services/stool'
 import { INITIAL_DAYS, MORE_DAYS, loadJournalEntries } from '../services/journalEntries'
 import { appLocale } from '../i18n/locale.js'
@@ -22,6 +23,8 @@ import { measureNorms, normSinceFromChanges, readDeviationEntries } from '../ser
 import { lastAnalysis } from '../services/analysisRunner'
 import LineIcon from './LineIcon'
 import { monoDigits } from '../utils/monoDigits'
+import { useStackedChoices } from '../hooks/useStackedChoices'
+import './TodayCards.css'
 
 /** Icône de chaque mesure du jour (ORG-2, leçon 9 : une icône pour toutes les mesures). */
 const CHIP_ICONS = {
@@ -253,6 +256,59 @@ function EditButton({ e, onEdit }) {
   )
 }
 
+/** « Modifier » une note digestive saisie dans l'app : ouvre le choix du niveau sur place (POLISH-SIM-36b). */
+function GutEditButton({ e, onEdit }) {
+  if (e.type !== 'gut' || !isDeletableEntry(e)) return null
+  return (
+    <div className="entry-edit">
+      <button type="button" className="entry-delete-btn" onClick={onEdit} aria-label={`Modifier ${DELETE_LABELS.gut}`}>
+        Modifier
+      </button>
+    </div>
+  )
+}
+
+/** Calme / Gêne / Douleur, le niveau actuel enfoncé ; le reste de la note (portée, heure) est gardé. */
+function GutLevelPicker({ e, onDone }) {
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState(null)
+  const [ref, layout] = useStackedChoices()
+  const choose = async (level) => {
+    if (level === e.payload?.level) return onDone()
+    setSaving(true)
+    setError(null)
+    try {
+      await updateEntry(e.id, { payload: { ...e.payload, level } })
+      window.dispatchEvent(new CustomEvent('health-entries-updated'))
+      onDone()
+    } catch {
+      setError('Modification impossible, réessayez.')
+      setSaving(false)
+    }
+  }
+  return (
+    <div className="entry-gut-edit">
+      <div ref={ref} className={layout === 'row' ? 'gut-choices' : `gut-choices gut-choices--${layout}`} role="group" aria-label="Niveau de la note digestive">
+        {GUT_LEVELS.map((l) => (
+          <button
+            key={l.id}
+            type="button"
+            className="gut-choice"
+            aria-pressed={e.payload?.level === l.id}
+            disabled={saving}
+            onClick={() => choose(l.id)}
+          >
+            <span className="gut-choice-radio" aria-hidden="true" />
+            <span className="choice-label">{l.label}</span>
+          </button>
+        ))}
+      </div>
+      <button type="button" className="entry-delete-btn" onClick={onDone} disabled={saving}>Annuler</button>
+      {error && <span className="entry-delete-error" role="alert">{error}</span>}
+    </div>
+  )
+}
+
 /** Repas : « Refaire » (page Repas pré-remplie) et « Modifier » sur place, comme sur la page Repas. */
 function MealButtons({ e, onEditMeal, onRedoMeal }) {
   const hasItems = e.payload?.items?.length > 0
@@ -295,6 +351,8 @@ function EntryItem({ e, measuredScreen, onEdit, editingMealId, onEditMeal, onRed
   const label = DELETE_LABELS[e.type] || 'cette entrée'
   const editWellbeing = (entry) => { setOpen(false); onEdit(entry) }
   const editMeal = (id) => { setOpen(false); onEditMeal(id) }
+  const [editingGut, setEditingGut] = useState(false)
+  const editGut = () => { setOpen(false); setEditingGut(true) }
   const toggle = hasActions(e) && <EntryActionsToggle open={open} label={label} onToggle={() => setOpen((o) => !o)} />
   const withBody = hasBody(e, measuredScreen)
   return (
@@ -318,9 +376,11 @@ function EntryItem({ e, measuredScreen, onEdit, editingMealId, onEditMeal, onRed
           <span className="entry-source">{SOURCE_LABELS[e.source] || e.source}</span>
         )}
         {!withBody && open && <EditButton e={e} onEdit={editWellbeing} />}
+        {!withBody && open && <GutEditButton e={e} onEdit={editGut} />}
         {!withBody && open && isDeletableEntry(e) && <DeleteButton e={e} />}
-        {!withBody && toggle}
+        {!withBody && !editingGut && toggle}
       </div>
+      {editingGut && <GutLevelPicker e={e} onDone={() => setEditingGut(false)} />}
       {e.type === 'food' && editingMealId === e.id ? (
         <SavedMealEditor entry={e} onCancel={() => onEditMeal(null)} onSaved={() => onEditMeal(null)} />
       ) : withBody && (

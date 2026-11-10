@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> ✏️ **Journal : modifier une note de digestion (10/11 18:35)** : une persona ne pouvait que supprimer une note
+> « Gêne » saisie par erreur. Le « … » propose maintenant « Modifier » : Calme, Gêne ou Douleur sur place, avec les
+> mêmes boutons que sur Aujourd'hui, l'heure est gardée ([clair](runs/captures/2026-11-10-1835-digestion-modifier-clair.png) ·
+> [sombre](runs/captures/2026-11-10-1835-digestion-modifier-sombre.png)). Part ce soir (23:45). À tester : Journal ›
+> Jours, « … » d'une note de digestion, « Modifier ».
+
 > 👆 **Journal : toucher une tuile ouvre sa courbe (10/11 16:35)** : une persona touchait « Sommeil » dans le Journal
 > sans que rien ne se passe. Comme sur Aujourd'hui, les tuiles Sommeil, Pas, VFC nuit, FC au repos, Écran et Bien-être
 > ouvrent maintenant Tendances sur leur mesure ; l'apparence ne change pas
@@ -267,6 +273,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 18:35 — [Journal : modifier une note de digestion](runs/2026-11-10-1835-digestion-modifier.md) | 🎨 | POLISH-SIM-36b : « Modifier » dans le « … » d'une note de digestion, choix sur place, heure gardée ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 10/11 17:35 — [Deux PR prêtes mergées](runs/2026-11-10-1735-merge-prs.md) | 🔧 | #894 (Analyses s'ouvre sur Digestion) mergée, release v653 ; #895 (tuiles du Journal) remise à jour sur main et vérifiée. Rien à faire de votre côté |
 | 10/11 16:35 — [Journal : les tuiles ouvrent leur courbe](runs/2026-11-10-1635-journal-tuiles.md) | 🎨 | POLISH-SIM-36 : les tuiles du jour qui ont une courbe ouvrent Tendances sur leur mesure, tuile entière touchable ; test rouge puis vert, captures claires et sombres. Reste POLISH-SIM-36b. Rien à faire de votre côté |
 | 10/11 15:35 — [Analyses s'ouvre sur Digestion](runs/2026-11-10-1535-analyses-digestion.md) | 🎨 | POLISH-SIM-33 : avec « Ma digestion » ou « Mon cycle », l'onglet Analyses ouvre Digestion ; test rouge puis vert, vérifié dans Chromium. Émulateur A56 relancé (panne de téléchargement). Rien à faire de votre côté |

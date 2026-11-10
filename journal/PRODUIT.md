@@ -359,6 +359,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **10/11 03:35** — **Tendances : la nuit même, au singulier** (T4-suite) : « Nuit plus courte que d'habitude (6 h 21) », comme la maquette.
 - **10/11 15:35** — **Analyses s'ouvre sur Digestion** (POLISH-SIM-33) pour qui suit son ventre ou son cycle.
 - **10/11 14:35** — **Analyses : liens pas assez nets en gris** (POLISH-SIM-30) : chiffre en gris, légende ; simulations Endométriose J14 et Ventre et données J45 (POLISH-SIM-31 à 37, PROP-SIM-10).
+- **10/11 18:35** — **Journal : modifier une note de digestion** (POLISH-SIM-36b) : « Modifier » dans le « … » ouvre Calme / Gêne / Douleur sur place, heure gardée.
 - **10/11 16:35** — **Journal : les tuiles du jour ouvrent leur courbe** (POLISH-SIM-36) : Sommeil, Pas, VFC nuit, FC au repos, Écran, Bien-être ouvrent Tendances sur leur mesure ; reste POLISH-SIM-36b (« Modifier » une note de digestion).
 - **10/11 10:35** — **Note du jour sans blancs autour de la virgule** (MONO-VIRGULE) : « 3,2 » sur Aujourd'hui, « +0,4 pt » d'Analyses et niveaux avant/après de Tendances ; seuls les chiffres en mono.
 - **10/11 09:35** — **Montre et accueil : mots dans la police du texte** (MONO-MOTS-3, fin du chantier mono) : étiquettes « reçu » / « rien », dates et « mesures sur 7 j » de l'écran Montre, « partiel » de Nutrition, chiffres et étiquettes de l'accueil hors mono sauf les chiffres ; 10 règles CSS mortes retirées.

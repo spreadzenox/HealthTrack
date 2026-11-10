@@ -187,6 +187,31 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     expect(screen.getByRole('button', { name: /Supprimer cette note digestive/i })).toBeInTheDocument()
   })
 
+  it('POLISH-SIM-36b : une note digestive se modifie sur place (Calme / Gêne / Douleur), le reste gardé', async () => {
+    const { updateEntry } = await import('../storage/localHealthStorage')
+    updateEntry.mockClear()
+    updateEntry.mockResolvedValue()
+    await renderEntries([{ type: 'gut', source: 'app_gut', at: '2026-04-11T10:00:00', payload: { level: 'discomfort', scope: 'day' } }])
+    openActions()
+    fireEvent.click(screen.getByRole('button', { name: 'Modifier cette note digestive' }))
+    const group = screen.getByRole('group', { name: 'Niveau de la note digestive' })
+    expect(within(group).getByRole('button', { name: 'Gêne' })).toHaveAttribute('aria-pressed', 'true')
+    fireEvent.click(within(group).getByRole('button', { name: 'Douleur' }))
+    await waitFor(() => expect(updateEntry).toHaveBeenCalledWith(1, { payload: { level: 'pain', scope: 'day' } }))
+    await waitFor(() => expect(screen.queryByRole('group', { name: 'Niveau de la note digestive' })).not.toBeInTheDocument())
+  })
+
+  it('POLISH-SIM-36b : « Annuler » referme le choix sans rien écrire', async () => {
+    const { updateEntry } = await import('../storage/localHealthStorage')
+    updateEntry.mockClear()
+    await renderEntries([{ type: 'gut', source: 'app_gut', at: '2026-04-11T10:00:00', payload: { level: 'calm' } }])
+    openActions()
+    fireEvent.click(screen.getByRole('button', { name: 'Modifier cette note digestive' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Annuler' }))
+    expect(screen.queryByRole('group', { name: 'Niveau de la note digestive' })).not.toBeInTheDocument()
+    expect(updateEntry).not.toHaveBeenCalled()
+  })
+
   it('liste une note des selles avec sa forme (et son type), supprimable (I176)', async () => {
     await renderEntries([{ type: 'stool', source: 'app_stool', at: '2026-04-11T10:00:00', payload: { form: 'hard', bristol: 2 } }])
     expect(screen.getByText('Selles')).toBeInTheDocument()
