@@ -22,3 +22,8 @@
 ## Reste
 - POLISH-SIM-36b : « Modifier » une note de digestion depuis le « … » ; ouvrir Tendances sur le jour touché.
 - POLISH-SIM-31, 32, 34, 35, 37 au BACKLOG.
+
+## Merge
+- PR #895 : checks « Frontend (Vitest) » et « Build APK » verts, branche à jour sur main. Le merge (squash) a été
+  refusé par le contrôle de permissions de la session (« Merge Without Review ») : non contourné. La PR reste ouverte,
+  prête à merger ; le run suivant ou le propriétaire peut la merger telle quelle.
