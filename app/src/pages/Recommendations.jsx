@@ -30,6 +30,7 @@ import { gutCardMode } from '../settings/onboarding'
 import { appLocale } from '../i18n/locale.js'
 import { keepWhole } from '../utils/keepWhole'
 import './Recommendations.css'
+import { monoDigits } from '../utils/monoDigits'
 
 const WORDS = {
   wellbeing: { what: 'votre bien-être', note: 'votre bien-être', weigh: 'Ce qui va avec votre bien-être', scale: 'de bien-être' },
@@ -110,7 +111,7 @@ function EffectBar({ f, max }) {
         <span className="reco-effect-range" style={{ left: pos(Math.max(-max, f.low)), right: `calc(100% - ${pos(Math.min(max, f.high))})` }} />
         <span className="reco-effect-bar" style={{ left: pos(left), right: `calc(100% - ${pos(right)})` }} />
       </span>
-      <span className="reco-effect-value" aria-label={`${pts(f.effect)} point sur 5${f.net ? '' : ', pas assez net'}`}><span className="mono">{pts(f.effect)}</span>&nbsp;pt</span>
+      <span className="reco-effect-value" aria-label={`${pts(f.effect)} point sur 5${f.net ? '' : ', pas assez net'}`}>{monoDigits(pts(f.effect))}&nbsp;pt</span>
     </li>
   )
 }
@@ -142,7 +143,7 @@ function Results({ outcome, view, locked }) {
                 </span>
                 {!locked && (
                   <span className="reco-piste-text">
-                    <span className="mono">{pts(f.effect)}</span> point sur 5 pour {f.usualChange?.text} ({f.horizonLabel.toLowerCase()})
+                    {monoDigits(pts(f.effect))} point sur 5 pour {f.usualChange?.text} ({f.horizonLabel.toLowerCase()})
                   </span>
                 )}
                 {locked

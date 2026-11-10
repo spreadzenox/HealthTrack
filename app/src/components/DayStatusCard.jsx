@@ -11,6 +11,7 @@ import { StartCalibration, UnlockReminder } from './WellbeingNudges'
 import LineIcon from './LineIcon'
 import StripPlus from './StripPlus'
 import './DayStatusCard.css'
+import { monoDigits } from '../utils/monoDigits'
 
 /** Un graphique à partir de 3 points (leçon 17). */
 const CURVE_MIN_POINTS = 3
@@ -82,8 +83,8 @@ export default function DayStatusCard({
         </div>
         <div className="day-status-body">
           <p id="day-status-value" className="day-status-value">
-            <span className="mono day-status-number">{w.value}</span>
-            <span className="mono day-status-max">/5</span>
+            <span className="day-status-number">{monoDigits(w.value)}</span>
+            <span className="day-status-max">/<span className="mono">5</span></span>
           </p>
           <p id="day-status-from" className="day-status-from">{w.from}</p>
         </div>

@@ -275,6 +275,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   `.mood-chip(s)`, `.mood-chip-gut`, `.onb-tile-num`, `.onb-choice-num`, `.onb-gesture-btn.mono`). Test garde-fou
   `src/monoMots3.test.js` (rouge puis vert) et test DOM de l'écran Montre ; captures `runs/captures/2026-11-10-0935-mono-mots-3-*`.
   Reste voulu en mono : le compteur « 04/05 » de l'accueil (chiffres seuls).
+- [x] **MONO-VIRGULE** ✅ 10/11 10:35 (revue `--play --dark` du run) : « 3 , 2 /5 » sur la carte bien-être d'Aujourd'hui
+  (valeur entière en `span.mono`, virgule à chasse fixe), « +0,4 pt » d'Analyses et « Niveau avant/après » de Tendances
+  passent par `monoDigits` ; test rouge puis vert ; captures `runs/captures/2026-11-10-1035-mono-virgule-carte-*`.
+  Restent en mono, voulu : graduations SVG (`<text>`).
 - [x] **MONO-CHIFFRES** ✅ 10/11 05:35 (revue `--play` du run, leçon 11 « police mono pour les chiffres seulement ») :
   « 6 h 30 », « d'habitude 49 ms » (Aujourd'hui), tuiles du Journal (« 37, normal », « 69 à 83 bpm », « 10 085 »),
   quantités des repas (« 150 g »), Tendances (valeur, fourchette, « +0,4 pt », « 31 % » de l'étoile) et « 1 847 entrées »
