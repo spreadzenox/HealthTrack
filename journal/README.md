@@ -12,6 +12,10 @@
 > Résultat : **100962 placé sur l'alpha** le 10/11 à 09:54 (Paris), en examen chez Google avant d'arriver aux testeurs
 > ([exécution](https://github.com/spreadzenox/HealthTrack/actions/runs/42785591067)).
 
+> 🔁 **Alpha : chaque envoi remplace le précédent (10/11 09:45, votre demande de 10:15)** : c'était déjà le cas chez
+> Google (un envoi remplace la version de la piste et annule l'examen en cours, sans file d'attente). Le script d'envoi
+> le demande maintenant explicitement. Aucun gel ne sera remis sans votre demande. Rien à faire de votre côté.
+
 > 🧽 **Mode polish depuis ce matin (votre décision (A) du 07/11)** : plus de nouvelle fonction ; seulement bugs,
 > polissage, textes en trop et retraits. Une idée de fonction vous arrivera en proposition avec une maquette, jamais
 > codée sans votre accord. Seule exception : les intégrations (Garmin et Samsung d'abord).
@@ -229,6 +233,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 09:45 — [Alpha : remplacer l'examen en cours](runs/2026-11-10-0945-alpha-remplace-examen.md) | 🔧 | CD-ALPHA-7 : votre demande du 10/11 vers 10:15 (« retirer de la file toutes les versions précédentes ») est déjà ce que fait Google ; l'envoi le dit maintenant explicitement (`changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT`), tests adaptés. Rien à faire de votre côté |
 | 10/11 09:40 — [Alpha : gel levé, envoi immédiat](runs/2026-11-10-0940-alpha-maintenant.md) | 🧊 | Run court : gel Alpha levé (`until` = `null`) selon votre décision du 10/11 vers 09:35 (« Ne prolonge pas et meme lance la publication android alpha maintenant ») ; test ajouté ; envoi « Play — Alpha » lancé à la main après le merge : 100962 placé sur l'alpha (en examen chez Google). Envoi nocturne normal ensuite. Rien à faire de votre côté |
 | 10/11 09:35 — [Montre et accueil : mots hors mono](runs/2026-11-10-0935-mono-mots-3.md) | 🎨 | MONO-MOTS-3 : écran Montre, « partiel » de Nutrition et accueil hors mono sauf les chiffres ; 10 règles CSS mortes retirées ; test garde-fou rouge puis vert. Rien à faire de votre côté |
 | 10/11 09:15 — [Relais iOS : déploiement continu](runs/2026-11-10-0915-relais-ios-deploiement-continu.md) | 📨 | Run court : votre réponse (« j'aimerais qu'elle le fasse tout seul… ») relayée mot pour mot dans POUR-IOS.md : chaque build TestFlight traitée part aux « Testeurs Halcya » et à l'examen bêta dès qu'elle est prête, puis la routine iOS lance elle-même le nettoyage réel des anciennes builds (restent la 844.344, la build des testeurs et la plus récente). Rien d'autre touché. Rien à faire de votre côté |
