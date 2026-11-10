@@ -273,6 +273,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 18:55 — [Relais iOS : cycle accepté](runs/2026-11-10-1855-relais-ios-cycle.md) | 📨 | Décision « Ok cycle » relayée à la routine iOS (POUR-IOS.md) : Android fait d'abord la brique partagée (CYCLE-*), puis iOS lit le cycle dans Santé. Rien à faire de votre côté |
 | 10/11 18:35 — [Journal : modifier une note de digestion](runs/2026-11-10-1835-digestion-modifier.md) | 🎨 | POLISH-SIM-36b : « Modifier » dans le « … » d'une note de digestion, choix sur place, heure gardée ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 10/11 17:35 — [Deux PR prêtes mergées](runs/2026-11-10-1735-merge-prs.md) | 🔧 | #894 (Analyses s'ouvre sur Digestion) mergée, release v653 ; #895 (tuiles du Journal) remise à jour sur main et vérifiée. Rien à faire de votre côté |
 | 10/11 16:35 — [Journal : les tuiles ouvrent leur courbe](runs/2026-11-10-1635-journal-tuiles.md) | 🎨 | POLISH-SIM-36 : les tuiles du jour qui ont une courbe ouvrent Tendances sur leur mesure, tuile entière touchable ; test rouge puis vert, captures claires et sombres. Reste POLISH-SIM-36b. Rien à faire de votre côté |
