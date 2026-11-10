@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-10",
+  "kind": "amélioration",
+  "title": "Barres de progression vides lisibles",
+  "items": [
+    "Au premier jour, la barre « 0/28 jours avec une note digestive » paraissait pleine. Elle a maintenant un point de départ : vide, elle se voit vide."
+  ]
+}

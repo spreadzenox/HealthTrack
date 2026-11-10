@@ -247,6 +247,12 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   affichait encore `AnalysesTabs` (« Bien-être · Digestion », aucun actif) : reste de l'ancienne organisation (04/11).
   Retiré, retour « ← Agir » (`act-back`, comme `Trial.jsx`) ; test rouge puis vert ; captures
   `runs/captures/2026-11-10-0135-reintro-agir-*`. Vus sans changement : Réglages, Sources, Vos données, Premium.
+- [x] **POLISH-BARRE-VIDE** ✅ 10/11 02:35 (revue `--play --empty` du run) : à « 0/28 jours avec une note digestive »
+  (Aujourd'hui) et « 0/14 jours » (Analyses), le rail seul, aussi foncé que le permet son contraste minimal avec le fond
+  (1,4:1), se lisait comme une barre pleine. Le remplissage garde un point de départ rond (`min-width` = hauteur du
+  rail) ; test `progressStart.test.js` rouge puis vert ; captures `runs/captures/2026-11-10-0235-barre-vide-*`. Reste
+  vu, non fait : sur Aujourd'hui vide, le petit « + » (AUJ-6) seul en bas à droite de la carte Digestion laisse un grand
+  blanc sous « Noter ma digestion » ; à juger au prochain passage des personas.
 - [x] **INTRO-TITRE (reste)** ✅ 09/11 18:35 : vérifié au navigateur, les six titres de Paramètres ont la même graisse
   (600, 16 px, Figtree) ; l'écart vu le 09/11 07:35 n'existe pas. Rien changé.
 - [ ] **PROP-OBJECTIF** (proposition au propriétaire avec maquette, run « idées » ; pas de code sans accord)
