@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-10",
+  "kind": "amélioration",
+  "title": "Abonnement : mots dans la police du texte",
+  "variants": ["play"],
+  "items": [
+    "Sur la page de l'abonnement, « premium », « / an », « par mois » et « jour 12 » reprennent la police du texte ; seuls les prix et les nombres gardent leur police à chasse fixe."
+  ]
+}

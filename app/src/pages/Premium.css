@@ -13,7 +13,6 @@
 }
 
 .paywall-tag {
-  font-family: var(--font-mono);
   font-size: 12px;
   padding: 4px 10px;
   border-radius: var(--radius-tag);
@@ -206,17 +205,14 @@
 }
 
 .paywall-plan-price {
-  font-family: var(--font-mono);
 }
 
 .paywall-plan-note {
-  font-family: var(--font-mono);
   font-size: 0.8rem;
   color: var(--text-muted);
 }
 
 .paywall-badge {
-  font-family: var(--font-mono);
   font-size: 12px;
   padding: 4px 8px;
   border-radius: var(--radius-tag);
@@ -240,7 +236,6 @@
 }
 
 .paywall-timeline-day {
-  font-family: var(--font-mono);
   min-width: 96px;
   color: var(--stone-text);
 }

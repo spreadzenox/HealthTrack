@@ -126,8 +126,10 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
         </g>
       ))}
       {selected && <line className="trends-selected" x1={x(selected)} x2={x(selected)} y1={PAD.t - 4} y2={H - PAD.b} />}
+      {/* Colonnes jointives sur toute la hauteur : une seule bande touchable, le jour le plus proche du doigt
+          (data-scrub : la vérification visuelle ne compte que leur hauteur). */}
       {dates.map((d) => (
-        <rect key={d} className="trends-hit" x={x(d) - colW / 2} y={0} width={colW} height={H}
+        <rect key={d} className="trends-hit" data-scrub="" x={x(d) - colW / 2} y={0} width={colW} height={H}
           role="button" tabIndex={-1} aria-label={longDay(d)} onClick={() => onSelect(selected === d ? null : d)} />
       ))}
     </svg>
