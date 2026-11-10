@@ -3,11 +3,16 @@
  * d'ajout d'Aujourd'hui. Toucher un flux enregistre le jour de règles ; toucher un autre flux le corrige ; « Retirer »
  * l'efface. Les données restent sur le téléphone (entrées `cycle` ordinaires, voir services/cycle.js).
  * Avec `dateKey` et `onDone` (Journal › Jours, CYCLE-2b) : corrige le flux d'un jour passé, puis se referme.
+ * Symptômes du jour (CYCLE-2c) : un geste coche (enregistre), un second décoche (efface) ; ceux d'une autre source
+ * restent cochés, sans modification possible ici.
  */
 import { useCallback, useEffect, useState } from 'react'
 import { createEntry, deleteEntry, listEntries, updateEntry } from '../storage/localHealthStorage'
 import { localDateKey } from '../services/analysisEngine'
-import { CYCLE_SOURCE, CYCLE_TYPE, MAX_CYCLE_DAY, cycleByDay, periodEntry, periodEntryOn } from '../services/cycle'
+import {
+  CYCLE_SOURCE, CYCLE_TYPE, MAX_CYCLE_DAY, SYMPTOMS, SYMPTOM_LABELS, cycleByDay, periodEntry, periodEntryOn,
+  symptomEntriesOn, symptomEntry,
+} from '../services/cycle'
 import Ordinal from './Ordinal'
 import './AddStrip.css'
 
@@ -44,6 +49,7 @@ export default function PeriodSheet({ now = realNow, dateKey = null, onDone = nu
 
   const today = list ? periodEntryOn(list, dayKey) : null
   const info = list ? cycleByDay(list, [dayKey]).get(dayKey) : null
+  const symptoms = list ? symptomEntriesOn(list, dayKey) : new Map()
 
   const save = async (flow) => {
     setError(null)
@@ -69,6 +75,19 @@ export default function PeriodSheet({ now = realNow, dateKey = null, onDone = nu
       notify()
     } catch {
       setError('Suppression impossible. Réessayez.')
+    }
+  }
+
+  const toggleSymptom = async (symptom) => {
+    setError(null)
+    const noted = symptoms.get(symptom)
+    try {
+      if (noted) await deleteEntry(noted.id)
+      else await createEntry(symptomEntry(dayKey, symptom))
+      await load()
+      notify()
+    } catch {
+      setError('Enregistrement impossible. Réessayez.')
     }
   }
 
@@ -102,6 +121,22 @@ export default function PeriodSheet({ now = realNow, dateKey = null, onDone = nu
           <button type="button" className="btn btn-secondary" onClick={remove}>Retirer</button>
         )}
       </div>
+      {!onDone && (
+        <>
+          <p className="period-sheet-day period-sheet-symptoms-title" id="period-symptoms-title">Symptômes</p>
+          <div className="period-symptoms" role="group" aria-labelledby="period-symptoms-title">
+            {SYMPTOMS.map((s) => {
+              const noted = symptoms.get(s)
+              return (
+                <button key={s} type="button" className="period-symptom" aria-pressed={Boolean(noted)}
+                  disabled={!list || (noted && noted.source !== CYCLE_SOURCE)} onClick={() => toggleSymptom(s)}>
+                  {SYMPTOM_LABELS[s]}
+                </button>
+              )
+            })}
+          </div>
+        </>
+      )}
       {error && <p className="period-sheet-error" role="alert">{error}</p>}
     </div>
   )

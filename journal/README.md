@@ -8,6 +8,13 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🩸 **Noter les symptômes du cycle (11/11 00:35)** : « Mes règles » (Aujourd'hui › Règles) propose maintenant
+> Crampes, Douleur pelvienne, Ballonnements, Maux de tête, Fatigue, Constipation et Diarrhée : une touche note le
+> symptôme du jour, une deuxième le retire ([clair](runs/captures/2026-11-11-0035-symptomes-cycle-clair.png) ·
+> [sombre](runs/captures/2026-11-11-0035-symptomes-cycle-sombre.png)). Ils s'affichent dans Journal › Jours. Part
+> demain soir sur Alpha. L'envoi Alpha de ce soir n'était pas encore parti à 00:35 (le cron de GitHub part souvent
+> 2 à 3 h en retard) : vérifié au prochain run.
+
 > 🩸 **Corriger ses règles depuis le Journal (10/11 23:35)** : dans Journal › Jours, la ligne « Règles » a maintenant
 > son « … », comme les saisies : « Modifier » ouvre Léger / Moyen / Abondant sur place pour ce jour, « Supprimer »
 > demande confirmation ([clair](runs/captures/2026-11-10-2335-regles-journal-clair.png) ·
@@ -309,6 +316,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 00:35 — [Symptômes du cycle](runs/2026-11-11-0035-symptomes-cycle.md) | 🧱 | CYCLE-2c : puces des symptômes dans « Mes règles » (une touche note, une autre retire). À tester : Aujourd'hui › Règles › Crampes |
 | 10/11 23:35 — [Corriger ses règles](runs/2026-11-10-2335-regles-journal.md) | 🧱 | CYCLE-2b : « … » de la ligne « Règles » du Journal (Modifier le flux sur place, Supprimer). À tester : Journal › Jours › « … » |
 | 10/11 22:35 — [Noter ses règles](runs/2026-11-10-2235-regles-aujourdhui.md) | 🧱 | CYCLE-2 : bouton « Règles » du bandeau d'Aujourd'hui (avec « Mon cycle »), un geste par flux, corriger ou retirer ; confidentialité à jour. À tester : Aujourd'hui › Règles |
 | 10/11 21:35 — [Cycle dans le Journal](runs/2026-11-10-2135-cycle-journal.md) | 🧱 | CYCLE-1b : ligne « Règles · 2e jour · flux moyen » et jour du cycle dans Journal › Jours (seulement avec des données de cycle) ; constipation et diarrhée ajoutées aux symptômes (demande iOS). Rien à faire de votre côté |
