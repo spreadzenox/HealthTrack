@@ -8,6 +8,16 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🧪 **Deux personas au premier lancement (10/11 20:35)** : « Stressé et pressé » (Android et montre Amazfit) et
+> « Endométriose » (iPhone seul) ont fait l'accueil complet. Elles s'y retrouvent, mais relèvent « Trois onglets » quand
+> la barre en a cinq, un « Voir dans 14 jours » flou, des pas absents d'Aujourd'hui, et la persona Endométriose ne
+> trouve pas où noter ses règles (c'est l'étape cycle en cours). Huit corrections rangées (POLISH-SIM-38 à 45)
+> ([synthèse](simulations/2026-11-10-2035-synthese.md)). **Une question pour vous** : sur les trois cartes du tuto, le
+> compteur reste à « 01/06 », comme sur la maquette v3 que vous avez validée. Trois simulations l'ont lu comme un bug.
+> Répondez « compteur 01/06 : garder » ou « compteur : faire avancer ».
+> 📋 **Cycle dans Health Connect (P48), pour plus tard** : le geste dans la Play Console est rédigé (`PRODUIT.md` §4),
+> avec le texte à coller. Ne le faites pas encore : la routine écrira « P48 maintenant » quand la lecture sera prête.
+
 > 🩸 **Cycle : la brique de base est posée (10/11 19:35, votre « Ok cycle »)** : règles (avec le flux), saignements
 > et symptômes du cycle ont maintenant leur place dans les données du téléphone, comprises par l'export et l'import
 > (aucune migration, anciens fichiers intacts). Rien ne s'affiche encore. Prochaines étapes, une par run : la ligne
@@ -280,6 +290,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 20:35 — [Deux personas au jour 1](runs/2026-11-10-2035-personas-j1.md) | 💡 | Simulations Stressé et pressé J1 et Endométriose J1 : POLISH-SIM-38 à 45 ; faux relais de l'outil corrigé ; P48 (cycle dans Health Connect) rédigée, pas encore à faire. Une question : compteur « 01/06 » du tuto |
 | 10/11 19:35 — [Cycle : brique partagée](runs/2026-11-10-1935-cycle-brique.md) | 🧱 | CYCLE-1a : règles, saignements et symptômes rangés en entrées `cycle` (sans migration), jour des règles et jour du cycle calculés, export / import testés ; rien d'affiché. Rien à faire de votre côté |
 | 10/11 18:55 — [Relais iOS : cycle accepté](runs/2026-11-10-1855-relais-ios-cycle.md) | 📨 | Décision « Ok cycle » relayée à la routine iOS (POUR-IOS.md) : Android fait d'abord la brique partagée (CYCLE-*), puis iOS lit le cycle dans Santé. Rien à faire de votre côté |
 | 10/11 18:35 — [Journal : modifier une note de digestion](runs/2026-11-10-1835-digestion-modifier.md) | 🎨 | POLISH-SIM-36b : « Modifier » dans le « … » d'une note de digestion, choix sur place, heure gardée ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
