@@ -33,14 +33,25 @@ async function loadPlaywright() {
 
 function screenshots() {
   rmSync(work, { recursive: true, force: true })
-  execFileSync(
-    process.execPath,
-    ['scripts/visual/visual-check.mjs', ...SCREENSHOT_ARGS, `--routes=${SCREENSHOTS.map(([r]) => r).join(',')}`],
-    { cwd: root, stdio: 'inherit' },
-  )
   rmSync(shotsDir, { recursive: true, force: true })
   mkdirSync(shotsDir, { recursive: true })
-  for (const [, name, file] of SCREENSHOTS) copyFileSync(resolve(work, 'tiles', `${name}-1.png`), resolve(shotsDir, `${file}.png`))
+  // Une passe par jeu d'options (la plupart des captures partagent la même), chacune dans son dossier.
+  const groups = new Map()
+  for (const shot of SCREENSHOTS) {
+    const key = (shot[3] || []).join(' ')
+    groups.set(key, [...(groups.get(key) || []), shot])
+  }
+  let i = 0
+  for (const shots of groups.values()) {
+    const out = `${work}/${i++}`
+    const args = SCREENSHOT_ARGS.map((a) => (a.startsWith('--out=') ? `--out=${out}` : a))
+    execFileSync(
+      process.execPath,
+      ['scripts/visual/visual-check.mjs', ...args, ...(shots[0][3] || []), `--routes=${shots.map(([r]) => r).join(',')}`],
+      { cwd: root, stdio: 'inherit' },
+    )
+    for (const [, name, file] of shots) copyFileSync(resolve(out, 'tiles', `${name}-1.png`), resolve(shotsDir, `${file}.png`))
+  }
 }
 
 const font = (rel) => `data:font/woff2;base64,${readFileSync(resolve(root, 'node_modules', rel)).toString('base64')}`

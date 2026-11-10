@@ -330,7 +330,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   l'alpha de 22:45) sans espacement, gel gardé ; un merge attend ce soir-là (un seul examen par jour) ; lancement à la
   main immédiat (`decideEvening`, `reviewGate.mjs` ; 5 tests rouges puis verts). À vérifier demain : bilan des deux
   workflows du 10/11 au soir (« envoi de la fiche du Store »).
-- [ ] **LISTING-CAPTURES** (polish, vu le 10/11 12:35) : les captures de la fiche datent du 03/11 (#646), avant le nouvel
+- [x] **LISTING-CAPTURES** ✅ 10/11 13:35 (7 captures : Aujourd'hui, Tendances, Analyses, Agir `--trial=8`, Repas, Réintroduction, Journal ; options par capture dans `screenshots.mjs` ; test : aucune route de redirection) (polish, vu le 10/11 12:35) : les captures de la fiche datent du 03/11 (#646), avant le nouvel
   écran Aujourd'hui, Agir et Tendances (07/11) et l'accueil (08/11). Les refaire sur la version actuelle (données de
   démo), elles partiront au passage du soir.
 - [x] ~~**CD-ALPHA-7** (suite de CD-ALPHA-6) : la porte de 24 h de la fiche (07:23 UTC) et des abonnements (07:33 UTC)
