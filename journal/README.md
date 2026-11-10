@@ -8,6 +8,11 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🥗 **Analyses s'ouvre sur Digestion (10/11 15:35)** : avec l'objectif « Ma digestion » (ou « Mon cycle »), une persona
+> arrivait sur Bien-être et cherchait son ventre. L'onglet s'ouvre maintenant sur Digestion, Bien-être reste à côté
+> ([capture](runs/captures/2026-11-10-1535-analyses-digestion.png)). Le test sur émulateur A56 de 14:58 a échoué au
+> téléchargement de l'image Android (panne de GitHub, pas l'app) : relancé. Part ce soir (23:45).
+
 > 🩶 **Analyses : les liens pas assez nets se voient tous (10/11 14:35)** : deux personas sur deux croyaient « nettes »
 > les lignes aux petites barres, où le hachurage ne se voit pas. Leur chiffre est maintenant en gris
 > ([capture](runs/captures/2026-11-10-1435-analyses-gris-1.png)). Les mêmes simulations (Endométriose J14, Ventre et
@@ -256,6 +261,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 15:35 — [Analyses s'ouvre sur Digestion](runs/2026-11-10-1535-analyses-digestion.md) | 🎨 | POLISH-SIM-33 : avec « Ma digestion » ou « Mon cycle », l'onglet Analyses ouvre Digestion ; test rouge puis vert, vérifié dans Chromium. Émulateur A56 relancé (panne de téléchargement). Rien à faire de votre côté |
 | 10/11 14:35 — [Deux personas, liens pas assez nets en gris](runs/2026-11-10-1435-analyses-gris.md) | 🎨 | Simulations Endométriose J14 et Ventre et données J45 (POLISH-SIM-31 à 37, PROP-SIM-10) ; POLISH-SIM-30 : dans Analyses, un lien pas assez net a son chiffre en gris ; test, captures. Rien à faire de votre côté |
 | 10/11 13:35 — [Fiche du Store : captures à jour](runs/2026-11-10-1335-fiche-captures.md) | 🎨 | LISTING-CAPTURES : 7 captures refaites (Aujourd'hui, Tendances, Analyses, Agir avec essai, Repas, Réintroduction, Journal) ; options propres à chaque capture ; test contre les routes de redirection (rouge puis vert). Rien à faire de votre côté |
 | 10/11 12:35 — [Fiche du Store au passage du soir](runs/2026-11-10-1235-fiche-passage-soir.md) | 🔧 | CD-ALPHA-7b : la fiche (nouveau titre) et les abonnements n'étaient plus envoyés depuis le 03/11 ; ils partent chaque soir juste avant la version Alpha s'ils ont changé ; 5 tests rouges puis verts. Rien à faire de votre côté |

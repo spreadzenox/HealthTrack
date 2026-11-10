@@ -357,6 +357,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **10/11 01:35** — **Réintroduction rangée sous Agir** (POLISH-REINTRO-AGIR) : plus d'onglets d'Analyses sans onglet actif, retour « ← Agir » comme la page d'un essai.
 - **10/11 02:35** — **Barres de progression vides lisibles** (POLISH-BARRE-VIDE) : un point de départ foncé, à zéro le rail seul ne se lit plus comme une barre pleine.
 - **10/11 03:35** — **Tendances : la nuit même, au singulier** (T4-suite) : « Nuit plus courte que d'habitude (6 h 21) », comme la maquette.
+- **10/11 15:35** — **Analyses s'ouvre sur Digestion** (POLISH-SIM-33) pour qui suit son ventre ou son cycle.
 - **10/11 14:35** — **Analyses : liens pas assez nets en gris** (POLISH-SIM-30) : chiffre en gris, légende ; simulations Endométriose J14 et Ventre et données J45 (POLISH-SIM-31 à 37, PROP-SIM-10).
 - **10/11 10:35** — **Note du jour sans blancs autour de la virgule** (MONO-VIRGULE) : « 3,2 » sur Aujourd'hui, « +0,4 pt » d'Analyses et niveaux avant/après de Tendances ; seuls les chiffres en mono.
 - **10/11 09:35** — **Montre et accueil : mots dans la police du texte** (MONO-MOTS-3, fin du chantier mono) : étiquettes « reçu » / « rien », dates et « mesures sur 7 j » de l'écran Montre, « partiel » de Nutrition, chiffres et étiquettes de l'accueil hors mono sauf les chiffres ; 10 règles CSS mortes retirées.
