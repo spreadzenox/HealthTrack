@@ -63,7 +63,7 @@
 }
 
 .nutrition-profile-line {
-  margin: 0 0 4px;
+  margin: 0 0 2px;
   line-height: 1.5;
 }
 
@@ -299,10 +299,26 @@
   text-decoration: underline dotted;
   text-decoration-color: var(--text-muted);
   text-underline-offset: 3px;
-  /* Cible tactile de 44 px (DESIGN.md) sans grossir le texte. */
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+}
+
+/* POLISH-PROFIL-SERRE : la valeur reste à la hauteur de sa ligne ; un débord invisible porte la cible tactile à
+   44 px (DESIGN.md) sans écarter les lignes de la carte. */
+.nutrition-profile-sourced,
+.nutrition-profile-missing {
+  position: relative;
+  min-height: 28px;
+}
+
+.nutrition-profile-sourced::after,
+.nutrition-profile-missing::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  bottom: -8px;
 }
 
 .nutrition-profile-missing {
