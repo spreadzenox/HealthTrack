@@ -55,6 +55,17 @@
 .add-chip.is-digestion { background: var(--peach-bg); }
 .add-chip.is-digestion .line-icon { color: var(--peach-label); }
 
+/* Règles (CYCLE-2) : rose framboise = corps. */
+.add-chip.is-body { background: var(--rose-bg); }
+.add-chip.is-body .line-icon { color: var(--rose-label); }
+
+.period-sheet-day { margin: 0; font-weight: 600; }
+.period-choices .gut-choice-radio { border-color: var(--rose-label); }
+.period-choices .gut-choice[aria-pressed='true'] { border-color: var(--rose-label); }
+.period-choices .gut-choice[aria-pressed='true'] .gut-choice-radio { background: var(--rose-label); }
+.period-sheet-more { display: flex; justify-content: center; margin-top: 12px; }
+.period-sheet-error { color: var(--color-danger); margin: 8px 0 0; }
+
 /* Cigarette (compteur actif) : une case du bandeau comme les autres. */
 .add-chip-slot .cigarette-quick-add { position: relative; height: 100%; }
 .add-chip-slot .btn.dashboard-cigarette-btn {

@@ -34,14 +34,15 @@ function Sheet({ title, onClose, children }) {
  *   stool?: import('react').ReactNode,
  *   cigarette?: import('react').ReactNode,
  *   cigaretteInStrip?: boolean,
- *   open?: null | 'digestion' | 'stool' | 'other',
- *   onOpenChange?: (open: null | 'digestion' | 'stool' | 'other') => void,
+ *   period?: import('react').ReactNode,
+ *   open?: null | 'digestion' | 'stool' | 'period' | 'other',
+ *   onOpenChange?: (open: null | 'digestion' | 'stool' | 'period' | 'other') => void,
  * }} props
  *   `open` / `onOpenChange` : fenêtre ouverte, pilotable de l'extérieur (« Noter ma digestion » du bloc digestif,
  *   AUJ-4 : le même geste que le bouton du bandeau).
  */
 export default function AddStrip({
-  onWellbeing, digestion = null, stool = null, cigarette = null, cigaretteInStrip = false, open: openProp, onOpenChange,
+  onWellbeing, digestion = null, stool = null, period = null, cigarette = null, cigaretteInStrip = false, open: openProp, onOpenChange,
 }) {
   const [innerOpen, setInnerOpen] = useState(null)
   const open = openProp !== undefined ? openProp : innerOpen
@@ -71,6 +72,13 @@ export default function AddStrip({
             <span>Selles</span>
           </button>
         )}
+        {/* CYCLE-2 : les règles en un geste, seulement avec « Mon cycle » ou des données de cycle (rose = corps) */}
+        {period && (
+          <button type="button" className="add-chip is-body" onClick={() => setOpen('period')}>
+            <LineIcon name="drop" size={22} />
+            <span>Règles</span>
+          </button>
+        )}
         {cigarette && cigaretteInStrip && <div className="add-chip-slot">{cigarette}</div>}
         <button type="button" className="add-chip" onClick={() => setOpen('other')}>
           <LineIcon name="dots" size={22} />
@@ -80,6 +88,7 @@ export default function AddStrip({
 
       {open === 'digestion' && <Sheet title="Ma digestion" onClose={close}>{digestion}</Sheet>}
       {open === 'stool' && <Sheet title="Photo des selles" onClose={close}>{stool}</Sheet>}
+      {open === 'period' && <Sheet title="Mes règles" onClose={close}>{period}</Sheet>}
       {open === 'other' && (
         <Sheet title="Autre chose" onClose={close}>
           <div className="add-sheet-list">
