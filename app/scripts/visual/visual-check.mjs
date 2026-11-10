@@ -377,7 +377,13 @@ function findA11y() {
     // Lien dans une phrase (inline au milieu d'un texte) : pas une cible isolée
     const inline = el.tagName === 'A' && st.display === 'inline' && (el.parentElement?.innerText || '').trim().length > (el.innerText || '').trim().length + 2
     // La zone touchable peut être agrandie par une étiquette englobante (case dans un <label>)
-    const box = el.closest('label')?.getBoundingClientRect() || r
+    let box = el.closest('label')?.getBoundingClientRect() || r
+    // Débord invisible (::after absolu à bords négatifs, POLISH-PROFIL-SERRE) : il agrandit la zone touchable.
+    const after = getComputedStyle(el, '::after')
+    if (after.content !== 'none' && after.position === 'absolute' && st.position !== 'static') {
+      const out = (v) => Math.max(0, -(parseFloat(v) || 0))
+      box = { width: box.width + out(after.left) + out(after.right), height: box.height + out(after.top) + out(after.bottom) }
+    }
     // Colonnes d'un graphique (data-scrub, historique du bien-être) : jointives, elles forment une seule bande touchable
     // de la largeur du graphique ; seule leur hauteur compte.
     const scrub = el.hasAttribute('data-scrub')

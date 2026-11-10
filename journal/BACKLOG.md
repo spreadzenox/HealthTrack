@@ -253,6 +253,13 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   rail) ; test `progressStart.test.js` rouge puis vert ; captures `runs/captures/2026-11-10-0235-barre-vide-*`. Reste
   vu, non fait : sur Aujourd'hui vide, le petit « + » (AUJ-6) seul en bas à droite de la carte Digestion laisse un grand
   blanc sous « Noter ma digestion » ; à juger au prochain passage des personas.
+- [x] **POLISH-PROFIL-SERRE** ✅ 10/11 04:35 (revue `--play` du run : Nutrition, Repas, Analyses › Digestion, Plus,
+  Nouveautés, Premium en sombre) : dans « Votre profil » (Journal › Nutrition), chaque valeur touchable avait
+  `min-height: 44px` pour 20 px de texte (trois lignes à 48 px de pas, la carte sur la moitié de l'écran). Valeurs et
+  « À compléter » à 28 px avec un `::after` invisible de 8 px dessus et dessous (cible de 44 px) ; l'outil visuel
+  compte ce débord dans « CIBLE < 44 px » ; test `profileCompact.test.js` rouge puis vert ; captures
+  `runs/captures/2026-11-10-0435-profil-serre-*`. Vus sans défaut : Repas, Analyses › Digestion, Plus, Nouveautés,
+  Premium (formules hors période de lancement).
 - [x] **INTRO-TITRE (reste)** ✅ 09/11 18:35 : vérifié au navigateur, les six titres de Paramètres ont la même graisse
   (600, 16 px, Figtree) ; l'écart vu le 09/11 07:35 n'existe pas. Rien changé.
 - [ ] **PROP-OBJECTIF** (proposition au propriétaire avec maquette, run « idées » ; pas de code sans accord)

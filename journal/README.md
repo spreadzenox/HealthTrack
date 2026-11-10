@@ -106,6 +106,12 @@
 > [sombre](runs/captures/2026-11-10-0235-barre-vide-aujourdhui-sombre.png) ·
 > [Analyses](runs/captures/2026-11-10-0235-barre-vide-analyses-clair.png)).
 
+> 📐 **Nutrition : « Votre profil » resserré (10/11 04:35)** : chaque ligne du profil (poids, composition, activité)
+> prenait 48 px de haut pour 20 px de texte ; la carte occupait la moitié de l'écran et ses lignes semblaient flotter.
+> Elles sont resserrées, la zone qu'on touche garde ses 44 px ; vos apports remontent d'environ 70 px
+> ([clair](runs/captures/2026-11-10-0435-profil-serre-clair.png) ·
+> [sombre](runs/captures/2026-11-10-0435-profil-serre-sombre.png)).
+
 > 🌙 **Tendances : « Nuit plus courte » au singulier (10/11 03:35)** : dans le détail d'un jour, « Ce qui a pu peser »
 > disait « Nuits plus courtes que d'habitude » avec la moyenne de deux nuits. Il dit maintenant, comme la maquette,
 > « Nuit plus courte que d'habitude (6 h 21) » avec la durée de la nuit même, quand elle va dans le même sens
@@ -193,6 +199,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 04:35 — [Nutrition : « Votre profil » resserré](runs/2026-11-10-0435-profil-serre.md) | 🎨 | POLISH-PROFIL-SERRE (revue `--play` du run) : lignes du profil à 28 px avec un débord invisible qui garde la cible de 44 px ; l'outil visuel compte ce débord ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 10/11 03:35 — [Tendances : la nuit même, au singulier](runs/2026-11-10-0335-nuit-singulier.md) | 🎨 | T4-suite : « Nuit plus courte que d'habitude (6 h 21) » avec la nuit du jour (valeur du jour exposée au court terme) ; tests rouges puis verts, captures claires et sombres. PR #878 (barres vides) relancée après une coupure réseau de la CI. Rien à faire de votre côté |
 | 10/11 02:35 — [Barres de progression vides lisibles](runs/2026-11-10-0235-barre-vide.md) | 🎨 | POLISH-BARRE-VIDE : à 0/28, la barre paraissait pleine ; un point de départ de la hauteur du rail (Aujourd'hui et Analyses) ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 10/11 01:35 — [Réintroduction rangée sous Agir](runs/2026-11-10-0135-reintro-agir.md) | 🎨 | POLISH-REINTRO-AGIR : plus d'onglets d'Analyses sur la réintroduction (reste de l'ancienne organisation), retour « ← Agir » ; test rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
