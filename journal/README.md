@@ -221,6 +221,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 09:10 — [Relais iOS : nettoyage fait](runs/2026-11-10-0910-relais-ios-nettoyage.md) | 📨 | Run court : votre réponse de 09:05 (nettoyage fait, dernière build chez les testeurs externes, accord d'Apple immédiat avec le même numéro de version) relayée mot pour mot en tête de `POUR-IOS.md` ; la routine iOS vérifiera les builds restantes. Rien à faire de votre côté |
 | 10/11 06:35 — [Mots dans la police du texte](runs/2026-11-10-0635-mono-mots.md) | 🎨 | MONO-MOTS : étiquettes et unités hors mono dans 9 composants (Réintroduction, rapport médecin, visite, selles, frise digestive, repas, Analyses, Tendances) ; test garde-fou rouge puis vert, captures claires et sombres. Rien à faire de votre côté |
 | 10/11 07:35 — [Abonnement : mots dans la police du texte](runs/2026-11-10-0735-mono-paywall.md) | 🎨 | MONO-MOTS-2 : paywall (étiquette, prix, « par mois », badge, frise de l'essai) hors mono sauf les chiffres ; colonnes de jours de Tendances marquées bande continue (plus d'avertissement de cible). Rien à faire de votre côté |
 | 10/11 05:35 — [Chiffres sans grands blancs](runs/2026-11-10-0535-mono-chiffres.md) | 🎨 | MONO-CHIFFRES (revue `--play` du run) : `utils/monoDigits` met en mono les seules suites de chiffres (unités, virgule et espace des milliers dans la police du texte), appliqué à Aujourd'hui, Journal, repas, Tendances et Vos données ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
