@@ -80,4 +80,22 @@ describe('PeriodSheet : noter ses règles en un geste (CYCLE-2)', () => {
     fireEvent.click(btn)
     expect(await screen.findByRole('alert')).toHaveTextContent('Enregistrement impossible. Réessayez.')
   })
+
+  it('un jour passé (Journal, CYCLE-2b) : son flux se corrige, « Annuler » referme, et rien ne s’ajoute pour aujourd’hui', async () => {
+    store.listEntries.mockResolvedValue([
+      { id: 7, type: 'cycle', source: 'app_cycle', at: noon(8), payload: { subtype: 'period', flow: 'heavy' } },
+      { id: 8, type: 'cycle', source: 'app_cycle', at: noon(9), payload: { subtype: 'period', flow: 'light' } },
+    ])
+    const done = vi.fn()
+    render(<PeriodSheet now={now} dateKey="2026-11-09" onDone={done} />)
+    expect(await screen.findByText(/jour des règles/)).toHaveTextContent('2e jour des règles, flux :')
+    expect(screen.getByRole('button', { name: 'Léger' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByRole('button', { name: 'Retirer' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Moyen' }))
+    await waitFor(() => expect(store.updateEntry).toHaveBeenCalledWith(8, { payload: { subtype: 'period', flow: 'medium' } }))
+    await waitFor(() => expect(done).toHaveBeenCalled())
+    expect(store.createEntry).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'Annuler' }))
+    expect(done).toHaveBeenCalledTimes(2)
+  })
 })

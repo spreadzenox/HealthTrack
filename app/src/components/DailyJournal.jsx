@@ -26,7 +26,10 @@ import { monoDigits } from '../utils/monoDigits'
 import { useStackedChoices } from '../hooks/useStackedChoices'
 import Ordinal from './Ordinal'
 import { listEntries } from '../storage/localHealthStorage'
-import { CYCLE_TYPE, MAX_CYCLE_DAY, SYMPTOM_LABELS, cycleByDay, cycleLineParts, cycleVisible, hasCycleData } from '../services/cycle'
+import {
+  CYCLE_SOURCE, CYCLE_TYPE, MAX_CYCLE_DAY, SYMPTOM_LABELS, cycleByDay, cycleLineParts, cycleVisible, hasCycleData, periodEntryOn,
+} from '../services/cycle'
+import PeriodSheet from './PeriodSheet'
 import { goalsOf } from '../settings/onboarding'
 import './TodayCards.css'
 
@@ -52,14 +55,24 @@ async function readCycle() {
   since.setDate(since.getDate() - CYCLE_READ_DAYS)
   const list = await listEntries({ type: CYCLE_TYPE, since: since.toISOString(), limit: 5000 })
   if (!cycleVisible(goalsOf(), hasCycleData(list))) return null
-  return (dateKeys) => cycleByDay(list, dateKeys)
+  return (dateKeys) => {
+    const byDay = cycleByDay(list, dateKeys)
+    // CYCLE-2b : l'entrée « règles » du jour, pour « … » (corriger le flux, supprimer)
+    for (const [key, info] of byDay) {
+      if (info.period) byDay.set(key, { ...info, entry: periodEntryOn(list, key) })
+    }
+    return byDay
+  }
 }
 
-/** « Règles · 2e jour · flux moyen · Crampes » sous le titre du jour. */
-function CycleLine({ info }) {
+/** « Règles · 2e jour · flux moyen · Crampes » sous le titre du jour ; « … » si les règles ont été notées ici. */
+function CycleLine({ info, dateKey }) {
+  const [open, setOpen] = useState(false)
+  const [editing, setEditing] = useState(false)
   const parts = cycleLineParts(info)
   const symptoms = (info?.symptoms || []).map((s) => SYMPTOM_LABELS[s]).filter(Boolean)
   if (!parts && !symptoms.length) return null
+  const entry = info?.entry?.source === CYCLE_SOURCE ? info.entry : null
   const bits = []
   if (parts) {
     bits.push(parts.label)
@@ -67,11 +80,33 @@ function CycleLine({ info }) {
     if (parts.flow) bits.push(parts.flow)
   }
   if (symptoms.length) bits.push(symptoms.join(', '))
+  const label = 'ces règles'
   return (
-    <p className="day-cycle">
-      <LineIcon name="drop" size={14} />
-      <span>{bits.map((b, i) => <span key={i}>{i > 0 && ' · '}{b}</span>)}</span>
-    </p>
+    <>
+      <div className="day-cycle">
+        <LineIcon name="drop" size={14} />
+        <span className="day-cycle-text">{bits.map((b, i) => <span key={i}>{i > 0 && ' · '}{b}</span>)}</span>
+        {entry && !editing && (
+          <span className="day-cycle-actions">
+            {open && (
+              <div className="entry-edit">
+                <button type="button" className="entry-delete-btn" aria-label={`Modifier ${label}`}
+                  onClick={() => { setOpen(false); setEditing(true) }}>
+                  Modifier
+                </button>
+              </div>
+            )}
+            {open && <DeleteEntryButton entryId={entry.id} label={label} />}
+            <EntryActionsToggle open={open} label={label} onToggle={() => setOpen((o) => !o)} />
+          </span>
+        )}
+      </div>
+      {editing && entry && (
+        <div className="day-cycle-edit">
+          <PeriodSheet dateKey={dateKey} onDone={() => setEditing(false)} />
+        </div>
+      )}
+    </>
   )
 }
 
@@ -445,7 +480,7 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays 
           <span className="day-card-cycle"><Ordinal n={cycle.cycleDay} /> jour du cycle</span>
         )}
       </h4>
-      <CycleLine info={cycle} />
+      <CycleLine info={cycle} dateKey={day.dateKey} />
       {chips.length > 0 && (
         <dl className="day-summary">
           {chips.map(([label, value, note]) => {

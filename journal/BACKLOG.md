@@ -50,8 +50,10 @@ téléphone ; page de confidentialité mise à jour quand quelque chose s'affich
   même entrée (`periodEntryOn`, aucun doublon), « Retirer » l'efface. Règles lues ailleurs (future source Health
   Connect) : affichées, non modifiables ici. Confidentialité (« règles et symptômes du cycle si vous les notez ») et
   Nouveautés.
-- [ ] **CYCLE-2b** Journal › Jours : « … » sur la ligne « Règles » (Modifier le flux / Supprimer), comme les notes de
-  digestion ; puis les symptômes du cycle en un geste dans « Mes règles » (chips, `symptomEntry`) et un jour passé
+- [x] **CYCLE-2b** ✅ 10/11 23:35 Journal › Jours : « … » sur la ligne « Règles » (seulement des règles notées dans
+  l'app) → « Modifier » ouvre le choix du flux sur place pour ce jour (`PeriodSheet` avec `dateKey` et `onDone` :
+  « 2e jour des règles, flux : », « Annuler » discret) ; « Supprimer » avec confirmation (`DeleteEntryButton`).
+- [ ] **CYCLE-2c** Symptômes du cycle en un geste dans « Mes règles » (chips, `symptomEntry`), puis noter un jour passé
   (hier) — une étape par run.
 - [ ] **CYCLE-3** Lecture de `MenstruationPeriodRecord` / `MenstruationFlowRecord` dans Health Connect (source
   `health_connect`, mêmes entrées). **Bloqué par une action du propriétaire** : ajouter le type à la déclaration

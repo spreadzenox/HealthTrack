@@ -387,6 +387,10 @@
   color: var(--text);
 }
 .day-cycle > svg { flex: none; margin-top: 2px; color: var(--rose-label); }
+/* CYCLE-2b : « … » de la ligne « Règles » (même geste que les saisies), et le choix du flux sur place */
+.day-cycle-text { flex: 1; min-width: 0; }
+.day-cycle-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px; margin-top: -4px; }
+.day-cycle-edit { margin: 0 0 10px; }
 
 .day-summary {
   display: grid;

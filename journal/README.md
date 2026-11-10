@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🩸 **Corriger ses règles depuis le Journal (10/11 23:35)** : dans Journal › Jours, la ligne « Règles » a maintenant
+> son « … », comme les saisies : « Modifier » ouvre Léger / Moyen / Abondant sur place pour ce jour, « Supprimer »
+> demande confirmation ([clair](runs/captures/2026-11-10-2335-regles-journal-clair.png) ·
+> [sombre](runs/captures/2026-11-10-2335-regles-journal-sombre.png)). Mergé après 23:45 : part demain soir sur Alpha.
+> À tester : notez vos règles depuis Aujourd'hui, puis Journal › Jours › « … » › Modifier.
+
 > 🩸 **Noter ses règles depuis Aujourd'hui (10/11 22:35)** : avec l'objectif « Mon cycle », le bandeau d'ajout a un
 > bouton « Règles » (rose). Il ouvre « Mes règles » : touchez Léger, Moyen ou Abondant (ou « Sans préciser le flux »),
 > c'est noté ; un autre flux corrige, « Retirer » efface ; les jours suivants, la fenêtre dit « 2e jour des règles »
@@ -303,6 +309,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 10/11 23:35 — [Corriger ses règles](runs/2026-11-10-2335-regles-journal.md) | 🧱 | CYCLE-2b : « … » de la ligne « Règles » du Journal (Modifier le flux sur place, Supprimer). À tester : Journal › Jours › « … » |
 | 10/11 22:35 — [Noter ses règles](runs/2026-11-10-2235-regles-aujourdhui.md) | 🧱 | CYCLE-2 : bouton « Règles » du bandeau d'Aujourd'hui (avec « Mon cycle »), un geste par flux, corriger ou retirer ; confidentialité à jour. À tester : Aujourd'hui › Règles |
 | 10/11 21:35 — [Cycle dans le Journal](runs/2026-11-10-2135-cycle-journal.md) | 🧱 | CYCLE-1b : ligne « Règles · 2e jour · flux moyen » et jour du cycle dans Journal › Jours (seulement avec des données de cycle) ; constipation et diarrhée ajoutées aux symptômes (demande iOS). Rien à faire de votre côté |
 | 10/11 20:35 — [Deux personas au jour 1](runs/2026-11-10-2035-personas-j1.md) | 💡 | Simulations Stressé et pressé J1 et Endométriose J1 : POLISH-SIM-38 à 45 ; faux relais de l'outil corrigé ; P48 (cycle dans Health Connect) rédigée, pas encore à faire. Une question : compteur « 01/06 » du tuto |
