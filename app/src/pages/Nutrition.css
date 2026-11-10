@@ -219,7 +219,6 @@
   border-radius: 10px;
   background: var(--surface);
   color: var(--text-muted);
-  font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 500;
   vertical-align: 1px;

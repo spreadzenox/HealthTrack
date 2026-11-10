@@ -9,26 +9,6 @@
   color: var(--mint-label);
 }
 
-
-.mood-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 10px 0 0;
-}
-
-.mood-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 9px;
-  border-radius: var(--radius-tag);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--mint-label);
-  background: rgba(var(--tint-rgb), 0.06);
-}
-
 /* Note manuelle, discrète : un lien-bouton en bas de la carte (cible de 44 px). */
 .mood-manual {
   display: inline-flex;
@@ -42,7 +22,6 @@
   color: var(--mint-label);
   background: transparent;
 }
-
 
 /* Rappel discret de la lecture au déverrouillage (POL-PLAY-84) : une ligne sur fond blanc, fermable. */
 .mood-unlock-reminder {
@@ -149,11 +128,4 @@
 
 .mood-calib-steps span.is-on {
   background: var(--mint-label);
-}
-
-/* VENTRE-BE-2 : la note du ventre a compté (pêche = ventre). */
-.mood-chip-gut {
-  font-family: var(--font-sans, inherit);
-  color: var(--peach-text);
-  background: var(--peach-bg);
 }
