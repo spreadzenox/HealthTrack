@@ -6,6 +6,7 @@ import { loadPlans, purchasePlan, restorePurchases, monthlyEquivalent, annualSav
 import { APP_NAME, PRIVACY_URL, TERMS_URL } from '../config/brand'
 import { benefitsFor, upcomingBenefits, PREMIUM_AI_DAILY, GOLD_AI_DAILY } from '../config/premiumBenefits'
 import DetailsToggle from '../components/DetailsToggle'
+import { monoDigits } from '../utils/monoDigits'
 import './Premium.css'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { REMINDER_DAYS_BEFORE, trialReminderAvailable } from '../services/trialReminder'
@@ -36,12 +37,12 @@ function TrialTimeline({ days, reminder }) {
       </li>
       {reminder && days > REMINDER_DAYS_BEFORE && (
         <li>
-          <span className="paywall-timeline-day">jour {days - REMINDER_DAYS_BEFORE}</span>
+          <span className="paywall-timeline-day">jour <span className="mono">{days - REMINDER_DAYS_BEFORE}</span></span>
           <span>On vous prévient par une notification</span>
         </li>
       )}
       <li>
-        <span className="paywall-timeline-day">jour {days}</span>
+        <span className="paywall-timeline-day">jour <span className="mono">{days}</span></span>
         <span><Ordinal n={1} /> paiement, sauf si vous annulez avant</span>
       </li>
     </ol>
@@ -246,13 +247,13 @@ export default function Premium({ context = null, onClose = null }) {
                   <span className="paywall-plan-text">
                     <span className="paywall-plan-name">{p.period === 'year' ? 'Annuel' : 'Mensuel'}</span>
                     <span className="paywall-plan-price">
-                      {`${p.price} /\u00a0${PER[p.period]}`}
+                      {monoDigits(`${p.price} /\u00a0${PER[p.period]}`)}
                     </span>
                     {/* REVUE-320-PRIX : à 320 px, « soit 2,50 € » puis « par mois », jamais « par » / « mois » ni « soit » seul ;
                         de même « / an » reste entier au-dessus. */}
-                    {monthly && <span className="paywall-plan-note">{`soit\u00a0${monthly} par\u00a0mois`}</span>}
+                    {monthly && <span className="paywall-plan-note">{monoDigits(`soit\u00a0${monthly} par\u00a0mois`)}</span>}
                   </span>
-                  {p.period === 'year' && saving && <span className="paywall-badge">−{saving} %</span>}
+                  {p.period === 'year' && saving && <span className="paywall-badge">−<span className="mono">{saving}</span> %</span>}
                 </label>
               )
             })}

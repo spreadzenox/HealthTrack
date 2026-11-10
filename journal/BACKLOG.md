@@ -266,6 +266,11 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   frise digestive, « ≈ 480 kcal » des repas, « pt » d'Analyses, valeur de Tendances (« 3,3 »). Test garde-fou : aucun
   `.mono` avec une lettre sur l'écran des portions. Reste (mineur) : règles CSS qui mettent en mono des étiquettes
   entières (`.paywall-tag`, `.watch-data-tag`, `.nutrition-partial-tag`, `.mood-chip`, `.reco-meta-line`, Onboarding).
+- [x] **MONO-MOTS-2** ✅ 10/11 07:35 : paywall (`.paywall-tag`, prix, « par mois », badge, frise de l'essai) hors mono sauf
+  les chiffres, test garde-fou (DOM et CSS). Colonnes de jours de Tendances : `data-scrub` (bande jointive, plus
+  d'avertissement « CIBLE < 44 px »).
+- [ ] **MONO-MOTS-3** (mineur) Reste en mono avec des mots : `.watch-data-tag/-date/-meta`, `.reco-meta-line`,
+  `.reco-evidence`, `.reco-link-meta/-src`, `.nutrition-partial-tag`, `.mood-chip`, Onboarding (9 règles).
 - [x] **MONO-CHIFFRES** ✅ 10/11 05:35 (revue `--play` du run, leçon 11 « police mono pour les chiffres seulement ») :
   « 6 h 30 », « d'habitude 49 ms » (Aujourd'hui), tuiles du Journal (« 37, normal », « 69 à 83 bpm », « 10 085 »),
   quantités des repas (« 150 g »), Tendances (valeur, fourchette, « +0,4 pt », « 31 % » de l'étoile) et « 1 847 entrées »

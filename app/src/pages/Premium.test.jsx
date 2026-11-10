@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 vi.mock('../config/distribution', async (importOriginal) => {
   const actual = await importOriginal()
@@ -33,15 +35,30 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     renderPremium()
     const annual = await screen.findByRole('radio', { name: /Annuel/ })
     expect(annual).toBeChecked()
-    expect(screen.getByText('29,99 € / an')).toBeInTheDocument()
-    const note = screen.getByText(/soit 2,50.€.par.mois/)
+    expect(screen.getByText((_, el) => el?.classList?.contains('paywall-plan-price') && /^29,99.€ \/\u00a0an$/.test(el.textContent))).toBeInTheDocument()
+    const note = screen.getByText((_, el) => el?.classList?.contains('paywall-plan-note') && /soit\s2,50.€.par.mois/.test(el.textContent))
     // REVUE-320-PRIX : à 320 px, la ligne ne peut passer qu'entre « soit 2,50 € » et « par mois ».
     expect(note.textContent).toBe('soit\u00a02,50\u00a0€ par\u00a0mois')
-    expect(screen.getByText('29,99 € / an').textContent).toMatch(/\/\u00a0an$/)
-    expect(screen.getByText('−50 %')).toBeInTheDocument()
+    expect(screen.getByText((_, el) => el?.classList?.contains('paywall-plan-price') && /^29,99.€ \/\u00a0an$/.test(el.textContent)).textContent).toMatch(/\/\u00a0an$/)
+    expect(document.querySelector('.paywall-badge')).toHaveTextContent('−50 %')
     expect(screen.getByRole('button', { name: 'Essayer 14 jours gratuitement' })).toBeEnabled()
     expect(screen.getByText(/Puis 29,99 € par an\. Annulable à tout moment dans Google Play/)).toBeInTheDocument()
     expect(screen.getByLabelText('Déroulé de l’essai')).toHaveTextContent('jour 14')
+  })
+
+  it('MONO-MOTS (leçon 11) : seuls les chiffres du paywall sont en police mono, jamais les mots', async () => {
+    billing.loadPlans.mockResolvedValue([YEAR, MONTH])
+    renderPremium()
+    await screen.findByRole('radio', { name: /Annuel/ })
+    const monoWithLetters = [...document.querySelectorAll('.mono')].map((e) => e.textContent).filter((t) => /\p{L}/u.test(t))
+    expect(monoWithLetters).toEqual([])
+    expect([...document.querySelectorAll('.mono')].map((e) => e.textContent)).toEqual(expect.arrayContaining(['29', '99', '14', '50']))
+    // Les classes d'étiquettes ne mettent plus de mots entiers en mono
+    const css = readFileSync(resolve('src/pages/Premium.css'), 'utf8')
+    for (const sel of ['.paywall-tag', '.paywall-plan-price', '.paywall-plan-note', '.paywall-badge', '.paywall-timeline-day']) {
+      const rule = css.match(new RegExp(`\\${sel} \\{([^}]*)\\}`))?.[1] ?? ''
+      expect(rule, sel).not.toMatch(/font-mono/)
+    }
   })
 
   it('VC-18b : sans rappel possible (navigateur), le paywall ne le promet pas', async () => {
@@ -163,7 +180,7 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
       expect(screen.getByRole('radio', { name: /Gold/ })).toBeChecked()
       expect(screen.queryByRole('radio', { name: /Annuel/ })).toBeNull()
       expect(screen.getByRole('radio', { name: /Mensuel/ })).toBeChecked()
-      expect(screen.getByText('9,99 € / mois')).toBeInTheDocument()
+      expect(screen.getByText((_, el) => el?.classList?.contains('paywall-plan-price') && /^9,99.€ \/.mois$/.test(el.textContent))).toBeInTheDocument()
       expect(screen.getByText(/jusqu’à 20 par jour/)).toBeInTheDocument()
       expect(screen.queryByLabelText('Déroulé de l’essai')).toBeNull()
       billing.purchasePlan.mockResolvedValue({ status: 'cancelled' })
