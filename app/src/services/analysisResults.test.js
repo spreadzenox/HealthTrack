@@ -210,6 +210,9 @@ describe('contrat des résultats d’Analyses', () => {
     const lo = steps.indexOf(Math.min(...steps))
     const down = dayContributions(res, entries, dk(lo)).find((c) => c.key === 'steps')
     expect(down.points).toBeLessThan(0)
+    // T4-suite : au court terme, la valeur du seul jour est aussi donnée (« Nuit plus courte (6 h 21) »).
+    for (const c of top) if (c.horizon !== 'short') expect(c.dayValue).toBeUndefined()
+    if (top[0].horizon === 'short') expect(top[0].dayValue).toBe(Math.max(100, steps[hi]))
     for (let i = 1; i < top.length; i += 1) expect(Math.abs(top[i - 1].points)).toBeGreaterThanOrEqual(Math.abs(top[i].points))
   })
 

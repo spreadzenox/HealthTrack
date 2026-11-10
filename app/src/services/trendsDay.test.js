@@ -89,6 +89,12 @@ describe('« Ce qui a pu peser » dit ce qui s’est passé (T4)', () => {
     expect(contributionText(c('sleepMinutes', 381, 450))).toBe('Nuits plus courtes que d’habitude (6 h 21)')
     expect(contributionText(c('sleepMinutes', 500, 450, 'medium'))).toBe('Nuits plus longues que d’habitude ces derniers jours (8 h 20)')
   })
+  it('sommeil au court terme : la nuit même, au singulier, comme la maquette (T4-suite)', () => {
+    expect(contributionText({ ...c('sleepMinutes', 400, 450), dayValue: 381 })).toBe('Nuit plus courte que d’habitude (6 h 21)')
+    expect(contributionText({ ...c('sleepMinutes', 480, 450), dayValue: 500 })).toBe('Nuit plus longue que d’habitude (8 h 20)')
+    // La nuit même va dans l'autre sens que la fenêtre : on garde la fenêtre (deux nuits).
+    expect(contributionText({ ...c('sleepMinutes', 400, 450), dayValue: 470 })).toBe('Nuits plus courtes que d’habitude (6 h 40)')
+  })
   it('alcool en verres, écran tard en durée, pas et FODMAP en quantité', () => {
     expect(contributionText(c('alcohol_g', 10, 0))).toBe('Plus d’alcool que d’habitude (1 verre)')
     expect(contributionText(c('alcohol_g', 3, 0))).toBe('Plus d’alcool que d’habitude (moins d’un verre)')

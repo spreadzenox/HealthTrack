@@ -190,8 +190,13 @@ for (const [g, word] of Object.entries(FODMAP_WORD)) {
 export function contributionText(c) {
   const p = PHRASES[c?.key]
   if (!p || !isNum(c.value) || !isNum(c.usual) || c.value === c.usual) return c?.label ?? ''
+  const up = c.value > c.usual
+  // T4-suite : la nuit même, au singulier, si elle va dans le même sens que la fenêtre (jour même et veille).
+  if (c.key === 'sleepMinutes' && c.horizon === 'short' && isNum(c.dayValue) && c.dayValue > 0 && (c.dayValue > c.usual) === up) {
+    return `Nuit plus ${up ? 'longue' : 'courte'} ${HABIT} (${formatDuration(c.dayValue)})`
+  }
   const shown = p.value(Math.max(0, c.value), c.horizon)
-  return `${p.say(c.value > c.usual)} ${HABIT}${WHEN[c.horizon] ?? ''}${shown ? ` (${shown})` : ''}`
+  return `${p.say(up)} ${HABIT}${WHEN[c.horizon] ?? ''}${shown ? ` (${shown})` : ''}`
 }
 
 /** Points sur 5 avec leur signe et l'unité : « −0,29 pt ». */

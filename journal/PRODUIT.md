@@ -356,6 +356,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **10/11 00:35** — **Agir : le graphique d'un essai comme la maquette** (POLISH-ESSAI-AXES) : Avec / Sans en lignes sur une échelle commune, Écart gradué, phrase de l'écart et de sa fourchette.
 - **10/11 01:35** — **Réintroduction rangée sous Agir** (POLISH-REINTRO-AGIR) : plus d'onglets d'Analyses sans onglet actif, retour « ← Agir » comme la page d'un essai.
 - **10/11 02:35** — **Barres de progression vides lisibles** (POLISH-BARRE-VIDE) : un point de départ foncé, à zéro le rail seul ne se lit plus comme une barre pleine.
+- **10/11 03:35** — **Tendances : la nuit même, au singulier** (T4-suite) : « Nuit plus courte que d'habitude (6 h 21) », comme la maquette.
 - **09/11 19:35** — **Agir : chaque essai porte sa consigne** (POLISH-AGIR-TITRES, restes de l'écart à la maquette) : essai en cours, terminé et page d'essai titrés « Dormir au moins 7 h 30 » (plus « Sommeil ») ; « Réintroduction : les fructanes » au lieu de « Tester les fructanes » / « Test FODMAP : Fructanes ».
 - **09/11 18:35** — **Agir : essais proposés concrets** (POLISH-AGIR-PROPOSE, écart à la maquette validée) : « Dormir au moins 7 h 53 » et « Lien repéré : +0,2 point de bien-être pour 40 min de sommeil de plus. 14 jours, un jour sur deux tiré au sort. » au lieu de « Tester : sommeil · court terme ».
 - **09/11 16:35** — **Tendances : grille lisible** (POLISH-SIM-28) : une ligne de grille par graduation ; la ligne grise isolée se lisait comme une habitude.
