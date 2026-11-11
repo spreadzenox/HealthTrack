@@ -155,8 +155,26 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
       })
     }
 
-    if (i === 0) pushFaceBursts(day, 3, true)
-    if (i === 0) continue // aujourd'hui : journée en cours, seulement le sommeil de la nuit
+    if (i === 0) {
+      pushFaceBursts(day, 3, true)
+      // Aujourd'hui : journée en cours, la nuit et les pas comptés jusqu'à maintenant (Health Connect lit le jour en
+      // cours ; POLISH-SIM-40 : sans eux, Aujourd'hui n'avait jamais de pas). Aucun tirage aléatoire de plus.
+      const dayStart = new Date(day)
+      dayStart.setHours(0, 0, 0, 0)
+      const fraction = Math.min(1, Math.max(0, (now.getTime() - dayStart.getTime()) / 86_400_000))
+      // Peu de pas avant 7 h : on compte la part de la journée éveillée (7 h → 23 h)
+      const awake = Math.min(1, Math.max(0, (fraction * 24 - 7) / 16))
+      const sofar = Math.round(steps * awake)
+      if (sofar > 0) {
+        entries.push({
+          type: 'steps',
+          source: 'health_connect',
+          at: dayStart.toISOString(),
+          payload: { value: sofar, unit: 'count', period: 'day', endDate: now.toISOString(), connector: 'health_connect', sourceName: 'Gadgetbridge' },
+        })
+      }
+      continue
+    }
 
     entries.push({
       type: 'steps',

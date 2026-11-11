@@ -70,17 +70,23 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
     expect(screen.getByRole('link', { name: /Ajouter une montre/ })).toHaveAttribute('href', '/connectors')
   })
 
-  it('notes du jour : bien-être en menthe, digestion en pêche seulement avec « Ma digestion »', () => {
+  it('notes du jour : digestion en pêche seulement avec « Ma digestion » ; le bien-être reste dans sa carte (POLISH-SIM-40)', () => {
     const entries = [
       { type: 'wellbeing', at: at(9), payload: { score: 5 } },
       { type: 'gut', at: at(10), payload: { level: 'pain' } },
     ]
     const { unmount } = wrap({ entries, summary: { meals: 1 }, showGut: true })
-    expect(valueEl('5/5').closest('li')).toHaveAttribute('data-tone', 'mint')
+    expect(screen.queryByText('5/5')).toBeNull()
+    expect(screen.queryByText('Bien-être')).toBeNull()
     expect(screen.getByText('Douleur').closest('li')).toHaveAttribute('data-tone', 'peach')
     unmount()
     wrap({ entries, summary: { meals: 1 }, showGut: false })
     expect(screen.queryByText('Douleur')).toBeNull()
+  })
+
+  it('seulement une note de bien-être : pas de bloc (POLISH-SIM-40, doublon de la carte du dessus)', () => {
+    const { container } = wrap({ entries: [{ type: 'wellbeing', at: at(9), payload: { score: 4 } }] })
+    expect(container).toBeEmptyDOMElement()
   })
 
   it('dès 7 jours d’historique, l’écart à votre norme sur la mesure (flèche seulement si net)', async () => {
