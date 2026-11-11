@@ -155,6 +155,18 @@ describe('Nouvel accueil : parcours complet sans Health Connect', () => {
     stored.created = []
   })
 
+  it('« Votre téléphone suffit » suit l’objectif : le poids pour « Prendre soin de moi » (POLISH-SIM-51)', () => {
+    renderAt()
+    fireEvent.click(btn('Suivant'))
+    fireEvent.click(btn('Suivant'))
+    fireEvent.click(btn('Commencer'))
+    fireEvent.click(screen.getByRole('checkbox', { name: /Prendre soin de moi/ }))
+    fireEvent.click(btn('Continuer'))
+    fireEvent.click(btn('Continuer'))
+    expect(heading('Votre téléphone suffit pour commencer')).toBeInTheDocument()
+    expect(screen.getByText('bien-être, repas en photo, poids')).toBeInTheDocument()
+  })
+
   it('aucun écran ne bloque ; « Que voulez-vous suivre ? » et « Avez-vous une montre ? » ont disparu', async () => {
     renderAt()
     fireEvent.click(btn('Suivant'))

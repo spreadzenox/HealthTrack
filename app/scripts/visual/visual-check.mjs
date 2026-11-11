@@ -106,7 +106,7 @@
  *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer"  # écrans suivants de l'onboarding
  *                                          (sans --onboarding, il est noté « fait » pour que les autres pages s'affichent)
  *   npm run visual -- --routes=/bienvenue --onboarding=found   # nouvel accueil (ACC-1 à 9) : tuto-2, tuto-3, goal,
- *                                          sources, sources-huawei, found, found-none, face (avec --face=on), first,
+ *                                          sources, sources-huawei, found, found-none, found-none-care, face (avec --face=on), first,
  *                                          first-stress, premium (avec --play), tour (visite guidée, route /,
  *                                          --click="Voir dans 14 jours" pour l'exemple)
  *   npm run visual -- --play --face=on --face-unlock=off --routes=/ --onboarding=unlock-later   # rappel discret de la
@@ -743,6 +743,7 @@ async function main() {
       // « Voici ce que Halcya recevra » : résumé depuis les données de démo, sans relire Health Connect
       found: at('found', { goals: ['gut'], health: 'granted', imported: true }),
       'found-none': at('found', { goals: ['gut'], health: 'declined' }),
+      'found-none-care': at('found', { goals: ['care'], health: 'declined' }),
       face: at('face', { goals: ['gut'] }),
       first: at('first', { goals: ['gut', 'cycle'] }),
       'first-stress': at('first', { goals: ['stress'] }),

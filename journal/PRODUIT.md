@@ -368,6 +368,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **11/11 02:35** — **Noter ses règles d'hier** (CYCLE-2d) : choix « Aujourd'hui · Hier » dans « Mes règles ».
 - **11/11 07:35** — Ma digestion : le soir, une seule rangée Calme / Gêne / Douleur à la fois (bilan de la journée, ou moment précis) (POLISH-SIM-41).
 - **11/11 15:35** — Analyses : un facteur qui change de sens selon le délai sans être net est nommé une fois (« rien à en tirer pour l'instant ») ; rien de net : une phrase en tête au lieu de la légende (POLISH-SIM-50).
+- **11/11 16:35** — Accueil sans Health Connect : « Ce que vous noterez » suit l'objectif (poids, règles, digestion) (POLISH-SIM-51) ; « Tests » (budget de lectures) ne dépend plus d'apt, qui tombait en panne DNS sur le runner.
 - **11/11 14:35** — Repas : le nom proposé par l'IA se modifie (champ « Nom », aussi dans « Modifier ») ; vide = sans nom (POLISH-SIM-49).
 - **11/11 13:35** — Tendances : le poids a sa courbe (dernière pesée du jour), graduations exactes (POLISH-SIM-47).
 - **11/11 12:35** — Repas : un aliment hors base est nommé dans le total (« sans … », « inconnu » si rien n'est compté), « ≥ » dans les listes (POLISH-SIM-48).

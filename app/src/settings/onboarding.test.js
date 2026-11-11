@@ -14,6 +14,7 @@ import {
   GOALS,
   TRACKS,
   goalsOf,
+  handNotes,
 } from './onboarding'
 
 describe('settings/onboarding', () => {
@@ -190,5 +191,21 @@ describe('settings/onboarding', () => {
       expect(shouldShowUnlockReminder(loadOnboarding(), off, later(10))).toBe(false)
       expect(onboardingDiagnostic()).toMatchObject({ unlockLater: true, unlockReminderDone: true })
     })
+  })
+})
+
+describe('handNotes (POLISH-SIM-51) : ce que l’on note sans source, selon l’objectif', () => {
+  it('sans objectif ou « Tout mesurer » : bien-être, digestion, repas en photo', () => {
+    expect(handNotes([])).toEqual(['bien-être', 'digestion', 'repas en photo'])
+    expect(handNotes(['all'])).toEqual(['bien-être', 'digestion', 'repas en photo'])
+  })
+  it('« Prendre soin de moi » : le poids, pas la digestion', () => {
+    expect(handNotes(['care'])).toEqual(['bien-être', 'repas en photo', 'poids'])
+  })
+  it('« Mon cycle » : digestion et règles', () => {
+    expect(handNotes(['cycle'])).toEqual(['bien-être', 'digestion', 'règles', 'repas en photo'])
+  })
+  it('« Mon stress et mon sommeil » : ni digestion ni poids', () => {
+    expect(handNotes(['stress'])).toEqual(['bien-être', 'repas en photo'])
   })
 })

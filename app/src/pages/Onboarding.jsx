@@ -6,6 +6,7 @@ import {
   defaultTracks,
   finishOnboarding,
   goalsOf,
+  handNotes,
   loadOnboarding,
   markScreenSeen,
   saveOnboarding,
@@ -409,7 +410,7 @@ function SourcesStep({ state, update, installed }) {
 
 const pct = (p) => (p && p.total ? Math.round((p.done / p.total) * 100) : 0)
 
-function FoundStep({ health, imported, onImported, installed, huawei, onConnect }) {
+function FoundStep({ health, goals, imported, onImported, installed, huawei, onConnect }) {
   const [progress, setProgress] = useState(importProgressNow)
   const [entries, setEntries] = useState(null)
   const [error, setError] = useState(false)
@@ -451,7 +452,7 @@ function FoundStep({ health, imported, onImported, installed, huawei, onConnect 
         <div className="onb-row">
           <div className="onb-row-text">
             <span className="onb-row-title">Ce que vous noterez</span>
-            <span className="onb-row-detail">bien-être, digestion, repas en photo</span>
+            <span className="onb-row-detail">{handNotes(goals).join(', ')}</span>
           </div>
         </div>
         {health !== 'unavailable' && healthConnector() && (
@@ -892,6 +893,7 @@ export default function Onboarding() {
         {step === 'found' && (
           <FoundStep
             health={state.health}
+            goals={goals}
             imported={!!state.imported}
             onImported={() => update({ imported: true })}
             installed={installed}
