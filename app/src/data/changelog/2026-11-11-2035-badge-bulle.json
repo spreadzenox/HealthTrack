@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-11",
+  "kind": "correctif",
+  "title": "Visite guidée : l'étiquette « Exemple » ne cache plus le nom de l'app",
+  "items": [
+    "L'étiquette « Exemple · données fictives » passe en tête de la bulle de la visite, au lieu de recouvrir le haut de l'écran."
+  ]
+}

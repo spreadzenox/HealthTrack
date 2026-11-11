@@ -146,12 +146,13 @@ function Tour({ onEnd, from }) {
       {/* Le rideau d'abord : le voile le couvre, l'écran se remplit sous lui (jamais une bande claire, POLISH-SIM-20) */}
       {revealing && <div className="tour-curtain" aria-hidden="true" />}
       <Spotlight selector={revealing ? null : step.anchor} stepKey={i} />
-      {step.days && (
-        <div className="tour-badge">
-          Exemple · données fictives · <DayCounter key={`${i}-${step.days}`} days={step.days} animate={animate} />
-        </div>
-      )}
       <div className="tour-bubble">
+        {/* Dans la bulle : jamais par-dessus l'en-tête de l'app (POLISH-SIM-37c) */}
+        {step.days && (
+          <div className="tour-badge">
+            Exemple · données fictives · <DayCounter key={`${i}-${step.days}`} days={step.days} animate={animate} />
+          </div>
+        )}
         <h2 id="tour-title" className="tour-title">{step.title}</h2>
         <p className="tour-text">{step.text}</p>
         <div className="tour-actions">

@@ -23,20 +23,18 @@
   transition: top 0.2s, left 0.2s, width 0.2s, height 0.2s;
 }
 
+/* En tête de la bulle (POLISH-SIM-37c : en haut de l'écran, il masquait le nom de l'app) */
 .tour-badge {
-  position: fixed;
-  top: calc(var(--safe-top, 0px) + 10px);
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 6px 14px;
+  justify-self: start;
+  padding: 4px 12px;
   border-radius: var(--radius-pill);
   background: var(--peach-bg);
   color: var(--peach-text);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  white-space: nowrap;
+  max-width: 100%;
 }
 
 .tour-day {

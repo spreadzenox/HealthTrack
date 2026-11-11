@@ -57,7 +57,8 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
     fireEvent.click(btn('Voir dans 14 jours'))
     expect(screen.getByRole('heading', { name: 'Votre bien-être du jour' })).toBeInTheDocument()
     await waitFor(() => expect(isExampleMode()).toBe(true))
-    expect(screen.getByText(/Exemple · données fictives/)).toBeInTheDocument()
+    // Dans la bulle, jamais par-dessus l’en-tête de l’app (POLISH-SIM-37c)
+    expect(screen.getByText(/Exemple · données fictives/).closest('.tour-bubble')).not.toBeNull()
   })
 
   it('la base de la personne est identique avant et après la visite ; « Passer » rend ses vraies données', async () => {
