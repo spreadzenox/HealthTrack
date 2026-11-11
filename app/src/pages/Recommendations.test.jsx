@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, within, fireEvent } from '@testing-library/react'
+import { render, screen, within, fireEvent, act } from '@testing-library/react'
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Recommendations from './Recommendations'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
@@ -150,5 +150,21 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(card).not.toHaveTextContent('de plus avec une gêne')
     fireEvent.click(within(card).getByRole('button', { name: 'Noter maintenant' }))
     expect(screen.getByTestId('where')).toHaveTextContent('/ digestion')
+  })
+})
+
+describe('Exemple digestion sans l’objectif ventre (POLISH-SIM-37b)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('le bandeau « suivi digestif masqué » se cache pendant l’exemple et revient après', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    const { enterExampleMode, exitExampleMode } = await import('../storage/exampleMode')
+    saveOnboarding({ goals: ['stress'] })
+    renderPage({ view: 'gut' }, readyResults)
+    expect(await screen.findByTestId('gut-off')).toBeInTheDocument()
+    act(() => enterExampleMode([]))
+    expect(screen.queryByTestId('gut-off')).not.toBeInTheDocument()
+    act(() => exitExampleMode())
+    expect(await screen.findByTestId('gut-off')).toBeInTheDocument()
   })
 })

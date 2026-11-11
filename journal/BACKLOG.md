@@ -383,8 +383,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-37** ✅ 11/11 18:35 Vos données : « Un fichier JSON, rangé dans Documents. » ; « Voir un exemple »
   relance la visite à l'écran où on le touche (Analyses › Digestion : l'exemple digestion, même sans l'objectif ventre) ;
   tests rouges puis verts.
-- [ ] **POLISH-SIM-37b** Exemple digestion relancé sans l'objectif ventre : le bandeau « Le suivi digestif est masqué »
-  reste en tête de l'exemple ; le cacher pendant la visite (mode exemple).
+- [x] **POLISH-SIM-37b** ✅ 11/11 19:35 Exemple digestion relancé sans l'objectif ventre : le bandeau « Le suivi
+  digestif est masqué » se cache pendant le mode exemple et revient à la sortie (`Recommendations`, test rouge puis vert).
+- [ ] **POLISH-SIM-37c** Le badge « Exemple · données fictives · jour 28 » recouvre le nom « Halcya » de l'en-tête
+  (capture du 11/11 19:35) : le placer sans masquer l'en-tête ; vérifier sur l'émulateur A56.
 - [x] **POLISH-SIM-38** ✅ 11/11 03:35 Accueil, 2e carte du tuto : « Trois onglets, trois usages » alors que la barre
   en a cinq. Devient « Trois usages : » (Journal, Analyses, Agir) ; test du texte rouge puis vert ; `TEXTES.md` de la
   maquette annoté.
