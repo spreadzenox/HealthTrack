@@ -84,6 +84,27 @@ export function personaEntries(entries, { day, equipment, notes = 'full', goals 
     return keepForEquipment(e, equipment) && keepForNotes(e, notes)
   }).map((e) => withSourceName(e, equipment))
     .concat(day > 1 && goals.includes('cycle') ? cycleEntries({ from, now }) : [])
+    .concat(day > 1 && notes === 'full' && goals.includes('gut') ? gutEntries(entries, { from, now }) : [])
+}
+
+const GUT_LEVELS = ['calm', 'calm', 'calm', 'discomfort', 'calm', 'discomfort', 'pain']
+const dayKey = (d) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+
+/**
+ * POLISH-SIM-32 : la démo n'a des notes digestives que sur ses 10 derniers jours ; une persona « ventre » qui note
+ * tout en a une chaque soir (21 h) sur toute la période, les jours déjà notés par la démo gardés tels quels.
+ * Niveaux synthétiques, fixés par le rang du jour (aucun hasard : mêmes données d'un passage à l'autre).
+ */
+function gutEntries(entries, { from, now }) {
+  const noted = new Set(entries.filter((e) => e.type === 'gut').map((e) => dayKey(new Date(e.at))))
+  const out = []
+  for (let n = 0; ; n++) {
+    const d = new Date(now); d.setDate(d.getDate() - n); d.setHours(21, 5, 0, 0)
+    if (d < from) break
+    if (d > now || noted.has(dayKey(d))) continue
+    out.push({ type: 'gut', source: 'app_gut', at: d.toISOString(), payload: { level: GUT_LEVELS[n % GUT_LEVELS.length] } })
+  }
+  return out
 }
 
 const CYCLE_SYMPTOMS = [['cramps', 'pelvic_pain', 'fatigue'], ['cramps', 'bloating'], ['bloating'], [], []]

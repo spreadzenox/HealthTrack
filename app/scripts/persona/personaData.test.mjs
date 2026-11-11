@@ -100,6 +100,19 @@ describe('personaEntries', () => {
     expect(personaEntries(demo, { day: 1, equipment: 'phone', now, goals: ['cycle'] }).some((e) => e.type === 'cycle')).toBe(false)
   })
 
+  it('POLISH-SIM-32 : objectif ventre, profil complet : une note digestive chaque jour, pas seulement les 10 derniers', () => {
+    const list = personaEntries(demo, { day: 45, equipment: 'phone', now, goals: ['gut'] })
+    const gut = list.filter((e) => e.type === 'gut')
+    const days = new Set(gut.map((e) => { const d = new Date(e.at); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` }))
+    expect(days.size).toBeGreaterThanOrEqual(44) // la note du soir d'aujourd'hui peut ne pas être encore là
+    expect(gut.filter((e) => e.payload.level !== 'calm').length).toBeGreaterThanOrEqual(5)
+    expect(gut.every((e) => new Date(e.at) <= now)).toBe(true)
+    // sans l'objectif ventre, ou avec le profil « few », rien n'est ajouté
+    const noGoal = personaEntries(demo, { day: 45, equipment: 'phone', now, goals: [] }).filter((e) => e.type === 'gut')
+    expect(noGoal.length).toBeLessThan(gut.length)
+    expect(personaEntries(demo, { day: 45, equipment: 'phone', now, goals: ['gut'], notes: 'few' }).some((e) => e.type === 'gut')).toBe(false)
+  })
+
   it('refuse un profil de saisie inconnu', () => {
     expect(() => personaEntries(demo, { day: 14, equipment: 'phone', now, notes: 'jamais' })).toThrow(/inconnu/)
   })

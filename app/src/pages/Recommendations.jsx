@@ -67,7 +67,7 @@ function Countdown({ outcome, view, onNote, onReminder }) {
             aria-valuenow={view.progress.have} aria-label="Jours notés">
             <div className="pistes-progress-bar" style={{ width: `${(view.progress.have / view.progress.need) * 100}%` }} />
           </div>
-          <p className="pistes-count"><span className="mono">{view.progress.have}/{view.progress.need}</span> jours</p>
+          <p className="pistes-count"><span className="mono">{view.progress.have}/{view.progress.need}</span> jours notés, pas forcément d’affilée</p>
         </>
       )}
       {outcome === 'digestion' && view.symptomsLeft > 0 && view.symptoms && (

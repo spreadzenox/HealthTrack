@@ -144,6 +144,8 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     renderPage({ view: 'gut' }, readyResults)
     const card = await screen.findByTestId('reco-countdown-digestion')
     expect(card).toHaveTextContent('Encore 25 jours notés avant vos premiers résultats')
+    // POLISH-SIM-32 : la fenêtre du compteur est dite
+    expect(card.querySelector('.pistes-count')).toHaveTextContent(/^\d+\/\d+ jours notés, pas forcément d’affilée$/)
     expect(card).toHaveTextContent('statistiquement liés à votre confort digestif')
     // POLISH-SIM-5 : on voit que la gêne notée compte (1 sur 5), sans « 4 jours de plus » ambigu
     expect(card).toHaveTextContent('Il faut aussi 5 jours avec une gêne ou une douleur notée : vous en avez 1.')
