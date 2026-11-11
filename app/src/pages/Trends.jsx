@@ -10,26 +10,10 @@ import { useSearchParams } from 'react-router-dom'
 import JournalTabs from '../components/JournalTabs'
 import TrendsViewer from '../components/TrendsViewer'
 import { getAnalysis } from '../services/analysisRunner'
-import { buildDailyJournal } from '../services/dailyJournal'
-import { listEntries } from '../storage/localHealthStorage'
+import { readMeasureDays } from '../services/trendsMeasureDays'
 import { buildTrendSeries, defaultTrendsView } from '../services/trendsData'
 import { dayFaceDetail, dayReadingsView, latestReadingDay } from '../services/trendsDay'
 import { loadFaceMoodEntries } from '../services/mood/faceMoodData'
-
-const DAY_MS = 86_400_000
-
-/** Les 31 derniers jours des mesures du visualiseur (une nuit de plus pour celle qui finit le premier jour). */
-async function readMeasureDays(now = new Date()) {
-  const since = new Date(now.getTime() - 31 * DAY_MS).toISOString()
-  const sleepSince = new Date(now.getTime() - 32 * DAY_MS).toISOString()
-  const lists = await Promise.all([
-    listEntries({ type: 'sleep', since: sleepSince, limit: Infinity }),
-    listEntries({ type: 'steps', since, limit: Infinity }),
-    listEntries({ type: 'heart_rate', subtypes: ['restingHeartRate', 'heartRateVariability'], since, limit: Infinity }),
-    listEntries({ type: 'phone_usage', since, limit: Infinity }),
-  ])
-  return buildDailyJournal(lists.flat())
-}
 
 const readStates = () => getAnalysis('dayStates').catch(() => null)
 // Détail d'un jour (ORG-3c) : lectures du visage et notes, contributions du modèle d'Analyses (ORG-5, contrat)

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildTrendSeries, periodDates, canAdd, unitsOf, detailSource } from './trendsData'
+import { buildTrendSeries, periodDates, canAdd, unitsOf, detailSource, trendMeasure } from './trendsData'
 
 const NOW = new Date(2026, 10, 7, 20)
 const band = (mean) => ({ mean, low: mean - 0.5, high: mean + 0.5, sd: 0.4 })
@@ -38,6 +38,15 @@ describe('Tendances (ORG-3)', () => {
     const r = buildTrendSeries({ days, period: 'week', now: NOW })
     expect(r.series.sleep.map((p) => p.value)).toEqual([7, 7, 7])
     expect(r.available).toEqual(['sleep'])
+  })
+
+  it('POLISH-SIM-47 : le poids a sa courbe (kg) dès 3 pesées sur la période', () => {
+    const days = [5, 6, 7].map((d) => ({ dateKey: `2026-11-0${d}`, summary: { weightKg: 80 - d / 10 } }))
+    const r = buildTrendSeries({ days, period: 'week', now: NOW })
+    expect(r.series.weight.map((p) => p.value)).toEqual([79.5, 79.4, 79.3])
+    expect(r.available).toEqual(['weight'])
+    expect(trendMeasure('weight')).toMatchObject({ label: 'Poids', unit: 'kg', tone: 'rose' })
+    expect(trendMeasure('weight').fmt(79.3)).toMatch(/^79,3\s?kg$/)
   })
 
   it('un axe par unité, deux au plus', () => {

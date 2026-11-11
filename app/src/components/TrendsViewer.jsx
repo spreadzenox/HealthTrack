@@ -48,7 +48,7 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
   }
   const step = dates.length > 14 ? 7 : 1
   const colW = (W - PAD.l - PAD.r) / Math.max(1, dates.length - 1)
-  const fmtAxis = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: 1 })
+  const fmtAxis = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: 2 })
   // POLISH-SIM-3 : avec deux axes, chacun prend la couleur de sa courbe (si une seule couleur porte cette unité).
   const axisTone = (u) => {
     if (units.length < 2) return undefined

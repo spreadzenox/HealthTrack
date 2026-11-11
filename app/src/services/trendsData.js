@@ -29,6 +29,8 @@ export const TREND_MEASURES = [
   { key: 'digestion', label: 'Confort digestif', unit: '/5', tone: 'peach', state: true, fmt: (v) => `${n1(v)} /5` },
   { key: 'sleep', label: 'Sommeil', unit: 'h', tone: 'night', field: 'sleepMinutes', scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },
   { key: 'steps', label: 'Pas', unit: 'pas', tone: 'lilac', field: 'steps', fmt: (v) => n0(v) },
+  // POLISH-SIM-47 : la pesée (à la main ou balance), dernière du jour ; thème corps
+  { key: 'weight', label: 'Poids', unit: 'kg', tone: 'rose', field: 'weightKg', fmt: (v) => `${n1(v)} kg` },
   { key: 'hrv', label: 'VFC nuit', unit: 'ms', tone: 'rose', field: 'hrv', fmt: (v) => `${n0(v)} ms`,
     gloss: 'variabilité de la fréquence cardiaque pendant la nuit, en millisecondes' },
   { key: 'restingHr', label: 'FC au repos', unit: 'bpm', tone: 'rose', field: 'restingHr', fmt: (v) => `${n0(v)} bpm`,

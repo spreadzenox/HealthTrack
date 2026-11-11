@@ -413,7 +413,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-46** ✅ 11/11 11:35 (Endométriose J45) « Mes règles » : un symptôme touché (Crampes) ne montre pas clairement qu'il
   est noté (Digestion affiche « Dernière note… »). Fait : coche ✓ dans la puce notée (l'état ne tient plus à la seule
   couleur) et ligne courte « Noté : Crampes » / « Retiré : Crampes » (role=status), effacée au passage Aujourd'hui ⇄ Hier.
-- [ ] **POLISH-SIM-47** (Maigrir J1) Tendances : une pesée (à la main ou balance) n'a aucune courbe, le « + » ne propose
+- [x] **POLISH-SIM-47** ✅ 11/11 13:35 (mesure « Poids » en kg, thème corps, dernière pesée du jour, poids ou composition ; lue par Tendances ; dès 3 pesées sur la période, donc Mois pour qui se pèse chaque semaine ; graduations à 2 décimales, « 77,25 » au lieu de « 77,3 ») (Maigrir J1) Tendances : une pesée (à la main ou balance) n'a aucune courbe, le « + » ne propose
   pas Poids. Vérifier où le poids s'affiche ; s'il est déjà dans le Journal, l'ajouter aux mesures de Tendances.
 - [x] **POLISH-SIM-48** ✅ 11/11 12:35 (total « ≈ 592 kcal, sans … » ou « inconnu, aucun aliment compté » ; « ≥ » dans les listes ; le relais ne contraint pas le nom par un enum, un nom hors table reste possible) (Maigrir J1) Repas : un aliment absent de la table compte pour 0 et le total affiche « ≈ 0 kcal »
   sans le dire. Afficher l'aliment non compté et un total marqué incomplet (vu avec le faux relais de l'outil ; vérifier
