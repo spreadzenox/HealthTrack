@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-11",
+  "kind": "correctif",
+  "title": "Le compteur de la digestion dit ce qu'il compte",
+  "items": [
+    "Le compteur des jours notés dit « pas forcément d'affilée » : un jour oublié ne remet rien à zéro.",
+    "Aujourd'hui compte tous vos jours notés, comme Analyses, et plus seulement ceux des six dernières semaines."
+  ]
+}

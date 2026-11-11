@@ -1,6 +1,6 @@
 /**
  * Bloc digestif de l'Accueil (AUJ-4, revue design du 07/11). Avant les analyses : « Vos analyses digestives arrivent
- * dans N jours », ce qu'elles chercheront, « N/28 jours avec une note digestive », un bouton « Noter ma digestion »
+ * dans N jours », ce qu'elles chercheront, « N/28 jours notés, pas forcément d'affilée », un bouton « Noter ma digestion »
  * (le même geste que « Digestion » du bandeau d'ajout) et le rappel du soir. Les notes du jour se lisent sur un petit
  * graphique (une pastille par note, à son heure). Une fois les analyses prêtes : une ligne qui ouvre Analyses ›
  * Digestion (leçon 16 : les résultats n'ont qu'une maison). Ni délais, ni correction statistique, ni minimum ici.
@@ -9,7 +9,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { APP_NAME } from '../config/brand'
-import { listEntries } from '../storage/localHealthStorage'
+import { readGutNotes } from '../services/gutNotes'
 import { GUT_TYPE, gutLevelLabel, gutNotesProgress, isGutDayNote } from '../services/today'
 import { localDateKey } from '../services/analysisEngine'
 import { readPistesSummary } from '../services/pistesSummary'
@@ -21,14 +21,6 @@ import StripPlus from './StripPlus'
 import { keepWhole } from '../utils/keepWhole'
 import './DigestBlock.css'
 import { monoDigits } from '../utils/monoDigits'
-
-const DAY_MS = 86_400_000
-/** Les 28 derniers jours (et un peu plus) suffisent au compte à rebours. */
-const WINDOW_DAYS = 42
-
-const readGutNotes = () => listEntries({
-  type: GUT_TYPE, since: new Date(Date.now() - WINDOW_DAYS * DAY_MS).toISOString(), limit: Infinity,
-})
 
 const hourOf = (iso) => { const d = new Date(iso); return d.getHours() + d.getMinutes() / 60 }
 
@@ -140,7 +132,7 @@ export default function DigestBlock({ onNote, read = readGutNotes, summary: summ
             <div className="digest-progress-bar" style={{ width: `${(bar.days / bar.target) * 100}%` }} />
           </div>
           <p className="digest-count">
-            <span className="mono">{bar.days}/{bar.target}</span> jours avec une note digestive
+            <span className="mono">{bar.days}/{bar.target}</span> jours notés, pas forcément d’affilée
           </p>
         </>
       )}

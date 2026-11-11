@@ -14,6 +14,18 @@ const wrap = (props) => render(
   <BrowserRouter><DigestBlock onNote={vi.fn()} summary={null} read={async () => []} {...props} /></BrowserRouter>,
 )
 
+describe('readGutNotes (POLISH-SIM-32)', () => {
+  it('lit toutes les notes digestives, comme Analyses, pas seulement les 42 derniers jours', async () => {
+    await import('fake-indexeddb/auto')
+    const { createEntry: addEntry } = await import('../storage/localHealthStorage')
+    const { readGutNotes } = await import('../services/gutNotes')
+    await addEntry({ type: 'gut', source: 'manual', at: dayAt(60), payload: { level: 'calm' } })
+    await addEntry({ type: 'gut', source: 'manual', at: dayAt(2), payload: { level: 'pain' } })
+    const notes = await readGutNotes()
+    expect(notes.map((n) => n.payload.level).sort()).toEqual(['calm', 'pain'])
+  })
+})
+
 describe('DigestBlock (AUJ-4)', () => {
   it('avant les analyses : le compte à rebours, ce qu’elles cherchent, N/28 et « Noter ma digestion »', async () => {
     const onNote = vi.fn()
@@ -21,6 +33,8 @@ describe('DigestBlock (AUJ-4)', () => {
     expect(await screen.findByRole('heading', { name: 'Encore 25 jours notés avant vos analyses digestives' })).toBeInTheDocument()
     expect(screen.getByText(/cherchera quels facteurs sont statistiquement liés à votre confort digestif\./)).toBeInTheDocument()
     expect(screen.getByText('3/28')).toBeInTheDocument()
+    // POLISH-SIM-32 : quelle fenêtre ? Aucune : tous les jours notés comptent, d'affilée ou non
+    expect(screen.getByText('3/28').parentElement).toHaveTextContent('3/28 jours notés, pas forcément d’affilée')
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '3')
     fireEvent.click(screen.getByRole('button', { name: 'Noter ma digestion' }))
     expect(onNote).toHaveBeenCalled()
