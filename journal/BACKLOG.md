@@ -359,9 +359,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   hachurage « pas assez net » ne se voyait pas sur les petites barres ; chiffre en gris pour un lien pas assez net,
   légende « hachuré, chiffre en gris : pas assez net » ; test rouge puis vert. Reste (idée) : toucher une ligne pour
   voir la fourchette chiffrée et le nombre de jours.
-- [ ] **POLISH-SIM-31** Aujourd'hui dit « 3/5 d'après 3 lectures du visage » alors que le Journal du jour ne montre
-  aucune lecture : vérifier (données de démo ou vrai écart) ; une information, une maison, mais le nombre doit se
-  retrouver (Tendances › Jour).
+- [x] **POLISH-SIM-31** ✅ 12/11 00:35 « 3/5 d'après 3 lectures du visage » sur Aujourd'hui, rien dans le Journal du
+  jour : pas un écart de calcul (Aujourd'hui et Tendances › Jour comptent les mêmes lectures du jour), mais le bloc
+  ouvrait Tendances en Semaine, où ce nombre n'apparaît pas. Il ouvre Tendances › Jour (`vue=jour`, `DayStatusCard`) ;
+  le Journal reste sans lectures (une information, une maison). Test rouge puis vert.
 - [x] **POLISH-SIM-32** ✅ 11/11 22:35 Compteur « 9/28 jours » : aucune fenêtre (tous les jours notés, comme le moteur) ;
   le compteur dit « jours notés, pas forcément d'affilée » (Aujourd'hui et Analyses) ; Aujourd'hui ne lit plus seulement
   42 jours (`services/gutNotes.js`). Le 9/28 à J45 venait de l'outil (démo : 10 jours de notes) : objectif ventre et
