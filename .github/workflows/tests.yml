@@ -82,7 +82,12 @@ jobs:
           cd app
           npm ci
           npm install -g playwright@1.56.1
-          playwright install --with-deps chromium
+          playwright install chromium
+          # 11/11 : apt (miroir Ubuntu d'Azure) tombait en panne DNS et rendait « Tests » rouge sans rapport avec le
+          # code. L'image du runner a déjà les bibliothèques de Chromium : leur installation par apt est tentée,
+          # bornée à 4 min, et son échec n'est qu'un avertissement (le budget ci-dessous échoue si Chromium ne démarre pas).
+          timeout 240 sudo env "PATH=$PATH" playwright install-deps chromium \
+            || echo "::warning::playwright install-deps a échoué (apt) ; on continue avec les bibliothèques du runner"
 
       # 3 ans de démo ; échoue si une page désérialise plus d'enregistrements que scripts/perf/budget.json
       - name: Check IndexedDB read budget per page

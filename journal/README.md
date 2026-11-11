@@ -8,6 +8,13 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🎯 **« Ce que vous noterez » suit votre objectif (11/11 16:35)** : sans Health Connect, l'accueil promettait
+> « bien-être, digestion, repas en photo » à tout le monde ; une persona venue pour maigrir n'y voyait pas son poids.
+> La liste suit maintenant l'objectif (poids avec « Prendre soin de moi », règles avec « Mon cycle »)
+> ([clair](runs/captures/2026-11-11-1635-noter-objectif-clair.png) · [sombre](runs/captures/2026-11-11-1635-noter-objectif-sombre.png)).
+> Et « Tests » était encore rouge sur main (panne réseau chez GitHub pendant l'installation de Chromium), ce qui aurait
+> retenu l'envoi Alpha du soir : le job n'en dépend plus. Rien à faire de votre côté.
+
 > 〰️ **Analyses : quoi retenir d'un lien flou (11/11 15:35)** : une persona voyait « Lactose » −0,2 / +1,2 / −2,5 pt
 > selon le délai et demandait « je dois en manger ou pas ? ». Quand rien n'est net, Analyses le dit une fois en haut de
 > « Ce qui va avec » ; quand un facteur change de sens d'un délai à l'autre sans être net, une ligne le nomme : « rien à
@@ -401,6 +408,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 16:35 — [Objectif à l'accueil, CI](runs/2026-11-11-1635-noter-objectif.md) | ✏️ | « Tests » ne dépend plus d'apt (panne DNS du runner) ; POLISH-SIM-51 : « Ce que vous noterez » selon l'objectif ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 11/11 15:35 — [Lien flou dans Analyses](runs/2026-11-11-1535-sens-du-delai.md) | ✏️ | POLISH-SIM-50 : « rien n'est net » dit une fois, facteur qui change de sens nommé ; tests rouges puis verts ; « Tests » de main relancé (panne DNS du runner). Rien à faire de votre côté |
 | 11/11 13:35 — [Poids dans Tendances](runs/2026-11-11-1335-poids-tendances.md) | ✏️ | POLISH-SIM-47 : mesure « Poids » (dernière pesée du jour) dans Tendances ; graduations à 2 décimales ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 11/11 14:35 — [Nom du repas modifiable](runs/2026-11-11-1435-nom-repas.md) | ✏️ | POLISH-SIM-49 : champ « Nom » (photo, Décrire, Modifier), vide = sans nom ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |

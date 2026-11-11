@@ -66,6 +66,21 @@ export function defaultTracks(goals) {
   return TRACKS.map((t) => t.id).filter((id) => set.has(id))
 }
 
+/**
+ * Ce que l'on note à la main quand aucune source n'est reliée (« Votre téléphone suffit », POLISH-SIM-51) : la liste
+ * suit les objectifs (poids avec « Prendre soin de moi », règles avec « Mon cycle », digestion avec le ventre).
+ */
+export function handNotes(goals = []) {
+  const broad = !goals.length || goals.includes('all')
+  return [
+    'bien-être',
+    (broad || wantsGut(goals)) && 'digestion',
+    goals.includes('cycle') && 'règles',
+    'repas en photo',
+    goals.includes('care') && 'poids',
+  ].filter(Boolean)
+}
+
 /** Version du parcours : 2 = nouvel accueil du 08/11 (tuto, objectifs, sources, trouvé, visage, première note, Gold). */
 export const FLOW_VERSION = 2
 
