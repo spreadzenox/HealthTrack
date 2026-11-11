@@ -392,7 +392,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-41** (Endométriose J1) Feuille Digestion : deux lignes « dans l'ensemble » et « À l'instant » aux
   mêmes boutons, sans dire laquelle choisir.
 - [ ] **POLISH-SIM-42** (Endométriose J1) « Autre chose » propose « + 1 cigarette » sans objectif tabac.
-- [ ] **POLISH-SIM-43** (Stressé J1) Agir dit « quelques jours », l'accueil « un essai de deux semaines » : une durée.
+- [x] **POLISH-SIM-43** ✅ 11/11 04:35 (Stressé J1) Agir dit « quelques jours », l'accueil « un essai de deux semaines » :
+  une durée. Réintroduction 3 jours, piste 14 jours : l'accueil dit « vérifier une piste par un essai », Agir vide « de
+  quelques jours à deux semaines selon la piste » ; tests rouges puis verts ; `TEXTES.md` annoté.
 - [ ] **POLISH-SIM-44** (Stressé J1) L'accueil renvoie à « Paramètres », la roue ouvre « Réglages » : un seul nom.
 - [ ] **POLISH-SIM-45** (Stressé J1, à vérifier) Journal › Jours : tuiles « Écran » et « Météo » au J1 sans source
   branchée (données de démo ou vraie valeur ?). Idée liée (proposition, pas de code) : à J1 avec 2 mois de montre,

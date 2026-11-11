@@ -12,7 +12,7 @@ Cartes 1 et 2 : lien « Passer » en haut à droite (→ écran Objectif seuleme
 | Carte | Titre | Sous-titre | Illustration |
 |---|---|---|---|
 | 1 | Bienvenue dans Halcya | Vos repas, votre sommeil, votre montre et votre ressenti, au même endroit. | pastilles « repas », « sommeil », « montre », « ressenti » → carte « vos journées » avec courbe |
-| 2 | Halcya cherche ce qui va avec vos bons et mauvais jours | Trois usages : (« Trois onglets » retiré le 11/11, POLISH-SIM-38 : la barre en a cinq) | 3 lignes : **Journal** — voir vos journées, vos repas, vos mesures · **Analyses** — les liens que Halcya trouve dans vos données · **Agir** — vérifier une piste par un essai de deux semaines |
+| 2 | Halcya cherche ce qui va avec vos bons et mauvais jours | Trois usages : (« Trois onglets » retiré le 11/11, POLISH-SIM-38 : la barre en a cinq) | 3 lignes : **Journal** — voir vos journées, vos repas, vos mesures · **Analyses** — les liens que Halcya trouve dans vos données · **Agir** — vérifier une piste par un essai (« de deux semaines » retiré le 11/11, POLISH-SIM-43 : une réintroduction dure 3 jours) |
 | 3 | Vos données restent sur votre téléphone | Elles n’en sortent que dans ces cas : | (pas d'illustration, liste ci-dessous ; pas de « Passer ») |
 
 Carte 3, liste :
