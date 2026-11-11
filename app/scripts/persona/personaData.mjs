@@ -65,7 +65,7 @@ function keepForNotes(entry, notes) {
  * Jour d'usage : jour 1 = installation du jour (aucune saisie dans l'app, l'onboarding n'est pas fait ; une montre
  * apporte ses 30 derniers jours importés) ; jour N = N jours de données (aujourd'hui compris).
  */
-export function personaEntries(entries, { day, equipment, notes = 'full', now = new Date() }) {
+export function personaEntries(entries, { day, equipment, notes = 'full', goals = [], now = new Date() }) {
   if (!NOTES.includes(notes)) throw new Error(`Profil de saisie inconnu : ${notes} (attendu : ${NOTES.join(', ')})`)
   const start = (n) => { const d = new Date(now); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (n - 1)); return d }
   const from = day <= 1 ? start(30) : start(day)
@@ -75,4 +75,27 @@ export function personaEntries(entries, { day, equipment, notes = 'full', now = 
     if (day <= 1 && APP_TYPES.has(e.type)) return false
     return keepForEquipment(e, equipment) && keepForNotes(e, notes)
   }).map((e) => withSourceName(e, equipment))
+    .concat(day > 1 && goals.includes('cycle') ? cycleEntries({ from, now }) : [])
+}
+
+const CYCLE_SYMPTOMS = [['cramps', 'pelvic_pain', 'fatigue'], ['cramps', 'bloating'], ['bloating'], [], []]
+const CYCLE_FLOWS = ['medium', 'heavy', 'medium', 'light', 'light']
+
+/**
+ * Règles notées à la main (objectif « Mon cycle », CYCLE-2) : 5 jours tous les 28 jours, les dernières il y a 3 jours
+ * (le jour 1 tombe donc le 4e jour avant aujourd'hui), avec crampes, douleur et ballonnements les premiers jours.
+ * Synthétique : même format que la saisie de l'app (`src/services/cycle.js`), midi heure locale.
+ */
+function cycleEntries({ from, now }) {
+  const out = []
+  const noon = (n, minute = 0) => { const d = new Date(now); d.setDate(d.getDate() - n); d.setHours(12, minute, 0, 0); return d }
+  for (let first = 7; noon(first) >= from; first += 28) {
+    for (let k = 0; k < 5; k++) {
+      const n = first - k
+      if (n < 0 || noon(n) < from) continue
+      out.push({ type: 'cycle', source: 'app_cycle', at: noon(n).toISOString(), payload: { subtype: 'period', flow: CYCLE_FLOWS[k] } })
+      CYCLE_SYMPTOMS[k].forEach((symptom, i) => out.push({ type: 'cycle', source: 'app_cycle', at: noon(n, 1 + i).toISOString(), payload: { subtype: 'symptom', symptom } }))
+    }
+  }
+  return out.filter((e) => new Date(e.at) <= now)
 }

@@ -408,6 +408,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   relier cycle et douleurs (« Mon cycle » ne débloque rien de visible) ; type et zone de la gêne ; essai lancé soi-même
   dans Agir ; aperçu du rapport PDF ; export CSV ; groupes FODMAP plus visibles dans Repas et Analyses.
 - [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`). Fait le
+  11/11 08:35 : `--goals=cycle` (jour > 1) ajoute des règles et symptômes notés (testé) ; `brief.md` à `__PORT__`. Fait le
   09/11 08:35 : objectif d'onboarding (`--goals`), profil de saisie (`--notes=few`), consigne aux agents sur ce qui
   n'existe pas dans la version web. Fait le 08/11 20:35 : le jour 1 ouvre le nouvel accueil même
   avec 30 jours importés. Fait le 08/11 08:35 : nom de

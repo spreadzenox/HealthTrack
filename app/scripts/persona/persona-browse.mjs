@@ -108,7 +108,7 @@ if (day > 1) {
 }
 const page = await context.newPage()
 await page.goto(base, { waitUntil: 'load' })
-const entries = personaEntries(generateDemoEntries(), { day, equipment, notes })
+const entries = personaEntries(generateDemoEntries(), { day, equipment, notes, goals })
 await page.evaluate(async (list) => {
   await new Promise((res) => { const q = indexedDB.deleteDatabase('HealthTrack'); q.onsuccess = q.onerror = q.onblocked = () => res() })
   if (list.length) await (await import('/src/storage/localHealthStorage.js')).upsertEntries(list)

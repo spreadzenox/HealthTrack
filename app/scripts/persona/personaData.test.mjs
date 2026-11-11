@@ -65,6 +65,21 @@ describe('personaEntries', () => {
     expect(types(few).has('sleep')).toBe(true)
   })
 
+  it('objectif « cycle » (jour > 1) : des règles notées tous les 28 jours environ, avec symptômes', () => {
+    const list = personaEntries(demo, { day: 45, equipment: 'phone', now, goals: ['cycle', 'gut'] })
+    const periods = list.filter((e) => e.type === 'cycle' && e.payload.subtype === 'period')
+    const starts = new Set(periods.map((e) => e.at.slice(0, 10)))
+    expect(starts.size).toBeGreaterThanOrEqual(8) // deux règles de 4 à 5 jours en 45 jours
+    expect(list.some((e) => e.type === 'cycle' && e.payload.subtype === 'symptom')).toBe(true)
+    expect(list.every((e) => e.type !== 'cycle' || e.source === 'app_cycle')).toBe(true)
+    expect(list.every((e) => new Date(e.at) <= now)).toBe(true)
+  })
+
+  it('sans objectif « cycle », ou au jour 1, aucune donnée de cycle', () => {
+    expect(personaEntries(demo, { day: 45, equipment: 'phone', now, goals: ['gut'] }).some((e) => e.type === 'cycle')).toBe(false)
+    expect(personaEntries(demo, { day: 1, equipment: 'phone', now, goals: ['cycle'] }).some((e) => e.type === 'cycle')).toBe(false)
+  })
+
   it('refuse un profil de saisie inconnu', () => {
     expect(() => personaEntries(demo, { day: 14, equipment: 'phone', now, notes: 'jamais' })).toThrow(/inconnu/)
   })
