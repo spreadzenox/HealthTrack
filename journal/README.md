@@ -11,7 +11,7 @@
 > 📈 **Le bien-être du jour ouvre sa journée (12/11 00:35)** : une persona lisait « 3/5 d'après 3 lectures du visage »
 > sur Aujourd'hui sans retrouver ces lectures nulle part. Les chiffres étaient justes, mais toucher le bloc ouvrait
 > Tendances en Semaine. Il ouvre maintenant la journée, où chaque lecture est un point et le détail dit « 3 lectures du
-> visage » ([capture](runs/captures/2026-11-12-0035-bien-etre-jour.png)). Partira sur Alpha avec l'envoi de ce soir. Rien à faire de votre côté.
+> visage » ([capture](runs/captures/2026-11-12-0035-bien-etre-jour.png)). PR #925 prête (checks verts), merge refusé par la session : le run suivant la merge. Rien à faire de votre côté.
 
 > 🧭 **La visite dit ce qu'elle montre (11/11 23:35)** : « Voir dans 14 jours » ne disait pas qu'on allait voir un
 > exemple, et l'exemple au jour 14 annonçait « Encore 18 jours » de notes digestives quand l'écran réel en annonce 27 au
@@ -448,7 +448,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
-| 12/11 00:35 — [Bien-être du jour → Tendances › Jour](runs/2026-11-12-0035-bien-etre-jour.md) | 🔧 | POLISH-SIM-31 : le bloc ouvre la vue Jour, où le nombre de lectures se retrouve. Tests, lint, build, captures vérifiées |
+| 12/11 00:35 — [Bien-être du jour → Tendances › Jour](runs/2026-11-12-0035-bien-etre-jour.md) | 🔧 | POLISH-SIM-31 : le bloc ouvre la vue Jour, où le nombre de lectures se retrouve. Tests (3454), lint, build, captures vérifiées ; PR #925 verte, merge refusé par la session, à merger au run suivant |
 | 11/11 23:35 — [Visite : « Exemple au jour 14 »](runs/2026-11-11-2335-exemple-jour14.md) | 🔧 | POLISH-SIM-39 : bouton de la visite et compte fictif de la digestion calés. Tests (3454), lint, build, captures vérifiées |
 | 11/11 22:35 — [Compteur de la digestion](runs/2026-11-11-2235-compteur-digestion.md) | 🔧 | POLISH-SIM-32 : « jours notés, pas forcément d'affilée » ; Aujourd'hui compte comme Analyses ; outil personas complété. Tests (3451), lint, build, banc complet verts |
 | 11/11 20:35 — [Badge « Exemple » dans la bulle](runs/2026-11-11-2035-badge-bulle.md) | 🔧 | POLISH-SIM-37c : le badge de la visite ne masque plus l'en-tête. Tests (3450), lint, build, banc complet verts ; PR #922 mergée par le run de 22:35 (checks verts) |
