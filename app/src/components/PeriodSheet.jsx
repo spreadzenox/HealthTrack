@@ -5,6 +5,8 @@
  * Avec `dateKey` et `onDone` (Journal › Jours, CYCLE-2b) : corrige le flux d'un jour passé, puis se referme.
  * Symptômes du jour (CYCLE-2c) : un geste coche (enregistre), un second décoche (efface) ; ceux d'une autre source
  * restent cochés, sans modification possible ici.
+ * « Aujourd’hui / Hier » (CYCLE-2d) : noter le flux et les symptômes d’hier sans quitter Aujourd’hui (même pastille
+ * que le choix de période de Tendances : même apparence, même sens).
  */
 import { useCallback, useEffect, useState } from 'react'
 import { createEntry, deleteEntry, listEntries, updateEntry } from '../storage/localHealthStorage'
@@ -15,6 +17,7 @@ import {
 } from '../services/cycle'
 import Ordinal from './Ordinal'
 import './AddStrip.css'
+import './TrendsViewer.css'
 
 const CHOICES = [
   { flow: 'light', label: 'Léger' },
@@ -34,8 +37,14 @@ function readCycle(dateKey) {
 
 export default function PeriodSheet({ now = realNow, dateKey = null, onDone = null }) {
   const todayKey = localDateKey(now().toISOString())
-  const dayKey = dateKey || todayKey
-  const isToday = dayKey === todayKey
+  const [yesterday, setYesterday] = useState(false)
+  const yesterdayKey = (() => {
+    const d = new Date(`${todayKey}T12:00:00`)
+    d.setDate(d.getDate() - 1)
+    return localDateKey(d.toISOString())
+  })()
+  const dayKey = dateKey || (yesterday ? yesterdayKey : todayKey)
+  const dayWord = yesterday ? 'Hier' : 'Aujourd’hui'
   const [list, setList] = useState(null)
   const [error, setError] = useState(null)
 
@@ -94,12 +103,20 @@ export default function PeriodSheet({ now = realNow, dateKey = null, onDone = nu
   const editable = !today || today.source === CYCLE_SOURCE
   return (
     <div className="period-sheet">
+      {!onDone && (
+        <div className="trends-periods period-sheet-days" role="group" aria-label="Jour">
+          {[[false, 'Aujourd’hui'], [true, 'Hier']].map(([past, label]) => (
+            <button key={label} type="button" className={`trends-period${yesterday === past ? ' is-on' : ''}`}
+              aria-pressed={yesterday === past} onClick={() => { if (yesterday !== past) { setList(null); setYesterday(past) } }}><span>{label}</span></button>
+          ))}
+        </div>
+      )}
       <p className="period-sheet-day">
-        {!isToday && info?.periodDay
+        {onDone && info?.periodDay
           ? <><Ordinal n={info.periodDay} /> jour des règles, flux :</>
           : today && info?.periodDay
-            ? <>Aujourd’hui, <Ordinal n={info.periodDay} /> jour des règles</>
-            : 'Règles aujourd’hui, flux :'}
+            ? <>{dayWord}, <Ordinal n={info.periodDay} /> jour des règles</>
+            : `Règles ${yesterday ? 'hier' : 'aujourd’hui'}, flux :`}
       </p>
       <div className="gut-choices period-choices" role="group" aria-label="Flux">
         {CHOICES.map((c) => (

@@ -131,4 +131,48 @@ describe('PeriodSheet : noter ses règles en un geste (CYCLE-2)', () => {
     await screen.findByText(/jour des règles/)
     expect(screen.queryByRole('group', { name: 'Symptômes' })).toBeNull()
   })
+
+  it('« Hier » (CYCLE-2d) : flux et symptômes d’hier, sans quitter Aujourd’hui', async () => {
+    store.listEntries.mockResolvedValue([
+      { id: 7, type: 'cycle', source: 'app_cycle', at: noon(8), payload: { subtype: 'period', flow: 'heavy' } },
+      { id: 21, type: 'cycle', source: 'app_cycle', at: noon(9), payload: { subtype: 'symptom', symptom: 'fatigue' } },
+    ])
+    render(<PeriodSheet now={now} />)
+    const days = await screen.findByRole('group', { name: 'Jour' })
+    const hier = screen.getByRole('button', { name: 'Hier' })
+    expect(days).toContainElement(hier)
+    expect(screen.getByRole('button', { name: 'Aujourd’hui' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Fatigue' })).toHaveAttribute('aria-pressed', 'false')
+    fireEvent.click(hier)
+    expect(hier).toHaveAttribute('aria-pressed', 'true')
+    expect(await screen.findByText('Règles hier, flux :')).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Fatigue' })).toHaveAttribute('aria-pressed', 'true'))
+    fireEvent.click(screen.getByRole('button', { name: 'Moyen' }))
+    await waitFor(() => expect(store.createEntry).toHaveBeenCalledWith({
+      type: 'cycle', source: 'app_cycle', at: noon(9), payload: { subtype: 'period', flow: 'medium' },
+    }))
+    fireEvent.click(screen.getByRole('button', { name: 'Crampes' }))
+    await waitFor(() => expect(store.createEntry).toHaveBeenCalledWith(expect.objectContaining({
+      payload: { subtype: 'symptom', symptom: 'cramps' },
+    })))
+    expect(store.createEntry.mock.calls[1][0].at.slice(0, 10)).toBe(noon(9).slice(0, 10))
+  })
+
+  it('« Hier » déjà noté : « Hier, 2e jour des règles » et « Retirer »', async () => {
+    store.listEntries.mockResolvedValue([
+      { id: 7, type: 'cycle', source: 'app_cycle', at: noon(8), payload: { subtype: 'period', flow: 'heavy' } },
+      { id: 8, type: 'cycle', source: 'app_cycle', at: noon(9), payload: { subtype: 'period', flow: 'light' } },
+    ])
+    render(<PeriodSheet now={now} />)
+    fireEvent.click(await screen.findByRole('button', { name: 'Hier' }))
+    await waitFor(() => expect(screen.getByText(/jour des règles/)).toHaveTextContent('Hier, 2e jour des règles'))
+    fireEvent.click(screen.getByRole('button', { name: 'Retirer' }))
+    await waitFor(() => expect(store.deleteEntry).toHaveBeenCalledWith(8))
+  })
+
+  it('un jour passé (Journal) : pas de choix Aujourd’hui / Hier', async () => {
+    render(<PeriodSheet now={now} dateKey="2026-11-09" onDone={vi.fn()} />)
+    await screen.findByRole('button', { name: 'Léger' })
+    expect(screen.queryByRole('group', { name: 'Jour' })).toBeNull()
+  })
 })
