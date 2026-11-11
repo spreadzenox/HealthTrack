@@ -395,7 +395,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-43** ✅ 11/11 04:35 (Stressé J1) Agir dit « quelques jours », l'accueil « un essai de deux semaines » :
   une durée. Réintroduction 3 jours, piste 14 jours : l'accueil dit « vérifier une piste par un essai », Agir vide « de
   quelques jours à deux semaines selon la piste » ; tests rouges puis verts ; `TEXTES.md` annoté.
-- [ ] **POLISH-SIM-44** (Stressé J1) L'accueil renvoie à « Paramètres », la roue ouvre « Réglages » : un seul nom.
+- [x] **POLISH-SIM-44** ✅ 11/11 05:35 (Stressé J1) L'accueil renvoie à « Paramètres », la roue ouvre « Réglages » : un seul nom.
+  Chaque renvoi donne le chemin depuis la roue, « Réglages › Paramètres » (accueil objectif et visage, rappel du soir,
+  Agir) ; tests rouges puis verts.
 - [ ] **POLISH-SIM-45** (Stressé J1, à vérifier) Journal › Jours : tuiles « Écran » et « Météo » au J1 sans source
   branchée (données de démo ou vraie valeur ?). Idée liée (proposition, pas de code) : à J1 avec 2 mois de montre,
   Analyses ne montre que « Encore 13 jours notés ».

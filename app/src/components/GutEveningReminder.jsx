@@ -71,7 +71,7 @@ export default function GutEveningReminder({ variant = 'offer' }) {
   return (
     <>
       {wanted ? (
-        <p className="gut-evening-reminder-done">C’est noté : rappel chaque soir vers {time}. Réglable dans Paramètres.</p>
+        <p className="gut-evening-reminder-done">C’est noté : rappel chaque soir vers {time}. À changer dans Réglages › Paramètres.</p>
       ) : (
         <button type="button" className="gut-evening-reminder" onClick={() => toggle(true)}>
           Me le demander chaque soir par notification
