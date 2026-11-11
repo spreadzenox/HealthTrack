@@ -160,13 +160,21 @@ function Results({ outcome, view, locked }) {
         <section className="reco-block" aria-labelledby={`reco-weigh-${outcome}`}>
           <h3 id={`reco-weigh-${outcome}`} className="reco-section-title">{w.weigh}</h3>
           <Unit w={w} />
+          {view.weighNothingNet && (
+            <p className="reco-unsure-all">Rien n’est net pour l’instant (barres hachurées, chiffres en gris) : ces chiffres bougeront avec vos prochains jours notés.</p>
+          )}
           {view.weigh.map((h) => (
             <div key={h.id} className="reco-horizon">
               <p className="reco-horizon-title">{h.label} <span className="reco-horizon-window">{h.window}</span></p>
               <EffectList factors={h.factors} />
             </div>
           ))}
-          <p className="reco-legend"><span className="reco-legend-unsure" aria-hidden="true" /> hachuré, chiffre en gris : pas assez net</p>
+          {!view.weighNothingNet && (
+            <p className="reco-legend"><span className="reco-legend-unsure" aria-hidden="true" /> hachuré, chiffre en gris : pas assez net</p>
+          )}
+          {view.flipped?.map((label) => (
+            <p key={label} className="reco-flipped">{label} change de sens selon le délai : rien à en tirer pour l’instant.</p>
+          ))}
         </section>
       )}
       {!locked && view.lookOnly.length > 0 && (

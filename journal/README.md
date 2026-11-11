@@ -8,6 +8,13 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 〰️ **Analyses : quoi retenir d'un lien flou (11/11 15:35)** : une persona voyait « Lactose » −0,2 / +1,2 / −2,5 pt
+> selon le délai et demandait « je dois en manger ou pas ? ». Quand rien n'est net, Analyses le dit une fois en haut de
+> « Ce qui va avec » ; quand un facteur change de sens d'un délai à l'autre sans être net, une ligne le nomme : « rien à
+> en tirer pour l'instant » ([clair](runs/captures/2026-11-11-1535-sens-du-delai-clair.png) ·
+> [sombre](runs/captures/2026-11-11-1535-sens-du-delai-sombre.png)). Au passage, « Tests » était rouge sur main à cause
+> d'une panne réseau chez GitHub (rien dans le code) : relancé. Part ce soir sur Alpha. Rien à faire de votre côté.
+
 > ✏️ **Le nom d'un repas se modifie (11/11 14:35)** : une persona avait écrit « salade de pâtes au thon », l'IA a
 > proposé « Pâtes à la carbonara » ; elle a corrigé les aliments mais le nom restait. Le nom est maintenant un champ
 > « Nom » sous l'analyse (photo ou « Décrire ») et dans « Modifier » d'un repas enregistré ; vide = repas sans nom
@@ -394,6 +401,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 15:35 — [Lien flou dans Analyses](runs/2026-11-11-1535-sens-du-delai.md) | ✏️ | POLISH-SIM-50 : « rien n'est net » dit une fois, facteur qui change de sens nommé ; tests rouges puis verts ; « Tests » de main relancé (panne DNS du runner). Rien à faire de votre côté |
 | 11/11 13:35 — [Poids dans Tendances](runs/2026-11-11-1335-poids-tendances.md) | ✏️ | POLISH-SIM-47 : mesure « Poids » (dernière pesée du jour) dans Tendances ; graduations à 2 décimales ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 11/11 14:35 — [Nom du repas modifiable](runs/2026-11-11-1435-nom-repas.md) | ✏️ | POLISH-SIM-49 : champ « Nom » (photo, Décrire, Modifier), vide = sans nom ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 11/11 12:35 — [Aliment non compté visible](runs/2026-11-11-1235-kcal-incomplet.md) | ✏️ | POLISH-SIM-48 : total « sans … » ou « inconnu » ; « ≥ » dans les listes ; tests rouges puis verts. Rien à faire de votre côté |

@@ -420,7 +420,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   que le vrai relais peut renvoyer un nom hors table).
 - [x] **POLISH-SIM-49** ✅ 11/11 14:35 (champ « Nom » sous l'analyse photo, dans « Décrire » et « Modifier » d'un repas qui a un nom ; vide = repas sans nom ; le titre ne répète plus le nom) (Maigrir J1) Repas : le nom du plat proposé par l'IA ne se modifie pas après correction des
   aliments.
-- [ ] **POLISH-SIM-50** (Endométriose J45) Analyses : un même facteur (Lactose) affiche des écarts de signes opposés
+- [x] **POLISH-SIM-50** ✅ 11/11 15:35 (« Lactose change de sens selon le délai : rien à en tirer pour l'instant. » sous la légende, si le facteur n'est net à aucun délai ; rien de net du tout : « Rien n'est net pour l'instant (barres hachurées, chiffres en gris) : ces chiffres bougeront avec vos prochains jours notés. » en tête, sans légende) (Endométriose J45) Analyses : un même facteur (Lactose) affiche des écarts de signes opposés
   selon le délai, sans dire quoi en retenir. Vérifier la présentation (si rien n'est net, le dire une fois).
 - [ ] **POLISH-SIM-51** (Maigrir J1) Accueil, « Votre téléphone suffit » : la liste (bien-être, digestion, repas en
   photo) ignore l'objectif choisi ; l'adapter (poids : repas, pas).

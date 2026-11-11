@@ -100,6 +100,30 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(Number(sleep.querySelector('.reco-effect-bar').style.right.match(/([\d.]+)%/)?.[1] ?? 100)).toBeLessThan(30)
   })
 
+  it('POLISH-SIM-50 : un facteur qui change de sens selon le délai est dit une fois, sous la légende', async () => {
+    const results = structuredClone(readyResults)
+    results.outcomes.wellbeing.horizons.short.factors.push(f('fodmap_lactose', 'Lactose', -0.2, { theme: 'nutrition', net: false }))
+    results.outcomes.wellbeing.horizons.medium.factors.push(f('fodmap_lactose', 'Lactose', 1.2, { theme: 'nutrition', net: false, horizon: 'medium' }))
+    renderPage({}, results)
+    const weigh = await screen.findByRole('region', { name: 'Ce qui va avec votre bien-être' })
+    expect(weigh.querySelector('.reco-flipped')).toHaveTextContent('Lactose change de sens selon le délai : rien à en tirer pour l’instant.')
+    expect(weigh.querySelector('.reco-legend')).toHaveTextContent('hachuré, chiffre en gris : pas assez net')
+  })
+
+  it('POLISH-SIM-50 : rien de net, une phrase en tête remplace la légende', async () => {
+    const results = structuredClone(readyResults)
+    const w = results.outcomes.wellbeing.horizons
+    w.short.factors = [f('fodmap_lactose', 'Lactose', -0.2, { theme: 'nutrition', net: false })]
+    w.medium.factors = [f('fodmap_lactose', 'Lactose', 1.2, { theme: 'nutrition', net: false, horizon: 'medium' })]
+    renderPage({}, results)
+    const weigh = await screen.findByRole('region', { name: 'Ce qui va avec votre bien-être' })
+    expect(weigh.querySelector('.reco-unsure-all')).toHaveTextContent('Rien n’est net pour l’instant (barres hachurées, chiffres en gris) : ces chiffres bougeront avec vos prochains jours notés.')
+    expect(weigh.querySelector('.reco-legend')).toBeNull()
+    expect(weigh.querySelector('.reco-flipped')).toBeNull()
+    // dit une fois, avant les barres
+    expect(weigh.querySelector('.reco-unsure-all').compareDocumentPosition(weigh.querySelector('.reco-horizon')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
   it('« Comment c’est calculé » : un lien discret en bas', async () => {
     renderPage({}, readyResults)
     const how = await screen.findByRole('button', { name: 'Comment c’est calculé' })

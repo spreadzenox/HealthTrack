@@ -778,6 +778,18 @@
   color: var(--text-muted);
 }
 
+.reco-unsure-all {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.reco-flipped {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 .reco-legend-unsure {
   width: 18px;
   height: 8px;
