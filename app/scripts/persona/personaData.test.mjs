@@ -29,6 +29,14 @@ describe('personaEntries', () => {
     expect(types(list).has('food')).toBe(true)
   })
 
+  it('téléphone seul au jour 1 : les pas de la journée en cours, comme Health Connect les donne (POLISH-SIM-40)', () => {
+    const list = personaEntries(demo, { day: 1, equipment: 'phone', now })
+    const today = list.filter((e) => e.type === 'steps' && new Date(e.at).toDateString() === now.toDateString())
+    expect(today).toHaveLength(1)
+    expect(today[0].payload.value).toBeGreaterThan(0)
+    expect(new Date(today[0].payload.endDate).getTime()).toBeLessThanOrEqual(now.getTime())
+  })
+
   it('montre sans VFC : ni VFC, ni montre Huawei, ni poids', () => {
     const list = personaEntries(demo, { day: 45, equipment: 'watch', now })
     expect(list.some((e) => e.payload?.subtype === 'heartRateVariability')).toBe(false)

@@ -387,8 +387,12 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   maquette annoté.
 - [ ] **POLISH-SIM-39** (2 sur 2) Visite guidée : « Voir dans 14 jours » ne dit pas ce qu'on verra (« Voir un exemple » ?) ;
   l'exemple affiche « Encore 18 jours » à J14 alors que le vrai compte au J1 dit 27 (ou 13) : caler le compte fictif.
-- [ ] **POLISH-SIM-40** (3 simulations, dont Maigrir J1 du 11/11 ; à reproduire d'abord) Aujourd'hui › « Vos données du jour » : pas (et FC de la montre)
-  absents au J1 alors que Journal › Jours les montre ; Bien-être y fait doublon avec la carte du dessus.
+- [x] **POLISH-SIM-40** ✅ 11/11 10:35 (3 simulations, dont Maigrir J1 du 11/11) Aujourd'hui › « Vos données du jour » : pas (et FC de la montre)
+  absents au J1 alors que Journal › Jours les montre ; Bien-être y fait doublon avec la carte du dessus. Reproduit :
+  artefact des données de démo (aucun pas pour la journée en cours, alors que la synchro Health Connect lit jusqu'à
+  maintenant) ; la démo et l'outil personas ont désormais les pas du jour au prorata de l'heure (test). Doublon retiré :
+  le bien-être n'a qu'une maison, sa carte (test rouge puis vert). FC de la montre : pas de ligne FC instantanée par
+  choix (seule la FC au repos), rien à corriger.
 - [x] **POLISH-SIM-41** ✅ 11/11 07:35 (Endométriose J1) Feuille Digestion : deux lignes « dans l'ensemble » et « À l'instant » aux
   mêmes boutons, sans dire laquelle choisir. Le soir, une seule rangée à la fois : le bilan de la journée, ou (après
   « Noter un moment précis ») « À l'instant » seule, avec « Bilan de la journée » pour revenir ; test rouge puis vert.

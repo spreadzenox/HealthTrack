@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 👣 **Pas du jour et bien-être une seule fois (11/11 10:35)** : trois personas ne voyaient pas leurs pas sur
+> Aujourd'hui. Vérifié : votre téléphone les lit bien jusqu'à l'instant présent ; c'étaient nos données de démonstration
+> qui n'en avaient aucun pour la journée en cours (corrigé, les personas les verront). Et « Vos données du jour »
+> répétait la note de bien-être de la carte juste au-dessus : retirée ([clair](runs/captures/2026-11-11-1035-pas-du-jour-clair.png) ·
+> [sombre](runs/captures/2026-11-11-1035-pas-du-jour-sombre.png)). Part ce soir sur Alpha. Rien à faire de votre côté.
+
 > 🧪 **Deux personas (11/11 08:35)** : « Prendre soin de soi, maigrir » au premier lancement (téléphone seul) et
 > « Endométriose » au 45e jour, pour la première fois avec ses règles notées. Constats : les pas toujours absents
 > d'Aujourd'hui (3e fois), une pesée sans courbe dans Tendances, un aliment inconnu compté 0 kcal sans le dire, le nom
@@ -365,6 +371,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 10:35 — [Pas du jour, bien-être une fois](runs/2026-11-11-1035-pas-du-jour.md) | ✏️ | POLISH-SIM-40 : pas absents = artefact de la démo (pas du jour ajoutés) ; bien-être retiré de « Vos données du jour » (doublon) ; tests rouges puis verts. Rien à faire de votre côté |
 | 11/11 09:35 — [#910 mergée](runs/2026-11-11-0935-merge-910.md) | 🔧 | PR #910 (Ma digestion, une question à la fois) remise à jour sur main, vérifiée (tests, build, lint, visual, capture du soir) et mergée. Rien à faire de votre côté |
 | 11/11 08:35 — [Deux personas](runs/2026-11-11-0835-personas.md) | 💡 | Simulations Maigrir J1 et Endométriose J45 (règles notées) ; POLISH-SIM-46 à 51, PROP-SIM-11 et 12 ; outil complété. Rien à faire de votre côté |
 | 11/11 07:35 — [Ma digestion, une question à la fois](runs/2026-11-11-0735-digestion-une-question.md) | ✏️ | POLISH-SIM-41 : le soir, une seule rangée Calme / Gêne / Douleur (journée, ou moment précis) ; test rouge puis vert. Rien à faire de votre côté |

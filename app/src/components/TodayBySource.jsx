@@ -24,6 +24,8 @@ const ICONS = {
 }
 /** Clé du thème de chaque ligne (src/theme/themes.js). */
 const THEME_KEYS = { screen: 'screenMinutes', cigarettes: 'phone' }
+/** Lignes qui ont leur propre bloc sur Aujourd’hui. */
+const HOMED_ELSEWHERE = new Set(['meals', 'wellbeing'])
 /** Moments d’une valeur reprise de la veille (services/today.js `measureTiles`). */
 const FROM_YESTERDAY = new Set(['hier', 'nuit d’avant'])
 /** Courbe de chaque ligne dans Journal › Tendances (POLISH-SIM-2 : une ligne touchée ouvre sa courbe). */
@@ -66,9 +68,10 @@ export default function TodayBySource({
     return () => window.removeEventListener('health-entries-updated', refresh)
   }, [refresh])
 
-  // Les repas ont leur bloc, « Mes repas du jour » (AUJ-5, leçon 16 : une information n'a qu'une maison)
+  // Les repas ont leur bloc, « Mes repas du jour » (AUJ-5), et le bien-être sa carte juste au-dessus (POLISH-SIM-40) :
+  // leçon 16, une information n'a qu'une maison
   const groups = todayBySource({ tiles, summary, entries, now: now || new Date(), showGut })
-    .map((g) => ({ ...g, items: g.items.filter((i) => i.key !== 'meals') }))
+    .map((g) => ({ ...g, items: g.items.filter((i) => !HOMED_ELSEWHERE.has(i.key)) }))
     .filter((g) => g.items.length)
   // Rien du tout : ni titre ni lien (le bien-être du jour et le bandeau d'ajout suffisent au premier jour)
   if (!groups.length) return null
