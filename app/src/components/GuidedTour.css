@@ -82,6 +82,7 @@
 .tour-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px;
 }
@@ -98,6 +99,8 @@
 
 .tour-next {
   margin-left: auto;
+  /* « Exemple au jour 14 » sur une ligne : faute de place, le bouton passe sous « Passer la visite » (POLISH-SIM-39) */
+  white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: reduce) {

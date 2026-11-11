@@ -153,5 +153,13 @@ export function buildTourEntries({ days, now = new Date(), received = new Set(),
     }
     return out
   }
-  return kept
+  // Avant le jour 28 : une note chaque soir aussi (POLISH-SIM-39). La démo n'en a que sur ses derniers jours : au jour 14,
+  // l'exemple disait « Encore 18 jours » quand le vrai écran en annonce 27 au jour 1. Niveaux de la démo gardés.
+  const levels = new Map(kept.filter((e) => e.type === 'gut').map((e) => [ago(e.at, now), e.payload?.level]))
+  const out = kept.filter((e) => e.type !== 'gut' || ago(e.at, now) === 0)
+  if (!out.some((e) => e.type === 'gut')) out.push({ type: 'gut', source: 'app_gut', at: soon, payload: { level: 'calm' } })
+  for (let i = days - 1; i >= 1; i--) {
+    out.push({ type: 'gut', source: 'app_gut', at: daysBefore(now, i, 22).toISOString(), payload: { level: levels.get(i) ?? 'calm' } })
+  }
+  return out
 }

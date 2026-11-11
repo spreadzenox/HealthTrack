@@ -48,13 +48,13 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
     boom.on = false
   })
 
-  it('commence par l’écran réel, « Passer la visite » visible ; « Voir dans 14 jours » montre l’exemple étiqueté', async () => {
+  it('commence par l’écran réel, « Passer la visite » visible ; « Exemple au jour 14 » montre l’exemple étiqueté', async () => {
     saveOnboarding({ done: true, goals: ['stress'], tour: 'pending' })
     renderTour()
     expect(await screen.findByRole('heading', { name: 'Votre écran Aujourd’hui' })).toBeInTheDocument()
     expect(btn('Passer la visite')).toBeInTheDocument()
     expect(isExampleMode()).toBe(false)
-    fireEvent.click(btn('Voir dans 14 jours'))
+    fireEvent.click(btn('Exemple au jour 14'))
     expect(screen.getByRole('heading', { name: 'Votre bien-être du jour' })).toBeInTheDocument()
     await waitFor(() => expect(isExampleMode()).toBe(true))
     // Dans la bulle, jamais par-dessus l’en-tête de l’app (POLISH-SIM-37c)
@@ -66,7 +66,7 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
     const before = await snapshot()
     saveOnboarding({ done: true, goals: ['gut'], tour: 'pending' })
     const onClose = renderTour()
-    fireEvent.click(await screen.findByRole('button', { name: 'Voir dans 14 jours' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Exemple au jour 14' }))
     await waitFor(() => expect(isExampleMode()).toBe(true))
     expect((await listEntries({ limit: 10000 })).length).toBeGreaterThan(100)
     fireEvent.click(btn('Passer la visite'))
@@ -104,7 +104,7 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
     renderTour(vi.fn(), '/recommendations/ventre')
     expect(await screen.findByRole('heading', { name: 'Votre digestion' })).toBeInTheDocument()
     expect(screen.getByTestId('where')).toHaveTextContent('/recommendations/ventre')
-    fireEvent.click(btn('Voir au jour 28'))
+    fireEvent.click(btn('Exemple au jour 28'))
     expect(screen.getByRole('heading', { name: 'Au jour 28 : ce qui va avec votre ventre' })).toBeInTheDocument()
   })
 
@@ -119,7 +119,7 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
     saveOnboarding({ done: true, goals: ['stress'], tour: 'pending' })
     vi.spyOn(console, 'error').mockImplementation(() => {})
     const onClose = renderTour()
-    fireEvent.click(await screen.findByRole('button', { name: 'Voir dans 14 jours' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Exemple au jour 14' }))
     await waitFor(() => expect(onClose).toHaveBeenCalled())
     expect(isExampleMode()).toBe(false)
     expect(loadOnboarding().tour).toBe('crashed')
@@ -129,6 +129,15 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
     expect(tourSteps({ hc: true, face: false, gut: false }).some((s) => s.days === 28)).toBe(false)
     expect(tourSteps({ hc: true, face: false, gut: true }).some((s) => s.days === 28)).toBe(true)
     expect(tourSteps({ hc: false, face: false, gut: false })[2].text).toMatch(/^Avec Health Connect ou une montre/)
+  })
+
+  it('le bouton qui ouvre l’exemple dit ce qu’on verra et quel jour (POLISH-SIM-39)', () => {
+    const steps = tourSteps({ hc: true, face: false, gut: true })
+    const openers = steps.filter((s, k) => steps[k + 1]?.reveal)
+    expect(openers.map((s) => s.button)).toEqual([
+      'Exemple au jour 14', 'Exemple au jour 14', 'Exemple au jour 14',
+      'Exemple au jour 28', 'Exemple au jour 14',
+    ])
   })
 
   it('étape Analyses : avec la digestion, les deux échéances (14 et 28 jours), jamais seulement 14 (POLISH-SIM-15)', () => {
@@ -173,10 +182,10 @@ describe('visite guidée : étiquette et projecteur (POLISH-SIM-14)', () => {
     }
   })
 
-  it('pendant « Voir dans 14 jours », l’écran qui se remplit reste sous le voile : jamais de bande claire (POLISH-SIM-20)', async () => {
+  it('pendant « Exemple au jour 14 », l’écran qui se remplit reste sous le voile : jamais de bande claire (POLISH-SIM-20)', async () => {
     saveOnboarding({ done: true, goals: ['stress'], tour: 'pending' })
     renderTour()
-    fireEvent.click(await screen.findByRole('button', { name: 'Voir dans 14 jours' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Exemple au jour 14' }))
     const curtain = document.querySelector('.tour-curtain')
     const shade = document.querySelector('.tour-shade')
     expect(curtain).not.toBeNull()
