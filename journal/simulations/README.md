@@ -26,7 +26,10 @@ prorata des poids, moment uniforme parmi 1, 14, 45 ; une configuration iPhone es
 **Objectif et saisie (POLISH-SIM-7 et 9, 09/11)** : `--goals=` coche les objectifs de l'accueil pour un jour > 1
 (`gut`, `cycle`, `stress`, `sport`, `care`, `all` ; au jour 1 l'agent les choisit lui-même). Correspondance :
 Ventre (1, 2) → `gut` ; Endométriose → `cycle,gut` ; Tout mesurer → `all` ; Sportif → `sport` ; Prendre soin de soi →
-`care` ; Stressé et pressé → `stress`. `--notes=few` (Stressé et pressé) : aucun repas ni ventre, une note de
+`care` ; Stressé et pressé → `stress`. **Cycle (11/11)** : avec `--goals=cycle` et un jour > 1, la persona a aussi ses règles notées à la main (5 jours tous
+les 28 jours, les dernières finies il y a 3 jours, crampes et ballonnements les premiers jours), au format de la saisie
+de l'app. **Brief** : remplacer `__PORT__`, `OUTFILE` et `SIMID` (un `sed s/PORT/…/` abîmait « RAPPORT »).
+`--notes=few` (Stressé et pressé) : aucun repas ni ventre, une note de
 bien-être un jour sur trois ; le visage et les imports restent. Dire à l'agent que Health Connect, le sommeil estimé
 et la lecture du visage n'existent pas dans la version web.
 
