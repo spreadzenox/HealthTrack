@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-11",
+  "kind": "correctif",
+  "title": "Un symptôme du cycle noté se voit",
+  "items": [
+    "Dans « Mes règles », un symptôme touché porte une coche et la fenêtre écrit « Noté : Crampes ». Un second toucher le retire et affiche « Retiré »."
+  ]
+}

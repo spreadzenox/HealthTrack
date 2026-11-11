@@ -410,8 +410,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-45** (Stressé J1, à vérifier) Journal › Jours : tuiles « Écran » et « Météo » au J1 sans source
   branchée (données de démo ou vraie valeur ?). Idée liée (proposition, pas de code) : à J1 avec 2 mois de montre,
   Analyses ne montre que « Encore 13 jours notés ».
-- [ ] **POLISH-SIM-46** (Endométriose J45) « Mes règles » : un symptôme touché (Crampes) ne montre pas clairement qu'il
-  est noté (Digestion affiche « Dernière note… »). Vérifier l'état sélectionné en clair et sombre ; un retour court.
+- [x] **POLISH-SIM-46** ✅ 11/11 11:35 (Endométriose J45) « Mes règles » : un symptôme touché (Crampes) ne montre pas clairement qu'il
+  est noté (Digestion affiche « Dernière note… »). Fait : coche ✓ dans la puce notée (l'état ne tient plus à la seule
+  couleur) et ligne courte « Noté : Crampes » / « Retiré : Crampes » (role=status), effacée au passage Aujourd'hui ⇄ Hier.
 - [ ] **POLISH-SIM-47** (Maigrir J1) Tendances : une pesée (à la main ou balance) n'a aucune courbe, le « + » ne propose
   pas Poids. Vérifier où le poids s'affiche ; s'il est déjà dans le Journal, l'ajouter aux mesures de Tendances.
 - [ ] **POLISH-SIM-48** (Maigrir J1) Repas : un aliment absent de la table compte pour 0 et le total affiche « ≈ 0 kcal »

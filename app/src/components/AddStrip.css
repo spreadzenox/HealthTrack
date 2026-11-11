@@ -85,6 +85,8 @@
   font-weight: 600;
 }
 .period-symptom:disabled { cursor: default; }
+.period-symptom-check { font-weight: 700; }
+.period-symptoms-said { min-height: 1.25rem; margin: 8px 0 0; color: var(--text-muted); font-size: 0.875rem; }
 .period-sheet-error { color: var(--color-danger); margin: 8px 0 0; }
 
 /* Cigarette (compteur actif) : une case du bandeau comme les autres. */

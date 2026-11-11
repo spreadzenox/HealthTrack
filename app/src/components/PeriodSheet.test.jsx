@@ -123,6 +123,24 @@ describe('PeriodSheet : noter ses règles en un geste (CYCLE-2)', () => {
     await waitFor(() => expect(store.deleteEntry).toHaveBeenCalledWith(11))
   })
 
+  it('symptôme touché (POLISH-SIM-46) : coche visible et retour court « Noté » puis « Retiré »', async () => {
+    store.listEntries.mockResolvedValue([])
+    render(<PeriodSheet now={now} />)
+    const crampes = await screen.findByRole('button', { name: 'Crampes' })
+    await waitFor(() => expect(crampes).toBeEnabled())
+    expect(crampes.querySelector('.period-symptom-check')).toBeNull()
+    store.listEntries.mockResolvedValue([
+      { id: 31, type: 'cycle', source: 'app_cycle', at: noon(10), payload: { subtype: 'symptom', symptom: 'cramps' } },
+    ])
+    fireEvent.click(crampes)
+    expect(await screen.findByRole('status')).toHaveTextContent('Noté : Crampes')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Crampes' })).toHaveAttribute('aria-pressed', 'true'))
+    expect(screen.getByRole('button', { name: 'Crampes' }).querySelector('.period-symptom-check')).not.toBeNull()
+    store.listEntries.mockResolvedValue([])
+    fireEvent.click(screen.getByRole('button', { name: 'Crampes' }))
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Retiré : Crampes'))
+  })
+
   it('un jour passé (Journal) : seulement le flux, pas les symptômes', async () => {
     store.listEntries.mockResolvedValue([
       { id: 8, type: 'cycle', source: 'app_cycle', at: noon(9), payload: { subtype: 'period', flow: 'light' } },
