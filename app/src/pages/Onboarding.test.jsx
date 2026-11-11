@@ -17,6 +17,7 @@ vi.mock('../storage/localHealthStorage', () => ({
 vi.mock('../connectors/connectorRegistry', () => ({ getConnector: () => undefined, CONNECTORS: [] }))
 
 import Onboarding from './Onboarding'
+import onboardingSource from './Onboarding.jsx?raw'
 import { FLOW_VERSION, loadOnboarding, saveOnboarding } from '../settings/onboarding'
 import { CHANGELOG } from '../data/changelog'
 import { getLastSeenId } from '../services/whatsNew'
@@ -120,6 +121,18 @@ describe('Nouvel accueil (ACC-3) : objectifs à choix multiple', () => {
     fireEvent.click(btn('Continuer'))
     expect(loadOnboarding()).toMatchObject({ goals: ['cycle', 'sport'], tracks: expect.arrayContaining(['gut', 'activity']) })
     expect(heading('Branchez vos sources')).toBeInTheDocument()
+  })
+
+  it('renvoie au même nom que la roue : « Réglages › Paramètres » (POLISH-SIM-44)', () => {
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'goal' })
+    renderAt()
+    expect(screen.getByText('Vous pourrez le changer dans Réglages › Paramètres (roue en haut à droite).')).toBeInTheDocument()
+  })
+
+  it('aucun texte ne renvoie à « Paramètres » seul (POLISH-SIM-44)', () => {
+    // L'écran du visage n'existe pas en jsdom (pas de lecture du visage) : on lit ses textes dans la source.
+    expect(onboardingSource).toContain("'à tout moment, dans Réglages › Paramètres'")
+    expect(onboardingSource).not.toMatch(/dans Paramètres/)
   })
 
   it('l’ancien objectif reste lu (goal: energy → Mon stress et mon sommeil coché)', () => {

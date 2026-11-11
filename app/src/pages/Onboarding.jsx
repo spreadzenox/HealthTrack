@@ -195,7 +195,7 @@ function GoalStep({ goals, onToggle }) {
           )
         })}
       </fieldset>
-      <p className="onb-fine">Vous pourrez le changer dans Paramètres.</p>
+      <p className="onb-fine">Vous pourrez le changer dans Réglages › Paramètres (roue en haut à droite).</p>
     </>
   )
 }
@@ -556,7 +556,7 @@ const FACE_LINES = [
   { title: 'Ce qui est gardé', text: 'l’image est effacée aussitôt, seul le score de la lecture reste' },
   { title: 'Où', text: 'sur ce téléphone, et dans sa sauvegarde si elle est activée' },
   { title: 'Ce que c’est', text: 'une estimation de votre bien-être par un modèle, pas un avis médical' },
-  { title: 'Comment l’arrêter', text: 'à tout moment, dans Paramètres' },
+  { title: 'Comment l’arrêter', text: 'à tout moment, dans Réglages › Paramètres' },
 ]
 
 function FaceStep({ face, onFace, onLater }) {

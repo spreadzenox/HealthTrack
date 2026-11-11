@@ -258,7 +258,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       <h2 className="page-title">{outcome === 'digestion' ? 'Votre confort digestif' : 'Votre bien-être'}</h2>
       {outcome === 'digestion' && !showGut && (
         <p className="reco-intro" data-testid="gut-off">
-          Le suivi digestif est masqué. Pour le retrouver : Paramètres → <Link to="/settings">Ce qui vous amène</Link>.
+          Le suivi digestif est masqué. Pour le retrouver : Réglages › Paramètres › <Link to="/settings">Ce qui vous amène</Link>.
         </p>
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}

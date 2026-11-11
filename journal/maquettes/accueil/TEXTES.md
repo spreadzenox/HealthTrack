@@ -39,7 +39,7 @@ Carte 3, liste :
   - Mon sport et ma récupération — entraînements, cœur, repos [Sportif]
   - Prendre soin de moi — alimentation, poids, forme [Prendre soin de soi, maigrir]
   - Tout mesurer — toutes mes montres et mesures au même endroit [Tout mesurer]
-- Bouton « Continuer » (jamais grisé) ; petit texte « Vous pourrez le changer dans Paramètres. »
+- Bouton « Continuer » (jamais grisé) ; petit texte « Vous pourrez le changer dans Paramètres. » (11/11, POLISH-SIM-44 : « … dans Réglages › Paramètres (roue en haut à droite). »)
 - Règle : « Ma digestion » ou « Mon cycle » coché ⇒ question ventre à l'écran 06 + étapes digestion dans la visite.
 
 ## 03 Sources
@@ -96,7 +96,7 @@ Huawei **non reliée** (Health Connect seul) : aucune ligne appareil ; seulement
   - Ce qui est gardé — l’image est effacée aussitôt, seul le score de la lecture reste
   - Où — sur ce téléphone, et dans sa sauvegarde si elle est activée
   - Ce que c’est — une estimation de votre bien-être par un modèle, pas un avis médical
-  - Comment l’arrêter — à tout moment, dans [Paramètres] (lien)
+  - Comment l’arrêter — à tout moment, dans [Paramètres] (lien) (11/11, POLISH-SIM-44 : « Réglages › Paramètres »)
 - Boutons « Activer » (principal) / « Plus tard » (secondaire)
 - Android seulement : « Android vous demandera ensuite les notifications : pendant la lecture, Halcya affiche la sienne. »
 - Fenêtres simulées : « Autoriser Halcya à utiliser la caméra ? » [Refuser] [Autoriser] ; puis Android : « écran du système, simulé (Android 13 et plus) » « Autoriser Halcya à vous envoyer des notifications ? » « Annoncé sur l’écran précédent, sous les boutons. » [Ne pas autoriser] [Autoriser].
