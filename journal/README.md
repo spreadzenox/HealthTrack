@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> ⏱️ **Une seule durée d'essai (11/11 04:35)** : l'accueil promettait « un essai de deux semaines » et Agir « quelques
+> jours » (une persona l'a relevé). Les deux sortes d'essais n'ont pas la même durée (réintroduction FODMAP 3 jours,
+> piste 14 jours) : l'accueil dit maintenant « vérifier une piste par un essai », et Agir vide « de quelques jours à
+> deux semaines selon la piste » ([Agir](runs/captures/2026-11-11-0435-une-duree-agir.png) ·
+> [accueil](runs/captures/2026-11-11-0435-une-duree-tuto.png)). Rien à faire de votre côté.
+
 > ✏️ **Accueil : « Trois usages » (11/11 03:35)** : la 2e carte de l'accueil disait « Trois onglets » alors que la barre
 > du bas en a cinq ; deux personas l'avaient relevé. Elle dit maintenant « Trois usages : » au-dessus de Journal,
 > Analyses et Agir ([clair](runs/captures/2026-11-11-0335-tuto-usages-clair.png) ·
@@ -333,6 +339,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 04:35 — [Une seule durée d'essai](runs/2026-11-11-0435-une-duree.md) | ✏️ | POLISH-SIM-43 : accueil « vérifier une piste par un essai », Agir vide « de quelques jours à deux semaines selon la piste » ; tests rouges puis verts. Rien à faire de votre côté |
 | 11/11 03:35 — [« Trois usages »](runs/2026-11-11-0335-tuto-usages.md) | ✏️ | POLISH-SIM-38 : 2e carte de l'accueil, « Trois onglets » → « Trois usages : ». Alpha 100984 envoyé à 03:16. Rien à faire de votre côté |
 | 11/11 02:35 — [Règles d'hier](runs/2026-11-11-0235-regles-hier.md) | 🧱 | CYCLE-2d : choix « Aujourd'hui · Hier » dans « Mes règles » (flux et symptômes de la veille). À tester : Aujourd'hui › Règles › Hier |
 | 11/11 01:35 — [Test du « 1er » réparé](runs/2026-11-11-0135-test-1er.md) | 🔧 | CI de main rouge le 11/11 : un test attendait « le 1 novembre », l'app écrit « le 1er novembre ». Test corrigé, rien ne change dans l'app. Rien à faire de votre côté |

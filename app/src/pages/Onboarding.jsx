@@ -88,7 +88,7 @@ function TutoIllustration() {
 const TABS_EXPLAINED = [
   { tab: 'Journal', text: 'voir vos journées, vos repas, vos mesures' },
   { tab: 'Analyses', text: `les liens que ${APP_NAME} trouve dans vos données` },
-  { tab: 'Agir', text: 'vérifier une piste par un essai de deux semaines' },
+  { tab: 'Agir', text: 'vérifier une piste par un essai' },
 ]
 
 function TutoStep({ card, onCard }) {

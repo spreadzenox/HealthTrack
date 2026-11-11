@@ -56,7 +56,8 @@ describe('Nouvel accueil (ACC-1, ACC-2) : tuto en trois cartes', () => {
     renderAt()
     fireEvent.click(btn('Suivant'))
     expect(heading('Halcya cherche ce qui va avec vos bons et mauvais jours')).toBeInTheDocument()
-    expect(screen.getByText('vérifier une piste par un essai de deux semaines')).toBeInTheDocument()
+    expect(screen.getByText('vérifier une piste par un essai')).toBeInTheDocument()
+    expect(screen.queryByText(/deux semaines/)).toBeNull()
     // POLISH-SIM-38 : la barre a cinq onglets, la carte n'en compte pas trois.
     expect(screen.getByText('Trois usages :')).toBeInTheDocument()
     expect(screen.queryByText(/Trois onglets/)).not.toBeInTheDocument()
