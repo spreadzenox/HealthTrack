@@ -184,7 +184,7 @@ describe('Food — correction avant enregistrement', () => {
       target: { files: [new File(['x'], 'repas.jpg', { type: 'image/jpeg' })] },
     })
     fireEvent.click(await screen.findByRole('button', { name: /Analyser les ingrédients/i }))
-    await screen.findByRole('heading', { name: 'Soupe à l’oignon' })
+    expect(await screen.findByLabelText('Nom')).toHaveValue('Soupe à l’oignon')
     const results = document.querySelector('.results')
     expect(await within(results).findByText('Riche en fructanes')).toBeInTheDocument()
     fireEvent.change(screen.getByLabelText(/Grammes de Oignon/i), { target: { value: '4' } })
@@ -210,7 +210,9 @@ describe('Food — correction avant enregistrement', () => {
       target: { files: [new File(['x'], 'repas.jpg', { type: 'image/jpeg' })] },
     })
     fireEvent.click(await screen.findByRole('button', { name: /Analyser les ingrédients/i }))
-    expect(await screen.findByRole('heading', { name: 'Plateau de fromages' })).toBeInTheDocument()
+    // POLISH-SIM-49 : le nom proposé par l'IA est un champ, pas un titre figé
+    expect(await screen.findByLabelText('Nom')).toHaveValue('Plateau de fromages')
+    expect(screen.getByRole('heading', { name: 'Ingrédients détectés' })).toBeInTheDocument()
     // Libellé simple pour tout le monde ; le nom technique du modèle seulement dans les détails
     expect(screen.getByText(/Analyse IA · une estimation/)).toBeInTheDocument()
     expect(screen.queryByText(/Source : gemini/)).not.toBeInTheDocument()
@@ -297,6 +299,21 @@ describe('Food — modifier un repas enregistré', () => {
       ],
     },
   }
+
+  it('renomme un repas enregistré (POLISH-SIM-49)', async () => {
+    const { listEntries, updateEntry } = await import('../storage/localHealthStorage')
+    updateEntry.mockResolvedValue()
+    listEntries.mockResolvedValue([meal])
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    await screen.findByText('Fromage', { selector: '.meal-dish' })
+    fireEvent.click(mealAction(/Modifier ce repas/i))
+    const name = screen.getByLabelText('Nom')
+    expect(name).toHaveValue('Fromage')
+    fireEvent.change(name, { target: { value: 'Abondance du marché' } })
+    fireEvent.click(screen.getByRole('button', { name: /^Enregistrer$/i }))
+    await vi.waitFor(() => expect(updateEntry).toHaveBeenCalled())
+    expect(updateEntry.mock.calls.at(-1)[1].payload.dish).toBe('Abondance du marché')
+  })
 
   it('corrige les grammes, retire un ingrédient et change l’heure', async () => {
     const { listEntries, updateEntry } = await import('../storage/localHealthStorage')
@@ -529,7 +546,7 @@ describe('Food — décrire un repas en quelques mots', () => {
     fireEvent.click(screen.getByRole('button', { name: /Remplir avec Gemini/i }))
     expect(spy).toHaveBeenCalledWith('un morceau d’abondance', 'KEY')
     expect(await screen.findByLabelText(/Grammes de Abondance/i)).toHaveValue(30)
-    expect(screen.getByRole('heading', { name: 'Fromage et pain' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Nom')).toHaveValue('Fromage et pain')
     fireEvent.change(screen.getByLabelText(/Grammes de Abondance/i), { target: { value: '45' } })
     fireEvent.click(screen.getByRole('button', { name: /Enregistrer ce repas/i }))
     await screen.findByText(/Repas enregistré/)
@@ -541,6 +558,50 @@ describe('Food — décrire un repas en quelques mots', () => {
       dish: 'Fromage et pain',
     })
     spy.mockRestore()
+  })
+
+  it('le nom proposé par l’IA se corrige avec les aliments, vide = sans nom (POLISH-SIM-49)', async () => {
+    const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+    setGeminiApiKey('KEY')
+    const gemini = await import('../services/geminiStandalone')
+    const spy = vi.spyOn(gemini, 'analyzeMealText').mockResolvedValue({
+      provider: 'gemini', model: 'm', dish: 'Pâtes à la carbonara',
+      items: [{ ingredient: 'Abondance', quantity: '30 g', quantity_g: 30 }],
+    })
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    fireEvent.click(screen.getByRole('button', { name: /Décrire ou saisir sans photo/i }))
+    fireEvent.change(screen.getByLabelText(/Décrivez votre repas/i), { target: { value: 'salade de pâtes au thon' } })
+    fireEvent.click(screen.getByRole('button', { name: /Remplir avec Gemini/i }))
+    const name = await screen.findByLabelText('Nom')
+    expect(name).toHaveValue('Pâtes à la carbonara')
+    expect(screen.queryByRole('heading', { name: 'Pâtes à la carbonara' })).toBeNull()
+    fireEvent.change(name, { target: { value: '  Salade de pâtes au thon ' } })
+    fireEvent.click(screen.getByRole('button', { name: /Enregistrer ce repas/i }))
+    await screen.findByText(/Repas enregistré/)
+    const { createEntry } = await import('../storage/localHealthStorage')
+    expect(createEntry.mock.calls.at(-1)[0].payload.dish).toBe('Salade de pâtes au thon')
+    spy.mockRestore()
+  })
+
+  it('photo : nom effacé = repas enregistré sans nom (POLISH-SIM-49)', async () => {
+    const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+    setGeminiApiKey('KEY')
+    const gemini = await import('../services/geminiStandalone')
+    vi.spyOn(gemini, 'analyzeWithGemini').mockResolvedValue({
+      provider: 'gemini', dish: 'Pâtes à la carbonara',
+      items: [{ ingredient: 'Abondance', quantity: '50 g', quantity_g: 50 }],
+    })
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    fireEvent.change(screen.getByLabelText(/Choisir depuis la galerie/i), {
+      target: { files: [new File(['x'], 'repas.jpg', { type: 'image/jpeg' })] },
+    })
+    fireEvent.click(await screen.findByRole('button', { name: /Analyser les ingrédients/i }))
+    fireEvent.change(await screen.findByLabelText('Nom'), { target: { value: '   ' } })
+    fireEvent.click(screen.getByRole('button', { name: /Enregistrer ce repas/i }))
+    await screen.findByText(/Repas enregistré/)
+    const { createEntry } = await import('../storage/localHealthStorage')
+    expect(createEntry.mock.calls.at(-1)[0].payload).not.toHaveProperty('dish')
+    expect(screen.getByLabelText('Nom')).toBeDisabled()
   })
 
   it('arrivée par « Décrire un repas » : le champ de description est ouvert et prêt (POLISH-SIM-25)', async () => {

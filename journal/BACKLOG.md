@@ -418,7 +418,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-48** ✅ 11/11 12:35 (total « ≈ 592 kcal, sans … » ou « inconnu, aucun aliment compté » ; « ≥ » dans les listes ; le relais ne contraint pas le nom par un enum, un nom hors table reste possible) (Maigrir J1) Repas : un aliment absent de la table compte pour 0 et le total affiche « ≈ 0 kcal »
   sans le dire. Afficher l'aliment non compté et un total marqué incomplet (vu avec le faux relais de l'outil ; vérifier
   que le vrai relais peut renvoyer un nom hors table).
-- [ ] **POLISH-SIM-49** (Maigrir J1) Repas : le nom du plat proposé par l'IA ne se modifie pas après correction des
+- [x] **POLISH-SIM-49** ✅ 11/11 14:35 (champ « Nom » sous l'analyse photo, dans « Décrire » et « Modifier » d'un repas qui a un nom ; vide = repas sans nom ; le titre ne répète plus le nom) (Maigrir J1) Repas : le nom du plat proposé par l'IA ne se modifie pas après correction des
   aliments.
 - [ ] **POLISH-SIM-50** (Endométriose J45) Analyses : un même facteur (Lactose) affiche des écarts de signes opposés
   selon le délai, sans dire quoi en retenir. Vérifier la présentation (si rien n'est net, le dire une fois).

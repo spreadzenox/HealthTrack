@@ -210,3 +210,9 @@ export function localInputToAt(value) {
   const d = new Date(value)
   return Number.isNaN(d.getTime()) ? null : d.toISOString()
 }
+
+/** Nom du repas à enregistrer (POLISH-SIM-49) : espaces retirés, null si vide. */
+export function dishToSave(name) {
+  const trimmed = typeof name === 'string' ? name.trim() : ''
+  return trimmed || null
+}

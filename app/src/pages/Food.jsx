@@ -10,10 +10,11 @@ import useDisclosure from '../hooks/useDisclosure'
 import MealItemList from '../components/MealItemList'
 import { groupMealsByDay, dayHeading } from '../services/dailyJournal'
 import MealEditor from '../components/MealEditor'
+import MealNameField from '../components/MealNameField'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import EntryActionsToggle from '../components/EntryActionsToggle'
 import { isDeletableEntry } from '../utils/entries'
-import { itemForStorage, mealKcal, mealUncounted } from '../services/mealEditing'
+import { dishToSave, itemForStorage, mealKcal, mealUncounted } from '../services/mealEditing'
 import SavedMealEditor from '../components/SavedMealEditor'
 import NewMealForm from '../components/NewMealForm'
 import { frequentMeals, mealLabel } from '../services/quickMeals'
@@ -76,6 +77,8 @@ export default function Food() {
   const [error, setError] = useState(null)
   const [result, setResult] = useState(null)
   const [items, setItems] = useState([])
+  // Nom proposé par l'IA, modifiable avant d'enregistrer (POLISH-SIM-49)
+  const [dishName, setDishName] = useState('')
   const [savedId, setSavedId] = useState(null)
   const [recentMeals, setRecentMeals] = useState([])
   const [editingId, setEditingId] = useState(null)
@@ -194,6 +197,7 @@ export default function Food() {
       const data = await analyzeMealPhoto(file)
       setResult(data)
       setItems(data.items || [])
+      setDishName(data.dish || '')
     } catch (err) {
       setError(err.message || "Erreur lors de l’analyse.")
     } finally {
@@ -204,6 +208,7 @@ export default function Food() {
   const saveMeal = async () => {
     const toSave = items.filter((it) => it.ingredient)
     if (!toSave.length) return
+    const dish = dishToSave(dishName)
     setSaving(true)
     setError(null)
     try {
@@ -214,7 +219,7 @@ export default function Food() {
           items: toSave.map(itemForStorage),
           provider: result.provider,
           ...(result.model ? { model: result.model } : {}),
-          ...(result.dish ? { dish: result.dish } : {}),
+          ...(dish ? { dish } : {}),
         },
       })
       setSavedId(id)
@@ -369,7 +374,7 @@ export default function Food() {
 
       {result && !loading && (
         <section className="results" aria-labelledby="results-title">
-          <h2 id="results-title">{result.dish || 'Ingrédients détectés'}</h2>
+          <h2 id="results-title">Ingrédients détectés</h2>
           <div className="provider-tag">
             Analyse IA · une estimation
             {FEATURES.aiModelName && (result.model || result.provider) && (
@@ -390,6 +395,9 @@ export default function Food() {
             <p className="results-hint">
               Aucun ingrédient reconnu. Ajoutez-les ci-dessous ou essayez une autre photo.
             </p>
+          )}
+          {result.dish && (
+            <MealNameField id="photo-meal-name" value={dishName} onChange={setDishName} disabled={Boolean(savedId) || saving} />
           )}
           <MealEditor items={items} onChange={setItems} disabled={Boolean(savedId) || saving} />
           {/* Avant d'enregistrer : les FODMAP du repas tel que corrigé (N4), comme sur la carte enregistrée. */}
