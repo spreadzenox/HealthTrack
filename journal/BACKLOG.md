@@ -415,7 +415,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   couleur) et ligne courte « Noté : Crampes » / « Retiré : Crampes » (role=status), effacée au passage Aujourd'hui ⇄ Hier.
 - [ ] **POLISH-SIM-47** (Maigrir J1) Tendances : une pesée (à la main ou balance) n'a aucune courbe, le « + » ne propose
   pas Poids. Vérifier où le poids s'affiche ; s'il est déjà dans le Journal, l'ajouter aux mesures de Tendances.
-- [ ] **POLISH-SIM-48** (Maigrir J1) Repas : un aliment absent de la table compte pour 0 et le total affiche « ≈ 0 kcal »
+- [x] **POLISH-SIM-48** ✅ 11/11 12:35 (total « ≈ 592 kcal, sans … » ou « inconnu, aucun aliment compté » ; « ≥ » dans les listes ; le relais ne contraint pas le nom par un enum, un nom hors table reste possible) (Maigrir J1) Repas : un aliment absent de la table compte pour 0 et le total affiche « ≈ 0 kcal »
   sans le dire. Afficher l'aliment non compté et un total marqué incomplet (vu avec le faux relais de l'outil ; vérifier
   que le vrai relais peut renvoyer un nom hors table).
 - [ ] **POLISH-SIM-49** (Maigrir J1) Repas : le nom du plat proposé par l'IA ne se modifie pas après correction des

@@ -5,6 +5,7 @@ import {
   normalizeMealItem,
   itemKcal,
   mealKcal,
+  mealUncounted,
   setItemGrams,
   itemsForEditing,
   atToLocalInput,
@@ -107,6 +108,15 @@ describe('kcal', () => {
       { ingredient: 'Zorglub', quantity_g: 50 },
     ])).toBe(590)
     expect(mealKcal([])).toBe(0)
+  })
+  it('nomme les aliments que le total ne compte pas (hors base ou sans grammes)', () => {
+    expect(mealUncounted([
+      { ingredient: 'Abondance', quantity_g: 100 },
+      { ingredient: 'Zorglub', quantity_g: 50 },
+      { ingredient: 'Abondance', quantity: '1 bol' },
+    ])).toEqual(['Zorglub', 'Abondance'])
+    expect(mealUncounted([{ ingredient: 'Abondance', quantity_g: 100 }])).toEqual([])
+    expect(mealUncounted(undefined)).toEqual([])
   })
 })
 

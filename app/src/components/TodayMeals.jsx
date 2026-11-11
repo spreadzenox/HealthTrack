@@ -5,13 +5,23 @@
  */
 import { Link } from 'react-router-dom'
 import { localDateKey } from '../services/analysisEngine'
-import { mealKcal, mealTitle } from '../services/mealEditing'
+import { mealKcal, mealTitle, mealUncounted } from '../services/mealEditing'
 import { appLocale } from '../i18n/locale.js'
 import MealPhotoButton from './MealPhotoButton'
 import LineIcon from './LineIcon'
 import StripPlus from './StripPlus'
 import './TodayMeals.css'
 import { monoDigits } from '../utils/monoDigits'
+
+/** kcal d'un repas ; « ≥ » quand un aliment n'est pas compté (POLISH-SIM-48). */
+function MealKcal({ kcal, partial }) {
+  const n = kcal.toLocaleString(appLocale())
+  return (
+    <span className="today-meal-kcal" aria-label={partial ? `au moins ${n} kcal` : undefined}>
+      {partial ? '≥' : '≈'}&nbsp;{monoDigits(n)}&nbsp;kcal
+    </span>
+  )
+}
 
 const hhmm = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 
@@ -35,7 +45,7 @@ export default function TodayMeals({ entries, now }) {
                 <Link to="/food" className="today-meal">
                   <span className="today-meal-time mono">{hhmm(e.at)}</span>
                   <span className="today-meal-name">{mealTitle(e)}</span>
-                  {kcal > 0 && <span className="today-meal-kcal">≈&nbsp;{monoDigits(kcal.toLocaleString(appLocale()))}&nbsp;kcal</span>}
+                  {kcal > 0 && <MealKcal kcal={kcal} partial={mealUncounted(e.payload.items).length > 0} />}
                   <LineIcon name="chevron" size={18} className="today-meal-chevron" />
                 </Link>
               </li>

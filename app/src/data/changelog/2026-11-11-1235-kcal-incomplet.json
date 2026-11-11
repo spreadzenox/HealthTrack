@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-11",
+  "kind": "correctif",
+  "title": "Un aliment non compté se voit dans le total",
+  "items": [
+    "Quand un aliment n'est pas dans la base, le total d'un repas le nomme (« ≈ 592 kcal, sans Sauce maison ») au lieu de l'ignorer. Si aucun aliment n'est compté, il dit « inconnu ».",
+    "Dans Journal › Repas et sur Aujourd'hui, un tel repas affiche « ≥ » devant ses kcal."
+  ]
+}
