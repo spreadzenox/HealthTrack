@@ -135,7 +135,7 @@ function Tour({ onEnd, from }) {
   if (!step) return null
   const next = () => {
     if (step.last) return onEnd('done')
-    // « Voir dans 14 jours » : le même écran se remplit de haut en bas (sans animation si on les réduit)
+    // « Exemple au jour 14 » : le même écran se remplit de haut en bas (sans animation si on les réduit)
     if (steps[i + 1]?.reveal && !reducedMotion()) setRevealing(true)
     return setI(i + 1)
   }

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { buildTourEntries } from './tourData'
 import { measuresOf } from '../devices/deviceCapabilities'
+import { gutNotesProgress } from './today'
 
 const NOW = new Date(2026, 10, 8, 20, 0)
 
@@ -28,6 +29,13 @@ describe('données fictives de la visite (ACC-8)', () => {
     const gut = buildTourEntries({ days: 28, now: NOW }).filter((e) => e.type === 'gut')
     expect(new Set(gut.map((e) => e.at.slice(0, 10))).size).toBeGreaterThanOrEqual(28)
     expect(gut.filter((e) => e.payload.level !== 'calm').length).toBeGreaterThanOrEqual(5)
+  })
+
+  it('jour 14 : 14 jours notés en digestion, comme chez qui note chaque soir (POLISH-SIM-39)', () => {
+    // Au J1 le vrai écran dit « Encore 27 jours » : au jour 14 de l'exemple, il en reste 14, jamais 18
+    const bar = gutNotesProgress(buildTourEntries({ days: 14, now: NOW }))
+    expect(bar.days).toBe(14)
+    expect(bar.remaining).toBe(14)
   })
 
   it('rien dans le futur : la note du soir d’aujourd’hui est ramenée à tout à l’heure', () => {

@@ -120,17 +120,17 @@ Plein écran sur de vraies captures v913 (412×915). Phase « maintenant » = ca
 
 | # | Écran (onglet) | Image | Zone surlignée | Jour | Titre | Texte | Bouton |
 |---|---|---|---|---|---|---|---|
-| 1 | Aujourd’hui | e-today | [3.4,12.4,93.2,53] boutons d'ajout + carte bien-être + carte digestion | – | Votre écran Aujourd’hui | hc : « Vos 30 derniers jours arrivent. Le reste se remplit au fil des jours. » / sinon : « Pour l’instant, il attend vos premières notes. » | Voir dans 14 jours |
+| 1 | Aujourd’hui | e-today | [3.4,12.4,93.2,53] boutons d'ajout + carte bien-être + carte digestion | – | Votre écran Aujourd’hui | hc : « Vos 30 derniers jours arrivent. Le reste se remplit au fil des jours. » / sinon : « Pour l’instant, il attend vos premières notes. » | Exemple au jour 14 (POLISH-SIM-39, 11/11 ; était « Voir dans 14 jours ») |
 | 2 | Aujourd’hui | d-today | [3.6,22.4,92.8,24.8] carte « Bien-être aujourd’hui 3,1/5 » | 14 | Votre bien-être du jour | face on : « Lu par la caméra quand vous regardez votre téléphone, et par vos notes. » / sinon : « D’après vos notes. Avec la lecture du visage, il se remplit tout seul. » | Suivant |
 | 3 | Aujourd’hui | d-today | [3.6,48.2,92.8,31.8] « Vos données du jour » | 14 | Vos mesures du jour | hc : « Ce que vos appareils envoient, comparé à vos habitudes. » / sinon : « Avec Health Connect ou une montre, vos nuits et vos pas s’affichent ici. » | Suivant |
-| 4 | Journal | e-journal | [3.4,13.4,93.2,31] « Vos derniers jours » vide | – | Le Journal | Chacune de vos journées sera gardée ici. | Voir dans 14 jours |
+| 4 | Journal | e-journal | [3.4,13.4,93.2,31] « Vos derniers jours » vide | – | Le Journal | Chacune de vos journées sera gardée ici. | Exemple au jour 14 (POLISH-SIM-39, 11/11 ; était « Voir dans 14 jours ») |
 | 5 | Journal | d-journal | [3.6,30,92.8,33.6] carte « Hier » | 14 | Une journée d’un coup d’œil | Sommeil, pas, cœur, repas et notes au même endroit. | Suivant |
-| 6 | Analyses › Bien-être | e-reco | [3.6,19.8,92.8,26.6] carte « Encore 14 jours… » | – | Les analyses | Elles démarrent après 14 jours notés. | Voir au jour 14 |
+| 6 | Analyses › Bien-être | e-reco | [3.6,19.8,92.8,26.6] carte « Encore 14 jours… » | – | Les analyses | Elles démarrent après 14 jours notés. | Exemple au jour 14 |
 | 7 | Analyses › Bien-être | d-reco | [3.6,22.4,92.8,15.8] « Pistes à tester » | 14 | Au jour 14 : vos premières pistes | Ce qui va avec vos bons et vos mauvais jours. Des pistes, pas des causes. | Suivant |
 | 8 | Analyses › Bien-être | d-reco | [3.6,39.8,92.8,53] « Ce qui va avec votre bien-être » | 14 | Le détail de chaque piste | De combien chaque facteur joue sur votre bien-être, en points sur 5. | Suivant |
-| 9* | Analyses › Digestion | e-ventre | [3.6,19.8,92.8,32.2] carte « Encore 28 jours… » | – | Votre digestion | Ses analyses demandent 28 jours notés, dont 5 avec une gêne. | Voir au jour 28 |
+| 9* | Analyses › Digestion | e-ventre | [3.6,19.8,92.8,32.2] carte « Encore 28 jours… » | – | Votre digestion | Ses analyses demandent 28 jours notés, dont 5 avec une gêne. | Exemple au jour 28 |
 | 10* | Analyses › Digestion | d-ventre | [3.6,29.5,92.8,63.5] « Ce qui va avec votre confort digestif » | 28 | Au jour 28 : ce qui va avec votre ventre | Repas, sommeil, écran : ce qui va avec vos jours calmes et vos jours de gêne. | Suivant |
-| 11 | Agir | e-agir | [3.6,16.4,92.8,17.6] « Rien en cours pour l’instant » | – | Agir | Ici, vous vérifierez une piste par vous-même. | Voir au jour 14 |
+| 11 | Agir | e-agir | [3.6,16.4,92.8,17.6] « Rien en cours pour l’instant » | – | Agir | Ici, vous vérifierez une piste par vous-même. | Exemple au jour 14 |
 | 12 | Agir | d-agir | [3.6,19.4,92.8,10.2] carte « Tester : sommeil » | 14 | Vérifier par un essai | Halcya vous propose deux semaines d’essai, puis compare avant et après. | Revenir à mes données |
 | 13 | Aujourd’hui | e-today | [1,93.4,19,6.4] onglet « Aujourd’hui » de la barre du bas | – | À vous | Pour revoir cette visite : « Voir un exemple », en bas des écrans encore vides. | Terminer |
 

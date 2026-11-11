@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-11",
+  "kind": "correctif",
+  "title": "La visite dit ce qu'elle montre",
+  "items": [
+    "Dans la visite, le bouton dit « Exemple au jour 14 » : on sait qu'on va voir des données fictives, et de quel jour.",
+    "L'exemple au jour 14 compte 14 jours notés pour la digestion, comme chez quelqu'un qui note chaque soir."
+  ]
+}

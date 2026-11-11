@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🧭 **La visite dit ce qu'elle montre (11/11 23:35)** : « Voir dans 14 jours » ne disait pas qu'on allait voir un
+> exemple, et l'exemple au jour 14 annonçait « Encore 18 jours » de notes digestives quand l'écran réel en annonce 27 au
+> premier jour. Le bouton dit « Exemple au jour 14 » (ou 28), et l'exemple compte 14 jours notés au jour 14
+> ([clair](runs/captures/2026-11-11-2335-exemple-jour14-clair.png) · [sombre](runs/captures/2026-11-11-2335-exemple-jour14-sombre.png)).
+> Partira sur Alpha avec l'envoi de demain soir. Rien à faire de votre côté.
+
 > 🔢 **Le compteur de la digestion dit ce qu'il compte (11/11 22:35)** : une persona voyait « 9/28 jours » au 45e jour
 > et demandait s'il fallait noter tous les jours d'affilée. Non : il compte tous les jours notés depuis le début ; il le
 > dit maintenant (« jours notés, pas forcément d'affilée »). Aujourd'hui ne comptait que les six dernières semaines ;
@@ -437,6 +443,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 23:35 — [Visite : « Exemple au jour 14 »](runs/2026-11-11-2335-exemple-jour14.md) | 🔧 | POLISH-SIM-39 : bouton de la visite et compte fictif de la digestion calés. Tests (3454), lint, build, captures vérifiées |
 | 11/11 22:35 — [Compteur de la digestion](runs/2026-11-11-2235-compteur-digestion.md) | 🔧 | POLISH-SIM-32 : « jours notés, pas forcément d'affilée » ; Aujourd'hui compte comme Analyses ; outil personas complété. Tests (3451), lint, build, banc complet verts |
 | 11/11 20:35 — [Badge « Exemple » dans la bulle](runs/2026-11-11-2035-badge-bulle.md) | 🔧 | POLISH-SIM-37c : le badge de la visite ne masque plus l'en-tête. Tests (3450), lint, build, banc complet verts ; PR #922 mergée par le run de 22:35 (checks verts) |
 | 11/11 19:35 — [Exemple digestion sans bandeau](runs/2026-11-11-1935-exemple-sans-bandeau.md) | 🔧 | POLISH-SIM-37b : bandeau « suivi digestif masqué » caché en mode exemple. Tests (3450), lint, build, banc complet verts |

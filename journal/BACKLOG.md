@@ -392,8 +392,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-38** ✅ 11/11 03:35 Accueil, 2e carte du tuto : « Trois onglets, trois usages » alors que la barre
   en a cinq. Devient « Trois usages : » (Journal, Analyses, Agir) ; test du texte rouge puis vert ; `TEXTES.md` de la
   maquette annoté.
-- [ ] **POLISH-SIM-39** (2 sur 2) Visite guidée : « Voir dans 14 jours » ne dit pas ce qu'on verra (« Voir un exemple » ?) ;
-  l'exemple affiche « Encore 18 jours » à J14 alors que le vrai compte au J1 dit 27 (ou 13) : caler le compte fictif.
+- [x] **POLISH-SIM-39** ✅ 11/11 23:35 (2 sur 2) Visite guidée : les boutons qui ouvrent l'exemple disent « Exemple au
+  jour 14 » (ou 28) au lieu de « Voir dans 14 jours » / « Voir au jour N » ; faute de place, le bouton passe sous
+  « Passer la visite » sur une ligne. Compte fictif : une note digestive chaque soir avant le jour 28 aussi (niveaux de
+  la démo gardés), l'exemple au jour 14 dit « Encore 14 jours » (il disait 18) ; tests rouges puis verts.
 - [x] **POLISH-SIM-40** ✅ 11/11 10:35 (3 simulations, dont Maigrir J1 du 11/11) Aujourd'hui › « Vos données du jour » : pas (et FC de la montre)
   absents au J1 alors que Journal › Jours les montre ; Bien-être y fait doublon avec la carte du dessus. Reproduit :
   artefact des données de démo (aucun pas pour la journée en cours, alors que la synchro Health Connect lit jusqu'à

@@ -371,6 +371,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **11/11 16:35** — Accueil sans Health Connect : « Ce que vous noterez » suit l'objectif (poids, règles, digestion) (POLISH-SIM-51) ; « Tests » (budget de lectures) ne dépend plus d'apt, qui tombait en panne DNS sur le runner.
 - **11/11 19:35** — Exemple digestion sans l'objectif ventre : plus de bandeau « suivi digestif masqué » au-dessus des données fictives (POLISH-SIM-37b).
 - **11/11 20:35** — Visite guidée : le badge « Exemple · données fictives » passe dans la bulle, il ne masque plus le nom de l'app (POLISH-SIM-37c).
+- **11/11 23:35** — Visite guidée : « Exemple au jour 14 » au lieu de « Voir dans 14 jours » ; l'exemple au jour 14 compte 14 jours notés en digestion (POLISH-SIM-39).
 - **11/11 22:35** — Compteur de la digestion : « jours notés, pas forcément d'affilée » ; Aujourd'hui compte tous les jours notés, comme Analyses (POLISH-SIM-32).
 - **11/11 18:35** — « Voir un exemple » relance la visite à l'écran touché (Digestion : exemple digestion) ; Vos données dit « fichier JSON » (POLISH-SIM-37).
 - **11/11 17:35** — POLISH-SIM-45 vérifié : les tuiles « Écran » et « Météo » d'une persona au J1 venaient de l'outil de simulation (sources pas encore activées), pas de l'app ; outil corrigé (test), PROP-SIM-13 notée (aperçu d'Analyses au J1 avec un historique de montre).
