@@ -18,7 +18,7 @@
   après l'ouverture du moment.
 - `npm run test` complet, lint, build, `npm run visual` complet (voir PR).
 - Captures (`--play --tz=Pacific/Kiritimati` pour être le soir, `--click="Digestion"`) :
-  `captures/2026-11-11-0735-digestion-journee-sombre.png`, `…-moment-clair.png`.
+  `captures/2026-11-11-0735-digestion-journee-clair.png` (refaite au run de 09:35 : les captures n’avaient pas été committées).
 
 ## Merge
 - PR #910 : Frontend (Vitest), Build APK, Relais, Protocole montre, Budget de lectures verts. **Merge non fait** : le

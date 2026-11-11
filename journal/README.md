@@ -19,8 +19,8 @@
 > 🫃 **Ma digestion, une question à la fois (11/11 07:35)** : le soir, la fenêtre « Ma digestion » montrait deux rangées
 > Calme / Gêne / Douleur (« dans l'ensemble » et « À l'instant ») sans dire laquelle choisir (une persona l'a relevé).
 > Elle n'en montre plus qu'une : le bilan de la journée d'abord ; « Noter un moment précis » passe à « À l'instant »
-> seule, et « Bilan de la journée » ramène ([bilan, sombre](runs/captures/2026-11-11-0735-digestion-journee-sombre.png) ·
-> [moment, clair](runs/captures/2026-11-11-0735-digestion-moment-clair.png)). PR #910 verte, pas encore mergée (merge
+> seule, et « Bilan de la journée » ramène ([bilan du soir](runs/captures/2026-11-11-0735-digestion-journee-clair.png), refaite au merge
+> du 11/11 09:35). Part ce soir sur Alpha. PR #910 verte, pas encore mergée (merge
 > refusé par les permissions de la session) : le prochain run la merge.
 
 > 🚭 **Plus de cigarette notée par erreur (11/11 06:35)** : « Autre chose » (bandeau d'Aujourd'hui) notait une cigarette
@@ -365,6 +365,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 09:35 — [#910 mergée](runs/2026-11-11-0935-merge-910.md) | 🔧 | PR #910 (Ma digestion, une question à la fois) remise à jour sur main, vérifiée (tests, build, lint, visual, capture du soir) et mergée. Rien à faire de votre côté |
 | 11/11 08:35 — [Deux personas](runs/2026-11-11-0835-personas.md) | 💡 | Simulations Maigrir J1 et Endométriose J45 (règles notées) ; POLISH-SIM-46 à 51, PROP-SIM-11 et 12 ; outil complété. Rien à faire de votre côté |
 | 11/11 07:35 — [Ma digestion, une question à la fois](runs/2026-11-11-0735-digestion-une-question.md) | ✏️ | POLISH-SIM-41 : le soir, une seule rangée Calme / Gêne / Douleur (journée, ou moment précis) ; test rouge puis vert. Rien à faire de votre côté |
 | 11/11 06:35 — [Compter ses cigarettes](runs/2026-11-11-0635-compter-cigarettes.md) | ✏️ | POLISH-SIM-42 : « Autre chose » ne note plus de cigarette d'un toucher, « Je fume : compter mes cigarettes » active le compteur ; test rouge puis vert. Rien à faire de votre côté |
