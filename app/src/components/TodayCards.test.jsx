@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { GutCard, PistesTeaser } from './TodayCards'
+import { localeDate } from '../i18n/locale.js'
 
 vi.mock('../storage/localHealthStorage', () => ({
   listEntries: vi.fn(),
@@ -90,7 +91,8 @@ describe('GutCard', () => {
     expect(await screen.findByText(`Dernière note : Douleur, ${weekday} à 10:19.`)).toBeInTheDocument()
     r2.unmount()
     const old = at(10)
-    const date = old.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+    // « 1er novembre » le 1er du mois (localeDate) : le test ne doit pas casser ce jour-là
+    const date = localeDate(old, { day: 'numeric', month: 'long' })
     wrap(<GutCard read={note(old)} now={morning} />)
     expect(await screen.findByText(`Dernière note : Douleur, le ${date} à 10:19.`)).toBeInTheDocument()
   })
