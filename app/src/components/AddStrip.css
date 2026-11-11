@@ -60,6 +60,7 @@
 .add-chip.is-body .line-icon { color: var(--rose-label); }
 
 .period-sheet-day { margin: 0; font-weight: 600; }
+.period-sheet-days { margin: 0 0 14px; }
 .period-choices .gut-choice-radio { border-color: var(--rose-label); }
 .period-choices .gut-choice[aria-pressed='true'] { border-color: var(--rose-label); }
 .period-choices .gut-choice[aria-pressed='true'] .gut-choice-radio { background: var(--rose-label); }

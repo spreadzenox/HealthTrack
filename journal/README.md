@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🩸 **Noter ses règles d'hier (11/11 02:35)** : « Mes règles » a en haut le choix « Aujourd'hui · Hier » (la même
+> pastille que Jour / Semaine / Mois de Tendances). « Hier » note le flux et les symptômes de la veille sans quitter
+> Aujourd'hui ; la fenêtre dit alors « Hier, 2e jour des règles » ([sombre](runs/captures/2026-11-11-0235-regles-hier-dark.png),
+> données de démo). Part demain soir sur Alpha. À tester : Aujourd'hui › Règles › Hier › Moyen. L'envoi Alpha de
+> ce soir n'était toujours pas parti à 02:35 (cron de GitHub en retard, comme les deux derniers soirs).
+
 > 🔧 **Vérifications de main réparées (11/11 01:35)** : un test a cassé parce qu'on est le 11 : il cherchait une note
 > « le 1 novembre », l'app écrit correctement « le 1er novembre ». Test corrigé, rien ne change dans l'app. Sans ce
 > correctif, l'envoi Alpha de ce soir aurait pris la version d'avant les symptômes du cycle.
@@ -320,6 +326,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 02:35 — [Règles d'hier](runs/2026-11-11-0235-regles-hier.md) | 🧱 | CYCLE-2d : choix « Aujourd'hui · Hier » dans « Mes règles » (flux et symptômes de la veille). À tester : Aujourd'hui › Règles › Hier |
 | 11/11 01:35 — [Test du « 1er » réparé](runs/2026-11-11-0135-test-1er.md) | 🔧 | CI de main rouge le 11/11 : un test attendait « le 1 novembre », l'app écrit « le 1er novembre ». Test corrigé, rien ne change dans l'app. Rien à faire de votre côté |
 | 11/11 00:35 — [Symptômes du cycle](runs/2026-11-11-0035-symptomes-cycle.md) | 🧱 | CYCLE-2c : puces des symptômes dans « Mes règles » (une touche note, une autre retire). À tester : Aujourd'hui › Règles › Crampes |
 | 10/11 23:35 — [Corriger ses règles](runs/2026-11-10-2335-regles-journal.md) | 🧱 | CYCLE-2b : « … » de la ligne « Règles » du Journal (Modifier le flux sur place, Supprimer). À tester : Journal › Jours › « … » |

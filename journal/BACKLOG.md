@@ -57,7 +57,9 @@ téléphone ; page de confidentialité mise à jour quand quelque chose s'affich
   `SYMPTOMS`), touchée = notée (`symptomEntry`, aucun doublon), retouchée = retirée ; `symptomEntriesOn` (cycle.js) ;
   symptômes d'une autre source cochés et grisés ; pas dans le mode « Modifier » du Journal (flux seul).
 - [x] **CI-1ER** ✅ 11/11 01:35 Test POL-PLAY-4 de `TodayCards.test.jsx` rouge le 11 du mois (note d'il y a 10 jours = le 1er : l'app dit « 1er », le test « 1 ») : date attendue calculée avec `localeDate`.
-- [ ] **CYCLE-2d** Noter un jour passé (hier) dans « Mes règles » : flux et symptômes d'hier, sans quitter Aujourd'hui.
+- [x] **CYCLE-2d** ✅ 11/11 02:35 « Mes règles » : choix « Aujourd'hui · Hier » en tête (pastille `trends-periods`
+  de Tendances : même apparence, même sens) ; « Hier » note flux et symptômes de la veille (« Règles hier, flux : »,
+  « Hier, 2e jour des règles », « Retirer ») ; absent du mode « Modifier » du Journal. Au-delà d'hier : Journal › Jours.
 - [ ] **CYCLE-3** Lecture de `MenstruationPeriodRecord` / `MenstruationFlowRecord` dans Health Connect (source
   `health_connect`, mêmes entrées). **Bloqué par une action du propriétaire** : ajouter le type à la déclaration
   Health Connect de la Play Console (P48, chemin exact et justification à préparer au début de l'étape dans
