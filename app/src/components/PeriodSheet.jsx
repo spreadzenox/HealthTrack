@@ -7,6 +7,7 @@
  * restent cochés, sans modification possible ici.
  * « Aujourd’hui / Hier » (CYCLE-2d) : noter le flux et les symptômes d’hier sans quitter Aujourd’hui (même pastille
  * que le choix de période de Tendances : même apparence, même sens).
+ * Retour d'un symptôme touché (POLISH-SIM-46) : coche dans la puce et ligne courte « Noté : Crampes » / « Retiré : … ».
  */
 import { useCallback, useEffect, useState } from 'react'
 import { createEntry, deleteEntry, listEntries, updateEntry } from '../storage/localHealthStorage'
@@ -47,6 +48,7 @@ export default function PeriodSheet({ now = realNow, dateKey = null, onDone = nu
   const dayWord = yesterday ? 'Hier' : 'Aujourd’hui'
   const [list, setList] = useState(null)
   const [error, setError] = useState(null)
+  const [said, setSaid] = useState('')
 
   const load = useCallback(() => readCycle(dayKey).then(setList), [dayKey])
 
@@ -93,6 +95,7 @@ export default function PeriodSheet({ now = realNow, dateKey = null, onDone = nu
     try {
       if (noted) await deleteEntry(noted.id)
       else await createEntry(symptomEntry(dayKey, symptom))
+      setSaid(`${noted ? 'Retiré' : 'Noté'} : ${SYMPTOM_LABELS[symptom]}`)
       await load()
       notify()
     } catch {
@@ -107,7 +110,7 @@ export default function PeriodSheet({ now = realNow, dateKey = null, onDone = nu
         <div className="trends-periods period-sheet-days" role="group" aria-label="Jour">
           {[[false, 'Aujourd’hui'], [true, 'Hier']].map(([past, label]) => (
             <button key={label} type="button" className={`trends-period${yesterday === past ? ' is-on' : ''}`}
-              aria-pressed={yesterday === past} onClick={() => { if (yesterday !== past) { setList(null); setYesterday(past) } }}><span>{label}</span></button>
+              aria-pressed={yesterday === past} onClick={() => { if (yesterday !== past) { setList(null); setSaid(''); setYesterday(past) } }}><span>{label}</span></button>
           ))}
         </div>
       )}
@@ -147,11 +150,13 @@ export default function PeriodSheet({ now = realNow, dateKey = null, onDone = nu
               return (
                 <button key={s} type="button" className="period-symptom" aria-pressed={Boolean(noted)}
                   disabled={!list || (noted && noted.source !== CYCLE_SOURCE)} onClick={() => toggleSymptom(s)}>
+                  {noted && <span className="period-symptom-check" aria-hidden="true">✓ </span>}
                   {SYMPTOM_LABELS[s]}
                 </button>
               )
             })}
           </div>
+          <p className="period-symptoms-said" role="status">{said}</p>
         </>
       )}
       {error && <p className="period-sheet-error" role="alert">{error}</p>}

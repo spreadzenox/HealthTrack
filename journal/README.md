@@ -8,6 +8,11 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🩸 **Un symptôme noté se voit (11/11 11:35)** : dans « Mes règles », toucher Crampes ne changeait que la couleur de la
+> puce (une persona n'a pas su si c'était noté). La puce porte maintenant une coche et la fenêtre écrit « Noté : Crampes »
+> (« Retiré : Crampes » au second toucher) ([clair](runs/captures/2026-11-11-1135-symptome-note-clair.png) ·
+> [sombre](runs/captures/2026-11-11-1135-symptome-note-sombre.png)). Part ce soir sur Alpha. Rien à faire de votre côté.
+
 > 👣 **Pas du jour et bien-être une seule fois (11/11 10:35)** : trois personas ne voyaient pas leurs pas sur
 > Aujourd'hui. Vérifié : votre téléphone les lit bien jusqu'à l'instant présent ; c'étaient nos données de démonstration
 > qui n'en avaient aucun pour la journée en cours (corrigé, les personas les verront). Et « Vos données du jour »
@@ -371,6 +376,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 11:35 — [Symptôme noté visible](runs/2026-11-11-1135-symptome-note.md) | ✏️ | POLISH-SIM-46 : coche dans la puce et « Noté : Crampes » / « Retiré » ; test rouge puis vert. Rien à faire de votre côté |
 | 11/11 10:35 — [Pas du jour, bien-être une fois](runs/2026-11-11-1035-pas-du-jour.md) | ✏️ | POLISH-SIM-40 : pas absents = artefact de la démo (pas du jour ajoutés) ; bien-être retiré de « Vos données du jour » (doublon) ; tests rouges puis verts. Rien à faire de votre côté |
 | 11/11 09:35 — [#910 mergée](runs/2026-11-11-0935-merge-910.md) | 🔧 | PR #910 (Ma digestion, une question à la fois) remise à jour sur main, vérifiée (tests, build, lint, visual, capture du soir) et mergée. Rien à faire de votre côté |
 | 11/11 08:35 — [Deux personas](runs/2026-11-11-0835-personas.md) | 💡 | Simulations Maigrir J1 et Endométriose J45 (règles notées) ; POLISH-SIM-46 à 51, PROP-SIM-11 et 12 ; outil complété. Rien à faire de votre côté |
