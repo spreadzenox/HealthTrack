@@ -117,7 +117,7 @@ function TutoStep({ card, onCard }) {
       {card === 1 && (
         <>
           <h1 className="onb-title">{APP_NAME} cherche ce qui va avec vos bons et mauvais jours</h1>
-          <p className="onb-lead">Trois onglets, trois usages.</p>
+          <p className="onb-lead">Trois usages :</p>
           <ul className="onb-tabs-list">
             {TABS_EXPLAINED.map((t) => (
               <li key={t.tab}>
