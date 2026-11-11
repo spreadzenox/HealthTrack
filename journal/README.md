@@ -11,7 +11,7 @@
 > 📈 **Le bien-être du jour ouvre sa journée (12/11 00:35)** : une persona lisait « 3/5 d'après 3 lectures du visage »
 > sur Aujourd'hui sans retrouver ces lectures nulle part. Les chiffres étaient justes, mais toucher le bloc ouvrait
 > Tendances en Semaine. Il ouvre maintenant la journée, où chaque lecture est un point et le détail dit « 3 lectures du
-> visage ». Partira sur Alpha avec l'envoi de ce soir. Rien à faire de votre côté.
+> visage » ([capture](runs/captures/2026-11-12-0035-bien-etre-jour.png)). Partira sur Alpha avec l'envoi de ce soir. Rien à faire de votre côté.
 
 > 🧭 **La visite dit ce qu'elle montre (11/11 23:35)** : « Voir dans 14 jours » ne disait pas qu'on allait voir un
 > exemple, et l'exemple au jour 14 annonçait « Encore 18 jours » de notes digestives quand l'écran réel en annonce 27 au
