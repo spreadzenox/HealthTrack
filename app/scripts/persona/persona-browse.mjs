@@ -75,7 +75,7 @@ await context.route('https://api.github.com/**', (r) => r.abort())
 await context.route('https://*.open-meteo.com/**', (r) => r.abort())
 await context.route('**/v1/subscription/verify', (r) => json(r, { ok: true, premium: true, source: 'launch', launchUntil: new Date(Date.now() + 20 * 86400000).toISOString() }))
 await context.route('**/v1/credits', (r) => json(r, { credits: { plan: 'premium', tier: 'gold', remaining: 20, daily: 20, resetAt: new Date(Date.now() + 86400000).toISOString(), state: 'x' } }))
-const FAKE_MEAL = { dish: 'Pâtes à la carbonara', ingredients: [{ ingredient: 'Pâtes alimentaires, cuites', quantity_g: 220 }, { ingredient: 'Lardons', quantity_g: 50 }, { ingredient: 'Oeuf, cru', quantity_g: 50 }, { ingredient: 'Parmesan', quantity_g: 15 }] }
+const FAKE_MEAL = { dish: 'Pâtes à la carbonara', ingredients: [{ ingredient: 'Pâtes cuites', quantity_g: 220 }, { ingredient: 'Lardon fumé, cuit', quantity_g: 50 }, { ingredient: 'Oeuf cru', quantity_g: 50 }, { ingredient: 'Parmesan', quantity_g: 15 }] }
 await context.route('**/v1/meal/analyze', (r) => json(r, { parsed: FAKE_MEAL, quota: { remaining: 19, resetAt: new Date(Date.now() + 6 * 3600000).toISOString() } }))
 // Faux Play Billing (aucun achat) : comme sur le téléphone, l'app relit ses droits au démarrage auprès du relais
 // (période de lancement : Gold offert). Sans lui, le navigateur restait en gratuit (constat des simulations du 08/11).

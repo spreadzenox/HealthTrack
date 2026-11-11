@@ -8,6 +8,14 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🧪 **Deux personas (11/11 08:35)** : « Prendre soin de soi, maigrir » au premier lancement (téléphone seul) et
+> « Endométriose » au 45e jour, pour la première fois avec ses règles notées. Constats : les pas toujours absents
+> d'Aujourd'hui (3e fois), une pesée sans courbe dans Tendances, un aliment inconnu compté 0 kcal sans le dire, le nom
+> du plat non modifiable, un symptôme du cycle touché sans retour visible ; six corrections rangées (POLISH-SIM-46 à 51)
+> ([synthèse](simulations/2026-11-11-0835-synthese.md)). Le cycle ne se voit encore que dans Journal › Jours : la
+> persona voulait le jour du cycle sur Aujourd'hui, les règles dans Tendances et dans le rapport médecin. Ce serait une
+> fonction : proposition PROP-SIM-11, maquette à venir. Rien à faire de votre côté.
+
 > 🚭 **Plus de cigarette notée par erreur (11/11 06:35)** : « Autre chose » (bandeau d'Aujourd'hui) notait une cigarette
 > d'un seul toucher, même pour qui ne fume pas (une persona l'a relevé). Il propose maintenant « Je fume : compter mes
 > cigarettes », qui met « + 1 cigarette » dans le bandeau ; on le retire dans Réglages › Paramètres › Cigarettes
@@ -350,6 +358,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 08:35 — [Deux personas](runs/2026-11-11-0835-personas.md) | 💡 | Simulations Maigrir J1 et Endométriose J45 (règles notées) ; POLISH-SIM-46 à 51, PROP-SIM-11 et 12 ; outil complété. Rien à faire de votre côté |
 | 11/11 06:35 — [Compter ses cigarettes](runs/2026-11-11-0635-compter-cigarettes.md) | ✏️ | POLISH-SIM-42 : « Autre chose » ne note plus de cigarette d'un toucher, « Je fume : compter mes cigarettes » active le compteur ; test rouge puis vert. Rien à faire de votre côté |
 | 11/11 05:35 — [« Réglages › Paramètres »](runs/2026-11-11-0535-reglages-parametres.md) | ✏️ | POLISH-SIM-44 : l'accueil, le rappel du soir et Agir donnent le chemin depuis la roue ; tests rouges puis verts. Rien à faire de votre côté |
 | 11/11 04:35 — [Une seule durée d'essai](runs/2026-11-11-0435-une-duree.md) | ✏️ | POLISH-SIM-43 : accueil « vérifier une piste par un essai », Agir vide « de quelques jours à deux semaines selon la piste » ; tests rouges puis verts. Rien à faire de votre côté |
