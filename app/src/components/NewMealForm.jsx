@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createEntry } from '../storage/localHealthStorage'
-import { atToLocalInput, itemForStorage, itemsForEditing, localInputToAt } from '../services/mealEditing'
+import { atToLocalInput, dishToSave, itemForStorage, itemsForEditing, localInputToAt } from '../services/mealEditing'
 import { mealTimeError } from '../services/quickMeals'
 import { MEAL_TEXT_MAX_LENGTH } from '../services/geminiStandalone'
 import {
@@ -8,6 +8,7 @@ import {
 } from '../services/mealAi'
 import useDisclosure from '../hooks/useDisclosure'
 import MealEditor from './MealEditor'
+import MealNameField from './MealNameField'
 import MealFodmapLine from './MealFodmapLine'
 import { gutCardMode } from '../settings/onboarding'
 import AiCreditsHint from './AiCreditsHint'
@@ -37,6 +38,8 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
   const [description, setDescription] = useState('')
   const [describing, setDescribing] = useState(false)
   const [described, setDescribed] = useState(null)
+  // Nom du repas modifiable (POLISH-SIM-49) : celui de « Refaire » ou celui proposé par l'IA ; null = pas de champ
+  const [name, setName] = useState(dish || null)
   const [initialTime] = useState(() => atToLocalInput(new Date().toISOString()))
   const [time, setTime] = useState(initialTime)
   const [saving, setSaving] = useState(false)
@@ -61,7 +64,8 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
         return
       }
       setItems(itemsForEditing(result.items))
-      setDescribed({ provider: result.provider, model: result.model, dish: result.dish })
+      setDescribed({ provider: result.provider, model: result.model })
+      if (result.dish) setName(result.dish)
     } catch (err) {
       setError(err.message || 'Analyse impossible, réessayez ou ajoutez les aliments ci-dessous.')
     } finally {
@@ -75,8 +79,6 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
     setItems(next)
     setError(null)
   }
-
-  const mealDish = described ? described.dish : dish
 
   const save = async () => {
     const toSave = items.filter((it) => it.ingredient)
@@ -93,6 +95,7 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
     }
     setSaving(true)
     setError(null)
+    const mealDish = dishToSave(name)
     try {
       await createEntry({
         type: 'food',
@@ -116,7 +119,7 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
   return (
     <section className="new-meal" ref={ref} aria-labelledby="new-meal-title">
       {disclosure}
-      <h3 id="new-meal-title" className="new-meal-title">{described?.dish || title}</h3>
+      <h3 id="new-meal-title" className="new-meal-title">{title}</h3>
       {describable && !described && canDescribe && (
         <div className="meal-describe">
           <label htmlFor="meal-description">Décrivez votre repas</label>
@@ -153,6 +156,9 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
           ajustez les grammes.{!canDescribe && ' Rien n’est envoyé en ligne.'}
           {describable && !canDescribe && ' Pour décrire le repas en quelques mots, ajoutez une clé Gemini dans Réglages (roue en haut à droite) → Paramètres.'}
         </p>
+      )}
+      {name !== null && (
+        <MealNameField id="new-meal-name" value={name} onChange={setName} disabled={saving || describing} />
       )}
       <div className="sme-time">
         <label htmlFor="new-meal-time">Heure du repas</label>

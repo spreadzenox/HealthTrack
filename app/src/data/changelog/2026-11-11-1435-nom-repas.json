@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-11",
+  "kind": "amélioration",
+  "title": "Le nom d'un repas se modifie",
+  "items": [
+    "Le nom proposé par l'analyse d'un repas (photo ou description) est maintenant un champ « Nom » : corrigez-le comme les aliments, ou videz-le pour un repas sans nom.",
+    "« Modifier » sur un repas déjà enregistré permet aussi de changer son nom."
+  ]
+}

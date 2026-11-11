@@ -527,3 +527,10 @@
   margin: 6px 0 4px;
   min-height: 96px;
 }
+
+/* Nom du repas modifiable (POLISH-SIM-49) : même ligne que l'heure, le champ prend la place libre */
+.meal-name-field input {
+  flex: 1;
+  min-width: 0;
+  max-width: 60%;
+}

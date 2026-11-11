@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> ✏️ **Le nom d'un repas se modifie (11/11 14:35)** : une persona avait écrit « salade de pâtes au thon », l'IA a
+> proposé « Pâtes à la carbonara » ; elle a corrigé les aliments mais le nom restait. Le nom est maintenant un champ
+> « Nom » sous l'analyse (photo ou « Décrire ») et dans « Modifier » d'un repas enregistré ; vide = repas sans nom
+> ([clair](runs/captures/2026-11-11-1435-nom-repas-clair.png) · [sombre](runs/captures/2026-11-11-1435-nom-repas-sombre.png)).
+> Part ce soir sur Alpha. À tester : Journal › Repas › Décrire, corriger le nom, Enregistrer.
+
 > ⚖️ **Le poids a sa courbe (11/11 13:35)** : une persona qui veut maigrir ne trouvait pas ses pesées dans Tendances.
 > « Poids » y est maintenant une mesure (dernière pesée du jour, à la main ou par une balance), dès 3 pesées sur la
 > période : en Mois si vous vous pesez chaque semaine. Au passage, les graduations n'arrondissent plus à tort
@@ -389,6 +395,7 @@
 | Run | Type | Résultat |
 |---|---|---|
 | 11/11 13:35 — [Poids dans Tendances](runs/2026-11-11-1335-poids-tendances.md) | ✏️ | POLISH-SIM-47 : mesure « Poids » (dernière pesée du jour) dans Tendances ; graduations à 2 décimales ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
+| 11/11 14:35 — [Nom du repas modifiable](runs/2026-11-11-1435-nom-repas.md) | ✏️ | POLISH-SIM-49 : champ « Nom » (photo, Décrire, Modifier), vide = sans nom ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 11/11 12:35 — [Aliment non compté visible](runs/2026-11-11-1235-kcal-incomplet.md) | ✏️ | POLISH-SIM-48 : total « sans … » ou « inconnu » ; « ≥ » dans les listes ; tests rouges puis verts. Rien à faire de votre côté |
 | 11/11 11:35 — [Symptôme noté visible](runs/2026-11-11-1135-symptome-note.md) | ✏️ | POLISH-SIM-46 : coche dans la puce et « Noté : Crampes » / « Retiré » ; test rouge puis vert. Rien à faire de votre côté |
 | 11/11 10:35 — [Pas du jour, bien-être une fois](runs/2026-11-11-1035-pas-du-jour.md) | ✏️ | POLISH-SIM-40 : pas absents = artefact de la démo (pas du jour ajoutés) ; bien-être retiré de « Vos données du jour » (doublon) ; tests rouges puis verts. Rien à faire de votre côté |

@@ -1,15 +1,16 @@
 import { useState } from 'react'
 import { updateEntry } from '../storage/localHealthStorage'
-import { atToLocalInput, itemForStorage, itemsForEditing, localInputToAt } from '../services/mealEditing'
+import { atToLocalInput, dishToSave, itemForStorage, itemsForEditing, localInputToAt } from '../services/mealEditing'
 import { mealTimeError } from '../services/quickMeals'
 import MealEditor from './MealEditor'
+import MealNameField from './MealNameField'
 import MealFodmapLine from './MealFodmapLine'
 import { gutCardMode } from '../settings/onboarding'
 import NutritionTableGate from './NutritionTableGate'
 
 /**
  * Modification d'un repas déjà enregistré : ingrédients, grammes et heure du repas.
- * Seuls `payload.items` et `at` changent ; le plat, la source et le modèle sont conservés.
+ * `payload.items`, `at` et le nom du plat (s'il en a un, POLISH-SIM-49) changent ; la source et le modèle sont conservés.
  */
 export default function SavedMealEditor(props) {
   return (
@@ -25,6 +26,8 @@ function SavedMealEditorForm({ entry, onSaved, onCancel }) {
   const [showFodmap] = useState(() => gutCardMode() !== 'hide')
   const initialTime = atToLocalInput(entry.at)
   const [time, setTime] = useState(initialTime)
+  const hasName = Boolean(entry.payload?.dish)
+  const [name, setName] = useState(entry.payload?.dish || '')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const timeId = `meal-time-${entry.id}`
@@ -36,6 +39,11 @@ function SavedMealEditorForm({ entry, onSaved, onCancel }) {
       return
     }
     const changes = { payload: { ...entry.payload, items: toSave.map(itemForStorage) } }
+    if (hasName) {
+      const dish = dishToSave(name)
+      if (dish) changes.payload.dish = dish
+      else delete changes.payload.dish
+    }
     if (time !== initialTime) {
       const at = localInputToAt(time)
       const timeError = mealTimeError(at)
@@ -59,6 +67,7 @@ function SavedMealEditorForm({ entry, onSaved, onCancel }) {
 
   return (
     <div className="saved-meal-editor">
+      {hasName && <MealNameField id={`meal-name-${entry.id}`} value={name} onChange={setName} disabled={saving} />}
       <div className="sme-time">
         <label htmlFor={timeId}>Heure du repas</label>
         <input

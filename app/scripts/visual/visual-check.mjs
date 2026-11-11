@@ -1344,7 +1344,7 @@ async function main() {
             if (args['ai-consent'] !== 'ask') await accept.click()
           }
           if (!(args.play && args['ai-consent'] === 'ask')) {
-            await page.getByRole('heading', { name: (args['food-analysis'] === 'fodmap' ? FAKE_MEAL_ANALYSIS_FODMAP : FAKE_MEAL_ANALYSIS).dish }).waitFor({ timeout: 10000 })
+            await page.getByLabel('Nom', { exact: true }).waitFor({ timeout: 10000 }) // nom du plat modifiable (POLISH-SIM-49)
           }
         }
         if (args['meal-text'] && path === '/food') {
@@ -1353,7 +1353,7 @@ async function main() {
           if (args['meal-text'] !== 'form') {
             await page.getByRole('button', { name: /Remplir avec (Gemini|l’IA)/ }).click()
             if (args.play) await page.getByRole('button', { name: /J’accepte, analyser ce repas/ }).click()
-            await page.getByRole('heading', { name: FAKE_MEAL_TEXT_ANALYSIS.dish }).waitFor({ timeout: 10000 })
+            await page.getByLabel('Nom', { exact: true }).waitFor({ timeout: 10000 })
           }
           await page.evaluate(() => document.querySelector('.new-meal')?.scrollIntoView({ block: 'start' }))
           await page.waitForTimeout(500)
