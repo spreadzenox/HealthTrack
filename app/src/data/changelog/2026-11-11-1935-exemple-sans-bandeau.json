@@ -1,6 +1,6 @@
 {
   "date": "2026-11-11",
-  "kind": "correction",
+  "kind": "correctif",
   "title": "L'exemple de la digestion sans bandeau en trop",
   "items": [
     "Sans l'objectif « Ma digestion », l'exemple de la digestion n'affiche plus « Le suivi digestif est masqué » au-dessus des données fictives. Le bandeau revient à la fin de l'exemple."
