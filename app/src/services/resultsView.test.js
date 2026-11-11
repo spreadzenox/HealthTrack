@@ -36,6 +36,26 @@ describe('Analyses sur le contrat (ORG-4, ORG-6)', () => {
     expect(v.pistes).toHaveLength(1)
   })
 
+  it('POLISH-SIM-50 : rien de net dans « Ce qui va avec » se dit une fois', () => {
+    const v = resultsView({ status: 'ready', beatsPersistence: true, horizons: {
+      short: h('short', 'ready', [f('lactose', -0.2, { net: false })]),
+      long: h('long', 'ready', [f('lactose', -2.5, { net: false, horizon: 'long' }), f('sleep', -1.8, { net: false, horizon: 'long' })]),
+    } })
+    expect(v.weighNothingNet).toBe(true)
+    expect(v.flipped).toEqual([])
+  })
+
+  it('POLISH-SIM-50 : un facteur qui change de sens selon le délai, sans être net, est nommé', () => {
+    const v = resultsView({ status: 'ready', beatsPersistence: true, horizons: {
+      short: h('short', 'ready', [f('lactose', -0.2, { net: false, label: 'Lactose' }), f('sleep', 0.4)]),
+      medium: h('medium', 'ready', [f('lactose', 1.2, { net: false, horizon: 'medium', label: 'Lactose' }), f('sleep', -0.1, { horizon: 'medium', net: false })]),
+      long: h('long', 'ready', [f('lactose', -2.5, { net: false, horizon: 'long', label: 'Lactose' })]),
+    } })
+    expect(v.weighNothingNet).toBe(false)
+    // le sommeil est net à court terme : son sens n'est pas « flou »
+    expect(v.flipped).toEqual(['Lactose'])
+  })
+
   it('résumé pour l’Accueil et Agir', () => {
     const r = { outcomes: { wellbeing: { status: 'ready', horizons: { short: h('short', 'ready', [f('sleep', 0.4, { label: 'Sommeil' })]) } }, digestion: { status: 'ready', horizons: { short: h('short', 'ready', [f('fodmap_fructans', -0.4, { label: 'Fructanes' })]) } } } }
     expect(pistesTitles(r)).toEqual({ gut: ['Fructanes → digestion'], levers: ['Sommeil'] })

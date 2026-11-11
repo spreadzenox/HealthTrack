@@ -7,6 +7,8 @@
  *   pour une variation habituelle, avec leur fourchette ; « net » plein, sinon hachuré. Seulement si la méthode prévoit
  *   mieux que « demain = aujourd'hui » hors échantillon (`beatsPersistence`).
  * - « À regarder, pas à changer » : corps et contexte (non actionnables).
+ * - POLISH-SIM-50 : si rien n'est net dans « Ce qui va avec », on le dit une fois (`weighNothingNet`) ; sinon, chaque
+ *   facteur qui change de sens d'un délai à l'autre sans être net nulle part est nommé une fois (`flipped`).
  */
 const MAX_PISTES = 3
 const MAX_PER_HORIZON = 5
@@ -51,6 +53,17 @@ export function resultsView(outcome) {
       factors: h.factors.filter((f) => f.actionable).slice(0, MAX_PER_HORIZON),
     })).filter((h) => h.factors.length)
     : null
+  const weighFactors = (weigh ?? []).flatMap((x) => x.factors)
+  const weighNothingNet = weighFactors.length > 0 && weighFactors.every((x) => !x.net)
+  const byKey = new Map()
+  for (const x of weighFactors.filter((y) => !y.outOfScale && y.effect !== 0)) {
+    byKey.set(x.key, [...(byKey.get(x.key) ?? []), x])
+  }
+  const flipped = weighNothingNet
+    ? []
+    : [...byKey.values()]
+      .filter((xs) => xs.every((y) => !y.net) && xs.some((y) => y.effect > 0) && xs.some((y) => y.effect < 0))
+      .map((xs) => xs[0].label)
   const lookBest = new Map()
   // POLISH-SIM-16 : un effet hors échelle (« pas assez de données ») ne passe jamais devant un effet mesurable.
   const rank = (f) => (f.outOfScale ? -1 : Math.abs(f.effect))
@@ -63,7 +76,7 @@ export function resultsView(outcome) {
     : []
   const locked = horizons.find((h) => h.status === 'locked')
   const nextLock = locked ? { label: locked.label, daysLeft: Math.max(0, locked.daysNeeded - locked.daysHave) } : null
-  return { state: 'results', pistes, weigh, nextLock, lookOnly }
+  return { state: 'results', pistes, weigh, weighNothingNet, flipped, nextLock, lookOnly }
 }
 
 /** Titres courts des pistes, pour l'Accueil et Agir (résumé mémorisé, pistesSummary.js). */
