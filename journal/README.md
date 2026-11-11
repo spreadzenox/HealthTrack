@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🔎 **« Voir un exemple » montre l'écran où vous êtes (11/11 18:35)** : depuis Analyses › Digestion, il relançait la
+> visite depuis Aujourd'hui (une persona cherchait un exemple de digestion). Il ouvre maintenant l'exemple de la
+> digestion, même sans l'objectif ventre ; depuis Agir ou le Journal, la visite part de cet écran. Et Vos données dit
+> le format de l'export : « Un fichier JSON » ([exemple digestion](runs/captures/2026-11-11-1835-exemple-digestion-jour28.png) ·
+> [export](runs/captures/2026-11-11-1835-export-json.png)). Part ce soir sur Alpha. Rien à faire de votre côté.
+
 > 🌦️ **Météo et écran au premier jour : vérifié (11/11 17:35)** : une persona voyait « Écran 3 h 56 » et « Météo »
 > dans le Journal dès l'installation, sans les avoir activés. Vérifié : c'était notre outil de simulation, pas l'app
 > (chez vous, ces tuiles n'apparaissent qu'après avoir activé la météo ou l'accès au temps d'écran). L'outil est corrigé
@@ -414,6 +420,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 18:35 — [« Voir un exemple » à l'écran touché](runs/2026-11-11-1835-voir-exemple-ecran.md) | 🔧 | POLISH-SIM-37 : la visite repart de l'écran touché (exemple digestion depuis Digestion) ; export dit « JSON ». Tests, lint, build, banc complet verts |
 | 11/11 17:35 — [Météo et écran au J1](runs/2026-11-11-1735-meteo-ecran-j1.md) | 🔧 | POLISH-SIM-45 : artefact de l'outil personas (sources pas encore activées), corrigé avec un test ; PROP-SIM-13 notée. Rien ne change dans l'app, rien à faire de votre côté |
 | 11/11 16:35 — [Objectif à l'accueil, CI](runs/2026-11-11-1635-noter-objectif.md) | ✏️ | « Tests » ne dépend plus d'apt (panne DNS du runner) ; POLISH-SIM-51 : « Ce que vous noterez » selon l'objectif ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 11/11 15:35 — [Lien flou dans Analyses](runs/2026-11-11-1535-sens-du-delai.md) | ✏️ | POLISH-SIM-50 : « rien n'est net » dit une fois, facteur qui change de sens nommé ; tests rouges puis verts ; « Tests » de main relancé (panne DNS du runner). Rien à faire de votre côté |

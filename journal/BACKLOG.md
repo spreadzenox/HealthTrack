@@ -380,8 +380,11 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-36b** ✅ 10/11 18:35 Journal : le « … » d'une note de digestion n'offrait que « Supprimer ».
   « Modifier » ouvre sur place Calme / Gêne / Douleur (mêmes choix que la carte ventre), heure et portée gardées ;
   test rouge puis vert. Reste (possible) : ouvrir Tendances sur le jour touché (paramètre de date).
-- [ ] **POLISH-SIM-37** Vos données : dire le format de l'export (JSON) ; Analyses › Digestion « Voir un exemple » ouvre
-  la visite générale au lieu d'un exemple digestion.
+- [x] **POLISH-SIM-37** ✅ 11/11 18:35 Vos données : « Un fichier JSON, rangé dans Documents. » ; « Voir un exemple »
+  relance la visite à l'écran où on le touche (Analyses › Digestion : l'exemple digestion, même sans l'objectif ventre) ;
+  tests rouges puis verts.
+- [ ] **POLISH-SIM-37b** Exemple digestion relancé sans l'objectif ventre : le bandeau « Le suivi digestif est masqué »
+  reste en tête de l'exemple ; le cacher pendant la visite (mode exemple).
 - [x] **POLISH-SIM-38** ✅ 11/11 03:35 Accueil, 2e carte du tuto : « Trois onglets, trois usages » alors que la barre
   en a cinq. Devient « Trois usages : » (Journal, Analyses, Agir) ; test du texte rouge puis vert ; `TEXTES.md` de la
   maquette annoté.

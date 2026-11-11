@@ -19,9 +19,18 @@ export function counterDay(elapsed, days, duration = COUNTER_MS) {
 
 export const TOUR_START_EVENT = 'halcya-tour-start'
 
-/** Relance la visite (« Voir un exemple »). */
-export function startTour() {
-  window.dispatchEvent(new CustomEvent(TOUR_START_EVENT))
+/**
+ * Relance la visite (« Voir un exemple ») à l'écran `from` (POLISH-SIM-37) : depuis Analyses › Digestion, l'exemple
+ * est celui de la digestion, pas le début de la visite.
+ */
+export function startTour(from) {
+  window.dispatchEvent(new CustomEvent(TOUR_START_EVENT, from ? { detail: { from } } : undefined))
+}
+
+/** Première étape de la visite sur l'écran `from` (0 si la visite n'y passe pas). */
+export function startIndex(steps, from) {
+  const i = from ? steps.findIndex((s) => s.route === from) : -1
+  return i < 0 ? 0 : i
 }
 
 const W = FIRST_RESULTS_DAY.wellbeing
