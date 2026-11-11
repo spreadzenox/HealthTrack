@@ -12,7 +12,8 @@
 > Calme / Gêne / Douleur (« dans l'ensemble » et « À l'instant ») sans dire laquelle choisir (une persona l'a relevé).
 > Elle n'en montre plus qu'une : le bilan de la journée d'abord ; « Noter un moment précis » passe à « À l'instant »
 > seule, et « Bilan de la journée » ramène ([bilan, sombre](runs/captures/2026-11-11-0735-digestion-journee-sombre.png) ·
-> [moment, clair](runs/captures/2026-11-11-0735-digestion-moment-clair.png)). Rien à faire de votre côté.
+> [moment, clair](runs/captures/2026-11-11-0735-digestion-moment-clair.png)). PR #910 verte, pas encore mergée (merge
+> refusé par les permissions de la session) : le prochain run la merge.
 
 > 🚭 **Plus de cigarette notée par erreur (11/11 06:35)** : « Autre chose » (bandeau d'Aujourd'hui) notait une cigarette
 > d'un seul toucher, même pour qui ne fume pas (une persona l'a relevé). Il propose maintenant « Je fume : compter mes
@@ -356,7 +357,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
-| 11/11 07:35 — [Ma digestion, une question à la fois](runs/2026-11-11-0735-digestion-une-question.md) | ✏️ | POLISH-SIM-41 : le soir, une seule rangée Calme / Gêne / Douleur (journée, ou moment précis) ; test rouge puis vert. Rien à faire de votre côté |
+| 11/11 07:35 — [Ma digestion, une question à la fois](runs/2026-11-11-0735-digestion-une-question.md) | ✏️ | POLISH-SIM-41 : le soir, une seule rangée Calme / Gêne / Douleur (journée, ou moment précis) ; test rouge puis vert. PR #910 verte, merge refusé par les permissions de la session : à merger au run suivant |
 | 11/11 06:35 — [Compter ses cigarettes](runs/2026-11-11-0635-compter-cigarettes.md) | ✏️ | POLISH-SIM-42 : « Autre chose » ne note plus de cigarette d'un toucher, « Je fume : compter mes cigarettes » active le compteur ; test rouge puis vert. Rien à faire de votre côté |
 | 11/11 05:35 — [« Réglages › Paramètres »](runs/2026-11-11-0535-reglages-parametres.md) | ✏️ | POLISH-SIM-44 : l'accueil, le rappel du soir et Agir donnent le chemin depuis la roue ; tests rouges puis verts. Rien à faire de votre côté |
 | 11/11 04:35 — [Une seule durée d'essai](runs/2026-11-11-0435-une-duree.md) | ✏️ | POLISH-SIM-43 : accueil « vérifier une piste par un essai », Agir vide « de quelques jours à deux semaines selon la piste » ; tests rouges puis verts. Rien à faire de votre côté |

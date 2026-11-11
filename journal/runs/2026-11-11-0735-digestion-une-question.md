@@ -20,6 +20,12 @@
 - Captures (`--play --tz=Pacific/Kiritimati` pour être le soir, `--click="Digestion"`) :
   `captures/2026-11-11-0735-digestion-journee-sombre.png`, `…-moment-clair.png`.
 
+## Merge
+- PR #910 : Frontend (Vitest), Build APK, Relais, Protocole montre, Budget de lectures verts. **Merge non fait** : le
+  merge squash par l'API a été refusé par le mode de permissions de la session (« Merge Without Review »). Rien n'a été
+  contourné. Le prochain run (ou le propriétaire) merge #910 après mise à jour sur origin/main.
+
 ## Suite
+- Merger #910.
 - POLISH-SIM-40 (à reproduire), 45, 37, 39.
 - CYCLE-3 attend P48 (propriétaire).
