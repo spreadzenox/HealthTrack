@@ -750,6 +750,9 @@ async function main() {
       premium: at('premium', { goals: ['gut'] }),
       // Visite guidée (ACC-8) : accueil fini à l'instant ; --click="Voir dans 14 jours" pour l'exemple
       tour: { flow: 2, done: true, endedBy: 'completed', doneAt: new Date().toISOString(), goals: ['gut'], health: 'granted', tour: 'pending' },
+      // Accueil fini à l'instant, visite déjà vue, sans objectif digestion : « Voir un exemple » en bas des écrans
+      // (POLISH-SIM-37 : --routes=/recommendations/ventre --click="Voir un exemple")
+      recent: { flow: 2, done: true, endedBy: 'completed', doneAt: new Date().toISOString(), goals: ['stress'], tour: 'done' },
     }
     if (args.onboarding === 'unlock-later') {
       // « Plus tard » à la lecture au déverrouillage il y a 3 jours (POL-PLAY-84) : rappel discret dans la carte

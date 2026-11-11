@@ -12,7 +12,7 @@ import { goalsOf, loadOnboarding, saveOnboarding, wantsGut } from '../settings/o
 import { isFaceSenseEnabled } from '../services/faceSense'
 import { getWeatherSettings } from '../services/weatherSync'
 import { getPhoneUsageSettings } from '../services/phoneUsageSync'
-import { COUNTER_MS, counterDay, tourSteps } from '../services/tour'
+import { COUNTER_MS, counterDay, startIndex, tourSteps } from '../services/tour'
 
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
@@ -73,10 +73,10 @@ export function Spotlight({ selector, stepKey }) {
   return <div className="tour-spot" style={rect} aria-hidden="true" />
 }
 
-function Tour({ onEnd }) {
+function Tour({ onEnd, from }) {
   const navigate = useNavigate()
   const [ctx, setCtx] = useState(null)
-  const [i, setI] = useState(0)
+  const [picked, setI] = useState(null)
   const [revealing, setRevealing] = useState(false)
   const shownDays = useRef(0)
 
@@ -98,7 +98,8 @@ function Tour({ onEnd }) {
           received,
           hc: received.size > 0 || s.health === 'granted' || s.huawei === 'pair',
           face: isFaceSenseEnabled(),
-          gut: wantsGut(goalsOf(s)),
+          // Relancée depuis Analyses › Digestion : l'exemple de la digestion, même sans cet objectif
+          gut: wantsGut(goalsOf(s)) || from === '/recommendations/ventre',
           weather: getWeatherSettings().enabled,
           screen: getPhoneUsageSettings().enabled,
           huawei: s.huawei === 'pair',
@@ -107,9 +108,10 @@ function Tour({ onEnd }) {
     return () => {
       alive = false
     }
-  }, [])
+  }, [from])
 
   const steps = useMemo(() => (ctx ? tourSteps(ctx) : null), [ctx])
+  const i = picked ?? (steps ? startIndex(steps, from) : 0)
   const step = steps?.[i]
 
   useEffect(() => {
@@ -191,7 +193,7 @@ class TourBoundary extends Component {
 /**
  * Visite ouverte par TourHost (Layout) : à la fin, « Passer » ou un plantage, données réelles rendues et visite close.
  */
-export default function GuidedTour({ onClose }) {
+export default function GuidedTour({ onClose, from }) {
   const navigate = useNavigate()
   const end = useCallback((how) => {
     exitExampleMode()
@@ -205,7 +207,7 @@ export default function GuidedTour({ onClose }) {
 
   return (
     <TourBoundary onCrash={() => end('crashed')}>
-      <Tour onEnd={end} />
+      <Tour onEnd={end} from={from} />
     </TourBoundary>
   )
 }

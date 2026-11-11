@@ -12,8 +12,12 @@ const GuidedTour = lazy(() => import('./GuidedTour'))
 
 export default function TourHost() {
   const [run, setRun] = useState(() => (loadOnboarding().tour === 'pending' ? 1 : 0))
+  const [from, setFrom] = useState(null)
   useEffect(() => {
-    const start = () => setRun((r) => r + 1)
+    const start = (e) => {
+      setFrom(e?.detail?.from || null)
+      setRun((r) => r + 1)
+    }
     window.addEventListener(TOUR_START_EVENT, start)
     return () => window.removeEventListener(TOUR_START_EVENT, start)
   }, [])
@@ -21,7 +25,7 @@ export default function TourHost() {
   if (!run) return null
   return (
     <Suspense fallback={null}>
-      <GuidedTour key={run} onClose={close} />
+      <GuidedTour key={run} onClose={close} from={from} />
     </Suspense>
   )
 }

@@ -221,7 +221,7 @@ export default function Data() {
           <p className="data-hint">
             {nothingToExport
               ? 'Rien à sauvegarder pour l’instant : vos repas, notes et mesures s’y ajouteront.'
-              : 'Un fichier rangé dans Documents.'}
+              : 'Un fichier JSON, rangé dans Documents.'}
           </p>
           {entryCount > 0 && (
             <p className="data-count">{monoDigits(plural(entryCount, 'entrée'))} et votre profil</p>

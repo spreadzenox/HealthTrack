@@ -369,6 +369,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **11/11 07:35** — Ma digestion : le soir, une seule rangée Calme / Gêne / Douleur à la fois (bilan de la journée, ou moment précis) (POLISH-SIM-41).
 - **11/11 15:35** — Analyses : un facteur qui change de sens selon le délai sans être net est nommé une fois (« rien à en tirer pour l'instant ») ; rien de net : une phrase en tête au lieu de la légende (POLISH-SIM-50).
 - **11/11 16:35** — Accueil sans Health Connect : « Ce que vous noterez » suit l'objectif (poids, règles, digestion) (POLISH-SIM-51) ; « Tests » (budget de lectures) ne dépend plus d'apt, qui tombait en panne DNS sur le runner.
+- **11/11 18:35** — « Voir un exemple » relance la visite à l'écran touché (Digestion : exemple digestion) ; Vos données dit « fichier JSON » (POLISH-SIM-37).
 - **11/11 17:35** — POLISH-SIM-45 vérifié : les tuiles « Écran » et « Météo » d'une persona au J1 venaient de l'outil de simulation (sources pas encore activées), pas de l'app ; outil corrigé (test), PROP-SIM-13 notée (aperçu d'Analyses au J1 avec un historique de montre).
 - **11/11 14:35** — Repas : le nom proposé par l'IA se modifie (champ « Nom », aussi dans « Modifier ») ; vide = sans nom (POLISH-SIM-49).
 - **11/11 13:35** — Tendances : le poids a sa courbe (dernière pesée du jour), graduations exactes (POLISH-SIM-47).

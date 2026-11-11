@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-11",
+  "kind": "amélioration",
+  "title": "« Voir un exemple » montre l'écran où vous êtes",
+  "items": [
+    "Depuis Analyses › Digestion, « Voir un exemple » ouvre l'exemple de la digestion au lieu de reprendre la visite au début ; depuis Agir ou le Journal, la visite part de cet écran.",
+    "Vos données : l'export dit son format, un fichier JSON."
+  ]
+}

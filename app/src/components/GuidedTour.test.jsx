@@ -26,13 +26,13 @@ function Where() {
   return <p data-testid="where">{useLocation().pathname}</p>
 }
 
-function renderTour(onClose = vi.fn()) {
+function renderTour(onClose = vi.fn(), from) {
   render(
-    <MemoryRouter initialEntries={['/']}>
+    <MemoryRouter initialEntries={[from || '/']}>
       <Routes>
         <Route path="*" element={<Where />} />
       </Routes>
-      <GuidedTour onClose={onClose} />
+      <GuidedTour onClose={onClose} from={from} />
     </MemoryRouter>,
   )
   return onClose
@@ -96,6 +96,21 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
     expect(isExampleMode()).toBe(false)
     expect(loadOnboarding().tour).toBe('done')
     expect(onClose).toHaveBeenCalled()
+  })
+
+  it('relancée depuis Analyses › Digestion, elle s’ouvre sur la digestion, même sans l’objectif (POLISH-SIM-37)', async () => {
+    saveOnboarding({ done: true, goals: ['stress'] })
+    renderTour(vi.fn(), '/recommendations/ventre')
+    expect(await screen.findByRole('heading', { name: 'Votre digestion' })).toBeInTheDocument()
+    expect(screen.getByTestId('where')).toHaveTextContent('/recommendations/ventre')
+    fireEvent.click(btn('Voir au jour 28'))
+    expect(screen.getByRole('heading', { name: 'Au jour 28 : ce qui va avec votre ventre' })).toBeInTheDocument()
+  })
+
+  it('relancée depuis Agir, elle s’ouvre sur Agir', async () => {
+    saveOnboarding({ done: true, goals: ['stress'] })
+    renderTour(vi.fn(), '/agir')
+    expect(await screen.findByRole('heading', { name: 'Agir' })).toBeInTheDocument()
   })
 
   it('un plantage de la visite ne bloque jamais l’app', async () => {

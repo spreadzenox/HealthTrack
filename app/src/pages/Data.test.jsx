@@ -83,6 +83,11 @@ describe('Data page — export (web)', () => {
     expect(screen.getByRole('button', { name: /Télécharger la sauvegarde/i })).toBeInTheDocument()
   })
 
+  it('dit le format de l’export : un fichier JSON (POLISH-SIM-37)', () => {
+    const { container } = renderData()
+    expect(container.querySelector('.data-hint').textContent).toMatch(/fichier JSON/)
+  })
+
   it('parle de « la sauvegarde du téléphone », pas de « la sauvegarde Google » (texte commun avec l’app iPhone)', () => {
     const { container } = renderData()
     expect(container.textContent).toMatch(/sauvegarde du téléphone est activée/)
