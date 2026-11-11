@@ -382,9 +382,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   test rouge puis vert. Reste (possible) : ouvrir Tendances sur le jour touché (paramètre de date).
 - [ ] **POLISH-SIM-37** Vos données : dire le format de l'export (JSON) ; Analyses › Digestion « Voir un exemple » ouvre
   la visite générale au lieu d'un exemple digestion.
-- [ ] **POLISH-SIM-38** (2 sur 2, `simulations/2026-11-10-2035-synthese.md`) Accueil, 2e carte du tuto : « Trois onglets,
-  trois usages » alors que la barre en a cinq (Aujourd'hui et Sources en plus). Dire « Trois usages » ou nommer ce que
-  font Aujourd'hui et Sources ; test du texte.
+- [x] **POLISH-SIM-38** ✅ 11/11 03:35 Accueil, 2e carte du tuto : « Trois onglets, trois usages » alors que la barre
+  en a cinq. Devient « Trois usages : » (Journal, Analyses, Agir) ; test du texte rouge puis vert ; `TEXTES.md` de la
+  maquette annoté.
 - [ ] **POLISH-SIM-39** (2 sur 2) Visite guidée : « Voir dans 14 jours » ne dit pas ce qu'on verra (« Voir un exemple » ?) ;
   l'exemple affiche « Encore 18 jours » à J14 alors que le vrai compte au J1 dit 27 (ou 13) : caler le compte fictif.
 - [ ] **POLISH-SIM-40** (2 sur 2, à reproduire d'abord) Aujourd'hui › « Vos données du jour » : pas (et FC de la montre)

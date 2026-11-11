@@ -8,6 +8,13 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> ✏️ **Accueil : « Trois usages » (11/11 03:35)** : la 2e carte de l'accueil disait « Trois onglets » alors que la barre
+> du bas en a cinq ; deux personas l'avaient relevé. Elle dit maintenant « Trois usages : » au-dessus de Journal,
+> Analyses et Agir ([clair](runs/captures/2026-11-11-0335-tuto-usages-clair.png) ·
+> [sombre](runs/captures/2026-11-11-0335-tuto-usages-sombre.png)). **Envoi Alpha du soir parti** : 100984 placé sur
+> l'alpha le 11/11 à 03:16 (cron de GitHub 3 h 30 en retard), avec tout le cycle jusqu'aux règles d'hier ; Google
+> l'examine. Rien à faire de votre côté.
+
 > 🩸 **Noter ses règles d'hier (11/11 02:35)** : « Mes règles » a en haut le choix « Aujourd'hui · Hier » (la même
 > pastille que Jour / Semaine / Mois de Tendances). « Hier » note le flux et les symptômes de la veille sans quitter
 > Aujourd'hui ; la fenêtre dit alors « Hier, 2e jour des règles » ([sombre](runs/captures/2026-11-11-0235-regles-hier-dark.png),
@@ -326,6 +333,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 03:35 — [« Trois usages »](runs/2026-11-11-0335-tuto-usages.md) | ✏️ | POLISH-SIM-38 : 2e carte de l'accueil, « Trois onglets » → « Trois usages : ». Alpha 100984 envoyé à 03:16. Rien à faire de votre côté |
 | 11/11 02:35 — [Règles d'hier](runs/2026-11-11-0235-regles-hier.md) | 🧱 | CYCLE-2d : choix « Aujourd'hui · Hier » dans « Mes règles » (flux et symptômes de la veille). À tester : Aujourd'hui › Règles › Hier |
 | 11/11 01:35 — [Test du « 1er » réparé](runs/2026-11-11-0135-test-1er.md) | 🔧 | CI de main rouge le 11/11 : un test attendait « le 1 novembre », l'app écrit « le 1er novembre ». Test corrigé, rien ne change dans l'app. Rien à faire de votre côté |
 | 11/11 00:35 — [Symptômes du cycle](runs/2026-11-11-0035-symptomes-cycle.md) | 🧱 | CYCLE-2c : puces des symptômes dans « Mes règles » (une touche note, une autre retire). À tester : Aujourd'hui › Règles › Crampes |
