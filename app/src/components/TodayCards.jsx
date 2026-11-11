@@ -97,6 +97,8 @@ export function GutCard({
   // Le soir, une seule question à l'écran (POL-PLAY-12) : le bilan du jour ; la note d'un moment précis reste à un geste
   const eveningFirst = Boolean(entries && evening.ask)
   const showMoment = !eveningFirst || momentOpen
+  // Jamais deux rangées Calme / Gêne / Douleur à la fois (POLISH-SIM-41) : la journée ou le moment, l'un puis l'autre
+  const showDay = eveningFirst && !momentOpen
 
   async function note(level, scope = null) {
     setSaving(true)
@@ -119,7 +121,7 @@ export function GutCard({
         <h3 id="gut-card-title" className="today-card-title">{title}</h3>
         <DetailsToggle on={details} onToggle={onToggleDetails} />
       </div>
-      {eveningFirst && (
+      {showDay && (
         <div className="gut-evening gut-evening-first" role="group" aria-labelledby="gut-evening-title">
           <p id="gut-evening-title" className="gut-evening-title">Et votre digestion aujourd’hui, dans l’ensemble ?</p>
           <GutChoiceRow>
@@ -172,10 +174,16 @@ export function GutCard({
       {entries && (
         // Les gestes facultatifs sur une seule ligne, comme « Noter moi-même · Historique » (POL-PLAY-29)
         <div className="gut-card-actions">
-          {eveningFirst && !momentOpen && (
+          {showDay && (
             <button type="button" className="gut-moment-link" onClick={() => setMomentOpen(true)}>
               <LineIcon name="plus" size={16} />
               Noter un moment précis
+            </button>
+          )}
+          {eveningFirst && momentOpen && (
+            <button type="button" className="gut-moment-link" onClick={() => setMomentOpen(false)}>
+              <LineIcon name="plus" size={16} />
+              Bilan de la journée
             </button>
           )}
           <StoolLine />

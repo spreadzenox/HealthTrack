@@ -126,7 +126,21 @@ describe('GutCard — bilan du soir (I170)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Noter un moment précis' }))
     fireEvent.click(screen.getByRole('button', { name: 'Gêne' }))
     await waitFor(() => expect(createEntry).toHaveBeenCalledWith({ type: 'gut', source: 'app_gut', payload: { level: 'discomfort' } }))
+  })
+
+  it('le soir, jamais deux rangées Calme / Gêne / Douleur à la fois : on passe de l’une à l’autre (POLISH-SIM-41)', async () => {
+    const now = new Date()
+    now.setHours(20, 30, 0, 0)
+    wrap(<GutCard read={async () => []} now={now} />)
+    await screen.findByText('Et votre digestion aujourd’hui, dans l’ensemble ?')
+    fireEvent.click(screen.getByRole('button', { name: 'Noter un moment précis' }))
+    expect(screen.queryByText(/dans l’ensemble/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Journée : Calme' })).not.toBeInTheDocument()
+    expect(screen.getByText('À l’instant')).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Calme' })).toHaveLength(1)
+    fireEvent.click(screen.getByRole('button', { name: 'Bilan de la journée' }))
     expect(screen.getByText('Et votre digestion aujourd’hui, dans l’ensemble ?')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Gêne' })).not.toBeInTheDocument()
   })
 
   it('le soir, « Noter un moment précis » et « Selles » sur une même ligne d’actions (POL-PLAY-29)', async () => {
