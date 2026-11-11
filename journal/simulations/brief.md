@@ -12,6 +12,7 @@ RÈGLES STRICTES
   curl -s "127.0.0.1:__PORT__/full"                      → capture de toute la page
   Chaque geste renvoie {"shot": "<chemin png>", "url": ...} : lis TOUJOURS la capture avant le geste suivant. Une erreur {"error"} veut dire que le geste n'a pas marché : essaie autrement, comme le ferait une personne.
 - Pas d'appareil photo réel : si l'app demande une photo, note-le et passe.
+- Le temps d'écran est lu par l'app Android : dans ce navigateur, Sources n'a pas sa carte même si le Journal montre « Écran ». Ce n'est pas un défaut à relever.
 - Ne touche jamais à « /quit ».
 - Budget : environ 45 gestes au plus, puis écris ton rapport.
 

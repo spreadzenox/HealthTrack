@@ -407,9 +407,14 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-44** ✅ 11/11 05:35 (Stressé J1) L'accueil renvoie à « Paramètres », la roue ouvre « Réglages » : un seul nom.
   Chaque renvoi donne le chemin depuis la roue, « Réglages › Paramètres » (accueil objectif et visage, rappel du soir,
   Agir) ; tests rouges puis verts.
-- [ ] **POLISH-SIM-45** (Stressé J1, à vérifier) Journal › Jours : tuiles « Écran » et « Météo » au J1 sans source
-  branchée (données de démo ou vraie valeur ?). Idée liée (proposition, pas de code) : à J1 avec 2 mois de montre,
-  Analyses ne montre que « Encore 13 jours notés ».
+- [x] **POLISH-SIM-45** ✅ 11/11 17:35 (Stressé J1) Journal › Jours : tuiles « Écran » et « Météo » au J1 sans source
+  branchée. Vérifié : artefact de l'outil personas, pas de l'app (la météo n'existe qu'après le choix d'une position,
+  le temps d'écran qu'après l'accès à l'utilisation). `personaData` retire `weather` et `phone_usage` au jour 1 (test
+  rouge puis vert) ; au-delà, `persona-browse` coche la météo (Paris, météo du jour fictive) pour que Sources la dise
+  activée ; `brief.md` : le temps d'écran n'a pas de carte dans la version web. Idée liée : PROP-SIM-13.
+- [ ] **PROP-SIM-13** (proposition avec maquette, pas de code sans accord ; Stressé J1) au J1 avec un historique de
+  montre importé, Analyses ne montre que « Encore 13 jours notés » : un premier aperçu tiré de l'historique (sommeil,
+  pas, FC ; sans bien-être, donc sans Y : seulement des tendances descriptives, règle 5) ?
 - [x] **POLISH-SIM-46** ✅ 11/11 11:35 (Endométriose J45) « Mes règles » : un symptôme touché (Crampes) ne montre pas clairement qu'il
   est noté (Digestion affiche « Dernière note… »). Fait : coche ✓ dans la puce notée (l'état ne tient plus à la seule
   couleur) et ligne courte « Noté : Crampes » / « Retiré : Crampes » (role=status), effacée au passage Aujourd'hui ⇄ Hier.
