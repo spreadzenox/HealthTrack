@@ -264,7 +264,8 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
     <section className="reco-page" data-tone={outcome === 'digestion' ? 'peach' : 'mint'}>
       <AnalysesTabs />
       <h2 className="page-title">{outcome === 'digestion' ? 'Votre confort digestif' : 'Votre bien-être'}</h2>
-      {outcome === 'digestion' && !showGut && (
+      {/* Pendant l'exemple (« Voir un exemple »), la digestion fictive s'affiche : pas de bandeau « masqué » (POLISH-SIM-37b) */}
+      {outcome === 'digestion' && !showGut && !isExampleMode() && (
         <p className="reco-intro" data-testid="gut-off">
           Le suivi digestif est masqué. Pour le retrouver : Réglages › Paramètres › <Link to="/settings">Ce qui vous amène</Link>.
         </p>
