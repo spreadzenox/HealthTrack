@@ -349,7 +349,8 @@ describe('Food — modifier un repas enregistré', () => {
     fireEvent.change(screen.getByLabelText(/Grammes de Abondance/i), { target: { value: '500' } })
     fireEvent.click(screen.getByRole('button', { name: /^Annuler$/ }))
     expect(screen.queryByLabelText(/Grammes de Abondance/i)).not.toBeInTheDocument()
-    expect(screen.getByText('≈ 393 kcal', { selector: '.meal-kcal' })).toBeInTheDocument()
+    // « Fromage lunaire » n'est pas dans la base : total incomplet (POLISH-SIM-48)
+    expect(screen.getByText('≥ 393 kcal', { selector: '.meal-kcal' })).toBeInTheDocument()
     expect(updateEntry).not.toHaveBeenCalled()
   })
 

@@ -24,6 +24,11 @@ describe('MealEditor', () => {
     expect(screen.getByText(/≈ 590 kcal/)).toBeInTheDocument()
   })
 
+  it('nomme l’aliment que le total ne compte pas (POLISH-SIM-48)', () => {
+    render(<Harness initial={[cheese, { ingredient: 'Pâtes alimentaires, cuites', quantity: '220 g', quantity_g: 220, unknown: true }]} />)
+    expect(screen.getByText(/Total estimé/)).toHaveTextContent('Total estimé : ≈ 197 kcal, sans Pâtes alimentaires, cuites')
+  })
+
   it('modifie les grammes à la saisie et avec les boutons − / +', () => {
     const onChange = vi.fn()
     render(<Harness initial={[cheese]} onChange={onChange} />)
@@ -72,7 +77,9 @@ describe('MealEditor', () => {
     const onChange = vi.fn()
     render(<Harness initial={[{ ingredient: 'Abricot sec bio', quantity: '30 g', quantity_g: 30, unknown: true }]} onChange={onChange} />)
     expect(screen.getByText(/Aliment absent de la base/i)).toBeInTheDocument()
-    expect(screen.getByText(/hors aliments absents de la base/i)).toBeInTheDocument()
+    // POLISH-SIM-48 : jamais « ≈ 0 kcal » quand rien n'est compté
+    expect(screen.getByText(/Total estimé/)).toHaveTextContent('Total estimé : inconnu, aucun aliment compté')
+    expect(screen.queryByText(/0 kcal/)).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: /Remplacer Abricot sec bio/i }))
     const search = screen.getByLabelText(/Remplacer par/i)
     expect(search.value).toBe('Abricot sec bio')

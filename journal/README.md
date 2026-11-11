@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🍽️ **Un aliment non compté se voit (11/11 12:35)** : une persona a vu « 220 g de pâtes ≈ 0 kcal » sans explication :
+> un aliment absent de la base comptait pour 0 en silence. Le total du repas le nomme maintenant (« ≈ 592 kcal, sans
+> Sauce maison du chef »), dit « inconnu » si aucun aliment n'est compté, et Journal › Repas comme Aujourd'hui
+> mettent « ≥ » devant les kcal d'un tel repas ([clair](runs/captures/2026-11-11-1235-kcal-incomplet-clair.png) ·
+> [sombre](runs/captures/2026-11-11-1235-kcal-incomplet-sombre.png)). Part ce soir sur Alpha. Rien à faire de votre côté.
+
 > 🩸 **Un symptôme noté se voit (11/11 11:35)** : dans « Mes règles », toucher Crampes ne changeait que la couleur de la
 > puce (une persona n'a pas su si c'était noté). La puce porte maintenant une coche et la fenêtre écrit « Noté : Crampes »
 > (« Retiré : Crampes » au second toucher) ([clair](runs/captures/2026-11-11-1135-symptome-note-clair.png) ·
@@ -376,6 +382,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 12:35 — [Aliment non compté visible](runs/2026-11-11-1235-kcal-incomplet.md) | ✏️ | POLISH-SIM-48 : total « sans … » ou « inconnu » ; « ≥ » dans les listes ; tests rouges puis verts. Rien à faire de votre côté |
 | 11/11 11:35 — [Symptôme noté visible](runs/2026-11-11-1135-symptome-note.md) | ✏️ | POLISH-SIM-46 : coche dans la puce et « Noté : Crampes » / « Retiré » ; test rouge puis vert. Rien à faire de votre côté |
 | 11/11 10:35 — [Pas du jour, bien-être une fois](runs/2026-11-11-1035-pas-du-jour.md) | ✏️ | POLISH-SIM-40 : pas absents = artefact de la démo (pas du jour ajoutés) ; bien-être retiré de « Vos données du jour » (doublon) ; tests rouges puis verts. Rien à faire de votre côté |
 | 11/11 09:35 — [#910 mergée](runs/2026-11-11-0935-merge-910.md) | 🔧 | PR #910 (Ma digestion, une question à la fois) remise à jour sur main, vérifiée (tests, build, lint, visual, capture du soir) et mergée. Rien à faire de votre côté |

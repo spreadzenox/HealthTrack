@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { itemKcal, mealKcal, searchIngredients, setItemGrams } from '../services/mealEditing'
+import { itemKcal, mealKcal, mealUncounted, searchIngredients, setItemGrams } from '../services/mealEditing'
 import './MealEditor.css'
 import { frenchLigatures } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
@@ -17,6 +17,7 @@ export default function MealEditor({ items, onChange, disabled = false }) {
   const [replaceIndex, setReplaceIndex] = useState(null)
   const suggestions = searchIngredients(query, 6)
   const total = mealKcal(items)
+  const uncounted = mealUncounted(items)
 
   const update = (index, next) => onChange(items.map((it, i) => (i === index ? next : it)))
   const remove = (index) => {
@@ -123,9 +124,15 @@ export default function MealEditor({ items, onChange, disabled = false }) {
 
       {items.length > 0 && (
         <p className="meal-editor-total">
-          Total estimé : <strong>≈ {total.toLocaleString(appLocale())} kcal</strong>
-          {items.some((it) => it.unknown) && (
-            <span className="mei-total-note"> (hors aliments absents de la base)</span>
+          {uncounted.length === items.length ? (
+            <>Total estimé : <strong>inconnu</strong><span className="mei-total-note">, aucun aliment compté</span></>
+          ) : (
+            <>
+              Total estimé : <strong>≈ {total.toLocaleString(appLocale())} kcal</strong>
+              {uncounted.length > 0 && (
+                <span className="mei-total-note">, sans {uncounted.map(frenchLigatures).join(', ')}</span>
+              )}
+            </>
           )}
         </p>
       )}

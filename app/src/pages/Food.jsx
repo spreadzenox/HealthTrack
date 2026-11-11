@@ -13,7 +13,7 @@ import MealEditor from '../components/MealEditor'
 import DeleteEntryButton from '../components/DeleteEntryButton'
 import EntryActionsToggle from '../components/EntryActionsToggle'
 import { isDeletableEntry } from '../utils/entries'
-import { itemForStorage, mealKcal } from '../services/mealEditing'
+import { itemForStorage, mealKcal, mealUncounted } from '../services/mealEditing'
 import SavedMealEditor from '../components/SavedMealEditor'
 import NewMealForm from '../components/NewMealForm'
 import { frequentMeals, mealLabel } from '../services/quickMeals'
@@ -429,7 +429,7 @@ export default function Food() {
                   {day.meals.length > 1 && (
                     <span className="meal-day-total">
                       {day.meals.length} repas
-                      {day.kcal > 0 && ` · ≈ ${day.kcal.toLocaleString(appLocale())} kcal`}
+                      {day.kcal > 0 && ` · ${day.meals.some((e) => mealUncounted(e.payload?.items).length) ? '≥' : '≈'} ${day.kcal.toLocaleString(appLocale())} kcal`}
                     </span>
                   )}
                 </h4>
@@ -439,7 +439,9 @@ export default function Food() {
                       <div className="meal-head">
                         <time className="meal-at" dateTime={e.at}>{timeOf(e.at)}</time>
                         {mealKcal(e.payload?.items) > 0 && (
-                          <span className="meal-kcal">≈ {mealKcal(e.payload.items).toLocaleString(appLocale())} kcal</span>
+                          <span className="meal-kcal">
+                            {`${mealUncounted(e.payload.items).length ? '≥' : '≈'} ${mealKcal(e.payload.items).toLocaleString(appLocale())} kcal`}
+                          </span>
                         )}
                       </div>
                       {e.payload?.dish && <p className="meal-dish">{e.payload.dish}</p>}

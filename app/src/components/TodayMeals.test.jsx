@@ -39,4 +39,14 @@ describe('TodayMeals — « Mes repas du jour » (AUJ-5)', () => {
     expect(mealTitle({ payload: { items: [{ name: 'a' }, { name: 'b' }, { name: 'c' }, { name: 'd' }] } })).toBe('a, b, c…')
     expect(mealTitle({ payload: {} })).toBe('Repas')
   })
+
+  it('un repas dont un aliment n’est pas compté affiche « ≥ » (POLISH-SIM-48)', () => {
+    wrap([
+      { id: 1, type: 'food', at: at(7, 12), payload: { dish: 'Salade', items: [{ ingredient: 'Abondance', quantity_g: 50 }, { ingredient: 'Zorglub', quantity_g: 80 }] } },
+      { id: 2, type: 'food', at: at(7, 19), payload: { dish: 'Fromage', items: [{ ingredient: 'Abondance', quantity_g: 50 }] } },
+    ])
+    expect(screen.getByLabelText('au moins 197 kcal')).toHaveTextContent('≥ 197 kcal')
+    const links = screen.getAllByRole('link')
+    expect(links[1].textContent).toMatch(/≈.197.kcal/)
+  })
 })

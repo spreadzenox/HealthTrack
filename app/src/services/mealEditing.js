@@ -168,6 +168,11 @@ export function mealKcal(items) {
   return (items || []).reduce((sum, it) => sum + (itemKcal(it) ?? 0), 0)
 }
 
+/** Aliments que `mealKcal` ne compte pas (absents de la base ou sans grammes), POLISH-SIM-48. */
+export function mealUncounted(items) {
+  return (items || []).filter((it) => it && itemKcal(it) == null).map((it) => it.ingredient)
+}
+
 /** Grammes lisibles dans un ancien libellé texte (« 150g », « 12,5 g »), sinon undefined. */
 function gramsFromLabel(label) {
   const m = /^\s*(\d+(?:[.,]\d+)?)\s*g\s*$/i.exec(String(label ?? ''))
