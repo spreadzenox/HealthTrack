@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom'
 import { eveningNotePlugin } from '../services/eveningNote'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
-import { shouldShowCigaretteCounter } from '../settings/cigaretteCounter'
+import { shouldShowCigaretteCounter, setCigaretteCounterPinned } from '../settings/cigaretteCounter'
 import DayStatusCard from '../components/DayStatusCard'
 import PaymentIssueCard from '../components/PaymentIssueCard'
 import LaunchEndCard from '../components/LaunchEndCard'
@@ -58,6 +58,8 @@ export default function Dashboard() {
     setUnlockReminder(false)
   }, [])
   const days = useMemo(() => buildDailyJournal(entries), [entries])
+  // POLISH-SIM-42 : « Je fume : compter mes cigarettes » met le compteur dans le bandeau (relu au rendu)
+  const [, setCigaretteTick] = useState(0)
   // CYCLE-2 : « Règles » dans le bandeau avec « Mon cycle », ou dès qu'une donnée de cycle existe
   const [cycleOn, setCycleOn] = useState(() => cycleVisible(goalsOf(), false))
   useEffect(() => {
@@ -128,6 +130,7 @@ export default function Dashboard() {
         period={cycleOn ? <PeriodSheet /> : null}
         cigarette={!loading && <CigaretteQuickAdd />}
         cigaretteInStrip={!loading && shouldShowCigaretteCounter(entries)}
+        onCountCigarettes={() => { setCigaretteCounterPinned(true); setCigaretteTick((t) => t + 1) }}
       />
       <PaymentIssueCard />
       <LaunchEndCard />

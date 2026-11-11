@@ -50,8 +50,18 @@ describe('AddStrip (nouvel écran Aujourd’hui du 07/11) : le seul endroit pour
     expect(screen.queryByRole('button', { name: '+ 1 cigarette' })).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'Autre chose' }))
     const dialog = screen.getByRole('dialog', { name: 'Autre chose' })
-    expect(within(dialog).getByRole('button', { name: '+ 1 cigarette' })).toBeInTheDocument()
     expect(within(dialog).getByRole('link', { name: /Décrire un repas/ })).toHaveAttribute('href', '/food')
+  })
+
+  it('POLISH-SIM-42 : « Autre chose » ne note pas de cigarette d\'un toucher, il propose de compter ses cigarettes', () => {
+    const onCountCigarettes = vi.fn()
+    view({ cigarette: <button type="button">+ 1 cigarette</button>, cigaretteInStrip: false, onCountCigarettes })
+    fireEvent.click(screen.getByRole('button', { name: 'Autre chose' }))
+    const dialog = screen.getByRole('dialog', { name: 'Autre chose' })
+    expect(within(dialog).queryByRole('button', { name: '+ 1 cigarette' })).toBeNull()
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Je fume : compter mes cigarettes' }))
+    expect(onCountCigarettes).toHaveBeenCalledTimes(1)
+    expect(screen.queryByRole('dialog')).toBeNull()
   })
 
   it('« Décrire un repas » ouvre directement le champ de description (POLISH-SIM-25)', () => {

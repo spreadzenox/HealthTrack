@@ -161,5 +161,14 @@
   text-decoration: none;
 }
 
+button.add-sheet-item {
+  width: 100%;
+  border: none;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
 /* Le titre est celui de la fenêtre : pas de second « Ma digestion » ni de bouton « détails » dans la fenêtre. */
 .add-sheet .today-card-head { display: none; }

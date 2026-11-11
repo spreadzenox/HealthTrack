@@ -391,7 +391,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   absents au J1 alors que Journal › Jours les montre ; Bien-être y fait doublon avec la carte du dessus.
 - [ ] **POLISH-SIM-41** (Endométriose J1) Feuille Digestion : deux lignes « dans l'ensemble » et « À l'instant » aux
   mêmes boutons, sans dire laquelle choisir.
-- [ ] **POLISH-SIM-42** (Endométriose J1) « Autre chose » propose « + 1 cigarette » sans objectif tabac.
+- [x] **POLISH-SIM-42** ✅ 11/11 06:35 (Endométriose J1) « Autre chose » propose « + 1 cigarette » sans objectif tabac.
+  La fenêtre ne note plus de cigarette d'un toucher : « Je fume : compter mes cigarettes » (même ligne que « Décrire un
+  repas ») active le compteur, qui passe dans le bandeau ; le retrait se fait dans Réglages › Paramètres › Cigarettes
+  (bloc visible en play dès que le compteur est actif) ; test rouge puis vert. Pas d'objectif tabac ajouté (mode polish).
 - [x] **POLISH-SIM-43** ✅ 11/11 04:35 (Stressé J1) Agir dit « quelques jours », l'accueil « un essai de deux semaines » :
   une durée. Réintroduction 3 jours, piste 14 jours : l'accueil dit « vérifier une piste par un essai », Agir vide « de
   quelques jours à deux semaines selon la piste » ; tests rouges puis verts ; `TEXTES.md` annoté.

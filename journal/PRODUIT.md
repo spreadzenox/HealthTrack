@@ -365,6 +365,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **10/11 18:35** — **Journal : modifier une note de digestion** (POLISH-SIM-36b) : « Modifier » dans le « … » ouvre Calme / Gêne / Douleur sur place, heure gardée.
 - **11/11 01:35** — CI de main réparée (test daté du « 1er » du mois), rien de visible.
 - **11/11 02:35** — **Noter ses règles d'hier** (CYCLE-2d) : choix « Aujourd'hui · Hier » dans « Mes règles ».
+- **11/11 06:35** — Cigarettes : « Autre chose » propose « Je fume : compter mes cigarettes » au lieu de noter une cigarette d’un toucher (POLISH-SIM-42).
 - **11/11 05:35** — « Réglages › Paramètres » : chaque renvoi aux Paramètres donne le chemin depuis la roue (POLISH-SIM-44).
 - **11/11 04:35** — Une seule durée d’essai : accueil sans durée, Agir « de quelques jours à deux semaines selon la piste » (POLISH-SIM-43).
 - **11/11 03:35** — Accueil, 2e carte : « Trois usages : » au lieu de « Trois onglets » (POLISH-SIM-38). Alpha 100984 envoyé (03:16).
