@@ -11,7 +11,7 @@
 > 🏷️ **L'étiquette « Exemple » ne cache plus le nom de l'app (11/11 20:35)** : pendant la visite guidée, « Exemple ·
 > données fictives · jour 28 » recouvrait « Halcya » en haut de l'écran. Elle passe en tête de la bulle de la visite
 > ([clair](runs/captures/2026-11-11-2035-badge-bulle-clair.png) · [sombre](runs/captures/2026-11-11-2035-badge-bulle-sombre.png)).
-> Part ce soir sur Alpha. Rien à faire de votre côté.
+> En attente de merge (PR #922 : la CI de GitHub n'a pas démarré ses tests pendant 40 min). Rien à faire de votre côté.
 
 > 🧹 **L'exemple de la digestion sans bandeau en trop (11/11 19:35)** : sans l'objectif « Ma digestion », l'exemple
 > ouvert depuis Analyses › Digestion gardait « Le suivi digestif est masqué » au-dessus des données fictives. Le
@@ -431,7 +431,7 @@
 | Run | Type | Résultat |
 |---|---|---|
 | 11/11 19:35 — [Exemple digestion sans bandeau](runs/2026-11-11-1935-exemple-sans-bandeau.md) | 🔧 | POLISH-SIM-37b : bandeau « suivi digestif masqué » caché en mode exemple. Tests (3450), lint, build, banc complet verts |
-| 11/11 20:35 — [Badge « Exemple » dans la bulle](runs/2026-11-11-2035-badge-bulle.md) | 🔧 | POLISH-SIM-37c : le badge de la visite ne masque plus l'en-tête. Tests (3450), lint, build, banc complet verts |
+| 11/11 20:35 — [Badge « Exemple » dans la bulle](runs/2026-11-11-2035-badge-bulle.md) | 🔧 | POLISH-SIM-37c : le badge de la visite ne masque plus l'en-tête. Tests (3450), lint, build, banc complet verts ; **PR #922 non mergée** (checks en file chez GitHub 40 min) |
 | 11/11 18:35 — [« Voir un exemple » à l'écran touché](runs/2026-11-11-1835-voir-exemple-ecran.md) | 🔧 | POLISH-SIM-37 : la visite repart de l'écran touché (exemple digestion depuis Digestion) ; export dit « JSON ». Tests, lint, build, banc complet verts |
 | 11/11 17:35 — [Météo et écran au J1](runs/2026-11-11-1735-meteo-ecran-j1.md) | 🔧 | POLISH-SIM-45 : artefact de l'outil personas (sources pas encore activées), corrigé avec un test ; PROP-SIM-13 notée. Rien ne change dans l'app, rien à faire de votre côté |
 | 11/11 16:35 — [Objectif à l'accueil, CI](runs/2026-11-11-1635-noter-objectif.md) | ✏️ | « Tests » ne dépend plus d'apt (panne DNS du runner) ; POLISH-SIM-51 : « Ce que vous noterez » selon l'objectif ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
