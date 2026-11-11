@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🚭 **Plus de cigarette notée par erreur (11/11 06:35)** : « Autre chose » (bandeau d'Aujourd'hui) notait une cigarette
+> d'un seul toucher, même pour qui ne fume pas (une persona l'a relevé). Il propose maintenant « Je fume : compter mes
+> cigarettes », qui met « + 1 cigarette » dans le bandeau ; on le retire dans Réglages › Paramètres › Cigarettes
+> ([clair](runs/captures/2026-11-11-0635-cigarettes-clair.png) · [sombre](runs/captures/2026-11-11-0635-cigarettes-sombre.png)).
+> Rien à faire de votre côté.
+
 > ⚙️ **« Réglages › Paramètres » (11/11 05:35)** : l'accueil disait « vous pourrez le changer dans Paramètres », mais la
 > roue en haut à droite ouvre « Réglages » (une persona s'y est perdue). L'accueil, le rappel du soir et Agir donnent
 > maintenant le chemin complet, « Réglages › Paramètres » ([objectif](runs/captures/2026-11-11-0535-reglages-objectif.png) ·
@@ -344,6 +350,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 06:35 — [Compter ses cigarettes](runs/2026-11-11-0635-compter-cigarettes.md) | ✏️ | POLISH-SIM-42 : « Autre chose » ne note plus de cigarette d'un toucher, « Je fume : compter mes cigarettes » active le compteur ; test rouge puis vert. Rien à faire de votre côté |
 | 11/11 05:35 — [« Réglages › Paramètres »](runs/2026-11-11-0535-reglages-parametres.md) | ✏️ | POLISH-SIM-44 : l'accueil, le rappel du soir et Agir donnent le chemin depuis la roue ; tests rouges puis verts. Rien à faire de votre côté |
 | 11/11 04:35 — [Une seule durée d'essai](runs/2026-11-11-0435-une-duree.md) | ✏️ | POLISH-SIM-43 : accueil « vérifier une piste par un essai », Agir vide « de quelques jours à deux semaines selon la piste » ; tests rouges puis verts. Rien à faire de votre côté |
 | 11/11 03:35 — [« Trois usages »](runs/2026-11-11-0335-tuto-usages.md) | ✏️ | POLISH-SIM-38 : 2e carte de l'accueil, « Trois onglets » → « Trois usages : ». Alpha 100984 envoyé à 03:16. Rien à faire de votre côté |

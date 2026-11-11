@@ -34,6 +34,7 @@ function Sheet({ title, onClose, children }) {
  *   stool?: import('react').ReactNode,
  *   cigarette?: import('react').ReactNode,
  *   cigaretteInStrip?: boolean,
+ *   onCountCigarettes?: () => void,
  *   period?: import('react').ReactNode,
  *   open?: null | 'digestion' | 'stool' | 'period' | 'other',
  *   onOpenChange?: (open: null | 'digestion' | 'stool' | 'period' | 'other') => void,
@@ -42,7 +43,7 @@ function Sheet({ title, onClose, children }) {
  *   AUJ-4 : le même geste que le bouton du bandeau).
  */
 export default function AddStrip({
-  onWellbeing, digestion = null, stool = null, period = null, cigarette = null, cigaretteInStrip = false, open: openProp, onOpenChange,
+  onWellbeing, digestion = null, stool = null, period = null, cigarette = null, cigaretteInStrip = false, onCountCigarettes, open: openProp, onOpenChange,
 }) {
   const [innerOpen, setInnerOpen] = useState(null)
   const open = openProp !== undefined ? openProp : innerOpen
@@ -96,7 +97,13 @@ export default function AddStrip({
               <LineIcon name="pen" size={20} />
               Décrire un repas
             </Link>
-            {cigarette && !cigaretteInStrip && cigarette}
+            {/* POLISH-SIM-42 : pas de « + 1 cigarette » d'un toucher pour qui ne fume pas ; on active le compteur. */}
+            {cigarette && !cigaretteInStrip && onCountCigarettes && (
+              <button type="button" className="add-sheet-item" onClick={() => { onCountCigarettes(); close() }}>
+                <LineIcon name="cigarette" size={20} />
+                Je fume : compter mes cigarettes
+              </button>
+            )}
           </div>
         </Sheet>
       )}
