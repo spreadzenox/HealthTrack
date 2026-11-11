@@ -387,7 +387,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   maquette annoté.
 - [ ] **POLISH-SIM-39** (2 sur 2) Visite guidée : « Voir dans 14 jours » ne dit pas ce qu'on verra (« Voir un exemple » ?) ;
   l'exemple affiche « Encore 18 jours » à J14 alors que le vrai compte au J1 dit 27 (ou 13) : caler le compte fictif.
-- [ ] **POLISH-SIM-40** (2 sur 2, à reproduire d'abord) Aujourd'hui › « Vos données du jour » : pas (et FC de la montre)
+- [ ] **POLISH-SIM-40** (3 simulations, dont Maigrir J1 du 11/11 ; à reproduire d'abord) Aujourd'hui › « Vos données du jour » : pas (et FC de la montre)
   absents au J1 alors que Journal › Jours les montre ; Bien-être y fait doublon avec la carte du dessus.
 - [x] **POLISH-SIM-41** ✅ 11/11 07:35 (Endométriose J1) Feuille Digestion : deux lignes « dans l'ensemble » et « À l'instant » aux
   mêmes boutons, sans dire laquelle choisir. Le soir, une seule rangée à la fois : le bilan de la journée, ou (après
@@ -406,10 +406,29 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-45** (Stressé J1, à vérifier) Journal › Jours : tuiles « Écran » et « Météo » au J1 sans source
   branchée (données de démo ou vraie valeur ?). Idée liée (proposition, pas de code) : à J1 avec 2 mois de montre,
   Analyses ne montre que « Encore 13 jours notés ».
+- [ ] **POLISH-SIM-46** (Endométriose J45) « Mes règles » : un symptôme touché (Crampes) ne montre pas clairement qu'il
+  est noté (Digestion affiche « Dernière note… »). Vérifier l'état sélectionné en clair et sombre ; un retour court.
+- [ ] **POLISH-SIM-47** (Maigrir J1) Tendances : une pesée (à la main ou balance) n'a aucune courbe, le « + » ne propose
+  pas Poids. Vérifier où le poids s'affiche ; s'il est déjà dans le Journal, l'ajouter aux mesures de Tendances.
+- [ ] **POLISH-SIM-48** (Maigrir J1) Repas : un aliment absent de la table compte pour 0 et le total affiche « ≈ 0 kcal »
+  sans le dire. Afficher l'aliment non compté et un total marqué incomplet (vu avec le faux relais de l'outil ; vérifier
+  que le vrai relais peut renvoyer un nom hors table).
+- [ ] **POLISH-SIM-49** (Maigrir J1) Repas : le nom du plat proposé par l'IA ne se modifie pas après correction des
+  aliments.
+- [ ] **POLISH-SIM-50** (Endométriose J45) Analyses : un même facteur (Lactose) affiche des écarts de signes opposés
+  selon le délai, sans dire quoi en retenir. Vérifier la présentation (si rien n'est net, le dire une fois).
+- [ ] **POLISH-SIM-51** (Maigrir J1) Accueil, « Votre téléphone suffit » : la liste (bien-être, digestion, repas en
+  photo) ignore l'objectif choisi ; l'adapter (poids : repas, pas).
+- [ ] **PROP-SIM-11** (proposition avec maquette, pas de code sans accord ; rejoint CYCLE-4 et PROP-SIM-10) cycle
+  visible hors du Journal : jour du cycle sur Aujourd'hui, règles en bandes dans Tendances, règles et symptômes dans le
+  rapport médecin, avec ce qu'il contient avant de le créer.
+- [ ] **PROP-SIM-12** (proposition avec maquette, pas de code sans accord) objectif « Prendre soin de moi · poids » :
+  poids actuel et visé à l'accueil, dernier poids sur Aujourd'hui, premier pas concret dans Agir au J1.
 - [ ] **PROP-SIM-10** (proposition avec maquette, pas de code sans accord ; rejoint POLISH-SIM-8) noter ses règles et
   relier cycle et douleurs (« Mon cycle » ne débloque rien de visible) ; type et zone de la gêne ; essai lancé soi-même
   dans Agir ; aperçu du rapport PDF ; export CSV ; groupes FODMAP plus visibles dans Repas et Analyses.
 - [ ] **POLISH-SIM-9** Outil : jouer les configurations iPhone sur la build iPhone (`--store=appstore`). Fait le
+  11/11 08:35 : `--goals=cycle` (jour > 1) ajoute des règles et symptômes notés (testé) ; `brief.md` à `__PORT__`. Fait le
   09/11 08:35 : objectif d'onboarding (`--goals`), profil de saisie (`--notes=few`), consigne aux agents sur ce qui
   n'existe pas dans la version web. Fait le 08/11 20:35 : le jour 1 ouvre le nouvel accueil même
   avec 30 jours importés. Fait le 08/11 08:35 : nom de

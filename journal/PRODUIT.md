@@ -310,6 +310,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **11/11 08:35** — Run idées : simulations Prendre soin de soi J1 (Android seul) et Endométriose J45 avec règles notées (outil `--goals=cycle`) ; POLISH-SIM-46 à 51, PROP-SIM-11 (cycle visible hors du Journal) et PROP-SIM-12 (objectif poids) ; faux relais de l'outil corrigé (noms d'aliments de la table).
 - **10/11 20:35** — Run idées : simulations Stressé et pressé J1 et Endométriose J1 (POLISH-SIM-38 à 45) ; outil des personas corrigé (faux relais) ; P48 rédigée (cycle dans Health Connect : pont natif nécessaire, CYCLE-3a / 3b).
 - **08/11 11:35** — CI de main réparée (panne GitHub 504 sur Gradle puis le compilateur Kotlin) : miroir Google de Maven Central et téléchargement de Gradle avec reprises (#830).
 - **07/11 09:35** — **TESTEUR-1c** : carte menthe « Votre journée » en tête de l'Accueil (titre en deux mots, échelle 1 à 5, d'où il vient, étiquettes), qui remplace le titre et la carte « Bien-être estimé » ; toucher → historique ; « Pas encore d'avis » avec un seul bouton.
