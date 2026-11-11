@@ -103,6 +103,8 @@ if (day > 1) {
       localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'completed', doneAt, step: 6, maxStep: 6, goals, flow: 2 }))
       // L'onboarding marque toutes les Nouveautés comme lues : pas de « 258 autres changements » (artefact du 08/11)
       localStorage.setItem('healthtrack-whats-new-last-seen', latestId)
+      // Météo activée à l'accueil (personaData garde ses jours) : Sources la dit « activée » (POLISH-SIM-45)
+      localStorage.setItem('healthtrack_weather', JSON.stringify({ enabled: true, location: { lat: 48.9, lon: 2.3, name: 'Paris' }, lastSyncAt: new Date().toISOString(), today: { date: new Date().toISOString().slice(0, 10), tempMaxC: 12, tempMinC: 5, precipMm: 0, sunshineH: 3, pressureHpa: 1016, pressureChangeHpa: null, aqi: 22, pollen: {}, pollenMax: 0 } }))
     }
   }, { doneAt: new Date(Date.now() - (day - 1) * 86400000).toISOString(), latestId, goals })
 }

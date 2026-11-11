@@ -6,6 +6,14 @@
 const APP_TYPES = new Set(['food', 'gut', 'stool', 'wellbeing', 'face_burst', 'cigarette', 'fodmap_challenge'])
 
 /**
+ * Contexte que l'app lit elle-même une fois la source activée (météo : position choisie ; temps d'écran : accès à
+ * l'utilisation). Au jour 1 rien n'est activé : aucune tuile « Météo » ni « Écran » (POLISH-SIM-45, artefact du
+ * 10/11). Ensuite, on suppose les deux activées à l'accueil (la météo reprend alors 92 jours, `persona-browse` coche
+ * le réglage pour que Sources dise la même chose).
+ */
+export const CONTEXT_TYPES = new Set(['weather', 'phone_usage'])
+
+/**
  * Matériel simplifié, d'après les colonnes « données reçues » de PERSONAS.md :
  * - phone : téléphone seul (pas et calories du téléphone ; ni sommeil, ni cœur, ni poids) ;
  * - watch : Galaxy Watch par Health Connect (pas, sommeil, FC, SpO₂ ; ni VFC, ni FC au repos, ni température, ni
@@ -72,7 +80,7 @@ export function personaEntries(entries, { day, equipment, notes = 'full', goals 
   return entries.filter((e) => {
     const at = new Date(e.at)
     if (at < from || at > now) return false
-    if (day <= 1 && APP_TYPES.has(e.type)) return false
+    if (day <= 1 && (APP_TYPES.has(e.type) || CONTEXT_TYPES.has(e.type))) return false
     return keepForEquipment(e, equipment) && keepForNotes(e, notes)
   }).map((e) => withSourceName(e, equipment))
     .concat(day > 1 && goals.includes('cycle') ? cycleEntries({ from, now }) : [])

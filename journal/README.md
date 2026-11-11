@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🌦️ **Météo et écran au premier jour : vérifié (11/11 17:35)** : une persona voyait « Écran 3 h 56 » et « Météo »
+> dans le Journal dès l'installation, sans les avoir activés. Vérifié : c'était notre outil de simulation, pas l'app
+> (chez vous, ces tuiles n'apparaissent qu'après avoir activé la météo ou l'accès au temps d'écran). L'outil est corrigé
+> ([Sources d'une persona au 14e jour](runs/captures/2026-11-11-1735-meteo-persona-sources.png)). Rien ne change dans
+> l'app ; rien à faire de votre côté.
+
 > 🎯 **« Ce que vous noterez » suit votre objectif (11/11 16:35)** : sans Health Connect, l'accueil promettait
 > « bien-être, digestion, repas en photo » à tout le monde ; une persona venue pour maigrir n'y voyait pas son poids.
 > La liste suit maintenant l'objectif (poids avec « Prendre soin de moi », règles avec « Mon cycle »)
@@ -408,6 +414,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 11/11 17:35 — [Météo et écran au J1](runs/2026-11-11-1735-meteo-ecran-j1.md) | 🔧 | POLISH-SIM-45 : artefact de l'outil personas (sources pas encore activées), corrigé avec un test ; PROP-SIM-13 notée. Rien ne change dans l'app, rien à faire de votre côté |
 | 11/11 16:35 — [Objectif à l'accueil, CI](runs/2026-11-11-1635-noter-objectif.md) | ✏️ | « Tests » ne dépend plus d'apt (panne DNS du runner) ; POLISH-SIM-51 : « Ce que vous noterez » selon l'objectif ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |
 | 11/11 15:35 — [Lien flou dans Analyses](runs/2026-11-11-1535-sens-du-delai.md) | ✏️ | POLISH-SIM-50 : « rien n'est net » dit une fois, facteur qui change de sens nommé ; tests rouges puis verts ; « Tests » de main relancé (panne DNS du runner). Rien à faire de votre côté |
 | 11/11 13:35 — [Poids dans Tendances](runs/2026-11-11-1335-poids-tendances.md) | ✏️ | POLISH-SIM-47 : mesure « Poids » (dernière pesée du jour) dans Tendances ; graduations à 2 décimales ; tests rouges puis verts, captures claires et sombres. Rien à faire de votre côté |

@@ -21,6 +21,18 @@ describe('personaEntries', () => {
     expect(list.some((e) => new Date(e.at) < new Date('2026-10-20'))).toBe(true)
   })
 
+  it('jour 1 : ni météo ni temps d\'écran, que l\'app ne lit qu\'une fois la source activée (POLISH-SIM-45)', () => {
+    const list = personaEntries(demo, { day: 1, equipment: 'watch', now })
+    expect(types(list).has('weather')).toBe(false)
+    expect(types(list).has('phone_usage')).toBe(false)
+  })
+
+  it('jour 14 : météo et temps d\'écran, activés à l\'accueil', () => {
+    const list = personaEntries(demo, { day: 14, equipment: 'watch', now })
+    expect(types(list).has('weather')).toBe(true)
+    expect(types(list).has('phone_usage')).toBe(true)
+  })
+
   it('téléphone seul : pas et calories seulement côté import', () => {
     const list = personaEntries(demo, { day: 14, equipment: 'phone', now })
     expect(types(list).has('sleep')).toBe(false)
