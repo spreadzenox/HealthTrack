@@ -47,6 +47,7 @@ function emptyDay(dateKey) {
     _stress: [],
     _bp: [],
     _glucose: [],
+    _weight: [],
     _wellbeing: [],
     _weather: null,
     _phone: null,
@@ -111,6 +112,8 @@ function finalize(day) {
       bloodPressure: last(day._bp),
       weather: day._weather,
       glucoseMgDl: last(day._glucose),
+      // Poids du jour (POLISH-SIM-47) : la dernière pesée, à la main ou par une balance
+      weightKg: last(day._weight),
       heartRate: hr.length ? { min: Math.min(...hr), max: Math.max(...hr), count: hr.length } : null,
       wellbeing: wb.length
         ? { average: Math.round((wb.reduce((s, v) => s + v, 0) / wb.length) * 10) / 10, count: wb.length }
@@ -256,6 +259,11 @@ export function buildDailyJournal(entries) {
       case 'food':
         day.meals += 1
         day.mealKcal += mealKcal(p.items)
+        day.items.push(e)
+        break
+      case 'weight':
+      case 'body_composition':
+        if (isNum(p.valueKg) && p.valueKg > 0) day._weight.push(p.valueKg)
         day.items.push(e)
         break
       default:

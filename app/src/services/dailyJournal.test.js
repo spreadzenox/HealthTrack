@@ -152,6 +152,18 @@ describe('buildDailyJournal', () => {
     expect(day.items.map((i) => i.type)).toEqual(['weight', 'body_composition'])
   })
 
+  it('POLISH-SIM-47 : le poids du jour est la dernière pesée (poids ou composition), sinon null', () => {
+    const [day] = buildDailyJournal([
+      e('weight', '2026-10-08T07:30:00', { valueKg: 77.2 }, 'withings'),
+      e('body_composition', '2026-10-08T07:30:00', { fatRatioPct: 24.1 }, 'withings'),
+      e('weight', '2026-10-08T19:00:00', { valueKg: 78 }, 'manual'),
+    ])
+    expect(day.summary.weightKg).toBe(78)
+    expect(day.items.map((i) => i.type)).toEqual(['weight', 'body_composition'])
+    const [other] = buildDailyJournal([e('steps', '2026-10-09T10:00:00', { count: 100 })])
+    expect(other.summary.weightKg).toBeNull()
+  })
+
   it('reporte le poids sur la composition quand elle ne le contient pas', () => {
     const [day] = buildDailyJournal([
       e('weight', '2026-10-08T07:30:00', { valueKg: 77.2 }, 'withings'),

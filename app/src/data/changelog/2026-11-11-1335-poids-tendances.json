@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-11",
+  "kind": "amélioration",
+  "title": "Votre poids a sa courbe dans Tendances",
+  "items": [
+    "Vos pesées, notées à la main ou venues d'une balance, ont maintenant leur courbe dans Journal › Tendances, dès 3 pesées sur la période (Mois si vous vous pesez moins souvent).",
+    "Les graduations du graphique ne sont plus arrondies à tort (77,25 au lieu de 77,3)."
+  ]
+}

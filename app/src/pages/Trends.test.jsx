@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Trends from './Trends'
+import { readMeasureDays } from '../services/trendsMeasureDays'
 
 
 const NOW = new Date(2026, 10, 7, 20)
@@ -242,5 +243,33 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(await screen.findByText('Vos courbes apparaîtront après 3 jours de mesures.')).toBeInTheDocument()
     expect(screen.queryByRole('group', { name: 'Période' })).toBeNull()
     expect(screen.queryByRole('list', { name: 'Mesures affichées' })).toBeNull()
+  })
+})
+
+describe('POLISH-SIM-47 : le poids dans Tendances', () => {
+  it('les pesées (poids, composition) sont lues avec les autres mesures', async () => {
+    const fake = async ({ type }) => (type === 'weight'
+      ? [5, 6].map((d) => ({ type, source: 'app_weight', at: new Date(2026, 10, d, 8).toISOString(), payload: { valueKg: 80 - d / 10 } }))
+      : type === 'body_composition'
+        ? [{ type, source: 'withings', at: new Date(2026, 10, 7, 7).toISOString(), payload: { valueKg: 79.1 } }]
+        : [])
+    const got = await readMeasureDays(NOW, fake)
+    expect(got.map((d) => [d.dateKey, d.summary.weightKg])).toEqual([['2026-11-07', 79.1], ['2026-11-06', 79.4], ['2026-11-05', 79.5]])
+  })
+})
+
+describe('POLISH-SIM-47 : graduations du poids', () => {
+  it('un pas de 0,25 kg s’écrit en entier (77,25, jamais « 77,3 »)', async () => {
+    const weighIns = [5, 6, 7].map((d, i) => ({ dateKey: `2026-11-0${d}`, summary: { weightKg: [77.9, 77.4, 77.1][i] } }))
+    const { container } = render(
+      <MemoryRouter initialEntries={['/tendances?mesure=weight']}>
+        <Trends now={NOW} readDays={async () => weighIns} readDayStates={async () => null}
+          readFaceEntries={async () => []} readDayContributions={async () => null} readDayChanges={async () => null} />
+      </MemoryRouter>,
+    )
+    await waitFor(() => expect(container.querySelector('.trends-axis.mono')).not.toBeNull())
+    const labels = [...container.querySelectorAll('.trends-axis.mono')].map((t) => t.textContent)
+    expect(labels).toContain('77,25')
+    expect(labels).not.toContain('77,3')
   })
 })
