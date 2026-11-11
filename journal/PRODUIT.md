@@ -363,6 +363,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **10/11 15:35** — **Analyses s'ouvre sur Digestion** (POLISH-SIM-33) pour qui suit son ventre ou son cycle.
 - **10/11 14:35** — **Analyses : liens pas assez nets en gris** (POLISH-SIM-30) : chiffre en gris, légende ; simulations Endométriose J14 et Ventre et données J45 (POLISH-SIM-31 à 37, PROP-SIM-10).
 - **10/11 18:35** — **Journal : modifier une note de digestion** (POLISH-SIM-36b) : « Modifier » dans le « … » ouvre Calme / Gêne / Douleur sur place, heure gardée.
+- **11/11 01:35** — CI de main réparée (test daté du « 1er » du mois), rien de visible.
 - **11/11 00:35** — **Noter les symptômes du cycle** (CYCLE-2c) : puces dans « Mes règles », une touche note, une autre retire.
 - **10/11 23:35** — **Corriger ses règles depuis le Journal** (CYCLE-2b) : « … » de la ligne « Règles », Modifier le flux ou Supprimer.
 - **10/11 22:35** — **Noter ses règles depuis Aujourd'hui** (CYCLE-2) : bouton « Règles » du bandeau, un geste par flux, corriger ou retirer.
