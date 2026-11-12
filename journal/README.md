@@ -8,6 +8,11 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🔧 **Coulisses : un avertissement en moins sur Sources (12/11 06:35)** : audit de la version play en clair sur les
+> données de démo, 18 écrans sans défaut visible. Seul constat : un module natif était déclaré deux fois, ce qui
+> écrivait un avertissement à l'ouverture de Sources. Corrigé, avec un test qui l'empêche de revenir. Rien ne change à
+> l'écran ; rien à faire de votre côté.
+
 > 👆 **Des champs plus faciles à toucher (12/11 05:35)** : les champs de saisie (clé Gemini de la version complète,
 > profil de Nutrition, compte Withings) faisaient 40 px de haut ; ils passent à 44 px, la taille minimale d'une cible
 > au doigt ([Réglages, sombre](runs/captures/2026-11-12-0535-cle-gemini-44px-sombre.png)). Part ce soir sur Alpha.
@@ -474,6 +479,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 06:35 — [Plugin enregistré une fois](runs/2026-11-12-0635-plugin-une-fois.md) | 🔧 | POLISH-AUDIT-3 : audit play clair sur démo (18 pages sans défaut visible) ; avertissement « AppManager already registered » de Sources supprimé, test de garde. Tests (3464), lint 0, build, visual |
 | 12/11 05:35 — [Champs à 44 px](runs/2026-11-12-0535-champs-44px.md) | 🔧 | POLISH-AUDIT-2 : les champs des Réglages (clé Gemini en sideload…) passent de 40 à 44 px de haut. Tests (3462), lint, build, visual (18 pages, aucune cible < 44 px), captures vérifiées |
 | 12/11 04:35 — [Nutrition : profil sans redite](runs/2026-11-12-0435-profil-nutrition.md) | 🔧 | POLISH-AUDIT-1 : audit des écrans (vides et démo, sombre, play) ; la carte du profil de Nutrition dit à quoi il sert. Alpha 101006 parti à 04:24. Tests (3461), lint, build, captures vérifiées |
 | 12/11 03:35 — [Sources : dernières mesures](runs/2026-11-12-0335-dernieres-mesures.md) | 🔧 | POLISH-SIM-35 : « Dernières mesures » d'après la fin d'un total du jour ; SpO₂ et `--source` dans l'outil des personas. Tests (3461), lint, build, captures vérifiées |

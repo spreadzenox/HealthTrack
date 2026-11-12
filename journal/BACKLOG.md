@@ -447,6 +447,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-AUDIT-2** ✅ 12/11 05:35 (suite de l'audit du 12/11 04:35) Réglages, sideload : le champ « Clé API
   Gemini » (et tous les `.settings-input`) faisait 40 px de haut, sous la cible de 44 px (DESIGN.md). `min-height:
   var(--tap-min)`, test dans `buttonShape.test.js`.
+- [x] **POLISH-AUDIT-3** ✅ 12/11 06:35 (audit play, clair, démo : 18 pages sans défaut visible à corriger) Sources :
+  « Capacitor plugin "AppManager" already registered » dans la console (le plugin était enregistré par
+  `phoneApps.js` et par `WatchDiagnostic.jsx`). Enregistré une seule fois (`phoneApps.js` l'exporte) ; garde-fou
+  `pluginRegistration.test.js` (un `registerPlugin('X')` par plugin dans `src/`).
 - [ ] **PROP-SIM-11** (proposition avec maquette, pas de code sans accord ; rejoint CYCLE-4 et PROP-SIM-10) cycle
   visible hors du Journal : jour du cycle sur Aujourd'hui, règles en bandes dans Tendances, règles et symptômes dans le
   rapport médecin, avec ce qu'il contient avant de le créer.

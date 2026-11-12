@@ -6,11 +6,10 @@
  * Logique dans src/devices/huawei/diagnostic.js, pairing.js et setup.js.
  */
 import { useState } from 'react'
-import { registerPlugin } from '@capacitor/core'
 import { Link, useInRouterContext } from 'react-router-dom'
 import { getClient, isBleAvailable, ready } from '../devices/ble/bleService'
 import { runHuaweiDiagnostic, STEPS } from '../devices/huawei/diagnostic'
-import { detectPhoneApps } from '../devices/phoneApps'
+import { detectPhoneApps, NativeAppManager } from '../devices/phoneApps'
 import { CURRENT_VERSION } from '../services/updateCheck'
 import { formatAgo } from '../utils/timeAgo'
 import { APP_NAME } from '../config/brand'
@@ -46,8 +45,6 @@ function saveLast(report) {
 }
 
 const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
-
-const NativeAppManager = registerPlugin('AppManager')
 
 /** Boîte de désinstallation / réglages d'une app : faux plugin des captures, natif dans l'app, sinon aucun. */
 function appManagerPlugin() {
