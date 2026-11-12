@@ -8,6 +8,14 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🧪 **Deux personas de plus (12/11 08:35)** : « Ventre et données » au 45e jour (téléphone seul) et « Sportif » au
+> 14e jour (Galaxy Watch). Le constat le plus fort : la carte « Vos analyses digestives sont prêtes » ouvre un écran qui
+> dit « Aucun lien assez net » (« après 45 jours, je me sens flouée »)
+> ([capture](simulations/captures/2026-11-12-0835-ventre-et-donnees-J45/accueil.png)). Aussi : le « + » des écarts ne
+> dit pas s'il veut dire mieux, Calme / Gêne / Douleur n'est pas relié à la note sur 5, « Lactose » n'est pas reconnu
+> comme FODMAP, et le sportif ne retrouve pas ses séances. Douze corrections au BACKLOG (POLISH-SIM-52 à 63) pour les
+> prochains runs ; [synthèse](simulations/2026-11-12-0835-synthese.md). Rien à faire de votre côté.
+
 > ✍️ **Journal vide : « Noter ma digestion » ouvre la note (12/11 07:35)** : audit de la version play en sombre sur
 > données vierges. Dans un Journal encore vide, la tuile « Noter votre digestion » vous laissait sur Aujourd'hui sans
 > rien d'ouvert. Elle ouvre maintenant la fenêtre « Ma digestion », et prend le même libellé que le bouton d'Aujourd'hui
@@ -485,6 +493,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 08:35 — [Deux personas](runs/2026-11-12-0835-personas.md) | 💡 | Idées : Ventre et données J45 (iPhone seul) et Sportif J14 (Galaxy Watch) ; POLISH-SIM-52 à 63, PROP-SIM-14. Journal seul |
 | 12/11 07:35 — [Journal vide : digestion](runs/2026-11-12-0735-journal-vide-digestion.md) | 🔧 | POLISH-JOURNAL-VIDE : audit play sombre sur données vierges ; la tuile « Noter ma digestion » du Journal vide ouvre la fenêtre de la digestion. Tests, lint, build, visual |
 | 12/11 06:35 — [Plugin enregistré une fois](runs/2026-11-12-0635-plugin-une-fois.md) | 🔧 | POLISH-AUDIT-3 : audit play clair sur démo (18 pages sans défaut visible) ; avertissement « AppManager already registered » de Sources supprimé, test de garde. Tests (3464), lint 0, build, visual |
 | 12/11 05:35 — [Champs à 44 px](runs/2026-11-12-0535-champs-44px.md) | 🔧 | POLISH-AUDIT-2 : les champs des Réglages (clé Gemini en sideload…) passent de 40 à 44 px de haut. Tests (3462), lint, build, visual (18 pages, aucune cible < 44 px), captures vérifiées |

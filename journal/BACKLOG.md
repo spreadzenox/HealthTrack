@@ -441,6 +441,44 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   selon le délai, sans dire quoi en retenir. Vérifier la présentation (si rien n'est net, le dire une fois).
 - [x] **POLISH-SIM-51** (fait 11/11 16:35, `handNotes`) (Maigrir J1) Accueil, « Votre téléphone suffit » : la liste (bien-être, digestion, repas en
   photo) ignore l'objectif choisi ; l'adapter (poids : repas, pas).
+- [ ] **POLISH-SIM-52** (Ventre et données J45, 12/11 08:35) Aujourd'hui : la carte « Vos analyses digestives sont
+  prêtes » ouvre un écran qui dit « Aucun lien assez net pour l'instant ». Titre selon l'état réel (prêtes avec une
+  piste nette ; sinon une phrase vraie, ex. « Vos analyses digestives : rien de net pour l'instant »). `DigestBlock.jsx`.
+- [ ] **POLISH-SIM-53** (Ventre et données J45) Analyses : « +0,2 pt » sans dire si « + » veut dire mieux ; la ligne
+  « pt : points de votre note de confort digestif, sur 5 » ne donne pas le sens. Dire une fois « + : plus de confort »
+  (et l'équivalent pour le bien-être), sans refrain.
+- [ ] **POLISH-SIM-54** (Ventre et données J45) Échelle de la digestion : la saisie dit Calme / Gêne / Douleur, les
+  analyses et Tendances parlent d'une note « sur 5 ». Montrer la correspondance là où la note sur 5 apparaît.
+- [ ] **POLISH-SIM-55** (Ventre et données J45) Analyses : « Lactose » est un groupe FODMAP, mais rien ne le dit ; la
+  persona SII conclut « aucun mot sur les FODMAP ». Vérifier pourquoi seuls lactose (et pas fructanes, GOS, polyols)
+  apparaissent sur 45 jours de démo (données de démo ou seuil), et nommer le groupe (« Lactose (FODMAP) ») si c'est
+  l'app. Lié à PROP-SIM-10 (groupes FODMAP plus visibles).
+- [ ] **POLISH-SIM-56** (Ventre et données J45) « Long terme : encore 12 jours notés » au 45e jour, puis 11 après la
+  note du matin : vérifier ce qui est compté (jours avec bien-être et digestion ?) et le dire en mots simples.
+- [ ] **POLISH-SIM-57** (Ventre et données J45) Rapport PDF : la case « bien-être estimé (caméra) » est proposée sans
+  aucune lecture du visage ; la cacher dans ce cas. Données › Exporter : « rangé dans Documents » et « Enregistrez le
+  fichier… (ex. Dossier Documents) » se contredisent ; une seule phrase.
+- [ ] **POLISH-SIM-58** (Sportif J14, Galaxy Watch) Séances : Sources annonce des « séances » reçues, la persona ne les
+  trouve ni dans Journal › Jours ni dans Tendances. Vérifier dans l'outil (environ 1 jour sur 3 avec séance) et dans
+  l'app où elles s'affichent ; si elles ne sont que dans une liste de saisies, une tuile « Séance » dans la carte du
+  jour.
+- [ ] **POLISH-SIM-59** (Sportif J14) Journal › Jours : tuile « Repas 1 » sans kcal alors que Repas affiche ≈ 479 kcal
+  pour ce repas, et qu'un autre jour dit ≈ 1 039 kcal. Vérifier la règle de la tuile (kcal dès qu'un repas est compté).
+- [ ] **POLISH-SIM-60** (Sportif J14) Sources, carte Samsung Health : « Si votre montre en est capable, activez ce
+  partage » pour la VFC, alors que Samsung Health ne l'écrit pas dans Health Connect. Dire ce qui est vrai pour l'app
+  source connue (Samsung : « Samsung Health ne partage pas la VFC »). `MyDevices.jsx`.
+- [ ] **POLISH-SIM-61** (Sportif J14) Tendances : la zone « attendu » (pointillé) n'est pas comprise (« d'où vient
+  cette baisse prévue ? ») ; en Semaine, sommeil seul, des jours futurs vides. Une ligne de légende courte ; pas de
+  jours futurs sans attendu.
+- [ ] **POLISH-SIM-62** (Sportif J14) Analyses au 14e jour noté : « Aucun lien assez net » et « Moyen terme : encore 7
+  jours notés », sans retour après « Enregistrer » la note de bien-être. Confirmer la note (« Noté : 4/5 ») ; dire en
+  une ligne ce qui a été comparé.
+- [ ] **POLISH-SIM-63** (Outil, Sportif J14) La persona voit « Cigarettes 3 » sans avoir activé le compteur
+  (POLISH-SIM-42 : opt-in) : `personaData` garde les cigarettes de la démo. Les retirer sauf objectif tabac.
+- [ ] **PROP-SIM-14** (proposition avec maquette, pas de code sans accord ; Sportif J14) « Autre chose » n'offre qu'un
+  doublon de « Décrire un repas » : séance ou courbatures notées à la main pour qui n'a pas de montre ? Le « + » de
+  « Vos données du jour » ne fait que surligner les boutons du haut : l'ouvrir sur un choix, ou le retirer.
+  Rappels déjà en proposition (PROP-SIM-10) : essai lancé soi-même dans Agir, export CSV, aperçu du rapport PDF.
 - [x] **POLISH-AUDIT-1** ✅ 12/11 04:35 (audit des écrans vides et de démo, sombre, play) Journal › Nutrition vide : la
   carte du profil répétait « Compléter mon profil » / « Complétez votre profil… ». Elle dit à quoi il sert : « Sexe, âge,
   taille, poids : vos repères d'apports en tiennent compte. »
