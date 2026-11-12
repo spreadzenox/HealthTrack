@@ -413,6 +413,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **12/11 13:35** — Journal › Tendances : sous la courbe du confort digestif, une ligne « Confort digestif : Calme 5, Gêne 3, Douleur 1 » ; le détail d'un jour ne répète plus « 5 = calme » (POLISH-SIM-54, fini).
 - **12/11 14:35** — Analyses : sous chaque groupe FODMAP, « pour 1 repas riche en lactose (FODMAP) de plus » ; données de démo et des personas avec des repas riches en GOS, fructose en excès et sorbitol (POLISH-SIM-55).
 - **12/11 15:35** — Analyses : la prochaine étape dit son délai et ce qui est compté (« Long terme (de 7 à 27 jours avant) : encore 12 jours avec votre digestion notée » ; bien-être « noté ou lu ») (POLISH-SIM-56).
+- **12/11 17:35** — Données : le rapport PDF ne propose la case du bien-être estimé qu'avec au moins une lecture du visage ; la sauvegarde dit le lieu du fichier une fois, après l'export (POLISH-SIM-57). #939 (POLISH-SIM-56) reprise et fusionnée avec ce run.
 - **12/11 12:35** — Journal › Jours : la tuile Repas dit « ≈ … kcal » tant que la table Ciqual se charge, au lieu de « Repas 1 » ; l'outil des personas capture une fois la table chargée (POLISH-SIM-59).
 - **12/11 11:35** — Analyses : la ligne de l'unité dit le sens du « + » (« meilleur bien-être », « plus de confort ») et, en digestion, Calme 5, Gêne 3, Douleur 1 (POLISH-SIM-53, 54 en partie).
 - **12/11 10:35** — Sources, carte Samsung Health : la VFC n'est plus « à activer » ; « Samsung Health ne partage pas la variabilité cardiaque avec Health Connect » (POLISH-SIM-60).

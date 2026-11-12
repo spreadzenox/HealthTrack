@@ -113,7 +113,7 @@ export default function Data() {
         a.click()
         document.body.removeChild(a)
         setTimeout(() => URL.revokeObjectURL(url), 1000)
-        setExportStatus('Téléchargement démarré. Enregistrez le fichier sur votre appareil (ex. Dossier Documents).')
+        setExportStatus(`${filename} téléchargé.`)
       }
     } catch (e) {
       setExportStatus('Erreur : ' + (e.message || 'export impossible'))
@@ -221,7 +221,7 @@ export default function Data() {
           <p className="data-hint">
             {nothingToExport
               ? 'Rien à sauvegarder pour l’instant : vos repas, notes et mesures s’y ajouteront.'
-              : 'Un fichier JSON, rangé dans Documents.'}
+              : 'Un fichier JSON, à garder en lieu sûr.'}
           </p>
           {entryCount > 0 && (
             <p className="data-count">{monoDigits(plural(entryCount, 'entrée'))} et votre profil</p>

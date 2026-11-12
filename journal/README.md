@@ -8,6 +8,16 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 📄 **Données : rapport et sauvegarde plus clairs (12/11 17:35)** : une persona voyait la case « Inclure mon bien-être
+> estimé (caméra) » sans jamais avoir activé la lecture du visage : le rapport PDF ne la propose plus tant qu'aucune
+> lecture n'existe. Et la sauvegarde disait deux lieux (« rangé dans Documents », puis « Enregistrez le fichier… ») : le
+> lieu n'est dit qu'une fois, après l'export ([Données](runs/captures/2026-11-12-1735-donnees-export-rapport.png)).
+> La correction de 15:35 (ci-dessous) était restée en attente de fusion : elle part avec celle-ci ce soir sur Alpha.
+> ⚠️ **Liens de captures cassés** : les captures citées dans ce résumé depuis le 12/11 00:35 (16 images) n'ont pas été
+> enregistrées dans le dépôt (les `.png` étaient ignorés par git, il fallait les forcer). Réglé pour la suite : les
+> captures du journal sont maintenant suivies d'office. Les 16 anciennes seront refaites ou leurs liens retirés
+> (JOURNAL-CAPTURES-1). Rien à faire de votre côté.
+
 > 🤖 **Vos gestes dans un navigateur : des missions pour Claude dans Chrome (12/11 16:35)** : votre décision de 16:15
 > est appliquée. Chaque action qui vous reste a maintenant sa voie (CI, mission navigateur, ou votre clic final) :
 > [classement](PRODUIT.md) § 4.0. Les missions sont dans [`missions/`](missions/README.md) ; dans Chrome, dites
@@ -552,6 +562,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 17:35 — [Rapport sans caméra, sauvegarde en une phrase](runs/2026-11-12-1735-rapport-sans-camera.md) | 🔧 | POLISH-SIM-57 ; reprise de #939 (POLISH-SIM-56) restée ouverte ; `.gitignore` : captures du journal suivies (16 liens cassés depuis 00:35, JOURNAL-CAPTURES-1). Tests (3475), lint, build, visual |
 | 12/11 16:35 — [Missions navigateur du propriétaire](runs/2026-11-12-1635-missions-navigateur.md) | 📓 | Décision du 12/11 16:15 : § 4.0 classe chaque action (a) / (b) / (c) ; 12 missions dans `journal/missions/` ; charte, BACKLOG (AUTO-GESTES-1 à 4), POUR-IOS. Journal seul |
 | 12/11 15:35 — [Ce qui reste à noter, dit clairement](runs/2026-11-12-1535-long-terme-compte.md) | 🔧 | POLISH-SIM-56 : « Long terme (de 7 à 27 jours avant) : encore N jours avec votre digestion notée » ; build de main relancé (panne Maven passagère, vert). PR #939 verte mais **non mergée** (merge refusé par la session). Tests (3473), lint, build, capture persona J45 |
 | 12/11 13:35 — [L'échelle de la digestion dans Tendances](runs/2026-11-12-1335-echelle-digestion-tendances.md) | 🔧 | POLISH-SIM-54 (fini) : « Confort digestif : Calme 5, Gêne 3, Douleur 1 » sous la courbe ; « 5 = calme » retiré du détail du jour. Tests (3472), lint, build, visual, captures |
@@ -1046,9 +1057,9 @@ En cas de doute : prendre l'item du haut de `BACKLOG.md` → « Prochaines étap
    Écrit pour l'utilisateur (clair, concret, sans jargon). Nouvelle semaine ISO (lundi, heure de
    Paris) → déplacer l'ancien bloc dans `semaines/AAAA-Sww.md` et repartir d'un bloc vide.
 4. Commit(s) clairs, push, PR vers `main` intitulée `[Auto] <résumé>`, corps = résumé du run. Les captures
-   (`journal/runs/captures/*.png`, `simulations/captures/`) sont ignorées par `.gitignore` (`*.png`) : les ajouter
-   avec **`git add -f`**, puis vérifier avec `git ls-files` que chaque capture citée dans le résumé existe (les runs
-   du 09/11 21:35 à 23:35 l'avaient oublié : liens morts).
+   du journal (`journal/**/*.png`) sont suivies par git depuis le 12/11 17:35 (plus de `git add -f`) : vérifier quand
+   même avec `git ls-files` que chaque capture citée dans le résumé existe (oubli du 09/11 au soir, puis du 12/11
+   00:35 à 15:35 : liens morts).
 5. Attendre la CI (s'abonner à l'activité de la PR, pas de boucle d'attente) : **Frontend (Vitest)**
    et **Build APK** doivent être verts (*Build APK* échoue = la release échouera aussi). Les jobs
    émulateur sont longs : les attendre seulement si le changement touche `android/`, Capacitor
