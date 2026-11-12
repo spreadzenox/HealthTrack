@@ -94,6 +94,19 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(container.querySelector('.trends-gloss')).toBeNull()
   })
 
+  it('POLISH-SIM-54 : le confort digestif dit une fois la note de chaque niveau sous la courbe', async () => {
+    const gutStates = { ...states, showDigestiveCurve: true }
+    const { container } = render(
+      <MemoryRouter initialEntries={['/tendances?mesure=digestion']}>
+        <Trends now={NOW} readDays={async () => days} readDayStates={async () => gutStates}
+          readFaceEntries={async () => []} readDayContributions={async () => null} readDayChanges={async () => null} />
+      </MemoryRouter>,
+    )
+    await screen.findByRole('img', { name: 'Courbe de Confort digestif' })
+    const gloss = [...container.querySelectorAll('.trends-gloss li')].map((li) => li.textContent)
+    expect(gloss).toEqual(['Confort digestif : Calme 5, Gêne 3, Douleur 1'])
+  })
+
   it('POLISH-SIM-28 : la grille suit chaque graduation de l’axe de gauche, aucune ligne grise isolée', async () => {
     const { container } = renderAt('/tendances')
     await screen.findByRole('img', { name: 'Courbe de Bien-être' })

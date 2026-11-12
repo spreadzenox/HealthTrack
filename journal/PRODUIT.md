@@ -371,6 +371,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **11/11 16:35** — Accueil sans Health Connect : « Ce que vous noterez » suit l'objectif (poids, règles, digestion) (POLISH-SIM-51) ; « Tests » (budget de lectures) ne dépend plus d'apt, qui tombait en panne DNS sur le runner.
 - **11/11 19:35** — Exemple digestion sans l'objectif ventre : plus de bandeau « suivi digestif masqué » au-dessus des données fictives (POLISH-SIM-37b).
 - **11/11 20:35** — Visite guidée : le badge « Exemple · données fictives » passe dans la bulle, il ne masque plus le nom de l'app (POLISH-SIM-37c).
+- **12/11 13:35** — Journal › Tendances : sous la courbe du confort digestif, une ligne « Confort digestif : Calme 5, Gêne 3, Douleur 1 » ; le détail d'un jour ne répète plus « 5 = calme » (POLISH-SIM-54, fini).
 - **12/11 12:35** — Journal › Jours : la tuile Repas dit « ≈ … kcal » tant que la table Ciqual se charge, au lieu de « Repas 1 » ; l'outil des personas capture une fois la table chargée (POLISH-SIM-59).
 - **12/11 11:35** — Analyses : la ligne de l'unité dit le sens du « + » (« meilleur bien-être », « plus de confort ») et, en digestion, Calme 5, Gêne 3, Douleur 1 (POLISH-SIM-53, 54 en partie).
 - **12/11 10:35** — Sources, carte Samsung Health : la VFC n'est plus « à activer » ; « Samsung Health ne partage pas la variabilité cardiaque avec Health Connect » (POLISH-SIM-60).

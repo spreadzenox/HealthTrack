@@ -87,8 +87,8 @@ describe('detailSource (POLISH-SIM-4) : d’où vient le chiffre d’un jour pas
     expect(detailSource('wellbeing', { value: 3.2, note: null, readings: 3 })).toBe('d’après le visage')
     expect(detailSource('wellbeing', { value: 3.2, note: null, readings: 0, observed: false })).toBe('estimé')
   })
-  it('confort digestif : donne toujours le sens de l’échelle', () => {
-    expect(detailSource('digestion', { value: 2, gut: 'Gêné', observed: true })).toBe('noté « Gêné », 5 = calme')
-    expect(detailSource('digestion', { value: 2, observed: false })).toBe('estimé, 5 = calme')
+  it('confort digestif : noté ou estimé, l’échelle est dite sous la courbe (POLISH-SIM-54)', () => {
+    expect(detailSource('digestion', { value: 2, gut: 'Gêné', observed: true })).toBe('noté « Gêné »')
+    expect(detailSource('digestion', { value: 2, observed: false })).toBe('estimé')
   })
 })
