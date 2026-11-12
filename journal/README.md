@@ -8,6 +8,13 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🫘 **Analyses : les groupes FODMAP nommés (12/11 14:35)** : une persona SII lisait « Lactose » sans savoir que c'était
+> un FODMAP, et ne voyait aucun autre groupe en 45 jours. La ligne sous chaque groupe le dit maintenant : « pour 1 repas
+> riche en lactose (FODMAP) de plus ». L'absence des autres groupes venait des données de démo (seul le yaourt était
+> riche en FODMAP) : elles ont maintenant des repas de lentilles (GOS) et de poire (fructose en excès, sorbitol)
+> ([persona J45, Digestion](runs/captures/2026-11-12-1435-fodmap-nomme-J45.png)). Part ce soir sur Alpha. Rien à faire
+> de votre côté.
+
 > 🥣 **Tendances : la note sur 5 de la digestion expliquée (12/11 13:35)** : une persona notait « Gêne » sans savoir à
 > quel chiffre cela correspondait sur la courbe. Sous la courbe du confort digestif, une ligne le dit une fois :
 > « Calme 5, Gêne 3, Douleur 1 », comme dans Analyses ; le détail d'un jour ne répète plus « 5 = calme »
@@ -525,6 +532,7 @@
 | Run | Type | Résultat |
 |---|---|---|
 | 12/11 13:35 — [L'échelle de la digestion dans Tendances](runs/2026-11-12-1335-echelle-digestion-tendances.md) | 🔧 | POLISH-SIM-54 (fini) : « Confort digestif : Calme 5, Gêne 3, Douleur 1 » sous la courbe ; « 5 = calme » retiré du détail du jour. Tests (3472), lint, build, visual, captures |
+| 12/11 14:35 — [Les groupes FODMAP nommés](runs/2026-11-12-1435-fodmap-nomme.md) | 🔧 | POLISH-SIM-55 : « (FODMAP) » sous chaque groupe dans Analyses ; démo avec GOS, fructose, sorbitol. Tests (3473), lint, build, visual, capture persona J45 |
 | 12/11 12:35 — [La tuile Repas en attendant les kcal](runs/2026-11-12-1235-repas-kcal-attente.md) | 🔧 | POLISH-SIM-59 : « ≈ … kcal » tant que la table Ciqual se charge ; l'outil des personas capture une fois la table chargée. Tests (3471), lint, build, visual, capture persona |
 | 12/11 11:35 — [Le sens du « + » dans Analyses](runs/2026-11-12-1135-analyses-sens-plus.md) | 🔧 | POLISH-SIM-53 (et 54 pour Analyses) : la ligne de l'unité dit ce que veut dire « + » et la note de chaque niveau de digestion. Tests (3468), lint, build, visual, captures |
 | 12/11 10:35 — [Samsung Health et la VFC](runs/2026-11-12-1035-samsung-vfc.md) | 🔧 | POLISH-SIM-60 : la carte Samsung Health dit que la VFC n'est pas partagée au lieu de proposer de l'activer. Tests (3467), lint, build, visual, capture persona |

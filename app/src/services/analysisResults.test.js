@@ -280,6 +280,13 @@ describe('matrice (ORG-5b)', () => {
     expect(factorMeta('fodmap_fructans')).toMatchObject({ theme: 'nutrition', actionable: true, label: 'Fructanes' })
   })
 
+  it('un groupe FODMAP est nommé comme tel sous son libellé (POLISH-SIM-55)', async () => {
+    const { factorMeta } = await import('./analysisResults')
+    expect(factorMeta('fodmap_lactose').text(1)).toBe('1 repas riche en lactose (FODMAP) de plus')
+    expect(factorMeta('fodmap_fructans').text(2)).toBe('2 repas riches en fructanes (FODMAP) de plus')
+    expect(factorMeta('sugar_g').text(10)).not.toMatch(/FODMAP/)
+  })
+
   it('journée à part : malade ou en voyage', async () => {
     const { buildAnalysisMatrix } = await import('./analysisResults')
     const entries = [

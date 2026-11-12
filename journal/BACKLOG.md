@@ -450,7 +450,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-54** ✅ 12/11 13:35 (Tendances : ligne « Confort digestif : Calme 5, Gêne 3, Douleur 1 » sous la courbe ; « 5 = calme » retiré du détail du jour) (Ventre et données J45) Échelle de la digestion : la saisie dit Calme / Gêne / Douleur, les
   analyses et Tendances parlent d'une note « sur 5 ». Montrer la correspondance là où la note sur 5 apparaît.
   Analyses fait le 12/11 11:35 (« (Calme 5, Gêne 3, Douleur 1) ») ; reste Tendances.
-- [ ] **POLISH-SIM-55** (Ventre et données J45) Analyses : « Lactose » est un groupe FODMAP, mais rien ne le dit ; la
+- [x] **POLISH-SIM-55** ✅ 12/11 14:35 (cause : les repas de la démo n'avaient qu'un aliment riche en FODMAP, le yaourt ; deux repas ajoutés, lentilles (GOS) et poire (fructose en excès, sorbitol), sans fructanes que la visite plante elle-même ; ligne sous le libellé « repas riche en lactose (FODMAP) ») (Ventre et données J45) Analyses : « Lactose » est un groupe FODMAP, mais rien ne le dit ; la
   persona SII conclut « aucun mot sur les FODMAP ». Vérifier pourquoi seuls lactose (et pas fructanes, GOS, polyols)
   apparaissent sur 45 jours de démo (données de démo ou seuil), et nommer le groupe (« Lactose (FODMAP) ») si c'est
   l'app. Lié à PROP-SIM-10 (groupes FODMAP plus visibles).
