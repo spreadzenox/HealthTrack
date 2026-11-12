@@ -100,6 +100,7 @@
 | **Nom** | **Décision du 21/10 au soir : l'app s'appelle « Halcya »** (de « halcyon days », les jours calmes et heureux ; « jours alcyoniens »). Commence par H : l'icône « H nuit » reste. À appliquer au **prochain run de code** via la source unique `app/src/config/brand.js`, dans les deux variantes (titre, démarrage, textes, notifications, libellé du lanceur). **Aucun identifiant technique ne change** (`fr.jpesquet.sante`, `com.healthtrack.app`, dépôt, fichiers, workflows). Titre de fiche proposé : « Halcya — ventre et bien-être » (≤ 30 caractères). Vérifié le 21/10 : pas d'app « Halcya », halcya.app / halcya.fr apparemment libres, marque US HALCYA en textile seulement ; **risque** : proximité des nombreuses marques « Halcyon » (logiciel, santé) → recherche d'antériorité INPI / EUIPO par le propriétaire avant le lancement public (P15). |
 | **Retours du premier testeur iPhone (06/11 au soir)** | Séance guidée, approuvée par le propriétaire : **priorité des runs de code** (après une CI cassée). « Interface d'ingénieur », trop de texte, couleurs et cadres au sens constant. (1) Aujourd'hui à refaire (statut du jour en tête, puis l'explication, les données par source, un endroit pour noter) ; (2) note de bien-être de 1 à 5 avec un milieu, précisions pré-remplies, rappel du soir en deux choix ; (3) Analyses sans détails techniques, Bien-être et Tendances fusionnés ou différenciés ; (4) repas : état vide en un bouton, photo directe ; (5) toutes les autorisations pendant l'accueil (et deux points propres à l'iPhone, transmis). Résumé : [`RETOURS-TESTEURS.md`](RETOURS-TESTEURS.md) ; étapes TESTEUR-* dans `BACKLOG.md`. Faites : 4a (repas vides en un bouton, 06/11 22:35), 1a (retouches de l'Accueil, 23:35), 4b (photo du repas directe depuis l'Accueil, Nutrition et le Journal vide, 07/11 00:35), 3a et 4c (Analyses sans « hasard » ni « exploratoire », Journal en une phrase, 01:35), 4d (profil de Nutrition : provenance au toucher, « À compléter » ouvre le formulaire, 02:35), 3c (le modèle à côté de « Comment c’est calculé », plus dedans, 03:35), 2a (note de bien-être de 1 à 5 avec un milieu ; stockage 0–5 inchangé, affichage converti partout, aucune donnée réécrite, 04:35), 2b (la note d'abord, puis précisions et phrase, 05:35), 2c (« Remplir maintenant » ou « Recevoir un rappel » à l'heure choisie ; notification du soir de 1 à 5, 06:35), 5a-1 (écran « La météo de votre ville » à l'accueil, position approximative après divulgation ; premier geste de l'accueil de 1 à 5, 07:35), 1b (maquette du nouvel écran Aujourd'hui, `maquettes/aujourdhui/`, 08:35), 1c (carte « Votre journée » en tête de l'Accueil, 09:35). |
 | **Cycle (10/11 vers 18:50)** | « Ok cycle » : exception au mode polish. (1) Brique partagée (stockage IndexedDB, export / import, ligne « Règles · 2e jour · flux moyen » et jour du cycle dans Journal › Jours, invisible tant que « Mon cycle » n'est pas coché et sans donnée) ; (2) saisie des règles en un geste depuis Aujourd'hui ; (3) lecture Health Connect après l'ajout du type par le propriétaire dans la déclaration Health Connect de la Play Console ; (4) plus tard, le cycle comme contexte de la digestion. iOS : lecteur de Santé dès que la brique est sur main. Étapes CYCLE-* au BACKLOG ; ✅ CYCLE-1a le 10/11 19:35 (stockage en entrées `cycle` sans migration, calcul jour des règles / jour du cycle, export / import testés) ; ✅ CYCLE-1b le 10/11 21:35 (ligne « Règles · 2e jour · flux moyen » et jour du cycle dans Journal › Jours ; symptômes constipation et diarrhée) ; ✅ CYCLE-2 le 10/11 22:35 (bouton « Règles » du bandeau d'Aujourd'hui, un geste, flux corrigeable, « Retirer ») ; ✅ CYCLE-2b le 10/11 23:35 (« … » de la ligne « Règles » du Journal : Modifier le flux, Supprimer) ; ✅ CYCLE-2c le 11/11 00:35 (symptômes du cycle en un geste dans « Mes règles ») ; ✅ CYCLE-2d le 11/11 02:35 (« Aujourd'hui · Hier » dans « Mes règles »). |
+| **Automatiser les gestes du propriétaire (12/11 vers 16:15)** | Tout geste fait à la main dans un navigateur doit être automatisé ; chaque action du propriétaire arrive avec sa voie : (a) CI / API, (b) mission navigateur `journal/missions/Pxx.md` (« fais la mission Pxx », Claude dans Chrome), (c) geste qui reste le sien (production, envoi final d'une déclaration, signature, paiement, identité), préparé jusqu'au bouton. Mots exacts et classement : § 4. Relayée à la routine iOS (App Store Connect, TestFlight). |
 | **Infrastructure** | Aucune donnée d'accès dans la session : tout passe par GitHub Actions sur `main` (Workload Identity Federation). Projet GCP `healthtrack-824b26`, budget 20 €/mois. Détail : [`INFRA.md`](INFRA.md). |
 
 Règles permanentes inchangées : data science D5 (Y ≠ X, ordre temporel, comparaisons multiples, n minimal,
@@ -235,6 +236,43 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 4. Actions du propriétaire (jamais faites par la routine) — la plus débloquante d'abord
 
+> **Décision du propriétaire du 12/11 vers 16:15 — automatiser ses gestes.** Ses mots : « à chaque fois que quelque
+> chose doit être fait humainement via un browser il faut absoluement trouver un moyen de l'automatiser, les modèles
+> sont parfaitement capable de prendre le controle d'un browser et de faire ces trucs là eux même (exemple avec
+> l'extension chrome de claude qui fait ça très bien lorsque je demande) » et « à chaque fois que je dois faire une
+> tâche si un modèle claude peut l'automatiser je vais vouloir le faire donc n'hésite pas à le proposer ».
+> **Règle** : toute action du propriétaire arrive avec sa voie, jamais avec une simple marche à suivre :
+> **(a)** CI ou API, au besoin après un droit accordé une fois (droit et commande exacte) ; **(b)** mission navigateur
+> `journal/missions/Pxx.md`, qu'il fait exécuter par Claude dans Chrome en disant « fais la mission Pxx » ;
+> **(c)** geste qui reste le sien (mise en production, envoi final d'une déclaration qui l'engage auprès de Google ou
+> d'Apple, signature, paiement, vérification d'identité) : la mission prépare tout jusqu'à ce bouton. Un geste
+> unique va en (b) plutôt qu'en (a) quand (a) demanderait un droit large pour la CI ; un geste qui revient va en (a)
+> dès qu'une API existe. Aucune mission ne contient de secret ; la routine ne demande jamais de mot de passe. Toute
+> autre tâche du propriétaire qu'un modèle Claude pourrait faire est proposée en tête du résumé.
+
+### 4.0 Classement des actions ouvertes (12/11 16:35)
+
+| # | Action | Voie | Mission / commande | Quand |
+|---|---|---|---|---|
+| P43 | Activer l'API Play Developer Reporting (plantages) | b | [`missions/P43.md`](missions/P43.md). (a) écartée : `roles/serviceusage.serviceUsageAdmin` pour gh-deployer, trop large pour un geste unique | maintenant |
+| P46 | TTL Firestore `feedback` | b | [`missions/P46.md`](missions/P46.md) (console Firestore → TTL) | maintenant |
+| P39 | TTL Firestore `appattest` | b | [`missions/P39.md`](missions/P39.md) | maintenant, pas urgent |
+| P29 | Retirer `roles/editor` du compte Compute par défaut | b | [`missions/P29.md`](missions/P29.md) (la CI n'a pas de droit IAM et ne doit pas en avoir) | pas urgent |
+| P34 | Enregistrement pour la vérification des développeurs | b (c si un envoi l'engage) | [`missions/P34.md`](missions/P34.md) | pas urgent |
+| P45 | Adresse de commentaires du test fermé + relevé des commentaires | b, récurrente | [`missions/P45.md`](missions/P45.md) (aucune API pour les commentaires d'un test fermé) | maintenant, puis 12/11, 16/11, 19/11 |
+| — | État d'examen des versions sur Play (nouvelle, remplace « vérifiez de temps en temps » de P42) | b | [`missions/ETAT-PLAY.md`](missions/ETAT-PLAY.md) (l'API dit la version de chaque piste, pas l'examen) | à la demande du résumé |
+| P48 | « Menstruation » dans la déclaration Health Connect | b puis c (envoi pour examen) | [`missions/P48.md`](missions/P48.md) | **pas encore** (« P48 maintenant ») |
+| P30 | Demander l'accès à la production | b puis c (Envoyer) | [`missions/P30.md`](missions/P30.md) | jour 14 du test fermé |
+| P32 | Pays de la production, puis promotion | b puis c (publier) | [`missions/P32.md`](missions/P32.md) | jour de la production |
+| P15 | Antériorité « Halcya », domaines | b (recherches) puis c (achat, dépôt) | [`missions/P15.md`](missions/P15.md) | après le test fermé |
+| P2 | Modifier l'activité de l'auto-entreprise | b puis c (signature) | [`missions/P2.md`](missions/P2.md) | quand il l'aura décidé |
+| P37 | Empreinte de l'installation (GOLD-a3) | téléphone, ni (a) ni (b) : 1 min dans l'app ; réponse « P37 oui » | — | quand il veut |
+| P1 | Installer la version GitHub (sideload) à la main | téléphone, ni (a) ni (b) | — | facultatif |
+| P44, P25, P31 | Questions (réponse dans une consigne) | rien à automatiser | — | — |
+| P13 (W-8BEN), P26, P5, P6, P12 | Fiscal, médiateur (reporté), juriste, budget pub, recrutement | c | — | dates déjà notées ci-dessous |
+| P41 | Inviter les testeurs | fait le 08/11 (ne plus rappeler) | — | — |
+
+
 - ~~**P47 (06/11 07:40, 🚨 BLOQUANT : GitHub Actions arrêté)**~~ **levée le 06/11 vers 07:30 UTC** (checks de #748 relancés à 07:33, tous verts ; rien à faire sauf e-mail de GitHub sur un paiement en échec). Énoncé d'origine : depuis le 06/11 ~06:40 UTC, GitHub refuse de lancer
   tout job du dépôt : « The job was not started because your account is locked due to a billing issue ». Plus aucun
   test, aucune release, aucun envoi sur Alpha ni déploiement du relais tant que ce n'est pas réglé. Geste : sur
@@ -310,6 +348,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **12/11 16:35** — Décision du 12/11 16:15 (automatiser les gestes du propriétaire) inscrite : § 4.0 classe chaque action ouverte en (a) / (b) / (c) ; 12 missions navigateur dans `journal/missions/` (P43, P46, P39, P29, P34, P45, ETAT-PLAY, P48, P30, P32, P15, P2) ; charte et POUR-IOS.md à jour. Aucun code produit.
 - **11/11 08:35** — Run idées : simulations Prendre soin de soi J1 (Android seul) et Endométriose J45 avec règles notées (outil `--goals=cycle`) ; POLISH-SIM-46 à 51, PROP-SIM-11 (cycle visible hors du Journal) et PROP-SIM-12 (objectif poids) ; faux relais de l'outil corrigé (noms d'aliments de la table).
 - **10/11 20:35** — Run idées : simulations Stressé et pressé J1 et Endométriose J1 (POLISH-SIM-38 à 45) ; outil des personas corrigé (faux relais) ; P48 rédigée (cycle dans Health Connect : pont natif nécessaire, CYCLE-3a / 3b).
 - **08/11 11:35** — CI de main réparée (panne GitHub 504 sur Gradle puis le compilateur Kotlin) : miroir Google de Maven Central et téléchargement de Gradle avec reprises (#830).
