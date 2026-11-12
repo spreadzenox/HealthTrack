@@ -227,6 +227,9 @@ describe('contrat des résultats d’Analyses', () => {
       expect(new Set(list.map((c) => c.key)).size).toBe(list.length)
       for (const c of list) expect(inModel.has(c.key)).toBe(true)
     }
+    // POLISH-SIM-34 : chaque barre dit si Analyses trouve ce lien net (un horizon net suffit), comme Analyses
+    const netKeys = new Set(Object.values(res.outcomes.wellbeing.horizons).flatMap((h) => h.factors.filter((f) => f.inModel && f.net).map((f) => f.key)))
+    for (const list of Object.values(all.wellbeing)) for (const c of list) expect(c.net).toBe(netKeys.has(c.key))
     expect(JSON.parse(JSON.stringify(all))).toStrictEqual(all)
   })
 

@@ -8,6 +8,14 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🌤️ **Tendances : un jour touché ne mélange plus les mesures (12/11 01:35)** : sous « Sommeil » seul, le détail
+> d'un jour disait « 3 lectures du visage » et « Plus de soleil que d'habitude (8 h) −1,43 pt », un facteur du
+> bien-être qu'Analyses trouve « pas assez net ». Sous Sommeil ou Pas, il ne montre plus que la mesure ; avec le
+> bien-être, un lien pas assez net est hachuré, chiffre en gris, comme dans Analyses. Et la démo ne donne plus 8 h de
+> soleil en novembre ([bien-être, clair](runs/captures/2026-11-12-0135-peser-net-clair.png) ·
+> [sommeil seul, sombre](runs/captures/2026-11-12-0135-sommeil-seul-sombre.png)). Part ce soir sur Alpha. Rien à faire
+> de votre côté.
+
 > 🧭 **La visite dit ce qu'elle montre (11/11 23:35)** : « Voir dans 14 jours » ne disait pas qu'on allait voir un
 > exemple, et l'exemple au jour 14 annonçait « Encore 18 jours » de notes digestives quand l'écran réel en annonce 27 au
 > premier jour. Le bouton dit « Exemple au jour 14 » (ou 28), et l'exemple compte 14 jours notés au jour 14
@@ -443,6 +451,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 01:35 — [Tendances : détail d'un jour](runs/2026-11-12-0135-peser-net.md) | 🔧 | POLISH-SIM-34 : sous Sommeil seul, ni visage ni facteurs du bien-être ; liens pas assez nets hachurés ; soleil de la démo selon la saison. Tests (3457), lint, build, captures vérifiées |
 | 11/11 23:35 — [Visite : « Exemple au jour 14 »](runs/2026-11-11-2335-exemple-jour14.md) | 🔧 | POLISH-SIM-39 : bouton de la visite et compte fictif de la digestion calés. Tests (3454), lint, build, captures vérifiées |
 | 11/11 22:35 — [Compteur de la digestion](runs/2026-11-11-2235-compteur-digestion.md) | 🔧 | POLISH-SIM-32 : « jours notés, pas forcément d'affilée » ; Aujourd'hui compte comme Analyses ; outil personas complété. Tests (3451), lint, build, banc complet verts |
 | 11/11 20:35 — [Badge « Exemple » dans la bulle](runs/2026-11-11-2035-badge-bulle.md) | 🔧 | POLISH-SIM-37c : le badge de la visite ne masque plus l'en-tête. Tests (3450), lint, build, banc complet verts ; PR #922 mergée par le run de 22:35 (checks verts) |

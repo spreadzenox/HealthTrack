@@ -703,7 +703,7 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
  * @param {string} dateKey   AAAA-MM-JJ
  * @param {{ outcome?: OutcomeId, max?: number, days?: Map }} [options]
  * @returns {DayContribution[]}  `horizon` = l'horizon qui pèse le plus pour ce facteur ce jour-là ; `dayValue` = la
- *   valeur du seul jour, au court terme
+ *   valeur du seul jour, au court terme ; `net` = Analyses trouve ce lien net sur au moins un horizon
  */
 export function dayContributions(results, entries, dateKey, { outcome = 'wellbeing', max = 3, days: givenDays } = {}) {
   const out = results?.outcomes?.[outcome]
@@ -725,11 +725,13 @@ export function dayContributions(results, entries, dateKey, { outcome = 'wellbei
       if (Math.abs(pts) > Math.abs(cur.top.pts)) cur.top = { pts, horizon: f.horizon, value, usual: f.center }
     }
   }
+  // POLISH-SIM-34 : la barre dit si Analyses trouve ce lien net (un horizon net suffit), comme ses propres barres
+  const netKeys = new Set(terms.filter((t) => t.net).map((t) => t.key))
   const list = []
   for (const { f, total, top } of byKey.values()) {
     const points = Math.round(total * 100) / 100 + 0
     if (points === 0) continue
-    const c = { key: f.key, label: f.label, theme: f.theme, horizon: top.horizon, points, value: top.value, usual: top.usual }
+    const c = { key: f.key, label: f.label, theme: f.theme, horizon: top.horizon, points, value: top.value, usual: top.usual, net: netKeys.has(f.key) }
     // T4-suite : au court terme, la valeur du seul jour (« Nuit plus courte que d'habitude (6 h 21) »).
     const dayValue = top.horizon === 'short' ? days.get(dateKey)?.[f.key] : null
     if (isNum(dayValue)) c.dayValue = dayValue
