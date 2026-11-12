@@ -8,6 +8,20 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🤖 **Vos gestes dans un navigateur : des missions pour Claude dans Chrome (12/11 16:35)** : votre décision de 16:15
+> est appliquée. Chaque action qui vous reste a maintenant sa voie (CI, mission navigateur, ou votre clic final) :
+> [classement](PRODUIT.md) § 4.0. Les missions sont dans [`missions/`](missions/README.md) ; dans Chrome, dites
+> « fais la mission P43 » en donnant le lien du fichier. **Prêtes maintenant**, 2 à 3 min chacune :
+> [P43](missions/P43.md) (lecture des plantages, la plus utile : la routine verra les plantages et ANR des testeurs),
+> [P46](missions/P46.md) et [P39](missions/P39.md) (expiration des avis et des clés App Attest),
+> [P45](missions/P45.md) (adresse de commentaires du test fermé, puis relevé anonyme des commentaires aux jours 4, 8,
+> 11 : aujourd'hui, 16/11, 19/11), [P29](missions/P29.md) et [P34](missions/P34.md) (pas urgentes). **Préparées pour
+> plus tard**, elles s'arrêtent avant votre clic : P48 (cycle, quand je dirai « P48 maintenant »), P30 et P32
+> (production), P15 (marque, après le test), P2 (auto-entreprise, quand vous l'aurez décidé).
+> **Proposé en plus** : la mission [ETAT-PLAY](missions/ETAT-PLAY.md) relève l'état d'examen chez Google (l'API ne le
+> dit pas) à la place de « vérifiez de temps en temps la Play Console ». Restent sur le téléphone : P37 (« P37 oui »,
+> 1 min). Relayé à la routine iOS (App Store Connect, TestFlight). Aucun code de l'app ne change.
+
 > 🫘 **Analyses : les groupes FODMAP nommés (12/11 14:35)** : une persona SII lisait « Lactose » sans savoir que c'était
 > un FODMAP, et ne voyait aucun autre groupe en 45 jours. La ligne sous chaque groupe le dit maintenant : « pour 1 repas
 > riche en lactose (FODMAP) de plus ». L'absence des autres groupes venait des données de démo (seul le yaourt était
@@ -531,6 +545,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 16:35 — [Missions navigateur du propriétaire](runs/2026-11-12-1635-missions-navigateur.md) | 📓 | Décision du 12/11 16:15 : § 4.0 classe chaque action (a) / (b) / (c) ; 12 missions dans `journal/missions/` ; charte, BACKLOG (AUTO-GESTES-1 à 4), POUR-IOS. Journal seul |
 | 12/11 13:35 — [L'échelle de la digestion dans Tendances](runs/2026-11-12-1335-echelle-digestion-tendances.md) | 🔧 | POLISH-SIM-54 (fini) : « Confort digestif : Calme 5, Gêne 3, Douleur 1 » sous la courbe ; « 5 = calme » retiré du détail du jour. Tests (3472), lint, build, visual, captures |
 | 12/11 14:35 — [Les groupes FODMAP nommés](runs/2026-11-12-1435-fodmap-nomme.md) | 🔧 | POLISH-SIM-55 : « (FODMAP) » sous chaque groupe dans Analyses ; démo avec GOS, fructose, sorbitol. Tests (3473), lint, build, visual, capture persona J45 |
 | 12/11 12:35 — [La tuile Repas en attendant les kcal](runs/2026-11-12-1235-repas-kcal-attente.md) | 🔧 | POLISH-SIM-59 : « ≈ … kcal » tant que la table Ciqual se charge ; l'outil des personas capture une fois la table chargée. Tests (3471), lint, build, visual, capture persona |
@@ -637,6 +652,14 @@ le dépôt. 13. Une spécification vit dans le dépôt, le prompt y renvoie. 14.
 tels quels. 15. Ce qui est remplacé est retiré explicitement. 16. Chaque transmission est vérifiée. 17. Les personas
 simulées (`PERSONAS.md`, `simulations/`) jugent chaque version. Dès le 09/11 : **mode polish** (`PRODUIT.md` § 0).
 
+**Gestes du propriétaire automatisés** (décision du 12/11 vers 16:15, `PRODUIT.md` § 4) : une action du propriétaire
+n'arrive jamais comme une simple marche à suivre. Elle a sa voie : (a) CI ou API, au besoin après un droit accordé une
+fois (droit et commande exacte) ; (b) mission navigateur `missions/Pxx.md` (page de départ, étapes, valeurs exactes,
+vérification finale, capture attendue), qu'il fait exécuter par Claude dans Chrome (« fais la mission Pxx ») ; (c) son
+geste (production, envoi final d'une déclaration qui l'engage, signature, paiement, identité), préparé jusqu'au bouton.
+Aucun secret dans une mission ; ne jamais demander de mot de passe. Toute autre tâche qu'un modèle Claude pourrait
+faire à sa place est proposée en tête du résumé.
+
 | Fichier | Rôle |
 |---|---|
 | `README.md` | Résumé de la semaine en cours (en tête) + charte : mission, principes, protocole d'un run |
@@ -649,6 +672,7 @@ simulées (`PERSONAS.md`, `simulations/`) jugent chaque version. Dès le 09/11 :
 | `DESIGN.md` | Identité visuelle « Clair et précis » validée le 20/10 au soir : couleurs, polices, formes, icône, maquettes, étapes de mise en œuvre |
 | `PRODUIT.md` | **Chantier produit (décisions du 20/10 au soir)** : décisions, 10 jalons et leur état, inventaire des écrans, « Actions du propriétaire » — à lire juste après ce résumé |
 | `BIEN-ETRE-AUTO.md` | État des lieux et plan du chantier « bien-être entièrement automatique » (consigne §00000), décisions Y / X, ce qu'il faut valider sur le téléphone |
+| `missions/Pxx.md` | Missions navigateur du propriétaire (décision du 12/11) : index et règles dans `missions/README.md` |
 | `protocoles/<famille>.md` | Spécifications de protocoles d'appareils, écrites avec nos mots (sources citées) : le code des pilotes est écrit à partir d'elles |
 
 ---

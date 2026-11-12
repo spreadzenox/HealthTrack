@@ -21,6 +21,18 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🤖 Automatiser les gestes du propriétaire (décision du 12/11 vers 16:15) — détail : `PRODUIT.md` § 4
+
+- [x] **AUTO-GESTES-1** (12/11 16:35, étape de journal) : classement (a) / (b) / (c) de chaque action ouverte
+  (`PRODUIT.md` § 4.0) ; missions `journal/missions/` (P43, P46, P39, P29, P34, P45, ETAT-PLAY, P48, P30, P32, P15,
+  P2) ; charte ; relais iOS (POUR-IOS.md 12/11 16:35).
+- [ ] **AUTO-GESTES-2** : quand le propriétaire a fait une mission, retirer l'action du § 4 et noter la preuve
+  (capture ou constat d'un workflow : par ex. P43 → bilan de « Play — AAB » sans « API pas activée »).
+- [ ] **AUTO-GESTES-3** (voie a, récurrente) : à chaque nouvelle action du propriétaire, écrire sa mission ou son
+  workflow le même run ; vérifier chaque mois qu'une mission (b) récurrente n'a pas désormais d'API (P45, ETAT-PLAY).
+- [ ] **AUTO-GESTES-4** (proposition) : pour P45 jours 8 et 11, la mission range directement le relevé anonyme dans
+  une consigne ; la routine le recopie dans `RETOURS-TESTEURS.md` et complète `INVITATION-TESTEURS.md` § 5 (P30).
+
 ## 🩸 Cycle (décision du propriétaire du 10/11 vers 18:50 : « Ok cycle ») — exception au mode polish
 
 Réponse aux propositions « lire le cycle depuis l'app Santé » (routine iOS, `journal/maquettes/cycle-sante/PROPOSITION.md`
