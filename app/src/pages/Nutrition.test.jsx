@@ -46,7 +46,9 @@ describe('Nutrition page', () => {
     })
     expect(screen.queryByRole('heading', { name: /^Nutrition$/ })).not.toBeInTheDocument()
     // VC-3 : aucune valeur par défaut affichée comme si elle était vraie.
-    expect(screen.getByText(/Complétez votre profil pour des repères ajustés/)).toBeInTheDocument()
+    // Polish 12/11 : la phrase dit à quoi sert le profil, sans répéter le bouton « Compléter mon profil ».
+    expect(screen.getByText('Sexe, âge, taille, poids : vos repères d’apports en tiennent compte.')).toBeInTheDocument()
+    expect(screen.queryByText(/Complétez votre profil/)).not.toBeInTheDocument()
     const card = document.querySelector('.nutrition-profile-card')
     expect(card.textContent).not.toMatch(/70 kg|170 cm|Homme|30 ans|kcal|IMC|par défaut/)
     expect(card.querySelector('.details-toggle')).toBeNull()

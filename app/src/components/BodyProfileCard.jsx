@@ -222,7 +222,7 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
       <div className="nutrition-profile-card">
         {head}
         <p className="nutrition-profile-hint">
-          Complétez votre profil pour des repères ajustés à vous.
+          Sexe, âge, taille, poids : vos repères d’apports en tiennent compte.
         </p>
         {compositionLine.length > 0 && (
           <p className="nutrition-profile-line"><Sourced value={compositionLine.join(SEP)} hint="(Withings)" /></p>

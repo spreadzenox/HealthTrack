@@ -8,6 +8,13 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🥗 **Nutrition : la carte du profil sans redite (12/11 04:35)** : sous « Compléter mon profil », elle disait
+> « Complétez votre profil pour des repères ajustés à vous ». Elle dit maintenant ce qui compte : « Sexe, âge, taille,
+> poids : vos repères d'apports en tiennent compte » ([clair](runs/captures/2026-11-12-0435-profil-nutrition-clair.png) ·
+> [sombre](runs/captures/2026-11-12-0435-profil-nutrition-sombre.png)). L'envoi Alpha d'hier soir est parti à 04:24
+> (cron de GitHub en retard de 4 h 40) : 101006 est en examen chez Google. Partira ce soir sur Alpha. Rien à faire de
+> votre côté.
+
 > 🕐 **Sources : l'heure des dernières mesures est juste (12/11 03:35)** : la carte de votre app (Samsung Health,
 > Fit…) disait « Dernières mesures il y a 2 jours » pour des pas arrivés hier soir, parce qu'un total de pas est daté
 > de minuit. Elle compte maintenant jusqu'à la dernière mise à jour. Et l'outil des personas donne l'oxygène du sang
@@ -462,6 +469,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 04:35 — [Nutrition : profil sans redite](runs/2026-11-12-0435-profil-nutrition.md) | 🔧 | POLISH-AUDIT-1 : audit des écrans (vides et démo, sombre, play) ; la carte du profil de Nutrition dit à quoi il sert. Alpha 101006 parti à 04:24. Tests (3461), lint, build, captures vérifiées |
 | 12/11 03:35 — [Sources : dernières mesures](runs/2026-11-12-0335-dernieres-mesures.md) | 🔧 | POLISH-SIM-35 : « Dernières mesures » d'après la fin d'un total du jour ; SpO₂ et `--source` dans l'outil des personas. Tests (3461), lint, build, captures vérifiées |
 | 12/11 02:35 — [Reprise de la PR #925](runs/2026-11-12-0235-reprise-925.md) | 🔧 | PR #925 (bien-être du jour → Tendances › Jour) mise à jour sur main, conflit du résumé résolu. Tests (3457), lint, build, captures vérifiées |
 | 12/11 01:35 — [Tendances : détail d'un jour](runs/2026-11-12-0135-peser-net.md) | 🔧 | POLISH-SIM-34 : sous Sommeil seul, ni visage ni facteurs du bien-être ; liens pas assez nets hachurés ; soleil de la démo selon la saison. Tests (3457), lint, build, captures vérifiées |
