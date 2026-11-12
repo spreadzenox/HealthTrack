@@ -374,7 +374,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   barre dont le lien est « pas assez net » dans Analyses est hachurée, chiffre en gris, avec la légende d'Analyses
   (`dayContributions` donne `net`) ; soleil de la démo selon la saison (≤ ~4 h en novembre, il en donnait 8). Tests
   rouges puis verts.
-- [ ] **POLISH-SIM-35** Outil des personas : `--equipment=watch` (Galaxy Watch) sans SpO2 (« Jamais reçu : oxygène
+- [x] **POLISH-SIM-35** ✅ 12/11 03:35 (SpO₂ de la nuit pour `watch`, `full`, `huawei` ; `--source=` ; et dans l'app, « Dernières mesures » prend la fin d'un total du jour, plus son début : « il y a 2 jours » pour les pas d'hier) Outil des personas : `--equipment=watch` (Galaxy Watch) sans SpO2 (« Jamais reçu : oxygène
   du sang ») ; source « Samsung Health » sur un Pixel en `phone`. Aligner sur `PERSONAS.md` ; vérifier aussi « dernières
   mesures il y a 2 jours » face aux pas d'hier.
   Complété le 10/11 20:35 : « Samsung Health · Reçu » aussi pour une Amazfit (`watch`) et un iPhone (`phone`), à côté

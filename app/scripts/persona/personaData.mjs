@@ -48,9 +48,29 @@ export function keepForEquipment(entry, equipment) {
 /** App qui écrit dans Health Connect selon le matériel (les données de démo disent « Gadgetbridge »). */
 const SOURCE_NAME = { phone: 'Samsung Health', watch: 'Samsung Health', 'watch-hrv': 'Fitbit', huawei: 'Samsung Health', full: 'Withings' }
 
-function withSourceName(entry, equipment) {
+function withSourceName(entry, equipment, sourceName) {
   if (entry.source !== 'health_connect' || !entry.payload?.sourceName) return entry
-  return { ...entry, payload: { ...entry.payload, sourceName: SOURCE_NAME[equipment] } }
+  return { ...entry, payload: { ...entry.payload, sourceName: sourceName || SOURCE_NAME[equipment] } }
+}
+
+/** SpO₂ de la nuit (POLISH-SIM-35) : ✓ pour la Galaxy Watch (config. 4) et le « tout mesurer », ≈ Huawei en direct ;
+ * ✗ Fitbit / Pixel Watch (config. 13), rien pour le téléphone seul. Valeurs fixées par le rang de la nuit. */
+const SPO2_VALUES = [96, 97, 95, 97, 98, 96, 94]
+
+function spo2Entries({ from, now, equipment, sourceName }) {
+  if (!['watch', 'full', 'huawei'].includes(equipment)) return []
+  const huawei = equipment === 'huawei'
+  const out = []
+  for (let n = 0; ; n++) {
+    const d = new Date(now); d.setDate(d.getDate() - n); d.setHours(4, 12, 0, 0)
+    if (d < from) break
+    if (d > now) continue
+    const value = SPO2_VALUES[n % SPO2_VALUES.length]
+    out.push(huawei
+      ? { type: 'heart_rate', source: 'huawei_watch', at: d.toISOString(), payload: { value, unit: '%', subtype: 'oxygenSaturation', during: 'sleep', samples: 1, connector: 'huawei_watch', sourceName: 'Montre Huawei' } }
+      : { type: 'heart_rate', source: 'health_connect', at: d.toISOString(), payload: { value, unit: 'percent', subtype: 'oxygenSaturation', connector: 'health_connect', sourceName: sourceName || SOURCE_NAME[equipment] } })
+  }
+  return out
 }
 
 /**
@@ -70,10 +90,13 @@ function keepForNotes(entry, notes) {
 }
 
 /**
+ * `sourceName` (facultatif, `--source=`) : l'app qui écrit dans Health Connect sur le téléphone tiré (Pixel → « Google Fit »,
+ * Amazfit → « Zepp », Xiaomi → « Mi Fitness »), sinon celle de `SOURCE_NAME` (POLISH-SIM-35).
+ *
  * Jour d'usage : jour 1 = installation du jour (aucune saisie dans l'app, l'onboarding n'est pas fait ; une montre
  * apporte ses 30 derniers jours importés) ; jour N = N jours de données (aujourd'hui compris).
  */
-export function personaEntries(entries, { day, equipment, notes = 'full', goals = [], now = new Date() }) {
+export function personaEntries(entries, { day, equipment, notes = 'full', goals = [], sourceName, now = new Date() }) {
   if (!NOTES.includes(notes)) throw new Error(`Profil de saisie inconnu : ${notes} (attendu : ${NOTES.join(', ')})`)
   const start = (n) => { const d = new Date(now); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (n - 1)); return d }
   const from = day <= 1 ? start(30) : start(day)
@@ -82,7 +105,8 @@ export function personaEntries(entries, { day, equipment, notes = 'full', goals 
     if (at < from || at > now) return false
     if (day <= 1 && (APP_TYPES.has(e.type) || CONTEXT_TYPES.has(e.type))) return false
     return keepForEquipment(e, equipment) && keepForNotes(e, notes)
-  }).map((e) => withSourceName(e, equipment))
+  }).map((e) => withSourceName(e, equipment, sourceName))
+    .concat(spo2Entries({ from, now, equipment, sourceName }))
     .concat(day > 1 && goals.includes('cycle') ? cycleEntries({ from, now }) : [])
     .concat(day > 1 && notes === 'full' && goals.includes('gut') ? gutEntries(entries, { from, now }) : [])
 }

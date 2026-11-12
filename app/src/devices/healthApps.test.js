@@ -92,6 +92,24 @@ describe('summarizeHealthConnectSources', () => {
     expect(s[0].app.id).toBe('gadgetbridge')
     expect(s[1]).toMatchObject({ name: 'com.example.balance', app: null, count: 1 })
   })
+
+  it('un total du jour compte jusqu’à sa fin, pas à son début (POLISH-SIM-35)', () => {
+    const now = new Date('2026-11-12T14:00:00Z')
+    const day = (at, endDate) => ({ source: 'health_connect', at, type: 'steps', payload: { sourceName: 'Samsung Health', period: 'day', endDate } })
+    const [s] = summarizeHealthConnectSources([
+      day('2026-11-11T00:00:00Z', '2026-11-11T23:59:00Z'),
+      day('2026-11-12T00:00:00Z', '2026-11-12T13:40:00Z'),
+    ], now)
+    expect(s.lastAt).toBe('2026-11-12T13:40:00.000Z')
+  })
+
+  it('une fin de mesure dans le futur ne dépasse pas maintenant', () => {
+    const now = new Date('2026-11-12T14:00:00Z')
+    const [s] = summarizeHealthConnectSources([
+      { source: 'health_connect', at: '2026-11-12T00:00:00Z', type: 'steps', payload: { sourceName: 'Fit', endDate: '2026-11-12T23:59:00Z' } },
+    ], now)
+    expect(s.lastAt).toBe('2026-11-12T14:00:00.000Z')
+  })
 })
 
 describe('adviseDevices', () => {

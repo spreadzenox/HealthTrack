@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-12",
+  "kind": "correctif",
+  "title": "Sources : l'heure des dernières mesures est juste",
+  "items": [
+    "Un total de pas du jour compte jusqu'à sa dernière mise à jour : la carte de votre app disait « il y a 2 jours » pour des pas arrivés hier soir."
+  ],
+  "variants": ["play", "sideload"]
+}

@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🕐 **Sources : l'heure des dernières mesures est juste (12/11 03:35)** : la carte de votre app (Samsung Health,
+> Fit…) disait « Dernières mesures il y a 2 jours » pour des pas arrivés hier soir, parce qu'un total de pas est daté
+> de minuit. Elle compte maintenant jusqu'à la dernière mise à jour. Et l'outil des personas donne l'oxygène du sang
+> aux Galaxy Watch (une persona lisait « Jamais reçu : oxygène du sang ») ([Sources d'une persona Galaxy
+> Watch](runs/captures/2026-11-12-0335-sources-galaxy-watch.png)). Part ce soir sur Alpha. Rien à faire de votre côté.
+
 > 🌤️ **Tendances : un jour touché ne mélange plus les mesures (12/11 01:35)** : sous « Sommeil » seul, le détail
 > d'un jour disait « 3 lectures du visage » et « Plus de soleil que d'habitude (8 h) −1,43 pt », un facteur du
 > bien-être qu'Analyses trouve « pas assez net ». Sous Sommeil ou Pas, il ne montre plus que la mesure ; avec le
@@ -456,6 +462,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 03:35 — [Sources : dernières mesures](runs/2026-11-12-0335-dernieres-mesures.md) | 🔧 | POLISH-SIM-35 : « Dernières mesures » d'après la fin d'un total du jour ; SpO₂ et `--source` dans l'outil des personas. Tests (3461), lint, build, captures vérifiées |
 | 12/11 02:35 — [Reprise de la PR #925](runs/2026-11-12-0235-reprise-925.md) | 🔧 | PR #925 (bien-être du jour → Tendances › Jour) mise à jour sur main, conflit du résumé résolu. Tests (3457), lint, build, captures vérifiées |
 | 12/11 01:35 — [Tendances : détail d'un jour](runs/2026-11-12-0135-peser-net.md) | 🔧 | POLISH-SIM-34 : sous Sommeil seul, ni visage ni facteurs du bien-être ; liens pas assez nets hachurés ; soleil de la démo selon la saison. Tests (3457), lint, build, captures vérifiées |
 | 12/11 00:35 — [Bien-être du jour → Tendances › Jour](runs/2026-11-12-0035-bien-etre-jour.md) | 🔧 | POLISH-SIM-31 : le bloc ouvre la vue Jour, où le nombre de lectures se retrouve. Tests (3454), lint, build, captures vérifiées ; PR #925 reprise, mise à jour sur main et mergée par le run de 02:35 |
