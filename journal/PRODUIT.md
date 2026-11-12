@@ -371,6 +371,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **11/11 16:35** — Accueil sans Health Connect : « Ce que vous noterez » suit l'objectif (poids, règles, digestion) (POLISH-SIM-51) ; « Tests » (budget de lectures) ne dépend plus d'apt, qui tombait en panne DNS sur le runner.
 - **11/11 19:35** — Exemple digestion sans l'objectif ventre : plus de bandeau « suivi digestif masqué » au-dessus des données fictives (POLISH-SIM-37b).
 - **11/11 20:35** — Visite guidée : le badge « Exemple · données fictives » passe dans la bulle, il ne masque plus le nom de l'app (POLISH-SIM-37c).
+- **12/11 10:35** — Sources, carte Samsung Health : la VFC n'est plus « à activer » ; « Samsung Health ne partage pas la variabilité cardiaque avec Health Connect » (POLISH-SIM-60).
 - **12/11 09:35** — Aujourd'hui, bloc digestion : « Vos analyses digestives sont prêtes » seulement avec un lien net ; sinon « Analyses digestives : aucun lien net pour l’instant » (POLISH-SIM-52).
 - **12/11 08:35** — run « idées » : deux simulations de personas (Ventre et données J45, Sportif J14) ; POLISH-SIM-52 à 63 et PROP-SIM-14 au BACKLOG ; en tête, la carte « analyses digestives prêtes » qui mène à « rien de net ».
 - **12/11 07:35** — Journal vide : « Noter ma digestion » ouvre la fenêtre de la digestion d'Aujourd'hui (POLISH-JOURNAL-VIDE).

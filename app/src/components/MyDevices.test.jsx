@@ -62,6 +62,18 @@ describe('MyDevices', () => {
     expect(screen.getByText(/Jamais reçu en 30 jours : cœur au repos, oxygène du sang, pas\./)).toBeInTheDocument()
   })
 
+  it('Samsung Health : la VFC est dite non partagée, pas « à activer » (POLISH-SIM-60)', async () => {
+    const day = (i) => new Date(NOW.getTime() - i * 86400000 - 3600000).toISOString()
+    const entries = [
+      ...Array.from({ length: 10 }, (_, i) => ({ source: 'health_connect', at: day(i), type: 'heart_rate', payload: { sourceName: 'Samsung Health', subtype: 'heartRate' } })),
+      hc('Samsung Health', day(0), 'sleep'),
+    ]
+    render(<MyDevices detect={async () => [app('samsung_health')]} loadEntries={async () => entries} now={NOW} />)
+    expect(await screen.findByText(/Jamais reçu en 30 jours : cœur au repos, oxygène du sang, pas\./)).toBeInTheDocument()
+    expect(screen.getByText('Samsung Health ne partage pas la variabilité cardiaque avec Health Connect.')).toBeInTheDocument()
+    expect(screen.queryByText(/Jamais reçu.*variabilité/)).not.toBeInTheDocument()
+  })
+
   it('navigateur (pas de détection) : sources réelles seulement, sans bouton « Ouvrir »', async () => {
     render(<MyDevices detect={async () => null} loadEntries={async () => [hc('Samsung Health', '2026-10-01T05:00:00Z', 'steps')]} now={NOW} />)
     expect(await screen.findByText('En pause')).toBeInTheDocument()

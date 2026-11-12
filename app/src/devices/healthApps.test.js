@@ -9,6 +9,7 @@ import {
   adviseDevices,
   sourceCoverage,
   missingWatchMetrics,
+  unsharedWatchMetrics,
   metricKey,
 } from './healthApps'
 import { WATCH_GUIDES } from '../data/watchGuides'
@@ -223,6 +224,19 @@ describe('sourceCoverage (« qui envoie quoi »)', () => {
     const watch = sourceCoverage([hr('2026-10-12T05:00:00Z'), { at: '2026-10-12T05:00:00Z', type: 'sleep' }], NOW)
     expect(missingWatchMetrics(watch)).toEqual(['cœur au repos', 'variabilité cardiaque', 'oxygène du sang', 'pas'])
     expect(missingWatchMetrics(sourceCoverage([{ at: '2026-10-12T05:00:00Z', type: 'weight' }], NOW))).toEqual([])
+  })
+
+  it('Samsung Health ne partage pas la VFC : elle sort de « à activer » et passe dans « ne partage pas » (POLISH-SIM-60)', () => {
+    const samsung = HEALTH_APPS.find((a) => a.id === 'samsung_health')
+    const watch = sourceCoverage([hr('2026-10-12T05:00:00Z'), { at: '2026-10-12T05:00:00Z', type: 'sleep' }], NOW)
+    expect(missingWatchMetrics(watch, samsung)).toEqual(['cœur au repos', 'oxygène du sang', 'pas'])
+    expect(unsharedWatchMetrics(watch, samsung)).toEqual(['variabilité cardiaque'])
+    // Reçue quand même (autre version de l'app) : rien à dire.
+    const withHrv = sourceCoverage([hr('2026-10-12T05:00:00Z'), { at: '2026-10-12T05:00:00Z', type: 'heart_rate', payload: { subtype: 'heartRateVariability' } }], NOW)
+    expect(unsharedWatchMetrics(withHrv, samsung)).toEqual([])
+    // Autre app, ou balance : rien.
+    expect(unsharedWatchMetrics(watch, HEALTH_APPS.find((a) => a.id === 'garmin'))).toEqual([])
+    expect(unsharedWatchMetrics(sourceCoverage([{ at: '2026-10-12T05:00:00Z', type: 'weight' }], NOW), samsung)).toEqual([])
   })
 
   it('summarizeHealthConnectSources joint la couverture à chaque source', () => {

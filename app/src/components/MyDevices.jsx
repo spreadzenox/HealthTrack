@@ -6,7 +6,7 @@
  */
 import { useEffect, useState } from 'react'
 import { listEntries } from '../storage/localHealthStorage'
-import { summarizeHealthConnectSources, adviseDevices, missingWatchMetrics } from '../devices/healthApps'
+import { summarizeHealthConnectSources, adviseDevices, missingWatchMetrics, unsharedWatchMetrics } from '../devices/healthApps'
 import { detectPhoneApps, openPhoneApp } from '../devices/phoneApps'
 import { formatAgo } from '../utils/timeAgo'
 import { openGuide } from '../utils/openGuide'
@@ -77,7 +77,8 @@ export default function MyDevices({ detect = detectPhoneApps, loadEntries = defa
               const types = metrics.map((m) => m.label)
               // Une mesure qui s'arrête alors que l'app envoie encore le reste (sinon « En pause » suffit).
               const stopped = row.status === 'ok' ? metrics.filter((m) => m.stopped) : []
-              const missing = row.status === 'ok' ? missingWatchMetrics(metrics) : []
+              const missing = row.status === 'ok' ? missingWatchMetrics(metrics, row.source?.app) : []
+              const unshared = row.status === 'ok' ? unsharedWatchMetrics(metrics, row.source?.app) : []
               const showGuide = row.status === 'action' && !!row.guideId
               const showOpen = canDetect && !!row.package && (row.status === 'action' || row.status === 'stale')
               return (
@@ -105,6 +106,9 @@ export default function MyDevices({ detect = detectPhoneApps, loadEntries = defa
                       Jamais reçu en 30 jours : {missing.join(', ')}. Si votre montre en est capable, activez ce partage
                       vers Health Connect dans {row.name}.
                     </p>
+                  )}
+                  {unshared.length > 0 && (
+                    <p className="my-device-meta">{`${row.name} ne partage pas la ${unshared.join(', ')} avec Health Connect.`}</p>
                   )}
                   {(showGuide || showOpen) && (
                     <div className="my-device-actions">

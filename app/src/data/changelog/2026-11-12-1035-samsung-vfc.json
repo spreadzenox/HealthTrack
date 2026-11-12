@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-12",
+  "kind": "correctif",
+  "variants": ["play", "sideload"],
+  "title": "Sources : ce que Samsung Health ne partage pas",
+  "items": [
+    "La carte Samsung Health ne vous demande plus d’activer le partage de la variabilité cardiaque : Samsung Health ne la partage pas avec Health Connect, elle le dit simplement."
+  ]
+}
