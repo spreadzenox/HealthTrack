@@ -212,7 +212,7 @@ export const FACTORS = [
   // ORG-5b : FODMAP par sous-groupe (repas au-dessus du repère par portion, hypothèse de départ, fodmapGroups.js).
   ...FODMAP_SUBGROUPS.map((g) => ({
     key: `fodmap_${g}`, label: FODMAP_LABELS[g], theme: 'nutrition', actionable: true, unit: 'repas', step: 1,
-    text: (a) => `${fmtInt(a)} repas riche${a > 1 ? 's' : ''} en ${FODMAP_TEXT[g]} de plus`,
+    text: (a) => `${fmtInt(a)} repas riche${a > 1 ? 's' : ''} en ${FODMAP_TEXT[g]} (FODMAP) de plus`,
   })),
 ]
 

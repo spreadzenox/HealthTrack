@@ -37,6 +37,18 @@ const MEALS = [
     { ingredient: 'Oeuf brouillé, avec matière grasse', quantity_g: 120 },
     { ingredient: 'Haricot vert, cuit', quantity_g: 80 },
   ],
+  // Repas riches en d'autres groupes FODMAP (fructose en excès et sorbitol ; GOS), pour que les analyses montrent
+  // plus que le lactose (POLISH-SIM-55). Pas de fructanes : la visite guidée plante les siens (tourData.js).
+  [
+    { ingredient: "Poulet, cuisse, viande bouillie/cuite à l'eau", quantity_g: 130 },
+    { ingredient: 'Riz blanc cuit', quantity_g: 150 },
+    { ingredient: 'Poire, chair et peau, crue', quantity_g: 150 },
+  ],
+  [
+    { ingredient: "Lentille verte, bouillie/cuite à l'eau", quantity_g: 180 },
+    { ingredient: 'Carotte, cuite à la vapeur', quantity_g: 100 },
+    { ingredient: 'Riz blanc cuit', quantity_g: 100 },
+  ],
 ]
 
 const toItems = (meal) =>
