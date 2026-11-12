@@ -24,5 +24,9 @@
 - `npm run test`, `npm run lint`, `npm run build`, `npm run visual -- --play --empty --dark --routes=/journal
   --click="Noter ma digestion"` (fenêtre ouverte), clair vide. Captures `runs/captures/2026-11-12-0735-journal-vide-*`.
 
+- Faux pas : la suite complète locale avait tourné avant l'ajout de l'entrée Nouveautés, écrite avec le genre
+  « correction » ; la CI l'a refusé (`WhatsNew.test.jsx` : nouveau, amélioration, correctif). Corrigé en « correctif ».
+  Leçon : relancer `WhatsNew.test.jsx` après avoir écrit l'entrée.
+
 ## Suite
 - Simulations du run « idées » de 08:35 ; PROP-SIM-11, 12, 13 (maquettes) ; CYCLE-3 attend P48.
