@@ -54,6 +54,13 @@ function at(day, hours, minutes = 0) {
  *   pour voir le « Radar forme » en alerte.
  * @returns {Array<{ type: string, source: string, at: string, payload: object }>}
  */
+// POLISH-SIM-34 : heures de soleil selon la saison (Paris : jusqu'à ~4 h en novembre, ~11 h en juin), plus jamais 8 h
+// un 10 novembre.
+const sunCap = (d) => {
+  const doy = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86_400_000)
+  return 1.4 * (2.5 + 5.5 * (1 + Math.cos((2 * Math.PI * (doy - 172)) / 365)) / 2)
+}
+
 export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), illness = false } = {}) {
   const rand = mulberry32(seed)
   const noise = (amp) => (rand() - 0.5) * 2 * amp
@@ -343,7 +350,7 @@ export function generateDemoEntries({ days = 75, seed = 42, now = new Date(), il
           tempMaxC: tMax,
           tempMinC: Math.round((tMax - 7 - weatherRand() * 3) * 10) / 10,
           precipMm: sunny < 0.35 ? Math.round(weatherRand() * 80) / 10 : 0,
-          sunshineH: Math.round(sunny * 9 * 10) / 10,
+          sunshineH: Math.round(sunny * sunCap(day) * 10) / 10,
           pressureHpa: pressure,
           pressureChangeHpa: Math.round((pressure - prevPressure) * 10) / 10,
           humidityPct: Math.round(65 + (1 - sunny) * 25),

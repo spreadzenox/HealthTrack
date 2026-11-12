@@ -369,9 +369,11 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   profil `full` = une note chaque soir. Tests rouges puis verts.
 - [x] **POLISH-SIM-33** ✅ 10/11 15:35 : Analyses s'ouvrait sur Bien-être avec l'objectif « Ma digestion » ; l'onglet
   du bas mène à Digestion avec « Ma digestion » ou « Mon cycle » (`TabBar`, test rouge puis vert).
-- [ ] **POLISH-SIM-34** Tendances › Sommeil, détail du jour : « Plus de soleil que d'habitude (8 h) −1,43 pt » un
-  10 novembre, quand Analyses donne le soleil « pas assez net » : vérifier la donnée de soleil de démo et la règle
-  « net » de « Ce qui a pu peser ».
+- [x] **POLISH-SIM-34** ✅ 12/11 01:35 Tendances, détail d'un jour : sous « Sommeil » seul (ou Pas…), plus de
+  « N lectures du visage » ni de « Ce qui a pu peser » (le modèle n'explique que le bien-être et la digestion) ; une
+  barre dont le lien est « pas assez net » dans Analyses est hachurée, chiffre en gris, avec la légende d'Analyses
+  (`dayContributions` donne `net`) ; soleil de la démo selon la saison (≤ ~4 h en novembre, il en donnait 8). Tests
+  rouges puis verts.
 - [ ] **POLISH-SIM-35** Outil des personas : `--equipment=watch` (Galaxy Watch) sans SpO2 (« Jamais reçu : oxygène
   du sang ») ; source « Samsung Health » sur un Pixel en `phone`. Aligner sur `PERSONAS.md` ; vérifier aussi « dernières
   mesures il y a 2 jours » face aux pas d'hier.

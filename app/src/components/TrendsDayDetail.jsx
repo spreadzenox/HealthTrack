@@ -88,20 +88,27 @@ export function MoodMap({ points, day, habit }) {
  */
 export function ContributionBars({ items }) {
   const max = Math.max(...items.map((c) => Math.abs(c.points)), 0.1)
+  // POLISH-SIM-34 : même langage qu'Analyses ; un ancien calcul sans `net` reste plein
+  const unsure = (c) => c.net === false
   return (
+    <>
     <ul className="tdd-contrib">
       {items.map((c) => (
-        <li key={c.key} data-tone={THEME_TONE[c.theme] ?? 'stone'}>
+        <li key={c.key} data-tone={THEME_TONE[c.theme] ?? 'stone'} className={unsure(c) ? 'is-unsure' : undefined}>
           <span className="tdd-contrib-label">{contributionText(c)}</span>
           <span className="tdd-contrib-track" aria-hidden="true">
             <span className="tdd-contrib-zero" />
             <span className="tdd-contrib-bar"
               style={c.points >= 0 ? { left: '50%', width: `${(c.points / max) * 50}%` } : { right: '50%', width: `${(-c.points / max) * 50}%` }} />
           </span>
-          <span className="tdd-contrib-value">{monoDigits(formatPoints(c.points))}</span>
+          <span className="tdd-contrib-value" aria-label={`${formatPoints(c.points)}${unsure(c) ? ', pas assez net' : ''}`}>{monoDigits(formatPoints(c.points))}</span>
         </li>
       ))}
     </ul>
+    {items.some(unsure) && (
+      <p className="tdd-legend"><span className="tdd-legend-unsure" aria-hidden="true" /> hachuré, chiffre en gris : pas assez net</p>
+    )}
+    </>
   )
 }
 

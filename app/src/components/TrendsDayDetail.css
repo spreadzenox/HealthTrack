@@ -123,3 +123,30 @@
   border-radius: 4px;
   background: var(--tone-label, var(--text-muted));
 }
+
+/* POLISH-SIM-34 : un lien pas assez net dans Analyses, dessiné comme dans Analyses */
+.tdd-contrib li.is-unsure .tdd-contrib-bar {
+  background: repeating-linear-gradient(135deg, var(--tone-label, var(--text-muted)) 0 3px, transparent 3px 6px);
+  border: 1px solid var(--tone-label, var(--text-muted));
+}
+
+.tdd-contrib li.is-unsure .tdd-contrib-value {
+  color: var(--text-muted);
+}
+
+.tdd-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.tdd-legend-unsure {
+  width: 18px;
+  height: 8px;
+  border: 1px solid var(--text-muted);
+  border-radius: 3px;
+  background: repeating-linear-gradient(135deg, var(--text-muted) 0 2px, transparent 2px 4px);
+}
