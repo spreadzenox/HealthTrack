@@ -33,8 +33,8 @@ import './Recommendations.css'
 import { monoDigits } from '../utils/monoDigits'
 
 const WORDS = {
-  wellbeing: { what: 'votre bien-être', note: 'votre bien-être', weigh: 'Ce qui va avec votre bien-être', scale: 'de bien-être' },
-  digestion: { what: 'votre confort digestif', note: 'votre digestion', weigh: 'Ce qui va avec votre confort digestif', scale: 'de confort digestif' },
+  wellbeing: { what: 'votre bien-être', note: 'votre bien-être', weigh: 'Ce qui va avec votre bien-être', scale: 'de bien-être', plus: 'meilleur bien-être' },
+  digestion: { what: 'votre confort digestif', note: 'votre digestion', weigh: 'Ce qui va avec votre confort digestif', scale: 'de confort digestif', levels: ' (Calme 5, Gêne 3, Douleur 1)', plus: 'plus de confort' },
 }
 
 const pts = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`
@@ -122,9 +122,10 @@ function EffectList({ factors }) {
   return <ul className="reco-effects">{factors.map((f) => <EffectBar key={`${f.key}-${f.horizon}`} f={f} max={max} />)}</ul>
 }
 
-/** POLISH-SIM-23 : l'unité « pt » dite une fois, sous le premier titre qui a des barres. */
+/** POLISH-SIM-23 : l'unité « pt » dite une fois, sous le premier titre qui a des barres ;
+ *  POLISH-SIM-53 et 54 : le sens du « + » et, pour la digestion, la note de chaque niveau. */
 function Unit({ w }) {
-  return <p className="reco-unit">pt : points de votre note {w.scale}, sur 5.</p>
+  return <p className="reco-unit">pt : points de votre note {w.scale}, sur 5{w.levels ?? ''}. + : {w.plus}.</p>
 }
 
 function Results({ outcome, view, locked }) {

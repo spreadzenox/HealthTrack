@@ -78,7 +78,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     const units = document.querySelectorAll('.reco-unit')
     expect(units).toHaveLength(1)
     expect(weigh).toContainElement(units[0])
-    expect(units[0]).toHaveTextContent('pt : points de votre note de bien-être, sur 5.')
+    expect(units[0]).toHaveTextContent('pt : points de votre note de bien-être, sur 5. + : meilleur bien-être.')
     expect(document.body.textContent).not.toMatch(/cause|diagnostic/i)
     // l'Accueil et Agir relisent les titres
     expect(JSON.parse(localStorage.getItem(PISTES_SUMMARY_KEY)).levers).toEqual(['Sommeil', 'Pas'])
@@ -152,6 +152,15 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(card).not.toHaveTextContent('de plus avec une gêne')
     fireEvent.click(within(card).getByRole('button', { name: 'Noter maintenant' }))
     expect(screen.getByTestId('where')).toHaveTextContent('/ digestion')
+  })
+  it('POLISH-SIM-53 et 54 : en digestion, l’unité dit le sens du « + » et la note de chaque niveau', async () => {
+    const gut = structuredClone(readyResults.outcomes.wellbeing)
+    for (const hz of Object.values(gut.horizons)) for (const x of hz.factors) x.outcome = 'digestion'
+    renderPage({ view: 'gut' }, { outcomes: { wellbeing: readyResults.outcomes.wellbeing, digestion: gut } })
+    await screen.findByRole('region', { name: 'Ce qui va avec votre confort digestif' })
+    const units = document.querySelectorAll('.reco-unit')
+    expect(units).toHaveLength(1)
+    expect(units[0]).toHaveTextContent('pt : points de votre note de confort digestif, sur 5 (Calme 5, Gêne 3, Douleur 1). + : plus de confort.')
   })
 })
 

@@ -444,11 +444,12 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-52** ✅ 12/11 09:35 (« prêtes » seulement avec un lien net ; sinon « Analyses digestives : aucun lien net pour l’instant », ou « Voir vos analyses digestives » si Analyses n'a jamais été ouvert) (Ventre et données J45, 12/11 08:35) Aujourd'hui : la carte « Vos analyses digestives sont
   prêtes » ouvre un écran qui dit « Aucun lien assez net pour l'instant ». Titre selon l'état réel (prêtes avec une
   piste nette ; sinon une phrase vraie, ex. « Vos analyses digestives : rien de net pour l'instant »). `DigestBlock.jsx`.
-- [ ] **POLISH-SIM-53** (Ventre et données J45) Analyses : « +0,2 pt » sans dire si « + » veut dire mieux ; la ligne
+- [x] **POLISH-SIM-53** ✅ 12/11 11:35 (« + : meilleur bien-être. » / « + : plus de confort. » dans la ligne de l'unité) (Ventre et données J45) Analyses : « +0,2 pt » sans dire si « + » veut dire mieux ; la ligne
   « pt : points de votre note de confort digestif, sur 5 » ne donne pas le sens. Dire une fois « + : plus de confort »
   (et l'équivalent pour le bien-être), sans refrain.
 - [ ] **POLISH-SIM-54** (Ventre et données J45) Échelle de la digestion : la saisie dit Calme / Gêne / Douleur, les
   analyses et Tendances parlent d'une note « sur 5 ». Montrer la correspondance là où la note sur 5 apparaît.
+  Analyses fait le 12/11 11:35 (« (Calme 5, Gêne 3, Douleur 1) ») ; reste Tendances.
 - [ ] **POLISH-SIM-55** (Ventre et données J45) Analyses : « Lactose » est un groupe FODMAP, mais rien ne le dit ; la
   persona SII conclut « aucun mot sur les FODMAP ». Vérifier pourquoi seuls lactose (et pas fructanes, GOS, polyols)
   apparaissent sur 45 jours de démo (données de démo ou seuil), et nommer le groupe (« Lactose (FODMAP) ») si c'est

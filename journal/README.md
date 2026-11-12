@@ -8,6 +8,13 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> ➕ **Analyses : le « + » dit s'il veut dire mieux (12/11 11:35)** : une persona lisait « +0,2 pt » sans savoir si
+> c'était mieux. La ligne de l'unité le dit une fois : « + : meilleur bien-être », et en digestion « + : plus de
+> confort », avec la note de chaque niveau (Calme 5, Gêne 3, Douleur 1)
+> ([digestion, clair](runs/captures/2026-11-12-1135-sens-plus-digestion-clair.png) ·
+> [bien-être, sombre](runs/captures/2026-11-12-1135-sens-plus-bien-etre-sombre.png)). Part ce soir sur Alpha. Rien à
+> faire de votre côté.
+
 > ⌚ **Sources : ce que Samsung Health ne partage pas (12/11 10:35)** : une persona Galaxy Watch lisait « Si votre
 > montre en est capable, activez ce partage » pour la variabilité cardiaque, alors que Samsung Health ne la partage pas
 > avec Health Connect. La carte le dit maintenant simplement, et ne demande plus d'activer ce qui n'existe pas
@@ -505,6 +512,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 11:35 — [Le sens du « + » dans Analyses](runs/2026-11-12-1135-analyses-sens-plus.md) | 🔧 | POLISH-SIM-53 (et 54 pour Analyses) : la ligne de l'unité dit ce que veut dire « + » et la note de chaque niveau de digestion. Tests (3468), lint, build, visual, captures |
 | 12/11 10:35 — [Samsung Health et la VFC](runs/2026-11-12-1035-samsung-vfc.md) | 🔧 | POLISH-SIM-60 : la carte Samsung Health dit que la VFC n'est pas partagée au lieu de proposer de l'activer. Tests (3467), lint, build, visual, capture persona |
 | 12/11 09:35 — [Bloc digestion : titre vrai](runs/2026-11-12-0935-analyses-digestives-titre.md) | 🔧 | POLISH-SIM-52 : « analyses prêtes » seulement avec un lien net ; sinon « aucun lien net pour l'instant ». Tests (3465), lint, build, captures vérifiées |
 | 12/11 08:35 — [Deux personas](runs/2026-11-12-0835-personas.md) | 💡 | Idées : Ventre et données J45 (iPhone seul) et Sportif J14 (Galaxy Watch) ; POLISH-SIM-52 à 63, PROP-SIM-14. Journal seul |
