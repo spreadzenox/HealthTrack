@@ -26,7 +26,7 @@ describe('Bloc bien-être du jour (AUJ-2)', () => {
     expect(document.querySelector('.day-status-number')).toHaveTextContent('3,6')
     expect(document.querySelector('.day-status-max')).toHaveTextContent('/5')
     expect(screen.getByText('D’après 3 lectures du visage')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Bien-être aujourd’hui/ })).toHaveAttribute('href', '/tendances?mesure=wellbeing')
+    expect(screen.getByRole('link', { name: /Bien-être aujourd’hui/ })).toHaveAttribute('href', '/tendances?mesure=wellbeing&vue=jour')
     expect(document.querySelectorAll('.day-curve-dot')).toHaveLength(3)
     expect(document.querySelector('.day-curve-trend')).not.toBeNull()
     // Plus de verdict, d’échelle à segments, d’« estimation prudente » ni d’horizon qui respire
@@ -58,6 +58,8 @@ describe('Bloc bien-être du jour (AUJ-2)', () => {
     view({ data: { est: { day: null } }, entries })
     expect(screen.getByText('4')).toBeInTheDocument()
     expect(screen.getByText(/^Votre dernière note, à 11:00$/)).toBeInTheDocument()
+    // POLISH-SIM-31 : les notes du jour se retrouvent aussi dans Tendances › Jour
+    expect(screen.getByRole('link', { name: /Bien-être aujourd’hui/ })).toHaveAttribute('href', '/tendances?mesure=wellbeing&vue=jour')
     expect(document.querySelectorAll('.day-curve-dot')).toHaveLength(3)
     expect(document.querySelector('.day-curve-trend')).toBeNull()
   })

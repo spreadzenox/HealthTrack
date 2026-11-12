@@ -2,7 +2,7 @@
  * Bloc « Bien-être aujourd'hui » en tête de l'Accueil (AUJ-2, revue design du 07/11 : montrer la donnée, pas un
  * verdict). La valeur du jour sur 5, d'où elle vient, et la courbe du jour (points et tendance, sans légende), comme
  * la vue Jour de l'historique. Carte menthe : c'est du bien-être (règle de sens constant). Toucher le bloc ouvre
- * l'historique du bien-être. Sans lecture ni note du jour : une phrase qui renvoie au bandeau d'ajout (AUJ-1).
+ * Tendances › Jour, où se retrouvent les lectures et notes comptées ici (POLISH-SIM-31). Sans lecture ni note du jour : une phrase qui renvoie au bandeau d'ajout (AUJ-1).
  */
 import { Link } from 'react-router-dom'
 import { dayWellbeing } from '../services/today'
@@ -75,7 +75,7 @@ export default function DayStatusCard({
 
   return (
     <section className={`today-card mood-estimate day-status is-${w.source}`} aria-labelledby="day-status-title">
-      <Link to="/tendances?mesure=wellbeing" className="day-status-main" aria-labelledby="day-status-title"
+      <Link to="/tendances?mesure=wellbeing&vue=jour" className="day-status-main" aria-labelledby="day-status-title"
         aria-describedby="day-status-value day-status-from">
         <div className="day-status-top">
           {heading}
