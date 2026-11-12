@@ -33,8 +33,8 @@ import './Recommendations.css'
 import { monoDigits } from '../utils/monoDigits'
 
 const WORDS = {
-  wellbeing: { what: 'votre bien-être', note: 'votre bien-être', weigh: 'Ce qui va avec votre bien-être', scale: 'de bien-être', plus: 'meilleur bien-être' },
-  digestion: { what: 'votre confort digestif', note: 'votre digestion', weigh: 'Ce qui va avec votre confort digestif', scale: 'de confort digestif', levels: ' (Calme 5, Gêne 3, Douleur 1)', plus: 'plus de confort' },
+  wellbeing: { what: 'votre bien-être', note: 'votre bien-être', weigh: 'Ce qui va avec votre bien-être', scale: 'de bien-être', plus: 'meilleur bien-être', days: 'avec votre bien-être noté ou lu' },
+  digestion: { what: 'votre confort digestif', note: 'votre digestion', weigh: 'Ce qui va avec votre confort digestif', scale: 'de confort digestif', levels: ' (Calme 5, Gêne 3, Douleur 1)', plus: 'plus de confort', days: 'avec votre digestion notée' },
 }
 
 const pts = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`
@@ -187,7 +187,8 @@ function Results({ outcome, view, locked }) {
       )}
       {view.nextLock && (
         <p className="reco-next">
-          {view.nextLock.label} : encore <span className="mono">{view.nextLock.daysLeft}</span> jour{view.nextLock.daysLeft > 1 ? 's' : ''} noté{view.nextLock.daysLeft > 1 ? 's' : ''}.
+          {/* POLISH-SIM-56 : dire ce qui est compté (jours avec ce résultat) et de quel délai il s'agit */}
+          {view.nextLock.label}{view.nextLock.window ? ` (${view.nextLock.window})` : ''} : encore <span className="mono">{view.nextLock.daysLeft}</span> jour{view.nextLock.daysLeft > 1 ? 's' : ''} {w.days}.
         </p>
       )}
     </>

@@ -22,6 +22,13 @@
 > dit pas) à la place de « vérifiez de temps en temps la Play Console ». Restent sur le téléphone : P37 (« P37 oui »,
 > 1 min). Relayé à la routine iOS (App Store Connect, TestFlight). Aucun code de l'app ne change.
 
+> ⏳ **Analyses : ce qui reste à noter, dit clairement (12/11 15:35)** : une persona lisait « Long terme : encore 12 jours
+> notés » au 45e jour sans savoir ce qui était compté. La ligne dit maintenant le délai et ce qui compte : « Long terme
+> (de 7 à 27 jours avant) : encore 12 jours avec votre digestion notée » (en bien-être : « noté ou lu », car le visage
+> compte aussi) ([persona J45, Digestion](runs/captures/2026-11-12-1535-long-terme-compte-J45.png)). Part ce soir sur
+> Alpha. Rien à faire de votre côté. En coulisses : le build de 15:02 était tombé sur une panne passagère de Maven
+> Central (`error_prone_annotations:2.3.1` introuvable) ; relancé.
+
 > 🫘 **Analyses : les groupes FODMAP nommés (12/11 14:35)** : une persona SII lisait « Lactose » sans savoir que c'était
 > un FODMAP, et ne voyait aucun autre groupe en 45 jours. La ligne sous chaque groupe le dit maintenant : « pour 1 repas
 > riche en lactose (FODMAP) de plus ». L'absence des autres groupes venait des données de démo (seul le yaourt était
@@ -546,6 +553,7 @@
 | Run | Type | Résultat |
 |---|---|---|
 | 12/11 16:35 — [Missions navigateur du propriétaire](runs/2026-11-12-1635-missions-navigateur.md) | 📓 | Décision du 12/11 16:15 : § 4.0 classe chaque action (a) / (b) / (c) ; 12 missions dans `journal/missions/` ; charte, BACKLOG (AUTO-GESTES-1 à 4), POUR-IOS. Journal seul |
+| 12/11 15:35 — [Ce qui reste à noter, dit clairement](runs/2026-11-12-1535-long-terme-compte.md) | 🔧 | POLISH-SIM-56 : « Long terme (de 7 à 27 jours avant) : encore N jours avec votre digestion notée » ; build de main relancé (panne Maven passagère). Tests (3473), lint, build, capture persona J45 |
 | 12/11 13:35 — [L'échelle de la digestion dans Tendances](runs/2026-11-12-1335-echelle-digestion-tendances.md) | 🔧 | POLISH-SIM-54 (fini) : « Confort digestif : Calme 5, Gêne 3, Douleur 1 » sous la courbe ; « 5 = calme » retiré du détail du jour. Tests (3472), lint, build, visual, captures |
 | 12/11 14:35 — [Les groupes FODMAP nommés](runs/2026-11-12-1435-fodmap-nomme.md) | 🔧 | POLISH-SIM-55 : « (FODMAP) » sous chaque groupe dans Analyses ; démo avec GOS, fructose, sorbitol. Tests (3473), lint, build, visual, capture persona J45 |
 | 12/11 12:35 — [La tuile Repas en attendant les kcal](runs/2026-11-12-1235-repas-kcal-attente.md) | 🔧 | POLISH-SIM-59 : « ≈ … kcal » tant que la table Ciqual se charge ; l'outil des personas capture une fois la table chargée. Tests (3471), lint, build, visual, capture persona |

@@ -466,7 +466,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   persona SII conclut « aucun mot sur les FODMAP ». Vérifier pourquoi seuls lactose (et pas fructanes, GOS, polyols)
   apparaissent sur 45 jours de démo (données de démo ou seuil), et nommer le groupe (« Lactose (FODMAP) ») si c'est
   l'app. Lié à PROP-SIM-10 (groupes FODMAP plus visibles).
-- [ ] **POLISH-SIM-56** (Ventre et données J45) « Long terme : encore 12 jours notés » au 45e jour, puis 11 après la
+- [x] **POLISH-SIM-56** ✅ 12/11 15:35 (compté : jours avec le résultat — digestion notée, ou bien-être noté ou lu ; la ligne dit le délai et ce compte) (Ventre et données J45) « Long terme : encore 12 jours notés » au 45e jour, puis 11 après la
   note du matin : vérifier ce qui est compté (jours avec bien-être et digestion ?) et le dire en mots simples.
 - [ ] **POLISH-SIM-57** (Ventre et données J45) Rapport PDF : la case « bien-être estimé (caméra) » est proposée sans
   aucune lecture du visage ; la cacher dans ce cas. Données › Exporter : « rangé dans Documents » et « Enregistrez le
