@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-12",
+  "kind": "correctif",
+  "title": "Journal : la tuile Repas ne dit plus « 1 » en attendant les kcal",
+  "items": [
+    "À l’ouverture du Journal, le temps de charger la table des aliments, la tuile Repas affichait le nombre de repas au lieu des kcal. Elle affiche « ≈ … kcal » le temps du calcul, puis les kcal."
+  ]
+}

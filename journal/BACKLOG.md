@@ -463,7 +463,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   trouve ni dans Journal › Jours ni dans Tendances. Vérifier dans l'outil (environ 1 jour sur 3 avec séance) et dans
   l'app où elles s'affichent ; si elles ne sont que dans une liste de saisies, une tuile « Séance » dans la carte du
   jour.
-- [ ] **POLISH-SIM-59** (Sportif J14) Journal › Jours : tuile « Repas 1 » sans kcal alors que Repas affiche ≈ 479 kcal
+- [x] **POLISH-SIM-59** ✅ 12/11 12:35 (cause : capture prise avant le chargement de la table Ciqual ; tuile « ≈ … kcal » pendant le chargement, outil des personas qui attend la table) (Sportif J14) Journal › Jours : tuile « Repas 1 » sans kcal alors que Repas affiche ≈ 479 kcal
   pour ce repas, et qu'un autre jour dit ≈ 1 039 kcal. Vérifier la règle de la tuile (kcal dès qu'un repas est compté).
 - [x] **POLISH-SIM-60** ✅ 12/11 10:35 (`notShared` au catalogue ; « Samsung Health ne partage pas la variabilité cardiaque avec Health Connect. ») (Sportif J14) Sources, carte Samsung Health : « Si votre montre en est capable, activez ce
   partage » pour la VFC, alors que Samsung Health ne l'écrit pas dans Health Connect. Dire ce qui est vrai pour l'app

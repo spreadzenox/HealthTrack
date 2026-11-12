@@ -103,6 +103,8 @@ export function summaryChips(s) {
       const chip = [s.meals > 1 ? `${s.meals} repas` : 'Repas', `≈\u00a0${fr(s.mealKcal)}\u00a0kcal`]
       chips.push(incomplete ? [...chip, 'repas incomplets\u00a0?'] : chip)
     }
+    // Table Ciqual pas encore chargée : « Repas 1 » ferait croire à un repas sans kcal (POLISH-SIM-59)
+    else if (s.mealKcalPending) chips.push([s.meals > 1 ? `${s.meals} repas` : 'Repas', '≈\u00a0…\u00a0kcal'])
     else chips.push(['Repas', String(s.meals)])
   }
   if (s.screenMinutes != null) chips.push(['Écran', formatScreenMinutes(s.screenMinutes)])
