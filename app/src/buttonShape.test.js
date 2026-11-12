@@ -26,6 +26,11 @@ describe('forme des boutons (POL-PLAY-24)', () => {
     expect(rule(read('./pages/Connectors.css'), '.connector-btn')).toContain('min-height: var(--tap-min)')
   })
 
+  // Audit du 12/11 : « Clé API Gemini » (Réglages, sideload) faisait 40 px de haut.
+  it('les champs des Réglages gardent une cible tactile de 44 px', () => {
+    expect(rule(read('./Food.css'), '.settings-input')).toContain('min-height: var(--tap-min)')
+  })
+
   it('aucune feuille ne remet un .btn en rectangle', () => {
     for (const file of ['./App.css', './Food.css', './components/UpdateBanner.css', './pages/Connectors.css']) {
       const css = read(file)

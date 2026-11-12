@@ -371,6 +371,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **11/11 16:35** — Accueil sans Health Connect : « Ce que vous noterez » suit l'objectif (poids, règles, digestion) (POLISH-SIM-51) ; « Tests » (budget de lectures) ne dépend plus d'apt, qui tombait en panne DNS sur le runner.
 - **11/11 19:35** — Exemple digestion sans l'objectif ventre : plus de bandeau « suivi digestif masqué » au-dessus des données fictives (POLISH-SIM-37b).
 - **11/11 20:35** — Visite guidée : le badge « Exemple · données fictives » passe dans la bulle, il ne masque plus le nom de l'app (POLISH-SIM-37c).
+- **12/11 05:35** — Réglages : les champs de saisie (clé Gemini en sideload, profil, Withings) ont une cible tactile de 44 px (POLISH-AUDIT-2).
 - **12/11 04:35** — Journal › Nutrition vide : la carte du profil dit à quoi il sert au lieu de répéter son bouton (POLISH-AUDIT-1).
 - **12/11 03:35** — Sources : « Dernières mesures » d'après la fin d'un total du jour (« il y a 2 jours » pour les pas d'hier) ; outil des personas : SpO₂ des montres qui l'envoient et `--source` (POLISH-SIM-35).
 - **12/11 00:35** — « Bien-être aujourd'hui » ouvre Tendances › Jour, où se retrouvent les lectures comptées sur Aujourd'hui (POLISH-SIM-31).

@@ -8,6 +8,11 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 👆 **Des champs plus faciles à toucher (12/11 05:35)** : les champs de saisie (clé Gemini de la version complète,
+> profil de Nutrition, compte Withings) faisaient 40 px de haut ; ils passent à 44 px, la taille minimale d'une cible
+> au doigt ([Réglages, sombre](runs/captures/2026-11-12-0535-cle-gemini-44px-sombre.png)). Part ce soir sur Alpha.
+> Rien à faire de votre côté.
+
 > 🥗 **Nutrition : la carte du profil sans redite (12/11 04:35)** : sous « Compléter mon profil », elle disait
 > « Complétez votre profil pour des repères ajustés à vous ». Elle dit maintenant ce qui compte : « Sexe, âge, taille,
 > poids : vos repères d'apports en tiennent compte » ([clair](runs/captures/2026-11-12-0435-profil-nutrition-clair.png) ·
@@ -469,6 +474,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 05:35 — [Champs à 44 px](runs/2026-11-12-0535-champs-44px.md) | 🔧 | POLISH-AUDIT-2 : les champs des Réglages (clé Gemini en sideload…) passent de 40 à 44 px de haut. Tests (3462), lint, build, visual (18 pages, aucune cible < 44 px), captures vérifiées |
 | 12/11 04:35 — [Nutrition : profil sans redite](runs/2026-11-12-0435-profil-nutrition.md) | 🔧 | POLISH-AUDIT-1 : audit des écrans (vides et démo, sombre, play) ; la carte du profil de Nutrition dit à quoi il sert. Alpha 101006 parti à 04:24. Tests (3461), lint, build, captures vérifiées |
 | 12/11 03:35 — [Sources : dernières mesures](runs/2026-11-12-0335-dernieres-mesures.md) | 🔧 | POLISH-SIM-35 : « Dernières mesures » d'après la fin d'un total du jour ; SpO₂ et `--source` dans l'outil des personas. Tests (3461), lint, build, captures vérifiées |
 | 12/11 02:35 — [Reprise de la PR #925](runs/2026-11-12-0235-reprise-925.md) | 🔧 | PR #925 (bien-être du jour → Tendances › Jour) mise à jour sur main, conflit du résumé résolu. Tests (3457), lint, build, captures vérifiées |

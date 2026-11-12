@@ -259,6 +259,7 @@
 .settings-input {
   width: 100%;
   max-width: 400px;
+  min-height: var(--tap-min);
   padding: 10px 12px;
   font-size: 0.95rem;
   border: 1px solid var(--border);
