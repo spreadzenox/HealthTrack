@@ -441,6 +441,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   selon le délai, sans dire quoi en retenir. Vérifier la présentation (si rien n'est net, le dire une fois).
 - [x] **POLISH-SIM-51** (fait 11/11 16:35, `handNotes`) (Maigrir J1) Accueil, « Votre téléphone suffit » : la liste (bien-être, digestion, repas en
   photo) ignore l'objectif choisi ; l'adapter (poids : repas, pas).
+- [x] **POLISH-AUDIT-1** ✅ 12/11 04:35 (audit des écrans vides et de démo, sombre, play) Journal › Nutrition vide : la
+  carte du profil répétait « Compléter mon profil » / « Complétez votre profil… ». Elle dit à quoi il sert : « Sexe, âge,
+  taille, poids : vos repères d'apports en tiennent compte. »
 - [ ] **PROP-SIM-11** (proposition avec maquette, pas de code sans accord ; rejoint CYCLE-4 et PROP-SIM-10) cycle
   visible hors du Journal : jour du cycle sur Aujourd'hui, règles en bandes dans Tendances, règles et symptômes dans le
   rapport médecin, avec ce qu'il contient avant de le créer.
