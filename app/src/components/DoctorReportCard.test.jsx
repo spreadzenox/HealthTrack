@@ -40,6 +40,25 @@ describe('DoctorReportCard', () => {
     expect(save).toHaveBeenCalledWith(pdf)
   })
 
+  it('aucune lecture du visage : la case du bien-être estimé n’est pas proposée (POLISH-SIM-57)', async () => {
+    const create = vi.fn(async () => pdf)
+    renderCard({ create, save: async () => ({ saved: 'download' }), count: async () => 3, firstAt: async () => null, faceCount: async () => 0 })
+    fireEvent.click(await screen.findByRole('button', { name: 'Préparer le rapport' }))
+    await waitFor(() => expect(screen.queryByRole('checkbox', { name: /bien-être estimé/ })).toBeNull())
+    fireEvent.click(screen.getByRole('button', { name: 'Créer le PDF' }))
+    await waitFor(() => expect(create).toHaveBeenCalledWith({ weeks: 4, includeWellbeing: false }))
+  })
+
+  it('des lectures du visage, ou un comptage en échec : la case reste proposée', async () => {
+    const { unmount } = renderCard({ count: async () => 3, firstAt: async () => null, faceCount: async () => 12 })
+    fireEvent.click(await screen.findByRole('button', { name: 'Préparer le rapport' }))
+    expect(screen.getByRole('checkbox', { name: /bien-être estimé/ })).toBeInTheDocument()
+    unmount()
+    renderCard({ count: async () => 3, firstAt: async () => null, faceCount: async () => { throw new Error('x') } })
+    fireEvent.click(await screen.findByRole('button', { name: 'Préparer le rapport' }))
+    expect(screen.getByRole('checkbox', { name: /bien-être estimé/ })).toBeInTheDocument()
+  })
+
   it('peu de jours d’usage : la période proposée est 2 semaines (POLISH-SIM-12)', async () => {
     renderCard({ count: async () => 3, firstAt: async () => new Date(Date.now() - 6 * 86400000).toISOString() })
     fireEvent.click(await screen.findByRole('button', { name: 'Préparer le rapport' }))

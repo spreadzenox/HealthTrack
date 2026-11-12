@@ -13,6 +13,9 @@ async function countReportEntries() {
   return gut + food
 }
 
+/** Lectures du visage : sans elles, il n'y a aucun bien-être estimé à mettre dans le rapport. */
+const countFaceReadings = () => countEntries({ type: 'face_burst' })
+
 /** Première note du ventre ou premier repas : la période proposée ne dépasse pas les jours d'usage. */
 async function firstReportEntryAt() {
   const dates = (await Promise.all([getFirstEntryAt(GUT_TYPE), getFirstEntryAt('food')])).filter(Boolean)
@@ -25,13 +28,15 @@ async function firstReportEntryAt() {
  * Premium sur la version Play (offert pendant le lancement) ; libre en sideload. Sans aucune note du ventre ni aucun
  * repas, pas de rapport vide : une phrase dit quand il se remplit (un comptage en échec laisse le bouton), et pas de
  * « Débloquer » sur la version Play tant qu'il n'y a rien à mettre dedans (POL-PLAY-79). La période proposée est la
- * plus courte qui couvre les jours d'usage (POLISH-SIM-12), sauf si la personne en a déjà choisi une.
+ * plus courte qui couvre les jours d'usage (POLISH-SIM-12), sauf si la personne en a déjà choisi une. Sans aucune
+ * lecture du visage, la case du bien-être estimé n'est pas proposée (POLISH-SIM-57 ; un comptage en échec la laisse).
  */
 export default function DoctorReportCard({
   create = createReportPdf,
   save = saveAndShareReport,
   count = countReportEntries,
   firstAt = firstReportEntryAt,
+  faceCount = countFaceReadings,
 }) {
   const [ent] = useEntitlement()
   const premium = !FEATURES.billing || ent.premium
@@ -41,6 +46,7 @@ export default function DoctorReportCard({
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState(null)
   const [empty, setEmpty] = useState(false)
+  const [hasFace, setHasFace] = useState(true)
   const chosen = useRef(false)
   const card = useRef(null)
   const { hash } = useLocation()
@@ -62,11 +68,17 @@ export default function DoctorReportCard({
     return () => { alive = false }
   }, [count])
 
+  useEffect(() => {
+    let alive = true
+    Promise.resolve().then(faceCount).then((n) => { if (alive) setHasFace(n > 0) }, () => {})
+    return () => { alive = false }
+  }, [faceCount])
+
   const run = async () => {
     setBusy(true)
     setStatus(null)
     try {
-      const pdf = await create({ weeks, includeWellbeing: wellbeing })
+      const pdf = await create({ weeks, includeWellbeing: hasFace && wellbeing })
       const { saved } = await save(pdf)
       setStatus(saved === 'documents'
         ? `${pdf.fileName} est dans Documents (app Fichiers › Documents).`
@@ -112,10 +124,12 @@ export default function DoctorReportCard({
               </label>
             ))}
           </fieldset>
-          <label className="fodmap-reminder-row">
-            <input type="checkbox" checked={wellbeing} onChange={(e) => setWellbeing(e.target.checked)} />
-            Inclure mon bien-être estimé (caméra)
-          </label>
+          {hasFace && (
+            <label className="fodmap-reminder-row">
+              <input type="checkbox" checked={wellbeing} onChange={(e) => setWellbeing(e.target.checked)} />
+              Inclure mon bien-être estimé (caméra)
+            </label>
+          )}
           <button type="button" className="btn fodmap-cta" onClick={run} disabled={busy}>
             {busy ? 'Création…' : 'Créer le PDF'}
           </button>

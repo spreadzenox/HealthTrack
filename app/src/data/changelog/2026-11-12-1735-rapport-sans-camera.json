@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-12",
+  "kind": "amélioration",
+  "title": "Données : rapport et sauvegarde plus clairs",
+  "items": [
+    "Le rapport PDF ne propose plus d'inclure le bien-être estimé tant qu'aucune lecture du visage n'existe.",
+    "La sauvegarde dit où est le fichier une seule fois, après l'export."
+  ]
+}

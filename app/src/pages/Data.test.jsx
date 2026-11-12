@@ -126,7 +126,9 @@ describe('Data page — export (web)', () => {
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /Télécharger la sauvegarde/i }))
     })
-    expect(screen.getByText(/Téléchargement démarré/i)).toBeInTheDocument()
+    // POLISH-SIM-57 : le lieu du fichier n'est dit qu'une fois, après l'export, et jamais deux lieux différents.
+    expect(screen.getByText(/^healthtrack-export-\d{4}-\d{2}-\d{2}\.json téléchargé\.$/)).toBeInTheDocument()
+    expect(screen.queryByText(/Documents/)).toBeNull()
   })
 
   it('shows error status when exportToJson rejects', async () => {

@@ -466,9 +466,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   persona SII conclut « aucun mot sur les FODMAP ». Vérifier pourquoi seuls lactose (et pas fructanes, GOS, polyols)
   apparaissent sur 45 jours de démo (données de démo ou seuil), et nommer le groupe (« Lactose (FODMAP) ») si c'est
   l'app. Lié à PROP-SIM-10 (groupes FODMAP plus visibles).
-- [ ] **POLISH-SIM-56** (Ventre et données J45) « Long terme : encore 12 jours notés » au 45e jour, puis 11 après la
+- [x] **POLISH-SIM-56** ✅ 12/11 15:35 (compté : jours avec le résultat — digestion notée, ou bien-être noté ou lu ; la ligne dit le délai et ce compte) (Ventre et données J45) « Long terme : encore 12 jours notés » au 45e jour, puis 11 après la
   note du matin : vérifier ce qui est compté (jours avec bien-être et digestion ?) et le dire en mots simples.
-- [ ] **POLISH-SIM-57** (Ventre et données J45) Rapport PDF : la case « bien-être estimé (caméra) » est proposée sans
+- [x] **POLISH-SIM-57** ✅ 12/11 17:35 (case cachée sans aucune entrée `face_burst`, un comptage en échec la laisse ; indication « Un fichier JSON, à garder en lieu sûr. », phrase de fin « <fichier> téléchargé. » hors Android) (Ventre et données J45) Rapport PDF : la case « bien-être estimé (caméra) » est proposée sans
   aucune lecture du visage ; la cacher dans ce cas. Données › Exporter : « rangé dans Documents » et « Enregistrez le
   fichier… (ex. Dossier Documents) » se contredisent ; une seule phrase.
 - [ ] **POLISH-SIM-58** (Sportif J14, Galaxy Watch) Séances : Sources annonce des « séances » reçues, la persona ne les
@@ -488,6 +488,12 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   une ligne ce qui a été comparé.
 - [ ] **POLISH-SIM-63** (Outil, Sportif J14) La persona voit « Cigarettes 3 » sans avoir activé le compteur
   (POLISH-SIM-42 : opt-in) : `personaData` garde les cigarettes de la démo. Les retirer sauf objectif tabac.
+- [ ] **POLISH-SIM-65** (Outil, 12/11 17:35) `personaData` donne des lectures du visage à toutes les personas, même
+  « téléphone seul » qui dit n'avoir jamais activé la caméra : une option `--face=off` (aucune entrée `face_burst`),
+  tirée pour une part des personas, pour voir l'app sans bien-être lu.
+- [ ] **JOURNAL-CAPTURES-1** (12/11 17:35) 16 captures citées dans le résumé S46 (12/11 00:35 à 15:35) ne sont pas
+  dans le dépôt (`*.png` ignoré, `git add -f` oublié). `.gitignore` corrigé (`!journal/**/*.png`). Reste : refaire
+  les plus utiles ou retirer les liens morts, et un test qui échoue quand le résumé cite une capture absente.
 - [ ] **POLISH-SIM-64** (Outil) `persona-browse.mjs --dark` ne règle que le `colorScheme` du navigateur : l'app reste en
   clair. Régler aussi le thème de l'app (comme `visual-check --dark`).
 - [ ] **PROP-SIM-14** (proposition avec maquette, pas de code sans accord ; Sportif J14) « Autre chose » n'offre qu'un

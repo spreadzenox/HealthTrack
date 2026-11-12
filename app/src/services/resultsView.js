@@ -75,7 +75,7 @@ export function resultsView(outcome) {
     ? [...lookBest.values()].sort((a, b) => rank(b) - rank(a)).slice(0, MAX_PER_HORIZON)
     : []
   const locked = horizons.find((h) => h.status === 'locked')
-  const nextLock = locked ? { label: locked.label, daysLeft: Math.max(0, locked.daysNeeded - locked.daysHave) } : null
+  const nextLock = locked ? { label: locked.label, window: locked.window, daysLeft: Math.max(0, locked.daysNeeded - locked.daysHave) } : null
   return { state: 'results', pistes, weigh, weighNothingNet, flipped, nextLock, lookOnly }
 }
 

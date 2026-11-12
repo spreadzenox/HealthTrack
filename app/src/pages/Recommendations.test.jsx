@@ -21,7 +21,7 @@ const readyResults = {
       horizons: {
         short: h('short', 'Court terme', 'ready', [f('sleepMinutes', 'Sommeil', 0.4), f('screen_minutes', 'Temps d’écran', -0.2, { theme: 'context', net: false }), f('hrv_ms', 'VFC', 0.3, { theme: 'body', actionable: false })]),
         medium: h('medium', 'Moyen terme', 'ready', [f('steps', 'Pas', 0.25, { theme: 'activity', horizon: 'medium' })], 30, 21),
-        long: h('long', 'Long terme', 'locked', [], 30, 42),
+        long: { ...h('long', 'Long terme', 'locked', [], 30, 42), window: 'de 7 à 27 jours avant' },
       },
     },
     digestion: lockedOutcome(3, { symptomDays: 1, symptomDaysNeeded: 5, daysToFirst: 25 }),
@@ -73,7 +73,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(within(weigh).queryByText('VFC')).toBeNull()
     expect(within(screen.getByRole('region', { name: 'À regarder, pas à changer' })).getByText('VFC')).toBeInTheDocument()
     // POLISH-SIM-23 : des jours notés, comme le compte à rebours
-    expect(screen.getByText(/Long terme : encore/)).toHaveTextContent('Long terme : encore 12 jours notés.')
+    expect(screen.getByText(/Long terme \(/)).toHaveTextContent('Long terme (de 7 à 27 jours avant) : encore 12 jours avec votre bien-être noté ou lu.')
     // POLISH-SIM-23 : l'unité « pt » est dite une fois, sous le premier titre à barres
     const units = document.querySelectorAll('.reco-unit')
     expect(units).toHaveLength(1)
