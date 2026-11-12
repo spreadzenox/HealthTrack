@@ -14,7 +14,8 @@ export const NATIVE_TIMEOUT_MS = 3_000
 export const CHECK_TIMEOUT_MS = 2_000
 export const DETECT_TIMEOUT_MS = 6_000
 
-const NativeAppManager = registerPlugin('AppManager')
+/** Plugin natif AppManager, enregistré ici seulement (le diagnostic de la montre l'importe). */
+export const NativeAppManager = registerPlugin('AppManager')
 
 function isNative() {
   return typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
