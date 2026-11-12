@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-12",
+  "kind": "correctif",
+  "title": "Des champs de saisie plus faciles à toucher",
+  "items": [
+    "Les champs des réglages et du profil passent à 44 px de haut, la taille minimale d'une cible au doigt."
+  ]
+}

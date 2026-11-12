@@ -444,6 +444,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-AUDIT-1** ✅ 12/11 04:35 (audit des écrans vides et de démo, sombre, play) Journal › Nutrition vide : la
   carte du profil répétait « Compléter mon profil » / « Complétez votre profil… ». Elle dit à quoi il sert : « Sexe, âge,
   taille, poids : vos repères d'apports en tiennent compte. »
+- [x] **POLISH-AUDIT-2** ✅ 12/11 05:35 (suite de l'audit du 12/11 04:35) Réglages, sideload : le champ « Clé API
+  Gemini » (et tous les `.settings-input`) faisait 40 px de haut, sous la cible de 44 px (DESIGN.md). `min-height:
+  var(--tap-min)`, test dans `buttonShape.test.js`.
 - [ ] **PROP-SIM-11** (proposition avec maquette, pas de code sans accord ; rejoint CYCLE-4 et PROP-SIM-10) cycle
   visible hors du Journal : jour du cycle sur Aujourd'hui, règles en bandes dans Tendances, règles et symptômes dans le
   rapport médecin, avec ce qu'il contient avant de le créer.
