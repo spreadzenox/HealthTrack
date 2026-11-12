@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, afterEach } from 'vitest'
+import { loadNutritionTable, _resetNutritionTable } from '../data/nutritionTable'
 import { buildDailyJournal, dayHeading, groupMealsByDay, JOURNAL_SUMMARY_TYPES } from './dailyJournal'
 
 let nextId = 1
@@ -405,5 +406,25 @@ describe('buildDailyJournal : cycle (CYCLE-1b)', () => {
     ])
     expect(days).toHaveLength(1)
     expect(days[0].items).toEqual([])
+  })
+})
+
+describe('buildDailyJournal — kcal en attente de la table Ciqual (POLISH-SIM-59)', () => {
+  const meal = (items) => e('food', '2026-10-08T12:15:00', { items }, 'app_food')
+  const potato = [{ ingredient: 'Pomme de terre cuite', quantity_g: 200 }]
+  // La table est chargée par setup.js : on la remet après chaque essai
+  afterEach(async () => { await loadNutritionTable() })
+
+  it('marque les kcal « en cours » tant que la table manque, seulement pour un repas avec aliments', () => {
+    _resetNutritionTable()
+    expect(buildDailyJournal([meal(potato)])[0].summary.mealKcalPending).toBe(true)
+    expect(buildDailyJournal([meal([])])[0].summary.mealKcalPending).toBe(false)
+  })
+
+  it('plus rien en attente une fois la table chargée', async () => {
+    await loadNutritionTable()
+    const [day] = buildDailyJournal([meal(potato)])
+    expect(day.summary.mealKcalPending).toBe(false)
+    expect(day.summary.mealKcal).toBeGreaterThan(0)
   })
 })

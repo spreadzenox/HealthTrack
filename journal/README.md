@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🍽️ **Journal : la tuile Repas sans faux « 1 » (12/11 12:35)** : une persona voyait « Repas 1 » sans kcal dans
+> Jours, et ≈ 479 kcal dans Repas. Les deux calculs sont les mêmes : la tuile s'affichait avant que la table des
+> aliments soit chargée. Elle dit maintenant « ≈ … kcal » pendant ce court instant, puis les kcal
+> ([persona Sportif J14, après correction](runs/captures/2026-11-12-1235-repas-kcal-sportif.png)). Part ce soir sur
+> Alpha. Rien à faire de votre côté.
+
 > ➕ **Analyses : le « + » dit s'il veut dire mieux (12/11 11:35)** : une persona lisait « +0,2 pt » sans savoir si
 > c'était mieux. La ligne de l'unité le dit une fois : « + : meilleur bien-être », et en digestion « + : plus de
 > confort », avec la note de chaque niveau (Calme 5, Gêne 3, Douleur 1)
@@ -512,6 +518,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 12:35 — [La tuile Repas en attendant les kcal](runs/2026-11-12-1235-repas-kcal-attente.md) | 🔧 | POLISH-SIM-59 : « ≈ … kcal » tant que la table Ciqual se charge ; l'outil des personas capture une fois la table chargée. Tests (3471), lint, build, visual, capture persona |
 | 12/11 11:35 — [Le sens du « + » dans Analyses](runs/2026-11-12-1135-analyses-sens-plus.md) | 🔧 | POLISH-SIM-53 (et 54 pour Analyses) : la ligne de l'unité dit ce que veut dire « + » et la note de chaque niveau de digestion. Tests (3468), lint, build, visual, captures |
 | 12/11 10:35 — [Samsung Health et la VFC](runs/2026-11-12-1035-samsung-vfc.md) | 🔧 | POLISH-SIM-60 : la carte Samsung Health dit que la VFC n'est pas partagée au lieu de proposer de l'activer. Tests (3467), lint, build, visual, capture persona |
 | 12/11 09:35 — [Bloc digestion : titre vrai](runs/2026-11-12-0935-analyses-digestives-titre.md) | 🔧 | POLISH-SIM-52 : « analyses prêtes » seulement avec un lien net ; sinon « aucun lien net pour l'instant ». Tests (3465), lint, build, captures vérifiées |

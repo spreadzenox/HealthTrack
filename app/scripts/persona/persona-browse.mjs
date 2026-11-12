@@ -126,6 +126,10 @@ async function shot(full = false) {
   // Visite guidée : capture à la fin du « Exemple au jour 14 » (rideau et compteur, ≈ 1 s), jamais au milieu
   // (POLISH-SIM-20, 21 : « jour 10 » et bande claire venaient d'une capture à 600 ms)
   await page.waitForSelector('.tour-curtain', { state: 'detached', timeout: 3000 }).catch(() => {})
+  // Table Ciqual (1,3 Mo) : le serveur de dev la transforme en plusieurs secondes, l'APK la lit en un éclair.
+  // Capture une fois chargée, comme la verrait la personne (POLISH-SIM-59 : « Repas 1 » sans kcal)
+  await page.evaluate(() => import('/src/data/nutritionTable.js').then((m) => m.loadNutritionTable())).catch(() => {})
+  await page.waitForTimeout(100)
   const file = join(outDir, `${String(++n).padStart(3, '0')}.png`)
   await page.screenshot({ path: file, fullPage: full })
   return { shot: file, url: page.url().replace(base, '') }

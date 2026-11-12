@@ -15,6 +15,13 @@ describe('summaryChips — repas', () => {
     expect(meals({ meals: 2, mealKcal: 0 })).toEqual(['Repas', '2'])
   })
 
+  it('table Ciqual pas encore chargée : kcal « en cours », jamais « Repas 1 » (POLISH-SIM-59)', () => {
+    expect(meals({ meals: 1, mealKcal: 0, mealKcalPending: true })).toEqual(['Repas', '≈\u00a0…\u00a0kcal'])
+    expect(meals({ meals: 2, mealKcal: 0, mealKcalPending: true })[0]).toBe('2 repas')
+    // Des kcal déjà connues priment ; un repas sans aliment garde le simple compte
+    expect(meals({ meals: 1, mealKcal: 479, mealKcalPending: true })[1]).toBe('≈\u00a0479\u00a0kcal')
+  })
+
   it('signale des repas incomplets face à la dépense du jour, avec la règle de Nutrition (POLISH-SIM-24)', () => {
     // 479 kcal mangés pour 2 285 dépensés : sous la moitié, « repas incomplets ? » plutôt qu'un faux gros déficit
     expect(meals({ meals: 1, mealKcal: 479, burnedKcal: 2285 })).toEqual(['Repas', '≈\u00a0479\u00a0kcal', 'repas incomplets\u00a0?'])

@@ -8,6 +8,7 @@
 import { localDateKey } from './analysisEngine'
 import { isDaytimeHrv } from './hrv'
 import { mealKcal } from './mealEditing'
+import { getNutritionTable } from '../data/nutritionTable'
 import { appLocale, localeDate } from '../i18n/locale.js'
 import { activityTotal, addActivity, createActivityTotal } from './activityTotals'
 import { oneSleepSourcePerNight, sleepNightKey } from './sleepSources'
@@ -55,6 +56,7 @@ function emptyDay(dateKey) {
     cigarettes: 0,
     meals: 0,
     mealKcal: 0,
+    mealKcalPending: false,
   }
 }
 
@@ -121,6 +123,7 @@ function finalize(day) {
       cigarettes: day.cigarettes,
       meals: day.meals,
       mealKcal: day.mealKcal,
+      mealKcalPending: day.mealKcalPending,
     },
   }
 }
@@ -259,6 +262,8 @@ export function buildDailyJournal(entries) {
       case 'food':
         day.meals += 1
         day.mealKcal += mealKcal(p.items)
+        // Table Ciqual chargée à la demande : tant qu'elle manque, les kcal sont « en cours », pas absentes (POLISH-SIM-59)
+        if (!getNutritionTable() && p.items?.length) day.mealKcalPending = true
         day.items.push(e)
         break
       case 'weight':
