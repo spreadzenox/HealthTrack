@@ -456,6 +456,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 02:35 — [Reprise de la PR #925](runs/2026-11-12-0235-reprise-925.md) | 🔧 | PR #925 (bien-être du jour → Tendances › Jour) mise à jour sur main, conflit du résumé résolu. Tests (3457), lint, build, captures vérifiées |
 | 12/11 01:35 — [Tendances : détail d'un jour](runs/2026-11-12-0135-peser-net.md) | 🔧 | POLISH-SIM-34 : sous Sommeil seul, ni visage ni facteurs du bien-être ; liens pas assez nets hachurés ; soleil de la démo selon la saison. Tests (3457), lint, build, captures vérifiées |
 | 12/11 00:35 — [Bien-être du jour → Tendances › Jour](runs/2026-11-12-0035-bien-etre-jour.md) | 🔧 | POLISH-SIM-31 : le bloc ouvre la vue Jour, où le nombre de lectures se retrouve. Tests (3454), lint, build, captures vérifiées ; PR #925 reprise, mise à jour sur main et mergée par le run de 02:35 |
 | 11/11 23:35 — [Visite : « Exemple au jour 14 »](runs/2026-11-11-2335-exemple-jour14.md) | 🔧 | POLISH-SIM-39 : bouton de la visite et compte fictif de la digestion calés. Tests (3454), lint, build, captures vérifiées |
