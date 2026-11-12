@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-12",
+  "kind": "correctif",
+  "title": "« Noter ma digestion » ouvre la note",
+  "items": [
+    "Dans un Journal encore vide, la tuile « Noter ma digestion » ouvre directement la fenêtre de la digestion d’Aujourd’hui, au lieu de vous laisser sur l’écran sans rien d’ouvert."
+  ]
+}
