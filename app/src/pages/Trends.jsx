@@ -70,12 +70,14 @@ export default function Trends({
       alive = false
     }
   }, [period, changes, readDayChanges])
-  // Le confort digestif seul affiché : ses contributions ; sinon celles du bien-être
+  // Le confort digestif seul affiché : ses contributions ; avec le bien-être, les siennes. POLISH-SIM-34 : sans l'un
+  // ni l'autre (Sommeil, Pas…), aucune : le modèle d'Analyses n'explique que ces deux notes.
   const dayExtra = (date, keys) => {
-    if (!wantContrib) setTimeout(() => setWantContrib(true), 0)
+    const outcome = keys.includes('wellbeing') ? 'wellbeing' : keys.includes('digestion') ? 'digestion' : null
+    if (outcome && !wantContrib) setTimeout(() => setWantContrib(true), 0)
     return {
       face: dayFaceDetail(data?.face ?? [], date),
-      contributions: contributions?.[keys.includes('wellbeing') || !keys.includes('digestion') ? 'wellbeing' : 'digestion']?.[date] ?? null,
+      contributions: outcome ? contributions?.[outcome]?.[date] ?? null : null,
     }
   }
   return (

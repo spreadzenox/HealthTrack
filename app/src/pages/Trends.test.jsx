@@ -149,6 +149,17 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(detail.textContent).not.toMatch(/diagnostic|cause/i)
   })
 
+  it('POLISH-SIM-34 : sous « Sommeil » seul, ni lectures du visage ni facteurs du bien-être', async () => {
+    renderAt('/tendances?mesure=sleep')
+    await screen.findByRole('img', { name: /Courbe de Sommeil/ })
+    fireEvent.click(screen.getByRole('button', { name: 'jeudi 5 novembre' }))
+    const detail = screen.getByRole('group', { name: /Détail du jeudi 5 novembre/ })
+    expect(detail).toHaveTextContent('Sommeil')
+    expect(detail.textContent).not.toMatch(/lectures? du visage/)
+    await new Promise((r) => setTimeout(r, 20))
+    expect(within(detail).queryByRole('region', { name: 'Ce qui a pu peser ce jour-là' })).toBeNull()
+  })
+
   it('TS-2 : vue Mois, repère « changement » avec niveau avant et après et « Au même moment », jamais de cause', async () => {
     renderAt('/tendances')
     fireEvent.click(await screen.findByRole('button', { name: 'Mois' }))

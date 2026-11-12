@@ -210,7 +210,8 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
         )}
       </div>}
       {future && <p className="trends-detail-note">D’après vos habitudes</p>}
-      {face && face.readings > 0 && (
+      {/* POLISH-SIM-34 : les lectures du visage disent le bien-être, pas le sommeil ni les pas */}
+      {face && face.readings > 0 && keys.includes('wellbeing') && (
         <p className="trends-detail-note">
           {face.readings > 0 && `${face.readings} ${face.readings > 1 ? 'lectures' : 'lecture'} du visage`}
         </p>
