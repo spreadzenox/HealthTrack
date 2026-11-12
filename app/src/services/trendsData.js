@@ -22,11 +22,13 @@ const n0 = (v) => Math.round(v).toLocaleString(appLocale())
 
 /**
  * Mesures du visualiseur, dans l'ordre du menu « + ». `tone` = couleur du thème (src/theme/themes.js).
- * `gloss` : le nom en toutes lettres d'une abréviation, dit une fois sous les mesures affichées (POLISH-SIM-6).
+ * `gloss` : dit une fois sous les mesures affichées, le nom en toutes lettres d'une abréviation (POLISH-SIM-6) ou la
+ * note de chaque niveau de la digestion notée en mots (POLISH-SIM-54, mêmes notes que GUT_COMFORT).
  */
 export const TREND_MEASURES = [
   { key: 'wellbeing', label: 'Bien-être', unit: '/5', tone: 'mint', state: true, fmt: (v) => `${n1(v)} /5` },
-  { key: 'digestion', label: 'Confort digestif', unit: '/5', tone: 'peach', state: true, fmt: (v) => `${n1(v)} /5` },
+  { key: 'digestion', label: 'Confort digestif', unit: '/5', tone: 'peach', state: true, fmt: (v) => `${n1(v)} /5`,
+    gloss: 'Calme 5, Gêne 3, Douleur 1' },
   { key: 'sleep', label: 'Sommeil', unit: 'h', tone: 'night', field: 'sleepMinutes', scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },
   { key: 'steps', label: 'Pas', unit: 'pas', tone: 'lilac', field: 'steps', fmt: (v) => n0(v) },
   // POLISH-SIM-47 : la pesée (à la main ou balance), dernière du jour ; thème corps
@@ -162,12 +164,13 @@ export function defaultTrendsView({ asked = null, askedDay = false, available = 
 /**
  * POLISH-SIM-4 : ce que dit la ligne d'un jour passé à côté de son chiffre, pour qu'un bien-être de 3,2 à côté d'une
  * note de 3,4 se comprenne (l'estimation du jour mêle la note au visage, ou aux jours voisins quand il n'a pas de
- * lecture), et que le confort digestif dise le sens de son échelle.
+ * lecture). Le sens de l'échelle digestive est dit sous la courbe (POLISH-SIM-54).
  * @param {'wellbeing'|'digestion'} key
  * @param {{ value: number, note?: number|null, readings?: number, gut?: string|null, observed?: boolean }} d
  */
 export function detailSource(key, { value, note = null, readings = 0, gut = null, observed = false }) {
-  if (key === 'digestion') return `${gut ? `noté « ${gut} »` : observed ? 'noté' : 'estimé'}, 5 = calme`
+  // POLISH-SIM-54 : l'échelle est dite une fois sous la courbe (gloss), plus à chaque jour
+  if (key === 'digestion') return gut ? `noté « ${gut} »` : observed ? 'noté' : 'estimé'
   if (note != null) {
     if (Math.round(value * 10) === Math.round(note * 10)) return 'votre note'
     const n = note.toLocaleString(appLocale(), { maximumFractionDigits: 1 })

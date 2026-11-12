@@ -447,7 +447,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-53** ✅ 12/11 11:35 (« + : meilleur bien-être. » / « + : plus de confort. » dans la ligne de l'unité) (Ventre et données J45) Analyses : « +0,2 pt » sans dire si « + » veut dire mieux ; la ligne
   « pt : points de votre note de confort digestif, sur 5 » ne donne pas le sens. Dire une fois « + : plus de confort »
   (et l'équivalent pour le bien-être), sans refrain.
-- [ ] **POLISH-SIM-54** (Ventre et données J45) Échelle de la digestion : la saisie dit Calme / Gêne / Douleur, les
+- [x] **POLISH-SIM-54** ✅ 12/11 13:35 (Tendances : ligne « Confort digestif : Calme 5, Gêne 3, Douleur 1 » sous la courbe ; « 5 = calme » retiré du détail du jour) (Ventre et données J45) Échelle de la digestion : la saisie dit Calme / Gêne / Douleur, les
   analyses et Tendances parlent d'une note « sur 5 ». Montrer la correspondance là où la note sur 5 apparaît.
   Analyses fait le 12/11 11:35 (« (Calme 5, Gêne 3, Douleur 1) ») ; reste Tendances.
 - [ ] **POLISH-SIM-55** (Ventre et données J45) Analyses : « Lactose » est un groupe FODMAP, mais rien ne le dit ; la
