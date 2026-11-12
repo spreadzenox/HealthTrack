@@ -3,7 +3,7 @@
  * dans N jours », ce qu'elles chercheront, « N/28 jours notés, pas forcément d'affilée », un bouton « Noter ma digestion »
  * (le même geste que « Digestion » du bandeau d'ajout) et le rappel du soir. Les notes du jour se lisent sur un petit
  * graphique (une pastille par note, à son heure). Une fois les analyses prêtes : une ligne qui ouvre Analyses ›
- * Digestion (leçon 16 : les résultats n'ont qu'une maison). Ni délais, ni correction statistique, ni minimum ici.
+ * Digestion (leçon 16 : les résultats n'ont qu'une maison), titrée selon l'état réel (POLISH-SIM-52). Ni délais, ni correction statistique, ni minimum ici.
  * Couleur du thème digestion (pêche, leçon 12).
  */
 import { useCallback, useEffect, useState } from 'react'
@@ -110,13 +110,18 @@ export default function DigestBlock({ onNote, read = readGutNotes, summary: summ
   const todayNotes = entries
     .filter((e) => e?.at && localDateKey(e.at) === today && !isGutDayNote(e) && gutLevelLabel(e.payload?.level))
     .sort((a, b) => (a.at < b.at ? -1 : 1))
-  const ready = bar.ready || (summary?.gut?.length ?? 0) > 0
+  const hasLinks = (summary?.gut?.length ?? 0) > 0
+  const ready = bar.ready || hasLinks
+  // POLISH-SIM-52 : « prêtes » seulement avec un lien net ; sinon une phrase vraie (Analyses jamais ouvert : rien de connu)
+  const readyTitle = hasLinks
+    ? 'Vos analyses digestives sont prêtes'
+    : summary ? 'Analyses digestives : aucun lien net pour l’instant' : 'Voir vos analyses digestives'
 
   return (
     <section className="today-card digest-block" data-tone="peach" aria-labelledby="digest-title">
       {ready ? (
         <Link to="/recommendations/ventre" className="digest-ready">
-          <h2 id="digest-title" className="digest-title">Vos analyses digestives sont prêtes</h2>
+          <h2 id="digest-title" className="digest-title">{readyTitle}</h2>
           <LineIcon name="chevron" size={20} className="digest-chevron" />
         </Link>
       ) : (

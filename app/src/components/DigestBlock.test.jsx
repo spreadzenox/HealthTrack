@@ -65,6 +65,19 @@ describe('DigestBlock (AUJ-4)', () => {
     expect(screen.queryByRole('progressbar')).toBeNull()
   })
 
+  it('POLISH-SIM-52 : 28 jours notés sans lien net, le titre le dit au lieu de « prêtes »', async () => {
+    const days = Array.from({ length: 30 }, (_, i) => note(i + 1))
+    const { unmount } = wrap({ read: async () => days, summary: { gut: [], levers: ['Plus de pas'] } })
+    const link = await screen.findByRole('link', { name: /Analyses digestives : aucun lien net pour l’instant/ })
+    expect(link).toHaveAttribute('href', '/recommendations/ventre')
+    expect(screen.queryByText(/sont prêtes/)).toBeNull()
+    unmount()
+    // Analyses jamais ouvert : rien n'est connu, le titre n'annonce pas de résultat
+    wrap({ read: async () => days, summary: null })
+    expect(await screen.findByRole('link', { name: /Voir vos analyses digestives/ })).toHaveAttribute('href', '/recommendations/ventre')
+    expect(screen.queryByText(/sont prêtes/)).toBeNull()
+  })
+
   it('AUJ-4b : « Vos apports jusqu’ici » après le premier repas, sans couleur d’alerte ; un toucher ouvre Nutrition', async () => {
     const meals = [{ type: 'food', at: dayAt(0, 12), payload: { items: [{ ingredient: 'Abat, cuit (aliment moyen)', quantity_g: 100 }] } }]
     const { unmount } = wrap({ read: async () => [], meals })
