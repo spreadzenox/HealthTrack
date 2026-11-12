@@ -8,6 +8,12 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> ✍️ **Journal vide : « Noter ma digestion » ouvre la note (12/11 07:35)** : audit de la version play en sombre sur
+> données vierges. Dans un Journal encore vide, la tuile « Noter votre digestion » vous laissait sur Aujourd'hui sans
+> rien d'ouvert. Elle ouvre maintenant la fenêtre « Ma digestion », et prend le même libellé que le bouton d'Aujourd'hui
+> ([sombre, après le toucher](runs/captures/2026-11-12-0735-journal-vide-digestion-sombre.png) ·
+> [clair](runs/captures/2026-11-12-0735-journal-vide-clair.png)). Part ce soir sur Alpha. Rien à faire de votre côté.
+
 > 🔧 **Coulisses : un avertissement en moins sur Sources (12/11 06:35)** : audit de la version play en clair sur les
 > données de démo, 18 écrans sans défaut visible. Seul constat : un module natif était déclaré deux fois, ce qui
 > écrivait un avertissement à l'ouverture de Sources. Corrigé, avec un test qui l'empêche de revenir. Rien ne change à
@@ -479,6 +485,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 07:35 — [Journal vide : digestion](runs/2026-11-12-0735-journal-vide-digestion.md) | 🔧 | POLISH-JOURNAL-VIDE : audit play sombre sur données vierges ; la tuile « Noter ma digestion » du Journal vide ouvre la fenêtre de la digestion. Tests, lint, build, visual |
 | 12/11 06:35 — [Plugin enregistré une fois](runs/2026-11-12-0635-plugin-une-fois.md) | 🔧 | POLISH-AUDIT-3 : audit play clair sur démo (18 pages sans défaut visible) ; avertissement « AppManager already registered » de Sources supprimé, test de garde. Tests (3464), lint 0, build, visual |
 | 12/11 05:35 — [Champs à 44 px](runs/2026-11-12-0535-champs-44px.md) | 🔧 | POLISH-AUDIT-2 : les champs des Réglages (clé Gemini en sideload…) passent de 40 à 44 px de haut. Tests (3462), lint, build, visual (18 pages, aucune cible < 44 px), captures vérifiées |
 | 12/11 04:35 — [Nutrition : profil sans redite](runs/2026-11-12-0435-profil-nutrition.md) | 🔧 | POLISH-AUDIT-1 : audit des écrans (vides et démo, sombre, play) ; la carte du profil de Nutrition dit à quoi il sert. Alpha 101006 parti à 04:24. Tests (3461), lint, build, captures vérifiées |

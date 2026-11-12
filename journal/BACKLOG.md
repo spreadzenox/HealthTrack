@@ -447,6 +447,12 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-AUDIT-2** ✅ 12/11 05:35 (suite de l'audit du 12/11 04:35) Réglages, sideload : le champ « Clé API
   Gemini » (et tous les `.settings-input`) faisait 40 px de haut, sous la cible de 44 px (DESIGN.md). `min-height:
   var(--tap-min)`, test dans `buttonShape.test.js`.
+- [x] **POLISH-JOURNAL-VIDE** ✅ 12/11 07:35 (audit play, sombre, données vierges : 18 pages) Journal vide : la tuile
+  « Noter votre digestion » menait à Aujourd'hui sans rien ouvrir (la tuile bien-être, elle, ouvre la note sur place).
+  Elle passe `state: { open: 'digestion' }` (comme Analyses › Digestion) et prend le libellé du bloc digestif,
+  « Noter ma digestion » (« Noter mon bien-être » pour l'autre) ; test rouge puis vert ; captures
+  `runs/captures/2026-11-12-0735-journal-vide-*`. Vu, non fait : le petit « + » seul sous « Noter ma digestion »
+  (Aujourd'hui vide) ; sur le téléphone, le rappel du soir le précède, le blanc ne vient que de l'outil.
 - [x] **POLISH-AUDIT-3** ✅ 12/11 06:35 (audit play, clair, démo : 18 pages sans défaut visible à corriger) Sources :
   « Capacitor plugin "AppManager" already registered » dans la console (le plugin était enregistré par
   `phoneApps.js` et par `WatchDiagnostic.jsx`). Enregistré une seule fois (`phoneApps.js` l'exporte) ; garde-fou
