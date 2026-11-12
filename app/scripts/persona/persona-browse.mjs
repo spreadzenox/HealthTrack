@@ -9,6 +9,8 @@
  *     [--goals=care,stress]   objectifs cochés à l'accueil (jour > 1 ; au jour 1 l'agent les choisit lui-même) :
  *                             gut, cycle, stress, sport, care, all (POLISH-SIM-7)
  *     [--notes=few]           profil de saisie : full (défaut) ou few (persona pressée, presque rien de noté)
+ *     [--source=Zepp]         app qui écrit dans Health Connect, selon le téléphone ou la montre tirés (Pixel : « Google Fit » ;
+ *                             Amazfit : Zepp ; Xiaomi : Mi Fitness) ; défaut selon --equipment (Samsung Health, Fitbit…)
  *
  * Gestes (GET, réponse JSON { shot, url } ; la capture est un PNG à lire) :
  *   /start                     capture de l'écran actuel
@@ -110,7 +112,8 @@ if (day > 1) {
 }
 const page = await context.newPage()
 await page.goto(base, { waitUntil: 'load' })
-const entries = personaEntries(generateDemoEntries(), { day, equipment, notes, goals })
+const sourceName = args.source ? String(args.source) : undefined
+const entries = personaEntries(generateDemoEntries(), { day, equipment, notes, goals, sourceName })
 await page.evaluate(async (list) => {
   await new Promise((res) => { const q = indexedDB.deleteDatabase('HealthTrack'); q.onsuccess = q.onerror = q.onblocked = () => res() })
   if (list.length) await (await import('/src/storage/localHealthStorage.js')).upsertEntries(list)

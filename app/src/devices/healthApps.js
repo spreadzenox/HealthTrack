@@ -216,6 +216,16 @@ export const DIRECT_HUAWEI = {
  * @param {Date} [now]
  * @returns {Array<{ name: string, app: object|null, lastAt: string, count: number, types: string[], metrics: object[] }>}
  */
+/**
+ * Fin de la mesure : un total du jour (pas, dépense) est daté du début de la journée mais couvre jusqu'à `endDate`
+ * (POLISH-SIM-35 : « Dernières mesures il y a 2 jours » pour les pas d'hier). Jamais après maintenant.
+ */
+function measuredUntil(e, now) {
+  const end = e.payload?.endDate
+  if (!end || !(new Date(end) > new Date(e.at))) return e.at
+  return new Date(Math.min(new Date(end).getTime(), now.getTime())).toISOString()
+}
+
 export function summarizeHealthConnectSources(entries, now = new Date()) {
   const bySource = new Map()
   for (const e of entries || []) {
@@ -225,16 +235,17 @@ export function summarizeHealthConnectSources(entries, now = new Date()) {
     if (!raw) continue
     const app = direct ? DIRECT_HUAWEI : matchHealthApp(raw)
     const key = app ? app.id : raw
-    const cur = bySource.get(key) || { name: app ? app.name : raw, app, lastAt: e.at, count: 0, types: new Set(), entries: [] }
+    const seen = measuredUntil(e, now)
+    const cur = bySource.get(key) || { name: app ? app.name : raw, app, lastAt: seen, count: 0, types: new Set(), entries: [] }
     cur.count += 1
     cur.types.add(e.type)
     cur.entries.push(e)
-    if (e.at > cur.lastAt) cur.lastAt = e.at
+    if (new Date(seen) > new Date(cur.lastAt)) cur.lastAt = seen
     bySource.set(key, cur)
   }
   return [...bySource.values()]
     .map(({ entries: own, ...s }) => ({ ...s, types: [...s.types].sort(), metrics: sourceCoverage(own, now) }))
-    .sort((a, b) => (b.lastAt < a.lastAt ? -1 : 1))
+    .sort((a, b) => new Date(b.lastAt) - new Date(a.lastAt))
 }
 
 const RECENT_MS = 3 * 24 * 3600 * 1000

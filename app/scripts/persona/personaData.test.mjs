@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { personaEntries, keepForEquipment } from './personaData.mjs'
 import { generateDemoEntries } from '../visual/demoData.mjs'
+import { summarizeHealthConnectSources, missingWatchMetrics } from '../../src/devices/healthApps.js'
 
 const now = new Date('2026-11-08T15:00:00')
 const demo = generateDemoEntries({ now })
@@ -72,6 +73,29 @@ describe('personaEntries', () => {
     expect([...names('phone')]).toEqual(['Samsung Health'])
     expect([...names('watch-hrv')]).toEqual(['Fitbit'])
     expect(demo.some((e) => e.payload?.sourceName === 'Gadgetbridge')).toBe(true)
+  })
+
+  it('POLISH-SIM-35 : la Galaxy Watch envoie l’oxygène du sang chaque nuit ; ni Fitbit (config. 13) ni téléphone seul', () => {
+    const spo2 = (equipment, day = 14) => personaEntries(demo, { day, equipment, now })
+      .filter((e) => e.type === 'heart_rate' && e.payload?.subtype === 'oxygenSaturation')
+    for (const eq of ['watch', 'full']) {
+      const list = spo2(eq)
+      expect(list.length).toBeGreaterThanOrEqual(13)
+      expect(list.every((e) => e.source === 'health_connect' && e.payload.value >= 90 && e.payload.value <= 100 && e.payload.unit === 'percent')).toBe(true)
+    }
+    expect(spo2('watch', 1).some((e) => new Date(e.at) < new Date('2026-10-20'))).toBe(true) // historique importé
+    expect(spo2('huawei').every((e) => e.source === 'huawei_watch')).toBe(true)
+    expect(spo2('huawei').length).toBeGreaterThan(0)
+    expect(spo2('phone')).toHaveLength(0)
+    expect(spo2('watch-hrv')).toHaveLength(0)
+    const [watch] = summarizeHealthConnectSources(personaEntries(demo, { day: 14, equipment: 'watch', now }), now)
+    expect(missingWatchMetrics(watch.metrics)).not.toContain('oxygène du sang')
+  })
+
+  it('--source : l’app qui écrit dans Health Connect suit le téléphone tiré (Pixel → Google Fit, Amazfit → Zepp)', () => {
+    const names = new Set(personaEntries(demo, { day: 14, equipment: 'phone', now, sourceName: 'Google Fit' })
+      .filter((e) => e.source === 'health_connect').map((e) => e.payload?.sourceName))
+    expect([...names]).toEqual(['Google Fit'])
   })
 
   it('saisie « peu » (persona pressée) : ni repas ni ventre, quelques notes de bien-être, visage gardé', () => {
