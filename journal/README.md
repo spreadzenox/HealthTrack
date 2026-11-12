@@ -8,6 +8,13 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🥣 **Bloc digestion : un titre qui dit vrai (12/11 09:35)** : le constat le plus fort des personas de ce matin est
+> corrigé. Après 28 jours notés, le bloc d'Aujourd'hui ne dit plus « Vos analyses digestives sont prêtes » si elles
+> n'ont trouvé aucun lien net : il dit « Analyses digestives : aucun lien net pour l'instant »
+> ([clair](runs/captures/2026-11-12-0935-digest-aucun-lien-clair.png) ·
+> [sombre, Analyses pas encore ouvert](runs/captures/2026-11-12-0935-digest-sans-resume-sombre.png)). « Prêtes » revient
+> dès qu'un aliment ressort. Part ce soir sur Alpha. Rien à faire de votre côté.
+
 > 🧪 **Deux personas de plus (12/11 08:35)** : « Ventre et données » au 45e jour (téléphone seul) et « Sportif » au
 > 14e jour (Galaxy Watch). Le constat le plus fort : la carte « Vos analyses digestives sont prêtes » ouvre un écran qui
 > dit « Aucun lien assez net » (« après 45 jours, je me sens flouée »)
@@ -493,6 +500,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 09:35 — [Bloc digestion : titre vrai](runs/2026-11-12-0935-analyses-digestives-titre.md) | 🔧 | POLISH-SIM-52 : « analyses prêtes » seulement avec un lien net ; sinon « aucun lien net pour l'instant ». Tests (3465), lint, build, captures vérifiées |
 | 12/11 08:35 — [Deux personas](runs/2026-11-12-0835-personas.md) | 💡 | Idées : Ventre et données J45 (iPhone seul) et Sportif J14 (Galaxy Watch) ; POLISH-SIM-52 à 63, PROP-SIM-14. Journal seul |
 | 12/11 07:35 — [Journal vide : digestion](runs/2026-11-12-0735-journal-vide-digestion.md) | 🔧 | POLISH-JOURNAL-VIDE : audit play sombre sur données vierges ; la tuile « Noter ma digestion » du Journal vide ouvre la fenêtre de la digestion. Tests, lint, build, visual |
 | 12/11 06:35 — [Plugin enregistré une fois](runs/2026-11-12-0635-plugin-une-fois.md) | 🔧 | POLISH-AUDIT-3 : audit play clair sur démo (18 pages sans défaut visible) ; avertissement « AppManager already registered » de Sources supprimé, test de garde. Tests (3464), lint 0, build, visual |

@@ -441,7 +441,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   selon le délai, sans dire quoi en retenir. Vérifier la présentation (si rien n'est net, le dire une fois).
 - [x] **POLISH-SIM-51** (fait 11/11 16:35, `handNotes`) (Maigrir J1) Accueil, « Votre téléphone suffit » : la liste (bien-être, digestion, repas en
   photo) ignore l'objectif choisi ; l'adapter (poids : repas, pas).
-- [ ] **POLISH-SIM-52** (Ventre et données J45, 12/11 08:35) Aujourd'hui : la carte « Vos analyses digestives sont
+- [x] **POLISH-SIM-52** ✅ 12/11 09:35 (« prêtes » seulement avec un lien net ; sinon « Analyses digestives : aucun lien net pour l’instant », ou « Voir vos analyses digestives » si Analyses n'a jamais été ouvert) (Ventre et données J45, 12/11 08:35) Aujourd'hui : la carte « Vos analyses digestives sont
   prêtes » ouvre un écran qui dit « Aucun lien assez net pour l'instant ». Titre selon l'état réel (prêtes avec une
   piste nette ; sinon une phrase vraie, ex. « Vos analyses digestives : rien de net pour l'instant »). `DigestBlock.jsx`.
 - [ ] **POLISH-SIM-53** (Ventre et données J45) Analyses : « +0,2 pt » sans dire si « + » veut dire mieux ; la ligne

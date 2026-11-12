@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-12",
+  "kind": "correctif",
+  "title": "Bloc digestion : un titre qui dit vrai",
+  "items": [
+    "Sur Aujourd’hui, le bloc digestion n’annonce plus « Vos analyses digestives sont prêtes » quand elles n’ont encore trouvé aucun lien net : il le dit tel quel."
+  ]
+}
