@@ -24,6 +24,13 @@
 - Persona J45 (téléphone seul, ventre), Analyses › Digestion
   ([capture](captures/2026-11-12-1535-long-terme-compte-J45.png)). Texte seul changé.
 
+## Merge
+- PR #939 : Frontend (Vitest) et Build APK verts, `npm run visual` complet sans erreur. **Non mergée** : le merge
+  (squash par l'API) a été refusé par le contrôle de permissions de la session (« Merge Without Review »). Rien
+  contourné. Le run suivant (ou le propriétaire) la merge si main n'a pas bougé sur ces fichiers.
+- Émulateur A56 de 75bd95d : vert à la tentative 2 (panne Maven passagère confirmée).
+
 ## Suite
+- Merger #939 (garde-fous déjà verts ; remettre à jour sur main et relancer les checks si main a bougé).
 - Vérifier la tentative 2 de l'émulateur sur 75bd95d (et le build de ce merge).
 - POLISH-SIM-57, 58, 61 à 64.
