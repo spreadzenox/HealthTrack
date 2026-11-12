@@ -19,6 +19,7 @@ import { FEATURES } from '../config/distribution'
  * `writesHealthConnect` : l'app sait écrire dans Health Connect (il suffit de l'activer chez elle).
  * `bridgeFor` : l'app sert de passerelle pour les apps listées (Gadgetbridge / Health Sync pour Huawei).
  * `guideId` : guide de « Votre montre n'apparaît pas ? » (src/data/watchGuides.jsx).
+ * `notShared` : mesures de montre que l'app n'écrit pas dans Health Connect (inutile de proposer de les activer).
  */
 export const HEALTH_APPS = [
   { id: 'huawei_health', name: 'Huawei Health', packages: ['com.huawei.health'], writesHealthConnect: false, directWatch: true, guideId: 'huawei' },
@@ -48,6 +49,8 @@ export const HEALTH_APPS = [
     writesHealthConnect: true,
     guideId: 'samsung',
     enableHint: 'Samsung Health → ⋮ → Paramètres → Health Connect.',
+    // Samsung Health garde la VFC pour elle (forums développeurs Samsung, 2023-2026) : POLISH-SIM-60.
+    notShared: ['heartRateVariability'],
   },
   { id: 'zepp', name: 'Zepp (Amazfit)', packages: ['com.huami.watch.hmwatchmanager'], writesHealthConnect: true, guideId: 'xiaomi', enableHint: 'Zepp → Profil → Comptes → Health Connect.' },
   { id: 'zepp_life', name: 'Zepp Life (Mi Band)', packages: ['com.xiaomi.hm.health'], writesHealthConnect: true, guideId: 'xiaomi', enableHint: 'Zepp Life → Profil → Ajouter des comptes → Health Connect.' },
@@ -194,10 +197,21 @@ export function sourceCoverage(entries, now = new Date()) {
  * Mesures courantes d'une montre jamais reçues de cette source (« Pas reçu : VFC, SpO₂ »).
  * Seulement pour une source qui envoie déjà du cœur : une balance n'a pas à envoyer de VFC.
  */
-export function missingWatchMetrics(metrics) {
+export function missingWatchMetrics(metrics, app = null) {
+  const notShared = new Set(app?.notShared || [])
+  return neverReceivedWatch(metrics).filter((m) => !notShared.has(m.key)).map((m) => m.label)
+}
+
+/** Mesures de montre jamais reçues que l'app source ne partage pas du tout (« Samsung Health ne partage pas la VFC »). */
+export function unsharedWatchMetrics(metrics, app = null) {
+  const notShared = new Set(app?.notShared || [])
+  return neverReceivedWatch(metrics).filter((m) => notShared.has(m.key)).map((m) => m.label)
+}
+
+function neverReceivedWatch(metrics) {
   const keys = new Set((metrics || []).map((m) => m.key))
   if (!keys.has('heartRate') && !keys.has('restingHeartRate')) return []
-  return METRICS.filter((m) => m.watch && !keys.has(m.key)).map((m) => m.label)
+  return METRICS.filter((m) => m.watch && !keys.has(m.key))
 }
 
 /** Montre Huawei lue en direct par HealthTrack (sans Huawei Santé) : passerelle comme Gadgetbridge. */

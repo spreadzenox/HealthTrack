@@ -464,7 +464,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   jour.
 - [ ] **POLISH-SIM-59** (Sportif J14) Journal › Jours : tuile « Repas 1 » sans kcal alors que Repas affiche ≈ 479 kcal
   pour ce repas, et qu'un autre jour dit ≈ 1 039 kcal. Vérifier la règle de la tuile (kcal dès qu'un repas est compté).
-- [ ] **POLISH-SIM-60** (Sportif J14) Sources, carte Samsung Health : « Si votre montre en est capable, activez ce
+- [x] **POLISH-SIM-60** ✅ 12/11 10:35 (`notShared` au catalogue ; « Samsung Health ne partage pas la variabilité cardiaque avec Health Connect. ») (Sportif J14) Sources, carte Samsung Health : « Si votre montre en est capable, activez ce
   partage » pour la VFC, alors que Samsung Health ne l'écrit pas dans Health Connect. Dire ce qui est vrai pour l'app
   source connue (Samsung : « Samsung Health ne partage pas la VFC »). `MyDevices.jsx`.
 - [ ] **POLISH-SIM-61** (Sportif J14) Tendances : la zone « attendu » (pointillé) n'est pas comprise (« d'où vient
@@ -475,6 +475,8 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   une ligne ce qui a été comparé.
 - [ ] **POLISH-SIM-63** (Outil, Sportif J14) La persona voit « Cigarettes 3 » sans avoir activé le compteur
   (POLISH-SIM-42 : opt-in) : `personaData` garde les cigarettes de la démo. Les retirer sauf objectif tabac.
+- [ ] **POLISH-SIM-64** (Outil) `persona-browse.mjs --dark` ne règle que le `colorScheme` du navigateur : l'app reste en
+  clair. Régler aussi le thème de l'app (comme `visual-check --dark`).
 - [ ] **PROP-SIM-14** (proposition avec maquette, pas de code sans accord ; Sportif J14) « Autre chose » n'offre qu'un
   doublon de « Décrire un repas » : séance ou courbatures notées à la main pour qui n'a pas de montre ? Le « + » de
   « Vos données du jour » ne fait que surligner les boutons du haut : l'ouvrir sur un choix, ou le retirer.

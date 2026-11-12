@@ -8,6 +8,11 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> ⌚ **Sources : ce que Samsung Health ne partage pas (12/11 10:35)** : une persona Galaxy Watch lisait « Si votre
+> montre en est capable, activez ce partage » pour la variabilité cardiaque, alors que Samsung Health ne la partage pas
+> avec Health Connect. La carte le dit maintenant simplement, et ne demande plus d'activer ce qui n'existe pas
+> ([clair](runs/captures/2026-11-12-1035-samsung-vfc-clair.png)). Part ce soir sur Alpha. Rien à faire de votre côté.
+
 > 🥣 **Bloc digestion : un titre qui dit vrai (12/11 09:35)** : le constat le plus fort des personas de ce matin est
 > corrigé. Après 28 jours notés, le bloc d'Aujourd'hui ne dit plus « Vos analyses digestives sont prêtes » si elles
 > n'ont trouvé aucun lien net : il dit « Analyses digestives : aucun lien net pour l'instant »
@@ -500,6 +505,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 12/11 10:35 — [Samsung Health et la VFC](runs/2026-11-12-1035-samsung-vfc.md) | 🔧 | POLISH-SIM-60 : la carte Samsung Health dit que la VFC n'est pas partagée au lieu de proposer de l'activer. Tests (3467), lint, build, visual, capture persona |
 | 12/11 09:35 — [Bloc digestion : titre vrai](runs/2026-11-12-0935-analyses-digestives-titre.md) | 🔧 | POLISH-SIM-52 : « analyses prêtes » seulement avec un lien net ; sinon « aucun lien net pour l'instant ». Tests (3465), lint, build, captures vérifiées |
 | 12/11 08:35 — [Deux personas](runs/2026-11-12-0835-personas.md) | 💡 | Idées : Ventre et données J45 (iPhone seul) et Sportif J14 (Galaxy Watch) ; POLISH-SIM-52 à 63, PROP-SIM-14. Journal seul |
 | 12/11 07:35 — [Journal vide : digestion](runs/2026-11-12-0735-journal-vide-digestion.md) | 🔧 | POLISH-JOURNAL-VIDE : audit play sombre sur données vierges ; la tuile « Noter ma digestion » du Journal vide ouvre la fenêtre de la digestion. Tests, lint, build, visual |
