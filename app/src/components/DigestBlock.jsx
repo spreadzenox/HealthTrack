@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { APP_NAME } from '../config/brand'
 import { readGutNotes } from '../services/gutNotes'
-import { GUT_TYPE, gutLevelLabel, gutNotesProgress, isGutDayNote } from '../services/today'
+import { GUT_TYPE, gutEveningCheck, gutLevelLabel, gutNotesProgress, isGutDayNote } from '../services/today'
 import { localDateKey } from '../services/analysisEngine'
 import { readPistesSummary } from '../services/pistesSummary'
 import { computeTotalsFromItems } from '../services/nutritionKPIs'
@@ -110,6 +110,8 @@ export default function DigestBlock({ onNote, read = readGutNotes, summary: summ
   const todayNotes = entries
     .filter((e) => e?.at && localDateKey(e.at) === today && !isGutDayNote(e) && gutLevelLabel(e.payload?.level))
     .sort((a, b) => (a.at < b.at ? -1 : 1))
+  // POLISH-SIM-68 : le bilan du jour (une note pour la journée, sans heure) se lit ici aussi
+  const dayNote = gutEveningCheck(entries, now || new Date()).done
   const hasLinks = (summary?.gut?.length ?? 0) > 0
   const ready = bar.ready || hasLinks
   // POLISH-SIM-52 : « prêtes » seulement avec un lien net ; sinon une phrase vraie (Analyses jamais ouvert : rien de connu)
@@ -142,6 +144,7 @@ export default function DigestBlock({ onNote, read = readGutNotes, summary: summ
         </>
       )}
       <DayNotes notes={todayNotes} />
+      {dayNote && <p className="digest-day-note">Bilan du jour : {gutLevelLabel(dayNote.payload.level)}</p>}
       <TodayIntake meals={meals} />
       <button type="button" className="digest-note-button" onClick={onNote}>Noter ma digestion</button>
       <GutEveningReminder />

@@ -172,6 +172,22 @@ describe('GutCard — bilan du soir (I170)', () => {
     expect(screen.queryByText(/dans l’ensemble/)).not.toBeInTheDocument()
     expect(screen.getByText(/Un geste suffit/)).toBeInTheDocument()
   })
+
+  it('POLISH-SIM-68 : après le bilan du jour, la note d’hier ne passe plus pour la dernière', async () => {
+    const evening = new Date()
+    evening.setHours(21, 0, 0, 0)
+    const at = (daysAgo, h) => { const d = new Date(evening); d.setDate(d.getDate() - daysAgo); d.setHours(h, 0, 0, 0); return d.toISOString() }
+    const yesterday = { type: 'gut', source: 'app_gut', at: at(1, 10), payload: { level: 'pain' } }
+    const day = { type: 'gut', source: 'app_gut', at: at(0, 20), payload: { level: 'discomfort', scope: 'day' } }
+    const { unmount } = wrap(<GutCard read={async () => [yesterday, day]} now={evening} />)
+    expect(await screen.findByText('Bilan du jour : Gêne. Merci !')).toBeInTheDocument()
+    expect(screen.queryByText(/Dernière note/)).not.toBeInTheDocument()
+    unmount()
+    // une note d'un moment précis aujourd'hui reste « la dernière »
+    const moment = { type: 'gut', source: 'app_gut', at: at(0, 15), payload: { level: 'calm' } }
+    wrap(<GutCard read={async () => [yesterday, moment, day]} now={evening} />)
+    expect(await screen.findByText('Dernière note : Calme, à 15:00.')).toBeInTheDocument()
+  })
 })
 
 describe('GutCard — rappel du bilan par notification (I170 étape 2)', () => {
