@@ -1,5 +1,3 @@
-# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d1dc912 (.github/workflows/store-beta-submit.yml).
-# Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
 # Examen bêta d'Apple chaque nuit (message du propriétaire du 07/11 vers 18:30, inscrit dans la consigne de la routine) :
 # la dernière build TestFlight traitée par Apple (ou celle demandée) est ajoutée au groupe externe « Testeurs Halcya »
 # et soumise à l'examen bêta (scripts/store-beta-submit.mjs). Jamais la version de l'App Store : sa soumission et sa

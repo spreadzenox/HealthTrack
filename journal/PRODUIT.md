@@ -236,6 +236,16 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 4. Actions du propriétaire (jamais faites par la routine) — la plus débloquante d'abord
 
+> **Décision du propriétaire du 13/11 vers 19:05 — un seul dépôt, une seule routine (« go bascule ») : faite.** La
+> version iPhone vit dans `iphone/` (#945, #950) ; cette routine fait Android (Google Play) et l'iPhone (App Store,
+> TestFlight). Un produit, deux magasins : une fonction n'est livrée que des deux côtés, ou avec une ligne de
+> `iphone/journal/PARITE.md`. Ce qui reste au propriétaire chez Apple : soumission d'une version à l'examen de l'App
+> Store et mise en production, comptes, clés, certificats, contrats, banque, fiscalité (missions
+> `iphone/journal/missions/PI1.md` et `PI2.md`) ; la build 844.344 de la version 844 est celle de sa soumission.
+> Automatique après un merge : TestFlight, puis chaque nuit groupe externe, examen bêta et expiration des anciennes
+> builds (`iphone/journal/README.md` § 4). Une seule « prochaine action du propriétaire » en tête du résumé. Étapes :
+> FUSION-1 à 5 (`BACKLOG.md`).
+
 > **Décision du propriétaire du 12/11 vers 16:15 — automatiser ses gestes.** Ses mots : « à chaque fois que quelque
 > chose doit être fait humainement via un browser il faut absoluement trouver un moyen de l'automatiser, les modèles
 > sont parfaitement capable de prendre le controle d'un browser et de faire ces trucs là eux même (exemple avec

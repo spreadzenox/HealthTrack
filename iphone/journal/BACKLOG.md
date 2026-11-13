@@ -6,6 +6,12 @@
 
 ## Prochaines étapes
 
+> **13/11, dépôt unique** : ce backlog est désormais tenu par la routine unique. « HealthTrack reste en lecture
+> seule » n'a plus cours : le code partagé (`app/`, `relay/`) se corrige dans la même PR. Suite de la fusion :
+> FUSION-2 à FUSION-5 dans `journal/BACKLOG.md` ; les demandes de l'ancien `DEMANDES.md` encore ouvertes y sont
+> reprises (DEM-IOS-1 à 21).
+> Suivi d'Android au 13/11 22:35 : v1030 (correctif 58 refait après CYCLE-3a-1, #948).
+
 - [x] **I0 — Mise en place** (27/10, session de configuration avec le propriétaire) : dépôt `HealthTrack-iOS`
   public, charte, parité de départ, `upstream.json` + `scripts/upstream.sh` (testé : récupère Android v514, applique
   les correctifs, échoue clairement si l'un ne s'applique plus).

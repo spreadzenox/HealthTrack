@@ -8,6 +8,30 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+**Où en est Halcya (un seul dépôt, une seule routine depuis le 13/11)**
+
+| | Android (Google Play) | iPhone (App Store) |
+|---|---|---|
+| Dernière version | v1030 sur main (13/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 12/11 est partie le 13/11 à 03:56) | code de la v1024 chez les testeurs externes (build 1024.523, ancien dépôt) ; **1024.1028**, première build de ce dépôt, envoyée à TestFlight le 13/11 à 21:34, pas encore confirmée « traitée » par Apple ; v1030 en cours de vérification (PR de ce run) ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
+| Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
+
+**👉 Prochaine action du propriétaire (une seule, celle qui débloque le plus)**
+- **Mission PI1** (3 min, lecture seule) : dans Chrome, connecté à App Store Connect, dites à Claude
+  **« fais la mission PI1 »** ([`iphone/journal/missions/PI1.md`](../iphone/journal/missions/PI1.md)) : elle relève ce
+  qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
+  la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
+  sous « Toujours en attente de vous ».
+
+> 🔀 **Un seul dépôt, une seule routine (13/11 22:35)** : votre « go bascule » est appliqué côté routine. Ce résumé
+> couvre maintenant Android et l'iPhone ; l'ancien résumé de l'iPhone s'arrête au 13/11
+> ([`iphone/journal/README.md`](../iphone/journal/README.md)). Les fichiers de relais entre les deux routines sont
+> archivés (plus de relais : ce qui était « à transmettre » est dans le backlog, 21 demandes reprises). L'iPhone
+> reprend le suivi d'Android : la v1030 (rapport PDF, règles de Health Connect côté app) est en vérification sur
+> simulateur ; un correctif iPhone du cycle a été refait pour elle. Rien de visible ne change à ce run. Cette nuit,
+> après l'envoi Alpha de 23:45, la routine soumettra la build TestFlight de ce dépôt à l'examen bêta dès qu'Apple
+> l'aura traitée, et le dira ici. Rien à faire de votre côté.
+
 > 📄 **Rapport PDF : la confirmation reste visible (13/11 21:35)** : une persona touchait « Créer le PDF » sans voir
 > si le fichier était créé : la phrase « …pdf téléchargé » s'écrivait sous la barre du bas. Elle vient maintenant à
 > l'écran, juste au-dessus de la barre ([capture](runs/captures/2026-11-13-2135-rapport-pdf-confirmation.png)). Part
@@ -594,6 +618,10 @@
 > [sombre](runs/captures/2026-11-09-1035-vfc-habitude-sombre.png)).
 
 **Toujours en attente de vous (repris de la semaine dernière)**
+- **iPhone** (repris de l'ancien résumé iOS) : mission **PI1** (ci-dessus) ; le jour où vous voulez soumettre à
+  l'App Store, **« fais la mission PI2 »** ([`PI2.md`](../iphone/journal/missions/PI2.md) : tout prêt jusqu'au bouton
+  « Ajouter pour examen », que vous cliquez) ; la décision sur la licence des poids du visage (valence et éveil,
+  appris sur AffectNet, éteints sur iPhone en attendant : DEM-IOS-9 du backlog) ; les essais sur l'iPhone 12.
 - **Tendances › Jour** (question du 08/11) : « Nuits plus longues (7 h 46) » est la moyenne des derniers jours ;
   voulez-vous la nuit du seul jour, au singulier, comme la maquette ?
 - **P45** (1 min, avant d'inviter, nouveau) : Play Console → Halcya → Tester → Test fermé → Alpha → onglet Testeurs → « Adresse e-mail ou URL pour les commentaires » : si vide, mettez l'adresse de contact de la fiche Play. Ensuite, aux jours 4, 8 et 11, collez les retours des testeurs dans une consigne (« RETOURS TESTEURS jour N : … », sans nom ni adresse) : aucune API ne permet à la routine de les lire seule.
@@ -611,6 +639,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 13/11 22:35 — [Routine unique : iPhone repris](runs/2026-11-13-2235-routine-unique-iphone.md) | 📓 | FUSION-1 : résumé unique Android et iPhone, ancien relais archivé (21 demandes iOS reprises au backlog), en-tête « GÉNÉRÉ » retiré des workflows iOS, code embarqué de l'iPhone v1024 → v1030, correctif 58 (cycle) refait. Android v1030 ; TestFlight 1024.1028 envoyée, non confirmée ; parité 70 %. Rien à faire de votre côté |
 | 13/11 21:35 — [Rapport PDF : confirmation visible](runs/2026-11-13-2135-rapport-pdf-confirmation.md) | 🔧 | POLISH-SIM-67 : après « Créer le PDF », la ligne de confirmation vient à l'écran au-dessus de la barre d'onglets. Tests (3505), lint, build, visual verts. Rien à faire de votre côté |
 | 13/11 20:35 — [Deux simulations de personas](runs/2026-11-13-2035-personas.md) | 💡 | Ventre sans technique J45 (Apple Watch), Tout mesurer J45 (Amazfit) : POLISH-SIM-67 à 80, PROP-SIM-16. Outil : POLISH-SIM-63 et 66 corrigés. Aucun code produit. Tests (3504) verts. Rien à faire de votre côté |
 | 13/11 19:45 — [Cycle : règles de Health Connect, côté app](runs/2026-11-13-1945-cycle-lecture-hc.md) | 🏗️ | CYCLE-3a-1 : conversion des périodes et flux en jours de règles, synchro derrière le pont natif à venir, saisie à la main prioritaire. Rien de visible. Tests (3502), lint, build, visual verts. Rien à faire de votre côté |
@@ -725,6 +754,18 @@ quand il trouve une meilleure façon de travailler (en le notant dans le compte 
 le dépôt. 13. Une spécification vit dans le dépôt, le prompt y renvoie. 14. Les mots exacts du propriétaire passent
 tels quels. 15. Ce qui est remplacé est retiré explicitement. 16. Chaque transmission est vérifiée. 17. Les personas
 simulées (`PERSONAS.md`, `simulations/`) jugent chaque version. Dès le 09/11 : **mode polish** (`PRODUIT.md` § 0).
+
+**Routine unique, Android et iPhone** (décision du 13/11 vers 19:05) : la version iPhone vit dans `iphone/` et cette
+routine fait les deux apps. À chaque run, après cette charte : `iphone/README.md`, `iphone/journal/README.md` § 3, § 4
+et § 8, `iphone/journal/PARITE.md`, `iphone/journal/BACKLOG.md`. Une fonction n'est livrée que des deux côtés, ou avec
+une ligne de `PARITE.md` qui dit pourquoi pas. Suivi : `cd iphone && scripts/upstream.sh --latest` (clone complet :
+`git fetch --unshallow --filter=blob:none origin main`), correctifs cassés refaits (`patch -p1 --fuzz=3` dans
+`upstream/`, puis `git -C upstream diff -- <fichier> > patches/NN.patch`), tests et lint dans `iphone/upstream/app`.
+Une PR qui touche `iphone/` (hors journal, fiche, site) ou `ios-build.yml` attend « iOS — build simulateur » (près
+d'une heure) et ses captures (`captures/pr-<N>`) avant le merge ; le merge envoie seul la build sur TestFlight. Les
+workflows qui parlent à Apple ne se lancent que sur main. Il n'y a plus de relais : ni `POUR-IOS.md`, ni
+`DEMANDES.md`, ni `POUR-ORCHESTRATEUR.md` (archivés dans `archives/ancien-montage/`). Le compte rendu donne la version
+Android, la build TestFlight et la parité.
 
 **Gestes du propriétaire automatisés** (décision du 12/11 vers 16:15, `PRODUIT.md` § 4) : une action du propriétaire
 n'arrive jamais comme une simple marche à suivre. Elle a sa voie : (a) CI ou API, au besoin après un droit accordé une
