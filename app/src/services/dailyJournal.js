@@ -49,6 +49,7 @@ function emptyDay(dateKey) {
     _bp: [],
     _glucose: [],
     _weight: [],
+    _workouts: [],
     _wellbeing: [],
     _weather: null,
     _phone: null,
@@ -75,6 +76,17 @@ function dailyTotal(day, kind) {
 function phoneSleep(day) {
   const mins = day._phone?.sleepEstimate?.minutes
   return isNum(mins) && mins > 0 ? mins : null
+}
+
+/** Séances du jour : nombre, durée totale si une durée est connue, type quand il n'y en a qu'une. */
+function workoutSummary(list) {
+  if (!list.length) return null
+  const timed = list.filter((w) => w.minutes != null)
+  return {
+    count: list.length,
+    minutes: timed.length ? Math.round(timed.reduce((a, w) => a + w.minutes, 0)) : null,
+    type: list.length === 1 ? list[0].type : null,
+  }
 }
 
 function finalize(day) {
@@ -116,6 +128,7 @@ function finalize(day) {
       glucoseMgDl: last(day._glucose),
       // Poids du jour (POLISH-SIM-47) : la dernière pesée, à la main ou par une balance
       weightKg: last(day._weight),
+      workouts: workoutSummary(day._workouts),
       heartRate: hr.length ? { min: Math.min(...hr), max: Math.max(...hr), count: hr.length } : null,
       wellbeing: wb.length
         ? { average: Math.round((wb.reduce((s, v) => s + v, 0) / wb.length) * 10) / 10, count: wb.length }
@@ -269,6 +282,13 @@ export function buildDailyJournal(entries) {
       case 'weight':
       case 'body_composition':
         if (isNum(p.valueKg) && p.valueKg > 0) day._weight.push(p.valueKg)
+        day.items.push(e)
+        break
+      case 'activity':
+        // Séance de sport (POLISH-SIM-58) : comptée dans le résumé du jour, et listée avec son détail
+        if (p.workoutType || p.durationSeconds > 0) {
+          day._workouts.push({ type: p.workoutType || null, minutes: p.durationSeconds > 0 ? p.durationSeconds / 60 : null })
+        }
         day.items.push(e)
         break
       default:
