@@ -23,7 +23,7 @@ See `CONTRIBUTING.md` for TDD conventions and test file locations.
 
 ### Autonomous improvement routine
 
-A scheduled Claude routine improves the app every 2 hours. Its charter, backlog, research notes and per-run reports live in `journal/` (start with `journal/README.md`). User-visible changes get an entry in `app/src/data/changelog/` (one JSON file per change), shown in-app on the « Nouveautés » page.
+A scheduled Claude routine improves the app every hour, for Android and for the iPhone. Its charter, backlog, research notes and per-run reports live in `journal/` (start with `journal/README.md`). The iPhone version lives in `iphone/` (patches, overlay, Xcode project, its own journal; start with `iphone/README.md`) and is built only by GitHub Actions on macOS runners (`.github/workflows/ios-*.yml`). User-visible changes get an entry in `app/src/data/changelog/` (one JSON file per change), shown in-app on the « Nouveautés » page.
 
 ### Gotchas
 

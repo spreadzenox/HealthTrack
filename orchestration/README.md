@@ -5,12 +5,13 @@ de la routine, traduit ses décisions en instructions et lui rend compte. **La r
 ne merge aucune PR qui le touche.
 
 Écrit le 12/11/2026 pour qu'une nouvelle conversation d'orchestration reprenne le travail sans rien perdre (l'ancienne
-était saturée). Ce dépôt est public : rien de privé ici (§ 7).
+était saturée). Mis à jour le 13/11 : relais horaire, puis fusion des deux dépôts et routine unique. Ce dépôt est
+public : rien de privé ici (§ 7).
 
 | Fichier | Rôle |
 | --- | --- |
 | `routine/LANCEUR.md` | Le seul texte envoyé à chaque run (2 Ko), avec l'empreinte des instructions |
-| `routine/01-…md` à `04-…md` | Les instructions complètes de la routine (l'ancien prompt de 69 Ko, à l'octet près) |
+| `routine/01-…md` à `04-…md` | Les instructions complètes de la routine (l'ancien prompt de 69 Ko, plus le bloc « un seul dépôt, une seule routine » du 13/11 en tête du premier fichier) |
 | `scripts/controle-horaire.sh` | Contrôles en lecture seule après chaque lancement |
 | `scripts/verifier-instructions.sh` | Vérifie l'empreinte avant d'envoyer un lanceur |
 
@@ -19,7 +20,7 @@ ne merge aucune PR qui le touche.
 - Faire lancer un run à chaque déclenchement horaire (§ 2, par le relais), sans jamais faire le travail de code à la
   place de la routine.
 - Traduire chaque décision du propriétaire en instructions datées, avec ses mots entre guillemets (§ 3).
-- Surveiller : `main`, la CI, la piste Alpha, la boîte iPhone, les signaux à relayer (§ 5).
+- Surveiller : `main`, la CI (Android et iOS), la piste Alpha, TestFlight, les signaux à relayer (§ 5).
 - Rendre compte au propriétaire en français, au vouvoiement, en quelques lignes : ce qui a été livré, ce qui l'attend.
 - **Proposer l'automatisation de toute tâche qui lui revient** (décision du 12/11 : « à chaque fois que je dois faire
   une tâche si un modèle claude peut l'automatiser je vais vouloir le faire donc n'hésite pas à le proposer »).
@@ -31,16 +32,12 @@ refusé », et aucun run n'est parti). Elle ne travaille donc que lorsque le pro
 horaire** est une conversation légère, sans accès à cette machine, que la tâche planifiée réveille à la minute 29 :
 il applique le § 2 et rien d'autre. Le propriétaire ne lui écrit pas ; l'orchestrateur lit ses états et le pilote.
 
-Les deux routines :
-
-| Routine | Dépôt | Rythme (heure de Paris) |
-| --- | --- | --- |
-| « HealthTrack — amélioration autonome » (Android, produit) | `spreadzenox/HealthTrack` | toutes les heures, minute 29 |
-| « Halcya iOS — parité avec Android » | `spreadzenox/HealthTrack-iOS` | toutes les heures, minute 59 |
-
-La routine iOS ne reçoit rien directement : les décisions du propriétaire lui arrivent par `journal/POUR-IOS.md` de ce
-dépôt (écrit par la routine Android), et elle répond dans `journal/POUR-ORCHESTRATEUR.md` du dépôt iOS. Le dépôt iOS
-est en lecture seule pour la routine Android.
+**Une seule routine depuis le 13/11/2026** (« go bascule » du propriétaire vers 19:05) : « HealthTrack — amélioration
+autonome », dans ce dépôt, toutes les heures à la minute 29 (heure de Paris), pour Android et pour l'iPhone. La version
+iPhone vit dans `iphone/` (`iphone/README.md` dit où tout se trouve) et ses workflows sont `.github/workflows/ios-*.yml`.
+L'ancienne routine « Halcya iOS — parité avec Android » (dépôt `spreadzenox/HealthTrack-iOS`, minute 59) est
+désactivée, jamais supprimée ; il n'y a plus de boîte aux lettres entre routines (`journal/POUR-IOS.md`,
+`POUR-ORCHESTRATEUR.md`) : une décision du propriétaire qui concerne l'iPhone s'écrit dans les mêmes instructions.
 
 ## 2. À chaque déclenchement horaire (le relais)
 
@@ -52,8 +49,8 @@ est en lecture seule pour la routine Android.
    texte arrive dans le message de réveil, entre deux lignes de marqueur : c'est la copie du bloc de
    `routine/LANCEUR.md` que l'orchestrateur a placée dans le prompt de la tâche planifiée. Le relais ne va pas le
    relire dans le dépôt : l'empreinte doit rester hors du dépôt au moment du lancement.
-3. Lancer `scripts/controle-horaire.sh <clone HealthTrack> <clone HealthTrack-iOS>` : derniers commits de `main`,
-   empreinte des instructions, tête du résumé de la semaine, signal « P48 maintenant », boîte iPhone.
+3. Lancer `scripts/controle-horaire.sh <clone HealthTrack>` : derniers commits de `main`, empreinte des
+   instructions, tête du résumé de la semaine, signal « P48 maintenant », état de `iphone/`.
 4. Notifier le propriétaire sur son téléphone dans deux cas seulement : « P48 maintenant » (une fois), ou un run qui
    n'a pas pu partir / une empreinte différente (à la première panne, puis au plus toutes les six heures).
 5. Finir par un état de trois lignes dans sa conversation : session lancée, commit de `main`, signaux.
@@ -91,15 +88,17 @@ Ce qui a été constaté le 13/11, à savoir avant de recommencer :
 
 1. Écrire la modification dans le bon fichier `routine/0x-….md` : un paragraphe daté, les mots du propriétaire entre
    guillemets, ce qui est attendu au premier run qui le lit. Garder des lignes de 1 000 caractères au plus (couper à un
-   espace, la suite commence par deux espaces). Retirer ce qui est livré et n'a plus besoin d'être répété.
+   espace, la suite commence par deux espaces) et des fichiers de 23 000 caractères au plus (le lanceur le promet à la
+   routine). Retirer ce qui est livré et n'a plus besoin d'être répété.
 2. Recalculer l'empreinte (`cat orchestration/routine/0[1-4]-*.md | sha256sum`) et la reporter dans
    `routine/LANCEUR.md`. `scripts/verifier-instructions.sh` doit répondre OK.
 3. Ouvrir une PR « [Orchestration] … », attendre les checks, merger. Entre le merge et le run suivant, remplacer le
    texte du lanceur dans le prompt de la tâche planifiée du relais (mise à jour du prompt, jamais de suppression) : un
    run lancé avec l'ancienne empreinte s'arrête sans rien faire, par construction.
 
-Ces fichiers reprennent tel quel un prompt qui a grossi pendant un mois. Étape 5 du plan (§ 6) : le réécrire beaucoup
-plus court, en renvoyant à `journal/PRODUIT.md` et à la charte pour tout ce qui y est déjà.
+Ces fichiers reprennent un prompt qui a grossi pendant un mois ; depuis le 13/11, un bloc en tête du premier dit que
+la routine est unique et prime sur ce que la suite dit encore de « la routine iOS ». Étape 5 du plan (§ 6) : tout
+réécrire beaucoup plus court, en renvoyant à `journal/PRODUIT.md` et à la charte pour ce qui y est déjà.
 
 ## 4. Consignes permanentes du propriétaire
 
@@ -128,14 +127,14 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
 - Sur une machine du propriétaire : lecture seule d'abord, rien installé ni modifié sans son accord explicite, ne
   jamais ouvrir un fichier de secrets (`.env`, clés, jetons, `~/.ssh`).
 
-## 5. Demandes en cours et rappels (au 12/11/2026)
+## 5. Demandes en cours et rappels (au 13/11/2026)
 
 - **P48, déclaration Health Connect « Règles ».** Quand la routine écrit « P48 maintenant » en tête du résumé :
   notification sur le téléphone du propriétaire, avec la mission `journal/missions/P48.md`. Le lui rappeler à chaque
   bilan jusqu'à sa réponse « déclaration faite ». Ensuite, mettre à jour les instructions : lecture des règles
   autorisée dans la variante play et sur Alpha (CYCLE-3b).
-- **Alpha.** Notification quand le propriétaire confirme que la version 100984 ou plus récente est chez les testeurs
-  (101006 était en examen chez Google le 12/11).
+- **Alpha.** La version 101020 est chez les testeurs depuis le 13/11 (propriétaire prévenu). Aucun commentaire de
+  testeur dans la Play Console depuis le 08/11 (relevé du 13/11).
 - **Automatisation des gestes du propriétaire** (décision du 12/11 vers 16:15) : appliquée par la routine
   (`journal/missions/`, classement dans `journal/PRODUIT.md` § 4.0). À l'orchestrateur de proposer une voie
   automatique pour toute nouvelle tâche.
@@ -150,8 +149,17 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
   quatorzième jour.
 - **Maquettes PROP-SIM** (propositions issues des simulations) : les montrer au propriétaire quand la routine en
   produit ; rien ne se code sans son accord.
-- **App Store.** TestFlight suit Android (version 893, build `<versionCode>.<commits iOS>`). La soumission publique
-  est le geste du propriétaire ; le build 844.344 reste attaché à la version 844 pour elle.
+- **App Store.** TestFlight part de ce dépôt depuis le 13/11 (workflow `ios-testflight.yml`, version 893, build
+  `<versionCode>.<commits de ce dépôt>`). La soumission publique est le geste du propriétaire ; le build 844.344 reste
+  attaché à la version 844 pour elle.
+- **Après la bascule, pour le propriétaire** (`iphone/fusion/BASCULE.md`, étape 12) : révoquer l'ancienne clé App
+  Store Connect une fois la première build de ce dépôt traitée par Apple ; merger dans l'ancien dépôt iOS la PR qui
+  renvoie ici et retire le déclenchement automatique de TestFlight. Ne pas archiver l'ancien dépôt tant que
+  `iphone/README.md` (« Avant d'archiver ») le déconseille.
+- **Gestes dans les consoles par le navigateur piloté** (machine du propriétaire, compte dédié ; détails hors dépôt) :
+  l'orchestrateur lance chaque mission de `journal/missions/` dans une session à part et reporte le résultat dans les
+  instructions. Fait le 13/11 : P45 (adresse de retour déjà en place), état de la piste Alpha, lecture seule de P43
+  côté Play. En attente d'un geste du propriétaire : la partie Google Cloud de P43, P46 et P39.
 
 ## 6. Grand plan du 12/11 (demandé par le propriétaire)
 
@@ -164,19 +172,19 @@ gestes dans les consoles).
 2. **Nouvelle conversation** : elle lit ce fichier, demande tôt l'autorisation d'utiliser la machine du propriétaire,
    crée sa propre tâche planifiée ; les anciennes sont désactivées, jamais supprimées. *Fait le 13/11, avec un relais
    horaire (§ 1) : l'accès à la machine et le réveil horaire ne tiennent pas dans la même conversation.*
-3. **Machine du propriétaire** : inventaire en lecture seule, puis un navigateur dans un conteneur isolé (utilisateur
-   Linux dédié, compte Google « robot » dédié, limites de mémoire et de processeur), sans gêner ce qui y tourne déjà.
-   Première mission envisagée : P45. *Inventaire fait le 13/11, verdict favorable (détails hors dépôt) ; rien
-   d'installé : la suite attend l'accord du propriétaire.*
-4. **Fusion en un seul dépôt** par une session dédiée, sur une branche, pendant que les deux routines continuent ;
-   rien ne change pour les testeurs ; bascule en une fois ; l'ancien dépôt iOS reste en archive. Un geste manuel
-   inévitable : recréer dans ce dépôt les trois secrets App Store Connect (`ASC_ISSUER_ID`, `ASC_KEY_ID`,
-   `ASC_KEY_P8`, environnement « appstore »).
-5. **Une seule routine**, avec des instructions réécrites et beaucoup plus courtes.
-
-État du dépôt iOS au 12/11, utile à l'étape 4 : il ne copie pas le code, `upstream.json` épingle un commit Android,
-`scripts/upstream.sh` applique `patches/` (53 correctifs), `overlay/` (125 fichiers) et `ios/` (61 fichiers Swift) ;
-11 workflows.
+3. **Machine du propriétaire** : inventaire en lecture seule, puis un navigateur dans un conteneur isolé (compte
+   Google « robot » dédié, limites de mémoire et de processeur), sans gêner ce qui y tourne déjà. *Fait le 13/11 avec
+   l'accord du propriétaire (détails hors dépôt) ; premières missions faites (§ 5). Reste à concevoir : des missions
+   récurrentes qui partent sans message du propriétaire.*
+4. **Fusion en un seul dépôt** par une session dédiée, sur une branche, pendant que les deux routines continuaient ;
+   rien ne change pour les testeurs ; bascule en une fois. *Fait le 13/11 : PR « [Fusion] » #945, secrets App Store
+   Connect recréés par le propriétaire (environnement « appstore »), interrupteur `iphone/fusion/bascule.json` passé
+   à `true`, première build TestFlight depuis ce dépôt. Le déroulé et le retour arrière sont dans
+   `iphone/fusion/BASCULE.md`.*
+5. **Une seule routine**, avec des instructions réécrites et beaucoup plus courtes. *La routine est unique depuis le
+   13/11 (bloc en tête des instructions). La réécriture reste à faire : proposition dans
+   `iphone/fusion/ROUTINE-UNIQUE.md` ; d'abord sortir les décisions datées du propriétaire dans un fichier tenu par
+   l'orchestrateur, pour n'en perdre aucune.*
 
 ## 7. Ce qui n'est pas ici
 
