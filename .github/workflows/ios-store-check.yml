@@ -1,4 +1,4 @@
-# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@bad8351 (.github/workflows/store-check.yml).
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d1dc912 (.github/workflows/store-check.yml).
 # Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
 # Fiche App Store fr-FR (store/app-store/) : limites d'App Store Connect et directive 2.3.10 d'Apple, vérifiées sans
 # runner macOS (scripts/store-check.mjs), et tests de l'envoi par l'API App Store Connect (scripts/store-push.mjs,

@@ -10,8 +10,8 @@
 
 | | Android (Google Play) | iOS (App Store) |
 |---|---|---|
-| Dernière version | v1021 suivie (13/11) ; Alpha 100918 (nouvel accueil) chez les testeurs, en examen chez Google | **1019.513 chez les testeurs externes** (13/11, 10:29 ; déploiement continu) ; **844.344 reste attachée à la version 844 pour votre soumission** |
-| Où l'installer | Play Store, test fermé | **TestFlight** : groupe interne, et lien public du groupe « Testeurs Halcya » (1019.513 depuis le 13/11, 10:29) |
+| Dernière version | v1024 suivie (13/11) ; Alpha 100918 (nouvel accueil) chez les testeurs, en examen chez Google | **1021.521 chez les testeurs externes** (13/11, 18:34 ; déploiement continu) ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Où l'installer | Play Store, test fermé | **TestFlight** : groupe interne, et lien public du groupe « Testeurs Halcya » (1021.521 depuis le 13/11, 18:34) |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables ; 13/11 : taille du texte, test fermé TestFlight recompté) |
 
 **👉 Prochaine action du propriétaire**
@@ -202,7 +202,8 @@ https://github.com/spreadzenox/HealthTrack-iOS/tree/captures/main
 | 13/11 13:00 | attente | Rien de neuf chez Android depuis hier 18:06 ; l'iPhone est à jour (**1019.513** chez les testeurs). Parité : 70 % (33/47) | PR du journal |
 | 13/11 14:30 | attente | Rien de neuf chez Android depuis hier 18:06 ; l'iPhone est à jour (**1019.513** chez les testeurs). Parité : 70 % (33/47) | PR du journal |
 | 13/11 16:15 | attente | Rien de neuf chez Android depuis hier 18:06 ; l'iPhone est à jour (**1019.513** chez les testeurs). Parité : 70 % (33/47) | PR du journal |
-| 13/11 17:15 | suivi d'Android v1021 | Android a repris (premier run depuis hier 18:56) : dans Tendances, une ligne sous la courbe explique le pointillé (« attendu d'après vos habitudes »), et une mesure sans attendu s'arrête à aujourd'hui. Vérification sur simulateur en cours, puis envoi aux testeurs. Parité : 70 % (33/47) | PR v1021 (en cours) |
+| 13/11 17:15 | suivi d'Android v1021 | Android a repris (premier run depuis hier 18:56) : dans Tendances, une ligne sous la courbe explique le pointillé (« attendu d'après vos habitudes »), et une mesure sans attendu s'arrête à aujourd'hui. Vérifiée sur simulateur (légende lisible aussi en très grand texte), chez les testeurs depuis 18:34 (**1021.521**, l'ancienne 1019.513 expirée). Parité : 70 % (33/47) | #507 |
+| 13/11 19:00 | suivi d'Android v1023 et v1024 | dans le Journal, un jour avec une séance de sport (votre Apple Watch) a une tuile « Séance » ; dans Analyses, votre note est confirmée après « Enregistrer », et quand rien n'est encore net, une ligne dit ce qui a été comparé. Vérification sur simulateur en cours, puis envoi aux testeurs. Parité : 70 % (33/47) | #509 (en cours) |
 
 ---
 

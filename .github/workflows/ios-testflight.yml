@@ -1,4 +1,4 @@
-# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@bad8351 (.github/workflows/testflight.yml).
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d1dc912 (.github/workflows/testflight.yml).
 # Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
 # Envoi de Halcya sur TestFlight (I9), après les actions A1 à A3 du propriétaire et son accord du 30/10 pour la
 # signature par Apple (A2) : archive de la variante appstore (sans mode captures), signée à l'export par un certificat
