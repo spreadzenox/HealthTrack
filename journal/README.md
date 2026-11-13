@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1032 sur main (13/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 12/11 est partie le 13/11 à 03:56) | code de la v1024 chez les testeurs externes (build 1024.523, ancien dépôt) ; **1024.1028**, première build de ce dépôt, envoyée à TestFlight le 13/11 à 21:34, pas encore confirmée « traitée » par Apple ; **1030.1031** (code de la v1030, vérifiée sur simulateur) envoyée à TestFlight le 13/11 à 23:49, envoi accepté, à soumettre à l'examen bêta dès qu'Apple l'a traitée ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1033 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 n'était pas encore partie à 00:35, le cron de GitHub part souvent avec 3 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030, première build de ce dépôt validée par Apple, sans attente) ; code de la v1032 en vérification sur simulateur ; anciennes builds expirées par le nettoyage ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -22,6 +22,17 @@
   qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
+
+> 🍏 **iPhone : la première build de ce dépôt est chez les testeurs (14/11 00:35)** : la build TestFlight
+> **1030.1031** (rapport PDF, tuile « Séance », Analyses plus claires) était traitée par Apple ; la routine l'a ajoutée
+> au groupe « Testeurs Halcya » et soumise à l'examen bêta à 00:33. Apple l'a validée aussitôt : elle est « en test »,
+> aucune refusée, aucune en attente. La chaîne de publication iPhone marche donc depuis ce dépôt. L'envoi Alpha
+> Android du soir n'était pas encore parti à 00:35. **Agir** : avec l'objectif digestion, l'écran vide ouvrait
+> l'analyse du bien-être ; « Où en sont vos analyses » ouvre maintenant la digestion, et l'écran dit quoi faire en
+> attendant : « D'ici là, notez votre digestion chaque jour. »
+> ([clair](runs/captures/2026-11-14-0035-agir-vide-ventre-clair.png) ·
+> [sombre](runs/captures/2026-11-14-0035-agir-vide-ventre-sombre.png)). L'iPhone passe au code de la v1032 (bilan du
+> jour de la digestion) dès que sa vérification sur simulateur est verte. Rien à faire de votre côté.
 
 > 🍑 **Digestion : le bilan du jour se voit sur Aujourd'hui (13/11 23:35)** : une persona notait « Bilan de la
 > journée : Gêne », puis ne le retrouvait nulle part : Aujourd'hui ne montrait rien et la fenêtre « Ma digestion »
@@ -649,6 +660,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 00:35 — [Agir vide selon l'objectif ; iPhone 1030.1031 chez les testeurs](runs/2026-11-14-0035-agir-vide-objectif-ventre.md) | 🔧 | Nuit : build TestFlight 1030.1031 ajoutée au groupe externe et soumise à l'examen bêta (00:33), validée aussitôt (« en test ») ; nettoyage des anciennes builds. POLISH-SIM-70 : Agir vide ouvre Analyses › Digestion avec l'objectif ventre, et dit quoi noter. iPhone : code embarqué v1030 → v1032, 52 correctifs s'appliquent. Parité 70 %. |
 | 13/11 23:35 — [Digestion : bilan du jour visible](runs/2026-11-13-2335-digestion-bilan-du-jour.md) | 🔧 | POLISH-SIM-68 : « Bilan du jour : Gêne » sur Aujourd'hui, plus de « Dernière note … hier » après le bilan. PR iPhone #953 finie (build simulateur verte, captures regardées) et mergée : build TestFlight 1030.1031 envoyée. Tests (3507), lint, build, visual verts. Parité 70 %. Rien à faire de votre côté |
 | 13/11 22:35 — [Routine unique : iPhone repris](runs/2026-11-13-2235-routine-unique-iphone.md) | 📓 | FUSION-1 : résumé unique Android et iPhone, ancien relais archivé (21 demandes iOS reprises au backlog), en-tête « GÉNÉRÉ » retiré des workflows iOS, code embarqué de l'iPhone v1024 → v1030, correctif 58 (cycle) refait. Android v1030 ; TestFlight 1024.1028 envoyée, non confirmée ; parité 70 %. Rien à faire de votre côté |
 | 13/11 21:35 — [Rapport PDF : confirmation visible](runs/2026-11-13-2135-rapport-pdf-confirmation.md) | 🔧 | POLISH-SIM-67 : après « Créer le PDF », la ligne de confirmation vient à l'écran au-dessus de la barre d'onglets. Tests (3505), lint, build, visual verts. Rien à faire de votre côté |

@@ -572,8 +572,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   (« Lactose −0,8 pt : j'arrête le lait ou pas ? »). La replier par défaut quand rien n'est net ; dire en tête ce qui
   manque (le compte « encore N jours » n'est dit qu'en bas, pour le long terme). Une ligne touchée ne fait rien :
   explication courte du terme (GOS, sorbitol) avec des aliments.
-- [ ] **POLISH-SIM-70** (deux personas J45) Agir vide : « Où en sont vos analyses » ouvre Bien-être même quand
+- [x] **POLISH-SIM-70** (deux personas J45) Agir vide : « Où en sont vos analyses » ouvre Bien-être même quand
   l'objectif est le ventre ; ouvrir Digestion pour ce profil. L'état vide ne dit pas quoi faire d'ici là.
+  **Fait le 14/11 00:35** : avec l'objectif digestion ou cycle (`wantsGut`, comme la barre d'onglets), le lien ouvre
+  `/recommendations/ventre` ; une phrase « D'ici là, notez votre digestion chaque jour. » (ou « votre bien-être »).
 - [ ] **POLISH-SIM-71** (deux personas J45) Tendances, fiche d'un jour : un jour à 1,4/5, « Ce qui a pu peser » ne
   liste que des « + » ; ailleurs des −0,01 et −0,02 pt, sans dire s'il s'agit du ventre ou du bien-être ; « Confort
   digestif 2,0/5, noté "douleur" » alors que Douleur = 1. Seuil d'affichage, phrase quand rien ne pèse, moyenne dite.

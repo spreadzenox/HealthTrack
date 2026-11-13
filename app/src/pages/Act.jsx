@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { listEntries } from '../storage/localHealthStorage'
 import { GUT_TYPE } from '../services/today'
+import { goalsOf, wantsGut } from '../settings/onboarding'
 import { FODMAP_CHALLENGE_TYPE } from '../services/fodmapChallenge'
 import { readPistesSummary } from '../services/pistesSummary'
 import { actSections } from '../services/act'
@@ -139,6 +140,8 @@ export default function Act({ read = readAct, now }) {
     const id = await saveNewTrial(createTrial(factor, { now: at }))
     navigate(`/agir/essai/${id}`)
   }
+  // POLISH-SIM-70 : avec l'objectif ventre, l'état vide parle de la digestion et ouvre son analyse (comme la barre d'onglets)
+  const gutFirst = wantsGut(goalsOf())
   const empty = !current.length && !kept.length && !proposedTrials.length && !fodmap.proposed.length && !done.length
   return (
     <section className="act-page" aria-labelledby="act-title">
@@ -147,7 +150,8 @@ export default function Act({ read = readAct, now }) {
         <div className="today-card act-empty">
           <p className="act-empty-title">Rien en cours pour l’instant</p>
           <p className="act-empty-text">Quand vos analyses repèrent une piste, vous pourrez l’essayer ici, de quelques jours à deux semaines selon la piste, pour voir si elle compte pour vous.</p>
-          <Link to="/recommendations" className="act-empty-link">Où en sont vos analyses</Link>
+          <p className="act-empty-text">D’ici là, notez votre {gutFirst ? 'digestion' : 'bien-être'} chaque jour.</p>
+          <Link to={gutFirst ? '/recommendations/ventre' : '/recommendations'} className="act-empty-link">Où en sont vos analyses</Link>
         </div>
       ) : (
         <>

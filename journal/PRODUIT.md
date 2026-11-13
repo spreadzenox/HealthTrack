@@ -358,6 +358,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **14/11 00:35** — Nuit : build TestFlight 1030.1031 (première de ce dépôt) ajoutée au groupe externe et soumise à l'examen bêta à 00:33, validée aussitôt par Apple ; anciennes builds expirées. POLISH-SIM-70 : Agir vide suit l'objectif (lien vers Analyses › Digestion, phrase « D'ici là, notez votre digestion chaque jour. »). iPhone : code embarqué v1032.
 - **13/11 23:35** — POLISH-SIM-68 : le bilan du jour de la digestion se lit sur Aujourd'hui (« Bilan du jour : Gêne ») ; la fenêtre « Ma digestion » ne présente plus la note de la veille comme la dernière. PR #953 (routine unique, iPhone en v1030) finie et mergée ; build TestFlight 1030.1031 envoyée (13/11 23:49).
 - **13/11 21:35** — POLISH-SIM-67 : après « Créer le PDF », la confirmation vient à l'écran, au-dessus de la barre du bas (elle restait cachée dessous).
 - **13/11 20:35** — Deux simulations de personas au 45e jour (Ventre sans technique, Apple Watch ; Tout mesurer, bracelet Amazfit) : POLISH-SIM-67 à 80, PROP-SIM-16 au BACKLOG ; le plus net : la confirmation du rapport PDF cachée sous la barre du bas, la digestion notée que l'accueil ne montre pas, Analyses « pas net » lu comme un résultat. Outil : POLISH-SIM-63 et 66 corrigés.
