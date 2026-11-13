@@ -86,6 +86,20 @@ téléphone ; page de confidentialité mise à jour quand quelque chose s'affich
   permission n'est pas ajoutée au manifeste play, `check-play-manifest.sh` le vérifie) ; **CYCLE-3b** après « P48 fait » :
   permission dans la variante play, justification ajoutée à `PLAY-CONFORMITE.md` (tableau des types), confidentialité.
   Geste du propriétaire rédigé : P48 dans `PRODUIT.md` §4.
+  - [x] **CYCLE-3a-1** ✅ 13/11 19:45 Côté app, sans natif : `connectors/healthConnectCycle.js` convertit périodes et
+    flux en jours de règles (`periodEntry`, source `health_connect` ; fin à minuit, flux 0 à 3, période de plus de
+    15 jours écartée) ; la synchro Health Connect les lit par le pont `HealthCycle` s'il existe et si l'autorisation
+    est déjà donnée (`getCycleBridge`, rien sinon) ; `cycle.js` : une saisie à la main l'emporte sur un import du
+    même jour (`supersedes`). Contrat du pont écrit en tête de `healthConnectCycle.js`. Rien de visible.
+  - [ ] **CYCLE-3a-2** Pont natif `HealthCycle` (Java, variante sideload seulement : classe dans `sideload/java`,
+    inscrite dans `FlavorPlugins`, `READ_MENSTRUATION` dans le manifeste sideload, `check-play-manifest.sh` vérifie
+    qu'elle n'est pas dans play) : `checkPermission`, `requestPermission`, `read` selon le contrat ; conversion des
+    enregistrements dans un paquet sans dépendance Android, testé par `npm run test:java` ; test instrumenté
+    (`HealthConnectTest.kt` : écrire puis relire une période et un flux synthétiques).
+  - [ ] **CYCLE-3a-3** Demande de l'autorisation au bon moment : seulement si « Mon cycle » est coché, sur un geste
+    (ligne « Règles » de la source Health Connect dans Sources, ou « Mes règles »), avec ce qui est lu dit avant.
+    Limite connue à traiter ici : un jour importé puis supprimé dans le Journal revient à la synchro suivante, et un
+    flux ajouté après coup dans l'autre app n'est pas repris (l'import ne réécrit pas un jour déjà rangé).
 - [ ] **CYCLE-4** (plus tard) Analyses : le cycle comme contexte de la digestion (variable X, règle 5), jamais une
   cause ni un diagnostic.
 
@@ -483,7 +497,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-61** ✅ 13/11 16:45 (ligne « attendu d'après vos habitudes » sous la courbe quand un attendu est tracé ; sans attendu, la période s'arrête à aujourd'hui) (Sportif J14) Tendances : la zone « attendu » (pointillé) n'est pas comprise (« d'où vient
   cette baisse prévue ? ») ; en Semaine, sommeil seul, des jours futurs vides. Une ligne de légende courte ; pas de
   jours futurs sans attendu.
-- [ ] **POLISH-SIM-62** (Sportif J14) Analyses au 14e jour noté : « Aucun lien assez net » et « Moyen terme : encore 7
+- [x] **POLISH-SIM-62** ✅ 13/11 18:45 (« Noté : 4/5 » en `role=status` dans Analyses, `onSaved` de `WellbeingPrompt` ; `compared` dans `resultsView` : « 16 facteurs comparés à votre bien-être, du jour même à la veille. », seulement sans piste ni barre) (Sportif J14) Analyses au 14e jour noté : « Aucun lien assez net » et « Moyen terme : encore 7
   jours notés », sans retour après « Enregistrer » la note de bien-être. Confirmer la note (« Noté : 4/5 ») ; dire en
   une ligne ce qui a été comparé.
 - [ ] **POLISH-SIM-63** (Outil, Sportif J14) La persona voit « Cigarettes 3 » sans avoir activé le compteur

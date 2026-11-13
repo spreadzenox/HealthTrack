@@ -21,6 +21,7 @@
  *        — written for instance by Gadgetbridge (Huawei / Xiaomi / Amazfit watches), Withings, Omron…
  */
 import { BaseConnector } from './BaseConnector'
+import { readCycleEntries } from './healthConnectCycle'
 import { debugInfo, debugWarn, debugError, debugDebug } from '../utils/debugLog'
 import { HEALTH_CONNECT_READ_WINDOW_DAYS } from './syncWindow'
 
@@ -169,6 +170,16 @@ export function readSamplesInWindows(Health, { dataType, startDate, endDate, lim
   const read = async (from, to) =>
     (await Health.readSamples({ dataType, startDate: from, endDate: to, limit, ascending: true }))?.samples
   return readInWindows(read, { label: dataType, startDate, endDate, limit, windowMs })
+}
+
+/**
+ * Pont natif `HealthCycle` (règles dans Health Connect), ou null là où il n'existe pas (web, iPhone, variante play
+ * tant que le type n'est pas déclaré). Lu dans `Capacitor.Plugins` : un objet simple, jamais un proxy « thenable ».
+ */
+export function getCycleBridge() {
+  const cap = typeof window !== 'undefined' ? window.Capacitor : null
+  if (typeof cap?.isPluginAvailable !== 'function' || !cap.isPluginAvailable('HealthCycle')) return null
+  return cap.Plugins?.HealthCycle || null
 }
 
 function toEntryType(dataType) {
@@ -1141,6 +1152,20 @@ export class HealthConnectConnector extends BaseConnector {
         debugError(TAG, `Erreur lecture ${reader.dataType} : ${e?.message || e}`, { error: e })
         errors.push(`${reader.dataType}: ${e.message || e}`)
       }
+    }
+
+    // ── Règles (CYCLE-3a) : pont natif à part, lu seulement si l'autorisation est déjà donnée
+    const cycleBridge = getCycleBridge()
+    if (cycleBridge) try {
+      const entries = await readCycleEntries(cycleBridge, { startDate, endDate })
+      debugInfo(TAG, entries ? `Règles : ${entries.length} jours` : 'Règles : pas d’autorisation, rien de lu')
+      if (entries?.length) {
+        await writer(entries)
+        synced += entries.length
+      }
+    } catch (e) {
+      debugError(TAG, `Erreur lecture règles : ${e?.message || e}`, { error: e })
+      errors.push(`menstruation: ${e.message || e}`)
     }
 
     report(null)

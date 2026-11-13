@@ -88,6 +88,17 @@ describe('WellbeingPrompt (ouverte par l’appelant)', () => {
     })
     await waitFor(() => expect(onClose).toHaveBeenCalled())
   })
+
+  it('POLISH-SIM-62 : prévient l’appelant de la note enregistrée (onSaved), pas en cas d’annulation', async () => {
+    const onSaved = vi.fn()
+    const { rerender } = render(<WellbeingPrompt open onClose={() => {}} onSaved={onSaved} />)
+    fireEvent.click(screen.getByRole('button', { name: /Annuler/i }))
+    expect(onSaved).not.toHaveBeenCalled()
+    rerender(<WellbeingPrompt open onClose={() => {}} onSaved={onSaved} />)
+    fireEvent.click(screen.getByRole('button', { name: /Note 4 sur 5/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Enregistrer/i }))
+    await waitFor(() => expect(onSaved).toHaveBeenCalledWith(4))
+  })
 })
 
 describe('WellbeingPrompt — behaviour tags', () => {

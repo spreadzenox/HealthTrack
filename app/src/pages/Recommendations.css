@@ -798,6 +798,13 @@
   background: repeating-linear-gradient(135deg, var(--text-muted) 0 2px, transparent 2px 4px);
 }
 
+.reco-noted {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
 .reco-next {
   font-size: 0.85rem;
   color: var(--text-muted);

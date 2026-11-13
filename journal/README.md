@@ -8,6 +8,21 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🩸 **Cycle : la lecture des règles dans Health Connect est commencée (13/11 19:45)** : rien de visible encore. L'app
+> sait maintenant ranger les règles qu'une autre app (Flo, Clue, Samsung Health…) écrit dans Health Connect : un jour
+> de règles par jour, avec le flux quand il est noté, et ce que vous saisissez vous-même dans Halcya garde la priorité
+> sur un import du même jour. Il manque la partie Android qui lit ces données et la demande d'autorisation (deux
+> prochaines étapes, d'abord dans la variante sideload). **P48 n'est pas encore à faire** : je vous dirai
+> « P48 maintenant ». Rien à faire de votre côté.
+
+> 🔎 **Analyses : la note confirmée, et ce qui a été comparé (13/11 18:45)** : une persona atteignait son 14e jour
+> noté et trouvait Analyses presque vide (« aucun lien assez net », rien d'autre), sans retour après « Enregistrer ».
+> Après l'enregistrement, la page affiche maintenant « Noté : 4/5 »
+> ([capture](runs/captures/2026-11-13-1845-analyses-note-confirmee.png)). Et quand rien n'est net et qu'aucune barre
+> n'est montrée, une ligne dit ce qui a été fait : « 16 facteurs comparés à votre bien-être, du jour même à la
+> veille. » ([persona Sportif J14](runs/captures/2026-11-13-1845-analyses-compare-J14.png)). Part ce soir sur Alpha.
+> Rien à faire de votre côté.
+
 > 🏋️ **Journal : vos séances de sport dans le résumé du jour (13/11 17:45)** : une persona sportive (Galaxy Watch)
 > lisait dans Sources que ses « séances » arrivaient, sans les retrouver. Elles étaient bien dans le Journal, mais
 > seulement comme une ligne « Activité » au milieu des saisies, et aucune dans les trois premiers jours affichés. Un
@@ -579,6 +594,8 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 13/11 19:45 — [Cycle : règles de Health Connect, côté app](runs/2026-11-13-1945-cycle-lecture-hc.md) | 🏗️ | CYCLE-3a-1 : conversion des périodes et flux en jours de règles, synchro derrière le pont natif à venir, saisie à la main prioritaire. Rien de visible. Tests (3502), lint, build, visual verts. Rien à faire de votre côté |
+| 13/11 18:45 — [Analyses : note confirmée, facteurs comparés](runs/2026-11-13-1845-analyses-note-compare.md) | 🔧 | POLISH-SIM-62 : « Noté : 4/5 » après l'enregistrement ; « N facteurs comparés… » quand rien n'est net et qu'aucune barre ne s'affiche. Tests (3486), lint, build, visual verts. Rien à faire de votre côté |
 | 13/11 17:45 — [Journal : la tuile « Séance »](runs/2026-11-13-1745-seance-tuile.md) | 🔧 | POLISH-SIM-58 : tuile « Séance » (type, durée) dans le résumé du jour, ligne « Séance » au lieu d'« Activité ». Tests (3481), lint, build, visual verts. Rien à faire de votre côté |
 | 13/11 16:45 — [Tendances : le pointillé expliqué](runs/2026-11-13-1645-attendu-legende.md) | 🔧 | POLISH-SIM-61 : ligne « attendu d'après vos habitudes » sous la courbe ; une mesure sans attendu s'arrête à aujourd'hui. Tests (3477), lint, build, visual verts. Rien à faire de votre côté |
 | 12/11 17:35 — [Rapport sans caméra, sauvegarde en une phrase](runs/2026-11-12-1735-rapport-sans-camera.md) | 🔧 | POLISH-SIM-57 ; reprise de #939 (POLISH-SIM-56) restée ouverte ; `.gitignore` : captures du journal suivies (16 liens cassés depuis 00:35, JOURNAL-CAPTURES-1). Tests (3475), lint, build, visual |

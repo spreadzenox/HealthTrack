@@ -79,6 +79,17 @@ export function symptomEntry(dateKey, symptom, source = CYCLE_SOURCE) {
 const stamp = (e) => e.updated_at || e.created_at || e.at || ''
 
 /**
+ * Deux « jours de règles » le même jour : ce que la personne a saisi dans l'app l'emporte sur un import (Health
+ * Connect, Santé), quel que soit leur ordre ; entre deux saisies ou deux imports, le plus récent.
+ */
+function supersedes(e, prev) {
+  if (!prev) return true
+  const manual = e.source === CYCLE_SOURCE
+  if (manual !== (prev.source === CYCLE_SOURCE)) return manual
+  return stamp(e) >= stamp(prev)
+}
+
+/**
  * Le cycle jour par jour.
  * @param {Array<{ type: string, at: string, payload?: object }>} entries — toutes entrées confondues
  * @param {string[]} [dateKeys] — jours voulus (en plus des jours qui ont une donnée de cycle)
@@ -86,7 +97,7 @@ const stamp = (e) => e.updated_at || e.created_at || e.at || ''
  *   spotting: boolean, symptoms: string[] }>}
  */
 export function cycleByDay(entries, dateKeys = []) {
-  const flows = new Map() // dateKey → { flow, stamp } (la saisie la plus récente gagne)
+  const flows = new Map() // dateKey → { flow, entry } (voir `supersedes`)
   const spotting = new Set()
   const symptoms = new Map()
   for (const e of entries || []) {
@@ -94,8 +105,7 @@ export function cycleByDay(entries, dateKeys = []) {
     const key = localDateKey(e.at)
     const p = e.payload || {}
     if (p.subtype === 'period') {
-      const prev = flows.get(key)
-      if (!prev || stamp(e) >= prev.stamp) flows.set(key, { flow: FLOWS.includes(p.flow) ? p.flow : 'unknown', stamp: stamp(e) })
+      if (supersedes(e, flows.get(key)?.entry)) flows.set(key, { flow: FLOWS.includes(p.flow) ? p.flow : 'unknown', entry: e })
     } else if (p.subtype === 'spotting') {
       spotting.add(key)
     } else if (p.subtype === 'symptom' && SYMPTOMS.includes(p.symptom)) {
@@ -143,7 +153,7 @@ export function cycleByDay(entries, dateKeys = []) {
 }
 
 /**
- * L'entrée « jour de règles » du jour `dateKey` (la plus récente s'il y en a plusieurs), ou null : la saisie
+ * L'entrée « jour de règles » du jour `dateKey` (s'il y en a plusieurs : voir `supersedes`), ou null : la saisie
  * d'Aujourd'hui (CYCLE-2) la corrige plutôt que d'en ajouter une deuxième.
  */
 export function periodEntryOn(entries, dateKey) {
@@ -151,7 +161,7 @@ export function periodEntryOn(entries, dateKey) {
   for (const e of entries || []) {
     if (e?.type !== CYCLE_TYPE || e.payload?.subtype !== 'period' || !e.at) continue
     if (localDateKey(e.at) !== dateKey) continue
-    if (!found || stamp(e) >= stamp(found)) found = e
+    if (supersedes(e, found)) found = e
   }
   return found
 }

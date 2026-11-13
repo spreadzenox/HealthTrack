@@ -37,6 +37,9 @@ const WORDS = {
   digestion: { what: 'votre confort digestif', note: 'votre digestion', weigh: 'Ce qui va avec votre confort digestif', scale: 'de confort digestif', levels: ' (Calme 5, Gêne 3, Douleur 1)', plus: 'plus de confort', days: 'avec votre digestion notée' },
 }
 
+/** POLISH-SIM-62 : jusqu'où remontent les délais comparés (le plus long prêt). */
+const COMPARED_UP_TO = { short: 'à la veille', medium: 'à 6 jours avant', long: 'à 27 jours avant' }
+
 const pts = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`
 
 /** Mémorise les titres des pistes pour l'Accueil et Agir (sans recalcul de leur côté). */
@@ -156,6 +159,12 @@ function Results({ outcome, view, locked }) {
         ) : (
           <p className="today-card-text">Aucun lien assez net pour l’instant sur ce que vous pouvez changer.</p>
         )}
+        {/* POLISH-SIM-62 : sans piste ni barre, dire au moins ce qui a été comparé */}
+        {!view.pistes.length && !showWeigh && !(view.lookOnly.length && !locked) && view.compared && (
+          <p className="reco-next" data-testid="reco-compared">
+            <span className="mono">{view.compared.count}</span> facteur{view.compared.count > 1 ? 's comparés' : ' comparé'} à {w.what}, du jour même {COMPARED_UP_TO[view.compared.upTo]}.
+          </p>
+        )}
       </section>
       {showWeigh && (
         <section className="reco-block" aria-labelledby={`reco-weigh-${outcome}`}>
@@ -233,6 +242,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const [error, setError] = useState(null)
   const [revision, setRevision] = useState(0)
   const [noteOpen, setNoteOpen] = useState(false)
+  const [noted, setNoted] = useState(null)
   const [ent] = useEntitlement()
   const navigate = useNavigate()
   const [showGut] = useState(() => gutCardMode() !== 'hide')
@@ -273,6 +283,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
         </p>
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}
+      {outcome === 'wellbeing' && noted != null && <p className="reco-noted" role="status">Noté : <span className="mono">{noted}/5</span></p>}
       {v.state === 'loading' && !error && (
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul des analyses…</p></div>
       )}
@@ -281,7 +292,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       {outcome === 'digestion' && v.state === 'results' && <DoctorReportCard />}
       <HowItWorks />
       <SeeExample />
-      <WellbeingPrompt open={!!noteOpen} initialMode={noteOpen === 'reminder' ? 'reminder' : 'now'} onClose={() => setNoteOpen(false)} />
+      <WellbeingPrompt open={!!noteOpen} initialMode={noteOpen === 'reminder' ? 'reminder' : 'now'} onClose={() => setNoteOpen(false)} onSaved={setNoted} />
     </section>
   )
 }

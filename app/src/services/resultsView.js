@@ -9,6 +9,8 @@
  * - « À regarder, pas à changer » : corps et contexte (non actionnables).
  * - POLISH-SIM-50 : si rien n'est net dans « Ce qui va avec », on le dit une fois (`weighNothingNet`) ; sinon, chaque
  *   facteur qui change de sens d'un délai à l'autre sans être net nulle part est nommé une fois (`flipped`).
+ * - POLISH-SIM-62 : `compared` dit ce qui a été comparé (facteurs distincts, délai prêt le plus long), pour l'écran
+ *   où rien n'est net et où aucune barre ne le montre.
  */
 const MAX_PISTES = 3
 const MAX_PER_HORIZON = 5
@@ -76,7 +78,9 @@ export function resultsView(outcome) {
     : []
   const locked = horizons.find((h) => h.status === 'locked')
   const nextLock = locked ? { label: locked.label, window: locked.window, daysLeft: Math.max(0, locked.daysNeeded - locked.daysHave) } : null
-  return { state: 'results', pistes, weigh, weighNothingNet, flipped, nextLock, lookOnly }
+  const count = new Set(all.map((x) => x.key)).size
+  const compared = count > 0 ? { count, upTo: ready[ready.length - 1].id } : null
+  return { state: 'results', pistes, weigh, weighNothingNet, flipped, nextLock, lookOnly, compared }
 }
 
 /** Titres courts des pistes, pour l'Accueil et Agir (résumé mémorisé, pistesSummary.js). */

@@ -348,6 +348,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **13/11 19:45** — CYCLE-3a-1 : lecture des règles de Health Connect, côté app (conversion, synchro derrière un pont natif à venir, saisie à la main prioritaire sur un import). Rien de visible ; P48 toujours « pas encore » (il faut d'abord le pont natif CYCLE-3a-2 et la demande d'autorisation CYCLE-3a-3).
 - **12/11 16:35** — Décision du 12/11 16:15 (automatiser les gestes du propriétaire) inscrite : § 4.0 classe chaque action ouverte en (a) / (b) / (c) ; 12 missions navigateur dans `journal/missions/` (P43, P46, P39, P29, P34, P45, ETAT-PLAY, P48, P30, P32, P15, P2) ; charte et POUR-IOS.md à jour. Aucun code produit.
 - **11/11 08:35** — Run idées : simulations Prendre soin de soi J1 (Android seul) et Endométriose J45 avec règles notées (outil `--goals=cycle`) ; POLISH-SIM-46 à 51, PROP-SIM-11 (cycle visible hors du Journal) et PROP-SIM-12 (objectif poids) ; faux relais de l'outil corrigé (noms d'aliments de la table).
 - **10/11 20:35** — Run idées : simulations Stressé et pressé J1 et Endométriose J1 (POLISH-SIM-38 à 45) ; outil des personas corrigé (faux relais) ; P48 rédigée (cycle dans Health Connect : pont natif nécessaire, CYCLE-3a / 3b).
@@ -413,6 +414,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 - **12/11 13:35** — Journal › Tendances : sous la courbe du confort digestif, une ligne « Confort digestif : Calme 5, Gêne 3, Douleur 1 » ; le détail d'un jour ne répète plus « 5 = calme » (POLISH-SIM-54, fini).
 - **12/11 14:35** — Analyses : sous chaque groupe FODMAP, « pour 1 repas riche en lactose (FODMAP) de plus » ; données de démo et des personas avec des repas riches en GOS, fructose en excès et sorbitol (POLISH-SIM-55).
 - **12/11 15:35** — Analyses : la prochaine étape dit son délai et ce qui est compté (« Long terme (de 7 à 27 jours avant) : encore 12 jours avec votre digestion notée » ; bien-être « noté ou lu ») (POLISH-SIM-56).
+- **13/11 18:45** — Analyses : « Noté : 4/5 » après l'enregistrement d'une note de bien-être ; sans piste ni barre, une ligne dit combien de facteurs ont été comparés et jusqu'à quel délai (POLISH-SIM-62).
 - **13/11 17:45** — Journal › Jours : une tuile « Séance » (type et durée, ou nombre et durée totale) dans le résumé d'un jour avec séance de sport ; la ligne « Activité » s'appelle « Séance », comme dans Sources (POLISH-SIM-58).
 - **13/11 16:45** — Tendances : une ligne sous la courbe dit ce qu'est le pointillé (« attendu d'après vos habitudes ») ; une mesure sans attendu (sommeil, pas, poids…) s'arrête à aujourd'hui, sans jours futurs vides (POLISH-SIM-61).
 - **12/11 17:35** — Données : le rapport PDF ne propose la case du bien-être estimé qu'avec au moins une lecture du visage ; la sauvegarde dit le lieu du fichier une fois, après l'export (POLISH-SIM-57). #939 (POLISH-SIM-56) reprise et fusionnée avec ce run.

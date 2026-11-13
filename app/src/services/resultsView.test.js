@@ -30,6 +30,17 @@ describe('Analyses sur le contrat (ORG-4, ORG-6)', () => {
     expect(v.nextLock).toEqual({ label: 'long', window: '', daysLeft: 12 })
   })
 
+  it('POLISH-SIM-62 : ce qui a été comparé (facteurs distincts, délai le plus long prêt)', () => {
+    const v = resultsView({ status: 'partial', beatsPersistence: false, horizons: {
+      short: h('short', 'ready', [f('sleep', 0.1, { net: false }), f('hrv', 0.1, { net: false, actionable: false })]),
+      medium: h('medium', 'ready', [f('sleep', 0.1, { net: false, horizon: 'medium' }), f('steps', 0.1, { net: false, horizon: 'medium' })]),
+      long: h('long', 'locked', [], 30, 42),
+    } })
+    expect(v.pistes).toEqual([])
+    expect(v.compared).toEqual({ count: 3, upTo: 'medium' })
+    expect(resultsView({ status: 'partial', beatsPersistence: null, horizons: { short: h('short', 'ready', []) } }).compared).toBeNull()
+  })
+
   it('pas de « Ce qui pèse » sans prévision meilleure que « demain = aujourd’hui »', () => {
     const v = resultsView({ status: 'ready', beatsPersistence: false, horizons: { short: h('short', 'ready', [f('sleep', 0.4)]) } })
     expect(v.weigh).toBeNull()

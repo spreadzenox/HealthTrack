@@ -133,3 +133,20 @@ describe('cycle : symptômes d’un jour (CYCLE-2c)', () => {
     expect(symptomEntriesOn(null, '2026-11-10').size).toBe(0)
   })
 })
+
+describe('cycle : saisie à la main et import le même jour (CYCLE-3a)', () => {
+  it('la saisie à la main l’emporte sur un import, même plus récent', () => {
+    const manual = { ...periodEntry('2026-10-01', 'light'), created_at: '2026-10-01T08:00:00Z' }
+    const imported = { ...periodEntry('2026-10-01', 'unknown', 'health_connect'), created_at: '2026-10-02T09:00:00Z' }
+    expect(cycleByDay([manual, imported]).get('2026-10-01').flow).toBe('light')
+    expect(cycleByDay([imported, manual]).get('2026-10-01').flow).toBe('light')
+    expect(periodEntryOn([manual, imported], '2026-10-01')).toBe(manual)
+  })
+
+  it('entre deux imports, le plus récent gagne ; un import seul compte', () => {
+    const a = { ...periodEntry('2026-10-01', 'light', 'health_connect'), created_at: '2026-10-01T08:00:00Z' }
+    const b = { ...periodEntry('2026-10-01', 'heavy', 'apple_health'), created_at: '2026-10-01T09:00:00Z' }
+    expect(cycleByDay([b, a]).get('2026-10-01').flow).toBe('heavy')
+    expect(periodEntryOn([a], '2026-10-01')).toBe(a)
+  })
+})
