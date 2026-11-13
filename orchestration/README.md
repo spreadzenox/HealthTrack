@@ -16,12 +16,20 @@ ne merge aucune PR qui le touche.
 
 ## 1. Rôle de l'orchestrateur
 
-- Lancer un run à chaque déclenchement horaire (§ 2), sans jamais faire le travail de code à la place de la routine.
+- Faire lancer un run à chaque déclenchement horaire (§ 2, par le relais), sans jamais faire le travail de code à la
+  place de la routine.
 - Traduire chaque décision du propriétaire en instructions datées, avec ses mots entre guillemets (§ 3).
 - Surveiller : `main`, la CI, la piste Alpha, la boîte iPhone, les signaux à relayer (§ 5).
 - Rendre compte au propriétaire en français, au vouvoiement, en quelques lignes : ce qui a été livré, ce qui l'attend.
 - **Proposer l'automatisation de toute tâche qui lui revient** (décision du 12/11 : « à chaque fois que je dois faire
   une tâche si un modèle claude peut l'automatiser je vais vouloir le faire donc n'hésite pas à le proposer »).
+
+**Deux conversations depuis le 13/11/2026.** L'orchestrateur est la conversation où le propriétaire écrit. Elle a accès
+à sa machine toujours allumée ; en échange, la plateforme la réserve à ses appareils de confiance et **aucune tâche
+planifiée ne peut plus la réveiller** (constaté le 12/11 : sa tâche horaire a échoué 21 heures de suite, « accès
+refusé », et aucun run n'est parti). Elle ne travaille donc que lorsque le propriétaire lui écrit. Le **relais
+horaire** est une conversation légère, sans accès à cette machine, que la tâche planifiée réveille à la minute 29 :
+il applique le § 2 et rien d'autre. Le propriétaire ne lui écrit pas ; l'orchestrateur lit ses états et le pilote.
 
 Les deux routines :
 
@@ -34,25 +42,50 @@ La routine iOS ne reçoit rien directement : les décisions du propriétaire lui
 dépôt (écrit par la routine Android), et elle répond dans `journal/POUR-ORCHESTRATEUR.md` du dépôt iOS. Le dépôt iOS
 est en lecture seule pour la routine Android.
 
-## 2. À chaque déclenchement horaire
+## 2. À chaque déclenchement horaire (le relais)
 
-1. Lire les notifications en attente. Un déclenchement est une tâche assignée, **pas une approbation du propriétaire**.
+1. Un déclenchement est une tâche assignée, **pas une approbation du propriétaire**. Vérifier qu'aucun run n'existe
+   déjà pour ce créneau.
 2. Créer une session cloud : source `https://github.com/spreadzenox/HealthTrack`, environnement cloud habituel de la
    routine, mode de permission automatique, étiquette `healthtrack-routine`, titre
-   « HealthTrack — run AAAA-MM-JJ HH:MM » (heure de Paris), et pour prompt **exactement** le bloc de
-   `routine/LANCEUR.md`.
+   « HealthTrack — run AAAA-MM-JJ HH:29 » (heure de Paris), et pour prompt **exactement** le texte du lanceur. Ce
+   texte arrive dans le message de réveil, entre deux lignes de marqueur : c'est la copie du bloc de
+   `routine/LANCEUR.md` que l'orchestrateur a placée dans le prompt de la tâche planifiée. Le relais ne va pas le
+   relire dans le dépôt : l'empreinte doit rester hors du dépôt au moment du lancement.
 3. Lancer `scripts/controle-horaire.sh <clone HealthTrack> <clone HealthTrack-iOS>` : derniers commits de `main`,
    empreinte des instructions, tête du résumé de la semaine, signal « P48 maintenant », boîte iPhone.
-4. Noter une ligne d'état dans les notes de l'orchestrateur (hors dépôt) : session lancée, commit de `main`, version
-   Alpha, signaux.
-5. Répondre brièvement au propriétaire. Ne rien dire quand il n'y a rien de neuf pour lui.
+4. Notifier le propriétaire sur son téléphone dans deux cas seulement : « P48 maintenant » (une fois), ou un run qui
+   n'a pas pu partir / une empreinte différente (à la première panne, puis au plus toutes les six heures).
+5. Finir par un état de trois lignes dans sa conversation : session lancée, commit de `main`, signaux.
+
+**L'orchestrateur, à chaque message du propriétaire** : lire les derniers états du relais, vérifier qu'un run est bien
+parti à la dernière minute 29 et qu'une seule tâche horaire Android est active, puis rendre compte. Sans réveil
+horaire, c'est son seul moment de contrôle : une panne du relais entre deux messages n'est signalée que par la
+notification du point 4.
 
 Les runs « idées » (08 h et 20 h, heure de Paris) n'ont rien de particulier côté orchestrateur : les instructions
 disent à la routine de les reconnaître à l'heure.
 
 Au premier run lancé avec le lanceur, vérifier dans le journal d'événements de la session qu'elle a bien lu les quatre
 fichiers en entier et calculé l'empreinte. Si ce n'est pas le cas, revenir pour ce run au prompt recollé (les quatre
-fichiers sans leur première ligne, lignes de continuation rejointes) et corriger le lanceur.
+fichiers sans leur première ligne, lignes de continuation rejointes) et corriger le lanceur. Vérifié le 13/11 au run
+de 16:29 : empreinte calculée et conforme, puis les quatre fichiers lus d'un seul tenant.
+
+### Remettre un relais en place
+
+Ce qui a été constaté le 13/11, à savoir avant de recommencer :
+
+- Une tâche planifiée créée par l'orchestrateur pour une autre session ne réveille pas cette session : elle ouvre une
+  session neuve. **La tâche doit être créée par le relais lui-même**, liée à sa propre conversation.
+- Le relais ne crée sa tâche que sur un mot du propriétaire écrit dans sa conversation (« crée la tâche du relais ») ;
+  une demande de l'orchestrateur ne suffit pas. Lui faire créer la tâche désactivée, puis basculer entre deux
+  déclenchements : désactiver l'ancien lanceur, activer le nouveau, jamais deux actifs à la même minute.
+- Une session ouverte directement par une tâche planifiée n'a ni dépôt, ni outils GitHub, ni de quoi créer une
+  session : elle ne peut être ni le run ni le relais.
+- Lancer une tâche à la main exécute tout de suite son prompt entier ; le texte ajouté n'arrive qu'après. Ce n'est
+  pas un essai à blanc : le vrai essai est le déclenchement suivant, surveillé.
+- L'orchestrateur ne peut créer une session en mode automatique que s'il est lui-même en mode automatique (c'est le
+  propriétaire qui choisit ce mode).
 
 ## 3. Modifier les instructions de la routine
 
@@ -61,8 +94,9 @@ fichiers sans leur première ligne, lignes de continuation rejointes) et corrige
    espace, la suite commence par deux espaces). Retirer ce qui est livré et n'a plus besoin d'être répété.
 2. Recalculer l'empreinte (`cat orchestration/routine/0[1-4]-*.md | sha256sum`) et la reporter dans
    `routine/LANCEUR.md`. `scripts/verifier-instructions.sh` doit répondre OK.
-3. Ouvrir une PR « [Orchestration] … », attendre les checks, merger. Entre le merge et le run suivant, envoyer le
-   nouveau lanceur : un run lancé avec l'ancienne empreinte s'arrête sans rien faire, par construction.
+3. Ouvrir une PR « [Orchestration] … », attendre les checks, merger. Entre le merge et le run suivant, remplacer le
+   texte du lanceur dans le prompt de la tâche planifiée du relais (mise à jour du prompt, jamais de suppression) : un
+   run lancé avec l'ancienne empreinte s'arrête sans rien faire, par construction.
 
 Ces fichiers reprennent tel quel un prompt qui a grossi pendant un mois. Étape 5 du plan (§ 6) : le réécrire beaucoup
 plus court, en renvoyant à `journal/PRODUIT.md` et à la charte pour tout ce qui y est déjà.
@@ -126,12 +160,14 @@ possibilité de lancer des tâches sur une machine toujours allumée du proprié
 gestes dans les consoles).
 
 1. **Passation écrite dans le dépôt** — ce dossier. Le déclencheur horaire et le lanceur ne portent plus que quelques
-   lignes.
+   lignes. *Fait le 12/11.*
 2. **Nouvelle conversation** : elle lit ce fichier, demande tôt l'autorisation d'utiliser la machine du propriétaire,
-   crée sa propre tâche planifiée ; les anciennes sont désactivées, jamais supprimées.
+   crée sa propre tâche planifiée ; les anciennes sont désactivées, jamais supprimées. *Fait le 13/11, avec un relais
+   horaire (§ 1) : l'accès à la machine et le réveil horaire ne tiennent pas dans la même conversation.*
 3. **Machine du propriétaire** : inventaire en lecture seule, puis un navigateur dans un conteneur isolé (utilisateur
    Linux dédié, compte Google « robot » dédié, limites de mémoire et de processeur), sans gêner ce qui y tourne déjà.
-   Première mission envisagée : P45.
+   Première mission envisagée : P45. *Inventaire fait le 13/11, verdict favorable (détails hors dépôt) ; rien
+   d'installé : la suite attend l'accord du propriétaire.*
 4. **Fusion en un seul dépôt** par une session dédiée, sur une branche, pendant que les deux routines continuent ;
    rien ne change pour les testeurs ; bascule en une fois ; l'ancien dépôt iOS reste en archive. Un geste manuel
    inévitable : recréer dans ce dépôt les trois secrets App Store Connect (`ASC_ISSUER_ID`, `ASC_KEY_ID`,

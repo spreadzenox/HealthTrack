@@ -16,7 +16,7 @@ export const THEME_TONES = {
 const MEASURE_THEMES = {
   wellbeing: 'wellbeing', mood: 'wellbeing', face: 'wellbeing',
   gut: 'digestion', stool: 'digestion', meals: 'digestion', meal: 'digestion', kcal: 'digestion', nutrition: 'digestion',
-  steps: 'activity', burnedKcal: 'activity', activeMinutes: 'activity', exercise: 'activity', distance: 'activity',
+  steps: 'activity', burnedKcal: 'activity', activeMinutes: 'activity', exercise: 'activity', workouts: 'activity', distance: 'activity',
   sleep: 'sleep', sleepMinutes: 'sleep', watchSleepScore: 'sleep', bedtime: 'sleep',
   hrv: 'body', hrvDay: 'body', restingHr: 'body', sleepHr: 'body', heartRate: 'body', spo2: 'body',
   respiratoryRate: 'body', temperatureC: 'body', skinTempC: 'body', watchStress: 'body', stress: 'body',

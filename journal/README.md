@@ -8,6 +8,15 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🏋️ **Journal : vos séances de sport dans le résumé du jour (13/11 17:45)** : une persona sportive (Galaxy Watch)
+> lisait dans Sources que ses « séances » arrivaient, sans les retrouver. Elles étaient bien dans le Journal, mais
+> seulement comme une ligne « Activité » au milieu des saisies, et aucune dans les trois premiers jours affichés. Un
+> jour avec séance a maintenant une tuile lilas « Séance » (« Vélo, 56 min » ; « 2 séances, 1 h 10 » s'il y en a
+> plusieurs), et la ligne du jour s'appelle « Séance », comme dans Sources
+> ([persona Sportif J14](runs/captures/2026-11-13-1745-seance-tuile-clair.png)). Part ce soir sur Alpha. Rien à faire
+> de votre côté. Pas encore fait : les séances comme courbe dans Tendances (ce serait une nouvelle mesure : à vous
+> proposer avec une maquette, pas codé en mode polish).
+
 > 〰️ **Tendances : le pointillé expliqué (13/11 16:45)** : une persona demandait « d'où vient cette baisse prévue ? »
 > devant la partie pointillée de la courbe. Une ligne sous la courbe le dit : « attendu d'après vos habitudes ». Et le
 > sommeil affiché seul montrait trois jours futurs vides : une mesure sans attendu s'arrête maintenant à aujourd'hui
@@ -570,6 +579,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 13/11 17:45 — [Journal : la tuile « Séance »](runs/2026-11-13-1745-seance-tuile.md) | 🔧 | POLISH-SIM-58 : tuile « Séance » (type, durée) dans le résumé du jour, ligne « Séance » au lieu d'« Activité ». Tests (3481), lint, build, visual verts. Rien à faire de votre côté |
 | 13/11 16:45 — [Tendances : le pointillé expliqué](runs/2026-11-13-1645-attendu-legende.md) | 🔧 | POLISH-SIM-61 : ligne « attendu d'après vos habitudes » sous la courbe ; une mesure sans attendu s'arrête à aujourd'hui. Tests (3477), lint, build, visual verts. Rien à faire de votre côté |
 | 12/11 17:35 — [Rapport sans caméra, sauvegarde en une phrase](runs/2026-11-12-1735-rapport-sans-camera.md) | 🔧 | POLISH-SIM-57 ; reprise de #939 (POLISH-SIM-56) restée ouverte ; `.gitignore` : captures du journal suivies (16 liens cassés depuis 00:35, JOURNAL-CAPTURES-1). Tests (3475), lint, build, visual |
 | 12/11 16:35 — [Missions navigateur du propriétaire](runs/2026-11-12-1635-missions-navigateur.md) | 📓 | Décision du 12/11 16:15 : § 4.0 classe chaque action (a) / (b) / (c) ; 12 missions dans `journal/missions/` ; charte, BACKLOG (AUTO-GESTES-1 à 4), POUR-IOS. Journal seul |

@@ -418,6 +418,11 @@ describe('Journal — « Vos derniers jours » (déplacé de l’accueil, jalon 
     const row = document.querySelector('.entry-card')
     expect(row).toHaveTextContent('Vélo, 56 min, 329 kcal')
     expect(row).not.toHaveTextContent('cycling')
+    // POLISH-SIM-58 : le mot de Sources (« séances »), et une tuile dans le résumé du jour
+    expect(row).toHaveTextContent('Séance')
+    const tile = [...document.querySelectorAll('.day-summary-item')].find((el) => el.querySelector('dt').textContent === 'Séance')
+    expect(tile).toHaveTextContent('Vélo, 56 min')
+    expect(tile).toHaveAttribute('data-theme', 'lilac')
   })
 
   it('séance de la montre : FC moyenne, allure et courbe de FC (M7)', async () => {
