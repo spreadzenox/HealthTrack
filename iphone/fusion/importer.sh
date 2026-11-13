@@ -93,6 +93,8 @@ cat >> "$IPHONE/.gitignore" <<'GITIGNORE'
 !*.jpg
 # Dossiers créés par la CI dans iphone/
 /captures/
+# Copie des workflows pour les tests de overlay/ (scripts/upstream.sh)
+/.github/
 /captures-store/
 /captures-ipad/
 /_site/
