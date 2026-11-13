@@ -483,7 +483,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-61** ✅ 13/11 16:45 (ligne « attendu d'après vos habitudes » sous la courbe quand un attendu est tracé ; sans attendu, la période s'arrête à aujourd'hui) (Sportif J14) Tendances : la zone « attendu » (pointillé) n'est pas comprise (« d'où vient
   cette baisse prévue ? ») ; en Semaine, sommeil seul, des jours futurs vides. Une ligne de légende courte ; pas de
   jours futurs sans attendu.
-- [ ] **POLISH-SIM-62** (Sportif J14) Analyses au 14e jour noté : « Aucun lien assez net » et « Moyen terme : encore 7
+- [x] **POLISH-SIM-62** ✅ 13/11 18:45 (« Noté : 4/5 » en `role=status` dans Analyses, `onSaved` de `WellbeingPrompt` ; `compared` dans `resultsView` : « 16 facteurs comparés à votre bien-être, du jour même à la veille. », seulement sans piste ni barre) (Sportif J14) Analyses au 14e jour noté : « Aucun lien assez net » et « Moyen terme : encore 7
   jours notés », sans retour après « Enregistrer » la note de bien-être. Confirmer la note (« Noté : 4/5 ») ; dire en
   une ligne ce qui a été comparé.
 - [ ] **POLISH-SIM-63** (Outil, Sportif J14) La persona voit « Cigarettes 3 » sans avoir activé le compteur

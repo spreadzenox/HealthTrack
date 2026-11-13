@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-13",
+  "kind": "amélioration",
+  "title": "Analyses : votre note confirmée, et ce qui a été comparé",
+  "items": [
+    "Après « Enregistrer », la page affiche votre note (« Noté : 4/5 »).",
+    "Quand aucun lien n'est assez net, une ligne dit combien de facteurs ont été comparés et sur quel délai."
+  ]
+}
