@@ -565,7 +565,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-67** (bug ; Ventre sans technique J45) Rapport PDF : la phrase « Halcya-rapport-….pdf téléchargé »
   s'affiche sous la barre de navigation, coupée. La faire venir à l'écran (défilement) ; test.
   **Fait le 13/11 21:35** : la ligne vient à l'écran et s'arrête au-dessus de la barre d'onglets (`.report-status`).
-- [ ] **POLISH-SIM-68** (Ventre sans technique J45) Après « Bilan du jour : Gêne », la fenêtre « Ma digestion » garde
+- [x] **POLISH-SIM-68** (fait le 13/11 23:35 : « Bilan du jour : Gêne » dans le bloc digestion d'Aujourd'hui ; la fenêtre ne dit plus « Dernière note … hier » après le bilan ; reste possible : un titre « À l'instant » sur la rangée des moments) (Ventre sans technique J45) Après « Bilan du jour : Gêne », la fenêtre « Ma digestion » garde
   « Dernière note : Douleur, hier » et aucun bouton marqué ; l'accueil dit toujours « Noter ma digestion » sans la
   note du jour. Montrer la note du jour aux deux endroits.
 - [ ] **POLISH-SIM-69** (deux personas J45) Analyses sans lien net : la liste hachurée est lue comme un résultat

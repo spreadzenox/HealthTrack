@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1030 sur main (13/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 12/11 est partie le 13/11 à 03:56) | code de la v1024 chez les testeurs externes (build 1024.523, ancien dépôt) ; **1024.1028**, première build de ce dépôt, envoyée à TestFlight le 13/11 à 21:34, pas encore confirmée « traitée » par Apple ; v1030 en cours de vérification (PR de ce run) ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1032 sur main (13/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 12/11 est partie le 13/11 à 03:56) | code de la v1024 chez les testeurs externes (build 1024.523, ancien dépôt) ; **1024.1028**, première build de ce dépôt, envoyée à TestFlight le 13/11 à 21:34, pas encore confirmée « traitée » par Apple ; build de la v1030 envoyée à TestFlight le 13/11 vers 23:50 (vérifiée sur simulateur, 16 contrôles verts), à soumettre à l'examen bêta dès qu'Apple l'a traitée ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -22,6 +22,16 @@
   qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
+
+> 🍑 **Digestion : le bilan du jour se voit sur Aujourd'hui (13/11 23:35)** : une persona notait « Bilan de la
+> journée : Gêne », puis ne le retrouvait nulle part : Aujourd'hui ne montrait rien et la fenêtre « Ma digestion »
+> disait encore « Dernière note : Douleur, hier ». Le bloc digestion affiche maintenant « Bilan du jour : Gêne »
+> ([clair](runs/captures/2026-11-13-2335-bilan-du-jour-accueil-clair.png) ·
+> [sombre](runs/captures/2026-11-13-2335-bilan-du-jour-accueil-sombre.png)), et la fenêtre ne présente plus la note
+> de la veille comme la dernière ([capture](runs/captures/2026-11-13-2335-bilan-du-jour-fenetre.png)). Part cette
+> nuit sur Alpha ; sur iPhone au prochain suivi. **iPhone** : la vérification de la v1030 sur simulateur est verte,
+> la build est partie sur TestFlight ; la soumission à l'examen bêta se fera au premier run où Apple l'a traitée
+> (pas encore à 23:50, et l'Alpha du soir n'était pas partie). Rien à faire de votre côté.
 
 > 🔀 **Un seul dépôt, une seule routine (13/11 22:35)** : votre « go bascule » est appliqué côté routine. Ce résumé
 > couvre maintenant Android et l'iPhone ; l'ancien résumé de l'iPhone s'arrête au 13/11
@@ -639,6 +649,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 13/11 23:35 — [Digestion : bilan du jour visible](runs/2026-11-13-2335-digestion-bilan-du-jour.md) | 🔧 | POLISH-SIM-68 : « Bilan du jour : Gêne » sur Aujourd'hui, plus de « Dernière note … hier » après le bilan. PR iPhone #953 finie (build simulateur verte, captures regardées) et mergée : build TestFlight de la v1030 envoyée. Tests (3507), lint, build, visual verts. Parité 70 %. Rien à faire de votre côté |
 | 13/11 22:35 — [Routine unique : iPhone repris](runs/2026-11-13-2235-routine-unique-iphone.md) | 📓 | FUSION-1 : résumé unique Android et iPhone, ancien relais archivé (21 demandes iOS reprises au backlog), en-tête « GÉNÉRÉ » retiré des workflows iOS, code embarqué de l'iPhone v1024 → v1030, correctif 58 (cycle) refait. Android v1030 ; TestFlight 1024.1028 envoyée, non confirmée ; parité 70 %. Rien à faire de votre côté |
 | 13/11 21:35 — [Rapport PDF : confirmation visible](runs/2026-11-13-2135-rapport-pdf-confirmation.md) | 🔧 | POLISH-SIM-67 : après « Créer le PDF », la ligne de confirmation vient à l'écran au-dessus de la barre d'onglets. Tests (3505), lint, build, visual verts. Rien à faire de votre côté |
 | 13/11 20:35 — [Deux simulations de personas](runs/2026-11-13-2035-personas.md) | 💡 | Ventre sans technique J45 (Apple Watch), Tout mesurer J45 (Amazfit) : POLISH-SIM-67 à 80, PROP-SIM-16. Outil : POLISH-SIM-63 et 66 corrigés. Aucun code produit. Tests (3504) verts. Rien à faire de votre côté |
