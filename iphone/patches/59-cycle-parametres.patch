@@ -1,0 +1,21 @@
+diff --git a/app/src/pages/Settings.jsx b/app/src/pages/Settings.jsx
+index 72e7e9b..bfb4429 100644
+--- a/app/src/pages/Settings.jsx
++++ b/app/src/pages/Settings.jsx
+@@ -10,6 +10,7 @@ import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../th
+ import { DISTRIBUTION, FEATURES, STORE, storeOfPurchase } from '../config/distribution'
+ import { feedbackLink } from '../config/feedback'
+ import { GOALS, goalsOf, gutCardMode, loadOnboarding, saveOnboarding } from '../settings/onboarding'
++import { askCycleAfterOnboarding } from '../ios/cycleSante' // Version iOS (HealthTrack-iOS) : CYCLE-iOS-2 (correctif 59)
+ import { syncGutEvening } from '../services/gutEvening'
+ import GutEveningReminder from '../components/GutEveningReminder'
+ import AiCreditsHint from '../components/AiCreditsHint'
+@@ -163,6 +164,8 @@ export default function Settings() {
+     setGoals(value)
+     // sans carte ventre, plus de rappel du bilan du soir (le choix est gardé pour plus tard)
+     syncGutEvening()
++    // Version iOS (HealthTrack-iOS), CYCLE-iOS-2 : « Mon cycle » coché après l'accueil → le cycle demandé à Santé (correctif 59)
++    if (id === 'cycle' && value.includes('cycle')) askCycleAfterOnboarding().catch(() => {})
+   }
+ 
+   const handleTheme = (value) => {

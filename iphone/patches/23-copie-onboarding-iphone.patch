@@ -1,0 +1,20 @@
+diff --git a/app/src/pages/Onboarding.jsx b/app/src/pages/Onboarding.jsx
+index bc5531cc..b8abf5dc 100644
+--- a/app/src/pages/Onboarding.jsx
++++ b/app/src/pages/Onboarding.jsx
+@@ -37,6 +37,7 @@ import { APP_NAME } from '../config/brand'
+ import './Onboarding.css'
+ import { getApproxPosition } from '../services/approxPosition'
+ import { disableWeather, enableWeather, getWeatherSettings, syncWeather } from '../services/weatherSync'
++import SnapshotWelcome from '../ios/SnapshotWelcome' // Version iOS (HealthTrack-iOS)
+ import {
+   disablePhoneUsage,
+   enablePhoneUsage,
+@@ -862,6 +863,7 @@ export default function Onboarding() {
+       </div>
+ 
+       <main className="onb-body">
++        {FEATURES.iosStore && state.step === 0 && <SnapshotWelcome /> /* iPhone : copie de secours trouvée après une restauration */}
+         {step === 'tuto' && <TutoStep card={card} onCard={(c) => update({ card: c })} />}
+         {step === 'goal' && <GoalStep goals={goals} onToggle={toggleGoal} />}
+         {step === 'sources' && <SourcesStep state={state} update={update} installed={installed} />}

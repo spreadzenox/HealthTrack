@@ -1,0 +1,102 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "fr_FR",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "4841434C",
+  "nonRenewingSubscriptions" : [],
+  "products" : [],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "fr_FR",
+    "_storeKitErrors" : [],
+    "_storefront" : "FRA"
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "48414C01",
+      "localizations" : [],
+      "name" : "Halcya",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "48414C05",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Halcya Gold, au mois (prix d'essai fictif)",
+              "displayName" : "Gold mensuel",
+              "locale" : "fr_FR"
+            }
+          ],
+          "productID" : "halcya_gold_mensuel",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Halcya Gold mensuel",
+          "subscriptionGroupID" : "48414C01",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "29.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "48414C02",
+          "introductoryOffer" : {
+            "internalID" : "48414C04",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P2W"
+          },
+          "localizations" : [
+            {
+              "description" : "Halcya Premium, à l'année (prix d'essai fictif)",
+              "displayName" : "Premium annuel",
+              "locale" : "fr_FR"
+            }
+          ],
+          "productID" : "halcya_premium_annuel",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Halcya Premium annuel",
+          "subscriptionGroupID" : "48414C01",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "2.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "48414C03",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Halcya Premium, au mois (prix d'essai fictif)",
+              "displayName" : "Premium mensuel",
+              "locale" : "fr_FR"
+            }
+          ],
+          "productID" : "halcya_premium_mensuel",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Halcya Premium mensuel",
+          "subscriptionGroupID" : "48414C01",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

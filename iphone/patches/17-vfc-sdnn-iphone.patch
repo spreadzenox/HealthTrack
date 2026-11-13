@@ -1,0 +1,40 @@
+diff --git a/app/src/services/dailyJournal.js b/app/src/services/dailyJournal.js
+index 1c707d5..87412c6 100644
+--- a/app/src/services/dailyJournal.js
++++ b/app/src/services/dailyJournal.js
+@@ -38,6 +38,7 @@ function emptyDay(dateKey) {
+     _resting: [],
+     _hrv: [],
+     _hrvDay: [],
++    _hrvSdnn: [], // iPhone : VFC de l'app Santé en SDNN, jamais mêlée à la RMSSD
+     _spo2: [],
+     _resp: [],
+     _temp: [],
+@@ -92,6 +93,7 @@ function finalize(day) {
+       // VFC de journée (montre) : moyenne des mesures du jour, à part de la VFC de la nuit
+       hrvDay: day._hrvDay.length ? Math.round(day._hrvDay.reduce((a, v) => a + v, 0) / day._hrvDay.length) : null,
+       hrvDayCount: day._hrvDay.length,
++      hrvSdnn: last(day._hrvSdnn),
+       spo2: last(day._spo2),
+       respiratoryRate: day._resp.length
+         ? Math.round((day._resp.reduce((a, v) => a + v, 0) / day._resp.length) * 10) / 10
+@@ -215,6 +217,7 @@ export function buildDailyJournal(entries) {
+         if (p.subtype === 'restingHeartRate') day._resting.push(v)
+         else if (isDaytimeHrv(p)) day._hrvDay.push(v)
+         else if (p.subtype === 'heartRateVariability') day._hrv.push(v)
++        else if (p.subtype === 'heartRateVariabilitySdnn') day._hrvSdnn.push(v)
+         else if (p.subtype === 'oxygenSaturation') day._spo2.push(v)
+         else day._hr.push(v)
+         break
+diff --git a/app/src/services/journalChips.js b/app/src/services/journalChips.js
+index 69dedb9..60d5b24 100644
+--- a/app/src/services/journalChips.js
++++ b/app/src/services/journalChips.js
+@@ -43,6 +43,7 @@ export function summaryChips(s) {
+   if (s.restingHr != null) chips.push(['FC au repos', `${Math.round(s.restingHr)} bpm`])
+   if (s.hrv != null) chips.push(['VFC nuit', `${Math.round(s.hrv)} ms`])
+   if (s.hrvDay != null) chips.push(['VFC jour', `${s.hrvDay} ms`])
++  if (s.hrvSdnn != null) chips.push(['VFC (SDNN)', `${Math.round(s.hrvSdnn)} ms`])
+   if (s.spo2 != null) chips.push(['SpO₂', `${frNumber(s.spo2)} %`])
+   if (s.respiratoryRate != null) chips.push(['Respiration', `${frNumber(s.respiratoryRate)} /min`])
+   if (s.temperatureC != null) chips.push(['Température', `${frNumber(s.temperatureC)} °C`])

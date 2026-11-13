@@ -1,0 +1,291 @@
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d9da930 (.github/workflows/ios-build.yml).
+# Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
+# Version iOS de Halcya : code Android suivi (upstream.json) + adaptations iOS, build pour le simulateur sans signature,
+# captures sur deux iPhone simulés (taille de l'iPhone 12 de test, et un récent), en clair et en sombre.
+# Le dépôt est public : les minutes macOS sont gratuites, mais on évite les builds inutiles (journal et fiche App Store
+# seuls ignorés : la fiche a son propre contrôle, store-check.yml, et le workflow des modèles du visage le sien ;
+# runs dépassés d'une même PR annulés).
+name: iOS — build simulateur
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ["iphone/**", ".github/workflows/ios-build.yml", "!iphone/journal/**", "!iphone/**.md", "!iphone/store/**", "!iphone/site/**", "!iphone/scripts/site.mjs", "!iphone/scripts/store-*.mjs", "!iphone/fusion/**"]
+  push:
+    branches: [main]
+    paths: ["iphone/**", ".github/workflows/ios-build.yml", "!iphone/journal/**", "!iphone/**.md", "!iphone/store/**", "!iphone/site/**", "!iphone/scripts/site.mjs", "!iphone/scripts/store-*.mjs", "!iphone/fusion/**"]
+  workflow_dispatch:
+    inputs:
+      devices:
+        description: "Simulateurs à capturer à la place des deux habituels (ex. « iPhone 17 Pro Max » : captures 6,9 pouces de la fiche App Store, publiées sur captures/store)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+# Les captures de la fiche (lancement manuel avec `devices`) ont leur propre groupe : elles n'annulent pas la CI de main
+concurrency:
+  group: ios-build-${{ github.event.pull_request.number || github.ref }}${{ inputs.devices && '-store' || '' }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: iphone
+
+jobs:
+  web:
+    name: Tests d'Android avec les correctifs iOS (Vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # numéros de version = nombres de commits ; code suivi lu à son commit (scripts/upstream.sh)
+          filter: blob:none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19"
+      - name: Code Android suivi + adaptations iOS
+        run: scripts/upstream.sh
+      - name: Tests
+        working-directory: iphone/upstream/app
+        run: |
+          npm ci --no-audit --no-fund
+          npm run test
+      # Même règle qu'Android depuis v751 (#667) : 0 erreur d'ESLint, correctifs et fichiers de l'iPhone compris
+      - name: Lint (ESLint, 0 erreur)
+        working-directory: iphone/upstream/app
+        run: npm run lint
+
+  ios:
+    name: Build iOS (simulateur) et captures
+    runs-on: macos-latest
+    # 90 min : sur un runner lent (5/11, #303), les captures ont pris 60 min au lieu de 40 et le test d'achat a été
+    # coupé à 70 min alors que tout le reste était bon
+    timeout-minutes: 90
+    permissions:
+      contents: write # publication des captures sur la branche captures/<pr-N | main>
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # numéros de version = nombres de commits ; code suivi lu à son commit (scripts/upstream.sh)
+          filter: blob:none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22" # la CLI Capacitor 8 exige Node 22 (Android reste en 20 pour ses propres builds)
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Code Android suivi + adaptations iOS
+        run: scripts/upstream.sh
+      # Lecture du visage (I7) : modèles MediaPipe et TensorFlow Lite C, vérifiés, embarqués dans l'app
+      - name: Modèles du visage (téléchargés et vérifiés)
+        run: scripts/face-models.sh
+      # Règles des rappels du soir (I5) : paquet Swift du dépôt, testé seul (XCTest), avant toute build de l'app
+      - name: Tests Swift des rappels du soir (XCTest)
+        run: swift test --package-path ios/HalcyaRules
+      # Lecture du visage (I7) : calculs comparés aux vecteurs de référence d'Android, lus dans upstream/
+      - name: Tests Swift de la lecture du visage (XCTest, vecteurs d'Android)
+        run: swift test --package-path ios/HalcyaFace
+      - name: Numéros de version
+        run: |
+          ANDROID="$(node -p "require('./upstream.json').versionCode")"
+          echo "ANDROID_VERSION=$ANDROID" >> "$GITHUB_ENV"
+          # Numéro de version fixe des builds de test pendant un cycle (testflight-version.json, décision du propriétaire
+          # du 07/11 vers 19:35) ; à défaut, celui d'Android. Le numéro de build et la version affichée suivent Android.
+          MARKETING="$(node -p "require('fs').existsSync('testflight-version.json') ? require('./testflight-version.json').version : require('./upstream.json').versionCode")"
+          echo "MARKETING_VERSION_IOS=$MARKETING" >> "$GITHUB_ENV"
+          echo "IOS_BUILD=$ANDROID.$(git rev-list --count HEAD)" >> "$GITHUB_ENV"
+          xcodebuild -version
+      - name: Build web (variante appstore) et synchronisation Capacitor
+        working-directory: iphone/upstream/app
+        env:
+          VITE_DISTRIBUTION: appstore
+          VITE_STORE: appstore # nom du magasin dans les textes (« l’App Store », compte Apple ; distribution.js d’Android)
+          VITE_IOS_CAPTURE: "1" # build simulateur : mode « captures » (overlay/app/src/ios/captureMode.js), jamais en TestFlight
+        run: |
+          npm ci --no-audit --no-fund
+          CORE="$(node -p "require('@capacitor/core/package.json').version")"
+          npm install --no-save --no-audit --no-fund "@capacitor/ios@$CORE"
+          VITE_APP_VERSION="$ANDROID_VERSION" npm run build
+          npx -y -p "@capacitor/cli@$CORE" cap sync ios # CLI de la même version que le runtime (modèles de projet identiques)
+      - name: Écriture dans Santé pour la build de captures seulement (sonde I4)
+        working-directory: iphone/upstream/app/ios/App/App
+        # La sonde écrit des pas de démonstration puis les relit. L'app livrée n'écrit rien dans Santé : sa phrase
+        # (exigée par Apple, le plugin contenant l'écriture) le dit ; la build de captures la remplace par la sienne.
+        run: |
+          /usr/libexec/PlistBuddy -c "Set :NSHealthUpdateUsageDescription 'Build de test : écrit des mesures de démonstration dans Santé.'" Info.plist
+      # 8/11 : GitHub a répondu 504 aux fichiers binaires de capacitor-swift-pm (releases) pendant des heures ; gardés en cache,
+      # ils ne bloquent plus la build quand GitHub ne les sert pas
+      # Restauré ici, enregistré juste après la résolution (pas en fin de job : un échec plus loin le perdrait)
+      - name: Cache des paquets Swift (fichiers binaires de Capacitor)
+        id: spm-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: spm-${{ runner.os }}-${{ hashFiles('iphone/ios/App/CapApp-SPM/Package.swift') }}
+      # 8/11 : GitHub servait les binaires de Capacitor une fois sur quatre (504) : résolution à part, 6 essais espacés
+      - name: Paquets Swift (jusqu'à 6 essais)
+        working-directory: iphone/upstream/app/ios/App
+        run: |
+          for attempt in 1 2 3 4 5 6; do
+            if xcodebuild -resolvePackageDependencies -project App.xcodeproj -scheme App \
+              -derivedDataPath "$RUNNER_TEMP/dd" > "$RUNNER_TEMP/spm-$attempt.log" 2>&1; then
+              echo "Paquets Swift résolus (essai $attempt)"
+              exit 0
+            fi
+            tail -25 "$RUNNER_TEMP/spm-$attempt.log" || true
+            sleep $((attempt * 30))
+          done
+          echo "::error::Paquets Swift non résolus après 6 essais"
+          exit 1
+      - name: Cache des paquets Swift (enregistré dès la résolution)
+        if: steps.spm-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: ${{ steps.spm-cache.outputs.cache-primary-key }}
+      # Entitlements dans les réglages de la cible App (pas en ligne de commande : ils s'appliqueraient aussi au paquet
+      # de ressources des modèles du visage, qui n'en a pas)
+      - name: Build Xcode (simulateur, signature à la volée)
+        working-directory: iphone/upstream/app/ios/App
+        run: |
+          set -o pipefail
+          xcodebuild -project App.xcodeproj -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/dd" \
+            MARKETING_VERSION="$MARKETING_VERSION_IOS" CURRENT_PROJECT_VERSION="$IOS_BUILD" \
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= \
+            build 2>&1 | tee "$RUNNER_TEMP/xcodebuild.log" | grep -E "error:|warning: .*deprecated|BUILD (SUCCEEDED|FAILED)" || true
+          grep -q "BUILD SUCCEEDED" "$RUNNER_TEMP/xcodebuild.log"
+      # Test d'interface du dépôt (uitests/, sans bibliothèque tierce) qui accepte la feuille de l'app Santé pendant
+      # les captures. Encore à l'essai : s'il ne se construit pas, les captures se font quand même, feuille ouverte.
+      - name: Build du test d'interface (feuille de l'app Santé, I4)
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          xcodebuild -project uitests/HalcyaUITests.xcodeproj -scheme HalcyaUITests -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/dd-tests" \
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= \
+            build-for-testing > "$RUNNER_TEMP/xcodebuild-tests.log" 2>&1 || true
+          # Erreurs relues depuis la branche des captures (les artefacts ne sont pas toujours accessibles)
+          mkdir -p captures
+          grep -E "error:|SUCCEEDED|FAILED" "$RUNNER_TEMP/xcodebuild-tests.log" | tee captures/test-interface-build.txt
+          XCTESTRUN="$(ls "$RUNNER_TEMP"/dd-tests/Build/Products/*.xctestrun | head -1)"
+          echo "XCTESTRUN=$XCTESTRUN" >> "$GITHUB_ENV"
+      - name: Entitlements embarqués (essai HealthKit, I4)
+        run: |
+          mkdir -p captures
+          codesign -d --entitlements - "$RUNNER_TEMP/dd/Build/Products/Debug-iphonesimulator/App.app" > captures/entitlements.txt 2>&1 || true
+          cat captures/entitlements.txt
+      - name: Manifeste de confidentialité, chiffrement et phrases d'usage dans l'app (App Store, I9)
+        run: |
+          APP="$RUNNER_TEMP/dd/Build/Products/Debug-iphonesimulator/App.app"
+          plutil -lint "$APP/PrivacyInfo.xcprivacy"
+          /usr/libexec/PlistBuddy -c 'Print :NSPrivacyTracking' "$APP/PrivacyInfo.xcprivacy" | grep -qx false
+          /usr/libexec/PlistBuddy -c 'Print :NSPrivacyAccessedAPITypes:0:NSPrivacyAccessedAPIType' "$APP/PrivacyInfo.xcprivacy" | grep -qx NSPrivacyAccessedAPICategoryUserDefaults
+          /usr/libexec/PlistBuddy -c 'Print :ITSAppUsesNonExemptEncryption' "$APP/Info.plist" | grep -qx false
+          # Phrases d'usage : sans elles, iOS ferme l'app qui ouvre la caméra (photo du repas) ou refuse la position (météo)
+          for key in NSCameraUsageDescription NSLocationWhenInUseUsageDescription NSHealthShareUsageDescription NSBluetoothAlwaysUsageDescription; do
+            /usr/libexec/PlistBuddy -c "Print :$key" "$APP/Info.plist" > /dev/null
+          done
+          /usr/libexec/PlistBuddy -c 'Print :NSLocationDefaultAccuracyReduced' "$APP/Info.plist" | grep -qx true
+      - name: Captures sur simulateur
+        env:
+          CAPTURE_DEVICES: ${{ inputs.devices }}
+        run: scripts/ios-captures.sh "$RUNNER_TEMP/dd/Build/Products/Debug-iphonesimulator/App.app" captures "${XCTESTRUN:-}"
+      # Achat d'essai de l'abonnement App Store (I6), sans compte Apple : StoreKit Test (ios/App/AppTests/Halcya.storekit)
+      # dans une cible de tests unitaires hébergée par l'app. Encore à l'essai : n'arrête ni les captures ni la CI.
+      # Bloquant depuis le 29/10 (réussi sans faute sur #53, #55, #56 et #57) ; les captures restent publiées
+      - name: Achat d'essai App Store (StoreKit Test, I6)
+        working-directory: iphone/upstream/app/ios/App
+        run: |
+          set -o pipefail
+          mkdir -p "$GITHUB_WORKSPACE/iphone/captures"
+          # Bogue d'Apple FB22237318 (forums développeurs, fil 826971) : avec le simulateur iOS 26.5, `xcodebuild test`
+          # ne transmet pas le fichier .storekit à storekitd ; contournement signalé : un simulateur plus ancien (26.1).
+          # Le runner n'a que 26.2, 26.4 et 26.5 (28/10) : on prend l'iPhone du simulateur iOS le plus ancien.
+          { echo "Simulateurs iOS installés :"; xcrun simctl list runtimes available | grep -E '^iOS'; } | tee "$GITHUB_WORKSPACE/iphone/captures/achat-essai.txt"
+          OLDEST="$(xcrun simctl list devices available | awk '/^-- iOS /{v=$3; next} /^--/{v=""} v && /iPhone/ {print v " " $0}' | sort -V | head -1 || true)"
+          UDID="$(echo "$OLDEST" | grep -oE '[0-9A-F]{8}-[0-9A-F-]{27}' | head -1 || true)"
+          if [ -n "$UDID" ]; then
+            DEST="platform=iOS Simulator,id=$UDID"
+          else
+            DEST="platform=iOS Simulator,name=$(xcrun simctl list devices available | grep -oE 'iPhone 1[67][^(]*' | head -1 | sed 's/ *$//' || true)"
+          fi
+          echo "Simulateur choisi : ${OLDEST:-aucun ancien, iPhone par défaut}" | tee -a "$GITHUB_WORKSPACE/iphone/captures/achat-essai.txt"
+          echo "Destination : $DEST" | tee -a "$GITHUB_WORKSPACE/iphone/captures/achat-essai.txt"
+          xcodebuild -project App.xcodeproj -scheme App -configuration Debug \
+            -destination "$DEST" -derivedDataPath "$RUNNER_TEMP/dd-unit" \
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= \
+            -only-testing:AppTests test 2>&1 | tee "$RUNNER_TEMP/xcodebuild-unit.log" \
+            | grep -E "error:|Test Case|Executed|StoreKit Test :|TEST (SUCCEEDED|FAILED)" | tee -a "$GITHUB_WORKSPACE/iphone/captures/achat-essai.txt"
+      - name: Résumé
+        if: always()
+        run: |
+          {
+            echo "## iOS — Android v${ANDROID_VERSION:-?} · build ${IOS_BUILD:-?}"
+            echo
+            echo "$(ls captures/*.png 2>/dev/null | wc -l | tr -d ' ') capture(s) ; erreurs JavaScript : $(cat captures/js-errors.txt 2>/dev/null | wc -l | tr -d ' ') ligne(s) ; pages avec un texte propre à Android : $(cat captures/texte-android.txt 2>/dev/null | wc -l | tr -d ' ')"
+            echo '```'
+            head -20 captures/js-errors.txt 2>/dev/null || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      # Les sessions de la routine ne peuvent pas toujours télécharger les artefacts (hébergement bloqué par leur
+      # réseau) : les captures sont aussi poussées, seules, sur une branche dédiée qu'on lit avec git.
+      - name: Publier les captures sur une branche dédiée
+        if: always() && hashFiles('iphone/captures/*.png') != ''
+        env:
+          # Captures de la fiche : iPhone sur captures/store, iPad sur captures/store-ipad (l'une n'écrase pas l'autre)
+          BRANCH: captures/${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || inputs.devices != '' && (contains(inputs.devices, 'iPad') && 'store-ipad' || 'store') || github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd captures
+          git init -q -b "$BRANCH"
+          git add -A
+          git -c user.name="ios-build" -c user.email="ios-build@users.noreply.github.com" \
+            commit -qm "Captures de ${GITHUB_SHA::7} (Android v$ANDROID_VERSION, build $IOS_BUILD)"
+          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64)" \
+            push -qf "https://github.com/$GITHUB_REPOSITORY.git" "HEAD:refs/heads/$BRANCH"
+          echo "Captures : branche $BRANCH" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        # 11/11 : panne du service d'artefacts de GitHub ; build et captures bons (captures publiées sur leur branche),
+        # mais l'échec ici sautait « Tests d'interface construits » et mettait main en rouge. Les artefacts ne décident
+        # pas du résultat.
+        continue-on-error: true
+        with:
+          name: ios-captures
+          path: |
+            iphone/captures/
+            ${{ runner.temp }}/xcodebuild.log
+            ${{ runner.temp }}/xcodebuild-tests.log
+            ${{ runner.temp }}/xcodebuild-unit.log
+          if-no-files-found: warn
+      # En dernier, captures publiées : sans tests d'interface construits, les gestes (feuilles Santé et de partage,
+      # notifications, Fichiers) ne tournent pas et les sondes tombent à zéro, CI verte (29/10, PR #53)
+      - name: Tests d'interface construits
+        run: |
+          grep -q "TEST BUILD SUCCEEDED" captures/test-interface-build.txt || {
+            echo "::error::Build des tests d'interface en échec, gestes non essayés : voir test-interface-build.txt"
+            cat captures/test-interface-build.txt; exit 1; }
+      # Aucune erreur JavaScript sur les deux iPhone simulés (0 ligne sur les 10 dernières CI relues le 29/10 ; rendue
+      # bloquante, promesses rejetées sans traitement comprises) ; publiées plus haut, captures et console restent lisibles.
+      - name: Aucune erreur JavaScript
+        if: always() && hashFiles('iphone/captures/js-errors.txt') != ''
+        run: |
+          if [ -s captures/js-errors.txt ]; then
+            echo "::error::$(wc -l < captures/js-errors.txt | tr -d ' ') ligne(s) d'erreur JavaScript : voir js-errors.txt"
+            cat captures/js-errors.txt; exit 1
+          fi
+      # Aucun mot propre à Android sur les pages de l'iPhone (audit des textes, captureMode.js : androidWords,
+      # pageText ; liste vide depuis le 29/10, PR #71 : la carte du temps d'écran, juste sur iPhone, est mise à part)
+      - name: Aucun texte propre à Android
+        if: always() && hashFiles('iphone/captures/texte-android.txt') != ''
+        run: |
+          if [ -s captures/texte-android.txt ]; then
+            echo "::error::$(wc -l < captures/texte-android.txt | tr -d ' ') page(s) avec un mot propre à Android : voir texte-android.txt"
+            cat captures/texte-android.txt; exit 1
+          fi

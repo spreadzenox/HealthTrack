@@ -1,0 +1,77 @@
+diff --git a/app/src/components/DoctorReportCard.jsx b/app/src/components/DoctorReportCard.jsx
+index 7490991..775407b 100644
+--- a/app/src/components/DoctorReportCard.jsx
++++ b/app/src/components/DoctorReportCard.jsx
+@@ -1,6 +1,7 @@
+ import { useEffect, useRef, useState } from 'react'
+ import { Link, useLocation } from 'react-router-dom'
+ import { FEATURES } from '../config/distribution'
++import { APP_NAME } from '../config/brand'
+ import { useEntitlement } from '../hooks/useEntitlement'
+ import { REPORT_DEFAULT_WEEKS, REPORT_PERIODS, defaultReportWeeks } from '../services/report/buildReport'
+ import { createReportPdf, saveAndShareReport } from '../services/report/createReportPdf'
+@@ -81,7 +82,9 @@ export default function DoctorReportCard({
+       const pdf = await create({ weeks, includeWellbeing: hasFace && wellbeing })
+       const { saved } = await save(pdf)
+       setStatus(saved === 'documents'
+-        ? `${pdf.fileName} est dans Documents (app Fichiers › Documents).`
++        ? FEATURES.iosStore
++          ? `${pdf.fileName} est aussi dans l’app Fichiers › Sur mon iPhone › ${APP_NAME}.`
++          : `${pdf.fileName} est dans Documents (app Fichiers › Documents).`
+         : `${pdf.fileName} téléchargé.`)
+     } catch (e) {
+       setStatus('Le rapport n’a pas pu être créé : ' + (e?.message || 'erreur inconnue') + '.')
+diff --git a/app/src/pages/Data.jsx b/app/src/pages/Data.jsx
+index f52c91c..dfb5fea 100644
+--- a/app/src/pages/Data.jsx
++++ b/app/src/pages/Data.jsx
+@@ -14,7 +14,8 @@ import { monoDigits } from '../utils/monoDigits'
+ async function isAndroidNative() {
+   try {
+     const { Capacitor } = await import('@capacitor/core')
+-    return Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android'
++    // Version iOS (HealthTrack-iOS) : même chemin dans l'app iPhone, où le lien de téléchargement ne fait rien
++    return Capacitor.isNativePlatform() && ['android', 'ios'].includes(Capacitor.getPlatform())
+   } catch {
+     return false
+   }
+@@ -98,12 +99,23 @@ export default function Data() {
+         const { Filesystem, Directory } = await import('@capacitor/filesystem')
+         // Convert JSON string to base64 for Filesystem.writeFile
+         const base64 = btoa(unescape(encodeURIComponent(json)))
+-        await Filesystem.writeFile({
++        const written = await Filesystem.writeFile({
+           path: filename,
+           data: base64,
+           directory: Directory.Documents,
+         })
+-        setExportStatus(`${filename} enregistré dans Documents (app Fichiers > Téléphone > Documents).`)
++        if (FEATURES.iosStore) {
++          // Feuille de partage d'iOS : l'envoyer ou l'enregistrer ailleurs (Fichiers, AirDrop, mail…)
++          try {
++            const { Share } = await import('@capacitor/share')
++            await Share.share({ title: filename, files: [written.uri], dialogTitle: 'Enregistrer la sauvegarde' })
++          } catch {
++            // Partage annulé : le fichier reste dans Documents
++          }
++          setExportStatus(`${filename} est aussi dans l’app Fichiers › Sur mon iPhone › ${APP_NAME}.`)
++        } else {
++          setExportStatus(`${filename} enregistré dans Documents (app Fichiers > Téléphone > Documents).`)
++        }
+       } else {
+         const blob = new Blob([json], { type: 'application/json' })
+         const url = URL.createObjectURL(blob)
+diff --git a/app/src/services/report/createReportPdf.js b/app/src/services/report/createReportPdf.js
+index 8a84d6d..82701e1 100644
+--- a/app/src/services/report/createReportPdf.js
++++ b/app/src/services/report/createReportPdf.js
+@@ -43,7 +43,8 @@ export function bytesToBase64(bytes) {
+ async function isAndroidNative() {
+   try {
+     const { Capacitor } = await import('@capacitor/core')
+-    return Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android'
++    // Version iOS (HealthTrack-iOS) : même chemin dans l'app iPhone, où le lien de téléchargement ne fait rien
++    return Capacitor.isNativePlatform() && ['android', 'ios'].includes(Capacitor.getPlatform())
+   } catch {
+     return false
+   }

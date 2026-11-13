@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-31",
+  "kind": "amélioration",
+  "title": "Sources en couleur",
+  "variants": ["appstore"],
+  "items": [
+    "Chaque carte de Sources prend la couleur de son thème, comme dans « Vos derniers jours » : menthe pour la lecture du visage et l'app Santé, lilas pour la météo et le temps d'écran."
+  ]
+}

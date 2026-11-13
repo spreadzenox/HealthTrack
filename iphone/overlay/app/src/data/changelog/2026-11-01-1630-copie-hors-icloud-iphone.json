@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-01",
+  "kind": "amélioration",
+  "title": "Copie de secours : sur l'iPhone seulement",
+  "variants": ["appstore"],
+  "items": [
+    "La copie de secours de vos données reste sur l'iPhone, dans Fichiers › Halcya › Copie de secours : elle ne part plus dans la sauvegarde iCloud.",
+    "Pour changer d'iPhone, exportez vos données sur l'ancien, puis importez le fichier sur le nouveau."
+  ]
+}

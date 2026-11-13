@@ -1,0 +1,42 @@
+diff --git a/app/src/services/eveningNote.js b/app/src/services/eveningNote.js
+index 456caac..1daafc2 100644
+--- a/app/src/services/eveningNote.js
++++ b/app/src/services/eveningNote.js
+@@ -27,7 +27,8 @@ const RECORD_VERSIONS = [1, 2]
+ const KEY = 'healthtrack_evening_note'
+ const MINUTE_KEY = 'healthtrack_evening_note_minute'
+ 
+-const NativeEveningNote = registerPlugin('EveningNote')
++// Version iOS (HealthTrack-iOS) : exporté pour les sondes de la build de captures (un seul registerPlugin par plugin)
++export const NativeEveningNote = registerPlugin('EveningNote')
+ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
+ 
+ /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */
+diff --git a/app/src/services/fodmapReminder.js b/app/src/services/fodmapReminder.js
+index 91f0658..a8dbe7f 100644
+--- a/app/src/services/fodmapReminder.js
++++ b/app/src/services/fodmapReminder.js
+@@ -18,7 +18,8 @@ export const PORTION_DEFAULT_MINUTE = 12 * 60
+ const KEY = 'halcya_portion_reminder'
+ const GUT_WINDOW_DAYS = 120
+ 
+-const NativePortionReminder = registerPlugin('PortionReminder')
++// Version iOS (HealthTrack-iOS) : exporté pour les sondes de la build de captures (un seul registerPlugin par plugin)
++export const NativePortionReminder = registerPlugin('PortionReminder')
+ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
+ 
+ /** Plugin natif dans l'app (deux variantes), faux plugin des captures / tests, sinon aucun. */
+diff --git a/app/src/services/gutEvening.js b/app/src/services/gutEvening.js
+index b2f05aa..017741a 100644
+--- a/app/src/services/gutEvening.js
++++ b/app/src/services/gutEvening.js
+@@ -22,7 +22,8 @@ const LEARN_DAYS = 14
+ const RECORD_VERSION = 1
+ const KEY = 'healthtrack_gut_evening'
+ 
+-const NativeGutEvening = registerPlugin('GutEvening')
++// Version iOS (HealthTrack-iOS) : exporté pour les sondes de la build de captures (un seul registerPlugin par plugin)
++export const NativeGutEvening = registerPlugin('GutEvening')
+ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
+ 
+ /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */

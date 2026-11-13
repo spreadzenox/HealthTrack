@@ -1,0 +1,114 @@
+diff --git a/app/src/services/analysisEngine.js b/app/src/services/analysisEngine.js
+index f9392c2..c697e07 100644
+--- a/app/src/services/analysisEngine.js
++++ b/app/src/services/analysisEngine.js
+@@ -41,6 +41,7 @@ import {
+ import { appLocale, decimalMark } from '../i18n/locale.js'
+ import { activityTotal, addActivity, createActivityTotal } from './activityTotals'
+ import { oneSourcePerWorkout } from './workoutSources'
++import { DISTRIBUTION } from '../config/distribution' // Version iOS (HealthTrack-iOS)
+ 
+ // ─── Public constants ────────────────────────────────────────────────────────
+ 
+@@ -168,6 +169,10 @@ export const VARIABLE_META = {
+     direction: 'higher_better',
+     group: 'lifestyle',
+   },
++  // Version iOS (HealthTrack-iOS) : VFC de l'app Santé (SDNN), variable à part, jamais mêlée à la RMSSD
++  ...(DISTRIBUTION === 'appstore' ? {
++    hrv_sdnn_ms: { label: 'Variabilité cardiaque (SDNN)', unit: 'ms', format: (v) => `${Math.round(v)} ms`, direction: 'higher_better', group: 'lifestyle' },
++  } : {}),
+   spo2_pct: {
+     label: 'Saturation en oxygène (SpO₂)',
+     unit: '%',
+@@ -627,7 +632,7 @@ function ratingCutoffs(entries) {
+  */
+ export const MEASURED_KEYS = [
+   'sleepMinutes', 'steps', 'dailyCaloriesHC',
+-  'restingHR', 'avgHR', 'hrv_ms', 'spo2_pct',
++  'restingHR', 'avgHR', 'hrv_ms', 'hrv_sdnn_ms', 'spo2_pct',
+   'weight_kg', 'bmi', 'fat_ratio_pct', 'fat_mass_kg', 'muscle_mass_kg', 'bone_mass_kg',
+   'hydration_pct', 'visceral_fat_index', 'bmr_kcal', 'vascular_age_years', 'standing_hr_bpm', 'pwv_mps',
+ ]
+@@ -736,6 +741,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
+         _hrSum: 0, _hrCount: 0,
+         _avgHRSum: 0, _avgHRCount: 0,
+         _hrvSum: 0, _hrvCount: 0,
++        _hrvSdnnSum: 0, _hrvSdnnCount: 0, // Version iOS
+         _spo2Sum: 0, _spo2Count: 0,
+         dailyCaloriesHC: 0,
+         kcal: 0,
+@@ -861,6 +867,9 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
+             day._hrvSum += hrv
+             day._hrvCount += 1
+           }
++        } else if (subtype === 'heartRateVariabilitySdnn') { // Version iOS : app Santé
++          const v = e.payload?.value ?? bpm
++          if (typeof v === 'number' && v > 0) { day._hrvSdnnSum += v; day._hrvSdnnCount += 1 }
+         } else if (subtype === 'oxygenSaturation') {
+           const spo2 = e.payload?.value ?? bpm
+           if (typeof spo2 === 'number' && spo2 > 0) {
+@@ -998,6 +1007,7 @@ export function buildDailyDataset(entries, { includeDaysWithoutWellbeing = false
+       restingHR:          day._hrCount > 0 ? day._hrSum / day._hrCount : 0,
+       avgHR:              day._avgHRCount > 0 ? day._avgHRSum / day._avgHRCount : 0,
+       hrv_ms:             day._hrvCount > 0 ? day._hrvSum / day._hrvCount : 0,
++      hrv_sdnn_ms:        day._hrvSdnnCount > 0 ? day._hrvSdnnSum / day._hrvSdnnCount : 0, // Version iOS
+       spo2_pct:           day._spo2Count > 0 ? day._spo2Sum / day._spo2Count : 0,
+       dailyCaloriesHC:    day._kcal ? activityTotal(day._kcal, 'calories') ?? 0 : 0,
+       kcal:               day.kcal,
+@@ -1498,6 +1508,7 @@ export function buildTodayRow(entries, historicalRawDataset) {
+     _hrSum: 0, _hrCount: 0,
+     _avgHRSum: 0, _avgHRCount: 0,
+     _hrvSum: 0, _hrvCount: 0,
++    _hrvSdnnSum: 0, _hrvSdnnCount: 0, // Version iOS
+     _spo2Sum: 0, _spo2Count: 0,
+     dailyCaloriesHC: 0,
+     kcal: 0, protein_g: 0, fat_g: 0, carbohydrates_g: 0,
+@@ -1567,6 +1578,9 @@ export function buildTodayRow(entries, historicalRawDataset) {
+         } else if (subtype === 'heartRateVariability' && !isDaytimeHrv(e.payload)) {
+           const v = e.payload?.value ?? bpm
+           if (typeof v === 'number' && v > 0) { row._hrvSum += v; row._hrvCount += 1 }
++        } else if (subtype === 'heartRateVariabilitySdnn') { // Version iOS : app Santé
++          const v = e.payload?.value ?? bpm
++          if (typeof v === 'number' && v > 0) { row._hrvSdnnSum += v; row._hrvSdnnCount += 1 }
+         } else if (subtype === 'oxygenSaturation') {
+           const v = e.payload?.value ?? bpm
+           if (typeof v === 'number' && v > 0) { row._spo2Sum += v * w; row._spo2Count += w }
+@@ -1623,6 +1637,7 @@ export function buildTodayRow(entries, historicalRawDataset) {
+     restingHR:  row._hrCount    > 0 ? row._hrSum    / row._hrCount    : 0,
+     avgHR:      row._avgHRCount > 0 ? row._avgHRSum  / row._avgHRCount : 0,
+     hrv_ms:     row._hrvCount   > 0 ? row._hrvSum    / row._hrvCount   : 0,
++    hrv_sdnn_ms: row._hrvSdnnCount > 0 ? row._hrvSdnnSum / row._hrvSdnnCount : 0, // Version iOS
+     spo2_pct:   row._spo2Count  > 0 ? row._spo2Sum   / row._spo2Count  : 0,
+     wellbeing:  row._wellbeingCount > 0 ? row._wellbeingSum / row._wellbeingCount : null,
+   }
+@@ -1966,6 +1981,7 @@ const MEASURED_TODAY_KEYS = {
+   restingHR: (row) => row._hrCount > 0,
+   avgHR: (row) => row._avgHRCount > 0,
+   hrv_ms: (row) => row._hrvCount > 0,
++  hrv_sdnn_ms: (row) => row._hrvSdnnCount > 0, // Version iOS
+   spo2_pct: (row) => row._spo2Count > 0,
+ }
+ 
+diff --git a/app/src/services/firstImport.js b/app/src/services/firstImport.js
+index f932f90..0abc153 100644
+--- a/app/src/services/firstImport.js
++++ b/app/src/services/firstImport.js
+@@ -114,6 +114,17 @@ export function summarizeImport(entries, now = new Date()) {
+       source: sourceLine(hrv),
+     })
+   }
++  // Version iOS (HealthTrack-iOS) : sans RMSSD, la VFC de l'app Santé (SDNN), sous son nom, jamais mêlée
++  const sdnn = hrv.length ? [] : recent.filter((e) => e.type === 'heart_rate' && e.payload?.subtype === 'heartRateVariabilitySdnn'
++    && typeof e.payload.value === 'number')
++  if (sdnn.length) {
++    facts.push({
++      key: 'hrv',
++      value: `${Math.round(sdnn.reduce((s, e) => s + e.payload.value, 0) / sdnn.length)} ms`,
++      label: `de VFC (SDNN) en moyenne, sur ${sdnn.length} mesure${sdnn.length > 1 ? 's' : ''}`,
++      source: sourceLine(sdnn),
++    })
++  }
+ 
+   const resting = recent.filter((e) => e.type === 'heart_rate' && e.payload?.subtype === 'restingHeartRate' && typeof e.payload.bpm === 'number')
+   if (resting.length && facts.length < 4) {

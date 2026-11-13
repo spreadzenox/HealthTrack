@@ -1,0 +1,17 @@
+diff --git a/app/src/components/MyDevices.jsx b/app/src/components/MyDevices.jsx
+index cc8413f..eab6929 100644
+--- a/app/src/components/MyDevices.jsx
++++ b/app/src/components/MyDevices.jsx
+@@ -106,8 +106,10 @@ export default function MyDevices({ detect = detectPhoneApps, loadEntries = defa
+                   ))}
+                   {missing.length > 0 && (
+                     <p className="my-device-meta">
+-                      Jamais reçu en 30 jours : {missing.join(', ')}. Si votre montre en est capable, activez ce partage
+-                      vers {FEATURES.iosStore ? 'l’app Santé' : 'Health Connect'} dans {row.name}.
++                      Jamais reçu en 30 jours : {missing.join(', ')}.{' '}
++                      {FEATURES.iosStore && /apple watch/i.test(row.name)
++                        ? 'Si votre montre en est capable, activez cette mesure dans l’app Watch de l’iPhone.'
++                        : `Si votre montre en est capable, activez ce partage vers ${FEATURES.iosStore ? 'l’app Santé' : 'Health Connect'} dans ${row.name}.`}
+                     </p>
+                   )}
+                   {unshared.length > 0 && (

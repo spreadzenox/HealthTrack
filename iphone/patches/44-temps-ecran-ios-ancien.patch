@@ -1,0 +1,15 @@
+diff --git a/app/src/components/PhoneUsageCard.jsx b/app/src/components/PhoneUsageCard.jsx
+index d8516c5..f5e5d10 100644
+--- a/app/src/components/PhoneUsageCard.jsx
++++ b/app/src/components/PhoneUsageCard.jsx
+@@ -116,6 +116,10 @@ export default function PhoneUsageCard({
+   const night = today?.sleepEstimate
+   const apps = settings.todayApps?.date === today?.date ? appsLine(settings.todayApps?.minutes) : null
+ 
++  // Version iOS (HealthTrack-iOS) : avant iOS 26.4, l'iPhone ne donne pas le temps d'écran aux apps ; la carte n'est
++  // pas proposée (retours du premier testeur, 06/11), sauf si elle avait déjà été activée (elle dit alors de mettre à jour)
++  if (FEATURES.iosStore && access?.supported === false && !on) return null
++
+   return (
+     <section className="weather-card" aria-labelledby="phone-usage-title">
+       <div className="my-device-head">

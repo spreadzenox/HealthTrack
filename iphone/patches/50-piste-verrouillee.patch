@@ -1,0 +1,18 @@
+diff --git a/app/src/pages/Recommendations.css b/app/src/pages/Recommendations.css
+index 11f1019..00e3d03 100644
+--- a/app/src/pages/Recommendations.css
++++ b/app/src/pages/Recommendations.css
+@@ -714,6 +714,13 @@
+   font-size: 1.02rem;
+ }
+ 
++/* Version iOS (correctif 50) : la barre floutée d'une piste verrouillée ne prend sa place que dans un conteneur flexible */
++.reco-piste-title.is-locked {
++  display: flex;
++  align-items: center;
++  min-height: 1.4em;
++}
++
+ .reco-piste-text {
+   font-size: 0.88rem;
+ }

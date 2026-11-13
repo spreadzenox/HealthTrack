@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assistance — Halcya pour iPhone</title>
+  <!-- Adresse d'assistance de la fiche App Store (I9), publiée par .github/workflows/pages.yml (scripts/site.mjs). -->
+  <style>
+    :root {
+      --bg: #FFFFFF; --ink: #10231D; --ink-2: #4A5E57; --brand: #0B7A5E; --mint: #E3F5EE; --mint-ink: #3B5249;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #10231D; --ink: #F1F5F3; --ink-2: #B8C9C2; --brand: #5EE0B5; --mint: #1C3A31; --mint-ink: #D5EEE4; }
+    }
+    body {
+      font-family: Figtree, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      max-width: 680px; margin: 0 auto; padding: 24px 20px 48px;
+      color: var(--ink); background: var(--bg); line-height: 1.6;
+    }
+    h1 { font-size: 1.6rem; font-weight: 800; margin: 0 0 4px; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin: 28px 0 8px; }
+    h3 { font-size: 1rem; font-weight: 700; margin: 18px 0 4px; }
+    p  { margin: 0 0 14px; }
+    .lead { color: var(--ink-2); }
+    .summary { background: var(--mint); color: var(--mint-ink); border-radius: 22px; padding: 16px 18px; }
+    a  { color: var(--brand); }
+  </style>
+</head>
+<body>
+  <h1>Assistance</h1>
+  <p class="lead">Halcya pour iPhone</p>
+
+  <p class="summary">
+    Halcya vous aide à suivre votre ventre et votre bien-être, et à repérer des tendances dans vos propres données.
+    Elle ne pose pas de diagnostic et ne remplace pas l'avis d'un professionnel de santé. Elle est réservée aux
+    personnes de 18 ans et plus.
+  </p>
+
+  <h2>Questions fréquentes</h2>
+
+  <h3>Où sont mes données ?</h3>
+  <p>
+    Sur votre iPhone, et nulle part ailleurs : Halcya n'a ni compte ni serveur qui les garde. L'app tient à jour une
+    copie de secours sur l'iPhone, hors de la sauvegarde iCloud, visible dans l'app Fichiers (Sur mon iPhone → Halcya →
+    Copie de secours). Le détail est dans la
+    <a href="../confidentialite/">politique de confidentialité</a>.
+  </p>
+
+  <h3>Comment retrouver mes données sur un nouvel iPhone ?</h3>
+  <p>
+    Vos données ne passent pas par la sauvegarde iCloud : exportez-les sur l'ancien téléphone (Réglages → Données →
+    Exporter), puis importez le fichier sur le nouvel iPhone (Réglages → Données). Un fichier exporté par Halcya depuis
+    un autre téléphone s'importe de la même façon.
+  </p>
+
+  <h3>Mes mesures de l'app Santé n'apparaissent pas</h3>
+  <p>
+    Vérifiez dans l'app Santé que Halcya a le droit de lire les données voulues (sommeil, fréquence cardiaque, pas…),
+    puis rouvrez Halcya. Seules les données que votre montre ou vos apps écrivent dans l'app Santé peuvent être lues.
+  </p>
+
+  <h3>L'analyse IA d'un repas ne répond pas</h3>
+  <p>
+    Elle demande une connexion à Internet, et le nombre d'analyses est limité. Vous pouvez toujours saisir le repas
+    vous-même, sans analyse.
+  </p>
+
+  <h3>Comment tout effacer ?</h3>
+  <p>
+    Réglages → Données → « Supprimer toutes mes données » (un export vous est proposé juste avant). Supprimer l'app
+    efface aussi tout ce qu'elle garde sur l'iPhone.
+  </p>
+
+  <h2>Nous écrire</h2>
+  <p>
+    Une question, un problème, une idée : ouvrez une demande sur
+    <a href="https://github.com/spreadzenox/HealthTrack-iOS/issues">github.com/spreadzenox/HealthTrack-iOS</a>.
+    N'y mettez jamais de données de santé : cette page est publique.
+  </p>
+</body>
+</html>

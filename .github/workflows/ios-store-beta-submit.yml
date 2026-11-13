@@ -1,0 +1,69 @@
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d9da930 (.github/workflows/store-beta-submit.yml).
+# Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
+# Examen bêta d'Apple chaque nuit (message du propriétaire du 07/11 vers 18:30, inscrit dans la consigne de la routine) :
+# la dernière build TestFlight traitée par Apple (ou celle demandée) est ajoutée au groupe externe « Testeurs Halcya »
+# et soumise à l'examen bêta (scripts/store-beta-submit.mjs). Jamais la version de l'App Store : sa soumission et sa
+# mise en production restent au propriétaire (le script refuse tout chemin qui la touche). Le lien public du groupe
+# n'est jamais lu. Lancement manuel par la routine, sur main seulement (environnement `appstore` : ASC_KEY_ID,
+# ASC_ISSUER_ID, ASC_KEY_P8, jamais affichés).
+name: TestFlight — examen bêta (soumission)
+
+on:
+  workflow_dispatch:
+    inputs:
+      build:
+        description: "Build à soumettre (ex. 871.370) ; vide : la plus récente traitée par Apple"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: store-beta
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: iphone
+
+jobs:
+  # Garde de la bascule : ce workflow publie chez Apple. Il ne démarre que sur main, et seulement quand
+  # iphone/fusion/bascule.json l'autorise (voir iphone/fusion/BASCULE.md). Sinon le job suivant est sauté.
+  garde:
+    name: Publication iOS activée ?
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      publication: ${{ steps.garde.outputs.publication }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: iphone/fusion
+      - id: garde
+        run: fusion/garde.sh
+  submit:
+    name: Groupe externe et examen bêta
+    needs: garde
+    if: needs.garde.outputs.publication == 'oui'
+    runs-on: ubuntu-latest
+    environment: appstore
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # numéros de version = nombres de commits ; code suivi lu à son commit (scripts/upstream.sh)
+          filter: blob:none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Tests du script
+        run: node --test scripts/store-beta-submit.test.mjs
+      - name: Soumission (API App Store Connect)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          BUILD: ${{ inputs.build }}
+        run: |
+          if [ -n "$BUILD" ]; then node scripts/store-beta-submit.mjs --build "$BUILD"; else node scripts/store-beta-submit.mjs; fi

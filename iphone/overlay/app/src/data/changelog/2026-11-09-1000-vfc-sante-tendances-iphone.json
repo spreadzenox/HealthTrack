@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-09",
+  "kind": "correctif",
+  "variants": ["appstore"],
+  "title": "VFC de l’app Santé : Journal et Tendances",
+  "items": [
+    "Dans le Journal, la tuile « VFC (SDNN) » a la couleur et l’icône des autres mesures du cœur.",
+    "Journal › Tendances propose sa courbe (bouton « + ») dès trois jours mesurés, par exemple par une Apple Watch."
+  ]
+}

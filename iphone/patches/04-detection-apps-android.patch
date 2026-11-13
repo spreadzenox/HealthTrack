@@ -1,0 +1,14 @@
+diff --git a/app/src/devices/phoneApps.js b/app/src/devices/phoneApps.js
+index e917117..54a3bb5 100644
+--- a/app/src/devices/phoneApps.js
++++ b/app/src/devices/phoneApps.js
+@@ -18,7 +18,8 @@ export const DETECT_TIMEOUT_MS = 6_000
+ export const NativeAppManager = registerPlugin('AppManager')
+ 
+ function isNative() {
+-  return typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
++  // Noms de paquets Android : sans objet sur iPhone (version iOS, HealthTrack-iOS)
++  return typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true && window.Capacitor.getPlatform?.() !== 'ios'
+ }
+ 
+ /**

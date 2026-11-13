@@ -1,0 +1,22 @@
+diff --git a/app/src/devices/healthApps.js b/app/src/devices/healthApps.js
+index 6b440af..a87ce57 100644
+--- a/app/src/devices/healthApps.js
++++ b/app/src/devices/healthApps.js
+@@ -135,6 +135,8 @@ export const METRICS = [
+   { key: 'blood_glucose', label: 'glycémie' },
+   { key: 'weight', label: 'poids' },
+   { key: 'body_composition', label: 'masse grasse' },
++  // Version iOS (HealthTrack-iOS), CYCLE-iOS-3 : le cycle lu dans l'app Santé ; par épisodes, jamais « arrêté » (correctif 60)
++  { key: 'cycle', label: 'cycle', episodic: true },
+ ]
+ const METRIC_BY_KEY = new Map(METRICS.map((m) => [m.key, m]))
+ 
+@@ -185,7 +187,7 @@ export function sourceCoverage(entries, now = new Date()) {
+       lastAt: new Date(last).toISOString(),
+       days: recentDays.size,
+       habitual,
+-      stopped: habitual && gapDays >= STOP_AFTER_DAYS,
++      stopped: habitual && !m.episodic && gapDays >= STOP_AFTER_DAYS,
+       gapDays,
+     }
+   })

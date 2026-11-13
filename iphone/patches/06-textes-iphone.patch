@@ -1,0 +1,54 @@
+diff --git a/app/src/components/MyDevices.jsx b/app/src/components/MyDevices.jsx
+index 2576449..8a86949 100644
+--- a/app/src/components/MyDevices.jsx
++++ b/app/src/components/MyDevices.jsx
+@@ -11,6 +11,7 @@ import { detectPhoneApps, openPhoneApp } from '../devices/phoneApps'
+ import { formatAgo } from '../utils/timeAgo'
+ import { openGuide } from '../utils/openGuide'
+ import { APP_NAME } from '../config/brand'
++import { FEATURES } from '../config/distribution'
+ import './MyDevices.css'
+ 
+ const SOURCE_WINDOW_DAYS = 30
+@@ -63,7 +64,9 @@ export default function MyDevices({ detect = detectPhoneApps, loadEntries = defa
+         <p className="my-devices-intro">Recherche de vos apps santé…</p>
+       ) : rows.length === 0 ? (
+         <p className="my-devices-intro">
+-          {`Dans l’app Android, ${APP_NAME} repère tout seul vos apps de montre et de santé (Huawei Health, Samsung Health, Garmin…) et vous dit comment les brancher.`}
++          {FEATURES.iosStore
++            ? `Sur iPhone, ${APP_NAME} lit vos mesures dans l’app Santé d’Apple (montre, sommeil, pas…) : rien reçu ces 30 derniers jours. Voir la carte « App Santé » plus bas.`
++            : `Dans l’app Android, ${APP_NAME} repère tout seul vos apps de montre et de santé (Huawei Health, Samsung Health, Garmin…) et vous dit comment les brancher.`}
+         </p>
+       ) : (
+         <>
+diff --git a/app/src/pages/Data.jsx b/app/src/pages/Data.jsx
+index 2a7f5c1..7a31cc8 100644
+--- a/app/src/pages/Data.jsx
++++ b/app/src/pages/Data.jsx
+@@ -5,6 +5,7 @@ import { fixWatchKcalOnce } from '../services/watchKcalFix'
+ import { deleteAllMyData } from '../services/deleteAllData'
+ import { activityLevel } from '../services/nutrientReferenceIntakes'
+ import { APP_NAME } from '../config/brand'
++import { FEATURES } from '../config/distribution'
+ import DoctorReportCard from '../components/DoctorReportCard'
+ import '../Food.css'
+ import { appLocale, localeDate } from '../i18n/locale.js'
+@@ -206,9 +207,15 @@ export default function Data() {
+     <section className="food-page">
+       <h2 className="page-title">Vos données</h2>
+       <p className="page-intro">
+-        Vos données sont sur ce téléphone et passent les mises à jour. Si la sauvegarde du téléphone est
+-        activée, elles y sont copiées, chiffrées ; {APP_NAME} ne la lit pas. Exportez-les avant de réinstaller
+-        l’app ou de changer de téléphone.
++        Vos données sont sur ce téléphone et passent les mises à jour.{' '}
++        {FEATURES.iosStore ? (
++          'Avant de réinstaller ou de changer de téléphone, exportez-les.'
++        ) : (
++          <>
++            Si la sauvegarde du téléphone est activée, elles y sont copiées, chiffrées ; {APP_NAME} ne la lit pas.
++            Exportez-les avant de réinstaller l’app ou de changer de téléphone.
++          </>
++        )}
+       </p>
+ 
+       <div className="data-actions">

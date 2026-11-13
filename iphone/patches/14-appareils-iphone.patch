@@ -1,0 +1,18 @@
+diff --git a/app/src/components/MyDevices.jsx b/app/src/components/MyDevices.jsx
+index 96996e0..cc8413f 100644
+--- a/app/src/components/MyDevices.jsx
++++ b/app/src/components/MyDevices.jsx
+@@ -107,11 +107,11 @@ export default function MyDevices({ detect = detectPhoneApps, loadEntries = defa
+                   {missing.length > 0 && (
+                     <p className="my-device-meta">
+                       Jamais reçu en 30 jours : {missing.join(', ')}. Si votre montre en est capable, activez ce partage
+-                      vers Health Connect dans {row.name}.
++                      vers {FEATURES.iosStore ? 'l’app Santé' : 'Health Connect'} dans {row.name}.
+                     </p>
+                   )}
+                   {unshared.length > 0 && (
+-                    <p className="my-device-meta">{`${row.name} ne partage pas la ${unshared.join(', ')} avec Health Connect.`}</p>
++                    <p className="my-device-meta">{`${row.name} ne partage pas la ${unshared.join(', ')} avec ${FEATURES.iosStore ? 'l’app Santé' : 'Health Connect'}.`}</p>
+                   )}
+                   {(showGuide || showOpen) && (
+                     <div className="my-device-actions">

@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-31",
+  "kind": "correctif",
+  "title": "Sources : la VFC de l'Apple Watch n'est plus annoncée comme manquante",
+  "variants": ["appstore"],
+  "items": [
+    "Sur iPhone, l'app Santé donne la variabilité cardiaque en SDNN. « Mes appareils » la comptait bien, mais disait aussi « Jamais reçu : VFC » : cette ligne n'apparaît plus quand votre montre envoie déjà sa VFC."
+  ]
+}

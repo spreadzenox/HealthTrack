@@ -1,0 +1,79 @@
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d9da930 (.github/workflows/store-app.yml).
+# Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
+# Réglages de l'app dans App Store Connect (scripts/store-app.mjs), **seulement sur l'accord explicite du
+# propriétaire** : « Prix et disponibilité » (gratuite, 5 pays de P32) et « Content Rights ». Ne remplace jamais un
+# réglage en place ; rien n'est soumis ni publié. Lancement manuel, sur main seulement (environnement `appstore` :
+# ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8, jamais affichés).
+name: App Store — prix, disponibilité et Content Rights
+
+on:
+  workflow_dispatch:
+    inputs:
+      prix_et_disponibilite:
+        description: "App gratuite, disponible en France, Belgique, Luxembourg, Suisse, Canada (P32) — seulement après le « ok prix et disponibilité » du propriétaire"
+        type: boolean
+        default: false
+      content_rights:
+        description: "Déclaration Content Rights choisie par le propriétaire (vide : ne rien toucher)"
+        type: choice
+        default: ""
+        options:
+          - ""
+          - USES_THIRD_PARTY_CONTENT
+          - DOES_NOT_USE_THIRD_PARTY_CONTENT
+
+permissions:
+  contents: read
+
+concurrency:
+  group: store-push
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: iphone
+
+jobs:
+  # Garde de la bascule : ce workflow publie chez Apple. Il ne démarre que sur main, et seulement quand
+  # iphone/fusion/bascule.json l'autorise (voir iphone/fusion/BASCULE.md). Sinon le job suivant est sauté.
+  garde:
+    name: Publication iOS activée ?
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      publication: ${{ steps.garde.outputs.publication }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: iphone/fusion
+      - id: garde
+        run: fusion/garde.sh
+  app:
+    name: Réglages de l'app
+    needs: garde
+    if: needs.garde.outputs.publication == 'oui'
+    runs-on: ubuntu-latest
+    environment: appstore
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # numéros de version = nombres de commits ; code suivi lu à son commit (scripts/upstream.sh)
+          filter: blob:none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Tests du script
+        run: node --test scripts/store-app.test.mjs
+      - name: Réglages (API App Store Connect)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          PRIX_DISPO: ${{ inputs.prix_et_disponibilite }}
+          CONTENT_RIGHTS: ${{ inputs.content_rights }}
+        run: |
+          args=()
+          [ "$PRIX_DISPO" = "true" ] && args+=(--prix-et-disponibilite)
+          [ -n "$CONTENT_RIGHTS" ] && args+=(--content-rights "$CONTENT_RIGHTS")
+          node scripts/store-app.mjs "${args[@]}"

@@ -1,0 +1,33 @@
+diff --git a/app/src/services/today.js b/app/src/services/today.js
+index 269a05b6..1b855eb5 100644
+--- a/app/src/services/today.js
++++ b/app/src/services/today.js
+@@ -227,6 +227,8 @@ const tileSourceLabel = (e) => (e?.source === 'huawei_watch' ? SOURCE_LABELS.hua
+ const TILE_MATCHERS = {
+   sleep: (e, day) => e.type === 'sleep' && sleepDay(e) === day,
+   hrv: (e, day) => e.type === 'heart_rate' && e.payload?.subtype === 'heartRateVariability' && !isDaytimeHrv(e.payload) && localDateKey(e.at) === day,
++  // Version iOS (HealthTrack-iOS) : VFC de l'app Santé, en SDNN, rangée à part (jamais mêlée à la RMSSD)
++  hrvSdnn: (e, day) => e.type === 'heart_rate' && e.payload?.subtype === 'heartRateVariabilitySdnn' && localDateKey(e.at) === day,
+   steps: (e, day) => e.type === 'steps' && localDateKey(e.at) === day,
+ }
+ 
+@@ -256,6 +258,8 @@ export function measureTiles(summary, entries, now = new Date(), yesterday = nul
+   }
+   const sleep = pick('sleep', (s) => s.sleepMinutes != null)
+   const hrv = pick('hrv', (s) => s.hrv != null)
++  // Version iOS : sans VFC RMSSD, la tuile montre la SDNN de l'app Santé sous son nom plutôt qu'un « — »
++  const sdnn = hrv.s.hrv == null ? pick('hrvSdnn', (s) => s.hrvSdnn != null) : null
+   // Les pas sont un total de la journée : ceux d’hier laissaient chercher ceux d’aujourd’hui (POLISH-SIM-2c)
+   const steps = pick('steps', (s) => s.steps != null, { fromYesterday: false })
+   return [
+@@ -268,7 +272,9 @@ export function measureTiles(summary, entries, now = new Date(), yesterday = nul
+       when: sleep.s.sleepMinutes == null ? null : sleep.when ? 'nuit d’avant' : 'cette nuit',
+       sources: sourcesOf('sleep', sleep.d),
+     },
+-    { key: 'hrv', label: 'VFC nuit', value: hrv.s.hrv != null ? `${Math.round(hrv.s.hrv)} ms` : null, when: hrv.when, sources: sourcesOf('hrv', hrv.d) },
++    sdnn?.s.hrvSdnn != null
++      ? { key: 'hrv', label: 'VFC (SDNN)', value: `${Math.round(sdnn.s.hrvSdnn)} ms`, when: sdnn.when, sources: sourcesOf('hrvSdnn', sdnn.d) }
++      : { key: 'hrv', label: 'VFC nuit', value: hrv.s.hrv != null ? `${Math.round(hrv.s.hrv)} ms` : null, when: hrv.when, sources: sourcesOf('hrv', hrv.d) },
+     {
+       key: 'steps',
+       label: 'Pas',
