@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-01",
+  "kind": "amélioration",
+  "title": "Confidentialité et conditions relues",
+  "variants": ["appstore"],
+  "items": [
+    "Les conditions disent une seule fois que Halcya ne pose aucun diagnostic, et qu'un lien repéré est une piste à vérifier.",
+    "La politique de confidentialité est plus directe sur l'identifiant qui compte vos analyses de repas : il ne permet pas de vous identifier."
+  ]
+}

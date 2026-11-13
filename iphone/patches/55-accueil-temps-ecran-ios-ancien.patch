@@ -1,0 +1,31 @@
+diff --git a/app/src/pages/Onboarding.jsx b/app/src/pages/Onboarding.jsx
+index eab36409..093babe8 100644
+--- a/app/src/pages/Onboarding.jsx
++++ b/app/src/pages/Onboarding.jsx
+@@ -44,6 +44,7 @@ import {
+   getPhoneUsageSettings,
+   isPhoneUsageAvailable,
+   openPhoneUsageAccessSettings,
++  checkPhoneUsageAccess,
+ } from '../services/phoneUsageSync'
+ import { choiceToScore } from '../services/mood/wellbeingScale'
+ import { detectPhoneApps } from '../devices/phoneApps'
+@@ -367,6 +368,18 @@ function WeatherRow({ weather, onWeather }) {
+ 
+ function ScreenTimeRow({ screen, onScreen }) {
+   const on = screen === 'on' || (screen == null && getPhoneUsageSettings().enabled)
++  // Version iOS (HealthTrack-iOS, correctif 55) : avant iOS 26.4, l'iPhone ne donne pas le temps d'écran aux apps ; pas
++  // de ligne, comme la carte de Sources (correctif 44), sauf si le temps d'écran était déjà activé
++  const [supported, setSupported] = useState(!FEATURES.iosStore)
++  useEffect(() => {
++    if (!FEATURES.iosStore) return undefined
++    let alive = true
++    checkPhoneUsageAccess().then((a) => alive && setSupported(a?.supported !== false)).catch(() => {})
++    return () => {
++      alive = false
++    }
++  }, [])
++  if (!supported && !on) return null
+   const toggle = async () => {
+     if (on) {
+       disablePhoneUsage()

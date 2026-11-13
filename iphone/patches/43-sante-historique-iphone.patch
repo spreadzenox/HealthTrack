@@ -1,0 +1,14 @@
+diff --git a/app/src/connectors/HealthConnectConnector.js b/app/src/connectors/HealthConnectConnector.js
+index ef5d3a0..573b597 100644
+--- a/app/src/connectors/HealthConnectConnector.js
++++ b/app/src/connectors/HealthConnectConnector.js
+@@ -412,7 +412,8 @@ export class HealthConnectConnector extends BaseConnector {
+     /** Types demandés mais non autorisés (dernière vérification). */
+     this.missingReadTypes = []
+     /** Sans READ_HEALTH_DATA_HISTORY, seuls les 30 jours avant la première autorisation sont lisibles. */
+-    this.readWindowDays = HEALTH_CONNECT_READ_WINDOW_DAYS
++    // Version iOS (HealthTrack-iOS) : l'app Santé d'Apple n'a pas cette limite, tout l'historique se lit
++    this.readWindowDays = isIos() ? null : HEALTH_CONNECT_READ_WINDOW_DAYS
+   }
+ 
+   async isAvailable() {

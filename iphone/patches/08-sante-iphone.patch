@@ -1,0 +1,116 @@
+diff --git a/app/src/connectors/HealthConnectConnector.js b/app/src/connectors/HealthConnectConnector.js
+index b768e8c..ef5d3a0 100644
+--- a/app/src/connectors/HealthConnectConnector.js
++++ b/app/src/connectors/HealthConnectConnector.js
+@@ -54,6 +54,14 @@ const EXTRA_READ_TYPES = [
+ 
+ export const READ_TYPES = [...CORE_READ_TYPES, ...EXTRA_READ_TYPES]
+ 
++// Version iOS (HealthTrack-iOS) : HealthKit par le même plugin (I4). HealthKit ne dit jamais si la lecture est
++// accordée : « accordé » dès que la demande a été faite sur cet appareil. VFC : SDNN sur iOS, RMSSD sur Android,
++// pas encore séparées dans la norme personnelle → ni demandée ni lue sur iPhone.
++const IOS_ASKED_KEY = 'halcya_ios_healthkit_asked'
++const isIos = () => getPlatformSync() === 'ios'
++// VFC : SDNN sur iOS (HealthKit) contre RMSSD sur Android : lue, mais rangée à part (heartRateVariabilitySdnn)
++const HRV_SUBTYPE = () => (isIos() ? 'heartRateVariabilitySdnn' : 'heartRateVariability')
++
+ /** Libellés français des types Health Connect (écran Connecteurs). */
+ export const READ_TYPE_LABELS = {
+   steps: 'pas',
+@@ -391,11 +399,12 @@ export class HealthConnectConnector extends BaseConnector {
+     super({
+       id: 'health_connect',
+       // POL-PLAY-28 : titre court (tenait sur 2 lignes) ; « montre, bague, balance » ouvre la description
+-      name: 'Health Connect',
++      name: isIos() ? 'App Santé' : 'Health Connect',
+       // VC-27 : une phrase avec des marques connues du public ; la liste complète des types vit au chevron
+       // « Ce qui est importé » de la carte (`importedList`, ci-dessous)
+-      description:
+-        'Sommeil, cœur, pas, poids… écrits par vos apps santé : Samsung Health, Garmin, Withings, Oura.',
++      description: isIos()
++        ? 'Sommeil, cœur, pas, poids… écrits par l’Apple Watch et vos apps santé : Garmin, Withings, Oura.'
++        : 'Sommeil, cœur, pas, poids… écrits par vos apps santé : Samsung Health, Garmin, Withings, Oura.',
+       dataTypes: ['steps', 'sleep', 'heart_rate', 'activity', 'calories', 'respiratory_rate', 'body_temperature', 'blood_pressure', 'blood_glucose', 'weight', 'body_composition'],
+     })
+     /** Tout ce que la carte peut importer, replié sous « Ce qui est importé ». */
+@@ -444,6 +453,11 @@ export class HealthConnectConnector extends BaseConnector {
+     // Using sync here avoids any risk of deadlocking the WebView bridge thread.
+     const platform = getPlatformSync()
+     debugInfo(TAG, `Plateforme détectée (sync) : ${platform}`)
++    if (platform === 'ios') {
++      await ensureHealthPlugin()
++      const result = await getCachedHealthPlugin()?.isAvailable?.().catch(() => null)
++      return result?.available === true ? { available: true, platform } : { available: false, reason: 'ios', platform }
++    }
+ 
+     // Collect device info early so it is logged even if something below hangs
+     const deviceInfo = await collectDeviceInfo()
+@@ -723,6 +737,10 @@ export class HealthConnectConnector extends BaseConnector {
+       return 'not_asked'
+     }
+     const platform = getPlatformSync()
++    if (platform === 'ios') {
++      this.missingReadTypes = []
++      return localStorage.getItem(IOS_ASKED_KEY) ? 'granted' : 'not_asked'
++    }
+     const hasCheckAuth = typeof Health.checkAuthorization === 'function'
+     debugInfo(TAG, 'Vérification méthode Health.checkAuthorization', { hasCheckAuth, platform })
+     if (!hasCheckAuth) {
+@@ -772,6 +790,10 @@ export class HealthConnectConnector extends BaseConnector {
+     try {
+       debugInfo(TAG, 'Appel Health.requestAuthorization()…')
+       await Health.requestAuthorization({ read: READ_TYPES, write: [] })
++      if (isIos()) {
++        localStorage.setItem(IOS_ASKED_KEY, '1')
++        return 'granted'
++      }
+       debugInfo(TAG, 'requestAuthorization() terminé, vérification du résultat…')
+       return await this.checkPermissions()
+     } catch (e) {
+@@ -1020,7 +1042,7 @@ export class HealthConnectConnector extends BaseConnector {
+         payload: {
+           value: s.value,
+           unit: s.unit,
+-          subtype: 'heartRateVariability',
++          subtype: HRV_SUBTYPE(),
+           platformId: s.platformId,
+           sourceName: s.sourceName,
+           connector: 'health_connect',
+diff --git a/app/src/pages/Connectors.jsx b/app/src/pages/Connectors.jsx
+index 055efa7..486fee2 100644
+--- a/app/src/pages/Connectors.jsx
++++ b/app/src/pages/Connectors.jsx
+@@ -77,6 +77,18 @@ const SYSTEM_UPDATE = (
+ 
+ /** Message affiché quand Health Connect est indisponible, selon la raison remontée par le natif. */
+ const UNAVAILABLE_MESSAGES = {
++  // Version iOS (HealthTrack-iOS) : raison « ios » du connecteur, HealthKit absent de l'appareil
++  ios: {
++    title: 'L’app Santé n’est pas disponible sur cet appareil.',
++    body: (
++      <>
++        {APP_NAME} lit vos mesures dans l’app Santé d’Apple, où écrivent l’Apple Watch et beaucoup de montres et de
++        bagues ; vos notes et vos repas fonctionnent sans elle.
++      </>
++    ),
++    settings: false,
++    recheck: false,
++  },
+   provider_update_required: {
+     title: 'Health Connect nécessite une mise à jour.',
+     body: (
+@@ -320,9 +332,11 @@ function ConnectorCard({ connector }) {
+                       Ouvrir les paramètres Health Connect
+                     </button>
+                   )}
+-                  <button type="button" className="btn btn-secondary connector-btn" onClick={recheckAvailability}>
+-                    Revérifier la disponibilité
+-                  </button>
++                  {msg.recheck !== false && (
++                    <button type="button" className="btn btn-secondary connector-btn" onClick={recheckAvailability}>
++                      Revérifier la disponibilité
++                    </button>
++                  )}
+                 </div>
+               </div>
+             )

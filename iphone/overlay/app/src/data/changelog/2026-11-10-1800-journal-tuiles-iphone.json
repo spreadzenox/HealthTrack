@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-10",
+  "kind": "amélioration",
+  "variants": ["appstore"],
+  "title": "Journal : toucher une mesure ouvre sa courbe",
+  "items": [
+    "Dans Journal › Jours, toucher Sommeil, Pas, VFC (SDNN), FC au repos ou Bien-être ouvre sa courbe dans Tendances, comme sur Aujourd’hui."
+  ]
+}

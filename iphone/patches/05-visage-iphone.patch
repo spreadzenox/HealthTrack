@@ -1,0 +1,28 @@
+diff --git a/app/src/components/FaceSenseCard.jsx b/app/src/components/FaceSenseCard.jsx
+index a187b93..fbddde6 100644
+--- a/app/src/components/FaceSenseCard.jsx
++++ b/app/src/components/FaceSenseCard.jsx
+@@ -351,7 +351,7 @@ export default function FaceSenseCard({
+         </>
+       )}
+ 
+-      {!available && <p className="my-device-message">Disponible dans l’app Android.</p>}
++      {!available && <p className="my-device-message">{FEATURES.iosStore ? 'Bientôt sur iPhone.' : 'Disponible dans l’app Android.'}</p>}
+       {available && !loaded && <p className="my-device-message">Lecture de l’état…</p>}
+       {available && loaded && d.state === 'unavailable' && (
+         <>
+diff --git a/app/src/services/faceSense.js b/app/src/services/faceSense.js
+index 4b96721..7d46c79 100644
+--- a/app/src/services/faceSense.js
++++ b/app/src/services/faceSense.js
+@@ -23,7 +23,9 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
+ /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */
+ export function faceSensePlugin() {
+   if (typeof window !== 'undefined' && window.__healthtrackFakeFaceSense) return window.__healthtrackFakeFaceSense
+-  return isNative() ? NativeFaceSense : null
++  // Version iOS (HealthTrack-iOS) : le plugin n'existe pas encore sur iPhone, comme hors de l'app
++  const missingOnIos = window.Capacitor?.getPlatform?.() === 'ios' && !window.Capacitor.isPluginAvailable?.('FaceSense')
++  return isNative() && !missingOnIos ? NativeFaceSense : null
+ }
+ 
+ export function isFaceSenseAvailable() {

@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-09",
+  "kind": "correctif",
+  "variants": ["appstore"],
+  "title": "Accueil : le temps d’écran seulement s’il est lisible",
+  "items": [
+    "Avant iOS 26.4, l’iPhone ne donne pas le temps d’écran aux apps : l’écran « Branchez vos sources » ne le propose plus, comme l’onglet Sources."
+  ]
+}

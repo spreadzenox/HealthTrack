@@ -1,0 +1,13 @@
+diff --git a/app/src/main.jsx b/app/src/main.jsx
+index fe922bb..0bc1c4a 100644
+--- a/app/src/main.jsx
++++ b/app/src/main.jsx
+@@ -14,6 +14,8 @@ import { getLang } from './i18n/locale.js'
+ import { installFrenchSpacing } from './utils/frenchSpacing'
+ 
+ initTheme()
++// Version iOS : mode « captures » du simulateur (HealthTrack-iOS, VITE_IOS_CAPTURE=1), absent de toute autre build
++if (import.meta.env.VITE_IOS_CAPTURE === '1') import('./ios/captureMode.js').then((m) => m.installCaptureMode())
+ // Langue du document (lecteurs d'écran, césure) : « fr » sauf si l'anglais est choisi (jalon 9)
+ document.documentElement.lang = getLang()
+ 

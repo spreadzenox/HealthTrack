@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-08",
+  "kind": "nouveau",
+  "title": "Un nouvel accueil",
+  "variants": ["appstore"],
+  "items": [
+    "Au premier lancement, trois cartes présentent l’app et disent quand vos données quittent l’iPhone.",
+    "Vous pouvez cocher plusieurs raisons de venir, par exemple la digestion et le cycle. À changer dans Paramètres.",
+    "Santé, la météo et le temps d’écran se branchent sur un seul écran, d’un geste chacun ; vos 6 derniers mois de Santé sont importés."
+  ]
+}

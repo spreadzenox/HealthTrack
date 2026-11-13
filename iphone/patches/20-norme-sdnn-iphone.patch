@@ -1,0 +1,25 @@
+diff --git a/app/src/components/BaselineCards.jsx b/app/src/components/BaselineCards.jsx
+index 663727d..a557913 100644
+--- a/app/src/components/BaselineCards.jsx
++++ b/app/src/components/BaselineCards.jsx
+@@ -1,6 +1,7 @@
+ import { useState, useEffect, useCallback } from 'react'
+ import { listEntries } from '../storage/localHealthStorage'
+-import { computeHeartBaselines, BASELINE_METRICS, RECENT_DAYS, BASELINE_DAYS } from '../services/baselines'
++import { computeHeartBaselines, computeBaseline, BASELINE_METRICS, RECENT_DAYS, BASELINE_DAYS } from '../services/baselines'
++import { iosBaselineMetrics } from '../ios/sdnnBaseline' // Version iOS (HealthTrack-iOS)
+ import { APP_NAME } from '../config/brand'
+ import PastelTiles from './PastelTiles'
+ import './BaselineCards.css'
+@@ -88,8 +89,9 @@ export default function BaselineCards({ onStatus }) {
+     try {
+       const since = new Date(Date.now() - HISTORY_DAYS * 86400000).toISOString()
+       // FC repos et VFC seulement, pas les tranches de FC / SpO₂ (perf D2)
+-      const entries = await listEntries({ type: 'heart_rate', subtypes: Object.keys(BASELINE_METRICS), since, limit: Infinity })
+-      setBaselines(computeHeartBaselines(entries))
++      const ios = iosBaselineMetrics() // iPhone : VFC SDNN de l'app Santé, norme à part
++      const entries = await listEntries({ type: 'heart_rate', subtypes: [...Object.keys(BASELINE_METRICS), ...ios.map((m) => m.key)], since, limit: Infinity })
++      setBaselines([...computeHeartBaselines(entries), ...ios.map((m) => computeBaseline(entries, m))])
+     } catch {
+       setBaselines([])
+     }

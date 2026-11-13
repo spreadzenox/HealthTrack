@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-08",
+  "kind": "correctif",
+  "title": "Journal : les calories des repas ne sont plus coupées",
+  "variants": [
+    "appstore"
+  ],
+  "items": [
+    "Sur les iPhone de 6,1 pouces (iPhone 12 à 16), la tuile des repas de Journal › Jours n’écrit plus « kca l » : les calories tiennent sur une ligne."
+  ]
+}

@@ -1,0 +1,98 @@
+diff --git a/app/src/config/permissionDisclosures.js b/app/src/config/permissionDisclosures.js
+index 8668336..171949e 100644
+--- a/app/src/config/permissionDisclosures.js
++++ b/app/src/config/permissionDisclosures.js
+@@ -142,7 +142,7 @@ if (FEATURES.iosStore) {
+     points: [
+       `${APP_NAME} lit ce que votre montre, votre bague et vos applis santé écrivent dans l’app Santé : sommeil, pas, fréquence cardiaque, VFC, activité et quelques mesures (poids, température…). Il n’y écrit rien.`,
+       'iOS vous laisse choisir type par type : tout est facultatif.',
+-      'Les 30 derniers jours sont importés tout de suite, puis les nouvelles données au fil des jours.',
++      'Les 6 derniers mois sont importés tout de suite, puis les nouvelles données au fil des jours.',
+       'Elles restent dans vos données, sur le téléphone. Vous pouvez retirer l’accès à tout moment dans Réglages › Santé › Accès aux données et appareils.',
+     ],
+     accept: 'J’accepte, ouvrir l’app Santé',
+diff --git a/app/src/pages/Onboarding.jsx b/app/src/pages/Onboarding.jsx
+index 7534876..3b33f3f 100644
+--- a/app/src/pages/Onboarding.jsx
++++ b/app/src/pages/Onboarding.jsx
+@@ -53,6 +53,9 @@ import { STATUS_LABEL, measureStatuses } from '../devices/deviceCapabilities'
+ import { lastLaunchDay } from '../services/entitlement'
+ import { monoDigits } from '../utils/monoDigits'
+ 
++// Version iOS (HealthTrack-iOS) : l'iPhone importe 6 mois de l'app Santé (IOS_FIRST_IMPORT_DAYS), Android 30 jours
++const IMPORT_SPAN = FEATURES.iosStore ? '6 derniers mois' : '30 derniers jours'
++
+ const withTimeout = (promise, ms, fallback) =>
+   Promise.race([promise, new Promise((resolve) => setTimeout(() => resolve(fallback), ms))])
+ 
+@@ -277,7 +280,7 @@ function HealthCard({ health, onHealth }) {
+       </h2>
+       <p className="onb-card-sub">{name === 'Santé' ? 'votre iPhone et votre montre' : 'votre téléphone, vos montres, bagues et balances'}</p>
+       <p className="onb-card-text">
+-        {APP_NAME} lit vos pas, votre sommeil, ce que vos appareils mesurent et vos 30 derniers jours. Elle n’écrit rien et
++        {APP_NAME} lit vos pas, votre sommeil, ce que vos appareils mesurent et vos {IMPORT_SPAN}. Elle n’écrit rien et
+         n’envoie rien. Vous choisissez type par type.
+       </p>
+       {health === 'granted' ? (
+@@ -479,7 +482,7 @@ function FoundStep({ health, imported, onImported, installed, huawei, onConnect
+           <div
+             className="onb-import-bar"
+             role="progressbar"
+-            aria-label="Import de vos 30 derniers jours"
++            aria-label={`Import de vos ${IMPORT_SPAN}`}
+             aria-valuemin={0}
+             aria-valuemax={progress?.total || 1}
+             aria-valuenow={progress?.done || 0}
+@@ -487,7 +490,7 @@ function FoundStep({ health, imported, onImported, installed, huawei, onConnect
+             <span style={{ width: `${pct(progress)}%` }} />
+           </div>
+           <p className="onb-import-line">
+-            {monoDigits(`Import de vos 30 derniers jours${progress ? ` · ${progress.done}/${progress.total}` : '…'}`)}
++            {monoDigits(`Import de vos ${IMPORT_SPAN}${progress ? ` · ${progress.done}/${progress.total}` : '…'}`)}
+           </p>
+         </>
+       )}
+@@ -522,7 +525,7 @@ function FoundStep({ health, imported, onImported, installed, huawei, onConnect
+       )}
+       {facts?.length > 0 && (
+         <>
+-          <h2 className="onb-leaves-group">Vos 30 derniers jours</h2>
++          <h2 className="onb-leaves-group">Vos {IMPORT_SPAN}</h2>
+           <ul className="onb-facts">
+             {facts.map((f) => (
+               <li key={f.key} className={`onb-fact onb-fact--${f.key}`}>
+@@ -533,7 +536,7 @@ function FoundStep({ health, imported, onImported, installed, huawei, onConnect
+             ))}
+           </ul>
+           {sharedSource && <p className="onb-facts-source">D’après {sharedSource}</p>}
+-          <p className="onb-fine">Vos 30 derniers jours sont importés. {APP_NAME} les comparera à votre digestion et à votre bien-être.</p>
++          <p className="onb-fine">Vos {IMPORT_SPAN} sont importés. {APP_NAME} les comparera à votre digestion et à votre bien-être.</p>
+         </>
+       )}
+       {entries && !facts?.length && (
+diff --git a/app/src/services/firstImport.js b/app/src/services/firstImport.js
+index 0abc153..d80054b 100644
+--- a/app/src/services/firstImport.js
++++ b/app/src/services/firstImport.js
+@@ -24,6 +24,12 @@ const DAY_MS = 24 * 3600 * 1000
+ 
+ /** Jours résumés dans le « aha ». */
+ export const AHA_DAYS = 30
++/**
++ * Version iOS (HealthTrack-iOS) : jours importés à l'accueil sur iPhone. HealthKit n'a pas la fenêtre de 30 jours de
++ * Health Connect : l'historique (6 mois, le choix par défaut de Sources) arrive dès l'accueil (retours du premier
++ * testeur, 06/11) ; le « aha » résume toujours les 30 derniers jours.
++ */
++export const IOS_FIRST_IMPORT_DAYS = 180
+ 
+ /**
+  * Lit Health Connect pour la première fois et enregistre le résultat comme une synchro normale.
+@@ -35,7 +41,7 @@ export async function runFirstImport({ connector, onProgress, now = new Date(),
+   noteFirstGrant(connector.id, now)
+   const settings = getConnectorSettings(connector.id)
+   const readWindowDays = connector.readWindowDays ?? null
+-  const since = syncSince({ now, settings, latestAt: null, historyDays: readWindowDays ?? AHA_DAYS, readWindowDays })
++  const since = syncSince({ now, settings, latestAt: null, historyDays: readWindowDays ?? (FEATURES.iosStore ? IOS_FIRST_IMPORT_DAYS : AHA_DAYS), readWindowDays })
+   const result = await connector.sync({ since, until: now, writer, onProgress })
+   if (readsAllFailed(result)) {
+     setConnectorSettings(connector.id, { lastAttemptAt: now.toISOString(), lastSyncResult: result })

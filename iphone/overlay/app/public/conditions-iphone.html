@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Conditions d'utilisation — Halcya pour iPhone</title>
+  <!-- Version iPhone de app/public/conditions.html (HealthTrack), réécrite pour la variante appstore :
+       abonnements Silver et Gold par l'App Store (I6, point 5), app Santé et copie de secours hors d'iCloud ; « pas un dispositif médical » gardé (directive
+       1.4.1 d'Apple). Embarquée dans l'app (Réglages → Conditions, correctif 26). Quand la page d'Android change,
+       overlay/app/src/ios/conditionsIphone.test.js échoue : relire cette page, puis mettre à jour l'empreinte.
+       Brouillon à faire valider par un juriste, comme celle d'Android. -->
+  <style>
+    :root {
+      --bg: #FFFFFF; --surface: #F4F6F5; --border: #E3E8E6; --ink: #10231D; --ink-2: #4A5E57;
+      --brand: #0B7A5E; --mint: #E3F5EE; --mint-ink: #3B5249;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #10231D; --surface: #17302A; --border: #2A443C; --ink: #F1F5F3; --ink-2: #B8C9C2;
+              --brand: #5EE0B5; --mint: #1C3A31; --mint-ink: #D5EEE4; }
+    }
+    body {
+      font-family: Figtree, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      max-width: 680px; margin: 0 auto;
+      /* Dans l'app, la page passe sous l'heure et l'encoche : marges de la zone sûre de l'iPhone */
+      padding: calc(24px + env(safe-area-inset-top, 0px)) 20px calc(48px + env(safe-area-inset-bottom, 0px));
+      color: var(--ink); background: var(--bg); line-height: 1.6;
+    }
+    h1 { font-size: 1.6rem; font-weight: 800; margin: 0 0 4px; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin: 28px 0 8px; }
+    p  { margin: 0 0 14px; }
+    ul { margin: 0 0 14px; padding-left: 20px; }
+    li { margin-bottom: 6px; }
+    .updated { color: var(--ink-2); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.85rem; margin-bottom: 24px; }
+    .summary { background: var(--mint); color: var(--mint-ink); border-radius: 22px; padding: 16px 18px; margin-bottom: 8px; }
+    .summary ul { margin: 0; }
+    a  { color: var(--brand); }
+    .back { display: inline-block; margin: 0 0 16px; padding: 10px 0; font-weight: 600; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <!-- L'iPhone n'a pas de bouton retour : sans ce lien, la page serait une impasse dans l'app (/plus = Réglages) -->
+  <a class="back" href="/plus">‹ Revenir à Halcya</a>
+  <h1>Conditions d'utilisation</h1>
+  <p class="updated">Halcya pour iPhone · version du 1er novembre 2026</p>
+
+  <div class="summary">
+    <p><strong>En bref</strong></p>
+    <ul>
+      <li>Halcya vous aide à repérer des tendances dans vos propres données. Ce n'est pas un dispositif médical (voir le point 2).</li>
+      <li>Le journal, les imports de l'app Santé, le bien-être estimé, les graphiques et l'export sont gratuits. Les abonnements Silver et Gold, facultatifs, s'achètent dans l'app par l'App Store et se renouvellent automatiquement (voir le point 5).</li>
+      <li>Vos données restent sur votre iPhone, par défaut (voir la <a href="/confidentialite-iphone.html">politique de confidentialité</a>).</li>
+    </ul>
+  </div>
+
+  <h2>1. Qui édite Halcya</h2>
+  <p>
+    Halcya pour iPhone est éditée par un développeur indépendant établi en France, entrepreneur individuel, et
+    distribuée par l'App Store. En utilisant l'application, vous acceptez les présentes conditions. Le contrat de
+    licence d'utilisateur final standard d'Apple s'applique aussi à votre licence d'utilisation de l'application.
+  </p>
+
+  <h2>2. Ce que fait Halcya, et ce qu'elle ne fait pas</h2>
+  <p>
+    Halcya sert à noter vos repas, votre digestion et votre bien-être, à lire les mesures que vos montres et objets
+    connectés écrivent dans l'app Santé, et à vous montrer des liens possibles entre ces données. Un lien repéré
+    est une <strong>piste</strong> à vérifier : il ne prouve pas que l'un entraîne l'autre. Le bien-être affiché est
+    estimé à partir de votre visage ou de vos saisies.
+  </p>
+  <p>
+    <strong>Halcya n'est pas un dispositif médical.</strong> Elle ne pose pas de diagnostic, ne propose pas de soin et
+    ne remplace pas l'avis d'un médecin, d'un gastro-entérologue ou d'une diététicienne. En cas de symptôme
+    inhabituel, qui s'aggrave ou qui vous inquiète, consultez un professionnel de santé. En cas d'urgence, appelez
+    le 15 ou le 112.
+  </p>
+
+  <h2>3. Qui peut l'utiliser</h2>
+  <p>Halcya est réservée aux personnes de <strong>18 ans et plus</strong>. Aucun compte n'est nécessaire.</p>
+
+  <h2>4. Fonctions gratuites</h2>
+  <p>
+    Le journal et la saisie des repas, de la digestion et du bien-être, la lecture de l'app Santé et des capteurs
+    Bluetooth, l'estimation du bien-être, les graphiques, les pistes et l'export de toutes vos données sont
+    gratuits.
+  </p>
+  <p>
+    L'analyse IA des repas fonctionne avec des crédits : le nombre d'analyses restantes et la date de renouvellement
+    sont affichés dans l'application.
+  </p>
+
+  <h2>5. Abonnements Silver et Gold (achats intégrés de l'App Store)</h2>
+  <p>
+    Silver et Gold s'achètent uniquement dans l'application, par les achats intégrés de l'App Store. Les formules,
+    leurs prix toutes taxes comprises et l'éventuel essai sont ceux que l'App Store affiche au moment de l'achat.
+    Apple encaisse le paiement sur votre compte Apple, applique la TVA et vous envoie le reçu : Halcya ne voit jamais
+    votre moyen de paiement.
+  </p>
+  <ul>
+    <li><strong>Contenu</strong> : ce qui est coché sur l'écran d'abonnement au moment de l'achat. Aujourd'hui,
+      Silver donne l'analyse IA des repas jusqu'à <strong>10 analyses par jour</strong> (plafond qui protège le
+      service), les pistes repas → digestion avec leurs délais, la réintroduction FODMAP guidée et le rapport PDF pour
+      votre médecin ; Gold donne la même chose avec jusqu'à <strong>20 analyses par jour</strong>. Une fonction
+      annoncée « en préparation » s'ajoute sans supplément quand elle est prête ; elle n'est pas due tant qu'elle
+      n'est pas livrée.</li>
+    <li><strong>Essai gratuit</strong> : seulement si l'App Store vous le propose sur l'écran d'achat, une fois par
+      compte Apple. Sa durée y est indiquée ; sans annulation au moins 24 heures avant la fin de l'essai, le premier
+      paiement a lieu à cette date. La date de fin de l'essai figure dans Réglages → votre nom → Abonnements → Halcya.</li>
+    <li><strong>Renouvellement automatique</strong> : l'abonnement se renouvelle à la fin de chaque période, au prix
+      alors en vigueur, sauf annulation au moins 24 heures avant la fin de la période en cours ; votre compte Apple
+      est débité dans les 24 heures qui précèdent. Apple vous prévient avant toute hausse de prix.</li>
+    <li><strong>Changer de formule</strong> : un seul abonnement Halcya à la fois. Passer de Silver à Gold prend
+      effet tout de suite, et Apple rembourse au prorata le reste de Silver ; revenir à Silver prend effet au
+      renouvellement suivant.</li>
+    <li><strong>Annulation</strong> : à tout moment, dans Réglages → votre nom → Abonnements → Halcya, ou par le lien
+      « Gérer l'abonnement » de l'application. L'abonnement reste actif jusqu'à la fin de la période déjà payée.</li>
+    <li><strong>Période de grâce</strong> : si un paiement échoue, Apple vous laisse quelques jours pour mettre à jour
+      votre moyen de paiement, sans perte de l'abonnement.</li>
+    <li><strong>Remboursements</strong> : ils sont traités par Apple, selon ses règles (demande possible sur
+      reportaproblem.apple.com), sans préjudice de vos droits de consommateur.</li>
+    <li><strong>Droit de rétractation</strong> : l'accès à l'abonnement commence dès votre demande. En confirmant
+      l'achat, vous demandez cette exécution immédiate ; les règles applicables au contenu numérique fourni sans
+      support matériel s'appliquent alors, sans préjudice des remboursements accordés par Apple.</li>
+    <li><strong>Restaurer</strong> : après une réinstallation ou sur un nouvel iPhone, « Restaurer un achat » sur
+      l'écran d'abonnement retrouve votre abonnement sur le même compte Apple.</li>
+  </ul>
+
+  <h2>6. Vos données</h2>
+  <p>
+    Vos données restent sur votre iPhone, par défaut ; ce qui en sort, et quand, est décrit dans la
+    <a href="/confidentialite-iphone.html">politique de confidentialité</a>. Vous pouvez les exporter et les
+    supprimer à tout moment (Réglages → Données). Une copie de secours est tenue à jour sur l'iPhone, dans l'app
+    Fichiers ; elle n'est pas incluse dans la sauvegarde iCloud. Pensez à exporter une sauvegarde régulièrement : sans
+    elle, une désinstallation, la perte du téléphone ou un changement d'iPhone efface vos données.
+  </p>
+
+  <h2>7. Bon usage</h2>
+  <p>
+    Vous vous engagez à ne pas détourner le service d'analyse IA (envoi automatisé, contournement des crédits,
+    contenu sans rapport avec un repas) ni à tenter de perturber son fonctionnement. Un usage abusif peut entraîner
+    la limitation de l'analyse IA, sans effet sur les autres fonctions ni sur vos données.
+  </p>
+
+  <h2>8. Disponibilité et responsabilité</h2>
+  <p>
+    L'application est fournie avec soin, mais sans garantie de fonctionnement ininterrompu : une montre, l'app Santé
+    ou le service d'analyse peuvent être momentanément indisponibles. Les estimations (bien-être, nutriments,
+    pistes) peuvent être inexactes ; elles ne doivent pas guider seules une décision de santé. La responsabilité de
+    l'éditeur ne peut être engagée que dans les limites prévues par la loi ; rien dans ces conditions ne limite vos
+    droits de consommateur.
+  </p>
+
+  <h2>9. Propriété</h2>
+  <p>
+    L'application, son nom, son icône et ses textes appartiennent à l'éditeur. Vos données vous appartiennent.
+    Les polices Figtree et IBM Plex Mono sont utilisées sous licence SIL Open Font License 1.1.
+  </p>
+
+  <h2>10. Modifications</h2>
+  <p>
+    Si ces conditions changent, la date en haut de page change aussi, et les changements importants sont annoncés
+    dans l'application (Réglages → Nouveautés).
+  </p>
+
+  <h2>11. Droit applicable et litiges</h2>
+  <p>
+    Ces conditions sont soumises au droit français. En cas de difficulté, écrivez-nous d'abord (voir Contact) : nous
+    cherchons une solution amiable. À défaut, vous pouvez saisir le tribunal compétent, et en particulier celui de
+    votre domicile.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Une demande sur
+    <a href="https://github.com/spreadzenox/HealthTrack-iOS/issues">github.com/spreadzenox/HealthTrack-iOS</a>
+    (n'y mettez jamais de données de santé).
+  </p>
+</body>
+</html>

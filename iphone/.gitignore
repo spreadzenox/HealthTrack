@@ -1,0 +1,48 @@
+# Code Android suivi, récupéré par scripts/upstream.sh (jamais versionné ici)
+upstream/
+
+# Node / build
+node_modules/
+dist/
+build/
+DerivedData/
+*.xcresult
+.visual/
+
+# Fichiers générés par `cap sync ios` dans le projet natif
+ios/App/App/public/
+ios/App/App/capacitor.config.json
+ios/App/App/config.xml
+
+# Secrets : jamais dans le dépôt (clés App Store Connect, certificats, profils)
+*.p8
+*.p12
+*.cer
+*.mobileprovision
+*.keystore
+.env
+.env.*
+
+# OS / éditeurs
+.DS_Store
+.idea/
+.vscode/
+xcuserdata/
+
+# Paquets Swift (swift test)
+.build/
+
+# Modèles du visage et TensorFlow Lite C, téléchargés et vérifiés par scripts/face-models.sh (jamais versionnés)
+ios/HalcyaFaceModels/Vendor/
+ios/HalcyaFaceModels/Sources/HalcyaFaceModels/Models/
+
+# --- Dépôt unique (ajouté par fusion/importer.sh) : la racine ignore *.png et *.jpg, pas ici
+!*.png
+!*.jpg
+# Dossiers créés par la CI dans iphone/
+/captures/
+# Copie des workflows pour les tests de overlay/ (scripts/upstream.sh)
+/.github/
+/captures-store/
+/captures-ipad/
+/_site/

@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-31",
+  "kind": "correctif",
+  "title": "Nutrition : le poids de l'app Santé n'est plus « saisi »",
+  "variants": ["appstore"],
+  "items": [
+    "Un poids lu dans l'app Santé (par exemple celui d'une balance) s'affiche « (app Santé, 28/10) » dans votre profil, au lieu de « saisi le » comme si vous l'aviez tapé.",
+    "La masse grasse enregistrée dans l'app Santé apparaît aussi dans le profil."
+  ]
+}

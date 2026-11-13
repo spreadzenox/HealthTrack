@@ -1,0 +1,14 @@
+diff --git a/app/src/pages/WhatsNew.test.jsx b/app/src/pages/WhatsNew.test.jsx
+index 31cbe44..ccf791b 100644
+--- a/app/src/pages/WhatsNew.test.jsx
++++ b/app/src/pages/WhatsNew.test.jsx
+@@ -49,7 +49,8 @@ describe('WhatsNew page', () => {
+       expect(['nouveau', 'amélioration', 'correctif']).toContain(e.kind)
+       expect(e.title).toBeTruthy()
+       expect(Array.isArray(e.items)).toBe(true)
+-      if (e.variants !== undefined) expect(e.variants.length > 0 && e.variants.every((v) => ['play', 'sideload'].includes(v))).toBe(true)
++      // Version iOS (HealthTrack-iOS) : les notes propres à l'iPhone ont la variante appstore (overlay/)
++      if (e.variants !== undefined) expect(e.variants.length > 0 && e.variants.every((v) => ['play', 'sideload', 'appstore'].includes(v))).toBe(true)
+     }
+   })
+ })

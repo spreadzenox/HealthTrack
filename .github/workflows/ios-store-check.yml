@@ -1,0 +1,42 @@
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d1dc912 (.github/workflows/store-check.yml).
+# Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
+# Fiche App Store fr-FR (store/app-store/) : limites d'App Store Connect et directive 2.3.10 d'Apple, vérifiées sans
+# runner macOS (scripts/store-check.mjs), et tests de l'envoi par l'API App Store Connect (scripts/store-push.mjs,
+# lancé par store-push.yml ; scripts/store-subscriptions.mjs, lancé par store-subscriptions.yml).
+name: Fiche App Store — contrôle
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ["iphone/store/**", "iphone/scripts/store-*.mjs", ".github/workflows/ios-store-*.yml"]
+  push:
+    branches: [main]
+    paths: ["iphone/store/**", "iphone/scripts/store-*.mjs", ".github/workflows/ios-store-*.yml"]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: iphone
+
+jobs:
+  check:
+    name: Limites de la fiche App Store (fr-FR)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # numéros de version = nombres de commits ; code suivi lu à son commit (scripts/upstream.sh)
+          filter: blob:none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node scripts/store-check.mjs
+      - run: node --test scripts/store-push.test.mjs
+      - run: node scripts/store-push.mjs --dry-run
+      - run: node --test scripts/store-subscriptions.test.mjs
+      - run: node scripts/store-subscriptions.mjs --dry-run
+      - run: node --test scripts/store-beta.test.mjs
+      - run: node --test scripts/store-beta-submit.test.mjs
+      - run: node scripts/store-beta-submit.mjs --dry-run

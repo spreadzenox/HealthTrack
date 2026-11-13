@@ -1,0 +1,16 @@
+diff --git a/app/src/pages/Onboarding.jsx b/app/src/pages/Onboarding.jsx
+index b3e29270..9c74ca69 100644
+--- a/app/src/pages/Onboarding.jsx
++++ b/app/src/pages/Onboarding.jsx
+@@ -381,8 +381,9 @@ function ScreenTimeRow({ screen, onScreen }) {
+       <div className="onb-row-text">
+         <span className="onb-row-title">Temps d’écran</span>
+         <span className="onb-row-detail">
+-          le temps passé sur le téléphone, le soir surtout, sans rien lire de ce que vous y faites. Android ouvre un
+-          réglage : activez-y {APP_NAME}.
++          {FEATURES.iosStore
++            ? 'le temps passé sur l’iPhone, le soir surtout, sans rien lire de ce que vous y faites. L’iPhone demande votre accord (Face ID ou code).'
++            : <>le temps passé sur le téléphone, le soir surtout, sans rien lire de ce que vous y faites. Android ouvre un réglage : activez-y {APP_NAME}.</>}
+         </span>
+       </div>
+       <Switch checked={on} onChange={toggle} label="Temps d’écran" />

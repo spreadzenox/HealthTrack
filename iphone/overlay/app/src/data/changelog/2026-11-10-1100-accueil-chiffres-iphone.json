@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-10",
+  "kind": "amélioration",
+  "variants": ["appstore"],
+  "title": "Accueil : mots dans la police du texte",
+  "items": [
+    "Pendant l’accueil, « Import de vos 6 derniers mois » et les mesures trouvées reprennent la police du texte ; seuls les chiffres gardent leur police à chasse fixe."
+  ]
+}

@@ -1,0 +1,21 @@
+diff --git a/app/src/pages/Data.jsx b/app/src/pages/Data.jsx
+index 7c7f500..0e8886c 100644
+--- a/app/src/pages/Data.jsx
++++ b/app/src/pages/Data.jsx
+@@ -6,6 +6,7 @@ import { deleteAllMyData } from '../services/deleteAllData'
+ import { activityLevel } from '../services/nutrientReferenceIntakes'
+ import { APP_NAME } from '../config/brand'
+ import { FEATURES } from '../config/distribution'
++import SnapshotRestore from '../ios/SnapshotRestore'
+ import DoctorReportCard from '../components/DoctorReportCard'
+ import '../Food.css'
+ import { appLocale, localeDate } from '../i18n/locale.js'
+@@ -254,6 +255,8 @@ export default function Data() {
+               Choisir un fichier à importer
+             </button>
+           )}
++          {/* Version iOS (HealthTrack-iOS) : la copie de secours passe par le même aperçu */}
++          {FEATURES.iosStore && !pending && <SnapshotRestore onChoose={(file) => handleFileChosen({ target: { files: [file] } })} />}
+           {pending && (
+             <div className="import-preview" aria-live="polite">
+               <p className="import-preview-title">

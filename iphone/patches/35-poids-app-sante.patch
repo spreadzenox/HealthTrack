@@ -1,0 +1,81 @@
+diff --git a/app/src/components/BodyProfileCard.jsx b/app/src/components/BodyProfileCard.jsx
+index bdc460d..1e632c7 100644
+--- a/app/src/components/BodyProfileCard.jsx
++++ b/app/src/components/BodyProfileCard.jsx
+@@ -7,6 +7,7 @@ import { computeDailyEnergyKcal, ACTIVITY_LEVELS, activityLevel } from '../servi
+ import { useDetailsMode } from '../hooks/useDetailsMode'
+ import DetailsToggle from './DetailsToggle'
+ import { appLocale } from '../i18n/locale.js'
++import { FEATURES } from '../config/distribution'
+ 
+ const formatNumber = (v) => new Intl.NumberFormat(appLocale(), { maximumFractionDigits: 1 }).format(v)
+ const formatInt = (v) => new Intl.NumberFormat(appLocale(), { maximumFractionDigits: 0 }).format(v)
+@@ -30,6 +31,10 @@ const COMPOSITION_FIELDS = [
+   ['pwvMps', 'Vitesse d’onde de pouls', 'm/s'],
+ ]
+ 
++// Version iOS : mesures lues dans l'app Santé (Health Connect sur Android), ni saisies ni de Withings
++const HEALTH_APP = FEATURES.iosStore ? 'app Santé' : 'Health Connect'
++const compositionSource = (payload) => (payload?.source === 'health_connect' ? HEALTH_APP : 'Withings')
++
+ function compositionParts(payload) {
+   if (!payload) return []
+   return COMPOSITION_FIELDS
+@@ -225,7 +230,7 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
+           Sexe, âge, taille, poids : vos repères d’apports en tiennent compte.
+         </p>
+         {compositionLine.length > 0 && (
+-          <p className="nutrition-profile-line"><Sourced value={compositionLine.join(SEP)} hint="(Withings)" /></p>
++          <p className="nutrition-profile-line"><Sourced value={compositionLine.join(SEP)} hint={`(${compositionSource(composition)})`} /></p>
+         )}
+       </div>
+     )
+@@ -233,11 +238,13 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
+ 
+   const weightHint = () => (origins.weight === 'withings'
+     ? `(Withings, ${formatDayMonth(profile.weightAt)})`
+-    : `(saisi le ${formatDayMonth(profile.weightAt)})`)
++    : origins.weight === 'health'
++      ? `(${HEALTH_APP}, ${formatDayMonth(profile.weightAt)})`
++      : `(saisi le ${formatDayMonth(profile.weightAt)})`)
+   const join = (parts) => parts.filter(Boolean).map((p, i) => <span key={i}>{i > 0 && SEP}{p}</span>)
+   const bodyParts = join([
+     known('weight') && <Sourced value={`${formatNumber(profile.weightKg)} kg`} hint={weightHint()} />,
+-    known('height') && <Sourced value={`${profile.heightCm} cm`} hint={origins.height === 'withings' ? '(Withings)' : null} />,
++    known('height') && <Sourced value={`${profile.heightCm} cm`} hint={origins.height === 'withings' ? '(Withings)' : origins.height === 'health' ? `(${HEALTH_APP})` : null} />,
+     details && bmi != null && <span>IMC{'\u00a0'}{formatNumber(bmi)}</span>,
+   ])
+   const energyParts = join([
+@@ -263,7 +270,7 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
+       {head}
+       {bodyParts.length > 0 && <p className="nutrition-profile-line">{bodyParts}</p>}
+       {compositionLine.length > 0 && (
+-        <p className="nutrition-profile-line"><Sourced value={compositionLine.join(SEP)} hint="(Withings)" /></p>
++        <p className="nutrition-profile-line"><Sourced value={compositionLine.join(SEP)} hint={`(${compositionSource(composition)})`} /></p>
+       )}
+       <p className="nutrition-profile-line">{energyParts}</p>
+       {missing.length > 0 && (
+diff --git a/app/src/services/bodyProfile.js b/app/src/services/bodyProfile.js
+index 10c1eb6..4e03549 100644
+--- a/app/src/services/bodyProfile.js
++++ b/app/src/services/bodyProfile.js
+@@ -22,6 +22,7 @@ function latest(entries, type, valueKey) {
+ }
+ 
+ function originOf(entry) {
++  if (entry.source === 'health_connect') return 'health' // Version iOS : app Santé (Health Connect sur Android), pas une saisie
+   return entry.source === 'withings' ? 'withings' : 'manual'
+ }
+ 
+@@ -97,9 +98,9 @@ export async function getBodyProfile(entries, now = new Date()) {
+  */
+ export function getLatestBodyComposition(entries) {
+   const comp = (entries || [])
+-    .filter((e) => e.type === 'body_composition' && e.source === 'withings')
++    .filter((e) => e.type === 'body_composition' && (e.source === 'withings' || e.source === 'health_connect'))
+     .sort((a, b) => (b.at < a.at ? -1 : 1))[0]
+-  return comp?.payload ?? null
++  return comp ? { ...comp.payload, source: comp.source } : null
+ }
+ 
+ export function computeBmi(weightKg, heightCm) {

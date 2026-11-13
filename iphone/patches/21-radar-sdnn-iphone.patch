@@ -1,0 +1,51 @@
+diff --git a/app/src/components/HealthRadar.jsx b/app/src/components/HealthRadar.jsx
+index 0a3c792..e503f36 100644
+--- a/app/src/components/HealthRadar.jsx
++++ b/app/src/components/HealthRadar.jsx
+@@ -6,6 +6,7 @@ import { localDateKey } from '../services/wellbeingSeries'
+ import { formatDuration } from '../utils/format'
+ import './HealthRadar.css'
+ import { appLocale, localeDate } from '../i18n/locale.js'
++import { radarHrvMetric } from '../ios/sdnnBaseline' // Version iOS (HealthTrack-iOS)
+ 
+ const HISTORY_DAYS = RADAR_DAYS + RADAR_BASELINE_DAYS + 2
+ 
+@@ -56,7 +57,7 @@ export default function HealthRadar({ onStatus }) {
+       const since = new Date(Date.now() - HISTORY_DAYS * 86400000).toISOString()
+       const [heart, sleep, wellbeing, workouts, meals, context] = await Promise.all([
+         // FC repos et VFC seulement (une valeur par jour), pas les tranches de FC / SpO₂ (perf D2)
+-        listEntries({ type: 'heart_rate', subtypes: Object.keys(BASELINE_METRICS), since, limit: Infinity }),
++        listEntries({ type: 'heart_rate', subtypes: [...new Set([...Object.keys(BASELINE_METRICS), radarHrvMetric().key])], since, limit: Infinity }),
+         listEntries({ type: 'sleep', since, limit: Infinity }),
+         listEntries({ type: 'wellbeing', since, limit: Infinity }),
+         // Séances du soir et repas tardifs comptent comme causes sans être cochés
+@@ -66,7 +67,7 @@ export default function HealthRadar({ onStatus }) {
+         listEntries({ type: 'context', since, limit: Infinity }),
+       ])
+       const entries = [...heart, ...sleep]
+-      const hasData = entries.some((e) => e.type === 'sleep' || ['restingHeartRate', 'heartRateVariability'].includes(e.payload?.subtype))
++      const hasData = entries.some((e) => e.type === 'sleep' || ['restingHeartRate', 'heartRateVariability', radarHrvMetric().key].includes(e.payload?.subtype))
+       const radar = computeRadar(entries)
+       setState({ hasData, radar, why: explainRadar(radar, [...wellbeing, ...workouts, ...meals, ...context]) })
+     } catch {
+diff --git a/app/src/services/radar.js b/app/src/services/radar.js
+index 372ee7b..9315de1 100644
+--- a/app/src/services/radar.js
++++ b/app/src/services/radar.js
+@@ -24,6 +24,7 @@ import { BASELINE_METRICS, dailyValues } from './baselines'
+ import { localDateKey } from './wellbeingSeries'
+ import { BEHAVIOR_TAGS, measuredTagsByDay } from './behaviorTags'
+ import { oneSleepSourcePerNight } from './sleepSources'
++import { radarHrvMetric } from '../ios/sdnnBaseline' // Version iOS (HealthTrack-iOS)
+ 
+ export const RADAR_DAYS = 3
+ export const RADAR_BASELINE_DAYS = 60
+@@ -111,7 +112,7 @@ function meanSd(values) {
+ export function computeRadar(entries, now = new Date()) {
+   const series = {
+     restingHeartRate: dailyValues(entries, BASELINE_METRICS.restingHeartRate),
+-    heartRateVariability: dailyValues(entries, BASELINE_METRICS.heartRateVariability),
++    heartRateVariability: dailyValues(entries, radarHrvMetric()), // iPhone : VFC SDNN de l'app Santé
+     sleepMinutes: nightlySleep(entries),
+   }
+   const evalKeys = Array.from({ length: RADAR_DAYS }, (_, i) => dayKeyOffset(now, i)) // aujourd'hui d'abord

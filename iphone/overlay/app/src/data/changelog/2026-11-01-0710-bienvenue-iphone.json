@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-01",
+  "kind": "amélioration",
+  "title": "Écrans de bienvenue plus directs",
+  "variants": ["appstore"],
+  "items": [
+    "Les premiers écrans disent l'essentiel en phrases courtes : objectifs, montre, app Santé, lecture du visage et première note."
+  ]
+}

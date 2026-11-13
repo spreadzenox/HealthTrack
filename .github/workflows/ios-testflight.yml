@@ -1,0 +1,255 @@
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d1dc912 (.github/workflows/testflight.yml).
+# Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
+# Envoi de Halcya sur TestFlight (I9), après les actions A1 à A3 du propriétaire et son accord du 30/10 pour la
+# signature par Apple (A2) : archive de la variante appstore (sans mode captures), signée à l'export par un certificat
+# de distribution géré par Apple, puis envoyée à App Store Connect. Aucun certificat ni profil dans le dépôt ou les
+# secrets : seule la clé API App Store Connect (rôle Admin) est rangée dans l'environnement `appstore`, réservé à
+# main (ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8), écrite le temps du job dans un fichier effacé à la fin.
+# L'archive n'est pas signée par Apple : une signature ad hoc garde les entitlements (HealthKit) pour l'export, sans
+# créer de certificat de développement à chaque passage (la limite du compte serait vite atteinte).
+name: iOS — TestFlight
+
+# Livraison continue (décision du propriétaire du 04/11, 19:45) : chaque merge sur main qui change l'app part sur
+# TestFlight sans geste de personne, comme Android vers Alpha. Toute PR passe ses vérifications (dont la build iOS et les
+# captures) avant son merge sur main ; le journal, la fiche et le site n'envoient rien. Les testeurs internes la
+# reçoivent ; l'App Store reste le clic du propriétaire, jamais automatisé.
+on:
+  push:
+    branches: [main]
+    paths: ["iphone/upstream.json", "iphone/patches/**", "iphone/overlay/**", "iphone/ios/**", "iphone/scripts/upstream.sh", "iphone/scripts/face-models.sh"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: iphone
+
+jobs:
+  # Garde de la bascule : ce workflow publie chez Apple. Il ne démarre que sur main, et seulement quand
+  # iphone/fusion/bascule.json l'autorise (voir iphone/fusion/BASCULE.md). Sinon le job suivant est sauté.
+  garde:
+    name: Publication iOS activée ?
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      publication: ${{ steps.garde.outputs.publication }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: iphone/fusion
+      - id: garde
+        run: fusion/garde.sh
+  testflight:
+    name: Archive signée et envoi sur TestFlight
+    needs: garde
+    if: needs.garde.outputs.publication == 'oui'
+    runs-on: macos-latest
+    timeout-minutes: 60
+    environment: appstore
+    env:
+      TEAM_ID: 67R69L355R # identifiant d'équipe Apple : public, il figure dans toute app signée
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # numéros de version = nombres de commits ; code suivi lu à son commit (scripts/upstream.sh)
+          filter: blob:none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Clé API App Store Connect (jamais affichée)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          for name in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8; do
+            [ -n "${!name}" ] || { echo "::error::Secret $name absent de l'environnement appstore"; exit 1; }
+          done
+          umask 077
+          mkdir -p "$RUNNER_TEMP/asc"
+          printf '%s\n' "$ASC_KEY_P8" > "$RUNNER_TEMP/asc/AuthKey_$ASC_KEY_ID.p8"
+          grep -q -- "-----BEGIN PRIVATE KEY-----" "$RUNNER_TEMP/asc/AuthKey_$ASC_KEY_ID.p8" \
+            || { echo "::error::ASC_KEY_P8 doit contenir tout le fichier .p8, lignes BEGIN et END comprises"; exit 1; }
+          echo "ASC_KEY_PATH=$RUNNER_TEMP/asc/AuthKey_$ASC_KEY_ID.p8" >> "$GITHUB_ENV"
+      - name: Code Android suivi + adaptations iOS
+        run: scripts/upstream.sh
+      - name: Modèles du visage (téléchargés et vérifiés)
+        run: scripts/face-models.sh
+      - name: Numéros de version
+        run: |
+          ANDROID="$(node -p "require('./upstream.json').versionCode")"
+          echo "ANDROID_VERSION=$ANDROID" >> "$GITHUB_ENV"
+          # Numéro de version fixe des builds de test pendant un cycle (testflight-version.json, décision du propriétaire
+          # du 07/11 vers 19:35) ; à défaut, celui d'Android. Le numéro de build et la version affichée suivent Android.
+          MARKETING="$(node -p "require('fs').existsSync('testflight-version.json') ? require('./testflight-version.json').version : require('./upstream.json').versionCode")"
+          echo "MARKETING_VERSION_IOS=$MARKETING" >> "$GITHUB_ENV"
+          echo "IOS_BUILD=$ANDROID.$(git rev-list --count HEAD)" >> "$GITHUB_ENV"
+          echo "Version $MARKETING, build $ANDROID.$(git rev-list --count HEAD) (app : version $ANDROID d'Android)"
+          xcodebuild -version
+      - name: Build web (variante appstore, sans mode captures) et synchronisation Capacitor
+        working-directory: iphone/upstream/app
+        env:
+          VITE_DISTRIBUTION: appstore
+          VITE_STORE: appstore # nom du magasin dans les textes (« l’App Store », compte Apple ; distribution.js d’Android)
+        run: |
+          npm ci --no-audit --no-fund
+          CORE="$(node -p "require('@capacitor/core/package.json').version")"
+          npm install --no-save --no-audit --no-fund "@capacitor/ios@$CORE"
+          VITE_APP_VERSION="$ANDROID_VERSION" npm run build
+          # Le mode captures (sondes, écriture dans Santé) n'est compilé qu'avec VITE_IOS_CAPTURE=1 : jamais ici
+          if grep -rq "\[healthkit\] base" dist; then echo "::error::mode captures présent dans la build"; exit 1; fi
+          npx -y -p "@capacitor/cli@$CORE" cap sync ios
+      # 8/11 : GitHub a répondu 504 aux fichiers binaires de capacitor-swift-pm (releases) pendant des heures ; gardés en cache,
+      # ils ne bloquent plus la build quand GitHub ne les sert pas
+      # Restauré ici, enregistré juste après la résolution (pas en fin de job : un échec plus loin le perdrait)
+      - name: Cache des paquets Swift (fichiers binaires de Capacitor)
+        id: spm-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: spm-${{ runner.os }}-${{ hashFiles('iphone/ios/App/CapApp-SPM/Package.swift') }}
+      # 5/11 (795.300) : un raté de réseau au téléchargement des paquets Swift (« Could not resolve package
+      # dependencies ») a fait échouer l'archive ; avec la livraison continue, personne ne relance : jusqu'à 3 essais,
+      # dans le même dossier que l'archive, qui réutilise ensuite les paquets téléchargés
+      - name: Paquets Swift (jusqu'à 6 essais)
+        working-directory: iphone/upstream/app/ios/App
+        run: |
+          # 8/11 : GitHub servait les binaires de Capacitor une fois sur quatre (504) : 6 essais, de plus en plus espacés
+          for attempt in 1 2 3 4 5 6; do
+            if xcodebuild -resolvePackageDependencies -project App.xcodeproj -scheme App \
+              -derivedDataPath "$RUNNER_TEMP/dd" > "$RUNNER_TEMP/spm-$attempt.log" 2>&1; then
+              echo "Paquets Swift résolus (essai $attempt)"
+              exit 0
+            fi
+            grep -E "error:" "$RUNNER_TEMP/spm-$attempt.log" | head -5 || true
+            # 8/11 : « Could not resolve package dependencies » seul ne dit pas quel paquet ni pourquoi : la fin du journal
+            tail -25 "$RUNNER_TEMP/spm-$attempt.log" || true
+            sleep $((attempt * 30))
+          done
+          echo "::error::Paquets Swift non résolus après 6 essais"
+          exit 1
+      - name: Cache des paquets Swift (enregistré dès la résolution)
+        if: steps.spm-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: ${{ steps.spm-cache.outputs.cache-primary-key }}
+      - name: Archive (signature ad hoc, entitlements gardés pour l'export)
+        working-directory: iphone/upstream/app/ios/App
+        run: |
+          set -o pipefail
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Halcya.xcarchive" -derivedDataPath "$RUNNER_TEMP/dd" \
+            MARKETING_VERSION="$MARKETING_VERSION_IOS" CURRENT_PROJECT_VERSION="$IOS_BUILD" \
+            CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            DEVELOPMENT_TEAM="$TEAM_ID" PROVISIONING_PROFILE_SPECIFIER= \
+            archive 2>&1 | tee "$RUNNER_TEMP/archive.log" | grep -E "error:|ARCHIVE (SUCCEEDED|FAILED)" || true
+          grep -q "ARCHIVE SUCCEEDED" "$RUNNER_TEMP/archive.log"
+          codesign -d --entitlements - "$RUNNER_TEMP/Halcya.xcarchive/Products/Applications/App.app" 2>&1 \
+            | tee "$RUNNER_TEMP/archive-entitlements.txt" | grep -q "com.apple.developer.healthkit"
+      - name: Options d'export (App Store Connect, signature automatique)
+        run: |
+          cat > "$RUNNER_TEMP/export-options.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>export</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>uploadSymbols</key><true/>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict>
+          </plist>
+          EOF
+          plutil -lint "$RUNNER_TEMP/export-options.plist"
+      - name: Export signé par Apple (certificat de distribution géré par Apple)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -o pipefail
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Halcya.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" -exportOptionsPlist "$RUNNER_TEMP/export-options.plist" \
+            -allowProvisioningUpdates -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            2>&1 | tee "$RUNNER_TEMP/export.log" | grep -E "error:|EXPORT (SUCCEEDED|FAILED)" || true
+          grep -q "EXPORT SUCCEEDED" "$RUNNER_TEMP/export.log"
+      - name: Vérification de l'app signée (entitlements, version, phrases de l'app livrée)
+        run: |
+          IPA="$(ls "$RUNNER_TEMP"/export/*.ipa | head -1)"
+          echo "IPA=$IPA" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/ipa" && unzip -q "$IPA" -d "$RUNNER_TEMP/ipa"
+          APP="$(ls -d "$RUNNER_TEMP"/ipa/Payload/*.app | head -1)"
+          codesign -d --entitlements - "$APP" 2>&1 | tee "$RUNNER_TEMP/ipa-entitlements.txt"
+          grep -q "com.apple.developer.healthkit" "$RUNNER_TEMP/ipa-entitlements.txt"
+          # Temps d'écran (I8) : droits accordés par Apple le 30/10, à garder dans l'app signée pour l'App Store
+          grep -qE 'com\.apple\.developer\.family-controls([^.]|$)' "$RUNNER_TEMP/ipa-entitlements.txt" \
+            || { echo "::error::family-controls absent de l'app signée"; exit 1; }
+          grep -q 'com.apple.developer.family-controls.app-and-website-usage' "$RUNNER_TEMP/ipa-entitlements.txt" \
+            || { echo "::error::family-controls.app-and-website-usage absent de l'app signée"; exit 1; }
+          # App Attest (I6) : capacité cochée par le propriétaire le 2/11 ; environnement de production, sinon le relais
+          # refuserait les attestations en « enforce » (aaguid « appattestdevelop »). codesign écrit la valeur deux
+          # lignes sous la clé ([Key], [Value], [String] production)
+          grep -A2 'com.apple.developer.devicecheck.appattest-environment' "$RUNNER_TEMP/ipa-entitlements.txt" | grep -q production \
+            || { echo "::error::App Attest (production) absent de l'app signée"; exit 1; }
+          if grep -A2 "get-task-allow" "$RUNNER_TEMP/ipa-entitlements.txt" | grep -q true; then
+            echo "::error::app signée en développement (get-task-allow)"; exit 1
+          fi
+          codesign -dv "$APP" 2>&1 | grep -E "^(Authority|TeamIdentifier)=" | head -3
+          [ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")" = "$MARKETING_VERSION_IOS" ]
+          [ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Info.plist")" = "$IOS_BUILD" ]
+          [ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")" = "fr.jpesquet.sante" ]
+          # Phrase d'écriture exigée par Apple (le plugin Santé contient l'écriture) : celle de l'app livrée, qui dit que
+          # Halcya n'écrit rien, jamais celle de la build de captures
+          /usr/libexec/PlistBuddy -c 'Print :NSHealthUpdateUsageDescription' "$APP/Info.plist" | grep -q "n’écrit rien"
+          # Phrase exigée dès que le code fait référence au framework Speech (sonde vocale) : sans elle, Apple invalide la
+          # build après l'envoi (ITMS-90683, e-mail reçu pour 616.97)
+          /usr/libexec/PlistBuddy -c 'Print :NSSpeechRecognitionUsageDescription' "$APP/Info.plist" | grep -q "ni écoutée ni enregistrée"
+          /usr/libexec/PlistBuddy -c 'Print :ITSAppUsesNonExemptEncryption' "$APP/Info.plist" | grep -qx false
+      - name: Envoi sur App Store Connect (TestFlight)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -o pipefail
+          sed -i '' 's#<string>export</string>#<string>upload</string>#' "$RUNNER_TEMP/export-options.plist"
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Halcya.xcarchive" \
+            -exportPath "$RUNNER_TEMP/upload" -exportOptionsPlist "$RUNNER_TEMP/export-options.plist" \
+            -allowProvisioningUpdates -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            2>&1 | tee "$RUNNER_TEMP/upload.log" | grep -E "error:|Upload|EXPORT (SUCCEEDED|FAILED)" || true
+          grep -q "EXPORT SUCCEEDED" "$RUNNER_TEMP/upload.log"
+          echo "### Envoyé sur TestFlight : version $MARKETING_VERSION_IOS, build $IOS_BUILD (app : version $ANDROID_VERSION d'Android)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Traitement par Apple : 10 à 30 min, puis la build apparaît dans App Store Connect › TestFlight." >> "$GITHUB_STEP_SUMMARY"
+      - name: Journaux (sans secret)
+        if: always()
+        # 11/11 : panne du service d'artefacts de GitHub ; la build 1000.477 était envoyée, mais le run a fini en échec
+        # et bloqué le déploiement continu. Les journaux ne décident pas du résultat.
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: testflight-logs
+          path: |
+            ${{ runner.temp }}/archive.log
+            ${{ runner.temp }}/export.log
+            ${{ runner.temp }}/upload.log
+            ${{ runner.temp }}/archive-entitlements.txt
+            ${{ runner.temp }}/ipa-entitlements.txt
+            ${{ runner.temp }}/spm-*.log
+          if-no-files-found: ignore
+      - name: Effacer la clé
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/asc"

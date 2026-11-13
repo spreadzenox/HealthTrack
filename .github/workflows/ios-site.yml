@@ -1,0 +1,36 @@
+# Pages publiques de la version iPhone (politique de confidentialité, conditions, assistance : les adresses de la
+# fiche App Store), construites par iphone/scripts/site.mjs. Écrit à la main pour le dépôt unique (le pages.yml du
+# dépôt HealthTrack-iOS n'est pas porté) : ce workflow CONSTRUIT et vérifie le site, il ne publie rien.
+# Les pages restent servies par le site du dépôt HealthTrack-iOS (adresses inscrites dans la fiche App Store) tant que
+# la routine n'a pas décidé de leur nouvelle adresse (iphone/README.md, « Site »).
+name: iOS — site (contrôle)
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ["iphone/overlay/app/public/confidentialite-iphone.html", "iphone/overlay/app/public/conditions-iphone.html", "iphone/site/**", "iphone/scripts/site.mjs", ".github/workflows/ios-site.yml"]
+  push:
+    branches: [main]
+    paths: ["iphone/overlay/app/public/confidentialite-iphone.html", "iphone/overlay/app/public/conditions-iphone.html", "iphone/site/**", "iphone/scripts/site.mjs", ".github/workflows/ios-site.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-site-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Construire le site de l'iPhone (confidentialité, conditions, assistance)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: iphone
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19"
+      - working-directory: iphone
+        run: node scripts/site.mjs _site
