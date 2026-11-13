@@ -376,6 +376,65 @@ describe('HealthConnectConnector', () => {
       expect(result.synced).toBeGreaterThan(0)
     })
 
+    describe('règles (pont natif HealthCycle, CYCLE-3a)', () => {
+      const quiet = async () => {
+        const { Health } = await import('@capgo/capacitor-health')
+        Health.readSamples.mockResolvedValue({ samples: [] })
+        Health.queryAggregated.mockResolvedValue({ samples: [] })
+        Health.queryWorkouts.mockResolvedValue({ workouts: [] })
+      }
+      const since = new Date('2026-11-01T00:00:00Z')
+      const until = new Date('2026-11-13T12:00:00Z')
+      const withBridge = async (bridge, run) => {
+        const orig = globalThis.window.Capacitor
+        globalThis.window.Capacitor = { getPlatform: () => 'web', isPluginAvailable: (name) => name === 'HealthCycle', Plugins: { HealthCycle: bridge } }
+        try { return await run() } finally { globalThis.window.Capacitor = orig }
+      }
+
+      it('sans pont : aucune entrée de cycle, aucune erreur', async () => {
+        await quiet()
+        const { written, writer } = makeWriter()
+        const result = await connector.sync({ since, until, writer })
+        expect(written.filter((e) => e.type === 'cycle')).toEqual([])
+        expect(result.errors).toEqual([])
+      })
+
+      it('pont présent et autorisation donnée : les jours de règles sont écrits, source health_connect', async () => {
+        await quiet()
+        const bridge = {
+          checkPermission: vi.fn().mockResolvedValue({ granted: true }),
+          read: vi.fn().mockResolvedValue({
+            periods: [{ startTime: new Date(2026, 10, 3, 8).toISOString(), endTime: new Date(2026, 10, 4, 20).toISOString(), sourceName: 'Flo' }],
+            flows: [{ time: new Date(2026, 10, 3, 9).toISOString(), flow: 2 }],
+          }),
+        }
+        const { written, writer } = makeWriter()
+        const result = await withBridge(bridge, () => connector.sync({ since, until, writer }))
+        expect(bridge.read).toHaveBeenCalledWith({ startDate: since.toISOString(), endDate: until.toISOString() })
+        const cycle = written.filter((e) => e.type === 'cycle')
+        expect(cycle.map((e) => [e.source, e.payload.subtype, e.payload.flow])).toEqual([
+          ['health_connect', 'period', 'medium'],
+          ['health_connect', 'period', 'unknown'],
+        ])
+        expect(result.synced).toBe(2)
+        expect(result.errors).toEqual([])
+      })
+
+      it('autorisation absente : rien de lu ; lecture en échec : une erreur, le reste de la synchro tient', async () => {
+        await quiet()
+        const denied = { checkPermission: vi.fn().mockResolvedValue({ granted: false }), read: vi.fn() }
+        const a = makeWriter()
+        const r1 = await withBridge(denied, () => connector.sync({ since, until, writer: a.writer }))
+        expect(denied.read).not.toHaveBeenCalled()
+        expect(r1.errors).toEqual([])
+
+        const broken = { checkPermission: vi.fn().mockResolvedValue({ granted: true }), read: vi.fn().mockRejectedValue(new Error('panne')) }
+        const b = makeWriter()
+        const r2 = await withBridge(broken, () => connector.sync({ since, until, writer: b.writer }))
+        expect(r2.errors).toEqual(['menstruation: panne'])
+      })
+    })
+
     // Le plugin trie puis garde les `limit` premiers échantillons (ordre croissant) : sur 30 jours de FC dense,
     // les jours les plus récents étaient perdus, et la synchro suivante repartait de maintenant (jamais relus).
     const DAY = 24 * 3600000
