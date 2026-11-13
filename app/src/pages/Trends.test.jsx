@@ -125,6 +125,27 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(Number(label.getAttribute('x'))).toBeGreaterThan(Number(container.querySelector('.trends-today line').getAttribute('x1')))
   })
 
+  it('POLISH-SIM-61 : sous la courbe, le pointillé dit d’où il vient', async () => {
+    const { container } = renderAt('/tendances')
+    await screen.findByRole('img', { name: 'Courbe de Bien-être' })
+    const legend = container.querySelector('.trends-future-legend')
+    expect(legend).toHaveTextContent('attendu d’après vos habitudes')
+    expect(legend.querySelector('.trends-future-swatch')).not.toBeNull()
+  })
+
+  it('POLISH-SIM-61 : une mesure sans attendu s’arrête à aujourd’hui, sans jours futurs vides ni légende', async () => {
+    const { container } = renderAt('/tendances?mesure=sleep')
+    await screen.findByRole('img', { name: 'Courbe de Sommeil' })
+    expect(screen.getByRole('button', { name: 'samedi 7 novembre' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'dimanche 8 novembre' })).toBeNull()
+    expect(container.querySelector('.trends-future-legend')).toBeNull()
+    // Le bien-être ajouté ramène son attendu, donc les jours futurs
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une mesure' }))
+    fireEvent.click(within(screen.getByRole('list', { name: 'Mesures à ajouter' })).getByRole('button', { name: /Bien-être/ }))
+    expect(screen.getByRole('button', { name: 'dimanche 8 novembre' })).toBeInTheDocument()
+    expect(container.querySelector('.trends-future-legend')).not.toBeNull()
+  })
+
   it('toucher un jour passé montre sa valeur, jamais un « attendu » ; un jour futur, l’attendu et sa fourchette', async () => {
     renderAt('/tendances')
     await screen.findByRole('img', { name: /Courbe/ })
