@@ -32,9 +32,13 @@ testeurs externes ; 844.344 intacte  ·  **Parité** : 70 % (33/47)
 - Non modifiés : `orchestration/`, `iphone/fusion/` (dont `bascule.json`).
 
 ## Vérifs
-- Voir la PR : tests et lint du code embarqué avec les correctifs (Vitest dans `iphone/upstream/app`), tests de
-  `app/`, puis « iOS — build simulateur » sur la PR (elle se déclenche : `iphone/upstream.json`, `patches/`,
-  `ios-build.yml` changent). État exact au moment de finir le run : section « État à la fin du run » ci-dessous.
+- Code embarqué v1030 avec les 52 correctifs (`iphone/upstream/app`) : Vitest 3864 verts (44 ignorés, comme avant),
+  ESLint 0 erreur.
+- `app/` : `npm run test` (3505 verts), `npm run build`, `npm run lint` (0 erreur), `npm run visual` complet sans
+  erreur (captures non relues une à une : aucun fichier de `app/` ne change).
+- PR #953 : « iOS — build simulateur » se déclenche (`iphone/upstream.json`, `patches/`, `ios-build.yml` changent) et
+  dure près d'une heure. Pas de merge avant qu'elle soit verte et que les captures `captures/pr-953` soient
+  regardées. Si ce compte rendu est sur main, c'est que ces conditions étaient remplies au merge.
 
 ## Limites
 - README, BACKLOG et PRODUIT lus par sections, pas en entier (plus de 900 ko avec le journal de l'iPhone) ;
