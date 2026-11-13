@@ -1,9 +1,9 @@
 #!/bin/bash
 # Contrôles de l'orchestrateur après chaque lancement de run. Lecture seule : ne modifie aucun dépôt.
-# Usage : controle-horaire.sh <clone de HealthTrack> [<clone de HealthTrack-iOS>]
+# Usage : controle-horaire.sh <clone de HealthTrack>
 # État local (hors dépôt) : $ORCH_STATE, par défaut ~/.halcya-orchestration.
 set -u
-HT=${1:?clone de HealthTrack}; IOS=${2:-}; ST=${ORCH_STATE:-$HOME/.halcya-orchestration}; mkdir -p "$ST"
+HT=${1:?clone de HealthTrack}; ST=${ORCH_STATE:-$HOME/.halcya-orchestration}; mkdir -p "$ST"
 cd "$HT" && git fetch -q origin || exit 1
 echo "== main"; git log --oneline -3 origin/main
 if [ "$(git rev-parse --is-shallow-repository)" = true ]; then echo "commits : clone superficiel, compte non fiable"
@@ -14,20 +14,13 @@ want=$(git show origin/main:orchestration/routine/LANCEUR.md | grep -oE '^[0-9a-
 [ "$got" = "$want" ] && echo "empreinte OK" || echo "EMPREINTE DIFFÉRENTE : $got (lanceur : $want)"
 echo "== tête du résumé de la semaine"; git show origin/main:journal/README.md | sed -n 10,16p | cut -c1-400
 echo "== signal « P48 maintenant » (déclaration Health Connect « Règles »)"
-# Le signal est une ligne de la tête du résumé ; les phrases qui l'annoncent seulement ne comptent pas.
-git show origin/main:journal/README.md | sed -n 1,60p | grep -n "P48 maintenant" \
-  | grep -v -e "pas encore" -e "quand je dirai" | head -3
+# Le signal est dans la tête du résumé ; les phrases qui l'annoncent seulement (« je vous dirai « P48 maintenant » »,
+# « pas encore ») ne comptent pas, même coupées par un retour à la ligne : la tête est relue d'un seul tenant.
+git show origin/main:journal/README.md | sed -n 1,60p | sed 's/^> \{0,1\}//' | tr '\n' ' ' \
+  | grep -oE '.{0,90}P48 maintenant.{0,60}' | grep -v -e "pas encore" -e "dirai" | head -3
 git show origin/main:journal/PRODUIT.md | grep -n "^| P48" | cut -c1-160
-if [ -n "$IOS" ]; then
-  echo "== boîte iPhone (journal/POUR-ORCHESTRATEUR.md de HealthTrack-iOS)"
-  # Sans les blobs : sur un clone superficiel, rapatrier toutes les branches avec leurs fichiers ne finit pas.
-  cd "$IOS" && timeout 120 git fetch -q --filter=blob:none origin '+refs/heads/*:refs/remotes/origin/*' \
-    || { echo "boîte iPhone : récupération des branches impossible ou trop longue"; exit 1; }
-  echo "main : $(git log -1 --format='%h %ci %s' origin/main)"
-  # Les messages peuvent rester sur la branche de travail de la routine iOS tant que sa PR n'est pas mergée.
-  BR=$(git branch -r --sort=-committerdate | grep -E 'origin/claude/' | head -1 | tr -d ' ')
-  F=journal/POUR-ORCHESTRATEUR.md
-  TXT=$( { git show "origin/main:$F" 2>/dev/null; [ -n "$BR" ] && git show "$BR:$F" 2>/dev/null; } | grep -E '^\| [0-9]{2}/[0-9]{2}' | sort -u -r -k2,3 )
-  NEW=$(echo "$TXT" | sha1sum | cut -d' ' -f1); OLD=$(cat "$ST/ios_inbox.state" 2>/dev/null)
-  if [ "$NEW" = "$OLD" ]; then echo "rien de nouveau"; else echo "NOUVEAU :"; echo "$TXT" | head -3 | cut -c1-700; echo "$NEW" > "$ST/ios_inbox.state"; fi
-fi
+echo "== iPhone (dossier iphone/, depuis la fusion du 13/11)"
+# L'ancien dépôt HealthTrack-iOS n'est plus lu : un second argument est accepté pour ne pas casser un appel, et ignoré.
+git show origin/main:iphone/fusion/bascule.json 2>/dev/null | grep -o '"publication": *[a-z]*' || echo "iphone/ absent de main"
+git show origin/main:iphone/upstream.json 2>/dev/null | grep -E '"(commit|versionCode)"' | tr -d ' \n'; echo
+git show origin/main:iphone/journal/README.md 2>/dev/null | sed -n 1,40p | grep -m1 -n "TestFlight" | cut -c1-300
