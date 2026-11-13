@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-01",
+  "kind": "amélioration",
+  "title": "Lecture du visage : des détails plus courts",
+  "variants": ["appstore"],
+  "items": [
+    "Dans Sources, les détails de la lecture du visage tiennent en phrases courtes."
+  ]
+}

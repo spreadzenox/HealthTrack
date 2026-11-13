@@ -1,0 +1,46 @@
+# Simulation — Ventre, sans technique — J45 — 2026-11-13 20:35
+
+- **Persona** : n° 2 « Ventre, sans technique » — syndrome de l'intestin irritable, peu à l'aise avec les applis, veut savoir quoi éviter ; objectif choisi à l'accueil : le ventre.
+- **Configuration** : n° 3 « iPhone + Apple Watch » (Watch SE 3, Series 10 à 12, Ultra ; poids 11 %) — reçus d'après Sources : cœur, cœur au repos, variabilité cardiaque, sommeil, pas, dépense, séances, respiration, température ; affiché « jamais reçu en 30 jours » : oxygène du sang (alors que cette configuration est censée l'envoyer).
+- **Moment** : jour 45 — repas, digestion (Calme / Gêne / Douleur), selles, bien-être et cigarettes notés presque chaque jour ; courbes d'un mois dans Tendances ; côté résultats : « Aucun lien assez net pour l'instant » et onglet Agir vide.
+
+## Tâches
+1. Noter ma digestion du jour — réussie (bouton « Noter ma digestion », un seul toucher sur « Gêne », « Bilan du jour : Gêne. Merci ! »).
+2. Savoir enfin quoi éviter pour mon ventre — ratée (après 45 jours : « Aucun lien assez net pour l'instant », suivi d'une vingtaine de lignes avec Fructose, Sorbitol, GOS, FODMAP, « pt », hPa, VFC que je ne sais pas lire).
+3. Savoir quoi faire ensuite (essai) — ratée (onglet Agir : « Rien en cours pour l'instant », aucune action possible ; son lien m'envoie sur les analyses Bien-être, pas sur le ventre).
+4. Préparer quelque chose pour mon médecin — réussie à moitié (« Préparer le rapport » → « Créer le PDF » marche, mais le message « …pdf téléchargé » est caché sous la barre du bas et rien ne propose d'ouvrir ou d'envoyer le fichier).
+5. Noter un repas — réussie (Repas → « Décrire le repas » → texte → « Remplir avec l'IA » → écran d'accord → liste d'aliments à vérifier → « Enregistrer ce repas »). L'IA a rendu des « pâtes à la carbonara » pour mes « pâtes sauce tomate, oignon, yaourt » : sans doute les données de démonstration, non compté comme défaut.
+6. Comprendre un mauvais jour dans Tendances — abandonnée (j'ai touché un jour de douleur : on me parle de cœur au repos et de « variabilité cardiaque » à −0,02 pt, rien sur ce que j'avais mangé).
+
+## Compris
+- Noter sa digestion est très simple : trois gros boutons Calme / Gêne / Douleur, un toucher, c'est fini — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/accueil-apres-note.png`
+- L'accueil est court et clair : mon bien-être, mon sommeil, mes pas « d'après votre montre », mes repas du jour — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/accueil-apres-note.png`
+- La phrase « Aucun lien assez net pour l'instant sur ce que vous pouvez changer » : je comprends que l'app ne sait pas encore, et qu'elle ne m'invente rien — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/analyses-digestion.png`
+- « Comment c'est calculé » : trois lignes simples (l'app compare mes jours notés à ce que j'ai fait avant, tout reste sur le téléphone) — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/analyses-digestion.png`
+- Le rapport pour le médecin : « Deux pages à montrer à votre médecin ou à votre diététicienne… c'est vous qui l'envoyez », choix 2 / 4 / 12 semaines — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/rapport-pdf.png`
+- Le Journal par jour (repas, digestion, selles à leur heure) se lit comme un carnet.
+
+## Pas compris
+- « Ça fait 45 jours que je note tout et on me dit qu'il n'y a rien de net. Encore combien de temps ? Est-ce que je note mal ? » Seule indication, tout en bas et pour le « long terme » : « encore 11 jours avec votre digestion notée » — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/analyses-digestion.png`
+- « GOS, Sorbitol, Fructose en excès, FODMAP, +0,2 pt, hPa, VFC, FC au repos : c'est du chinois. Et les petites barres avec un trait au milieu, je ne sais pas si à droite c'est bien ou mal. » Toucher une ligne ne fait rien — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/analyses-digestion.png`
+- « On me dit que rien n'est net, mais on m'affiche quand même "Lactose −0,8 pt". Alors j'arrête le lait ou pas ? » — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/analyses-digestion.png`
+- « Agir » : une page presque blanche. « Quand vos analyses repèrent une piste… » : moi je voudrais essayer quelque chose maintenant — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/agir-vide.png`
+- « J'ai appuyé sur Créer le PDF : il s'est passé quoi ? » Le message de confirmation est coupé par la barre du bas, et je ne sais pas où est le fichier — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/rapport-pdf.png`
+- « Riche en fructanes : pâtes cuites — ≈ 0,73 g · repère 0,3 g par repas — Repères généraux (Varney 2017)… Teneurs : Ferjančič 2024. » Je ne sais pas ce que sont les fructanes ni qui sont ces gens ; et ce mot n'apparaît pas dans mes analyses (là c'est GOS, fructose, sorbitol, lactose). Je dois éviter les pâtes ou non ? — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/repas-fructanes.png`
+- Tendances, jour du 24 octobre : « Confort digestif 2,0/5, noté "douleur" » alors que la légende dit Douleur = 1 ; et « Ce qui a pu peser ce jour-là » ne parle que du cœur et du sommeil avec des −0,02 pt, sans dire si c'est pour mon ventre ou mon bien-être — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/tendances-jour.png`
+- Après avoir noté « Gêne », la fenêtre affiche encore « Dernière note : Douleur, hier à 11:19 » juste au-dessus de « Bilan du jour : Gêne », les trois boutons restent tous vides, et sur l'accueil le bouton dit toujours « Noter ma digestion » : j'ai cru que ça n'avait pas été pris — capture : `captures/2026-11-13-2035-ventre-sans-technique-J45/accueil-apres-note.png`
+- « VFC nuit 46 ms » sur l'accueil : aucune idée de ce que c'est (dans Sources ça s'appelle « variabilité cardiaque », dans Tendances « Variabilité cardiaque plus basse »).
+
+## Constats → étapes POLISH au BACKLOG
+- [ ] Analyses › Digestion, bloc « Pistes à tester » vide à J45 : dire en une phrase ce qui manque et quand (« encore N jours notés » ou « vos jours de gêne sont trop peu nombreux »), au lieu de la seule phrase « Aucun lien assez net » ; l'indication « encore 11 jours » n'existe aujourd'hui que pour le long terme, tout en bas.
+- [ ] Analyses › Digestion, quand rien n'est net : replier par défaut la liste des ~20 lignes grisées (« Voir le détail ») ; à l'écran, la personne lit « Lactose −0,8 pt » et hésite à supprimer un aliment alors que le texte dit que rien n'est établi.
+- [ ] Analyses, libellés des lignes : remplacer ou expliquer les termes bruts (GOS, Sorbitol, Fructose en excès, FODMAP, hPa, VFC, FC au repos) par des mots courants avec exemples d'aliments (« GOS — pois chiches, lentilles… ») ; rendre la ligne touchable pour afficher cette explication (aujourd'hui toucher une ligne ne fait rien).
+- [ ] Agir, état vide à J45 : proposer au moins une chose à faire (continuer à noter N jours, voir le rapport médecin, ou un essai général) ; le lien « Où en sont vos analyses » ouvre l'onglet Bien-être alors que l'objectif choisi est le ventre → ouvrir l'onglet Digestion pour ce profil (idem onglet Analyses de la barre du bas).
+- [ ] Rapport PDF pour mon médecin : le message « Halcya-rapport-2026-11-13.pdf téléchargé » apparaît sous la barre de navigation (coupé, illisible) ; le faire défiler à l'écran et ajouter « Ouvrir » / « Partager ».
+- [ ] Fenêtre « Ma digestion » après le bilan : le bouton choisi (Gêne) n'est pas marqué comme sélectionné, « Dernière note : Douleur, hier à 11:19 » reste affichée alors qu'une note du jour existe, et les trois boutons servent alors à autre chose (moment précis) sans le dire ; sur l'accueil, la carte digestion ne montre pas « Aujourd'hui : Gêne » et le bouton reste « Noter ma digestion ».
+- [ ] Repas, encadré « Riche en fructanes » déplié : retirer ou reléguer les références « Varney 2017 », « Ferjančič 2024 » et « ≈ 0,73 g · repère 0,3 g par repas » derrière un « En savoir plus » ; dire en clair ce que cela implique, et utiliser le même vocabulaire que dans Analyses (fructanes n'y figure pas parmi les lignes visibles).
+- [ ] Tendances › détail d'un jour : « Confort digestif 2,0/5 noté "douleur" » contredit la légende (Douleur = 1) — préciser « moyenne de 2 notes » ou montrer les notes ; « Ce qui a pu peser ce jour-là » ne dit pas quelle mesure est concernée et n'affiche que des effets de −0,01/−0,02 pt : masquer les effets négligeables et montrer les repas de la veille pour un profil ventre.
+- [ ] Vocabulaire : « VFC nuit » (accueil, Journal, Tendances, Analyses) contre « variabilité cardiaque » (Sources, détail d'un jour) — un seul nom, en toutes lettres.
+- [ ] Sources › Apple Watch : « Jamais reçu en 30 jours : oxygène du sang » alors que cette configuration (Watch SE 3 / Series 10-12 / Ultra) est censée l'envoyer — vérifier le jeu de données ou la détection.
+- [ ] Analyse IA d'un repas à J45 : l'écran « Avant d'analyser un repas avec l'IA » s'affiche comme à la première fois alors que des dizaines de repas sont déjà enregistrés — à vérifier (accord déjà donné ?).
+- [ ] Accueil, carte « Bien-être aujourd'hui » : la note est passée de 3 à 2,9 puis de nouveau à 3 /5 en quelques minutes sans nouvelle saisie (Tendances affiche 3,0) — harmoniser l'arrondi.

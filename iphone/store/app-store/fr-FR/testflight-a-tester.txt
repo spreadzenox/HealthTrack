@@ -1,0 +1,7 @@
+Merci de tester Halcya !
+- Premier lancement : trois cartes présentent l'app ; cochez ce qui vous amène, puis branchez vos sources sur un seul écran (Santé en lecture seule, météo, temps d'écran) ; rien n'est obligatoire. Une visite guidée montre ensuite chaque onglet, avec des données d'exemple.
+- Aujourd'hui : en haut, notez un repas (photo), votre bien-être (de 1 à 5) ou votre digestion ; touchez une ligne de « Vos données du jour » pour ouvrir sa courbe.
+- Le soir : la notification de la note du soir et celle du bilan digestif se touchent sans ouvrir l'app.
+- Journal : vos jours, vos repas, la nutrition et Tendances (comparez deux courbes, touchez un jour pour son détail).
+- Analyses et Agir : ce qui va avec vos bons et moins bons jours, puis un essai de deux semaines pour vérifier une piste (il faut quelques jours de notes).
+- Paramètres → « Votre avis » : écrivez-nous ce qui vous gêne ou vous plaît.

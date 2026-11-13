@@ -1,0 +1,89 @@
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d1dc912 (.github/workflows/store-beta-expire.yml).
+# Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
+# Livraison continue sur TestFlight (décision du propriétaire du 09/11 vers 11:00) : expire les builds qui ne servent
+# plus (scripts/store-beta-expire.mjs). Builds nommées (`builds`, ex. « 896.376 ») ou nettoyage après chaque nouvelle
+# build (`nettoyage`). Jamais la build attachée à la version de l'App Store (844.344) ni la dernière build distribuée
+# au groupe externe ; la version de l'App Store est seulement lue. Puis le relevé de l'examen bêta (lecture seule)
+# vérifie le résultat. Lancement manuel par la routine, sur main seulement (environnement `appstore` : ASC_KEY_ID,
+# ASC_ISSUER_ID, ASC_KEY_P8, jamais affichés).
+name: TestFlight — expiration des builds
+
+on:
+  workflow_dispatch:
+    inputs:
+      builds:
+        description: "Builds à expirer (ex. 896.376 ; plusieurs séparées par des virgules) ; vide : aucune"
+        required: false
+        default: ""
+      nettoyage:
+        description: "Expirer aussi les builds qui ne servent plus (règle du 09/11)"
+        type: boolean
+        default: false
+      essai:
+        description: "Essai : afficher le plan sans rien expirer"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: store-beta
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: iphone
+
+jobs:
+  # Garde de la bascule : ce workflow publie chez Apple. Il ne démarre que sur main, et seulement quand
+  # iphone/fusion/bascule.json l'autorise (voir iphone/fusion/BASCULE.md). Sinon le job suivant est sauté.
+  garde:
+    name: Publication iOS activée ?
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      publication: ${{ steps.garde.outputs.publication }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: iphone/fusion
+      - id: garde
+        run: fusion/garde.sh
+  expire:
+    name: Expiration des builds
+    needs: garde
+    if: needs.garde.outputs.publication == 'oui'
+    runs-on: ubuntu-latest
+    environment: appstore
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # numéros de version = nombres de commits ; code suivi lu à son commit (scripts/upstream.sh)
+          filter: blob:none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Tests du script
+        run: node --test scripts/store-beta-expire.test.mjs
+      - name: Expiration (API App Store Connect)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          BUILDS: ${{ inputs.builds }}
+          NETTOYAGE: ${{ inputs.nettoyage }}
+          ESSAI: ${{ inputs.essai }}
+        run: |
+          set --
+          if [ -n "$BUILDS" ]; then set -- "$@" --builds "$BUILDS"; fi
+          if [ "$NETTOYAGE" = "true" ]; then set -- "$@" --nettoyage; fi
+          if [ "$ESSAI" = "true" ]; then set -- "$@" --essai; fi
+          node scripts/store-beta-expire.mjs "$@"
+      - name: Relevé après (lecture seule)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: node scripts/store-beta.mjs

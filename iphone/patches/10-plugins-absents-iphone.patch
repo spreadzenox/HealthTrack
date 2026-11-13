@@ -1,0 +1,168 @@
+diff --git a/app/src/services/eveningNote.js b/app/src/services/eveningNote.js
+index 9c490db..456caac 100644
+--- a/app/src/services/eveningNote.js
++++ b/app/src/services/eveningNote.js
+@@ -12,6 +12,7 @@ import { registerPlugin } from '@capacitor/core'
+ import { listEntries, upsertEntries } from '../storage/localHealthStorage'
+ import { localDateKey } from './wellbeingSeries'
+ import { choiceToScore } from './mood/wellbeingScale'
++import { missingOnIos } from '../ios/nativePlugins.js' // Version iOS (HealthTrack-iOS)
+ 
+ export const DEFAULT_MINUTE = 21 * 60
+ const EARLIEST_MINUTE = 18 * 60
+@@ -32,7 +33,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
+ /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */
+ export function eveningNotePlugin() {
+   if (typeof window !== 'undefined' && window.__healthtrackFakeEveningNote) return window.__healthtrackFakeEveningNote
+-  return isNative() ? NativeEveningNote : null
++  return isNative() && !missingOnIos('EveningNote') ? NativeEveningNote : null
+ }
+ 
+ const minuteOf = (iso) => {
+diff --git a/app/src/services/fodmapReminder.js b/app/src/services/fodmapReminder.js
+index 7a12772..91f0658 100644
+--- a/app/src/services/fodmapReminder.js
++++ b/app/src/services/fodmapReminder.js
+@@ -12,6 +12,7 @@ import { registerPlugin } from '@capacitor/core'
+ import { listEntries } from '../storage/localHealthStorage'
+ import { GUT_TYPE } from './today'
+ import { CHALLENGE_DAYS, FODMAP_CHALLENGE_TYPE, calmDaysLeftText, currentChallenge, findFood, formatAmount } from './fodmapChallenge'
++import { missingOnIos } from '../ios/nativePlugins.js' // Version iOS (HealthTrack-iOS)
+ 
+ export const PORTION_DEFAULT_MINUTE = 12 * 60
+ const KEY = 'halcya_portion_reminder'
+@@ -23,7 +24,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
+ /** Plugin natif dans l'app (deux variantes), faux plugin des captures / tests, sinon aucun. */
+ export function portionReminderPlugin() {
+   if (typeof window !== 'undefined' && window.__healthtrackFakePortionReminder) return window.__healthtrackFakePortionReminder
+-  return isNative() ? NativePortionReminder : null
++  return isNative() && !missingOnIos('PortionReminder') ? NativePortionReminder : null
+ }
+ 
+ export const portionReminderAvailable = () => Boolean(portionReminderPlugin())
+diff --git a/app/src/services/gutEvening.js b/app/src/services/gutEvening.js
+index 7b6adec..b2f05aa 100644
+--- a/app/src/services/gutEvening.js
++++ b/app/src/services/gutEvening.js
+@@ -15,6 +15,7 @@ import { localDateKey } from './wellbeingSeries'
+ import { GUT_DAY_SCOPE, GUT_LEVELS, GUT_SOURCE, GUT_TYPE, isGutDayNote } from './today'
+ import { drainNativeInbox, learnEveningMinute } from './eveningNote'
+ import { gutCardMode, loadOnboarding } from '../settings/onboarding'
++import { missingOnIos } from '../ios/nativePlugins.js' // Version iOS (HealthTrack-iOS)
+ 
+ export const GUT_DEFAULT_MINUTE = 20 * 60
+ const LEARN_DAYS = 14
+@@ -27,7 +28,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
+ /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */
+ export function gutEveningPlugin() {
+   if (typeof window !== 'undefined' && window.__healthtrackFakeGutEvening) return window.__healthtrackFakeGutEvening
+-  return isNative() ? NativeGutEvening : null
++  return isNative() && !missingOnIos('GutEvening') ? NativeGutEvening : null
+ }
+ 
+ /** Choix de la personne (allumé / éteint), indépendant de l'objectif. */
+diff --git a/app/src/services/restoreGuard.js b/app/src/services/restoreGuard.js
+index 1d8d50a..351fb52 100644
+--- a/app/src/services/restoreGuard.js
++++ b/app/src/services/restoreGuard.js
+@@ -11,6 +11,7 @@
+ import { registerPlugin } from '@capacitor/core'
+ import { withTimeout } from '../utils/withTimeout'
+ import { markWatchRestored } from './watchAutoSync'
++import { missingOnIos } from '../ios/nativePlugins.js' // Version iOS (HealthTrack-iOS)
+ 
+ const NativeMarker = registerPlugin('BackupMarker')
+ 
+@@ -29,7 +30,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
+ 
+ export function markerPlugin() {
+   if (typeof window !== 'undefined' && window.__healthtrackFakeBackupMarker) return window.__healthtrackFakeBackupMarker
+-  return isNative() ? NativeMarker : null
++  return isNative() && !missingOnIos('BackupMarker') ? NativeMarker : null
+ }
+ 
+ /** Rend `{ restored: false }`, `{ restored: true, removed }` ou `{ restored: false, unavailable: true }`. */
+diff --git a/app/src/services/voiceProbe.js b/app/src/services/voiceProbe.js
+index 97f9993..0a12976 100644
+--- a/app/src/services/voiceProbe.js
++++ b/app/src/services/voiceProbe.js
+@@ -6,6 +6,7 @@
+  * permission demandée, aucun son ni aucune humeur dans le résultat.
+  */
+ import { registerPlugin } from '@capacitor/core'
++import { missingOnIos } from '../ios/nativePlugins.js' // Version iOS (HealthTrack-iOS)
+ 
+ const NativeVoiceProbe = registerPlugin('VoiceProbe')
+ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
+@@ -13,7 +14,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
+ /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */
+ export function voiceProbePlugin() {
+   if (typeof window !== 'undefined' && window.__healthtrackFakeVoiceProbe) return window.__healthtrackFakeVoiceProbe
+-  return isNative() ? NativeVoiceProbe : null
++  return isNative() && !missingOnIos('VoiceProbe') ? NativeVoiceProbe : null
+ }
+ 
+ /** Résultat brut de la sonde, ou null hors de l'app Android. Ne lève jamais. */
+diff --git a/app/src/services/watchCaptures.js b/app/src/services/watchCaptures.js
+index fc9253a..b113b2d 100644
+--- a/app/src/services/watchCaptures.js
++++ b/app/src/services/watchCaptures.js
+@@ -9,6 +9,7 @@ import { registerPlugin } from '@capacitor/core'
+ import { importWatchCapture, SYNC_STATE_VERSION } from './watchSync'
+ import { isValidCapture } from '../devices/huawei/capture'
+ import { DICT_CLASS } from '../devices/huawei/p2p'
++import { missingOnIos } from '../ios/nativePlugins.js' // Version iOS (HealthTrack-iOS)
+ 
+ const NativeCapture = registerPlugin('WatchCapture')
+ 
+@@ -17,7 +18,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
+ /** Plugin natif dans l'app, faux plugin des tests, sinon aucun. */
+ export function capturePlugin() {
+   if (typeof window !== 'undefined' && window.__healthtrackFakeWatchCapture) return window.__healthtrackFakeWatchCapture
+-  return isNative() ? NativeCapture : null
++  return isNative() && !missingOnIos('WatchCapture') ? NativeCapture : null
+ }
+ 
+ /** Clé de synchro de la montre (adresse telle que le JS la connaît, casse comprise) : celle de l'état déjà gardé si elle existe. */
+diff --git a/app/src/services/watchPresence.js b/app/src/services/watchPresence.js
+index c0969c4..13a8b86 100644
+--- a/app/src/services/watchPresence.js
++++ b/app/src/services/watchPresence.js
+@@ -10,6 +10,7 @@
+ import { registerPlugin } from '@capacitor/core'
+ import { syncWatchIfStale } from './watchAutoSync'
+ import { getBackgroundSync, requestWatchNotifications } from './watchCaptures'
++import { missingOnIos } from '../ios/nativePlugins.js' // Version iOS (HealthTrack-iOS)
+ 
+ const NativeCompanion = registerPlugin('Companion')
+ 
+@@ -18,7 +19,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
+ /** Plugin natif dans l'app, faux plugin des captures (`npm run visual -- --companion`), sinon aucun. */
+ export function companionPlugin() {
+   if (typeof window !== 'undefined' && window.__healthtrackFakeCompanion) return window.__healthtrackFakeCompanion
+-  return isNative() ? NativeCompanion : null
++  return isNative() && !missingOnIos('Companion') ? NativeCompanion : null
+ }
+ 
+ const sameDevice = (a, b) => !!a && !!b && String(a).toLowerCase() === String(b).toLowerCase()
+diff --git a/app/src/services/watchVault.js b/app/src/services/watchVault.js
+index 51dd408..ae9f19c 100644
+--- a/app/src/services/watchVault.js
++++ b/app/src/services/watchVault.js
+@@ -6,6 +6,7 @@
+  * sauf « gardée ou non ». Ne lève jamais.
+  */
+ import { registerPlugin } from '@capacitor/core'
++import { missingOnIos } from '../ios/nativePlugins.js' // Version iOS (HealthTrack-iOS)
+ 
+ const NativeVault = registerPlugin('WatchVault')
+ 
+@@ -14,7 +15,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
+ /** Plugin natif dans l'app, faux plugin des tests / captures, sinon aucun. */
+ export function vaultPlugin() {
+   if (typeof window !== 'undefined' && window.__healthtrackFakeWatchVault) return window.__healthtrackFakeWatchVault
+-  return isNative() ? NativeVault : null
++  return isNative() && !missingOnIos('WatchVault') ? NativeVault : null
+ }
+ 
+ /**

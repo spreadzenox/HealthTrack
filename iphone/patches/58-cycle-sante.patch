@@ -1,0 +1,43 @@
+diff --git a/app/src/connectors/HealthConnectConnector.js b/app/src/connectors/HealthConnectConnector.js
+index 573b597..b4bb83c 100644
+--- a/app/src/connectors/HealthConnectConnector.js
++++ b/app/src/connectors/HealthConnectConnector.js
+@@ -23,6 +23,8 @@
+ import { BaseConnector } from './BaseConnector'
+ import { debugInfo, debugWarn, debugError, debugDebug } from '../utils/debugLog'
+ import { HEALTH_CONNECT_READ_WINDOW_DAYS } from './syncWindow'
++import { requestSanteAuthorization, syncCycleFromSante } from '../ios/cycleSante' // Version iOS (HealthTrack-iOS) : CYCLE-iOS (correctif 58)
++import { goalsOf } from '../settings/onboarding' // Version iOS (HealthTrack-iOS) : « Mon cycle » (correctif 58)
+ 
+ const TAG = 'HealthConnect'
+ 
+@@ -789,6 +791,11 @@ export class HealthConnectConnector extends BaseConnector {
+       return 'denied'
+     }
+     try {
++      // Version iOS (HealthTrack-iOS), CYCLE-iOS-2 : avec « Mon cycle », règles et symptômes dans la même feuille d'Apple
++      // que les autres mesures ; la demande du module qui suit ne montre alors plus rien (correctif 58)
++      if (isIos() && goalsOf().includes('cycle')) {
++        await requestSanteAuthorization({ read: READ_TYPES, cycle: true }).catch((e) => debugWarn(TAG, `Autorisation du cycle : ${e?.message || e}`))
++      }
+       debugInfo(TAG, 'Appel Health.requestAuthorization()…')
+       await Health.requestAuthorization({ read: READ_TYPES, write: [] })
+       if (isIos()) {
+@@ -1166,6 +1173,17 @@ export class HealthConnectConnector extends BaseConnector {
+       }
+     }
+ 
++    // Version iOS (HealthTrack-iOS), CYCLE-iOS-1 : le cycle noté dans l'app Santé (règles, symptômes), lu par le
++    // plugin natif CycleHealth, rangé avec la brique partagée du cycle (correctif 58)
++    if (isIos()) {
++      try {
++        synced += await syncCycleFromSante({ since, until, writer })
++      } catch (e) {
++        debugError(TAG, `Erreur lecture du cycle : ${e?.message || e}`, { error: e })
++        errors.push(`cycle: ${e.message || e}`)
++      }
++    }
++
+     report(null)
+     debugInfo(TAG, 'Synchronisation terminée', { synced, skipped, errors })
+     return { synced, skipped, errors }

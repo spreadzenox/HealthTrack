@@ -1,0 +1,53 @@
+diff --git a/app/src/components/PhoneUsageCard.jsx b/app/src/components/PhoneUsageCard.jsx
+index 38f974c..1205994 100644
+--- a/app/src/components/PhoneUsageCard.jsx
++++ b/app/src/components/PhoneUsageCard.jsx
+@@ -21,6 +21,7 @@ import { APP_CATEGORY_LABELS } from '../services/phoneApps'
+ import { formatAgo } from '../utils/timeAgo'
+ import useDisclosure from '../hooks/useDisclosure'
+ import { APP_NAME } from '../config/brand'
++import { FEATURES } from '../config/distribution'
+ import './MyDevices.css'
+ import './WeatherCard.css'
+ import './PhoneUsageCard.css'
+@@ -139,7 +140,7 @@ export default function PhoneUsageCard({
+       )}
+ 
+       {!available && (
+-        <p className="my-device-message">Disponible dans l’app Android.</p>
++        <p className="my-device-message">{FEATURES.iosStore ? 'Pas encore disponible sur iPhone.' : 'Disponible dans l’app Android.'}</p>
+       )}
+ 
+       {available && !on && (
+diff --git a/app/src/components/WatchDiagnostic.jsx b/app/src/components/WatchDiagnostic.jsx
+index f5ff0a2..ca0cfa7 100644
+--- a/app/src/components/WatchDiagnostic.jsx
++++ b/app/src/components/WatchDiagnostic.jsx
+@@ -8,6 +8,7 @@
+ import { useState } from 'react'
+ import { Link, useInRouterContext } from 'react-router-dom'
+ import { getClient, isBleAvailable, ready } from '../devices/ble/bleService'
++import { FEATURES } from '../config/distribution'
+ import { runHuaweiDiagnostic, STEPS } from '../devices/huawei/diagnostic'
+ import { detectPhoneApps, NativeAppManager } from '../devices/phoneApps'
+ import { CURRENT_VERSION } from '../services/updateCheck'
+@@ -107,7 +108,7 @@ async function defaultBackground() {
+   return watch ? getBackgroundSync({ deviceId: watch.deviceId }) : null
+ }
+ 
+-export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy, setup, connect, background = defaultBackground, busy = isWatchBusy, maxMs = TEST_MAX_MS, troubleshooting = true }) {
++export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable() && !FEATURES.iosStore, save = defaultSave, copy = defaultCopy, setup, connect, background = defaultBackground, busy = isWatchBusy, maxMs = TEST_MAX_MS, troubleshooting = true }) {
+   const connectFn = connect === undefined ? (classicPlugin() ? defaultConnect : null) : connect
+   const setupDeps = setup === undefined ? { detectApps: detectPhoneApps, classic: classicPlugin(), appManager: appManagerPlugin() } : setup
+   const [report, setReport] = useState(loadLast)
+@@ -180,7 +181,9 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
+     <>
+       {!available ? (
+         <p className="my-devices-intro">
+-          Dans l’app Android, {APP_NAME} lit directement les mesures d’une montre Huawei compatible, allumée près du téléphone.
++          {FEATURES.iosStore
++            ? 'La lecture directe des montres Huawei n’est pas encore possible sur iPhone.'
++            : `Dans l’app Android, ${APP_NAME} lit directement les mesures d’une montre Huawei compatible, allumée près du téléphone.`}
+         </p>
+       ) : (
+         <>

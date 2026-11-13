@@ -1,0 +1,5 @@
+{
+  "version": 893,
+  "depuis": "2026-11-07",
+  "decision": "Décision du propriétaire du 07/11 vers 19:35 : un numéro de version fixe pour les builds de test TestFlight pendant un cycle, celui de la prochaine version de l'App Store (les builds suivantes d'une même version peuvent éviter un examen bêta complet) ; le numéro de build suit toujours Android et l'app affiche toujours la version d'Android. La version de l'App Store et la build 844.344 ne changent pas."
+}

@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-09",
+  "kind": "correctif",
+  "variants": ["appstore"],
+  "title": "VFC de l’app Santé comparée à votre habitude",
+  "items": [
+    "Sur Aujourd’hui, la ligne « VFC (SDNN) » dit sa valeur d’habitude, calculée sur vos seules mesures de l’app Santé, avec une flèche quand l’écart est net, y compris pour la VFC d’hier.",
+    "Dans le Journal, la tuile « VFC (SDNN) » d’un jour nettement différent le signale aussi."
+  ]
+}

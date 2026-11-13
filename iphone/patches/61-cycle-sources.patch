@@ -1,0 +1,21 @@
+diff --git a/app/src/pages/Connectors.jsx b/app/src/pages/Connectors.jsx
+index 486fee2..af3bf9f 100644
+--- a/app/src/pages/Connectors.jsx
++++ b/app/src/pages/Connectors.jsx
+@@ -8,6 +8,7 @@ import DebugPanel from '../components/DebugPanel'
+ import MethodNote from '../components/MethodNote'
+ import WatchGuides from '../components/WatchGuides'
+ import MyDevices from '../components/MyDevices'
++import CycleSanteCard from '../ios/CycleSanteCard' // Version iOS (HealthTrack-iOS) : CYCLE-iOS-3 (correctif 61)
+ import BleDevices from '../components/BleDevices'
+ import WatchDiagnostic from '../components/WatchDiagnostic'
+ import WithingsSetup from '../components/WithingsSetup'
+@@ -526,6 +527,8 @@ export default function Connectors() {
+       </p>
+ 
+       <MyDevices detect={detectApps} />
++      {/* Version iOS (HealthTrack-iOS), CYCLE-iOS-3 : le cycle de Santé proposé à qui a « Mon cycle » (correctif 61) */}
++      <CycleSanteCard />
+ 
+       {/* POL-PLAY-45 : sans titre, les sources actives (météo, Health Connect…) se lisaient comme des « appareils ». */}
+       {layout.active.length > 0 && (

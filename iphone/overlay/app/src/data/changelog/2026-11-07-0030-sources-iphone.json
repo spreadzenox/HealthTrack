@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-07",
+  "kind": "correctif",
+  "title": "App Santé : tout votre historique",
+  "variants": [
+    "appstore"
+  ],
+  "items": [
+    "À l’accueil, l’app Santé est proposée même sans montre (l’iPhone y écrit vos pas), et vos 6 derniers mois sont importés au lieu d’un seul.",
+    "Dans Sources, la carte App Santé importe tout l’historique que vous choisissez (jusqu’à 2 ans).",
+    "Sur un iPhone qui n’a pas encore iOS 26.4, la carte du temps d’écran n’est plus proposée : elle ne pourrait pas fonctionner."
+  ]
+}

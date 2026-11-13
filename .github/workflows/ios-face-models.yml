@@ -1,0 +1,67 @@
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d1dc912 (.github/workflows/face-models.yml).
+# Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
+# Lecture du visage sur iPhone (I7) : le calcul (swift test) puis les 3 modèles du Face Landmarker exécutés par
+# TensorFlow Lite C sur un iPhone simulé, comparés aux sorties de référence d'Android (mêmes tolérances que
+# FaceModelsTest.java). À part de la build de l'app : ne tourne que si le visage ou ses modèles changent, en quelques
+# minutes ; lançable à la main sur une branche sans PR (workflow_dispatch).
+name: iOS — modèles du visage
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ["iphone/ios/HalcyaFace/**", "iphone/ios/HalcyaFaceModels/**", "iphone/scripts/face-models.sh", "iphone/upstream.json", ".github/workflows/ios-face-models.yml"]
+  push:
+    branches: [main]
+    paths: ["iphone/ios/HalcyaFace/**", "iphone/ios/HalcyaFaceModels/**", "iphone/scripts/face-models.sh", "iphone/upstream.json", ".github/workflows/ios-face-models.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: face-models-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: iphone
+
+jobs:
+  models:
+    name: Modèles du visage sur iPhone simulé (XCTest)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # numéros de version = nombres de commits ; code suivi lu à son commit (scripts/upstream.sh)
+          filter: blob:none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Code Android suivi (vecteurs de référence, empreintes des modèles)
+        run: scripts/upstream.sh
+      # Calcul du visage sans modèle (paquet pur, aussi dans la build complète) : retour rapide pour toute la chaîne
+      - name: Tests Swift du calcul du visage (XCTest, vecteurs d'Android)
+        run: swift test --package-path ios/HalcyaFace
+      - name: Modèles et TensorFlow Lite C, téléchargés et vérifiés
+        run: scripts/face-models.sh
+      - name: Tests sur iPhone simulé
+        run: |
+          set -o pipefail
+          UDID="$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)["devices"]
+          ios = sorted((k for k in d if "iOS" in k), key=lambda k: [int(x) for x in k.rsplit("iOS-", 1)[1].split("-")])
+          phones = [x for k in reversed(ios) for x in d[k] if x["name"].startswith("iPhone")]
+          print(phones[0]["udid"])')"
+          echo "Simulateur : $UDID"
+          cd ios/HalcyaFaceModels
+          # Schéma généré par Xcode pour le paquet : « -Package » s'il existe (tous les tests), sinon celui du produit
+          xcodebuild -list | tee "$RUNNER_TEMP/schemes.txt"
+          SCHEME="$(grep -q 'HalcyaFaceModels-Package' "$RUNNER_TEMP/schemes.txt" && echo HalcyaFaceModels-Package || echo HalcyaFaceModels)"
+          xcodebuild test -scheme "$SCHEME" -destination "id=$UDID" 2>&1 | tee "$RUNNER_TEMP/face-models.log" \
+            | grep -E "Test Case|error:|\[visage\]|Executed|TEST (SUCCEEDED|FAILED)"

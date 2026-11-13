@@ -1,0 +1,16 @@
+diff --git a/app/src/devices/deviceCapabilities.js b/app/src/devices/deviceCapabilities.js
+index 10e93d34..246cd3c7 100644
+--- a/app/src/devices/deviceCapabilities.js
++++ b/app/src/devices/deviceCapabilities.js
+@@ -77,7 +77,10 @@ export const CAPABILITIES = {
+ }
+ 
+ const SLEEP_STAGES = new Set(['light', 'deep', 'rem'])
+-const HEART_SUBTYPES = { heartRate: 'heartRate', restingHeartRate: 'restingHeartRate', heartRateVariability: 'hrv', oxygenSaturation: 'spo2' }
++const HEART_SUBTYPES = {
++  heartRate: 'heartRate', restingHeartRate: 'restingHeartRate', heartRateVariability: 'hrv', oxygenSaturation: 'spo2',
++  heartRateVariabilitySdnn: 'hrv', // Version iOS (HealthTrack-iOS) : VFC de l'app Santé, en SDNN (correctif 53)
++}
+ 
+ /** Mesures (ids de MEASURES) qu'apporte une entrée importée. */
+ export function measuresOf(entry) {

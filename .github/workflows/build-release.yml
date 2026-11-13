@@ -9,6 +9,9 @@ on:
     # pas de nouvelle release (sinon bannière de mise à jour pour rien).
     paths-ignore:
       - "journal/**"
+      # Dépôt unique : la version iPhone (iphone/**, workflows ios-*.yml) ne change pas l'app Android
+      - "iphone/**"
+      - ".github/workflows/ios-*.yml"
   workflow_dispatch:
 
 permissions:

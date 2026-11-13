@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-07",
+  "kind": "amélioration",
+  "title": "Accueil : tout autoriser au même endroit",
+  "variants": ["appstore"],
+  "items": [
+    "Après l’app Santé, l’accueil propose la position approximative (pour la météo) et l’appareil photo (pour vos repas), chacun avec sa raison. Rien n’est obligatoire."
+  ]
+}

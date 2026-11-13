@@ -1,0 +1,45 @@
+Halcya réunit vos repas, votre digestion, votre sommeil, votre activité et votre bien-être dans un journal, sur votre iPhone. Vous voyez ce qui va avec vos bons et vos mauvais jours.
+
+Elle est pensée d'abord pour les personnes qui ont une digestion sensible : ballonnements, syndrome de l'intestin irritable ou côlon irritable (SII). Elle sert aussi à suivre son énergie et ses nuits.
+
+VOS MONTRES ET CAPTEURS, SANS RESSAISIE
+• App Santé, si vous l'autorisez : sommeil, fréquence cardiaque, VFC, pas, dépense, séances… depuis l'Apple Watch et les montres, bagues et apps qui écrivent dans Santé.
+• Une nuit vue par plusieurs sources n'est comptée qu'une fois.
+• Temps d'écran de l'iPhone, si vous l'autorisez : temps d'écran, écran tard le soir, temps par catégorie d'app et nuits estimées sans montre, lus sur le téléphone (Union européenne, iOS 26.4 ou plus).
+
+NOTEZ EN UN GESTE
+• Votre digestion : Calme, Gêne ou Douleur, horodaté en une touche. Le soir, un bilan rapide, même depuis la notification.
+• Vos repas : un journal alimentaire horodaté, à partir d'une photo, d'une image de la photothèque ou de quelques mots. L'analyse par IA des ingrédients est facultative et ne part que si vous la lancez.
+• Les FODMAP de chaque repas, groupe par groupe, par exemple « riche en fructanes : oignon ». Les teneurs viennent de la table Ciqual de l'Anses et de mesures publiées. Une teneur jamais mesurée est marquée « inconnue ».
+• Une note de votre soirée, de 1 à 5, et une note libre quand vous le voulez.
+
+DES PISTES QUI TIENNENT COMPTE DES DÉLAIS
+• La digestion réagit parfois des heures après un repas. Halcya compare chaque repas à votre digestion dans les 48 h qui suivent, à nuit comparable.
+• Une piste n'apparaît qu'avec assez de jours pour comparer : en général trois à quatre semaines de notes.
+• Les repères FODMAP généraux servent de point de départ. Dès que vos propres données suffisent, ce sont elles qui comptent.
+
+VÉRIFIER UNE PISTE
+• Réintroduction FODMAP guidée, un groupe à la fois (blé, oignon, ail, GOS, lactose, fructose, sorbitol, mannitol) : trois portions croissantes, un rappel par jour si vous le voulez, puis la portion qui vous convient.
+• Rapport PDF de 2, 4 ou 12 semaines pour votre médecin ou votre diététicienne.
+
+COMPRENDRE VOS TENDANCES
+• Aujourd'hui : votre journée en une phrase, votre bien-être estimé, votre sommeil, votre VFC et vos pas.
+• Journal : chaque jour, ce que vos sources ont mesuré et ce que vous avez noté.
+• Tendances : votre forme comparée à vos propres semaines habituelles.
+• Analyses : ce qui va de pair avec votre digestion et votre bien-être, calculé sur le téléphone.
+
+LOCAL PAR DÉFAUT, L'IA SEULEMENT SI VOUS LE VOULEZ
+• Vos données restent sur votre iPhone, sans compte à créer.
+• Seule l'analyse IA d'un repas, quand vous la lancez, envoie la photo réduite (sans métadonnées) ou votre description.
+• Export complet de vos données en un geste (fichier JSON) ; import d'une sauvegarde faite sur un autre téléphone.
+• Une copie de secours de vos données reste sur l'iPhone, hors de la sauvegarde iCloud. Pour changer d'iPhone, exportez vos données puis importez le fichier.
+
+ABONNEMENTS FACULTATIFS
+• Silver : l'analyse IA des repas jusqu'à 10 fois par jour, les pistes repas → digestion, la réintroduction FODMAP guidée et le rapport PDF. 4,99 € par mois, ou 29,99 € par an avec 2 semaines d'essai gratuit.
+• Gold : la même chose, jusqu'à 20 analyses IA par jour. 9,99 € par mois.
+• Prix de la zone euro ; en Suisse et au Canada, l'App Store indique le prix local.
+• Achat par l'App Store, renouvellement automatique, annulable dans les réglages de votre compte Apple au moins 24 heures avant la fin de la période. Conditions d'utilisation : https://spreadzenox.github.io/HealthTrack-iOS/conditions/
+
+Halcya n'est pas un dispositif médical. Elle ne pose aucun diagnostic et ne remplace pas l'avis d'un professionnel de santé : parlez de vos pistes à votre médecin ou à votre diététicienne.
+
+Réservée aux personnes de 18 ans et plus.

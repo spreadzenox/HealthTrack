@@ -34,8 +34,42 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   # Job commun : build de l'APK (mutualisé entre les deux jobs d'émulateur)
   # ─────────────────────────────────────────────────────────────────────────────
+  # Dépôt unique (fusion iOS) : un changement qui ne touche que la version iPhone (iphone/**, workflows ios-*.yml)
+  # ne construit pas l'APK et ne lance aucun émulateur. Les jobs sautés comptent comme réussis pour une PR.
+  # Dans le doute (lancement manuel, liste illisible), tout tourne comme avant.
+  portee:
+    name: Portée du changement
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      android: ${{ steps.portee.outputs.android }}
+    steps:
+      - id: portee
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          files=""
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            files="$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename' || true)"
+          elif [ "$GITHUB_EVENT_NAME" = "push" ] && [ -n "${BEFORE//0/}" ]; then
+            files="$(gh api "repos/$GITHUB_REPOSITORY/compare/$BEFORE...$GITHUB_SHA" --jq 'if (.files | length) < 300 then .files[].filename else empty end' || true)"
+          fi
+          if [ -n "$files" ] && ! echo "$files" | grep -qvE '^(iphone/|\.github/workflows/ios-[^/]+\.yml$)'; then
+            echo "Changement propre à la version iPhone : APK et émulateurs sautés."
+            echo "android=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "android=true" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
     name: Build APK
+    needs: portee
+    if: needs.portee.outputs.android == 'true'
     runs-on: ubuntu-latest
     outputs:
       apk-path: app/android/app/build/outputs/apk/debug/app-debug.apk
@@ -731,7 +765,7 @@ jobs:
     name: Publier l'APK
     runs-on: ubuntu-latest
     needs: build
-    if: always()
+    if: always() && needs.build.result != 'skipped'
 
     steps:
       - name: Télécharger les APKs buildés

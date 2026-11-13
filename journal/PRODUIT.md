@@ -348,6 +348,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **13/11 20:35** — Deux simulations de personas au 45e jour (Ventre sans technique, Apple Watch ; Tout mesurer, bracelet Amazfit) : POLISH-SIM-67 à 80, PROP-SIM-16 au BACKLOG ; le plus net : la confirmation du rapport PDF cachée sous la barre du bas, la digestion notée que l'accueil ne montre pas, Analyses « pas net » lu comme un résultat. Outil : POLISH-SIM-63 et 66 corrigés.
 - **13/11 19:45** — CYCLE-3a-1 : lecture des règles de Health Connect, côté app (conversion, synchro derrière un pont natif à venir, saisie à la main prioritaire sur un import). Rien de visible ; P48 toujours « pas encore » (il faut d'abord le pont natif CYCLE-3a-2 et la demande d'autorisation CYCLE-3a-3).
 - **12/11 16:35** — Décision du 12/11 16:15 (automatiser les gestes du propriétaire) inscrite : § 4.0 classe chaque action ouverte en (a) / (b) / (c) ; 12 missions navigateur dans `journal/missions/` (P43, P46, P39, P29, P34, P45, ETAT-PLAY, P48, P30, P32, P15, P2) ; charte et POUR-IOS.md à jour. Aucun code produit.
 - **11/11 08:35** — Run idées : simulations Prendre soin de soi J1 (Android seul) et Endométriose J45 avec règles notées (outil `--goals=cycle`) ; POLISH-SIM-46 à 51, PROP-SIM-11 (cycle visible hors du Journal) et PROP-SIM-12 (objectif poids) ; faux relais de l'outil corrigé (noms d'aliments de la table).

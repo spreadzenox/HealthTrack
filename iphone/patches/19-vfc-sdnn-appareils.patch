@@ -1,0 +1,20 @@
+diff --git a/app/src/devices/healthApps.js b/app/src/devices/healthApps.js
+index e343fbc..7974152 100644
+--- a/app/src/devices/healthApps.js
++++ b/app/src/devices/healthApps.js
+@@ -126,6 +126,7 @@ export const METRICS = [
+   { key: 'heartRate', label: 'cœur', watch: true },
+   { key: 'restingHeartRate', label: 'cœur au repos', watch: true },
+   { key: 'heartRateVariability', label: 'variabilité cardiaque', watch: true },
++  { key: 'heartRateVariabilitySdnn', label: 'variabilité cardiaque (SDNN)' }, // Version iOS : VFC de l'app Santé, à part
+   { key: 'oxygenSaturation', label: 'oxygène du sang', watch: true },
+   { key: 'sleep', label: 'sommeil', watch: true },
+   { key: 'steps', label: 'pas', watch: true },
+@@ -211,6 +212,7 @@ export function unsharedWatchMetrics(metrics, app = null) {
+ function neverReceivedWatch(metrics) {
+   const keys = new Set((metrics || []).map((m) => m.key))
+   if (!keys.has('heartRate') && !keys.has('restingHeartRate')) return []
++  if (keys.has('heartRateVariabilitySdnn')) keys.add('heartRateVariability') // Version iOS : la VFC de l'app Santé en tient lieu
+   return METRICS.filter((m) => m.watch && !keys.has(m.key))
+ }
+ 

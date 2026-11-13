@@ -24,8 +24,14 @@ export const CONTEXT_TYPES = new Set(['weather', 'phone_usage'])
  */
 export const EQUIPMENT = ['phone', 'watch', 'watch-hrv', 'huawei', 'full']
 
+/** Ce qu'une balance connectée envoie : absent sans balance (POLISH-SIM-66 : « Pesée Withings » chez la Galaxy Watch). */
+const SCALE_TYPES = new Set(['weight', 'body_composition'])
+
 export function keepForEquipment(entry, equipment) {
+  // POLISH-SIM-63 : le compteur de cigarettes est une option que personne n'active par défaut ; aucune persona ne fume.
+  if (entry.type === 'cigarette') return false
   if (APP_TYPES.has(entry.type)) return true
+  if (equipment !== 'full' && EQUIPMENT.includes(equipment) && SCALE_TYPES.has(entry.type)) return false
   const huawei = entry.source === 'huawei_watch'
   const hrv = entry.payload?.subtype === 'heartRateVariability'
   switch (equipment) {
@@ -33,11 +39,11 @@ export function keepForEquipment(entry, equipment) {
       return entry.type === 'steps' || entry.type === 'calories'
     case 'watch':
       return !huawei && !hrv && entry.payload?.subtype !== 'restingHeartRate'
-        && !['weight', 'body_temperature', 'respiratory_rate'].includes(entry.type)
+        && !['body_temperature', 'respiratory_rate'].includes(entry.type)
     case 'watch-hrv':
-      return !huawei && entry.type !== 'weight'
+      return !huawei
     case 'huawei':
-      return entry.type !== 'weight'
+      return true
     case 'full':
       return true
     default:

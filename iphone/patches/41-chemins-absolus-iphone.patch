@@ -1,0 +1,15 @@
+diff --git a/app/vite.config.js b/app/vite.config.js
+index 82824a4..92dc422 100644
+--- a/app/vite.config.js
++++ b/app/vite.config.js
+@@ -9,7 +9,9 @@ const appVersion = process.env.VITE_APP_VERSION ?? pkg.version ?? '0.0.0'
+ // https://vite.dev/config/
+ export default defineConfig({
+   plugins: [react()],
+-  base: './',
++  // Version iOS (correctif 41) : servie à la racine de capacitor://localhost ; chemins absolus, sinon un rechargement
++  // sur une page à deux niveaux (/recommendations/ventre, v786) cherche les fichiers au mauvais endroit (écran blanc)
++  base: '/',
+   define: {
+     __APP_VERSION__: JSON.stringify(appVersion),
+   },

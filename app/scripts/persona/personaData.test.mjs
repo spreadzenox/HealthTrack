@@ -137,6 +137,23 @@ describe('personaEntries', () => {
     expect(personaEntries(demo, { day: 45, equipment: 'phone', now, goals: ['gut'], notes: 'few' }).some((e) => e.type === 'gut')).toBe(false)
   })
 
+  it('POLISH-SIM-63 : aucune cigarette, aucune persona n\'a activé ce compteur', () => {
+    expect(types(demo).has('cigarette')).toBe(true)
+    for (const equipment of ['phone', 'watch', 'full']) {
+      expect(types(personaEntries(demo, { day: 45, equipment, now })).has('cigarette')).toBe(false)
+    }
+  })
+
+  it('POLISH-SIM-66 : sans balance, ni pesée ni composition corporelle ; avec (full), les deux', () => {
+    expect(types(demo).has('body_composition')).toBe(true)
+    for (const equipment of ['phone', 'watch', 'watch-hrv', 'huawei']) {
+      const t = types(personaEntries(demo, { day: 45, equipment, now }))
+      expect(t.has('weight')).toBe(false)
+      expect(t.has('body_composition')).toBe(false)
+    }
+    expect(types(personaEntries(demo, { day: 45, equipment: 'full', now })).has('body_composition')).toBe(true)
+  })
+
   it('refuse un profil de saisie inconnu', () => {
     expect(() => personaEntries(demo, { day: 14, equipment: 'phone', now, notes: 'jamais' })).toThrow(/inconnu/)
   })

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CAPACITOR_DEBUG</key>
+	<string>$(CAPACITOR_DEBUG)</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>fr</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Halcya se connecte en Bluetooth à vos capteurs (ceinture cardio, tensiomètre, balance, thermomètre, oxymètre) pour enregistrer leurs mesures sur ce téléphone.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Halcya lit vos mesures de l’app Santé (sommeil, fréquence cardiaque, VFC, pas… et vos règles si vous suivez votre cycle) pour les ranger dans votre journal, sur cet iPhone.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Halcya n’écrit rien dans l’app Santé : elle y lit seulement vos mesures, avec votre accord.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Halcya utilise la caméra pour photographier vos repas ou, si vous suivez votre ventre, estimer la forme de vos selles et, si vous l’activez, pour lire votre visage à l’ouverture de l’app : les images de votre visage restent sur cet iPhone et sont oubliées aussitôt. Une photo de repas ou de selles ne quitte l’iPhone que si vous demandez son analyse ; celle des selles est effacée juste après.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Halcya vérifie seulement s’il peut reconnaître le français sur cet iPhone, pour une future dictée de la note du soir qui ne ferait rien sortir du téléphone. Votre voix n’est ni écoutée ni enregistrée.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Halcya utilise votre position approximative (à environ 10 km) pour la météo, la pression et la qualité de l’air du jour. Seule cette position arrondie est envoyée au service gratuit Open-Meteo.</string>
+	<key>NSLocationDefaultAccuracyReduced</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>CFBundleDisplayName</key>
+        <string>Halcya</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+</dict>
+</plist>

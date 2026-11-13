@@ -1,0 +1,138 @@
+diff --git a/app/src/components/PhoneUsageCard.jsx b/app/src/components/PhoneUsageCard.jsx
+index 1205994..d8516c5 100644
+--- a/app/src/components/PhoneUsageCard.jsx
++++ b/app/src/components/PhoneUsageCard.jsx
+@@ -131,10 +131,20 @@ export default function PhoneUsageCard({
+             lit pas le contenu des apps.
+           </p>
+           <MethodNote summary="Détails">
+-            Votre téléphone sait quand il s’allume et quelles apps sont ouvertes : {APP_NAME} en tire votre temps
+-            d’écran, l’écran tard le soir, le temps passé sur les réseaux sociaux, la vidéo, les jeux… et, les nuits
+-            sans montre, une estimation de votre sommeil. Vos Analyses regardent comment tout cela va avec{' '}
+-            <em>votre</em> bien-être, dans un sens ou dans l’autre.
++            {FEATURES.iosStore ? (
++              <>
++                L’iPhone compte, heure par heure, votre temps d’écran, vos prises en main et le temps passé dans chaque
++                app : {APP_NAME} en tire votre temps d’écran, l’écran tard le soir, le temps passé sur les réseaux
++                sociaux, la vidéo, les jeux… et, les nuits sans montre, une estimation de votre sommeil.
++              </>
++            ) : (
++              <>
++                Votre téléphone sait quand il s’allume et quelles apps sont ouvertes : {APP_NAME} en tire votre temps
++                d’écran, l’écran tard le soir, le temps passé sur les réseaux sociaux, la vidéo, les jeux… et, les nuits
++                sans montre, une estimation de votre sommeil.
++              </>
++            )}{' '}
++            Vos Analyses regardent comment tout cela va avec <em>votre</em> bien-être, dans un sens ou dans l’autre.
+           </MethodNote>
+         </>
+       )}
+@@ -149,7 +159,31 @@ export default function PhoneUsageCard({
+         </button>
+       )}
+ 
+-      {available && on && access && !granted && (
++      {available && on && access && !granted && FEATURES.iosStore && (
++        <div className="phone-usage-guide">
++          <ol className="phone-usage-steps">
++            <li>Touchez « Autoriser » : l’iPhone demande votre accord pour le temps d’écran (Face ID ou code).</li>
++            <li>Revenez ici : tout se met à jour seul.</li>
++          </ol>
++          <p className="my-device-meta">
++            {access.supported === false
++              ? 'Il faut iOS 26.4 ou plus : mettez à jour l’iPhone dans Réglages › Général › Mise à jour logicielle.'
++              : 'Apple ne donne ce temps d’écran aux apps que dans l’Union européenne, depuis iOS 26.4.'}
++          </p>
++          <div className="my-device-actions">
++            {access.supported !== false && (
++              <button type="button" className="btn btn-primary connector-btn" onClick={() => openSettings().catch(() => {})}>
++                Autoriser
++              </button>
++            )}
++            <button type="button" className="btn btn-secondary connector-btn" onClick={turnOff}>
++              Annuler
++            </button>
++          </div>
++        </div>
++      )}
++
++      {available && on && access && !granted && !FEATURES.iosStore && (
+         <div className="phone-usage-guide">
+           <ol className="phone-usage-steps">
+             <li>Touchez « Ouvrir le réglage » : Android affiche « Accès aux données d’utilisation ».</li>
+@@ -177,7 +211,10 @@ export default function PhoneUsageCard({
+             <p className="weather-today">
+               <span className="weather-today-label">Aujourd’hui</span> {formatScreenMinutes(today.screenMinutes)} d’écran
+               {today.lateScreenMinutes > 0 && ` · ${formatScreenMinutes(today.lateScreenMinutes)} hier soir après 22 h`}
+-              {today.unlocks > 0 && ` · ${today.unlocks} déverrouillage${today.unlocks > 1 ? 's' : ''}`}
++              {today.unlocks > 0 &&
++                (FEATURES.iosStore
++                  ? ` · ${today.unlocks} prise${today.unlocks > 1 ? 's' : ''} en main`
++                  : ` · ${today.unlocks} déverrouillage${today.unlocks > 1 ? 's' : ''}`)}
+             </p>
+           ) : (
+             <p className="my-device-message">{busy ? 'Lecture du téléphone…' : 'Pas encore de données aujourd’hui.'}</p>
+diff --git a/app/src/config/permissionDisclosures.js b/app/src/config/permissionDisclosures.js
+index 90538c6..351488e 100644
+--- a/app/src/config/permissionDisclosures.js
++++ b/app/src/config/permissionDisclosures.js
+@@ -137,6 +137,20 @@ if (FEATURES.iosStore) {
+   }
+ }
+ 
++// Version iOS (HealthTrack-iOS) : l'autorisation Temps d'écran de l'iPhone au lieu de l'accès aux données d'utilisation
++if (FEATURES.iosStore) {
++  DISCLOSURES.usage = {
++    ...DISCLOSURES.usage,
++    title: 'Avant d’autoriser l’accès au temps d’écran',
++    points: [
++      `${APP_NAME} lit, heure par heure, votre temps d’écran, le nombre de fois où vous prenez l’iPhone en main et le temps passé par app (sans rien lire de ce que vous y faites).`,
++      'Ça sert à estimer votre temps d’écran et votre sommeil, pour les comparer à votre bien-être.',
++      'L’iPhone va vous demander votre accord (Face ID ou code). Vous pourrez le retirer dans Réglages › Temps d’écran.',
++    ],
++    accept: 'J’accepte, continuer',
++  }
++}
++
+ /** La divulgation d'un accès ; erreur si l'accès n'est pas décrit (pour ne jamais demander sans prévenir). */
+ export function disclosureFor(key) {
+   const d = DISCLOSURES[key]
+diff --git a/app/src/services/phoneUsageSync.js b/app/src/services/phoneUsageSync.js
+index 3a0ba8d..f555e3a 100644
+--- a/app/src/services/phoneUsageSync.js
++++ b/app/src/services/phoneUsageSync.js
+@@ -11,6 +11,7 @@ import { upsertEntries } from '../storage/localHealthStorage'
+ import { phoneUsageEntries, summarizePhoneDay, dateKeyOf } from './phoneUsage'
+ import { phoneAppsEntries, summarizeAppsDay } from './phoneApps'
+ import { APP_NAME } from '../config/brand'
++import { readsSegments, segmentsAccessError, syncSegments } from '../ios/phoneUsageIos'
+ 
+ const KEY = 'healthtrack_phone_usage'
+ export const PHONE_USAGE_STALE_MS = 30 * 60 * 1000
+@@ -58,6 +59,7 @@ export function disablePhoneUsage() {
+ 
+ export function isPhoneUsageAvailable() {
+   if (typeof window !== 'undefined' && window.__healthtrackFakePhoneUsage) return true
++  if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') return Capacitor.isPluginAvailable('PhoneUsage')
+   return Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android'
+ }
+ 
+@@ -107,12 +109,17 @@ export async function syncPhoneUsage({ force = false, now = new Date(), plugin =
+     try {
+       const access = await checkPhoneUsageAccess(plugin)
+       if (!access.granted) {
+-        const error = access.supported
++        const error = readsSegments(plugin)
++          ? segmentsAccessError(access)
++          : access.supported
+           ? 'Accès aux données d’utilisation pas encore accordé.'
+           : `Mettez à jour ${APP_NAME} (ou Android 9+) pour cette fonction.`
+         setPhoneUsageSettings({ lastError: error })
+         return { ran: false, noAccess: true, error }
+       }
++      if (readsSegments(plugin)) {
++        return await syncSegments({ plugin, now, write, save: setPhoneUsageSettings, lookbackMs: LOOKBACK_MS })
++      }
+       const end = now.getTime()
+       const res = await plugin.queryScreenEvents({ start: end - LOOKBACK_MS, end })
+       const events = Array.isArray(res?.events) ? res.events : []

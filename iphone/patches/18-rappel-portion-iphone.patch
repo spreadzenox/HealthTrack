@@ -1,0 +1,25 @@
+diff --git a/app/src/Layout.jsx b/app/src/Layout.jsx
+index 86e4503..70aea00 100644
+--- a/app/src/Layout.jsx
++++ b/app/src/Layout.jsx
+@@ -10,6 +10,7 @@ import { useAutoSync } from './hooks/useAutoSync'
+ import { FEATURES } from './config/distribution'
+ import { loadOnboarding, needsOnboarding } from './settings/onboarding'
+ import { takePortionOpen } from './services/fodmapReminder'
++import { onPortionOpen } from './ios/portionOpen' // Version iOS (HealthTrack-iOS)
+ import './App.css'
+ 
+ /** Pendant le chargement d'une page (fichier séparé, quelques ms). */
+@@ -87,7 +88,11 @@ function usePortionOpen() {
+     }
+     check()
+     document.addEventListener('visibilitychange', check)
+-    return () => document.removeEventListener('visibilitychange', check)
++    const offIos = onPortionOpen(check) // iPhone : toucher transmis après le retour au premier plan
++    return () => {
++      document.removeEventListener('visibilitychange', check)
++      offIos()
++    }
+   }, [navigate])
+ }
+ 

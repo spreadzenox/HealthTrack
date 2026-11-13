@@ -1,0 +1,26 @@
+diff --git a/app/src/main.jsx b/app/src/main.jsx
+index 0bc1c4a..62b6bfc 100644
+--- a/app/src/main.jsx
++++ b/app/src/main.jsx
+@@ -16,6 +16,8 @@ import { installFrenchSpacing } from './utils/frenchSpacing'
+ initTheme()
+ // Version iOS : mode « captures » du simulateur (HealthTrack-iOS, VITE_IOS_CAPTURE=1), absent de toute autre build
+ if (import.meta.env.VITE_IOS_CAPTURE === '1') import('./ios/captureMode.js').then((m) => m.installCaptureMode())
++// Version iOS : copie de secours de la base (IndexedDB n'est pas durable dans WKWebView), absente de toute autre build
++if (import.meta.env.VITE_DISTRIBUTION === 'appstore') import('./ios/snapshot.js').then((m) => m.startSnapshots())
+ // Langue du document (lecteurs d'écran, césure) : « fr » sauf si l'anglais est choisi (jalon 9)
+ document.documentElement.lang = getLang()
+ 
+diff --git a/app/src/pages/Data.jsx b/app/src/pages/Data.jsx
+index 7cf5ba9..18e7ab5 100644
+--- a/app/src/pages/Data.jsx
++++ b/app/src/pages/Data.jsx
+@@ -221,7 +221,7 @@ export default function Data() {
+       <p className="page-intro">
+         Vos données sont sur ce téléphone et passent les mises à jour.{' '}
+         {FEATURES.iosStore ? (
+-          'Avant de réinstaller ou de changer de téléphone, exportez-les.'
++          `Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › ${APP_NAME} ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.`
+         ) : (
+           <>
+             Si la sauvegarde du téléphone est activée, elles y sont copiées, chiffrées ; {APP_NAME} ne la lit pas.
