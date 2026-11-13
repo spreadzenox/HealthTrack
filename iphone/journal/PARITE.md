@@ -16,7 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
-**Dernière version Android suivie** : v1030 (commit `174f589`, 13/11/2026, PR du run de 22:35 en vérification), voir
+**Dernière version Android suivie** : v1030 (commit `174f589`, 13/11/2026 ; build TestFlight 1030.1031 envoyée le 13/11 à 23:49), voir
 `upstream.json`. Livré par Android de v1025 à v1030 : #948 (CYCLE-3a-1, règles lues dans Health Connect, côté app :
 sans objet sur iPhone, où le pont `HealthCycle` n'existe pas et où le cycle vient de Santé, correctif 58 refait ; la
 priorité de la saisie à la main sur un import vaut aussi pour Santé) ; #951 (rapport PDF, confirmation visible : code

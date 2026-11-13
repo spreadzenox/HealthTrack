@@ -358,7 +358,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
-- **13/11 23:35** — POLISH-SIM-68 : le bilan du jour de la digestion se lit sur Aujourd'hui (« Bilan du jour : Gêne ») ; la fenêtre « Ma digestion » ne présente plus la note de la veille comme la dernière. PR #953 (routine unique, iPhone en v1030) finie et mergée ; build TestFlight de la v1030 envoyée.
+- **13/11 23:35** — POLISH-SIM-68 : le bilan du jour de la digestion se lit sur Aujourd'hui (« Bilan du jour : Gêne ») ; la fenêtre « Ma digestion » ne présente plus la note de la veille comme la dernière. PR #953 (routine unique, iPhone en v1030) finie et mergée ; build TestFlight 1030.1031 envoyée (13/11 23:49).
 - **13/11 21:35** — POLISH-SIM-67 : après « Créer le PDF », la confirmation vient à l'écran, au-dessus de la barre du bas (elle restait cachée dessous).
 - **13/11 20:35** — Deux simulations de personas au 45e jour (Ventre sans technique, Apple Watch ; Tout mesurer, bracelet Amazfit) : POLISH-SIM-67 à 80, PROP-SIM-16 au BACKLOG ; le plus net : la confirmation du rapport PDF cachée sous la barre du bas, la digestion notée que l'accueil ne montre pas, Analyses « pas net » lu comme un résultat. Outil : POLISH-SIM-63 et 66 corrigés.
 - **13/11 19:45** — CYCLE-3a-1 : lecture des règles de Health Connect, côté app (conversion, synchro derrière un pont natif à venir, saisie à la main prioritaire sur un import). Rien de visible ; P48 toujours « pas encore » (il faut d'abord le pont natif CYCLE-3a-2 et la demande d'autorisation CYCLE-3a-3).

@@ -1,8 +1,8 @@
 # Run 13/11 23:35 — Digestion : le bilan du jour visible (POLISH-SIM-68) ; PR iPhone #953 finie
 
 **Type** : code (mode polish, bug) et suivi iPhone  ·  **Android** : v1032 sur main après ce run  ·
-**TestFlight** : build de la v1030 envoyée par le merge de #953 (numéro et état : voir « Après le merge ») ;
-1024.1028 envoyée le 13/11 à 21:34 ; 1024.523 (ancien dépôt) chez les testeurs externes ; 844.344 intacte  ·
+**TestFlight** : **1030.1031** (version 893) envoyée le 13/11 à 23:49 par le merge de #953, envoi accepté par Apple,
+traitement en cours ; 1024.1028 envoyée le 13/11 à 21:34 ; 1024.523 (ancien dépôt) chez les testeurs externes ; 844.344 intacte  ·
 **Parité** : 70 % (33/47)
 
 ## Contexte
@@ -14,7 +14,8 @@
 ## Fait
 1. **PR #953 finie et mergée** (3d749af) : 16 checks verts, dont « Build iOS (simulateur) et captures » (57 min).
    Captures `captures/pr-953` regardées (iPhone 16e, clair : Sources, Journal, Aujourd'hui) : rien de changé, aucun
-   texte propre à Android ; `achat-essai.txt` : TEST SUCCEEDED. Le merge a lancé « iOS — TestFlight » (v1030).
+   texte propre à Android ; `achat-essai.txt` : TEST SUCCEEDED. Le merge a lancé « iOS — TestFlight » : « Version 893, build 1030.1031 », archive et envoi réussis
+   (« Upload succeeded », 23:49).
 2. **POLISH-SIM-68** (persona Ventre sans technique, J45) : après « Bilan de la journée : Gêne », rien ne le montrait
    sur Aujourd'hui, et la fenêtre « Ma digestion » disait encore « Dernière note : Douleur, hier ».
    - `DigestBlock.jsx` : une ligne « Bilan du jour : Gêne » au-dessus de « Noter ma digestion » quand le bilan du
@@ -43,7 +44,7 @@
   venait d'être envoyée. À faire au premier run où elle est traitée.
 
 ## Suite
-- Nuit : après l'envoi Alpha, `ios-store-beta-submit.yml` sur main pour la build de la v1030 de ce dépôt dès
+- Nuit : après l'envoi Alpha, `ios-store-beta-submit.yml` sur main pour la build 1030.1031 dès
   qu'Apple l'a traitée, puis `ios-store-beta-expire.yml` (nettoyage) et `ios-store-push.yml` ; le dire en tête du
   résumé, ou dire qu'aucune build de ce dépôt n'est traitée.
 - Suivi iPhone : `scripts/upstream.sh --latest` (v1032, ce correctif), puis FUSION-2.
