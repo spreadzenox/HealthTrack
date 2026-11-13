@@ -8,6 +8,18 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 🧑‍🤝‍🧑 **Deux personas au 45e jour (13/11 20:35)** : « Ventre, sans technique » (iPhone + Apple Watch) et « Tout
+> mesurer » (iPhone + bracelet Amazfit) ont essayé l'app, sans voir le code
+> ([synthèse](simulations/2026-11-13-2035-synthese.md)). Rien ne change dans l'app à ce run. Ce qu'elles ont trouvé de
+> plus net, à corriger aux prochains runs : après « Créer le PDF », la phrase de confirmation est cachée sous la barre
+> du bas ([capture](simulations/captures/2026-11-13-2035-ventre-sans-technique-J45/rapport-pdf.png)) ; une digestion
+> notée n'apparaît pas sur Aujourd'hui, qui dit encore « Noter ma digestion »
+> ([capture](simulations/captures/2026-11-13-2035-ventre-sans-technique-J45/accueil-apres-note.png)) ; dans Analyses,
+> quand rien n'est net, la liste hachurée est lue comme un résultat (« Lactose −0,8 pt : j'arrête le lait ou pas ? »,
+> [capture](simulations/captures/2026-11-13-2035-tout-mesurer-J45/analyses.png)) ; Agir vide renvoie vers Analyses :
+> « je tourne en rond ». Les deux redemandent un essai qu'on lance soi-même et un export pour tableur (déjà dans la
+> proposition PROP-SIM-10, qui attend une maquette pour vous). Rien à faire de votre côté.
+
 > 🩸 **Cycle : la lecture des règles dans Health Connect est commencée (13/11 19:45)** : rien de visible encore. L'app
 > sait maintenant ranger les règles qu'une autre app (Flo, Clue, Samsung Health…) écrit dans Health Connect : un jour
 > de règles par jour, avec le flux quand il est noté, et ce que vous saisissez vous-même dans Halcya garde la priorité
@@ -594,6 +606,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 13/11 20:35 — [Deux simulations de personas](runs/2026-11-13-2035-personas.md) | 💡 | Ventre sans technique J45 (Apple Watch), Tout mesurer J45 (Amazfit) : POLISH-SIM-67 à 80, PROP-SIM-16. Outil : POLISH-SIM-63 et 66 corrigés. Aucun code produit. Tests (3504) verts. Rien à faire de votre côté |
 | 13/11 19:45 — [Cycle : règles de Health Connect, côté app](runs/2026-11-13-1945-cycle-lecture-hc.md) | 🏗️ | CYCLE-3a-1 : conversion des périodes et flux en jours de règles, synchro derrière le pont natif à venir, saisie à la main prioritaire. Rien de visible. Tests (3502), lint, build, visual verts. Rien à faire de votre côté |
 | 13/11 18:45 — [Analyses : note confirmée, facteurs comparés](runs/2026-11-13-1845-analyses-note-compare.md) | 🔧 | POLISH-SIM-62 : « Noté : 4/5 » après l'enregistrement ; « N facteurs comparés… » quand rien n'est net et qu'aucune barre ne s'affiche. Tests (3486), lint, build, visual verts. Rien à faire de votre côté |
 | 13/11 17:45 — [Journal : la tuile « Séance »](runs/2026-11-13-1745-seance-tuile.md) | 🔧 | POLISH-SIM-58 : tuile « Séance » (type, durée) dans le résumé du jour, ligne « Séance » au lieu d'« Activité ». Tests (3481), lint, build, visual verts. Rien à faire de votre côté |

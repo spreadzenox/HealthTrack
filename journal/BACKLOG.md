@@ -500,7 +500,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-62** ✅ 13/11 18:45 (« Noté : 4/5 » en `role=status` dans Analyses, `onSaved` de `WellbeingPrompt` ; `compared` dans `resultsView` : « 16 facteurs comparés à votre bien-être, du jour même à la veille. », seulement sans piste ni barre) (Sportif J14) Analyses au 14e jour noté : « Aucun lien assez net » et « Moyen terme : encore 7
   jours notés », sans retour après « Enregistrer » la note de bien-être. Confirmer la note (« Noté : 4/5 ») ; dire en
   une ligne ce qui a été comparé.
-- [ ] **POLISH-SIM-63** (Outil, Sportif J14) La persona voit « Cigarettes 3 » sans avoir activé le compteur
+- [x] **POLISH-SIM-63** ✅ 13/11 20:35 (`keepForEquipment` écarte toute cigarette ; test) (Outil, Sportif J14) La persona voit « Cigarettes 3 » sans avoir activé le compteur
   (POLISH-SIM-42 : opt-in) : `personaData` garde les cigarettes de la démo. Les retirer sauf objectif tabac.
 - [ ] **POLISH-SIM-65** (Outil, 12/11 17:35) `personaData` donne des lectures du visage à toutes les personas, même
   « téléphone seul » qui dit n'avoir jamais activé la caméra : une option `--face=off` (aucune entrée `face_burst`),
@@ -510,10 +510,49 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   les plus utiles ou retirer les liens morts, et un test qui échoue quand le résumé cite une capture absente.
 - [ ] **PROP-SIM-15** (13/11 17:45 ; proposition avec maquette, pas de code sans accord ; Sportif J14) Séances comme
   mesure de Tendances (durée par jour, superposable au bien-être) : nouvelle mesure, donc à proposer au propriétaire.
-- [ ] **POLISH-SIM-66** (Outil, 13/11 17:45) `keepForEquipment('watch')` écarte `weight` mais garde `body_composition` :
+- [x] **POLISH-SIM-66** ✅ 13/11 20:35 (`SCALE_TYPES` : ni `weight` ni `body_composition` hors `full` ; test) (Outil, 13/11 17:45) `keepForEquipment('watch')` écarte `weight` mais garde `body_composition` :
   la persona Galaxy Watch sans balance voit une « Pesée Withings Body Scan ». L'écarter aussi (et pour `watch-hrv`, `huawei`).
 - [ ] **POLISH-SIM-64** (Outil) `persona-browse.mjs --dark` ne règle que le `colorScheme` du navigateur : l'app reste en
   clair. Régler aussi le thème de l'app (comme `visual-check --dark`).
+- **Simulations du 13/11 20:35** ([synthèse](simulations/2026-11-13-2035-synthese.md) ; Ventre sans technique J45,
+  Tout mesurer J45). Ordre proposé : 67, 68, 69, 70, 71, puis le reste après vérification.
+- [ ] **POLISH-SIM-67** (bug ; Ventre sans technique J45) Rapport PDF : la phrase « Halcya-rapport-….pdf téléchargé »
+  s'affiche sous la barre de navigation, coupée. La faire venir à l'écran (défilement) ; test.
+- [ ] **POLISH-SIM-68** (Ventre sans technique J45) Après « Bilan du jour : Gêne », la fenêtre « Ma digestion » garde
+  « Dernière note : Douleur, hier » et aucun bouton marqué ; l'accueil dit toujours « Noter ma digestion » sans la
+  note du jour. Montrer la note du jour aux deux endroits.
+- [ ] **POLISH-SIM-69** (deux personas J45) Analyses sans lien net : la liste hachurée est lue comme un résultat
+  (« Lactose −0,8 pt : j'arrête le lait ou pas ? »). La replier par défaut quand rien n'est net ; dire en tête ce qui
+  manque (le compte « encore N jours » n'est dit qu'en bas, pour le long terme). Une ligne touchée ne fait rien :
+  explication courte du terme (GOS, sorbitol) avec des aliments.
+- [ ] **POLISH-SIM-70** (deux personas J45) Agir vide : « Où en sont vos analyses » ouvre Bien-être même quand
+  l'objectif est le ventre ; ouvrir Digestion pour ce profil. L'état vide ne dit pas quoi faire d'ici là.
+- [ ] **POLISH-SIM-71** (deux personas J45) Tendances, fiche d'un jour : un jour à 1,4/5, « Ce qui a pu peser » ne
+  liste que des « + » ; ailleurs des −0,01 et −0,02 pt, sans dire s'il s'agit du ventre ou du bien-être ; « Confort
+  digestif 2,0/5, noté "douleur" » alors que Douleur = 1. Seuil d'affichage, phrase quand rien ne pèse, moyenne dite.
+- [ ] **POLISH-SIM-72** « VFC » (Aujourd'hui, Journal, Analyses) et « variabilité cardiaque » (Sources, fiche d'un
+  jour) : un seul nom.
+- [ ] **POLISH-SIM-73** (Tout mesurer J45) La sauvegarde s'appelle `healthtrack-export-AAAA-MM-JJ.json` : nom de la
+  marque (`config/brand.js`) ; l'import d'anciens fichiers ne dépend pas du nom (à vérifier par test).
+- [ ] **POLISH-SIM-74** (à vérifier ; Tout mesurer J45) Analyses, long terme : « −2,1 pt pour 150 kcal d'activité de
+  plus » sur une note sur 5, hachuré. Vérifier le calcul sur les données de la persona ; un chiffre pas net aussi
+  grand doit-il s'afficher ?
+- [ ] **POLISH-SIM-75** (à vérifier ; Tout mesurer J45) Tendances › Jour : Sommeil choisi, l'app repasse sur
+  Bien-être sans le dire (T2 prévoit la puce grisée « une valeur par jour »).
+- [ ] **POLISH-SIM-76** (à vérifier ; Tout mesurer J45) Objectif « tout comprendre » et digestion notée : Analyses
+  n'a que l'onglet Bien-être.
+- [ ] **POLISH-SIM-77** (Ventre sans technique J45) Repas, encadré « Riche en fructanes » : « ≈ 0,73 g · repère
+  0,3 g », « Varney 2017 », « Ferjančič 2024 » à première vue. Les ranger derrière un détail (la source reste citée).
+- [ ] **POLISH-SIM-78** (Outil, à vérifier) L'accord de l'IA est redemandé au 45e jour : poser l'accord dans
+  `persona-browse` pour un jour > 1, ou bug de l'app si l'accord y est déjà.
+- [ ] **POLISH-SIM-79** (Outil) `watch-hrv` joué en Apple Watch n'a pas d'oxygène du sang (config 3 : ✓) : Sources
+  dit « Jamais reçu ». Ajouter un matériel `apple-watch` (VFC et oxygène) ou une option.
+- [ ] **POLISH-SIM-80** (à vérifier) Aujourd'hui : note de bien-être 3, puis 2,9, puis 3 sans saisie ; 4 lectures du
+  visage annoncées, aucune ligne Bien-être dans le Journal du jour.
+- [ ] **PROP-SIM-16** (proposition avec maquette, pas de code sans accord ; Tout mesurer J45) Tendances n'offre que 5
+  mesures (FC, dépense, oxygène, poids, calories absents) ; Journal › Jours sans saut à une date ; carte d'appareil
+  de Sources sans la liste complète de ses mesures (température, phases). Rappels PROP-SIM-10 confirmés : essai lancé
+  soi-même, export CSV.
 - [ ] **PROP-SIM-14** (proposition avec maquette, pas de code sans accord ; Sportif J14) « Autre chose » n'offre qu'un
   doublon de « Décrire un repas » : séance ou courbatures notées à la main pour qui n'a pas de montre ? Le « + » de
   « Vos données du jour » ne fait que surligner les boutons du haut : l'ouvrir sur un choix, ou le retirer.
