@@ -1,4 +1,4 @@
 {
-  "publication": false,
+  "publication": true,
   "pourquoi": "Interrupteur de la bascule (iphone/fusion/BASCULE.md). Tant qu'il est à false, aucun workflow iOS qui publie (TestFlight, fiche, abonnements, examen bêta) ne démarre dans ce dépôt, même lancé à la main. L'orchestrateur le passe à true le jour de la bascule, après que le propriétaire a recréé l'environnement « appstore » et ses trois secrets."
 }
