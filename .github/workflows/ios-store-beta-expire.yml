@@ -1,5 +1,3 @@
-# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d1dc912 (.github/workflows/store-beta-expire.yml).
-# Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
 # Livraison continue sur TestFlight (décision du propriétaire du 09/11 vers 11:00) : expire les builds qui ne servent
 # plus (scripts/store-beta-expire.mjs). Builds nommées (`builds`, ex. « 896.376 ») ou nettoyage après chaque nouvelle
 # build (`nettoyage`). Jamais la build attachée à la version de l'App Store (844.344) ni la dernière build distribuée

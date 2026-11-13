@@ -1,5 +1,3 @@
-# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d1dc912 (.github/workflows/store-push.yml).
-# Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
 # Fiche App Store fr-FR (store/app-store/fr-FR) envoyée à App Store Connect par son API (I9) : nom, sous-titre,
 # description, mots-clés, texte promotionnel, adresses d'assistance et de confidentialité, et, sur demande, les
 # captures 6,9" de captures/store et iPad 13" de captures/store-ipad, sur la version encore « Prête à soumettre », dont

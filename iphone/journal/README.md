@@ -1,5 +1,11 @@
 # Journal de bord — Halcya sur iOS
 
+> **Depuis le 13/11 au soir (dépôt unique, routine unique) : le résumé que lit le propriétaire est en tête de
+> [`journal/README.md`](../../journal/README.md), Android et iPhone dans le même tableau.** Le bloc ci-dessous est le
+> dernier résumé de l'ancienne routine iOS, gardé pour mémoire ; il n'est plus tenu à jour. La charte (§ 3, § 4, § 8)
+> reste la référence pour construire et publier l'iPhone ; son § 2 (« lecture seule ») et « DEMANDES » décrivent
+> l'ancien montage (fichiers archivés dans `archives/ancien-montage/`).
+
 ## 📅 Semaine en cours — S46 (lundi 9 novembre → dimanche 15 novembre 2026)
 
 > Résumé tenu à jour à chaque run de la routine iOS : **c'est ce que lit le propriétaire.**

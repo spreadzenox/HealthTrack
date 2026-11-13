@@ -21,6 +21,52 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 📱 Routine unique — Android et iPhone dans ce dépôt (décision du 13/11 vers 19:05, « go bascule »)
+
+> Depuis la fusion (#945, #950), la version iPhone vit dans `iphone/` et cette routine fait les deux apps. Le backlog
+> propre à l'iPhone reste `iphone/journal/BACKLOG.md`, la parité `iphone/journal/PARITE.md`.
+
+- [x] **FUSION-1** (13/11 22:35, premier run de la routine unique) : résumé unique en tête de `README.md` (tableau
+  Android et iPhone, une seule prochaine action) ; ancien montage archivé (`journal/archives/ancien-montage/POUR-IOS.md`,
+  `iphone/journal/archives/ancien-montage/` : DEMANDES, POUR-ORCHESTRATEUR, PROMPT-ROUTINE) ; en-tête « GÉNÉRÉ » retiré
+  des workflows `ios-*.yml` ; suivi d'Android repris : code embarqué v1024 → v1030, correctif 58 refait (CYCLE-3a-1).
+- [ ] **FUSION-2** : `upstream.json` à `"commit": "HEAD"`, `app/**` et `relay/**` dans les filtres de `ios-build.yml`
+  (pas `app/android/**`), job Ubuntu « les correctifs s'appliquent » sur les PR qui touchent `app/src/**`
+  (`iphone/README.md`, « Sort des correctifs », étape 1). Tant que ce n'est pas fait, chaque run avance
+  `upstream.json` (`scripts/upstream.sh --latest`).
+- [ ] **FUSION-3** : faire fondre `iphone/patches/` dans `app/src/`, un sujet par run, la variante `appstore`
+  (correctif 01) d'abord ; puis `overlay/` (étape 2), puis `ios/` → `app/ios/` (étape 3).
+- [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
+  adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
+  dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
+- [ ] **FUSION-5** : charte de `iphone/journal/README.md` relue (§ 2 « lecture seule », « DEMANDES ») et fondue dans
+  la charte de `journal/README.md` ; captures de l'iPhone liées depuis ce dépôt (branches `captures/main`).
+
+### Demandes de l'ancienne routine iOS encore ouvertes (reprises de `DEMANDES.md` avant archivage, texte complet dans
+`iphone/journal/archives/ancien-montage/DEMANDES.md`) — à trier dans le polish, une par run au plus
+
+- [ ] **DEM-IOS-1** (demande du 13/11, état repris : « ouverte ») : (passage des personas iPhone du 13/11, persona 7 « Stressé et pressé », iPhone + Apple Watch, J14, presque rien de noté, version 1019 ; `journal/simulations/2026-11-13-0500-synthese.md`) Code partagé : (1) Accueil sans phrase de synthèse (« j'ai deux chiffres, mais pas de verdict ni de pourquoi ») […]
+- [ ] **DEM-IOS-2** (demande du 12/11, état repris : « ouverte ») : (petit) Suite de #930 : `theme.js` (`styleSystemBars`) appelle `registerPlugin('SystemBars')` à chaque changement de thème, alors que Capacitor 8 enregistre déjà `SystemBars` dans `@capacitor/core` : 42 « Capacitor plugin "SystemBars" already registered » dans la console d'une build de captures […]
+- [ ] **DEM-IOS-3** (demande du 12/11, état repris : « ouverte ») : (petit) Après #930 (un seul `registerPlugin` par plugin) : exporter, comme `NativeAppManager`, les plugins `NativeGutEvening` (`services/gutEvening.js`), `NativeEveningNote` (`services/eveningNote.js`) et `NativePortionReminder` (`services/fodmapReminder.js`)
+- [ ] **DEM-IOS-4** (demande du 12/11, état repris : « ouverte ») : (passage des personas iPhone du 12/11, persona 6 « Prendre soin de soi, maigrir », iPhone + Apple Watch, J14, version 1008 ; `journal/simulations/2026-11-12-0600-synthese.md`) Code partagé : (1) le poids n'a ni raccourci ni tuile sur l'Accueil (saisie seulement par Nutrition › « Compléter mon […]
+- [ ] **DEM-IOS-5** (demande du 11/11, état repris : « ouverte ») : (petit) Note `2026-11-11-1635-noter-objectif.json` (#918, « Accueil : ce que vous noterez suit votre objectif ») : elle commence par « Sans Health Connect » ; la marquer `"variants": ["play", "sideload"]` (règle IOS-3), ou dire « Sans app de santé reliée »
+- [ ] **DEM-IOS-6** (demande du 11/11, état repris : « ouverte ») : (passage des personas iPhone du 11/11, persona 4 « Endométriose », iPhone seul, J14, version 988 ; `journal/simulations/2026-11-11-0700-*` de ce dépôt ; reprise de la persona du 10/11 après l'arrivée du cycle) : 1) Analyses › Digestion ne tient pas encore compte du cycle (« Le détail » : jour de la […]
+- [ ] **DEM-IOS-7** (demande du 11/11, état repris : « ouverte ») : Après #908 (POLISH-SIM-44) : sur iPhone, « Réglages » est aussi le nom de l'app système d'Apple. Proposition : écrire « la roue en haut à droite › Paramètres » (ou « ⚙ › Paramètres ») plutôt que « Réglages › Paramètres » dans `GutEveningReminder.jsx`, `Recommendations.jsx` et `Onboarding.jsx` […]
+- [ ] **DEM-IOS-8** (demande du 11/11, état repris : « ouverte ») : Avec CYCLE-3 (Health Connect), compter le cycle dans « Mes appareils » : `{ key: 'cycle', label: 'cycle', episodic: true }` dans `METRICS` de `devices/healthApps.js`, et `stopped: habitual && !m.episodic && …` dans `sourceCoverage` (une mesure par épisodes n'est jamais « arrêtée »).
+- [ ] **DEM-IOS-9** (demande du 28/10, état repris : « à transmettre (décision du propriétaire, peut-être avec un avis juridique) ») : **Trancher la licence des poids HSEmotion** (valence / éveil du visage, appris sur AffectNet, réservé à la recherche non commerciale) : idée **I73** d'Android, « visage sans poids AffectNet »
+- [ ] **DEM-IOS-10** (demande du 29/10, état repris : « à transmettre ») : (petit) `app/src/services/bodyProfile.js` : un poids venu de Health Connect (`source: 'health_connect'`) a l'origine `manual`, et la carte du profil (Nutrition) l'annonce « (saisi le 26/10) » comme si la personne l'avait tapé ; lui donner sa propre origine (p. ex. `health`) et un libellé « (Health […]
+- [ ] **DEM-IOS-11** (demande du 29/10, état repris : « à transmettre ») : (petit) Marquer `"variants": ["play", "sideload"]` la note `2026-10-29-0533-paywall-lancement.json` (#494, « Premium offert : dit une seule fois »)
+- [ ] **DEM-IOS-12** (demande du 7/11, état repris : « ouverte ») : (petit) Les notes de Nouveautés `2026-11-07-2150-norme-apres-changement` et `2026-11-07-2200-bien-etre-du-jour-ts1` sont marquées `["play", "sideload"]`, alors que `POUR-IOS.md` (22:30) les dit valables pour l'iPhone et que le code est partagé : les marquer sans `variants` (toutes variantes) ou […]
+- [ ] **DEM-IOS-13** (demande du 8/11, état repris : « Analyses en partie fait en v923 (#846 : une unité par facteur, effets hors échelle masqués) ; le reste ouvert ») : (constats des personas iPhone, 2e passage, version 918 ; `journal/simulations/2026-11-08-2010-synthese.md` de ce dépôt) code partagé, pour votre tri POLISH : Analyses › Bien-être (« −4,7 pt » sur une note sur 5, « −0,0 pt », unité de référence qui change selon la fenêtre, marqueurs pas à l'échelle, […]
+- [ ] **DEM-IOS-14** (demande du 8/11, état repris : « ③ en partie fait en v913 (#835 : jours notés, Agir vide expliqué ; #836 : rapport depuis Agir) et v914 (#837 : pas du jo ») : (constats des personas iPhone, `journal/simulations/2026-11-08-1510-synthese.md` de ce dépôt) code partagé : ① le même repas d'hier sans kcal dans Journal › Jours (« Repas 1 ») mais « ≈ 479 kcal » dans Repas ; ② l'outil des personas, en `--store=appstore` comme en play ?, répond « Aucun aliment […]
+- [ ] **DEM-IOS-15** (demande du 8/11, état repris : « ouvert ») : (petit, POLISH) Analyses › « Pistes à tester », piste verrouillée (sans abonnement) : la barre floutée `.pistes-first-blur` (`TodayCards.css` : `flex: 1`, `height: 12px`) est un `span` vide posé dans `.reco-piste-title` (`Recommendations.jsx`), qui n'est pas un conteneur flexible : elle n'a ni […]
+- [ ] **DEM-IOS-16** (demande du 7/11, état repris : « ouverte ») : (petit, AUJ-7) `src/config/digestifWording.test.js` relève comme « texte visible » les identifiants de notes de Nouveautés qui contiennent « ventre » (ex. `2026-11-06-1935-ventre-grande-police`, cité par la liste `APPSTORE_HIDDEN` de l'iPhone dans `changelog.js`) ; ajouter à `ALLOWED` un motif […]
+- [ ] **DEM-IOS-17** (demande du 7/11, état repris : « ouverte ») : (petit, TESTEUR-2c) La notification du soir repliée garde le texte « 0 = très bas, 5 = très bien » (`EveningNoteNotice.java`, `setContentText`), alors que ses boutons vont de 1 à 5 depuis #772 (v855) et que la vue dépliée dit « 1 = très bas, 5 = très bien ».
+- [ ] **DEM-IOS-18** (demande du 7/11, état repris : « ouverte ») : (petit, REVUE-320) Sur un écran de 390 points (iPhone 16e, iPhone 12), les sous-onglets d'Analyses passent sur deux lignes : « Bien-être », « Ventre », « FODMAP » puis « Tendances » seul en dessous (captures de #346 à #351), alors que la note de Nouveautés du 6/11 dit qu'ils tiennent sur une ligne.
+- [ ] **DEM-IOS-19** (demande du 6/11, état repris : « ouverte ») : (petit, KEEP-WHOLE) Les titres des pistes (`LeverCard`, `<p className="reco-advice-text">{lever.title ?? lever.action}</p>` de `Recommendations.jsx`) ne passent pas par `keepWhole()` : sur un écran de 390 points (iPhone 16e, iPhone 12 ; sans doute aussi un téléphone Android étroit), « Nuits plus […]
+- [ ] **DEM-IOS-20** (demande du 5/11, état repris : « ⏳ ») : (petit, information, ANALYSES-ONGLETS-1) `/recommendations/ventre` est la première page à deux niveaux accessible dans l'app ; avec `base: './'` (`vite.config.js`), un **rechargement complet** sur cette page cherche les fichiers sous `/recommendations/assets/` : écran blanc. Sur iPhone, c'est […]
+- [ ] **DEM-IOS-21** (demande du 10/11, état repris : « ouvert ») : (constats des personas iPhone, passage du 10/11, persona 4 « Endométriose », iPhone seul, J14, version 969 ; `journal/simulations/2026-11-10-1300-endometriose-iphone-J14.md` de ce dépôt) code partagé, pour votre tri POLISH : « Mon cycle » cochable mais sans geste « Règles » ni phase visible (l'aide […]
+
 ## 🤖 Automatiser les gestes du propriétaire (décision du 12/11 vers 16:15) — détail : `PRODUIT.md` § 4
 
 - [x] **AUTO-GESTES-1** (12/11 16:35, étape de journal) : classement (a) / (b) / (c) de chaque action ouverte

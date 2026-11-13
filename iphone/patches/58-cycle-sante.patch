@@ -1,9 +1,9 @@
 diff --git a/app/src/connectors/HealthConnectConnector.js b/app/src/connectors/HealthConnectConnector.js
-index 573b597..b4bb83c 100644
+index c3f087a0..953eddcd 100644
 --- a/app/src/connectors/HealthConnectConnector.js
 +++ b/app/src/connectors/HealthConnectConnector.js
-@@ -23,6 +23,8 @@
- import { BaseConnector } from './BaseConnector'
+@@ -24,6 +24,8 @@ import { BaseConnector } from './BaseConnector'
+ import { readCycleEntries } from './healthConnectCycle'
  import { debugInfo, debugWarn, debugError, debugDebug } from '../utils/debugLog'
  import { HEALTH_CONNECT_READ_WINDOW_DAYS } from './syncWindow'
 +import { requestSanteAuthorization, syncCycleFromSante } from '../ios/cycleSante' // Version iOS (HealthTrack-iOS) : CYCLE-iOS (correctif 58)
@@ -11,7 +11,7 @@ index 573b597..b4bb83c 100644
  
  const TAG = 'HealthConnect'
  
-@@ -789,6 +791,11 @@ export class HealthConnectConnector extends BaseConnector {
+@@ -800,6 +802,11 @@ export class HealthConnectConnector extends BaseConnector {
        return 'denied'
      }
      try {
@@ -23,8 +23,8 @@ index 573b597..b4bb83c 100644
        debugInfo(TAG, 'Appel Health.requestAuthorization()…')
        await Health.requestAuthorization({ read: READ_TYPES, write: [] })
        if (isIos()) {
-@@ -1166,6 +1173,17 @@ export class HealthConnectConnector extends BaseConnector {
-       }
+@@ -1191,6 +1198,17 @@ export class HealthConnectConnector extends BaseConnector {
+       errors.push(`menstruation: ${e.message || e}`)
      }
  
 +    // Version iOS (HealthTrack-iOS), CYCLE-iOS-1 : le cycle noté dans l'app Santé (règles, symptômes), lu par le
