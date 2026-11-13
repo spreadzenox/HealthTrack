@@ -57,6 +57,8 @@ const PATHS = {
   moon: <path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z" />,
   heart: <path d="M12 19.5s-7-4.3-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.2c0 5-7 9.3-7 9.3z" />,
   pulse: <path d="M3 12h4l2-5 4 10 2-5h6" />,
+  // Séance de sport (POLISH-SIM-58) : un haltère, jamais le tracé de la VFC
+  dumbbell: <path d="M3.5 9.5v5M6.5 7v10M6.5 12h11M17.5 7v10M20.5 9.5v5" />,
   steps: (
     <>
       <path d="M8 3.5c1.7 0 2.6 1.9 2.6 4.2 0 2-.8 3.6-.8 5.3H6.4c0-1.7-.9-3.2-.9-5.3C5.5 5.4 6.3 3.5 8 3.5zM6.5 15.5h3.2v1.6a1.6 1.6 0 0 1-3.2 0z" />

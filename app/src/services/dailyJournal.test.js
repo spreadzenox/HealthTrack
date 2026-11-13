@@ -8,6 +8,20 @@ function e(type, at, payload = {}, source = 'health_connect') {
 }
 
 describe('buildDailyJournal', () => {
+  it('compte les séances de sport du jour, avec leur durée (POLISH-SIM-58)', () => {
+    const days = buildDailyJournal([
+      e('activity', '2026-10-08T18:00:00', { workoutType: 'cycling', durationSeconds: 3360 }),
+      e('activity', '2026-10-07T07:30:00', { workoutType: 'running', durationSeconds: 1800 }),
+      e('activity', '2026-10-07T18:00:00', { workoutType: 'yoga', durationSeconds: 2400 }),
+      e('activity', '2026-10-06T18:00:00', { workoutType: 'swimming' }),
+      e('steps', '2026-10-05T00:00:00', { value: 4000, period: 'day' }),
+    ])
+    expect(days[0].summary.workouts).toEqual({ count: 1, minutes: 56, type: 'cycling' })
+    expect(days[1].summary.workouts).toEqual({ count: 2, minutes: 70, type: null })
+    expect(days[2].summary.workouts).toEqual({ count: 1, minutes: null, type: 'swimming' })
+    expect(days[3].summary.workouts).toBeNull()
+  })
+
   it('regroupe les entrées par jour local, le plus récent en premier', () => {
     const days = buildDailyJournal([
       e('cigarette', '2026-10-07T09:00:00', { count: 1 }, 'app_cigarette'),

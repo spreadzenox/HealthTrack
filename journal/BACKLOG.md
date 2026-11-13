@@ -471,7 +471,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-57** ✅ 12/11 17:35 (case cachée sans aucune entrée `face_burst`, un comptage en échec la laisse ; indication « Un fichier JSON, à garder en lieu sûr. », phrase de fin « <fichier> téléchargé. » hors Android) (Ventre et données J45) Rapport PDF : la case « bien-être estimé (caméra) » est proposée sans
   aucune lecture du visage ; la cacher dans ce cas. Données › Exporter : « rangé dans Documents » et « Enregistrez le
   fichier… (ex. Dossier Documents) » se contredisent ; une seule phrase.
-- [ ] **POLISH-SIM-58** (Sportif J14, Galaxy Watch) Séances : Sources annonce des « séances » reçues, la persona ne les
+- [x] **POLISH-SIM-58** ✅ 13/11 17:45 (vérifié dans l'outil : les séances étaient listées, en ligne « Activité », aucune dans les 3 jours affichés d'abord ; tuile lilas « Séance » dans le résumé du jour, `summary.workouts` ; ligne renommée « Séance » ; reste PROP-SIM-15) (Sportif J14, Galaxy Watch) Séances : Sources annonce des « séances » reçues, la persona ne les
   trouve ni dans Journal › Jours ni dans Tendances. Vérifier dans l'outil (environ 1 jour sur 3 avec séance) et dans
   l'app où elles s'affichent ; si elles ne sont que dans une liste de saisies, une tuile « Séance » dans la carte du
   jour.
@@ -494,6 +494,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **JOURNAL-CAPTURES-1** (12/11 17:35) 16 captures citées dans le résumé S46 (12/11 00:35 à 15:35) ne sont pas
   dans le dépôt (`*.png` ignoré, `git add -f` oublié). `.gitignore` corrigé (`!journal/**/*.png`). Reste : refaire
   les plus utiles ou retirer les liens morts, et un test qui échoue quand le résumé cite une capture absente.
+- [ ] **PROP-SIM-15** (13/11 17:45 ; proposition avec maquette, pas de code sans accord ; Sportif J14) Séances comme
+  mesure de Tendances (durée par jour, superposable au bien-être) : nouvelle mesure, donc à proposer au propriétaire.
+- [ ] **POLISH-SIM-66** (Outil, 13/11 17:45) `keepForEquipment('watch')` écarte `weight` mais garde `body_composition` :
+  la persona Galaxy Watch sans balance voit une « Pesée Withings Body Scan ». L'écarter aussi (et pour `watch-hrv`, `huawei`).
 - [ ] **POLISH-SIM-64** (Outil) `persona-browse.mjs --dark` ne règle que le `colorScheme` du navigateur : l'app reste en
   clair. Régler aussi le thème de l'app (comme `visual-check --dark`).
 - [ ] **PROP-SIM-14** (proposition avec maquette, pas de code sans accord ; Sportif J14) « Autre chose » n'offre qu'un

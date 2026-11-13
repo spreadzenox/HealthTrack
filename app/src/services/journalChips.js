@@ -1,7 +1,7 @@
 import { toDisplay } from './mood/wellbeingScale'
 import { weatherSummaryParts } from './weather'
 import { formatScreenMinutes } from './phoneUsage'
-import { formatDuration } from '../utils/format'
+import { formatDuration, workoutTypeLabel } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
 import { measureTone } from '../theme/themes'
 import { isLikelyIncompleteEnergy } from './nutritionIntakeCompare'
@@ -31,6 +31,8 @@ const CHIP_KEYS = {
   Glycémie: 'glucoseMgDl',
   FC: 'heartRate',
   Dépense: 'burnedKcal',
+  Séance: 'workouts',
+  Séances: 'workouts',
   'Bien-être': 'wellbeing',
   Repas: 'meals',
   Écran: 'screenMinutes',
@@ -40,11 +42,11 @@ const CHIP_KEYS = {
 
 /** Clé de mesure d'une tuile (icône, thème, écart à la norme). */
 export function chipKey(label) {
-  return CHIP_KEYS[label] ?? (/ repas$/.test(label) ? 'meals' : null)
+  return CHIP_KEYS[label] ?? (/ repas$/.test(label) ? 'meals' : / séances$/.test(label) ? 'workouts' : null)
 }
 
 export function chipTheme(label) {
-  return measureTone(CHIP_KEYS[label] ?? (/ repas$/.test(label) ? 'meals' : null))
+  return measureTone(chipKey(label))
 }
 
 /**
@@ -92,6 +94,13 @@ export function summaryChips(s) {
     chips.push(['FC', min === max ? `${Math.round(min)} bpm` : `${Math.round(min)} à ${Math.round(max)} bpm`])
   }
   if (s.burnedKcal != null) chips.push(['Dépense', `${fr(s.burnedKcal)} kcal`])
+  if (s.workouts) {
+    // Séances de sport (POLISH-SIM-58) : une seule dit son type ; plusieurs, leur nombre et la durée totale
+    const { count, minutes, type } = s.workouts
+    const duration = minutes != null ? formatDuration(minutes) : null
+    if (count === 1) chips.push(['Séance', [workoutTypeLabel(type), duration].filter(Boolean).join(', ') || '1'])
+    else chips.push(duration ? [`${count} séances`, duration] : ['Séances', String(count)])
+  }
   // Une seule note, ou des cigarettes : déjà lisibles dans les lignes du jour, juste en dessous
   if (s.wellbeing?.count > 1) chips.push(['Bien-être', `${frNumber(Math.round(toDisplay(s.wellbeing.average) * 10) / 10)} / 5`])
   if (s.meals > 0) {

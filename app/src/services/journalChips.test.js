@@ -56,6 +56,27 @@ describe('summaryChips — repas', () => {
   })
 })
 
+describe('summaryChips — séances de sport (POLISH-SIM-58)', () => {
+  const chip = (workouts) => summaryChips({ workouts }).find(([label]) => /éance/.test(label))
+
+  it('une séance : son type et sa durée', () => {
+    expect(chip({ count: 1, minutes: 56, type: 'cycling' })).toEqual(['Séance', 'Vélo, 56 min'])
+    expect(chip({ count: 1, minutes: null, type: 'swimming' })).toEqual(['Séance', 'Natation'])
+    expect(chip({ count: 1, minutes: 30, type: null })).toEqual(['Séance', '30 min'])
+  })
+
+  it('plusieurs séances : le nombre dans le titre, la durée totale en valeur', () => {
+    expect(chip({ count: 2, minutes: 70, type: null })).toEqual(['2 séances', '1 h 10'])
+    expect(chip({ count: 2, minutes: null, type: null })).toEqual(['Séances', '2'])
+  })
+
+  it('aucune séance : aucune tuile ; la tuile est lilas (activité)', () => {
+    expect(chip(null)).toBeUndefined()
+    expect(chipTheme('Séance')).toBe('lilac')
+    expect(chipTheme('2 séances')).toBe('lilac')
+  })
+})
+
 describe('summaryChips — nuit de la montre (MONTRE-SCORE, I200)', () => {
   it('montre le score de la montre et la FC de la nuit juste après le sommeil', () => {
     const chips = summaryChips({ sleepMinutes: 441, watchSleepScore: 82, sleepHr: 57, steps: 4000 })

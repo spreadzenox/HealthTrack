@@ -38,6 +38,7 @@ const CHIP_ICONS = {
   sleepMinutes: 'moon', watchSleepScore: 'star', sleepHr: 'heart', steps: 'steps', restingHr: 'heart', hrv: 'pulse',
   hrvDay: 'pulse', spo2: 'drop', respiratoryRate: 'wind', temperatureC: 'thermo', skinTempC: 'thermo', watchStress: 'gauge',
   bloodPressure: 'heart', glucoseMgDl: 'drop', heartRate: 'heart', burnedKcal: 'flame', wellbeing: 'smile', meals: 'meal',
+  workouts: 'dumbbell',
   screenMinutes: 'phone', socialMinutes: 'phone', weather: 'sun',
 }
 /** Mesure du résumé → mesure comparée à votre norme (dayDeviations, AUJ-3b). */
@@ -133,7 +134,7 @@ function normsOf(normDays, dateKey, since) {
 
 const TYPE_LABELS = {
   food: 'Repas',
-  activity: 'Activité',
+  activity: 'Séance',
   weight: 'Poids',
   sleep: 'Sommeil',
   wellbeing: 'Bien-être',
