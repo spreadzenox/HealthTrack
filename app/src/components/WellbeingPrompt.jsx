@@ -92,9 +92,10 @@ function withTags(payload, tags) {
  * Note de bien-être donnée à la main, ouverte par l'appelant (open + onClose) : depuis la carte « Bien-être estimé »
  * de l'Accueil, et le Journal. Elle ne s'ouvre plus d'elle-même au lancement (POL-3, retour
  * du propriétaire du 24/10 : la lecture du visage estime déjà le bien-être). Avec `entry`, elle modifie cette note :
- * la note et les tags changent, l'heure et les autres champs restent.
+ * la note et les tags changent, l'heure et les autres champs restent. `onSaved(note)` prévient l'appelant de la note
+ * enregistrée (1 à 5), pour qu'il la confirme à l'écran (POLISH-SIM-62).
  */
-export default function WellbeingPrompt({ open = false, onClose, entry, initialMode = 'now' } = {}) {
+export default function WellbeingPrompt({ open = false, onClose, onSaved, entry, initialMode = 'now' } = {}) {
   const [selected, setSelected] = useState(null)
   const [tags, setTags] = useState([])
   const [saving, setSaving] = useState(false)
@@ -206,6 +207,7 @@ export default function WellbeingPrompt({ open = false, onClose, entry, initialM
         })
       }
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
+      onSaved?.(selected)
       close()
     } catch (e) {
       setError(e.message || 'Enregistrement impossible')
