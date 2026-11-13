@@ -1,4 +1,4 @@
-# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d9da930 (.github/workflows/store-beta.yml).
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@bad8351 (.github/workflows/store-beta.yml).
 # Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
 # Examen bêta d'Apple (TestFlight externe) : relevé en lecture seule de l'état des builds du groupe « Testeurs Halcya »
 # (scripts/store-beta.mjs ; décision du propriétaire du 06/11 vers 18:20 : relevé à chaque run, rien soumis ni changé

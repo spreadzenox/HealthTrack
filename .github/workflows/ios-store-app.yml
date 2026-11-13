@@ -1,4 +1,4 @@
-# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d9da930 (.github/workflows/store-app.yml).
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@bad8351 (.github/workflows/store-app.yml).
 # Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
 # Réglages de l'app dans App Store Connect (scripts/store-app.mjs), **seulement sur l'accord explicite du
 # propriétaire** : « Prix et disponibilité » (gratuite, 5 pays de P32) et « Content Rights ». Ne remplace jamais un

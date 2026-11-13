@@ -1,4 +1,4 @@
-# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d9da930 (.github/workflows/store-subscriptions.yml).
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@bad8351 (.github/workflows/store-subscriptions.yml).
 # Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
 # Abonnements App Store (I6) créés par l'API App Store Connect (scripts/store-subscriptions.mjs) : groupe « Halcya »,
 # Gold mensuel (9,99 €), Silver annuel (29,99 €, essai gratuit de 2 semaines) et Silver mensuel (4,99 €), en France,

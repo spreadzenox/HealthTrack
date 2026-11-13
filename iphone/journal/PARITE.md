@@ -16,7 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
-**Dernière version Android suivie** : v1019 (commit `340bbe1`, 12/11/2026), voir `upstream.json`.
+**Dernière version Android suivie** : v1021 (commit `c85bf63`, 13/11/2026), voir `upstream.json`.
 
 ## 1. Socle
 
@@ -107,6 +107,7 @@ Une ligne par livraison Android reportée ici (date, PR `[Auto]`, ce que ça cha
 
 | Date | PR Android | Ce que ça demande côté iOS | État |
 |---|---|---|---|
+| 13/11 17:15 | #942, #943 (v1020, v1021) | #942 : orchestration d'Android (`orchestration/`, passation de l'orchestrateur), rien dans l'app ; suivie avec la suivante. #943 (POLISH-SIM-61) : Tendances, sous la courbe une ligne explique le pointillé (« attendu d'après vos habitudes ») quand un attendu est tracé ; une mesure sans attendu (sommeil, pas, poids, VFC, dont la VFC SDNN de l'Apple Watch) s'arrête à aujourd'hui, sans jours vides à droite (`TrendsViewer.jsx` et `.css`). Code partagé, valable sur iPhone ; note de Nouveautés `2026-11-13-1645-attendu-legende` pour tous. Après 23 h sans run d'Android (12/11 17:56 → 13/11 16:45). 52 correctifs sans retouche ; 3836 tests, build appstore et lint passent | ✅ (captures de la PR) |
 | 12/11 18:00 | #940, #941 (v1018, v1019) | #941 (POLISH-SIM-57, 56) : Données, le rapport PDF ne propose plus d'inclure le bien-être estimé tant qu'aucune lecture du visage n'existe (`DoctorReportCard.jsx`) ; la sauvegarde dit où est le fichier une seule fois, après l'export (« Un fichier JSON, à garder en lieu sûr. » avant ; `Data.jsx`) ; Analyses, « Long terme (de 7 à 27 jours avant) : encore 12 jours avec votre digestion notée » (`resultsView.js`). Code partagé, valable sur iPhone. Correctif 09 refait (contexte) ; correctif 62 retiré : la ligne sous le bouton ne nomme plus de dossier, et sur iPhone l'endroit reste dit après l'export (« … est aussi dans l'app Fichiers › Sur mon iPhone › Halcya. », correctif 09) ; test iPhone mis à jour. #940 (v1018) : journal d'Android (missions navigateur). 52 correctifs | ✅ |
 | 12/11 16:00 | #938 (v1017) | #938 (POLISH-SIM-55) : Analyses, sous « Lactose », « Fructanes » ou « GOS », la ligne dit « repas riche en lactose (FODMAP) » (`analysisResults.js`). Code partagé, valable sur iPhone. 53 correctifs sans retouche | ✅ |
 | 12/11 14:00 | #937 (v1016) | #937 (POLISH-SIM-54) : Tendances, sous la courbe du confort digestif, une ligne donne la note de chaque niveau (Calme 5, Gêne 3, Douleur 1 ; `trendsData.js`). Code partagé, valable sur iPhone. 53 correctifs sans retouche (dont 56, mesures de Tendances) | ✅ |

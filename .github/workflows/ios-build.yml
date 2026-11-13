@@ -1,4 +1,4 @@
-# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d9da930 (.github/workflows/ios-build.yml).
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@bad8351 (.github/workflows/ios-build.yml).
 # Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
 # Version iOS de Halcya : code Android suivi (upstream.json) + adaptations iOS, build pour le simulateur sans signature,
 # captures sur deux iPhone simulés (taille de l'iPhone 12 de test, et un récent), en clair et en sombre.

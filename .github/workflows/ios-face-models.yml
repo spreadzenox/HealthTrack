@@ -1,4 +1,4 @@
-# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@d9da930 (.github/workflows/face-models.yml).
+# GÉNÉRÉ par iphone/fusion/porter-workflows.mjs depuis spreadzenox/HealthTrack-iOS@bad8351 (.github/workflows/face-models.yml).
 # Jusqu’à la bascule, ne pas modifier ce fichier : il est réécrit à chaque import (iphone/fusion/importer.sh).
 # Lecture du visage sur iPhone (I7) : le calcul (swift test) puis les 3 modèles du Face Landmarker exécutés par
 # TensorFlow Lite C sur un iPhone simulé, comparés aux sorties de référence d'Android (mêmes tolérances que
