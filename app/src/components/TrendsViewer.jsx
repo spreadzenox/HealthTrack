@@ -288,6 +288,12 @@ export default function TrendsViewer({
     setSelected(null)
     setAdding(false)
   }
+  // POLISH-SIM-61 : les jours futurs ne s'affichent que si une courbe choisie y trace son attendu (bien-être,
+  // confort digestif estimé) ; sinon la période s'arrête à aujourd'hui, sans jours vides
+  const hasFuture = shown.some((k) => data.series[k].some((p) => p.future))
+  const chartData = hasFuture ? data : { ...data, dates: data.dates.filter((d) => d <= data.today) }
+  // Un jour futur touché ne reste pas ouvert quand la courbe qui portait son attendu est retirée
+  const sel = selected && chartData.dates.includes(selected) ? selected : null
   // TS-2 : repères « changement » en vue Mois
   const marks = period === 'month' ? changeMarks(changes, shown, data.dates) : []
   // Revue du 09/11 : historique vierge (aucune courbe, aucune lecture ni note) → le message seul, sans Jour / Semaine /
@@ -385,9 +391,14 @@ export default function TrendsViewer({
         </>
       ) : shown.length ? (
         <>
-          <Chart data={data} keys={shown} selected={selected} onSelect={setSelected} marks={marks} />
-          {selected
-            ? <DayDetail data={data} keys={shown} date={selected} onClose={() => setSelected(null)} extra={dayExtra?.(selected, shown) ?? null} marks={marks} />
+          <Chart data={chartData} keys={shown} selected={sel} onSelect={setSelected} marks={marks} />
+          {hasFuture && (
+            <p className="trends-future-legend">
+              <span className="trends-future-swatch" aria-hidden="true" />attendu d’après vos habitudes
+            </p>
+          )}
+          {sel
+            ? <DayDetail data={data} keys={shown} date={sel} onClose={() => setSelected(null)} extra={dayExtra?.(sel, shown) ?? null} marks={marks} />
             : <p className="trends-hint">Touchez un jour pour son détail.</p>}
           {shown.some((k) => trendMeasure(k).gloss) && (
             // POLISH-SIM-6 : une abréviation dit son nom en toutes lettres une fois, ici

@@ -162,6 +162,21 @@ button.trends-chip {
   fill: var(--text-muted);
 }
 
+/* POLISH-SIM-61 : sous la courbe, le pointillé dit d'où il vient */
+.trends-future-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.trends-future-swatch {
+  width: 22px;
+  border-top: 2px dashed var(--text-muted);
+}
+
 .trends-band {
   fill: var(--tone-track, var(--border));
   opacity: 0.55;

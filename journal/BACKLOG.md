@@ -480,7 +480,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-60** ✅ 12/11 10:35 (`notShared` au catalogue ; « Samsung Health ne partage pas la variabilité cardiaque avec Health Connect. ») (Sportif J14) Sources, carte Samsung Health : « Si votre montre en est capable, activez ce
   partage » pour la VFC, alors que Samsung Health ne l'écrit pas dans Health Connect. Dire ce qui est vrai pour l'app
   source connue (Samsung : « Samsung Health ne partage pas la VFC »). `MyDevices.jsx`.
-- [ ] **POLISH-SIM-61** (Sportif J14) Tendances : la zone « attendu » (pointillé) n'est pas comprise (« d'où vient
+- [x] **POLISH-SIM-61** ✅ 13/11 16:45 (ligne « attendu d'après vos habitudes » sous la courbe quand un attendu est tracé ; sans attendu, la période s'arrête à aujourd'hui) (Sportif J14) Tendances : la zone « attendu » (pointillé) n'est pas comprise (« d'où vient
   cette baisse prévue ? ») ; en Semaine, sommeil seul, des jours futurs vides. Une ligne de légende courte ; pas de
   jours futurs sans attendu.
 - [ ] **POLISH-SIM-62** (Sportif J14) Analyses au 14e jour noté : « Aucun lien assez net » et « Moyen terme : encore 7
