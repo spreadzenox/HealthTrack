@@ -49,12 +49,18 @@ export default function DoctorReportCard({
   const [hasFace, setHasFace] = useState(true)
   const chosen = useRef(false)
   const card = useRef(null)
+  const statusLine = useRef(null)
   const { hash } = useLocation()
 
   // Depuis Agir (« votre rapport médecin ») : la carte vient à l'écran.
   useEffect(() => {
     if (hash === '#rapport-medecin') card.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
   }, [hash])
+
+  // La confirmation s'écrit sous le bouton, souvent sous la barre du bas : elle vient à l'écran (POLISH-SIM-67).
+  useEffect(() => {
+    if (status) statusLine.current?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' })
+  }, [status])
 
   useEffect(() => {
     let alive = true
@@ -133,7 +139,7 @@ export default function DoctorReportCard({
           <button type="button" className="btn fodmap-cta" onClick={run} disabled={busy}>
             {busy ? 'Création…' : 'Créer le PDF'}
           </button>
-          {status && <p className="fodmap-note" role="status">{status}</p>}
+          {status && <p ref={statusLine} className="fodmap-note report-status" role="status">{status}</p>}
         </>
       )}
     </article>

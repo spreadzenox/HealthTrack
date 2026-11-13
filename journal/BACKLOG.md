@@ -516,8 +516,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   clair. Régler aussi le thème de l'app (comme `visual-check --dark`).
 - **Simulations du 13/11 20:35** ([synthèse](simulations/2026-11-13-2035-synthese.md) ; Ventre sans technique J45,
   Tout mesurer J45). Ordre proposé : 67, 68, 69, 70, 71, puis le reste après vérification.
-- [ ] **POLISH-SIM-67** (bug ; Ventre sans technique J45) Rapport PDF : la phrase « Halcya-rapport-….pdf téléchargé »
+- [x] **POLISH-SIM-67** (bug ; Ventre sans technique J45) Rapport PDF : la phrase « Halcya-rapport-….pdf téléchargé »
   s'affiche sous la barre de navigation, coupée. La faire venir à l'écran (défilement) ; test.
+  **Fait le 13/11 21:35** : la ligne vient à l'écran et s'arrête au-dessus de la barre d'onglets (`.report-status`).
 - [ ] **POLISH-SIM-68** (Ventre sans technique J45) Après « Bilan du jour : Gêne », la fenêtre « Ma digestion » garde
   « Dernière note : Douleur, hier » et aucun bouton marqué ; l'accueil dit toujours « Noter ma digestion » sans la
   note du jour. Montrer la note du jour aux deux endroits.
