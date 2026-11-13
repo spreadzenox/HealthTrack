@@ -84,6 +84,20 @@ describe('DoctorReportCard', () => {
     delete window.HTMLElement.prototype.scrollIntoView
   })
 
+  it('après « Créer le PDF », la confirmation vient à l’écran, au-dessus de la barre du bas (POLISH-SIM-67)', async () => {
+    const scroll = vi.fn()
+    window.HTMLElement.prototype.scrollIntoView = scroll
+    renderCard({ create: vi.fn(async () => pdf), save: vi.fn(async () => ({ saved: 'download' })), count: async () => 1 })
+    fireEvent.click(await screen.findByRole('button', { name: 'Préparer le rapport' }))
+    expect(scroll).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'Créer le PDF' }))
+    const status = await screen.findByRole('status')
+    await waitFor(() => expect(scroll).toHaveBeenCalledWith({ behavior: 'smooth', block: 'nearest' }))
+    expect(scroll.mock.contexts[0]).toBe(status)
+    expect(status).toHaveClass('report-status')
+    delete window.HTMLElement.prototype.scrollIntoView
+  })
+
   it('rien de noté : pas de rapport vide, une phrase dit quand il se remplit', async () => {
     const count = vi.fn(async () => 0)
     renderCard({ count })

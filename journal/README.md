@@ -8,6 +8,11 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+> 📄 **Rapport PDF : la confirmation reste visible (13/11 21:35)** : une persona touchait « Créer le PDF » sans voir
+> si le fichier était créé : la phrase « …pdf téléchargé » s'écrivait sous la barre du bas. Elle vient maintenant à
+> l'écran, juste au-dessus de la barre ([capture](runs/captures/2026-11-13-2135-rapport-pdf-confirmation.png)). Part
+> ce soir sur Alpha. Rien à faire de votre côté.
+
 > 🧑‍🤝‍🧑 **Deux personas au 45e jour (13/11 20:35)** : « Ventre, sans technique » (iPhone + Apple Watch) et « Tout
 > mesurer » (iPhone + bracelet Amazfit) ont essayé l'app, sans voir le code
 > ([synthèse](simulations/2026-11-13-2035-synthese.md)). Rien ne change dans l'app à ce run. Ce qu'elles ont trouvé de
@@ -606,6 +611,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 13/11 21:35 — [Rapport PDF : confirmation visible](runs/2026-11-13-2135-rapport-pdf-confirmation.md) | 🔧 | POLISH-SIM-67 : après « Créer le PDF », la ligne de confirmation vient à l'écran au-dessus de la barre d'onglets. Tests (3505), lint, build, visual verts. Rien à faire de votre côté |
 | 13/11 20:35 — [Deux simulations de personas](runs/2026-11-13-2035-personas.md) | 💡 | Ventre sans technique J45 (Apple Watch), Tout mesurer J45 (Amazfit) : POLISH-SIM-67 à 80, PROP-SIM-16. Outil : POLISH-SIM-63 et 66 corrigés. Aucun code produit. Tests (3504) verts. Rien à faire de votre côté |
 | 13/11 19:45 — [Cycle : règles de Health Connect, côté app](runs/2026-11-13-1945-cycle-lecture-hc.md) | 🏗️ | CYCLE-3a-1 : conversion des périodes et flux en jours de règles, synchro derrière le pont natif à venir, saisie à la main prioritaire. Rien de visible. Tests (3502), lint, build, visual verts. Rien à faire de votre côté |
 | 13/11 18:45 — [Analyses : note confirmée, facteurs comparés](runs/2026-11-13-1845-analyses-note-compare.md) | 🔧 | POLISH-SIM-62 : « Noté : 4/5 » après l'enregistrement ; « N facteurs comparés… » quand rien n'est net et qu'aucune barre ne s'affiche. Tests (3486), lint, build, visual verts. Rien à faire de votre côté |

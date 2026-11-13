@@ -415,6 +415,11 @@ button.fodmap-group:focus-visible,
   font-weight: 600;
 }
 
+/* La confirmation s'arrête au-dessus de la barre d'onglets quand elle vient à l'écran. */
+.report-status {
+  scroll-margin-bottom: calc(var(--safe-bottom, 0px) + 84px);
+}
+
 .report-period {
   display: inline-flex;
   align-items: center;

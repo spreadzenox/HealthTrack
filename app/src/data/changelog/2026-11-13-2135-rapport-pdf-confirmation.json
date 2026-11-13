@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-13",
+  "kind": "correctif",
+  "title": "Rapport PDF : la confirmation reste visible",
+  "items": [
+    "Après « Créer le PDF », la ligne qui dit où est le fichier s'affiche au-dessus de la barre du bas."
+  ]
+}
