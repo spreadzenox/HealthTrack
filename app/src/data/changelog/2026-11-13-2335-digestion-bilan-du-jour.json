@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-13",
+  "kind": "correctif",
+  "title": "Digestion : le bilan du jour se voit sur Aujourd'hui",
+  "items": [
+    "Après « Bilan de la journée », Aujourd'hui affiche « Bilan du jour : Gêne » dans le bloc digestion.",
+    "Dans « Ma digestion », la note de la veille n'est plus présentée comme la dernière une fois le bilan fait."
+  ]
+}

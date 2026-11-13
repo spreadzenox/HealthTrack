@@ -114,6 +114,7 @@ export function GutCard({
   }
 
   const current = summary.lastToday ? summary.last.payload.level : null
+  const staleLast = Boolean(evening.done && summary.last && !summary.lastToday)
   if (onlyIfUsed && !entries?.length) return null
   return (
     <section className="today-card gut-card" aria-labelledby="gut-card-title">
@@ -160,11 +161,14 @@ export function GutCard({
               </button>
             ))}
           </GutChoiceRow>
-          <p className="today-card-text">
-            {summary.last
-              ? `Dernière note : ${gutLevelLabel(summary.last.payload.level)}, ${lastNoteWhen(summary.last.at)}.`
-              : 'Un geste suffit, l’heure est notée. Vous pouvez noter plusieurs fois par jour.'}
-          </p>
+          {/* POLISH-SIM-68 : après le bilan du jour, une note d'un autre jour ne passe plus pour la dernière */}
+          {!staleLast && (
+            <p className="today-card-text">
+              {summary.last
+                ? `Dernière note : ${gutLevelLabel(summary.last.payload.level)}, ${lastNoteWhen(summary.last.at)}.`
+                : 'Un geste suffit, l’heure est notée. Vous pouvez noter plusieurs fois par jour.'}
+            </p>
+          )}
         </>
       )}
       {entries && evening.done && (

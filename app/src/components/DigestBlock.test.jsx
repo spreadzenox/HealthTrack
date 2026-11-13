@@ -57,6 +57,16 @@ describe('DigestBlock (AUJ-4)', () => {
     expect(screen.queryByRole('link', { name: /Vos notes du jour/ })).toBeNull()
   })
 
+  it('POLISH-SIM-68 : le bilan du jour se lit ici, celui d’hier non', async () => {
+    const dayNote = (daysAgo, level) => ({ type: 'gut', at: dayAt(daysAgo, 20), payload: { level, scope: 'day' } })
+    const { unmount } = wrap({ read: async () => [note(1, 'pain'), dayNote(0, 'discomfort')] })
+    expect(await screen.findByText('Bilan du jour : Gêne')).toBeInTheDocument()
+    unmount()
+    wrap({ read: async () => [dayNote(1, 'discomfort')] })
+    await screen.findByRole('heading')
+    expect(screen.queryByText(/Bilan du jour/)).toBeNull()
+  })
+
   it('analyses prêtes : une ligne qui ouvre Analyses › Digestion, sans résultat recopié ici', async () => {
     wrap({ read: async () => [note(1)], summary: { gut: ['Oignon → digestion'], levers: [] } })
     const link = await screen.findByRole('link', { name: /Vos analyses digestives sont prêtes/ })

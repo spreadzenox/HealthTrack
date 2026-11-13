@@ -90,6 +90,12 @@
   opacity: 0.8;
 }
 
+/* Bilan du jour (POLISH-SIM-68) : la note de la journée, sans heure, donc hors du graphique des moments */
+.digest-day-note {
+  margin: 12px 0 0;
+  font-weight: 600;
+}
+
 .digest-note-button {
   width: 100%;
   min-height: 48px;
