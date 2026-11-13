@@ -1,0 +1,163 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=1D202A62-75FA-4910-BFA1-14DDB30B0518 "-only-testing:HalcyaUITests/NotificationsUITests/testToucherLeRappelDePortion"
+
+2026-11-13 21:50:21.609 xcodebuild[57674:158534] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-13 21:50:21.637 xcodebuild[57674:158534] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:1D202A62-75FA-4910-BFA1-14DDB30B0518, OS:26.2, name:iPad Pro 13-inch (M5) }
+{ platform:iOS Simulator, arch:x86_64, id:1D202A62-75FA-4910-BFA1-14DDB30B0518, OS:26.2, name:iPad Pro 13-inch (M5) }
+2026-11-13 21:50:26.950 xcodebuild[57674:158534] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-13 21:50:33.372052+0000 HalcyaUITests-Runner[58442:160359] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-13 21:50:35.987.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-13 21:50:35.991.
+Test Suite 'NotificationsUITests' started at 2026-11-13 21:50:35.992.
+Test Case '-[HalcyaUITests.NotificationsUITests testToucherLeRappelDePortion]' started.
+    t =     0.00s Start Test at 2026-11-13 21:50:35.997
+    t =     0.34s Set Up
+    t =     0.34s Pressing Home button
+    t =     1.00s Waiting 90.0s for Any (First Match) to exist
+    t =     3.41s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.62s         Checking existence of `Any (First Match)`
+    t =     4.12s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     4.12s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     4.18s         Capturing element debug description
+    t =     5.02s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     5.04s         Checking existence of `Any (First Match)`
+    t =     5.37s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     5.39s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     5.40s         Capturing element debug description
+    t =     6.02s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     6.02s         Checking existence of `Any (First Match)`
+    t =     6.14s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     6.14s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     6.15s         Capturing element debug description
+    t =     7.02s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     7.02s         Checking existence of `Any (First Match)`
+    t =     7.14s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     7.14s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     7.15s         Capturing element debug description
+    t =     8.07s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     8.07s         Checking existence of `Any (First Match)`
+    t =     8.21s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     8.21s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     8.22s         Capturing element debug description
+    t =     9.07s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     9.07s         Checking existence of `Any (First Match)`
+    t =     9.19s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     9.20s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =     9.20s         Capturing element debug description
+    t =    10.03s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    10.03s         Checking existence of `Any (First Match)`
+    t =    10.17s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    10.17s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    10.18s         Capturing element debug description
+    t =    11.10s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    11.10s         Checking existence of `Any (First Match)`
+    t =    11.22s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    11.22s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    11.23s         Capturing element debug description
+    t =    12.05s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    12.05s         Checking existence of `Any (First Match)`
+    t =    12.18s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    12.19s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    12.19s         Capturing element debug description
+    t =    13.03s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    13.03s         Checking existence of `Any (First Match)`
+    t =    13.16s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    13.16s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    13.17s         Capturing element debug description
+    t =    14.02s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    14.02s         Checking existence of `Any (First Match)`
+    t =    14.12s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    14.12s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    14.12s         Capturing element debug description
+    t =    15.03s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    15.03s         Checking existence of `Any (First Match)`
+    t =    15.18s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    15.19s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    15.20s         Capturing element debug description
+    t =    16.02s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    16.02s         Checking existence of `Any (First Match)`
+    t =    16.13s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    16.14s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    16.14s         Capturing element debug description
+    t =    17.08s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    17.08s         Checking existence of `Any (First Match)`
+    t =    17.24s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    17.24s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    17.25s         Capturing element debug description
+    t =    18.05s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    18.05s         Checking existence of `Any (First Match)`
+    t =    18.13s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    18.13s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    18.14s         Capturing element debug description
+    t =    19.02s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    19.02s         Checking existence of `Any (First Match)`
+    t =    19.09s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    19.09s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    19.10s         Capturing element debug description
+    t =    20.03s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    20.03s         Checking existence of `Any (First Match)`
+    t =    20.15s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    20.15s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    20.16s         Capturing element debug description
+    t =    21.02s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    21.02s         Checking existence of `Any (First Match)`
+    t =    21.11s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    21.11s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    21.12s         Capturing element debug description
+    t =    22.10s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    22.10s         Checking existence of `Any (First Match)`
+    t =    22.24s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    22.25s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    22.25s         Capturing element debug description
+    t =    23.08s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    23.08s         Checking existence of `Any (First Match)`
+    t =    23.20s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    23.20s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    23.21s         Capturing element debug description
+    t =    24.03s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    24.03s         Checking existence of `Any (First Match)`
+    t =    24.26s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    24.27s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    24.27s         Capturing element debug description
+    t =    25.02s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    25.02s         Checking existence of `Any (First Match)`
+    t =    25.19s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    25.19s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    25.20s         Capturing element debug description
+    t =    26.03s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    26.03s         Checking existence of `Any (First Match)`
+    t =    26.13s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    26.14s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    26.16s Tap Any (First Match)
+    t =    26.16s     Wait for com.apple.springboard to idle
+    t =    26.97s     Find the Any (First Match)
+    t =    27.03s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    27.03s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    27.05s     Check for interrupting elements affecting "NotificationShortLookView" BannerNotification
+    t =    27.08s         Wait for com.apple.DocumentManager.DockFolderViewService to idle
+    t =    27.27s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    27.27s Ignoring failure to get hierarchy for remote element in process 50612 (Error getting main window kAXErrorServerNotFound)
+    t =    27.30s     Synthesize event
+    t =    27.61s     Wait for com.apple.springboard to idle
+    t =    29.23s Wait for fr.jpesquet.sante to become Running Foreground
+    t =    29.24s Tear Down
+Test Case '-[HalcyaUITests.NotificationsUITests testToucherLeRappelDePortion]' passed (29.745 seconds).
+Test Suite 'NotificationsUITests' passed at 2026-11-13 21:51:05.742.
+	 Executed 1 test, with 0 failures (0 unexpected) in 29.745 (29.750) seconds
+Test Suite 'HalcyaUITests.xctest' passed at 2026-11-13 21:51:05.748.
+	 Executed 1 test, with 0 failures (0 unexpected) in 29.745 (29.757) seconds
+Test Suite 'Selected tests' passed at 2026-11-13 21:51:05.750.
+	 Executed 1 test, with 0 failures (0 unexpected) in 29.745 (29.763) seconds
+2026-11-13 21:51:06.767 xcodebuild[57674:158534] [MT] IDETestOperationsObserverDebug: 39.795 elapsed -- Testing started completed.
+2026-11-13 21:51:06.768 xcodebuild[57674:158534] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-13 21:51:06.768 xcodebuild[57674:158534] [MT] IDETestOperationsObserverDebug: 39.795 sec, +39.795 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-gomdbjjwljoacygtcdihfppwewic/Logs/Test/Test-HalcyaUITests-2026.11.13_21-50-21-+0000.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
