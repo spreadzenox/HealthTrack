@@ -572,6 +572,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   (« Lactose −0,8 pt : j'arrête le lait ou pas ? »). La replier par défaut quand rien n'est net ; dire en tête ce qui
   manque (le compte « encore N jours » n'est dit qu'en bas, pour le long terme). Une ligne touchée ne fait rien :
   explication courte du terme (GOS, sorbitol) avec des aliments.
+  **1re partie faite le 14/11 01:35** : rien de net (ni piste ni lien net) → les barres sont repliées derrière « Voir
+  les liens pas encore nets » ; en tête, les facteurs comparés et le compte « encore N jours » s'il existe. **Reste** :
+  l'explication d'un terme au toucher d'une ligne.
 - [x] **POLISH-SIM-70** (deux personas J45) Agir vide : « Où en sont vos analyses » ouvre Bien-être même quand
   l'objectif est le ventre ; ouvrir Digestion pour ce profil. L'état vide ne dit pas quoi faire d'ici là.
   **Fait le 14/11 00:35** : avec l'objectif digestion ou cycle (`wantsGut`, comme la barre d'onglets), le lien ouvre
