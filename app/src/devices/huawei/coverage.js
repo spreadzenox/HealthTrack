@@ -64,11 +64,11 @@ export const WATCH_DATA_KINDS = [
   { id: 'hrvNight', label: 'Variabilité cardiaque de la nuit', reads: ['sleepFile'], match: (e) => isHr('heartRateVariability')(e) && p(e).during !== 'day', value: (e) => `${num(p(e).value)} ms` },
   { id: 'hrvDay', label: 'Variabilité cardiaque de journée', reads: ['hrvDay'], match: (e) => isHr('heartRateVariability')(e) && p(e).during === 'day', value: (e) => `${num(p(e).value)} ms` },
   { id: 'skinTemp', label: 'Température de la peau', reads: ['skinTemp'], match: (e) => e.type === 'body_temperature' && p(e).subtype === 'skin', value: (e) => `${num(p(e).valueC, 1)} °C` },
-  { id: 'spo2', label: 'SpO₂', reads: ['minutes', 'sleepFile'], match: isHr('oxygenSaturation'), value: (e) => `${num(p(e).value)} %` },
+  { id: 'spo2', label: 'Oxygène du sang', reads: ['minutes', 'sleepFile'], match: isHr('oxygenSaturation'), value: (e) => `${num(p(e).value)} %` },
   { id: 'resp', label: 'Respiration (nuit)', reads: ['sleepFile'], match: (e) => e.type === 'respiratory_rate', value: (e) => `${num(p(e).value, 1)} /min` },
   { id: 'stress', label: 'Stress (montre)', reads: ['stress'], match: (e) => e.type === 'watch_stress', value: (e) => `${num(p(e).value)} · ${watchStressBand(p(e).value)}` },
   { id: 'hr', label: 'Fréquence cardiaque', reads: ['minutes'], match: isHr('heartRate'), value: (e) => `${num(p(e).bpm)} bpm` },
-  { id: 'restingHr', label: 'FC au repos', reads: ['minutes'], match: isHr('restingHeartRate'), value: (e) => `${num(p(e).bpm)} bpm` },
+  { id: 'restingHr', label: 'Cœur au repos', reads: ['minutes'], match: isHr('restingHeartRate'), value: (e) => `${num(p(e).bpm)} bpm` },
   { id: 'steps', label: 'Pas', reads: ['minutes', 'totals'], match: (e) => e.type === 'steps', group: dayKey, value: (list) => `${num(dayTotal(list))} pas`, unit: ['jour', 'jours'] },
   { id: 'calories', label: 'Calories', reads: ['minutes', 'totals'], match: (e) => e.type === 'calories', group: dayKey, value: (list) => `${num(dayTotal(list))} kcal`, unit: ['jour', 'jours'] },
   {

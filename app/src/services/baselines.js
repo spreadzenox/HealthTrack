@@ -27,7 +27,7 @@ export const MIN_BASELINE_DAYS = 14
 export const BASELINE_METRICS = {
   restingHeartRate: {
     key: 'restingHeartRate',
-    label: 'FC au repos',
+    label: 'Cœur au repos',
     unit: 'bpm',
     generalHigherIsBetter: false,
     log: false,

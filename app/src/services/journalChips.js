@@ -19,10 +19,10 @@ const CHIP_KEYS = {
   'Score de nuit': 'watchSleepScore',
   'FC nuit': 'sleepHr',
   Pas: 'steps',
-  'FC au repos': 'restingHr',
+  'Cœur au repos': 'restingHr',
   'Variabilité cardiaque': 'hrv',
   'Variabilité cardiaque, jour': 'hrvDay',
-  'SpO₂': 'spo2',
+  'Oxygène du sang': 'spo2',
   Respiration: 'respiratoryRate',
   Température: 'temperatureC',
   'Temp. peau': 'skinTempC',
@@ -77,10 +77,10 @@ export function summaryChips(s) {
   if (s.watchSleepScore != null) chips.push(['Score de nuit', `${s.watchSleepScore} / 100`])
   if (s.sleepHr != null) chips.push(['FC nuit', `${s.sleepHr} bpm`])
   if (s.steps != null) chips.push(['Pas', fr(Math.round(s.steps))])
-  if (s.restingHr != null) chips.push(['FC au repos', `${Math.round(s.restingHr)} bpm`])
+  if (s.restingHr != null) chips.push(['Cœur au repos', `${Math.round(s.restingHr)} bpm`])
   if (s.hrv != null) chips.push(['Variabilité cardiaque', `${Math.round(s.hrv)} ms`])
   if (s.hrvDay != null) chips.push(['Variabilité cardiaque, jour', `${s.hrvDay} ms`])
-  if (s.spo2 != null) chips.push(['SpO₂', `${frNumber(s.spo2)} %`])
+  if (s.spo2 != null) chips.push(['Oxygène du sang', `${frNumber(s.spo2)} %`])
   if (s.respiratoryRate != null) chips.push(['Respiration', `${frNumber(s.respiratoryRate)} /min`])
   if (s.temperatureC != null) chips.push(['Température', `${frNumber(s.temperatureC)} °C`])
   if (s.skinTempC != null) chips.push(['Temp. peau', `${frNumber(s.skinTempC)} °C`])

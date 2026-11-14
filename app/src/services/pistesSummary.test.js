@@ -93,6 +93,6 @@ describe('pisteTouchingToday (TESTEUR-1d-3)', () => {
 
   it('les mesures du corps (VFC, FC au repos) ne sont jamais des pistes à tester', () => {
     const s = summarizePistes(analysis({ levers: [sleepLever] }))
-    expect(pisteTouchingToday(s, [item('hrv', 'VFC de la nuit plus basse'), item('restingHr', 'FC au repos plus haute')])).toBeNull()
+    expect(pisteTouchingToday(s, [item('hrv', 'VFC de la nuit plus basse'), item('restingHr', 'Cœur au repos plus rapide')])).toBeNull()
   })
 })

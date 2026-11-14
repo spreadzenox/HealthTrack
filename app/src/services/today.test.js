@@ -280,7 +280,7 @@ describe('todayBySource (TESTEUR-1d-b)', () => {
     expect(ids(groups)).toEqual(['watch', 'phone'])
     expect(groups[0].title).toBe('Montre')
     expect(keys(groups[0])).toEqual(['sleep', 'hrv', 'restingHr'])
-    expect(groups[0].items[2]).toMatchObject({ label: 'FC au repos', value: '52 bpm' })
+    expect(groups[0].items[2]).toMatchObject({ label: 'Cœur au repos', value: '52 bpm' })
     expect(groups[1].title).toBe('Téléphone')
     expect(keys(groups[1])).toEqual(['steps', 'screen'])
     expect(groups[1].items[1]).toMatchObject({ label: 'Temps d’écran', value: '2 h 15' })
