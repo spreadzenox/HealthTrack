@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1041 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1043 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -22,6 +22,14 @@
   qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
+
+> ⚖️ **Tendances : « Poids » garde sa courbe (14/11 09:35)** : le bug le plus net des personas de 08:35. En vue
+> Jour, le « + » proposait « Poids » ; le toucher ouvrait la Semaine, où trois pesées espacées n'ont pas de courbe :
+> la mesure disparaissait et l'écran disait « Choisissez une courbe ». La mesure touchée s'ouvre maintenant là où
+> elle a une courbe, la Semaine d'abord, sinon le Mois
+> ([le menu](runs/captures/2026-11-14-0935-tendances-jour-poids-clair.png) ·
+> [après avoir touché « Poids »](runs/captures/2026-11-14-0935-tendances-poids-mois-clair.png)). **Sur iPhone** au
+> prochain suivi du code (aucun correctif iPhone sur cet écran). Rien à faire de votre côté.
 
 > 🧑‍🤝‍🧑 **Deux personas de plus (14/11 08:35)** : « Ventre, sans technique » au 14e jour (iPhone + Apple Watch) et
 > « Sportif » au 1er jour (téléphone et balance connectée, configuration jouée pour la première fois) ont essayé
@@ -745,6 +753,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 09:35 — [Tendances : « Poids » garde sa courbe](runs/2026-11-14-0935-tendances-poids-periode.md) | 🔧 | Main vert. POLISH-SIM-81 : une mesure touchée en vue Jour s'ouvre en Semaine si elle y a une courbe, sinon en Mois. #965 (journal en double du run de 07:35, en conflit) fermée, sa note reprise. iPhone : code embarqué inchangé (v1040), le correctif arrive au prochain suivi. Parité 70 %. |
 | 14/11 08:35 — [Deux personas ; Garmin, clé personnelle écartée](runs/2026-11-14-0835-personas-idees.md) | 🔭 | Run « idées », sans code produit. PR #963 du run précédent finie (build iOS verte, captures iPhone regardées, mergée à 08:50). Simulations « Ventre, sans technique » J14 (Apple Watch) et « Sportif » J1 (téléphone + balance) : POLISH-SIM-81 à 90, PROP-SIM-17 et 18. Outil : matériels `apple-watch` et `phone-scale`, accord IA déjà donné (POLISH-SIM-78, 79). INTEG-1a : niveau personnel Garmin lu, voie écartée pour l'app vendue. Parité 70 %. |
 | 14/11 02:35 — [Sauvegarde « halcya-export » ; iPhone en v1034](runs/2026-11-14-0235-sauvegarde-nom-halcya.md) | 🔧 | POLISH-SIM-73 : la sauvegarde s'appelle `halcya-export-AAAA-MM-JJ.json`, l'import ne dépend pas du nom (testé). iPhone : code embarqué v1032 → v1034, 52 correctifs sans retouche ; build TestFlight 1032.1033 envoyée à 01:41. Parité 70 %. |
 | 14/11 07:35 — [iPhone : « Variabilité cardiaque » tout court ; v1040](runs/2026-11-14-0735-vfc-iphone-cle.md) | 🔧 | Main vert, aucune PR en attente. POLISH-SIM-72-iOS-b : la mesure de l'app Santé se reconnaît à une clé, son nom perd « (SDNN) » sur Aujourd'hui, dans le Journal, dans Tendances et au premier import (correctifs 17, 30, 32, 56, 57). Code embarqué v1037 → v1040. PR ouverte : la build iOS (près d'une heure) et les captures restent à regarder avant le merge. Parité 70 %. |
