@@ -734,8 +734,11 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   Le dessiner comme partiel (point creux) ou l'écarter du tracé.
 - [ ] **POLISH-SIM-96** (à vérifier) Journal › Jours : tuile « FC » (écrire « Cœur ») ; étiquette « Écran tard »
   d'une note de bien-être sans origine.
-- [ ] **POLISH-SIM-97** (Maigrir J1) Nutrition au 1er jour : « des repas manquent sans doute, apports sous-estimés »
+- [x] **POLISH-SIM-97** (Maigrir J1) Nutrition au 1er jour : « des repas manquent sans doute, apports sous-estimés »
   après un seul repas noté. Ne pas l'afficher le premier jour de saisie.
+  **Fait le 15/11 00:35** : quand seul le jour en cours est saisi, la page écrit « ≈ … kcal aujourd'hui, journée en
+  cours. » et la légende « incertain : journée en cours » ; l'avertissement revient dès qu'un autre jour est saisi.
+  Le repère de calories par jour demandé par la persona reste une proposition, pas faite. iPhone : au prochain suivi.
 - [ ] **POLISH-SIM-98** (à vérifier sur captures ; Maigrir J1) Accueil : compteur « 01/06 » sur les trois premiers
   écrans ; explication de l'envoi à l'IA lue trois fois ; visite guidée : « + 1 cigarette » montré à qui n'a pas
   parlé de tabac.

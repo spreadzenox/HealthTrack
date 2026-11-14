@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-15",
+  "kind": "correctif",
+  "title": "Nutrition : plus de reproche au premier repas",
+  "items": [
+    "Après un premier repas noté, la page écrivait « des repas manquent sans doute, apports sous-estimés ». Tant que seul le jour en cours est saisi, elle écrit « journée en cours »."
+  ]
+}

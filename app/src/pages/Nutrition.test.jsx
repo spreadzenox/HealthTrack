@@ -132,6 +132,26 @@ describe('Nutrition page', () => {
     expect(legend).not.toMatch(/\bbas\b/)
   })
 
+  it('premier repas du jour, rien les jours d’avant : « journée en cours », sans « des repas manquent » (POLISH-SIM-97)', async () => {
+    // Minuit du jour en cours : toujours aujourd'hui et jamais dans le futur, quelle que soit l'heure du test.
+    const todayStart = new Date()
+    todayStart.setHours(0, 0, 0, 0)
+    loadNutritionEntries.mockResolvedValueOnce([
+      { type: 'food', at: todayStart.toISOString(), payload: { items: [{ ingredient: 'Abat, cuit (aliment moyen)', quantity_g: 200 }] } },
+    ])
+    const { container } = render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    await screen.findByText(/1\s*jour\b/)
+    expect(container.querySelector('.nutrition-warning')).toBeNull()
+    expect(container.textContent).not.toMatch(/des repas manquent|sous-estimés/)
+    const note = container.querySelector('.nutrition-summary')
+    expect(note.textContent).toMatch(/^≈\s[\d\s\u202f\u00a0]+kcal aujourd’hui, journée en cours\.$/)
+    // Le compte de repères resterait trompeur : toujours absent.
+    expect(container.textContent).not.toMatch(/repères? atteints? sur/)
+    const legend = container.querySelector('.nutrition-legend').textContent
+    expect(legend).toMatch(/incertain : journée en cours/)
+    expect(legend).not.toMatch(/repas manquants/)
+  })
+
   it('composition Withings dans « Votre profil », plus de section « Dernière mesure Withings » (D1)', async () => {
     loadNutritionEntries.mockResolvedValueOnce([
       ...completeProfile(),

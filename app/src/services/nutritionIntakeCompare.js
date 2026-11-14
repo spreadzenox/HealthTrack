@@ -127,6 +127,8 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
   if (likelyIncomplete) {
     for (const row of rows) if (['low', 'partial', 'under'].includes(row.status)) row.status = 'uncertain'
   }
+  // POLISH-SIM-97 : si le seul jour saisi est celui en cours, il n'est pas fini ; rien ne dit que des repas manquent.
+  const dayInProgress = likelyIncomplete && filtered.every((e) => localDayKey(e.at) === localDayKey(now))
 
   return {
     totals,
@@ -141,6 +143,7 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
     energyPerDay,
     energyTarget,
     likelyIncomplete,
+    dayInProgress,
     // Statuts présents (légende sans entrée inutile)
     statuses: [...new Set(rows.map((r) => r.status))].sort(),
     periodLabel: `${fmt.format(start)} – ${fmt.format(now)}`,

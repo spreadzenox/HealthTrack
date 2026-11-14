@@ -127,7 +127,11 @@ export default function Nutrition() {
             {comparison.loggedDays > 1 ? 's' : ''}
           </p>
           {/* Jours incomplets : le compte de repères atteints serait trompeur, l'avertissement le remplace */}
-          {comparison.likelyIncomplete ? (
+          {comparison.dayInProgress ? (
+            <p className="nutrition-summary">
+              ≈{'\u00a0'}{formatNutrientAmount(comparison.energyPerDay)} kcal aujourd’hui, journée en cours.
+            </p>
+          ) : comparison.likelyIncomplete ? (
             <p className="nutrition-warning">
               ≈{'\u00a0'}{formatNutrientAmount(comparison.energyPerDay)} kcal/j en moyenne : des repas manquent sans doute,
               apports sous-estimés.
@@ -140,7 +144,10 @@ export default function Nutrition() {
           )}
           <div className="nutrition-legend" aria-hidden="true">
             {LEGEND.filter(([status]) => comparison.statuses.includes(status)).map(([status, text]) => (
-              <span key={status}><i className={`nutrition-dot nutrition-bar-${status}`} /> {text}</span>
+              <span key={status}>
+                <i className={`nutrition-dot nutrition-bar-${status}`} />{' '}
+                {status === 'uncertain' && comparison.dayInProgress ? 'incertain : journée en cours' : text}
+              </span>
             ))}
           </div>
           {comparison.groups.map((group) => (

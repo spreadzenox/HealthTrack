@@ -31,6 +31,7 @@
  *   npm run visual -- --routes=/tendances --history-days=2  # historique presque vide : seules les données des 2 derniers
  *                                          jours (aujourd'hui et hier) sont gardées (T3, captures à côté de la maquette)
  *   npm run visual -- --routes=/agir --history-days=2 --wellbeing-today  # Agir vide, bien-être noté il y a une heure
+ *   npm run visual -- --empty --routes=/nutrition --first-meal  # un seul repas, noté aujourd'hui (POLISH-SIM-97)
  *   npm run visual -- --routes=/journal --cycle  # règles hier et avant-hier, symptômes : ligne « Règles » (CYCLE-1b)
  *   npm run visual -- --routes=/ --calibration  # notes de bien-être d'hier seulement : calibration de départ
  *                                          en cours (BE-BIAIS-2, 1 jour sur 3, note du jour demandée)
@@ -156,6 +157,12 @@ import { encodeFrame } from '../../src/devices/huawei/protocol.js'
 process.env.TZ = 'Europe/Paris'
 
 const APP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+
+// Premier repas d'une personne qui commence (--first-meal) : un petit-déjeuner, loin des besoins d'une journée.
+const FIRST_MEAL_ITEMS = [
+  { ingredient: 'Yaourt nature', quantity_g: 125, quantity: '125 g' },
+  { ingredient: 'Banane, chair sans peau, crue', quantity_g: 120, quantity: '120 g' },
+]
 
 const DEFAULT_ROUTES = [
   ['/', 'dashboard'],
@@ -1333,6 +1340,11 @@ async function main() {
       // Une pesée ce matin, arrivée par Health Connect (POLISH-SIM-84 : ligne « Poids » d'Aujourd'hui).
       const at = new Date(); at.setHours(7, 30, 0, 0)
       entries.push({ type: 'weight', source: 'health_connect', at: at.toISOString(), payload: { valueKg: 72.4 } })
+    }
+    if (args['first-meal']) {
+      // Un seul repas, noté aujourd'hui (POLISH-SIM-97 : Nutrition au premier jour dit « journée en cours »).
+      const at = new Date(Math.max(new Date().setHours(0, 0, 0, 0), Date.now() - 3600_000))
+      entries.push({ type: 'food', source: 'app_food', at: at.toISOString(), payload: { items: FIRST_MEAL_ITEMS, provider: 'gemini' } })
     }
     const seedResult = await page.evaluate(async (list) => {
       await new Promise((res) => {
