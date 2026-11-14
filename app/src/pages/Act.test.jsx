@@ -20,6 +20,23 @@ describe('Agir (ORG-1, ORG-1b)', () => {
     expect(screen.getByRole('link', { name: 'Où en sont vos analyses' })).toHaveAttribute('href', '/recommendations')
   })
 
+  // POLISH-SIM-70 : avec l'objectif ventre, le lien ouvre l'analyse de la digestion, et l'état vide dit quoi noter
+  it('état vide, objectif ventre : le lien ouvre Analyses › Digestion et la phrase parle de la digestion', async () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['gut'] }))
+    try {
+      wrap({ challenges: [], gut: [], pistes: null })
+      expect(await screen.findByRole('link', { name: 'Où en sont vos analyses' })).toHaveAttribute('href', '/recommendations/ventre')
+      expect(screen.getByText('D’ici là, notez votre digestion chaque jour.')).toBeInTheDocument()
+    } finally {
+      localStorage.removeItem('healthtrack_onboarding')
+    }
+  })
+
+  it('état vide, autre objectif : la phrase parle du bien-être', async () => {
+    wrap({ challenges: [], gut: [], pistes: null })
+    expect(await screen.findByText('D’ici là, notez votre bien-être chaque jour.')).toBeInTheDocument()
+  })
+
   it('un groupe FODMAP repéré par une analyse digestive est proposé, avec « Commencer »', async () => {
     wrap({ challenges: [], gut: [], pistes: { gut: ['Fructanes → digestion'], levers: [] } })
     const section = await screen.findByRole('region', { name: 'Proposés par vos analyses' })
