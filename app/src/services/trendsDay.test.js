@@ -117,3 +117,27 @@ describe('« Ce qui a pu peser » dit ce qui s’est passé (T4)', () => {
     expect(formatPoints(0.4)).toBe('+0,40 pt')
   })
 })
+
+describe('POLISH-SIM-71 : note digestive du jour et seuil d’affichage', () => {
+  it('dayFaceDetail donne la note du niveau le plus marqué (douleur = 1)', async () => {
+    const { dayFaceDetail } = await import('./trendsDay')
+    const at = (h) => new Date(2026, 9, 24, h).toISOString()
+    const d = dayFaceDetail([
+      { type: 'gut', at: at(9), payload: { level: 'calm' } },
+      { type: 'gut', at: at(13), payload: { level: 'pain' } },
+    ], '2026-10-24')
+    expect(d.gut).toBe('douleur')
+    expect(d.gutScore).toBe(1)
+    expect(dayFaceDetail([], '2026-10-24').gutScore).toBeNull()
+  })
+  it('weighView : seuil de 0,05 pt, « none » et « unexplained »', async () => {
+    const { weighView } = await import('./trendsDay')
+    expect(weighView(null, 2)).toBeNull()
+    expect(weighView([], 2)).toBeNull()
+    expect(weighView([{ points: -0.02 }, { points: 0.04 }], 2)).toEqual({ items: [], note: 'none' })
+    expect(weighView([{ points: 0.05 }, { points: -0.049 }], 3.4)).toEqual({ items: [{ points: 0.05 }], note: null })
+    expect(weighView([{ points: 0.39 }], 1.4).note).toBe('unexplained')
+    expect(weighView([{ points: 0.39 }, { points: -0.2 }], 1.4).note).toBeNull()
+    expect(weighView([{ points: 0.39 }], null).note).toBeNull()
+  })
+})

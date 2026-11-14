@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1035 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 n'était pas encore partie à 02:45, le cron de GitHub part souvent avec 3 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; build 1032.1033 (code de la v1032) envoyée sur TestFlight le 14/11 à 01:41, pour les testeurs la nuit prochaine ; code de la v1034 en vérification sur simulateur ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1036 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 n'était pas encore partie à 04:05, le cron de GitHub part souvent avec 3 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41) et v1034 (03:32) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; code de la v1035 en vérification sur simulateur ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -22,6 +22,17 @@
   qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
+
+> 📈 **Tendances : la fiche d'un jour se lit mieux (14/11 03:35)** : deux personas ne comprenaient pas « Ce qui a pu
+> peser ce jour-là » (des −0,02 pt, sans savoir s'il s'agissait du ventre ou du bien-être ; un jour à 1,4/5 avec
+> seulement des « + »). Le bloc dit maintenant « Sur votre bien-être, en points sur 5. », ne montre plus les effets de
+> moins de 0,05 pt, et dit quand rien de ce qui est comparé n'explique une note basse
+> ([clair](runs/captures/2026-11-14-0335-fiche-jour-bien-etre-clair.png) ·
+> [sombre](runs/captures/2026-11-14-0335-fiche-jour-bien-etre-sombre.png)). Confort digestif : « 2,6 /5, estimé, avec
+> votre note « douleur » » au lieu de « noté « douleur » », qui contredisait l'échelle
+> ([capture](runs/captures/2026-11-14-0335-fiche-jour-digestion-clair.png)). **iPhone** : le code de la v1034 est
+> parti sur TestFlight à 03:32 ; le suivi de la v1035 (nom de la sauvegarde) a demandé de refaire deux correctifs.
+> L'envoi Alpha du 13/11 au soir n'était pas encore parti à 04:05. Rien à faire de votre côté.
 
 > 💾 **La sauvegarde porte le nom de l'app (14/11 02:35)** : une persona trouvait dans ses fichiers
 > `healthtrack-export-…json` sans reconnaître Halcya. Le fichier téléchargé depuis Vos données s'appelle maintenant
@@ -679,6 +690,7 @@
 | Run | Type | Résultat |
 |---|---|---|
 | 14/11 02:35 — [Sauvegarde « halcya-export » ; iPhone en v1034](runs/2026-11-14-0235-sauvegarde-nom-halcya.md) | 🔧 | POLISH-SIM-73 : la sauvegarde s'appelle `halcya-export-AAAA-MM-JJ.json`, l'import ne dépend pas du nom (testé). iPhone : code embarqué v1032 → v1034, 52 correctifs sans retouche ; build TestFlight 1032.1033 envoyée à 01:41. Parité 70 %. |
+| 14/11 03:35 — [Tendances, fiche d'un jour ; iPhone en v1035](runs/2026-11-14-0335-fiche-jour-ce-qui-pese.md) | 🔧 | POLISH-SIM-71 : « Ce qui a pu peser » dit la note concernée, masque les effets de moins de 0,05 pt, dit quand rien n'explique une note basse ; confort digestif « estimé, avec votre note ». iPhone : code embarqué v1034 → v1035, correctifs 06 et 12 refaits ; build TestFlight du code v1034 envoyée à 03:32. Parité 70 %. |
 | 14/11 01:35 — [Analyses : liens pas nets repliés](runs/2026-11-14-0135-analyses-liens-pas-nets-replies.md) | 🔧 | POLISH-SIM-69 (1re partie) : sans lien net, les barres hachurées sont repliées derrière « Voir les liens pas encore nets » ; facteurs comparés et jours restants dits en tête. #955 du run précédent mergée par sa session. iPhone : code embarqué inchangé (v1032). Parité 70 %. |
 | 14/11 00:35 — [Agir vide selon l'objectif ; iPhone 1030.1031 chez les testeurs](runs/2026-11-14-0035-agir-vide-objectif-ventre.md) | 🔧 | Nuit : build TestFlight 1030.1031 ajoutée au groupe externe et soumise à l'examen bêta (00:33), validée aussitôt (« en test ») ; nettoyage des anciennes builds. POLISH-SIM-70 : Agir vide ouvre Analyses › Digestion avec l'objectif ventre, et dit quoi noter. iPhone : code embarqué v1030 → v1032, 52 correctifs s'appliquent. Parité 70 %. |
 | 13/11 23:35 — [Digestion : bilan du jour visible](runs/2026-11-13-2335-digestion-bilan-du-jour.md) | 🔧 | POLISH-SIM-68 : « Bilan du jour : Gêne » sur Aujourd'hui, plus de « Dernière note … hier » après le bilan. PR iPhone #953 finie (build simulateur verte, captures regardées) et mergée : build TestFlight 1030.1031 envoyée. Tests (3507), lint, build, visual verts. Parité 70 %. Rien à faire de votre côté |

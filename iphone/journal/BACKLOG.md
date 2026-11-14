@@ -10,7 +10,7 @@
 > seule » n'a plus cours : le code partagé (`app/`, `relay/`) se corrige dans la même PR. Suite de la fusion :
 > FUSION-2 à FUSION-5 dans `journal/BACKLOG.md` ; les demandes de l'ancien `DEMANDES.md` encore ouvertes y sont
 > reprises (DEM-IOS-1 à 21).
-> Suivi d'Android au 14/11 02:35 : v1034 (aucun correctif à refaire). Avant, 14/11 00:35 : v1032 ; 13/11 22:35 : v1030
+> Suivi d'Android au 14/11 03:35 : v1035 (correctifs 06 et 12 : contexte de `Data.jsx` refait). Avant, 14/11 02:35 : v1034 ; 14/11 00:35 : v1032 ; 13/11 22:35 : v1030
 > (correctif 58 refait après CYCLE-3a-1, #948).
 
 - [x] **I0 — Mise en place** (27/10, session de configuration avec le propriétaire) : dépôt `HealthTrack-iOS`

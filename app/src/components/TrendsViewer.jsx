@@ -235,7 +235,7 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
               {!future && m.state && (
                 <span className="trends-detail-range">
                   {/* T3, POLISH-SIM-4 : la note dit son chiffre ici seulement, avec ce qui s'y mêle */}
-                  {detailSource(k, { value: p.value, note: face?.note ?? null, readings: face?.readings ?? 0, gut: face?.gut ?? null, observed: p.observed })}
+                  {detailSource(k, { value: p.value, note: face?.note ?? null, readings: face?.readings ?? 0, gut: face?.gut ?? null, gutScore: face?.gutScore ?? null, observed: p.observed })}
                 </span>
               )}
             </li>
@@ -249,7 +249,10 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
           {c.sameTime.length > 0 && <p className="trends-detail-note">Au même moment : {c.sameTime.join(', ').toLowerCase()}</p>}
         </div>
       ))}
-      {!future && extra && <TrendsDayDetail face={keys.includes('wellbeing') ? face : null} contributions={extra.contributions} />}
+      {!future && extra && (
+        <TrendsDayDetail face={keys.includes('wellbeing') ? face : null} contributions={extra.contributions}
+          outcome={extra.outcome ?? null} value={data.series[extra.outcome]?.find((q) => q.date === date)?.value ?? null} />
+      )}
     </div>
   )
 }

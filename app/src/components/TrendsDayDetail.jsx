@@ -5,7 +5,8 @@
  * et « Ce qui a pu peser ce jour-là » (les 3 plus grandes contributions du modèle d'Analyses, barres de part et d'autre
  * de zéro, couleur du thème). Des estimations de l'expression du visage, jamais un diagnostic.
  */
-import { contributionText, formatPoints } from '../services/trendsDay'
+import { contributionText, formatPoints, weighView } from '../services/trendsDay'
+import { APP_NAME } from '../config/brand'
 import { monoDigits } from '../utils/monoDigits'
 
 const pct = (p) => `${Math.round(p * 100)} %`
@@ -114,9 +115,17 @@ export function ContributionBars({ items }) {
 
 /**
  * @param {{ face: ReturnType<typeof import('../services/trendsDay').dayFaceDetail> | null,
- *   contributions: object[] | null }} props
+ *   contributions: object[] | null, outcome?: 'wellbeing'|'digestion'|null, value?: number|null }} props
  */
-export default function TrendsDayDetail({ face, contributions }) {
+const WEIGH_ON = { wellbeing: 'Sur votre bien-être, en points sur 5.', digestion: 'Sur votre confort digestif, en points sur 5.' }
+const WEIGH_NOTE = {
+  none: `Rien de marquant ce jour-là parmi ce que ${APP_NAME} compare.`,
+  unexplained: `Rien de ce que ${APP_NAME} compare n’explique cette note basse.`,
+}
+
+export default function TrendsDayDetail({ face, contributions, outcome = null, value = null }) {
+  // POLISH-SIM-71 : sur quelle note, sans les effets négligeables, et une phrase quand rien ne pèse
+  const weigh = weighView(contributions, value)
   return (
     <>
       {face?.mix && (
@@ -139,10 +148,12 @@ export default function TrendsDayDetail({ face, contributions }) {
           </p>
         </section>
       )}
-      {contributions?.length > 0 && (
+      {weigh && (
         <section className="tdd-block" aria-label="Ce qui a pu peser ce jour-là">
           <h3 className="tdd-title">Ce qui a pu peser ce jour-là</h3>
-          <ContributionBars items={contributions} />
+          {weigh.items.length > 0 && WEIGH_ON[outcome] && <p className="tdd-text tdd-weigh-on">{WEIGH_ON[outcome]}</p>}
+          {weigh.items.length > 0 && <ContributionBars items={weigh.items} />}
+          {weigh.note && <p className="tdd-text">{WEIGH_NOTE[weigh.note]}</p>}
         </section>
       )}
     </>

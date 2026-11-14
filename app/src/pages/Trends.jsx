@@ -78,6 +78,7 @@ export default function Trends({
     return {
       face: dayFaceDetail(data?.face ?? [], date),
       contributions: outcome ? contributions?.[outcome]?.[date] ?? null : null,
+      outcome,
     }
   }
   return (
