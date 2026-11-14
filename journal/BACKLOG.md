@@ -652,9 +652,13 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   touchée s'ouvre en Semaine si elle y a 3 points, sinon en Mois (`TrendsViewer.jsx`, `dailyPeriod`) ; la phrase du
   menu dit « en Semaine ou en Mois » dans ce cas. iPhone : code partagé, aucun correctif sur ce fichier, arrive au
   prochain suivi du code embarqué.
-- [ ] **POLISH-SIM-81b** Tendances, Mois → Semaine avec une mesure qui n'a de courbe qu'en Mois (Poids seul) : on
+- [x] **POLISH-SIM-81b** Tendances, Mois → Semaine avec une mesure qui n'a de courbe qu'en Mois (Poids seul) : on
   retombe sur « Choisissez une courbe » sans la mesure. Dire où elle se trouve (« Poids : en Mois ») ou la garder
-  grisée. Outil des personas : `--dark` ne change pas le thème des captures (à corriger).
+  grisée. Outil des personas : `--dark` ne change pas le thème des captures (à corriger). **Fait le 14/11 14:35** :
+  en Semaine, une mesure choisie qui n'a de courbe qu'en Mois reste dans les puces, grisée (« Poids · en Mois ») ;
+  la toucher rouvre le Mois avec sa courbe (`TrendsViewer.jsx`, `monthOnly`). `persona-browse --dark` règle le thème
+  de l'app (`healthtrack_theme`), plus seulement le schéma du téléphone. iPhone : code partagé, aucun correctif sur
+  ce fichier ; embarqué par la PR de suivi ouverte au même run.
 - [x] **POLISH-SIM-82** (Ventre sans technique J14) Analyses › Digestion en attente : « Noter maintenant » reste
   affiché quand la digestion du jour est déjà notée ; dire « Noté aujourd'hui » à la place. **Fait le 14/11 10:35** :
   le compte à rebours lit les notes digestives du jour (au fil de l'eau et bilan du soir) et dit « Noté

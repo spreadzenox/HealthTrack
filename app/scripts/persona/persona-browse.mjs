@@ -87,6 +87,8 @@ await context.addInitScript(() => {
     queryPurchases: async () => ({ purchases: [] }), addListener: async () => ({ remove() {} }),
   }
 })
+// --dark : le thème de l'app est un réglage (clair par défaut), pas le schéma du téléphone (POLISH-SIM-81b)
+if (args.dark) await context.addInitScript(() => { localStorage.setItem('healthtrack_theme', 'dark') })
 const latestId = readdirSync(join(APP_DIR, 'src/data/changelog')).filter((f) => f.endsWith('.json')).sort().pop().replace(/\.json$/, '')
 // Jour 1 : premier lancement, l'onboarding s'ouvre ; sinon il a été fait le jour de l'installation.
 // Au jour 1, les 30 jours importés sont déjà dans la base : sans marque, l'app y verrait quelqu'un qui a déjà des
