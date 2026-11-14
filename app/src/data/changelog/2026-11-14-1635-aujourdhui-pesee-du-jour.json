@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-14",
+  "kind": "correctif",
+  "title": "Aujourd'hui : votre pesée du jour",
+  "items": [
+    "Une pesée faite aujourd'hui manquait dans « Vos données du jour ». Elle y a maintenant sa ligne « Poids ».",
+    "Touchez cette ligne pour ouvrir la courbe du poids."
+  ]
+}

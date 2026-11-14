@@ -362,6 +362,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 ## 5. Historique
 
 - **14/11 01:35** — POLISH-SIM-69 (1re partie) : Analyses sans lien net, les barres hachurées sont repliées derrière « Voir les liens pas encore nets » ; en tête, les facteurs comparés et le compte de jours restant. iPhone : code embarqué inchangé (v1032), build TestFlight du code v1032 lancée par #955.
+- **14/11 16:35** — POLISH-SIM-84 : sur Aujourd'hui, une pesée du jour a sa ligne « Poids » dans « Vos données du jour » (avec la balance ; saisie dans l'app, avec vos notes). iPhone : PR de suivi #976 (code embarqué v1052) ouverte, voir le compte rendu.
 - **14/11 15:35** — POLISH-SIM-87 : à l'accueil, le bouton « Continuer sans » devient « Continuer » ; la première phrase et l'illustration disent « vos appareils » au lieu de « votre montre ». iPhone : PR de suivi #974 (code embarqué v1050) finie à ce run, voir le compte rendu.
 - **14/11 14:35** — POLISH-SIM-81b : dans Tendances, en Semaine, une mesure choisie qui n'a de courbe qu'en Mois reste visible, grisée (« Poids · en Mois »), et ramène au Mois. Outil des personas : `--dark` règle enfin le thème de l'app. iPhone : PR de suivi ouverte au même run (code embarqué après ce correctif).
 - **14/11 13:35** — POLISH-SIM-90 : la fiche d'un jour de Tendances dit la note telle qu'elle a été donnée (« vous avez noté 3 · estimé avec le visage » ; « vous avez noté « douleur » (1) »). iPhone : PR de suivi #970 fusionnée (code embarqué v1047), build iOS verte.

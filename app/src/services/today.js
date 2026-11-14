@@ -290,6 +290,9 @@ function formatMinutes(min) {
 }
 
 /** Dernière entrée du jour d'un type, ou null. */
+/** Une pesée : poids seul, ou composition corporelle avec son poids. */
+const WEIGH_IN_TYPES = new Set(['weight', 'body_composition'])
+
 function lastOfDay(entries, type, day, ok = () => true) {
   let best = null
   for (const e of entries || []) {
@@ -304,10 +307,11 @@ function lastOfDay(entries, type, day, ok = () => true) {
  * - `watch` (Montre) : sommeil, VFC de la nuit, FC au repos, et les pas quand ils viennent de la montre (montre
  *   connue, ou même appareil que la nuit) ;
  * - `phone` (Téléphone) : pas, nuit estimée par le téléphone, temps d'écran ;
+ * - `scale` (Balance) : la dernière pesée du jour (POLISH-SIM-84) ; un poids saisi dans l'app va dans `noted` ;
  * - `noted` (Noté par vous) : dernière note du bien-être (menthe) et du ventre (pêche, seulement avec « Mon ventre »)
  *   du jour, repas et cigarettes du jour. Jamais une note d'hier.
  * Une source sans chiffre n'apparaît pas. Les tuiles viennent de `measureTiles` (même règle « aujourd'hui, sinon hier »).
- * @returns {Array<{ id: 'watch'|'phone'|'noted', title: string, items: object[] }>}
+ * @returns {Array<{ id: 'watch'|'phone'|'scale'|'noted', title: string, items: object[] }>}
  */
 export function todayBySource({ tiles = [], summary = null, entries = [], now = new Date(), showGut = false } = {}) {
   const s = summary || {}
@@ -336,16 +340,29 @@ export function todayBySource({ tiles = [], summary = null, entries = [], now = 
   if (wb) noted.push({ key: 'wellbeing', label: 'Bien-être', value: `${formatNote(wb.payload.score)}/5`, when: `à ${hhmm(wb.at)}`, theme: 'mint' })
   const gut = showGut ? lastOfDay(entries, GUT_TYPE, day, (e) => !isGutDayNote(e) && gutLevelLabel(e.payload?.level)) : null
   if (gut) noted.push({ key: 'gut', label: 'Digestion', value: gutLevelLabel(gut.payload.level), when: `à ${hhmm(gut.at)}`, theme: 'peach' })
+  // POLISH-SIM-84 : la pesée du jour (la dernière), avec la balance ; saisie dans l'app, avec vos notes
+  const scale = []
+  let weighIn = null
+  for (const e of entries || []) {
+    if (!WEIGH_IN_TYPES.has(e?.type) || !e.at || localDateKey(e.at) !== day) continue
+    if (!isNum(e.payload?.valueKg) || e.payload.valueKg <= 0) continue
+    if (!weighIn || e.at > weighIn.at) weighIn = e
+  }
+  if (weighIn) {
+    const kg = weighIn.payload.valueKg.toLocaleString(appLocale(), { maximumFractionDigits: 1, minimumFractionDigits: 1 })
+    ;(weighIn.source === 'app_weight' ? noted : scale).push({ key: 'weight', label: 'Poids', value: `${kg} kg`, when: `à ${hhmm(weighIn.at)}`, sources: [] })
+  }
   if (s.meals > 0) noted.push({ key: 'meals', label: 'Repas', value: String(s.meals), when: null })
   if (s.cigarettes > 0) noted.push({ key: 'cigarettes', label: s.cigarettes > 1 ? 'Cigarettes' : 'Cigarette', value: String(s.cigarettes), when: null })
 
   return [
     { id: 'watch', title: 'Montre', items: watch },
     { id: 'phone', title: 'Téléphone', items: phone },
+    { id: 'scale', title: 'Balance', items: scale },
     { id: 'noted', title: 'Noté par vous', items: noted },
   ].filter((g) => g.items.length)
 }
-const SOURCE_FROM = { watch: 'votre montre', phone: 'votre téléphone', noted: 'vos notes' }
+const SOURCE_FROM = { watch: 'votre montre', phone: 'votre téléphone', scale: 'votre balance', noted: 'vos notes' }
 
 /** « D'après votre montre, votre téléphone et vos notes. » (AUJ-3 : sources en petit, sans nom d'appareil ni d'app) */
 export function sourcesSentence(groupIds) {

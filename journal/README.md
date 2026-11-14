@@ -23,6 +23,17 @@
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
 
+> ⚖️ **Aujourd'hui : votre pesée du jour (14/11 16:35)** : une persona avec une balance connectée et sans
+> montre ne voyait aucune pesée sur Aujourd'hui. Une pesée faite dans la journée a maintenant sa ligne « Poids »
+> dans « Vos données du jour », avec l'heure ; la toucher ouvre la courbe du poids
+> ([clair](runs/captures/2026-11-14-1635-aujourdhui-pesee-clair.png) ·
+> [sombre](runs/captures/2026-11-14-1635-aujourdhui-pesee-sombre.png) ·
+> [balance seule](runs/captures/2026-11-14-1635-aujourdhui-pesee-seule-clair.png)). Pas de capture « avant »
+> refaite ; un poids saisi à la main dans une autre app de santé est dit « d'après votre balance » lui aussi ; le
+> lien « Ajouter une montre » reste sous le bloc quand il n'y a pas de montre. **Sur iPhone** : la PR de suivi #976
+> (code de la v1052 : « Continuer », « vos appareils ») est ouverte, sa build macOS est à finir au run suivant ; le
+> correctif de ce run arrive sur iPhone au suivi d'après. Rien à faire de votre côté.
+
 > 👋 **Accueil : « Continuer », et « vos appareils » (14/11 15:35)** : deux personas butaient sur le bouton
 > « Continuer sans » de l'accueil (« sans quoi ? »), et la première phrase parlait de « votre montre » à quelqu'un
 > qui n'en a pas. Le bouton dit « Continuer »
@@ -816,6 +827,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 16:35 — [Aujourd'hui : la pesée du jour](runs/2026-11-14-1635-aujourdhui-pesee-du-jour.md) | 🔧 | Main vert, aucune PR de la routine ouverte. Suivi iPhone : PR #976 (code embarqué v1050 → v1052, 52 correctifs sans retouche), build macOS et captures de l'accueil à finir au run suivant. POLISH-SIM-84 : une pesée du jour a sa ligne « Poids » dans « Vos données du jour » ; option `--weigh-in` de l'outil de captures. 3548 tests verts. Parité 70 %. |
 | 14/11 15:35 — [Accueil : « Continuer » et « vos appareils »](runs/2026-11-14-1535-accueil-continuer-appareils.md) | 🔧 | Main vert. PR #974 du run précédent finie (build iOS verte, capture iPhone de Tendances regardée) et mergée : iPhone en code v1050. POLISH-SIM-87 : à l'accueil, « Continuer sans » devient « Continuer », « votre montre » devient « vos appareils » ; PR #975. 3545 tests verts. iPhone : au prochain suivi. Parité 70 %. |
 | 14/11 14:35 — [Tendances : « Poids · en Mois »](runs/2026-11-14-1435-tendances-mesure-en-mois.md) | 🔧 | Main vert, aucune PR de la routine ouverte ; envoi TestFlight du merge de #970 réussi. POLISH-SIM-81b : en Semaine, une mesure choisie qui n'a de courbe qu'en Mois reste dans les puces, grisée, et ramène au Mois ; `--dark` de l'outil des personas corrigé. 3545 tests verts. #973 mergée (v1050), 12 checks verts ; release v720, APK 34,6 Mo. Suivi iPhone : PR ouverte (code embarqué v1047 → v1050, 52 correctifs sans retouche, 3905 tests verts), build macOS et captures à finir au run suivant. Parité 70 %. |
 | 14/11 13:35 — [Tendances, fiche d'un jour : la note telle que donnée](runs/2026-11-14-1335-tendances-fiche-jour-note.md) | 🔧 | Main vert. PR #970 du run précédent finie (build iOS verte, capture iPhone du Journal regardée : « Cœur au repos ») et mergée. POLISH-SIM-90 : « vous avez noté 3 · estimé avec le visage » à la place de « votre note 3,4 et le visage » ; digestion : « vous avez noté « douleur » (1) » ; PR #972. 3543 tests verts. Parité 70 %. |

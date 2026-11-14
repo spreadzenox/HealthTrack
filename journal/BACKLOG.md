@@ -673,8 +673,15 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-83** (à vérifier) Objectif « Mon sport et ma récupération » : rien ne change de visible ensuite
   (Aujourd'hui, Analyses, Agir). Relever ce que l'objectif règle vraiment ; s'il ne règle rien, le dire dans une
   proposition plutôt que de le laisser promettre.
-- [ ] **POLISH-SIM-84** Aujourd'hui avec une balance et sans montre : aucune pesée dans « Vos données du jour », et le
-  seul lien est « Ajouter une montre ».
+- [x] **POLISH-SIM-84** Aujourd'hui avec une balance et sans montre : aucune pesée dans « Vos données du jour », et le
+  seul lien est « Ajouter une montre ». **Fait le 14/11 16:35** : la dernière pesée du jour (`weight` ou
+  `body_composition`) a sa ligne « Poids · à 07:30 · 72,4 kg », couleur du corps, lien vers sa courbe de Tendances ;
+  source dite « votre balance » (groupe `scale` de `todayBySource`), ou « vos notes » pour un poids saisi dans l'app
+  (`app_weight`) ; jamais la pesée d'hier. Option `--weigh-in` de `npm run visual`. Reste **POLISH-SIM-84b** : le
+  lien « Ajouter une montre » reste seul sous le bloc quand il n'y a pas de montre (le remplacer par « Ajouter un
+  appareil » ?) ; pas de « d'habitude » pour le poids ; un poids saisi à la main dans une autre app de santé est dit
+  « votre balance ». iPhone : code partagé, les 52 correctifs s'appliquent encore sur `app/src` avec ce changement
+  (15, 30 et 56 touchent ces fichiers) ; arrive au suivi d'après.
 - [ ] **POLISH-SIM-85** Visite guidée d'Agir : « Exemple au jour 14 » montré à une personne qui est à son 14e jour ;
   « un jour sur deux tiré au sort » pas compris.
 - [x] **POLISH-SIM-86** Journal : tuiles « SpO₂ » et « FC au repos », alors que Sources dit « oxygène du sang » et
