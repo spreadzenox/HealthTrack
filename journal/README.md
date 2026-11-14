@@ -772,7 +772,10 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+<<<<<<< HEAD
 | 14/11 11:35 — [Analyses › Bien-être : « Noté aujourd'hui »](runs/2026-11-14-1135-analyses-bien-etre-note-du-jour.md) | 🔧 | Main vert. PR #968 du run précédent finie (build iOS verte, captures iPhone regardées, mergée) : iPhone en code v1044. POLISH-SIM-82b : avant les premiers résultats, la carte d'Analyses › Bien-être dit « Noté aujourd'hui : 4/5 » et propose « Ajouter une note » quand le bien-être du jour est noté. iPhone : au prochain suivi. Parité 70 %. |
+=======
+>>>>>>> origin/main
 | 14/11 10:35 — [Analyses › Digestion : « Noté aujourd'hui »](runs/2026-11-14-1035-analyses-digestion-note-du-jour.md) | 🔧 | Main vert, aucune PR ouverte. POLISH-SIM-82 : avant les premiers résultats, la carte dit « Noté aujourd'hui : Gêne » et propose « Ajouter une note » quand la digestion du jour est notée. #967 mergée (v1044, release v716, APK 33,0 Mo). iPhone : PR de suivi du code embarqué (v1040 → v1044, 52 correctifs sans retouche) ouverte, build macOS à finir au run suivant. Parité 70 %. |
 | 14/11 09:35 — [Tendances : « Poids » garde sa courbe](runs/2026-11-14-0935-tendances-poids-periode.md) | 🔧 | Main vert. POLISH-SIM-81 : une mesure touchée en vue Jour s'ouvre en Semaine si elle y a une courbe, sinon en Mois. #965 (journal en double du run de 07:35, en conflit) fermée, sa note reprise. iPhone : code embarqué inchangé (v1040), le correctif arrive au prochain suivi. Parité 70 %. |
 | 14/11 08:35 — [Deux personas ; Garmin, clé personnelle écartée](runs/2026-11-14-0835-personas-idees.md) | 🔭 | Run « idées », sans code produit. PR #963 du run précédent finie (build iOS verte, captures iPhone regardées, mergée à 08:50). Simulations « Ventre, sans technique » J14 (Apple Watch) et « Sportif » J1 (téléphone + balance) : POLISH-SIM-81 à 90, PROP-SIM-17 et 18. Outil : matériels `apple-watch` et `phone-scale`, accord IA déjà donné (POLISH-SIM-78, 79). INTEG-1a : niveau personnel Garmin lu, voie écartée pour l'app vendue. Parité 70 %. |

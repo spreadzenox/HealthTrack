@@ -39,7 +39,14 @@ nuit prochaine ; 844.344 intacte  ·  **Parité** : 70 % (33/47)
 - Charte, PRODUIT, BACKLOG, PARITE et journal iPhone lus par sections, pas en entier (plus de 1 Mo).
 - Numéros des builds TestFlight des codes v1034 à v1040 non relevés.
 
-FIN_DU_RUN
+## Fin du run
+- **PR #968 finie** : « Build iOS (simulateur) et captures » verte à 11:53 (51 min). Captures de `captures/pr-968`
+  regardées : Journal › Tendances (courbe du bien-être en Semaine, inchangée) et Analyses › Digestion (compte à
+  rebours, « Noter maintenant » sans note du jour, inchangé) ; aucune erreur JavaScript relevée par la build.
+  Les captures ne jouent ni « Poids » en vue Jour ni une digestion notée le jour même : ces deux cas sont couverts
+  par les tests du code partagé, verts avec les correctifs iPhone. Mergée à 11:55 (5ea019c) : l'iPhone embarque le
+  code de la v1044.
+FIN_SUITE
 
 ## Suite
 - Suivi iPhone du code de ce run au prochain passage (`scripts/upstream.sh --latest`), captures d'Analyses › Bien-être.
