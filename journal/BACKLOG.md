@@ -1222,7 +1222,11 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     événement `analyze` de type `photo` ou `text`, lisible ; une empreinte est écartée si un de ses contrôles Play
     Integrity est marqué CI, robot, réseau de test ou iPhone ; « à inscrire » = au moins un jeton accepté, les
     autres sont listées à part. Le bilan donne aussi la durée de conservation des journaux.
-  - [ ] **P44-2b** : lire le premier relevé (bilan du déploiement qui suit le merge) et le noter ici ; si la
+  - [ ] **P44-2b** — **premier relevé, 14/11 21:55** (déploiement de #985) : 3 installations à inscrire,
+    `5e4a69f72ffb` (celle du propriétaire, 37 repas, 08/11 → 14/11), `8419337c4894` (3 repas, 10/11 → 14/11),
+    `b029a1141987` (7 repas, 08/11 → 11/11) ; 0 sans jeton accepté ; 123 écartées (robots, réseau de test, iPhone) ;
+    246 analyses et 239 contrôles lus ; conservation des journaux : 30 jours (le 02/12, le 08/11 sera encore lisible).
+    Suite : lire le premier relevé (bilan du déploiement qui suit le merge) et le noter ici ; si la
     conservation est inférieure à 25 jours, garder les relevés successifs dans le journal. Le 02/12 au matin :
     relancer « Relais — déploiement » (workflow_dispatch), inscrire la liste « à inscrire » dans `offered.installs`
     de `relay/src/launch-period.json` par une PR, décider des « sans jeton accepté » (par défaut : non inscrites).

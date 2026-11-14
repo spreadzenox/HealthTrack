@@ -60,7 +60,7 @@
 > « P44 oui ». Après le 2 décembre, votre installation garde Gold en entier (20 analyses par jour, affichage
 > « Gold »), sans date de fin ; et le relais sait garder Gold jusqu'au 27 décembre inclus aux installations d'une
 > liste. **Cette liste est vide** : aucun testeur n'en bénéficie encore, elle sera remplie le 2 décembre au matin
-> avec les installations qui ont analysé au moins un repas (le relevé est dans le bilan du relais depuis le 14/11 21:35, P44-2a ; l'inscription du 2 décembre reste à faire, P44-2b). Rien ne change avant le 2 décembre.
+> avec les installations qui ont analysé au moins un repas (le relevé est dans le bilan du relais depuis le 14/11 21:35, P44-2a ; l'inscription du 2 décembre reste à faire, P44-2b). Premier relevé, le 14/11 à 21:55 : trois installations ont analysé un repas depuis le 8 novembre, la vôtre (37 repas) et deux autres (7 et 3 repas). Rien ne change avant le 2 décembre.
 > Pas vérifié sur votre téléphone ; votre écran dira « Gold offert pendant le test : vous n'avez rien à payer. »,
 > texte à revoir (P44-3). Si vous réinstallez l'app, votre empreinte change : dites-le. **Sur iPhone** : non
 > concerné (la période offerte y est finie depuis le 6/11, l'écran d'achat doit rester visible).
