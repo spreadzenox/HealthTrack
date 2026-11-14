@@ -1,0 +1,30 @@
+Simulateurs iOS installés :
+iOS 26.2 (26.2 - 23C54) - com.apple.CoreSimulator.SimRuntime.iOS-26-2
+iOS 26.4 (26.4.1 - 23E254a) - com.apple.CoreSimulator.SimRuntime.iOS-26-4
+iOS 26.5 (26.5 - 23F77) - com.apple.CoreSimulator.SimRuntime.iOS-26-5
+Simulateur choisi : 26.2     iPhone 16e (73903A6E-DECF-4552-ADBB-B4B1F348F51F) (Shutdown) 
+Destination : platform=iOS Simulator,id=73903A6E-DECF-4552-ADBB-B4B1F348F51F
+Test Case '-[AppTests.AppStoreBillingTests testAchatDEssaiRenduCommeUnAchatPlayEtGardeDansLesAbonnementsEnCours]' started.
+Test Case '-[AppTests.AppStoreBillingTests testAchatDEssaiRenduCommeUnAchatPlayEtGardeDansLesAbonnementsEnCours]' passed (0.987 seconds).
+Test Case '-[AppTests.AppStoreBillingTests testFormulesLuesDansStoreKit]' started.
+Test Case '-[AppTests.AppStoreBillingTests testFormulesLuesDansStoreKit]' passed (0.234 seconds).
+Test Case '-[AppTests.AppStoreBillingTests testMonteeDeSilverAGoldUnSeulAbonnementEnCours]' started.
+Test Case '-[AppTests.AppStoreBillingTests testMonteeDeSilverAGoldUnSeulAbonnementEnCours]' passed (0.673 seconds).
+	 Executed 3 tests, with 0 failures (0 unexpected) in 1.894 (1.897) seconds
+Test Case '-[AppTests.BackGestureTests testBalayageDuBordGaucheRemonteLHistorique]' started.
+Test Case '-[AppTests.BackGestureTests testBalayageDuBordGaucheRemonteLHistorique]' passed (0.001 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.001 (0.074) seconds
+Test Case '-[AppTests.TextSizeTests testLaVueWebSuitUnChangementDeTaille]' started.
+Test Case '-[AppTests.TextSizeTests testLaVueWebSuitUnChangementDeTaille]' passed (0.228 seconds).
+Test Case '-[AppTests.TextSizeTests testPetitTexteReduit]' started.
+Test Case '-[AppTests.TextSizeTests testPetitTexteReduit]' passed (0.002 seconds).
+Test Case '-[AppTests.TextSizeTests testPlafonneALaPlusGrandePoliceDAndroid]' started.
+Test Case '-[AppTests.TextSizeTests testPlafonneALaPlusGrandePoliceDAndroid]' passed (0.002 seconds).
+Test Case '-[AppTests.TextSizeTests testTailleParDefautSansChangement]' started.
+Test Case '-[AppTests.TextSizeTests testTailleParDefautSansChangement]' passed (0.591 seconds).
+Test Case '-[AppTests.TextSizeTests testTresGrandTexteAgrandit]' started.
+Test Case '-[AppTests.TextSizeTests testTresGrandTexteAgrandit]' passed (0.001 seconds).
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.824 (0.830) seconds
+	 Executed 9 tests, with 0 failures (0 unexpected) in 2.719 (2.802) seconds
+	 Executed 9 tests, with 0 failures (0 unexpected) in 2.719 (2.812) seconds
+** TEST SUCCEEDED **
