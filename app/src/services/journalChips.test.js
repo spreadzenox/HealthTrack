@@ -49,7 +49,7 @@ describe('summaryChips — repas', () => {
   it('prend la couleur du thème de chaque mesure (AUJ-8)', () => {
     expect(chipTheme('Sommeil')).toBe('night')
     expect(chipTheme('Variabilité cardiaque')).toBe('rose')
-    expect(chipTheme('FC au repos')).toBe('rose')
+    expect(chipTheme('Cœur au repos')).toBe('rose')
     expect(chipTheme('Pas')).toBe('lilac')
     expect(chipTheme('Écran')).toBe('stone')
     expect(chipTheme('Bien-être')).toBe('mint')

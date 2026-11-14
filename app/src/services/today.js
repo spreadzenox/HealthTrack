@@ -327,7 +327,7 @@ export function todayBySource({ tiles = [], summary = null, entries = [], now = 
       && t.sources.every((l) => WATCH_LABELS.has(l) || watchDevices.has(device(l)))
     ;(fromWatch ? watch : phone).push(t)
   }
-  if (isNum(s.restingHr)) watch.push({ key: 'restingHr', label: 'FC au repos', value: `${Math.round(s.restingHr)} bpm`, when: null, sources: [] })
+  if (isNum(s.restingHr)) watch.push({ key: 'restingHr', label: 'Cœur au repos', value: `${Math.round(s.restingHr)} bpm`, when: null, sources: [] })
   if (isNum(s.screenMinutes)) phone.push({ key: 'screen', label: 'Temps d’écran', value: formatMinutes(s.screenMinutes), when: null, sources: [] })
 
   const day = localDateKey(now.toISOString())

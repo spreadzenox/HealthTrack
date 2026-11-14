@@ -44,7 +44,7 @@ function directionLabel(s) {
 }
 
 function checkedList(metrics) {
-  const names = metrics.map((m) => (m.key === 'sleepMinutes' ? 'sommeil' : m.label.startsWith('FC') ? m.label : m.label.toLowerCase()))
+  const names = metrics.map((m) => (m.key === 'sleepMinutes' ? 'sommeil' : m.label.toLowerCase()))
   return names.length > 1 ? `${names.slice(0, -1).join(', ')} et ${names[names.length - 1]}` : names[0]
 }
 

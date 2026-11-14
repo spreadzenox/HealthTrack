@@ -13,7 +13,7 @@ export const MEASURES = [
   { id: 'sleep', label: 'Durée du sommeil', theme: 'sleep' },
   { id: 'stages', label: 'Phases du sommeil', theme: 'sleep' },
   { id: 'heartRate', label: 'Fréquence cardiaque', theme: 'body' },
-  { id: 'restingHeartRate', label: 'FC au repos', theme: 'body' },
+  { id: 'restingHeartRate', label: 'Cœur au repos', theme: 'body' },
   { id: 'hrv', label: 'Variabilité cardiaque', theme: 'body' },
   { id: 'temperature', label: 'Température', theme: 'body' },
   { id: 'spo2', label: 'Oxygène du sang', theme: 'body' },

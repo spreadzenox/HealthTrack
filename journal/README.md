@@ -23,6 +23,18 @@
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
 
+> 🏷️ **« Cœur au repos », « Oxygène du sang » : un seul nom (14/11 12:35)** : une persona lisait « SpO₂ » et
+> « FC au repos » dans le Journal, « oxygène du sang » et « cœur au repos » dans Sources, sans voir que c'étaient
+> les mêmes mesures. Le nom de Sources est maintenant celui de toute l'app : Aujourd'hui, Journal, Tendances,
+> Analyses, « Ce qui change aujourd'hui » (« Cœur au repos plus rapide »). **Moins compact** : dans le Journal,
+> « Cœur au repos » tient sur deux lignes, là où « FC au repos » tenait sur une
+> ([avant](runs/captures/2026-11-14-1235-journal-avant-clair.png) ·
+> [après](runs/captures/2026-11-14-1235-journal-apres-clair.png) ·
+> [sombre](runs/captures/2026-11-14-1235-journal-apres-sombre.png)). La tuile « FC » garde son nom pour l'instant.
+> **Sur iPhone** : la PR de suivi #970 embarque le code de la v1046 (« Noté aujourd'hui » du bien-être), build
+> macOS en cours ; ces deux noms demandent de refaire quatre correctifs iPhone, au suivi suivant. Rien à faire de
+> votre côté.
+
 > ✅ **Analyses › Bien-être : « Noté aujourd'hui » (14/11 11:35)** : la même chose que pour la digestion, vérifiée
 > puis corrigée. Avant les premiers résultats, la carte gardait « Noter maintenant » quand le bien-être du jour était
 > noté ; « Noté : 4/5 » n'apparaissait qu'après une saisie faite depuis Analyses et disparaissait en quittant
@@ -772,6 +784,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 12:35 — [« Cœur au repos », « Oxygène du sang » : un seul nom](runs/2026-11-14-1235-coeur-au-repos-oxygene-du-sang.md) | 🔧 | Main vert, aucune PR ouverte. Suivi iPhone : PR #970 (code embarqué v1044 → v1046, 52 correctifs sans retouche, 3899 tests verts), build macOS à finir au run suivant. POLISH-SIM-86 : « Cœur au repos » et « Oxygène du sang » remplacent « FC au repos » et « SpO₂ » dans tous les textes, test de garde. Quatre correctifs iPhone à refaire au suivi de cette version. Parité 70 %. |
 | 14/11 11:35 — [Analyses › Bien-être : « Noté aujourd'hui »](runs/2026-11-14-1135-analyses-bien-etre-note-du-jour.md) | 🔧 | Main vert. PR #968 du run précédent finie (build iOS verte, captures iPhone regardées, mergée) : iPhone en code v1044. POLISH-SIM-82b : avant les premiers résultats, la carte d'Analyses › Bien-être dit « Noté aujourd'hui : 4/5 » et propose « Ajouter une note » quand le bien-être du jour est noté. iPhone : au prochain suivi. Parité 70 %. |
 | 14/11 10:35 — [Analyses › Digestion : « Noté aujourd'hui »](runs/2026-11-14-1035-analyses-digestion-note-du-jour.md) | 🔧 | Main vert, aucune PR ouverte. POLISH-SIM-82 : avant les premiers résultats, la carte dit « Noté aujourd'hui : Gêne » et propose « Ajouter une note » quand la digestion du jour est notée. #967 mergée (v1044, release v716, APK 33,0 Mo). iPhone : PR de suivi du code embarqué (v1040 → v1044, 52 correctifs sans retouche) ouverte, build macOS à finir au run suivant. Parité 70 %. |
 | 14/11 09:35 — [Tendances : « Poids » garde sa courbe](runs/2026-11-14-0935-tendances-poids-periode.md) | 🔧 | Main vert. POLISH-SIM-81 : une mesure touchée en vue Jour s'ouvre en Semaine si elle y a une courbe, sinon en Mois. #965 (journal en double du run de 07:35, en conflit) fermée, sa note reprise. iPhone : code embarqué inchangé (v1040), le correctif arrive au prochain suivi. Parité 70 %. |

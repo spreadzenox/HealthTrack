@@ -37,7 +37,7 @@ function hm(minutes) {
 const METRICS = [
   { key: 'sleep', field: 'sleepMinutes', up: 'Nuit plus longue', down: 'Nuit plus courte', minAbs: 20, fmt: hm },
   { key: 'hrv', field: 'hrv', up: 'Variabilité cardiaque de la nuit plus haute', down: 'Variabilité cardiaque de la nuit plus basse', minAbs: 4, fmt: (v) => `${Math.round(v)} ms` },
-  { key: 'restingHr', field: 'restingHr', up: 'FC au repos plus haute', down: 'FC au repos plus basse', minAbs: 3, fmt: (v) => `${Math.round(v)} bpm` },
+  { key: 'restingHr', field: 'restingHr', up: 'Cœur au repos plus rapide', down: 'Cœur au repos plus lent', minAbs: 3, fmt: (v) => `${Math.round(v)} bpm` },
   { key: 'steps', field: 'steps', up: 'Plus de pas', down: 'Moins de pas', minAbs: 1000, cumulative: true, fmt: (v) => Math.round(v).toLocaleString(appLocale()) },
   { key: 'screen', field: 'screenMinutes', up: 'Plus de temps d’écran', down: 'Moins de temps d’écran', minAbs: 20, cumulative: true, fmt: hm },
 ]

@@ -123,7 +123,7 @@ export default function BaselineCards({ onStatus }) {
       {!hasAnyData ? (
         <>
           <p className="empty-hint">
-            Avec une montre, après 3 semaines de mesures, {APP_NAME} compare votre FC au repos et votre variabilité cardiaque à{' '}
+            Avec une montre, après 3 semaines de mesures, {APP_NAME} compare votre cœur au repos et votre variabilité cardiaque à{' '}
             <em>vos</em> valeurs habituelles.
           </p>
           <PastelTiles tiles={[{ to: '/connectors', theme: 'stone', icon: 'plus', label: 'Ajouter une montre' }]} />
@@ -137,7 +137,7 @@ export default function BaselineCards({ onStatus }) {
           )}
           {generalFatigue && (
             <p className="baseline-hint" role="note">
-              Hypothèse générale : une FC au repos plus haute ou une variabilité cardiaque plus basse suit souvent une nuit courte, du
+              Hypothèse générale : un cœur au repos plus rapide ou une variabilité cardiaque plus basse suit souvent une nuit courte, du
               stress, de l’alcool, un entraînement intense ou le début d’une infection. Si cela dure ou s’accompagne de
               symptômes, parlez-en à un professionnel de santé.
             </p>
