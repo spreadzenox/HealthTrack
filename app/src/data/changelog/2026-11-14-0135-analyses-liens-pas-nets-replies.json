@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-14",
+  "kind": "correctif",
+  "title": "Analyses : rien de net, rien à lire de travers",
+  "items": [
+    "Tant qu'aucun lien n'est net, les barres hachurées sont repliées : elles se lisaient comme des résultats.",
+    "La page dit combien de facteurs ont été comparés ; « Voir les liens pas encore nets » les affiche."
+  ]
+}

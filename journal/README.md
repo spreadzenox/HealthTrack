@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1033 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 n'était pas encore partie à 00:35, le cron de GitHub part souvent avec 3 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030, première build de ce dépôt validée par Apple, sans attente) ; code de la v1032 en vérification sur simulateur ; anciennes builds expirées par le nettoyage ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1034 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 n'était pas encore partie à 01:40, le cron de GitHub part souvent avec 3 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030, première build de ce dépôt validée par Apple, sans attente) ; code de la v1032 en vérification sur simulateur ; anciennes builds expirées par le nettoyage ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -22,6 +22,15 @@
   qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
+
+> 🔎 **Analyses : tant que rien n'est net, plus de barres à lire de travers (14/11 01:35)** : deux personas lisaient
+> la liste hachurée comme un résultat (« Lactose −0,8 pt : j'arrête le lait ou pas ? »). Quand aucun lien n'est net,
+> la page dit seulement « Aucun lien assez net pour l'instant », combien de facteurs ont été comparés, et le nombre
+> de jours qui manquent pour le délai suivant s'il y en a un ; les barres restent accessibles par « Voir les liens pas
+> encore nets » ([replié](runs/captures/2026-11-14-0135-analyses-rien-de-net-replie.png) ·
+> [déplié](runs/captures/2026-11-14-0135-analyses-rien-de-net-ouvert.png)). Dès qu'un lien est net, tout s'affiche
+> comme avant. Partira sur Alpha au prochain envoi du soir ; sur iPhone au prochain suivi. L'envoi Alpha du 13/11 au
+> soir n'était pas encore parti à 01:40. Rien à faire de votre côté.
 
 > 🍏 **iPhone : la première build de ce dépôt est chez les testeurs (14/11 00:35)** : la build TestFlight
 > **1030.1031** (rapport PDF, tuile « Séance », Analyses plus claires) était traitée par Apple ; la routine l'a ajoutée
@@ -660,6 +669,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 01:35 — [Analyses : liens pas nets repliés](runs/2026-11-14-0135-analyses-liens-pas-nets-replies.md) | 🔧 | POLISH-SIM-69 (1re partie) : sans lien net, les barres hachurées sont repliées derrière « Voir les liens pas encore nets » ; facteurs comparés et jours restants dits en tête. #955 du run précédent mergée par sa session. iPhone : code embarqué inchangé (v1032). Parité 70 %. |
 | 14/11 00:35 — [Agir vide selon l'objectif ; iPhone 1030.1031 chez les testeurs](runs/2026-11-14-0035-agir-vide-objectif-ventre.md) | 🔧 | Nuit : build TestFlight 1030.1031 ajoutée au groupe externe et soumise à l'examen bêta (00:33), validée aussitôt (« en test ») ; nettoyage des anciennes builds. POLISH-SIM-70 : Agir vide ouvre Analyses › Digestion avec l'objectif ventre, et dit quoi noter. iPhone : code embarqué v1030 → v1032, 52 correctifs s'appliquent. Parité 70 %. |
 | 13/11 23:35 — [Digestion : bilan du jour visible](runs/2026-11-13-2335-digestion-bilan-du-jour.md) | 🔧 | POLISH-SIM-68 : « Bilan du jour : Gêne » sur Aujourd'hui, plus de « Dernière note … hier » après le bilan. PR iPhone #953 finie (build simulateur verte, captures regardées) et mergée : build TestFlight 1030.1031 envoyée. Tests (3507), lint, build, visual verts. Parité 70 %. Rien à faire de votre côté |
 | 13/11 22:35 — [Routine unique : iPhone repris](runs/2026-11-13-2235-routine-unique-iphone.md) | 📓 | FUSION-1 : résumé unique Android et iPhone, ancien relais archivé (21 demandes iOS reprises au backlog), en-tête « GÉNÉRÉ » retiré des workflows iOS, code embarqué de l'iPhone v1024 → v1030, correctif 58 (cycle) refait. Android v1030 ; TestFlight 1024.1028 envoyée, non confirmée ; parité 70 %. Rien à faire de votre côté |

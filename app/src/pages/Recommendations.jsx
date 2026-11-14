@@ -134,6 +134,17 @@ function Unit({ w }) {
 function Results({ outcome, view, locked }) {
   const w = WORDS[outcome]
   const showWeigh = !locked && view.weigh && view.weigh.length > 0
+  // POLISH-SIM-69 : rien de net, les barres hachurées étaient lues comme un résultat. Elles se replient, et le
+  // haut de la page dit ce qui a été comparé et ce qui manque.
+  const [unsureOpen, setUnsureOpen] = useState(false)
+  const quiet = showWeigh && view.weighNothingNet && !view.pistes.length && view.lookOnly.every((x) => !x.net)
+  const bars = !quiet || unsureOpen
+  const nextLock = view.nextLock && (
+    <p className="reco-next">
+      {/* POLISH-SIM-56 : dire ce qui est compté (jours avec ce résultat) et de quel délai il s'agit */}
+      {view.nextLock.label}{view.nextLock.window ? ` (${view.nextLock.window})` : ''} : encore <span className="mono">{view.nextLock.daysLeft}</span> jour{view.nextLock.daysLeft > 1 ? 's' : ''} {w.days}.
+    </p>
+  )
   return (
     <>
       <section className="reco-block" aria-labelledby={`reco-pistes-${outcome}`}>
@@ -160,13 +171,19 @@ function Results({ outcome, view, locked }) {
           <p className="today-card-text">Aucun lien assez net pour l’instant sur ce que vous pouvez changer.</p>
         )}
         {/* POLISH-SIM-62 : sans piste ni barre, dire au moins ce qui a été comparé */}
-        {!view.pistes.length && !showWeigh && !(view.lookOnly.length && !locked) && view.compared && (
+        {!view.pistes.length && (quiet || (!showWeigh && !(view.lookOnly.length && !locked))) && view.compared && (
           <p className="reco-next" data-testid="reco-compared">
             <span className="mono">{view.compared.count}</span> facteur{view.compared.count > 1 ? 's comparés' : ' comparé'} à {w.what}, du jour même {COMPARED_UP_TO[view.compared.upTo]}.
           </p>
         )}
+        {quiet && nextLock}
+        {quiet && (
+          <button type="button" className="reco-how-link" aria-expanded={unsureOpen} onClick={() => setUnsureOpen(!unsureOpen)}>
+            Voir les liens pas encore nets
+          </button>
+        )}
       </section>
-      {showWeigh && (
+      {showWeigh && bars && (
         <section className="reco-block" aria-labelledby={`reco-weigh-${outcome}`}>
           <h3 id={`reco-weigh-${outcome}`} className="reco-section-title">{w.weigh}</h3>
           <Unit w={w} />
@@ -187,19 +204,14 @@ function Results({ outcome, view, locked }) {
           ))}
         </section>
       )}
-      {!locked && view.lookOnly.length > 0 && (
+      {!locked && bars && view.lookOnly.length > 0 && (
         <section className="reco-block" aria-labelledby={`reco-look-${outcome}`}>
           <h3 id={`reco-look-${outcome}`} className="reco-section-title">À regarder, pas à changer</h3>
           {!showWeigh && <Unit w={w} />}
           <EffectList factors={view.lookOnly} />
         </section>
       )}
-      {view.nextLock && (
-        <p className="reco-next">
-          {/* POLISH-SIM-56 : dire ce qui est compté (jours avec ce résultat) et de quel délai il s'agit */}
-          {view.nextLock.label}{view.nextLock.window ? ` (${view.nextLock.window})` : ''} : encore <span className="mono">{view.nextLock.daysLeft}</span> jour{view.nextLock.daysLeft > 1 ? 's' : ''} {w.days}.
-        </p>
-      )}
+      {!quiet && nextLock}
     </>
   )
 }

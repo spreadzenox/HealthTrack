@@ -116,12 +116,43 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     w.short.factors = [f('fodmap_lactose', 'Lactose', -0.2, { theme: 'nutrition', net: false })]
     w.medium.factors = [f('fodmap_lactose', 'Lactose', 1.2, { theme: 'nutrition', net: false, horizon: 'medium' })]
     renderPage({}, results)
+    fireEvent.click(await screen.findByRole('button', { name: 'Voir les liens pas encore nets' }))
     const weigh = await screen.findByRole('region', { name: 'Ce qui va avec votre bien-être' })
     expect(weigh.querySelector('.reco-unsure-all')).toHaveTextContent('Rien n’est net pour l’instant (barres hachurées, chiffres en gris) : ces chiffres bougeront avec vos prochains jours notés.')
     expect(weigh.querySelector('.reco-legend')).toBeNull()
     expect(weigh.querySelector('.reco-flipped')).toBeNull()
     // dit une fois, avant les barres
     expect(weigh.querySelector('.reco-unsure-all').compareDocumentPosition(weigh.querySelector('.reco-horizon')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('POLISH-SIM-69 : rien de net, les barres hachurées sont repliées ; en tête, ce qui a été comparé et ce qui manque', async () => {
+    const results = structuredClone(readyResults)
+    const w = results.outcomes.wellbeing.horizons
+    w.short.factors = [f('fodmap_lactose', 'Lactose', -0.2, { theme: 'nutrition', net: false }), f('temp', 'Température', 0.3, { theme: 'context', actionable: false, net: false })]
+    w.medium.factors = [f('fodmap_gos', 'GOS', 1.2, { theme: 'nutrition', net: false, horizon: 'medium' })]
+    renderPage({}, results)
+    const pistes = await screen.findByRole('region', { name: 'Pistes à tester' })
+    expect(pistes).toHaveTextContent('Aucun lien assez net pour l’instant sur ce que vous pouvez changer.')
+    expect(within(pistes).getByTestId('reco-compared')).toHaveTextContent('3 facteurs comparés à votre bien-être, du jour même à 6 jours avant.')
+    // le compte « encore N jours » est dit en tête, une seule fois
+    expect(pistes).toHaveTextContent('Long terme (de 7 à 27 jours avant) : encore 12 jours avec votre bien-être noté ou lu.')
+    expect(screen.getAllByText(/: encore/)).toHaveLength(1)
+    // aucune barre tant qu'on ne les demande pas
+    expect(screen.queryByRole('region', { name: 'Ce qui va avec votre bien-être' })).toBeNull()
+    expect(screen.queryByRole('region', { name: 'À regarder, pas à changer' })).toBeNull()
+    expect(document.querySelector('.reco-effect')).toBeNull()
+    const more = screen.getByRole('button', { name: 'Voir les liens pas encore nets' })
+    expect(more).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(more)
+    expect(more).toHaveAttribute('aria-expanded', 'true')
+    expect(within(screen.getByRole('region', { name: 'Ce qui va avec votre bien-être' })).getByText('GOS')).toBeInTheDocument()
+    expect(within(screen.getByRole('region', { name: 'À regarder, pas à changer' })).getByText('Température')).toBeInTheDocument()
+  })
+
+  it('POLISH-SIM-69 : dès qu’un lien est net, rien n’est replié', async () => {
+    renderPage({}, readyResults)
+    await screen.findByRole('region', { name: 'Ce qui va avec votre bien-être' })
+    expect(screen.queryByRole('button', { name: 'Voir les liens pas encore nets' })).toBeNull()
   })
 
   it('« Comment c’est calculé » : un lien discret en bas', async () => {
