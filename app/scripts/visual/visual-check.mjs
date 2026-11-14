@@ -7,6 +7,7 @@
  * Usage :
  *   npm run visual                         # toutes les pages, données de démo
  *   npm run visual -- --empty              # état vide (premier lancement)
+ *   npm run visual -- --routes=/ --weigh-in # une pesée ce matin (ligne « Poids » d'Aujourd'hui)
  *   npm run visual -- --routes=/,/food     # pages choisies
  *   npm run visual -- --dark               # thème sombre de l'app (le clair est celui par défaut)
  *   npm run visual -- --light              # schéma de couleurs clair du téléphone (avec --theme=system)
@@ -1318,6 +1319,11 @@ async function main() {
       // La montre n'envoie plus sa VFC depuis 4 jours (le reste continue d'arriver).
       const from = daysAgo(4, 0)
       entries = entries.filter((e) => e.payload?.subtype !== 'heartRateVariability' || new Date(e.at) < from)
+    }
+    if (args['weigh-in']) {
+      // Une pesée ce matin, arrivée par Health Connect (POLISH-SIM-84 : ligne « Poids » d'Aujourd'hui).
+      const at = new Date(); at.setHours(7, 30, 0, 0)
+      entries.push({ type: 'weight', source: 'health_connect', at: at.toISOString(), payload: { valueKg: 72.4 } })
     }
     const seedResult = await page.evaluate(async (list) => {
       await new Promise((res) => {

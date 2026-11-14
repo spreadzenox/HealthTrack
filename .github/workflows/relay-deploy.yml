@@ -87,7 +87,7 @@ jobs:
             --allow-unauthenticated \
             --min-instances=0 --max-instances=1 --concurrency=8 \
             --cpu=1 --memory=512Mi --timeout=60 \
-            --set-env-vars="^;^VERTEX_PROJECT=${GCP_PROJECT};VERTEX_LOCATIONS=eu,europe-west1;VERTEX_MODELS=gemini-3.5-flash-lite,gemini-3.1-flash-lite;VERTEX_TIMEOUT_MS=30000;GOLD_MODELS=gemini-3.8-flash;GOLD_LOCATIONS=eu;GOLD_THINKING_LEVEL=MEDIUM;GOLD_TIMEOUT_MS=25000;GOLD_DAILY_CAP=40;GOLD_MONTHLY_EUR=15;STOP_MONTHLY_EUR=19;GLOBAL_DAILY_CAP=150;INSTALL_DAILY_CAP=20;GLOBAL_PER_MINUTE_CAP=10;PLAY_PACKAGE=fr.jpesquet.sante;PUBLIC_URL=${RELAY_URL};RTDN_SERVICE_ACCOUNT=${RUNTIME_SA};INTEGRITY_MODE=observe;APP_ATTEST_MODE=observe;APPLE_TEAM_ID=67R69L355R" \
+            --set-env-vars="^;^VERTEX_PROJECT=${GCP_PROJECT};VERTEX_LOCATIONS=eu,europe-west1;VERTEX_MODELS=gemini-3.5-flash-lite,gemini-3.1-flash-lite;VERTEX_TIMEOUT_MS=30000;GOLD_MODELS=gemini-3.8-flash;GOLD_LOCATIONS=eu;GOLD_THINKING_LEVEL=MEDIUM;GOLD_TIMEOUT_MS=25000;GOLD_DAILY_CAP=40;GOLD_INSTALLS=5e4a69f72ffb;GOLD_MONTHLY_EUR=15;STOP_MONTHLY_EUR=19;GLOBAL_DAILY_CAP=150;INSTALL_DAILY_CAP=20;GLOBAL_PER_MINUTE_CAP=10;PLAY_PACKAGE=fr.jpesquet.sante;PUBLIC_URL=${RELAY_URL};RTDN_SERVICE_ACCOUNT=${RUNTIME_SA};INTEGRITY_MODE=observe;APP_ATTEST_MODE=observe;APPLE_TEAM_ID=67R69L355R" \
             --quiet
 
       - name: Vérifier le service (santé + une analyse de texte)
@@ -284,7 +284,7 @@ jobs:
               "$RUNNER_TEMP/integrity.json"
             # GOLD-a3 (P37) : empreintes (12 caractères, hashInstallId, rien de personnel) des installations Android dont le
             # jeton Play Integrity a été accepté, hors CI et robots, avec leurs jours. Avant l'arrivée des testeurs, seul le
-            # téléphone du propriétaire passe : c'est son empreinte, à ajouter à GOLD_INSTALLS après sa confirmation.
+            # téléphone du propriétaire passe : c'est son empreinte, confirmée par lui le 14/11 (« P37 oui confirmé ») et inscrite dans GOLD_INSTALLS.
             jq -r 'map(select(.jsonPayload.status == "passed" and .jsonPayload.ci != true and .jsonPayload.testlab != true and .jsonPayload.testnet != true and .jsonPayload.platform != "ios" and .jsonPayload.install != null))
               | if length == 0 then "Installations Android au jeton accepté (GOLD-a3) : aucune"
                 else "Installations Android au jeton accepté (GOLD-a3) : " + (group_by(.jsonPayload.install)

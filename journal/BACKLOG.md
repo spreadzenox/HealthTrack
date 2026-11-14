@@ -673,8 +673,15 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-83** (à vérifier) Objectif « Mon sport et ma récupération » : rien ne change de visible ensuite
   (Aujourd'hui, Analyses, Agir). Relever ce que l'objectif règle vraiment ; s'il ne règle rien, le dire dans une
   proposition plutôt que de le laisser promettre.
-- [ ] **POLISH-SIM-84** Aujourd'hui avec une balance et sans montre : aucune pesée dans « Vos données du jour », et le
-  seul lien est « Ajouter une montre ».
+- [x] **POLISH-SIM-84** Aujourd'hui avec une balance et sans montre : aucune pesée dans « Vos données du jour », et le
+  seul lien est « Ajouter une montre ». **Fait le 14/11 16:35** : la dernière pesée du jour (`weight` ou
+  `body_composition`) a sa ligne « Poids · à 07:30 · 72,4 kg », couleur du corps, lien vers sa courbe de Tendances ;
+  source dite « votre balance » (groupe `scale` de `todayBySource`), ou « vos notes » pour un poids saisi dans l'app
+  (`app_weight`) ; jamais la pesée d'hier. Option `--weigh-in` de `npm run visual`. Reste **POLISH-SIM-84b** : le
+  lien « Ajouter une montre » reste seul sous le bloc quand il n'y a pas de montre (le remplacer par « Ajouter un
+  appareil » ?) ; pas de « d'habitude » pour le poids ; un poids saisi à la main dans une autre app de santé est dit
+  « votre balance ». iPhone : code partagé, les 52 correctifs s'appliquent encore sur `app/src` avec ce changement
+  (15, 30 et 56 touchent ces fichiers) ; arrive au suivi d'après.
 - [ ] **POLISH-SIM-85** Visite guidée d'Agir : « Exemple au jour 14 » montré à une personne qui est à son 14e jour ;
   « un jour sur deux tiré au sort » pas compris.
 - [x] **POLISH-SIM-86** Journal : tuiles « SpO₂ » et « FC au repos », alors que Sources dit « oxygène du sang » et
@@ -1161,9 +1168,30 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     Play Integrity accepté (hors CI et robots), avec leurs jours. Lu avant l'arrivée des testeurs, c'est l'empreinte du
     téléphone du propriétaire (seul `passed`) ; reste : sa confirmation (P37 simplifiée : les 4 premiers caractères),
     puis `GOLD_INSTALLS=<empreinte>` dans `relay-deploy.yml` (GOLD-a3-2), avant le 27/11.
-  - [ ] **GOLD-a3-2** dès « P37 oui » : `GOLD_INSTALLS=5e4a69f72ffb` dans `relay-deploy.yml` (test 123 couvre déjà le
-    mécanisme), vérifier au bilan. Sans réponse le 20/11 : le redemander en tête du résumé (ne pas l'ajouter sans
-    confirmation : une erreur donnerait Gold à un testeur).
+  - [x] **GOLD-a3-2** (14/11 17:35, « P37 oui confirmé » du 14/11 vers 16:50) : `GOLD_INSTALLS=5e4a69f72ffb` dans
+    `relay-deploy.yml`, test de garde dans `relay/test/workflow.test.js` (la liste ne contient que cette empreinte).
+  - [ ] **GOLD-a3-3** (avant le 02/12, fin de la période de lancement) : aujourd'hui `GOLD_INSTALLS` ne change que le
+    modèle servi (`tierOf` dans `relay/src/server.js`). Hors période, l'installation listée reste « gratuite » pour
+    les crédits (`credits.take` avec `premium: false`) et pour l'app (`verifyResponse` de `relay/src/billing.js` rend
+    `premium: false` : paywall, pas de « Gold »). À faire : l'installation listée reçoit les droits Gold complets
+    (20 analyses par jour, `premium: true`, `tier: 'gold'`), par le même mécanisme que P44-1 (une période offerte par
+    installation), tests sur `/v1/billing/verify`, `/v1/credits` et `/v1/analyze` ; vérifier le texte que l'app
+    affiche alors (aujourd'hui « Gold offert pendant le test, jusqu'au … » pour `source: 'launch'`).
+- [ ] **P44 — un mois de Gold en plus pour les testeurs actifs** (« P44 oui », propriétaire, 14/11 vers 16:50) :
+  Gold jusqu'au 27/12 pour les installations qui ont analysé au moins un repas pendant le test, sans carte ni donnée
+  personnelle, sous les plafonds du budget ; jamais lié à un avis (règles Play). À livrer avant le 02/12.
+  - [ ] **P44-1** (relais) : une période offerte par installation, par empreinte (`hashInstallId`, 12 caractères) :
+    liste et date de fin (« 2026-12-27T23:00:00Z ») dans un fichier du relais ou une variable du déploiement ;
+    `verifyResponse` rend `premium: true`, `tier: 'gold'`, `source: 'launch'` et `launchUntil` à cette date pour
+    ces installations une fois la période générale finie ; crédits et modèle suivent ; plafonds inchangés
+    (`GOLD_DAILY_CAP`, 15 € et 19 € du mois). Tests. L'iPhone n'est pas concerné (période finie le 06/11).
+  - [ ] **P44-2** (CI) : le bilan de « Relais — déploiement » liste les empreintes Android qui ont au moins un
+    événement `analyze` (hors CI, robots et Test Lab) entre le 08/11 et le 02/12 ; vérifier combien de jours les
+    journaux Cloud Logging sont gardés (30 par défaut) et faire un premier relevé sans attendre. Inscrire la liste
+    le 02/12 au matin (un testeur qui analyse son premier repas le dernier jour compte).
+  - [ ] **P44-3** (app et textes) : vérifier sur l'émulateur ce que lit un testeur le 02/12 (cartes FIN-LANCEMENT-1
+    et 2, « Gold offert … jusqu'au 27 décembre »), et ce que lit celui qui n'a rien analysé ; note de Nouveautés
+    (`"variants": ["play"]`) ; `INVITATION-TESTEURS.md` et la fiche du test si elles donnent la date du 2 décembre.
 - [x] **GOLD-a4 — prix 2027** (02/11 00:33) : `PRICE_SCHEDULE = [{ from: '2027-01-01', factor: 2 }]` dans
   `relay/src/costs.js` ; `pricesAt(ms)` multiplie la grille (par défaut ou `MODEL_PRICES`, toujours en prix 2026) et
   le cumul du mois l'applique à la date de chaque appel (décembre ×1, janvier ×2) ; facteur noté dans l'événement

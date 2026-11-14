@@ -10,6 +10,7 @@ import {
   headerLine,
   measureTiles,
   todayBySource,
+  sourcesSentence,
   pistesProgress,
   gutNotesProgress,
   GUT_PISTES_MIN_NOTE_DAYS,
@@ -292,6 +293,27 @@ describe('todayBySource (TESTEUR-1d-b)', () => {
     expect(ids(groups)).toEqual(['phone'])
     expect(todayBySource.hasWatch(groups)).toBe(false)
     expect(todayBySource({ tiles: tiles({ sleep: none, hrv: none, steps: none }), summary: null, entries: [], now: NOW })).toEqual([])
+  })
+
+  it('la pesée du jour : une ligne « Poids » avec la balance, la dernière du jour, jamais celle d’hier (POLISH-SIM-84)', () => {
+    const none = { value: null, sources: [] }
+    const weigh = (d, h, kg, type = 'weight', source = 'health_connect') => ({ type, source, at: new Date(2026, 9, d, h).toISOString(), payload: { valueKg: kg } })
+    const args = { tiles: tiles({ sleep: none, hrv: none }), summary: {}, now: NOW }
+    const groups = todayBySource({ ...args, entries: [weigh(21, 7, 72.6), weigh(21, 9, 72.44, 'body_composition', 'withings'), weigh(20, 8, 73)] })
+    expect(ids(groups)).toEqual(['phone', 'scale'])
+    expect(groups[1].title).toBe('Balance')
+    expect(groups[1].items).toEqual([expect.objectContaining({ key: 'weight', label: 'Poids', value: '72,4 kg', when: 'à 09:00' })])
+    expect(todayBySource.hasWatch(groups)).toBe(false)
+    expect(sourcesSentence(ids(groups))).toBe('D’après votre téléphone et votre balance.')
+    expect(ids(todayBySource({ ...args, entries: [weigh(20, 8, 73)] }))).toEqual(['phone'])
+    expect(ids(todayBySource({ ...args, entries: [weigh(21, 8, 0)] }))).toEqual(['phone'])
+  })
+
+  it('un poids saisi à la main dans l’app va avec vos notes (POLISH-SIM-84)', () => {
+    const entries = [{ type: 'weight', source: 'app_weight', at: new Date(2026, 9, 21, 8).toISOString(), payload: { valueKg: 70 } }]
+    const groups = todayBySource({ tiles: [], summary: {}, entries, now: NOW })
+    expect(ids(groups)).toEqual(['noted'])
+    expect(groups[0].items[0]).toMatchObject({ key: 'weight', label: 'Poids', value: '70,0 kg' })
   })
 
   it('la nuit estimée par le téléphone va avec le téléphone, les pas d’une montre seule avec la montre', () => {
