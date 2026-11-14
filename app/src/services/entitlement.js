@@ -67,7 +67,9 @@ export function getEntitlement({ now = Date.now() } = {}) {
     // Période de grâce : Google garde le droit ouvert ; hors connexion, on le garde au plus 3 jours après la
     // dernière vérification réussie
     const graceUntil = ent.state === 'grace' && ent.checkedAt ? new Date(Date.parse(ent.checkedAt) + GRACE_OFFLINE_MS).toISOString() : null
-    ent.premium = isFuture(until, now) || isFuture(graceUntil, now)
+    // Gold offert sans date de fin (GOLD-a3-3, `offeredFor` du relais) : vrai jusqu'à ce que le relais dise autre chose
+    const endless = ent.source === 'launch' && ent.launchUntil === null
+    ent.premium = endless || isFuture(until, now) || isFuture(graceUntil, now)
   }
   return ent
 }
@@ -202,7 +204,7 @@ export function describeEntitlement(ent) {
   if (ent?.premium && ent.source === 'launch') {
     return ent.launchUntil
       ? `Gold offert pendant le test, jusqu’au ${lastLaunchDay(ent.launchUntil)} : vous n’avez rien à payer.`
-      : 'Gold offert pendant le test : vous n’avez rien à payer.'
+      : 'Gold offert : vous n’avez rien à payer.'
   }
   const name = tierName(ent) ?? 'Premium'
   switch (ent?.state) {

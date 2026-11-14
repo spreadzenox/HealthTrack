@@ -23,6 +23,18 @@
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
 
+> 🥇 **Votre Gold après le 2 décembre : un bug évité (14/11 23:35)** : le relais était prêt à garder Gold à votre
+> installation sans date de fin, mais l'app, elle, lisait « pas de date » comme « fini ». Le 3 décembre, votre
+> téléphone aurait donc affiché la version gratuite et l'écran d'achat, alors que le relais vous servait encore Gold.
+> Corrigé et testé : l'app garde Gold tant que le relais le dit, et écrit « Gold offert : vous n'avez rien à
+> payer. » sans parler du test ([écran Gold](runs/captures/2026-11-14-2335-gold-sans-fin-premium-clair.png) ·
+> [sombre](runs/captures/2026-11-14-2335-gold-sans-fin-premium-sombre.png) ·
+> [Paramètres](runs/captures/2026-11-14-2335-gold-sans-fin-parametres-clair.png)). **Limites** : vu sur un relais
+> factice, pas sur votre téléphone ni contre le vrai relais ; il faut que votre téléphone
+> ait la version de ce run (ou une suivante) avant le 2 décembre, sinon le bug reste. Rien ne change pour les
+> testeurs ni sur iPhone. Reste de P44-3 : dire aux testeurs inscrits que Gold continue jusqu'au 27 décembre
+> (aujourd'hui rien ne l'annonce, la date change seulement dans Paramètres).
+
 > 🎯 **Agir : plus de « notez chaque jour » quand c'est fait (14/11 22:35)** : quand rien n'est en cours, Agir
 > demandait de noter son bien-être (ou sa digestion) chaque jour, même à qui venait de le faire. La phrase ne
 > s'affiche plus quand la note du jour existe ([clair](runs/captures/2026-11-14-2235-agir-note-faite-clair.png) ·
@@ -880,6 +892,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 23:35 — [Gold sans date de fin : l'app le lisait comme fini (P44-3a)](runs/2026-11-14-2335-gold-sans-fin.md) | 🔧 | Main vert. Le run de 22:35 finissait #987 (Agir) : étape indépendante, suite de « P37 oui confirmé ». `getEntitlement` éteignait un Gold offert sans date (`launchUntil: null`, ce que le relais sert à l'installation du propriétaire après le 02/12) : corrigé, testé ; textes « Gold offert » sans « pendant le test » dans ce cas. Rien de visible aujourd'hui, pas de note de Nouveautés. Reste P44-3b (annonce aux testeurs inscrits) et P44-2b (02/12). |
 | 14/11 22:35 — [Agir vide : la phrase « notez chaque jour » seulement si la note manque](runs/2026-11-14-2235-agir-note-du-jour.md) | 🔧 | Main vert. #983 (suivi iPhone v1059) remise à jour sur main, build iOS verte, mergée à 23:30 : l'iPhone embarque v1059 (« Ajouter un appareil »). POLISH-SIM-92 : sur Agir vide, « D'ici là, notez… » ne s'affiche que si rien n'est noté aujourd'hui ; option de capture `--wellbeing-today`. Parité 70 %. |
 | 14/11 21:35 — [Relevé des testeurs actifs (P44-2a)](runs/2026-11-14-2135-p44-2-testeurs-actifs.md) | 🔧 | Main vert. Le run de 20:35 finissait encore #983 (suivi iPhone v1059, build macOS relancée à 21:29) : étape indépendante dans `relay/`. Le bilan de « Relais — déploiement » liste les installations Android qui ont analysé un repas depuis le 08/11 (CI, robots et iPhone écartés) et la durée de conservation des journaux ; tri testé. Rien de visible dans l'app. TestFlight non relevé (1030.1031 chez les testeurs d'après 18:35). Parité 70 %. |
 | 14/11 20:35 — [Deux personas ; maquette du bilan digestif](runs/2026-11-14-2035-personas-bilan-digestif.md) | 🔭 | Run « idées », sans code produit. Main vert. Simulations « Prendre soin de soi, maigrir » J1 (Galaxy Watch) et « Sportif » J45 (Android seul) : POLISH-SIM-91 à 98, PROP-SIM-19. Maquette de PROP-SIM-17 (`maquettes/bilan-digestif/`), en attente de la réponse du propriétaire. Suivi iPhone : PR #983 (code embarqué v1059, 52 correctifs sans retouche), build macOS en cours à la fin du run. TestFlight non relevé. Parité 70 %. |

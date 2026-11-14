@@ -50,6 +50,22 @@ describe('droits premium lus auprès du relais (jalon 6c)', () => {
     expect(getEntitlement({ now: Date.now() + 11 * 86_400_000 })).toMatchObject({ premium: false })
   })
 
+  it('Gold offert sans date de fin (GOLD-a3-3) : reste premium tant que le relais le dit', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(response({ ok: true, premium: true, source: 'launch', tier: 'gold', launchUntil: null }))
+    await refreshEntitlement({ fetchImpl })
+    expect(getEntitlement()).toMatchObject({ premium: true, source: 'launch', launchUntil: null })
+    expect(getEntitlement({ now: Date.now() + 400 * 86_400_000 })).toMatchObject({ premium: true })
+    expect(tierName(getEntitlement())).toBe('Gold')
+    // le relais ne l'offre plus : l'app suit à la vérification suivante
+    await refreshEntitlement({ fetchImpl: vi.fn().mockResolvedValue(response({ ok: true, premium: false, source: null, launchUntil: null })) })
+    expect(getEntitlement()).toMatchObject({ premium: false })
+  })
+
+  it('un abonnement sans date d’échéance ne devient pas premium pour autant', () => {
+    localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'play', state: 'active', expiresAt: null }))
+    expect(getEntitlement()).toMatchObject({ premium: false })
+  })
+
   it('hors connexion : garde le dernier état connu, sans jamais prolonger un abonnement expiré', async () => {
     localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'play', state: 'active', expiresAt: inDays(2), checkedAt: new Date().toISOString() }))
     const ent = await refreshEntitlement({ fetchImpl: vi.fn().mockRejectedValue(new TypeError('offline')) })
@@ -96,6 +112,10 @@ describe('texte de l’état d’abonnement', () => {
 
   it('lancement : la fin (exclue, minuit à Paris) s’affiche comme le dernier jour offert', () => {
     expect(describeEntitlement({ premium: true, source: 'launch', launchUntil: '2026-11-15T23:00:00Z' })).toMatch(/jusqu’au 15 nov\. 2026 :/)
+  })
+
+  it('Gold offert sans date de fin : ni « pendant le test » ni date', () => {
+    expect(describeEntitlement({ premium: true, source: 'launch', launchUntil: null })).toBe('Gold offert : vous n’avez rien à payer.')
   })
 
   it('gratuit, lancement, actif, essai, annulé, période de grâce, pause, suspendu', () => {

@@ -62,6 +62,8 @@
  *                                          --ios-launch=ended : période de lancement finie sur iPhone (02/11)
  *   npm run visual -- --play --routes=/ --subscription=launch --launch-ends-in=2  # fin de Gold offert dans 2 jours :
  *                                          carte de l'Accueil (FIN-LANCEMENT-1)
+ *   npm run visual -- --play --routes=/premium,/settings --subscription=launch --launch-ends-in=never  # Gold offert
+ *                                          sans date de fin (installation du propriétaire, GOLD-a3-3)
  *   npm run visual -- --play --routes=/ --launch-ended=2  # période de lancement finie il y a 2 jours (relais factice
  *                                          « free ») : carte « Le test est terminé. Merci ! » (FIN-LANCEMENT-2)
  *   npm run visual -- --play --routes=/settings --subscription=active  # état d'abonnement factice renvoyé par le
@@ -689,6 +691,8 @@ async function main() {
       const ios = route.request().headers()['x-platform'] === 'ios'
       const launchUntil = (() => {
         // --launch-ends-in=N : fin de période dans N jours (carte « Gold offert jusqu'au … », FIN-LANCEMENT-1)
+        // --launch-ends-in=never : Gold offert sans date de fin (installation du propriétaire, GOLD-a3-3)
+        if (args['launch-ends-in'] === 'never') return null
         if (args['launch-ends-in'] !== undefined) return inDays(Number(args['launch-ends-in']))
         try {
           const p = JSON.parse(readFileSync(join(APP_DIR, '../relay/src/launch-period.json'), 'utf8'))
