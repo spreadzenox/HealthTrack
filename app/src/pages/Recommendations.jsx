@@ -23,6 +23,8 @@ import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
 import { isExampleMode } from '../storage/exampleMode'
 import { THEME_TONE, pistesTitles, resultsView } from '../services/resultsView'
 import { readGutNotes } from '../services/gutNotes'
+import { listEntries } from '../storage/localHealthStorage'
+import { scoreToChoice } from '../services/mood/wellbeingScale'
 import { GUT_LEVELS, GUT_TYPE } from '../services/today'
 import { localDateKey } from '../services/analysisEngine'
 import { eveningNotePlugin } from '../services/eveningNote'
@@ -62,6 +64,21 @@ function gutLevelsToday(gutEntries, now = new Date()) {
   return GUT_LEVELS.filter((l) => seen.has(l.id)).map((l) => l.label)
 }
 
+/** POLISH-SIM-82b : les notes de bien-être données aujourd'hui, telles que saisies (1 à 5), dans l'ordre. */
+function wellbeingNotesToday(entries, now = new Date()) {
+  const today = localDateKey(now.toISOString())
+  return (entries || [])
+    .filter((e) => e?.type === 'wellbeing' && e.at && localDateKey(e.at) === today && scoreToChoice(e.payload?.score) != null)
+    .sort((a, b) => new Date(a.at) - new Date(b.at))
+    .map((e) => `${scoreToChoice(e.payload.score)}/5`)
+}
+
+const readWellbeingToday = () => {
+  const since = new Date()
+  since.setHours(0, 0, 0, 0)
+  return listEntries({ type: 'wellbeing', since: since.toISOString(), limit: 50 })
+}
+
 function Countdown({ outcome, view, onNote, onReminder, notedToday = [] }) {
   const w = WORDS[outcome]
   const n = view.daysLeft
@@ -90,7 +107,7 @@ function Countdown({ outcome, view, onNote, onReminder, notedToday = [] }) {
       )}
       {notedToday.length > 0 ? (
         <>
-          <p className="reco-noted" role="status" data-testid="reco-noted-today">Noté aujourd’hui : {notedToday.join(', ')}</p>
+          <p className="reco-noted" role="status" data-testid="reco-noted-today">Noté aujourd’hui : {outcome === 'wellbeing' ? <span className="mono">{notedToday.join(', ')}</span> : notedToday.join(', ')}</p>
           <button type="button" className="reco-cta is-secondary" onClick={onNote}>Ajouter une note</button>
         </>
       ) : (
@@ -265,7 +282,7 @@ function HowItWorks() {
   )
 }
 
-export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults'), readGut = readGutNotes }) {
+export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults'), readGut = readGutNotes, readWellbeing = readWellbeingToday }) {
   const outcome = view === 'gut' ? 'digestion' : 'wellbeing'
   const [results, setResults] = useState(() => peekAnalysis('analysisResults').result ?? null)
   const [error, setError] = useState(null)
@@ -276,6 +293,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const navigate = useNavigate()
   const [showGut] = useState(() => gutCardMode() !== 'hide')
   const [gutToday, setGutToday] = useState([])
+  const [wbToday, setWbToday] = useState([])
 
   useEffect(() => {
     const onUpdate = () => setRevision((r) => r + 1)
@@ -297,21 +315,23 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   }, [read, revision])
 
   useEffect(() => {
-    if (outcome !== 'digestion') return undefined
     let alive = true
+    const [readNotes, toToday, set] = outcome === 'digestion' ? [readGut, gutLevelsToday, setGutToday] : [readWellbeing, wellbeingNotesToday, setWbToday]
     Promise.resolve()
-      .then(readGut)
-      .then((list) => alive && setGutToday(gutLevelsToday(list)))
-      .catch(() => alive && setGutToday([]))
+      .then(readNotes)
+      .then((list) => alive && set(toToday(list)))
+      .catch(() => alive && set([]))
     return () => {
       alive = false
     }
-  }, [outcome, readGut, revision])
+  }, [outcome, readGut, readWellbeing, revision])
 
   const v = results ? resultsView(results.outcomes?.[outcome]) : { state: 'loading' }
   // Version Play sans abonnement (hors période de lancement) : les pistes restent floues, comme avant
   const locked = FEATURES.billing && !ent.premium
   const onNote = outcome === 'wellbeing' ? () => setNoteOpen(true) : () => navigate('/', { state: { open: 'digestion' } })
+  // La note qui vient d'être enregistrée ici se lit dans la carte, même si la relecture des notes échoue
+  const notedToday = outcome === 'digestion' ? gutToday : wbToday.length ? wbToday : noted != null ? [`${noted}/5`] : []
   const onReminder = outcome === 'wellbeing' && eveningNotePlugin() ? () => setNoteOpen('reminder') : null
 
   return (
@@ -325,11 +345,11 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
         </p>
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}
-      {outcome === 'wellbeing' && noted != null && <p className="reco-noted" role="status">Noté : <span className="mono">{noted}/5</span></p>}
+      {outcome === 'wellbeing' && noted != null && v.state !== 'locked' && <p className="reco-noted" role="status">Noté : <span className="mono">{noted}/5</span></p>}
       {v.state === 'loading' && !error && (
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul des analyses…</p></div>
       )}
-      {v.state === 'locked' && <Countdown outcome={outcome} view={v} onNote={onNote} onReminder={onReminder} notedToday={outcome === 'digestion' ? gutToday : []} />}
+      {v.state === 'locked' && <Countdown outcome={outcome} view={v} onNote={onNote} onReminder={onReminder} notedToday={notedToday} />}
       {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} />}
       {outcome === 'digestion' && v.state === 'results' && <DoctorReportCard />}
       <HowItWorks />

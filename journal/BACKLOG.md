@@ -660,8 +660,12 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   le compte à rebours lit les notes digestives du jour (au fil de l'eau et bilan du soir) et dit « Noté
   aujourd'hui : Gêne » ; le bouton devient « Ajouter une note », secondaire (`Recommendations.jsx`,
   `gutLevelsToday`). iPhone : code partagé, aucun correctif sur ce fichier, arrive au suivi de la v1044.
-- [ ] **POLISH-SIM-82b** (à vérifier) Analyses › Bien-être en attente : même question pour la note de bien-être du
-  jour (« Noté : 4/5 » ne s'affiche que juste après la saisie faite depuis Analyses).
+- [x] **POLISH-SIM-82b** Analyses › Bien-être en attente : même question pour la note de bien-être du
+  jour (« Noté : 4/5 » ne s'affiche que juste après la saisie faite depuis Analyses). **Vérifié et fait le 14/11
+  11:35** : le compte à rebours lit les notes de bien-être du jour et dit « Noté aujourd'hui : 4/5 » (chaque note
+  telle que donnée, dans l'ordre) ; le bouton devient « Ajouter une note », secondaire ; l'ancienne ligne « Noté :
+  4/5 » au-dessus de la carte ne reste que lorsque la note fait arriver les résultats (`Recommendations.jsx`,
+  `wellbeingNotesToday`). iPhone : code partagé, aucun correctif sur ce fichier, arrive au prochain suivi.
 - [ ] **POLISH-SIM-83** (à vérifier) Objectif « Mon sport et ma récupération » : rien ne change de visible ensuite
   (Aujourd'hui, Analyses, Agir). Relever ce que l'objectif règle vraiment ; s'il ne règle rien, le dire dans une
   proposition plutôt que de le laisser promettre.
