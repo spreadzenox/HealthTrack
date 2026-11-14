@@ -13,8 +13,8 @@
 Sur votre ordinateur, dans Chrome, connecté à App Store Connect (https://appstoreconnect.apple.com, votre identifiant
 Apple), ouvrez Claude dans Chrome et dites :
 
-> **fais la mission PI1** (en collant le contenu de `journal/missions/PI1.md`, ou son lien GitHub :
-> https://github.com/spreadzenox/HealthTrack-iOS/blob/main/journal/missions/PI1.md)
+> **fais la mission PI2** (en collant le contenu de `iphone/journal/missions/PI2.md`, ou son lien GitHub :
+> https://github.com/spreadzenox/HealthTrack/blob/main/iphone/journal/missions/PI2.md)
 
 Claude suit les étapes, s'arrête si une page ne ressemble pas à ce qui est décrit, et finit par la vérification et la
 capture demandées. Renvoyez ensuite à la routine la phrase indiquée en fin de mission (par ex. « PI1 fait ») et, si
@@ -41,8 +41,9 @@ retour à la routine.
 
 | Action | Voie | Comment |
 |---|---|---|
-| Abonnements encore « Métadonnées manquantes » chez Apple (l'API n'expose rien de manquant) | b, puis a | [PI1](PI1.md) : relevé, en lecture seule, de ce que la page de chaque abonnement signale ; la routine corrige ensuite par l'API (`store-subscriptions.yml`) |
-| Soumettre la version de l'App Store à l'examen | b puis c | [PI2](PI2.md) : tout préparé dans la page de la version (abonnements, notes pour l'examen, vérifications), arrêt avant « Ajouter pour examen » ; vous cliquez |
+| Abonnements encore « Métadonnées manquantes » chez Apple (l'API n'expose rien de manquant) | b | ✅ [PI1](PI1.md) faite le 14/11 : Apple ne signale rien, les abonnements partent avec la version (PI2) ; rien à corriger par l'API |
+| Déclaration « Regulated Medical Device » (encadré bleu vu le 14/11) | b puis c | [PI2](PI2.md), partie A : réponse « No » préparée, arrêt avant « Save » ; vous cliquez (l'API ne l'expose pas) |
+| Soumettre la version de l'App Store à l'examen | b puis c | [PI2](PI2.md), partie B : notes pour l'examen, publication manuelle, puis un seul brouillon de soumission (version 844, groupe Halcya, trois abonnements), arrêt avant « Submit for Review » ; vous cliquez |
 | Publier en production après l'accord d'Apple | c | votre clic (réglage « publication manuelle » vérifié dans PI2) |
 | Examen bêta TestFlight, groupe externe, nettoyage des builds, fiche, prix, captures | a | déjà automatique (CI, clé App Store Connect) : rien pour vous |
 | Faire entrer la testeuse de l'iPhone 12 | c (rien à automatiser) | le lien public du groupe « Testeurs Halcya », que vous avez, suffit : l'envoyer est votre geste |

@@ -38,8 +38,10 @@ Page de la version iOS (« Prête à soumettre ») :
 
 1. **Build** : vérifier que c'est bien celle donnée par la routine (déjà attachée ; sinon la choisir).
 2. **Achats intégrés et abonnements** : cocher les **trois** abonnements (`halcya_gold_mensuel`,
-   `halcya_premium_annuel`, `halcya_premium_mensuel`). La section apparaît quand les abonnements sont prêts. Si elle
-   manque encore, le dire à la routine avant d'aller plus loin.
+   `halcya_premium_annuel`, `halcya_premium_mensuel`). Relevé PI1 du 14/11 : cette section n'apparaît pas sur la page
+   de la version 844, alors qu'Apple ne signale aucun manque ; on passe alors par « Add for Review » sur la page de
+   chaque abonnement. Les gestes exacts, déclaration « Regulated Medical Device » comprise, sont dans la mission
+   `journal/missions/PI2.md`, qui fait foi.
 3. **Informations pour l'examen** :
    - notes : coller le texte anglais de `notes-examen.md` (entre les deux traits), après l'avoir relu ;
    - « Connexion requise » décochée ;

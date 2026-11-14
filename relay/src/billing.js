@@ -166,19 +166,34 @@ export const isLaunchPeriod = ({ from = '', until = '', off = false } = {}, now)
 }
 
 /**
+ * Période offerte à une installation (GOLD-a3-3, P44-1) : `offered` associe une empreinte d'installation à sa date de
+ * fin (ISO), ou à `null` pour une période sans fin (GOLD_INSTALLS). Rend `{ until }` si elle court à l'instant `now`,
+ * sinon null. Une date vide ou illisible ne donne rien : seul `null` veut dire « sans fin ».
+ */
+export const offeredFor = (offered, fingerprint, now) => {
+  if (!offered || !Object.hasOwn(offered, fingerprint)) return null
+  const until = offered[fingerprint]
+  if (until === null) return { until: null }
+  const end = Date.parse(until || '')
+  return Number.isFinite(end) && now < end ? { until: new Date(end).toISOString() } : null
+}
+
+/**
  * Réponse au format attendu par le validateur de capacitor-plugin-cdv-purchase (`ok`, `data.collection`), enrichie
  * de nos propres champs (`premium`, `source`, `state`…), pour l'app (jalon 6c).
  */
-export function verifyResponse({ ent, launchUntil, acknowledged, accountMatch }) {
-  const premium = Boolean(ent?.premium) || Boolean(launchUntil)
-  const source = ent?.premium ? ent.source ?? 'play' : launchUntil ? 'launch' : null
-  // Pendant la période de lancement, toute installation play a Gold (décision du 31/10), même abonnée Silver
-  const tier = launchUntil ? 'gold' : ent?.premium ? ent.tier ?? tierOfProduct(ent.productId) : null
+export function verifyResponse({ ent, launchUntil, offered = null, acknowledged, accountMatch }) {
+  // Gold offert : la période de lancement, sinon la période propre à cette installation (`offered`, sans date si sans fin)
+  const gift = Boolean(launchUntil) || Boolean(offered)
+  const premium = Boolean(ent?.premium) || gift
+  const source = ent?.premium ? ent.source ?? 'play' : gift ? 'launch' : null
+  // Pendant une période offerte, l'installation a Gold (décision du 31/10), même abonnée Silver
+  const tier = gift ? 'gold' : ent?.premium ? ent.tier ?? tierOfProduct(ent.productId) : null
   const payload = {
     premium,
     source,
     tier,
-    launchUntil,
+    launchUntil: launchUntil ?? offered?.until ?? null,
     state: ent?.state ?? null,
     productId: ent?.productId ?? null,
     basePlanId: ent?.basePlanId ?? null,
@@ -243,15 +258,18 @@ export function createPushVerifier({ audience, serviceAccount, fetchImpl = fetch
 /**
  * Routes d'abonnement, branchées par server.js.
  * @param {{ play: ReturnType<typeof createPlayClient>, packageName: string, launchPremium?: { from?: string, until?: string, iosUntil?: string, off?: boolean },
+ *   offeredInstalls?: Record<string, string|null>, hash?: (installId: string) => string,
  *   verifyPush: (authorization: string) => Promise<boolean>, log?: (e: object) => void, now?: () => number }} deps
  */
-export function createBillingRoutes({ play, appStore = null, appStoreNotifications = null, packageName, launchPremium = {}, verifyPush, log = () => {}, now = Date.now }) {
+export function createBillingRoutes({ play, appStore = null, appStoreNotifications = null, packageName, launchPremium = {}, offeredInstalls = {}, hash = (id) => id, verifyPush, log = () => {}, now = Date.now }) {
   return {
     /** POST /v1/subscription/verify — droits premium d'une installation (avec ou sans jeton d'achat). */
     async verify(body, installId, { platform = 'android' } = {}) {
       const launchUntil = launchUntilFor(launchPremium, now(), platform)
+      // Période propre à l'installation : seulement hors période de lancement, jamais pour l'app iPhone (écran d'achat visible)
+      const offered = !launchUntil && platform !== 'ios' && installId ? offeredFor(offeredInstalls, hash(installId), now()) : null
       const purchaseToken = purchaseTokenFrom(body)
-      if (!purchaseToken) return { status: 200, payload: verifyResponse({ ent: null, launchUntil }) }
+      if (!purchaseToken) return { status: 200, payload: verifyResponse({ ent: null, launchUntil, offered }) }
 
       // Achat iPhone (transaction StoreKit 2 signée) : vérifié sur place, sans appel à Google ni à Apple
       if (appStore?.isJws(purchaseToken)) {
@@ -262,11 +280,11 @@ export function createBillingRoutes({ play, appStore = null, appStoreNotificatio
         } catch (err) {
           if (!err?.code) throw err
           log({ event: 'verify', source: 'appstore', result: err.code, token: hashToken(purchaseToken) })
-          return { status: 400, payload: { ok: false, error: 'invalid_purchase', message: 'Achat App Store non reconnu.', ...verifyResponse({ ent: null, launchUntil }) } }
+          return { status: 400, payload: { ok: false, error: 'invalid_purchase', message: 'Achat App Store non reconnu.', ...verifyResponse({ ent: null, launchUntil, offered }) } }
         }
         const { ent, accountMatch, environment, locked = false, lockError = false } = checked
         log({ event: 'verify', source: 'appstore', environment, state: ent.state, premium: ent.premium, tier: ent.tier, accountMatch, locked, lockError, token: hashToken(purchaseToken) })
-        return { status: 200, payload: verifyResponse({ ent, launchUntil, acknowledged: true, accountMatch }) }
+        return { status: 200, payload: verifyResponse({ ent, launchUntil, offered, acknowledged: true, accountMatch }) }
       }
 
       let sub
@@ -275,7 +293,7 @@ export function createBillingRoutes({ play, appStore = null, appStoreNotificatio
       } catch (err) {
         if (err instanceof PlayApiError && (err.status === 400 || err.status === 404 || err.status === 410)) {
           log({ event: 'verify', result: 'unknown_token', status: err.status, token: hashToken(purchaseToken) })
-          return { status: 404, payload: { ok: false, error: 'unknown_purchase', message: 'Achat introuvable chez Google Play.', ...verifyResponse({ ent: null, launchUntil }) } }
+          return { status: 404, payload: { ok: false, error: 'unknown_purchase', message: 'Achat introuvable chez Google Play.', ...verifyResponse({ ent: null, launchUntil, offered }) } }
         }
         throw err
       }
@@ -289,7 +307,7 @@ export function createBillingRoutes({ play, appStore = null, appStoreNotificatio
         log({ event: 'ack_failed', status: err?.status ?? null, token: hashToken(purchaseToken) })
       }
       log({ event: 'verify', state: ent.state, premium: ent.premium, test: ent.test, acknowledged, accountMatch, token: hashToken(purchaseToken) })
-      return { status: 200, payload: verifyResponse({ ent, launchUntil, acknowledged, accountMatch }) }
+      return { status: 200, payload: verifyResponse({ ent, launchUntil, offered, acknowledged, accountMatch }) }
     },
 
     /**

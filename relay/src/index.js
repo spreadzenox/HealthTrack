@@ -84,6 +84,8 @@ const handler = createHandler({
     appStoreNotifications,
     packageName: config.packageName,
     launchPremium: config.launchPremium,
+    offeredInstalls: config.offeredInstalls,
+    hash: hashInstallId,
     verifyPush: createPushVerifier({ audience: `${config.publicUrl}/pubsub/rtdn`, serviceAccount: config.rtdnServiceAccount }),
     log,
   }),

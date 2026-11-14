@@ -39,7 +39,7 @@ retour à la routine.
 > Depuis le 14/11, une mission qui se passe dans la Play Console ou la console Google Cloud est faite par
 > l'orchestrateur (navigateur piloté, compte Google dédié aux droits d'administrateur), quand le propriétaire le lui
 > écrit ; le résumé de la semaine la range sous « À faire par l'orchestrateur ». Restent au propriétaire : Apple
-> (PI1, PI2), son téléphone, ses réponses, et tout ce qui l'engage (envoi pour examen, production, paiement,
+> (PI1 faite le 14/11 ; PI2, réécrite le 14/11, le jour de la soumission), son téléphone, ses réponses, et tout ce qui l'engage (envoi pour examen, production, paiement,
 > signature, identité : la mission prépare alors tout jusqu'à ce bouton).
 
 | Mission | Objet | Voie | Quand |
