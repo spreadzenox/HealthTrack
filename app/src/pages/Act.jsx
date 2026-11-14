@@ -23,13 +23,14 @@ const GUT_WINDOW_DAYS = 120
 
 async function readAct() {
   const since = new Date(Date.now() - GUT_WINDOW_DAYS * 86_400_000).toISOString()
-  const [challenges, gut, trialsData, results] = await Promise.all([
+  const [challenges, gut, wellbeing, trialsData, results] = await Promise.all([
     listEntries({ type: FODMAP_CHALLENGE_TYPE, limit: Infinity }),
     listEntries({ type: GUT_TYPE, since, limit: Infinity }),
+    listEntries({ type: 'wellbeing', limit: 1 }),
     readTrialsData(),
     getAnalysis('analysisResults').catch(() => null),
   ])
-  return { challenges, gut, pistes: readPistesSummary(), trialsData, results }
+  return { challenges, gut, wellbeing, pistes: readPistesSummary(), trialsData, results }
 }
 
 function Card({ item, action }) {
@@ -142,6 +143,10 @@ export default function Act({ read = readAct, now }) {
   }
   // POLISH-SIM-70 : avec l'objectif ventre, l'état vide parle de la digestion et ouvre son analyse (comme la barre d'onglets)
   const gutFirst = wantsGut(goalsOf())
+  // POLISH-SIM-92 : « notez… chaque jour » ne se dit qu'à qui n'a pas encore noté aujourd'hui
+  const dayStart = new Date(at)
+  dayStart.setHours(0, 0, 0, 0)
+  const notedToday = ((gutFirst ? data.gut : data.wellbeing) ?? []).some((e) => new Date(e.at) >= dayStart && new Date(e.at) <= at)
   const empty = !current.length && !kept.length && !proposedTrials.length && !fodmap.proposed.length && !done.length
   return (
     <section className="act-page" aria-labelledby="act-title">
@@ -150,7 +155,7 @@ export default function Act({ read = readAct, now }) {
         <div className="today-card act-empty">
           <p className="act-empty-title">Rien en cours pour l’instant</p>
           <p className="act-empty-text">Quand vos analyses repèrent une piste, vous pourrez l’essayer ici, de quelques jours à deux semaines selon la piste, pour voir si elle compte pour vous.</p>
-          <p className="act-empty-text">D’ici là, notez votre {gutFirst ? 'digestion' : 'bien-être'} chaque jour.</p>
+          {!notedToday && <p className="act-empty-text">D’ici là, notez votre {gutFirst ? 'digestion' : 'bien-être'} chaque jour.</p>}
           <Link to={gutFirst ? '/recommendations/ventre' : '/recommendations'} className="act-empty-link">Où en sont vos analyses</Link>
         </div>
       ) : (

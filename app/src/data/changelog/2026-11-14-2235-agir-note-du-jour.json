@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-14",
+  "kind": "correctif",
+  "title": "Agir : plus de rappel si vous avez déjà noté",
+  "items": [
+    "Quand rien n'est en cours, Agir demandait de noter votre bien-être ou votre digestion chaque jour, même si c'était fait. La phrase ne s'affiche plus quand la note du jour existe."
+  ]
+}
