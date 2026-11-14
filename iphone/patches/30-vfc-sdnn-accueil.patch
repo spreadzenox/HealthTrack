@@ -26,7 +26,7 @@ index 269a05b6..1b855eb5 100644
      },
 -    { key: 'hrv', label: 'Variabilité cardiaque', value: hrv.s.hrv != null ? `${Math.round(hrv.s.hrv)} ms` : null, when: hrv.when, sources: sourcesOf('hrv', hrv.d) },
 +    sdnn?.s.hrvSdnn != null
-+      ? { key: 'hrv', label: 'Variabilité cardiaque (SDNN)', value: `${Math.round(sdnn.s.hrvSdnn)} ms`, when: sdnn.when, sources: sourcesOf('hrvSdnn', sdnn.d) }
++      ? { key: 'hrv', measure: 'hrvSdnn', label: 'Variabilité cardiaque', value: `${Math.round(sdnn.s.hrvSdnn)} ms`, when: sdnn.when, sources: sourcesOf('hrvSdnn', sdnn.d) }
 +      : { key: 'hrv', label: 'Variabilité cardiaque', value: hrv.s.hrv != null ? `${Math.round(hrv.s.hrv)} ms` : null, when: hrv.when, sources: sourcesOf('hrv', hrv.d) },
      {
        key: 'steps',

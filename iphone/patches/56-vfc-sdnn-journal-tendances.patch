@@ -8,12 +8,12 @@ index c46a727..329af7f 100644
            {items.map((i) => {
 -            const n = (FROM_YESTERDAY.has(i.when) ? norms.yesterday : norms.today)[i.key]
 +            // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé a sa propre habitude, en SDNN (correctif 56 ; norme : correctif 57)
-+            const n = (FROM_YESTERDAY.has(i.when) ? norms.yesterday : norms.today)[i.label === 'Variabilité cardiaque (SDNN)' ? 'hrvSdnn' : i.key]
++            const n = (FROM_YESTERDAY.has(i.when) ? norms.yesterday : norms.today)[i.measure ?? i.key]
              return (
                <li key={i.key} data-tone={measureTone(THEME_KEYS[i.key] ?? i.key)}>
 -                <Row trend={TREND_KEYS[i.key]}>
 +                {/* Version iOS (HealthTrack-iOS) : la VFC de l'app Santé ouvre sa courbe SDNN, pas la « Variabilité cardiaque » vide (correctif 56) */}
-+                <Row trend={i.label === 'Variabilité cardiaque (SDNN)' ? 'hrvSdnn' : TREND_KEYS[i.key]}>
++                <Row trend={i.measure ?? TREND_KEYS[i.key]}>
                  <span className="today-data-icon"><LineIcon name={ICONS[i.key] ?? 'dots'} size={20} /></span>
                  <span className="today-data-label">
                    {i.label}
@@ -25,7 +25,7 @@ index 72d90ce..b23f312 100644
    'FC au repos': 'restingHr',
    'Variabilité cardiaque': 'hrv',
    'Variabilité cardiaque, jour': 'hrvDay',
-+  'Variabilité cardiaque (SDNN)': 'hrvDay', // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé prend l'icône et la couleur de la VFC, sans norme (correctif 56)
++  'Variabilité cardiaque, app Santé': 'hrvDay', // Version iOS (HealthTrack-iOS) : à côté d'une RMSSD importée, la VFC de l'app Santé prend l'icône et la couleur de la VFC, sans norme (correctif 56)
    'SpO₂': 'spo2',
    Respiration: 'respiratoryRate',
    Température: 'temperatureC',
@@ -38,8 +38,8 @@ index eb0b9c9..c102e1d 100644
    { key: 'hrv', label: 'Variabilité cardiaque', unit: 'ms', tone: 'rose', field: 'hrv', fmt: (v) => `${n0(v)} ms`,
      gloss: 'mesurée pendant la nuit, en millisecondes' },
 +  // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé, en SDNN, sa propre courbe, jamais mêlée à la RMSSD (correctif 56)
-+  { key: 'hrvSdnn', label: 'Variabilité cardiaque (SDNN)', unit: 'ms', tone: 'rose', field: 'hrvSdnn', fmt: (v) => `${n0(v)} ms`,
-+    gloss: 'en millisecondes, telle que la mesure l’app Santé' },
++  { key: 'hrvSdnn', label: 'Variabilité cardiaque', unit: 'ms', tone: 'rose', field: 'hrvSdnn', fmt: (v) => `${n0(v)} ms`,
++    gloss: 'en millisecondes (SDNN), telle que la mesure l’app Santé' },
    { key: 'restingHr', label: 'FC au repos', unit: 'bpm', tone: 'rose', field: 'restingHr', fmt: (v) => `${n0(v)} bpm`,
      gloss: 'fréquence cardiaque au repos, en battements par minute' },
    { key: 'screen', label: 'Écran', unit: 'h', tone: 'stone', field: 'screenMinutes', scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },

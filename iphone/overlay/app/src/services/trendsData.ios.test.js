@@ -7,17 +7,17 @@ const now = new Date('2026-11-09T10:00:00')
 const day = (dateKey, summary) => ({ dateKey, summary })
 
 describe('Tendances : VFC en SDNN (iPhone)', () => {
-  it('trois jours de SDNN font une courbe « Variabilité cardiaque (SDNN) », rose, en ms', () => {
+  it('trois jours de SDNN font une courbe « Variabilité cardiaque », rose, en ms', () => {
     const days = [day('2026-11-06', { hrvSdnn: 48 }), day('2026-11-07', { hrvSdnn: 52 }), day('2026-11-08', { hrvSdnn: 50.6 })]
     const { series, available } = buildTrendSeries({ days, period: 'week', now })
     expect(available).toContain('hrvSdnn')
     expect(available).not.toContain('hrv')
     expect(series.hrvSdnn.map((p) => p.value)).toEqual([48, 52, 50.6])
     const m = trendMeasure('hrvSdnn')
-    expect(m.label).toBe('Variabilité cardiaque (SDNN)')
+    expect(m.label).toBe('Variabilité cardiaque')
     expect(m.tone).toBe(trendMeasure('hrv').tone)
     expect(m.fmt(50.6)).toBe('51 ms')
-    expect(m.gloss).toMatch(/app Santé/)
+    expect(m.gloss).toBe('en millisecondes (SDNN), telle que la mesure l’app Santé') // la méthode, dite une fois, ici
     expect(unitsOf(['hrvSdnn', 'hrv'])).toEqual(['ms'])
   })
 
