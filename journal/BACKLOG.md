@@ -1199,7 +1199,7 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     `relay-deploy.yml`, test de garde dans `relay/test/workflow.test.js` (la liste ne contient que cette empreinte).
   - [x] **GOLD-a3-3** (14/11 18:35 : fait avec P44-1, `offeredFor` dans `relay/src/billing.js` ; une empreinte de
     `GOLD_INSTALLS` a une période offerte sans fin : `premium: true`, `tier: 'gold'`, `source: 'launch'`,
-    `launchUntil: null`, 20 analyses par jour ; l'app dit alors « Gold offert pendant le test : vous n'avez rien à
+    `launchUntil: null`, 20 analyses par jour ; **l'app lisait cette réponse comme « gratuit » jusqu'au 14/11 23:35, P44-3a** ; l'app dit alors « Gold offert pendant le test : vous n'avez rien à
     payer. », texte à revoir pour lui avec P44-3 ; pas vérifié sur son téléphone, sans effet avant le 02/12)
     (avant le 02/12, fin de la période de lancement) : aujourd'hui `GOLD_INSTALLS` ne change que le
     modèle servi (`tierOf` dans `relay/src/server.js`). Hors période, l'installation listée reste « gratuite » pour
@@ -1236,7 +1236,23 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     événement `analyze` (hors CI, robots et Test Lab) entre le 08/11 et le 02/12 ; vérifier combien de jours les
     journaux Cloud Logging sont gardés (30 par défaut) et faire un premier relevé sans attendre. Inscrire la liste
     le 02/12 au matin (un testeur qui analyse son premier repas le dernier jour compte).
-  - [ ] **P44-3** (app et textes) : vérifier sur l'émulateur ce que lit un testeur le 02/12 (cartes FIN-LANCEMENT-1
+  - [x] **P44-3a** (14/11 23:35) : **bug côté app de GOLD-a3-3**. `getEntitlement` (`app/src/services/entitlement.js`)
+    calculait `premium = isFuture(launchUntil)` : avec `launchUntil: null` (période offerte sans fin, installation du
+    propriétaire après le 02/12), l'app repassait en gratuit alors que le relais servait Gold. Corrigé (source
+    `launch` sans date = premium jusqu'à la vérification suivante), testé (`entitlement.test.js`, `Premium.test.jsx`).
+    Textes de ce cas : « Gold offert : vous n'avez rien à payer. » (Paramètres), « Gold offert » et « Tout ce qui suit
+    est débloqué… » (écran Gold), sans « pendant le test » ni « Merci de tester l'app ». Outil :
+    `npm run visual -- --play --routes=/premium,/settings --subscription=launch --launch-ends-in=never`.
+    Vu sur relais factice ; pas sur le téléphone du propriétaire. `LaunchStep` de l'accueil dit encore
+    « Gold est offert pendant le test » (ne se voit qu'à une réinstallation, qui change l'empreinte de toute façon).
+  - [ ] **P44-3b** : un testeur inscrit voit « Gold offert jusqu'au 2 déc. » (carte FIN-LANCEMENT-1, du 30/11 au
+    02/12), puis rien ne lui dit que Gold continue : la date passe au 27 déc. dans Paramètres et l'écran Gold
+    (« Gold offert pendant le test, jusqu'au 27 déc. 2026 », vu en capture avec une date factice), la carte revient
+    le 24/12. À faire : une carte d'Aujourd'hui, une fois, quand la date servie par le relais recule
+    (`halcya_launch_last_until` plus ancienne que `launchUntil`) : « Gold offert jusqu'au 27 décembre », sans lien
+    avec un avis. Vérifier aussi que la carte « Le test est terminé. Merci ! » ne s'affiche pas à un inscrit entre la
+    fin de la période et sa première vérification (hors connexion le 03/12).
+  - [ ] **P44-3** (app et textes ; 3a faite, 3b à faire) : vérifier sur l'émulateur ce que lit un testeur le 02/12 (cartes FIN-LANCEMENT-1
     et 2, « Gold offert … jusqu'au 27 décembre »), et ce que lit celui qui n'a rien analysé ; note de Nouveautés
     (`"variants": ["play"]`) ; `INVITATION-TESTEURS.md` et la fiche du test si elles donnent la date du 2 décembre.
 - [x] **GOLD-a4 — prix 2027** (02/11 00:33) : `PRICE_SCHEDULE = [{ from: '2027-01-01', factor: 2 }]` dans

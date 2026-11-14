@@ -266,6 +266,18 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
       expect(screen.getByRole('button', { name: 'Continuer' })).toBeInTheDocument()
     })
 
+    it('Gold offert sans date de fin (GOLD-a3-3) : « Gold offert », sans « test » ni date, aucun achat proposé', async () => {
+      billing.loadPlans.mockResolvedValue([YEAR, MONTH])
+      launchEnt(null)
+      renderPremium()
+      expect(screen.getByRole('heading', { name: 'Gold offert' })).toBeInTheDocument()
+      expect(screen.getByText('Tout ce qui suit est débloqué : vous n’avez rien à payer, aucune carte bancaire n’est demandée.')).toBeInTheDocument()
+      expect(screen.queryByText(/test/i)).toBeNull()
+      expect(screen.getByText(/jusqu’à 20 par jour/)).toBeInTheDocument()
+      await waitFor(() => expect(billing.loadPlans).toHaveBeenCalled())
+      expect(screen.queryByRole('button', { name: /Essayer|S’abonner/ })).toBeNull()
+    })
+
     it('dans l’onboarding aussi : « Continuer », pas d’incitation à payer', () => {
       billing.loadPlans.mockResolvedValue([YEAR, MONTH])
       launchEnt('2099-12-01T00:00:00.000Z')
