@@ -12,14 +12,40 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1052 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1056 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **👉 Prochaine action du propriétaire (une seule, celle qui débloque le plus)**
-- **Rien aujourd'hui.** Le relevé de la mission PI1 (abonnements iPhone) est arrivé pendant le run de 17:35
-  (#979) : le run suivant en tire la suite (mission PI2, ce que l'API permet). Vos réponses du 14/11 (« P44 oui »,
-  « P37 oui confirmé », Tendances › Jour en attente) sont prises en compte, détail juste dessous.
+- **Le jour où vous voulez soumettre l'iPhone à l'App Store (10 min, deux clics pour vous)** : dans Chrome, connecté
+  à App Store Connect, dites à Claude **« fais la mission PI2 »**
+  ([`PI2.md`](../iphone/journal/missions/PI2.md), réécrite le 14/11 d'après le relevé PI1). Claude prépare tout et
+  s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
+  avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
+
+> 🍏 **iPhone : la suite du relevé PI1 (14/11 18:35)** : Apple ne reproche rien aux trois abonnements ; ils partent
+> à l'examen avec la version de l'app, il n'y a rien à corriger par l'API. La mission PI2 est réécrite en
+> conséquence. **Ce qui change pour vous** : (1) Apple demande une déclaration « Regulated Medical Device » aux apps
+> de santé vendues en Europe ; la mission la prépare sur **« No »** (Halcya n'a ni marquage CE de dispositif médical
+> ni enregistrement FDA, et ne donne ni diagnostic ni traitement) et s'arrête avant « Save » : c'est votre
+> déclaration, à valider ou à faire attendre l'avis du juriste (P5, toujours ouvert) en disant « PI2 sans la
+> déclaration ». (2) La section « Achats intégrés et abonnements » manque sur la page de la version 844 : la mission
+> passe par le bouton « Add for Review » de chaque abonnement, qui range l'abonnement dans un brouillon sans rien
+> envoyer, et s'arrête avant « Submit for Review ». **C'est un changement** : l'ancienne mission s'arrêtait avant
+> tout « Add for Review » ; si vous préférez cliquer ces boutons vous-même, dites-le en lançant la mission.
+> **Limites** : je n'ai vu aucun de ces écrans (aide d'Apple et relevé PI1 seulement) ; l'état des abonnements dans
+> l'API n'a pas été relu. Les trois pages publiques citées dans les notes pour l'examen répondent (200), encore
+> depuis le site de l'ancien dépôt. **Android** : la lecture des plantages activée par la mission P43 répond :
+> aucun plantage ni ANR signalé par Google sur 30 jours (bilan du « Play — AAB » de 18:15, v1056).
+
+> 🥇 **Gold après le 2 décembre : le mécanisme est en place (14/11 18:35)** : suite de « P37 oui confirmé » et de
+> « P44 oui ». Après le 2 décembre, votre installation garde Gold en entier (20 analyses par jour, affichage
+> « Gold »), sans date de fin ; et le relais sait garder Gold jusqu'au 27 décembre inclus aux installations d'une
+> liste. **Cette liste est vide** : aucun testeur n'en bénéficie encore, elle sera remplie le 2 décembre au matin
+> avec les installations qui ont analysé au moins un repas (P44-2, à faire). Rien ne change avant le 2 décembre.
+> Pas vérifié sur votre téléphone ; votre écran dira « Gold offert pendant le test : vous n'avez rien à payer. »,
+> texte à revoir (P44-3). Si vous réinstallez l'app, votre empreinte change : dites-le. **Sur iPhone** : non
+> concerné (la période offerte y est finie depuis le 6/11, l'écran d'achat doit rester visible).
 
 > 🥇 **Vos réponses du 14/11 : P37, P44, missions faites (14/11 17:35)** : « P37 oui confirmé » : l'empreinte de
 > votre installation (`5e4a69f72ffb`) est inscrite au relais. **Ce n'est que la moitié du chemin** : à ce stade elle
@@ -814,9 +840,9 @@
 > [sombre](runs/captures/2026-11-09-1035-vfc-habitude-sombre.png)).
 
 **Toujours en attente de vous (repris de la semaine dernière)**
-- **iPhone** (repris de l'ancien résumé iOS) : mission **PI1** faite le 14/11 (relevé reçu, suite à tirer par la routine) ; le jour où vous voulez soumettre à
-  l'App Store, **« fais la mission PI2 »** ([`PI2.md`](../iphone/journal/missions/PI2.md) : tout prêt jusqu'au bouton
-  « Ajouter pour examen », que vous cliquez) ; la décision sur la licence des poids du visage (valence et éveil,
+- **iPhone** (repris de l'ancien résumé iOS) : mission **PI1** faite le 14/11 (Apple ne reproche rien aux abonnements) ; le jour où vous voulez soumettre à
+  l'App Store, **« fais la mission PI2 »** ([`PI2.md`](../iphone/journal/missions/PI2.md), réécrite le 14/11 : arrêt
+  avant « Save » de la déclaration « dispositif médical », puis avant « Submit for Review ») ; la décision sur la licence des poids du visage (valence et éveil,
   appris sur AffectNet, éteints sur iPhone en attendant : DEM-IOS-9 du backlog) ; les essais sur l'iPhone 12.
 - **P32** (pays de vente) : le jour de la production, 2 min, geste exact dans [`PRODUIT.md`](PRODUIT.md) §4 (abonnements déjà prêts dans les 5 pays ; Suisse 4,90 / 29,00 / 9,90 CHF, Canada 6,99 / 39,99 / 12,99 $CA hors taxes : dites-le si vous voulez d'autres prix).
 
@@ -825,11 +851,12 @@
 - [P29](missions/P29.md) (rôle Éditeur du compte Compute par défaut) et [P34](missions/P34.md) (encart
   « Enregistrez vos applications ») : pas urgentes.
 - [ETAT-PLAY](missions/ETAT-PLAY.md) : état d'examen des pistes chez Google, à la demande.
-- Faites le 13/11 et le 14/11 : P43 (lecture des plantages, à vérifier au prochain « Play — AAB »), P46 et P39
+- Faites le 13/11 et le 14/11 : P43 (lecture des plantages, vérifiée le 14/11 à 18:20 : elle répond, aucun plantage ni ANR sur 30 jours), P46 et P39
   (expiration des avis et des clés App Attest), P45 (adresse de commentaires ; aucun commentaire depuis le 08/11).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 18:35 — [Suite de PI1 (mission PI2), Gold offert par installation](runs/2026-11-14-1835-pi2-gold-offert.md) | 🔧 | Main vert. Mission PI2 réécrite d'après le relevé PI1 (déclaration « dispositif médical » sur « No » jusqu'à « Save » ; brouillon de soumission jusqu'à « Submit for Review ») ; écrans non vus. GOLD-a3-3 et P44-1 : période offerte par installation au relais (231 tests verts) ; liste P44 vide, rien en service. P43 vérifiée : la lecture des plantages répond, aucun plantage ni ANR. TestFlight : 1030.1031 en test, rien en attente. ÉTAT_PR. Parité 70 %. |
 | 14/11 17:35 — [Réponses du 14/11 : P37 au relais, P44 découpée](runs/2026-11-14-1735-p37-gold-proprietaire.md) | 🔧 | Main vert. Réponses du propriétaire du 14/11 inscrites. GOLD-a3-2 : `GOLD_INSTALLS=5e4a69f72ffb` dans le déploiement du relais, test de garde (225 tests du relais verts) ; ne donne que le modèle Gold, droits complets à faire (GOLD-a3-3). P44 découpée (P44-1 à P44-3). P43, P46, P39, P45 passées à « fait ». PR #976 (suivi iPhone) verte mais en retard sur main : remise à jour en fin de run. Parité 70 %. |
 | 14/11 16:35 — [Aujourd'hui : la pesée du jour](runs/2026-11-14-1635-aujourdhui-pesee-du-jour.md) | 🔧 | Main vert, aucune PR de la routine ouverte. Suivi iPhone : PR #976 (code embarqué v1050 → v1052, 52 correctifs sans retouche), build macOS et captures de l'accueil à finir au run suivant. POLISH-SIM-84 : une pesée du jour a sa ligne « Poids » dans « Vos données du jour » ; option `--weigh-in` de l'outil de captures. 3548 tests verts. Parité 70 %. |
 | 14/11 15:35 — [Accueil : « Continuer » et « vos appareils »](runs/2026-11-14-1535-accueil-continuer-appareils.md) | 🔧 | Main vert. PR #974 du run précédent finie (build iOS verte, capture iPhone de Tendances regardée) et mergée : iPhone en code v1050. POLISH-SIM-87 : à l'accueil, « Continuer sans » devient « Continuer », « votre montre » devient « vos appareils » ; PR #975. 3545 tests verts. iPhone : au prochain suivi. Parité 70 %. |

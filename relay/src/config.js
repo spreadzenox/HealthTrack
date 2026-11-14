@@ -36,6 +36,25 @@ export function readLaunchPeriod(path = DEFAULT_LAUNCH_PERIOD) {
   }
 }
 
+/** Périodes offertes par installation (P44-1) : clé `offered` du même fichier, `{ until, installs }` (empreintes). */
+export function readOfferedInstalls(path = DEFAULT_LAUNCH_PERIOD) {
+  try {
+    const raw = JSON.parse(readFileSync(path, 'utf8')).offered ?? {}
+    return { until: String(raw.until ?? ''), installs: Array.isArray(raw.installs) ? raw.installs.map(String) : [] }
+  } catch {
+    return { until: '', installs: [] }
+  }
+}
+
+/** Empreinte → date de fin (fichier, P44) ou null, sans fin (GOLD_INSTALLS : l'installation du propriétaire, qui l'emporte). */
+function offeredFrom(env) {
+  const file = readOfferedInstalls(env.LAUNCH_PERIOD_PATH || DEFAULT_LAUNCH_PERIOD)
+  return {
+    ...Object.fromEntries(file.installs.map((fingerprint) => [fingerprint, file.until])),
+    ...Object.fromEntries(list(env.GOLD_INSTALLS, []).map((fingerprint) => [fingerprint, null])),
+  }
+}
+
 function launchFrom(env) {
   const file = readLaunchPeriod(env.LAUNCH_PERIOD_PATH || DEFAULT_LAUNCH_PERIOD)
   return {
@@ -62,6 +81,8 @@ export function loadConfig(env = process.env) {
     goldDailyCap: int(env.GOLD_DAILY_CAP, 40),
     // Empreintes (12 caractères, comme dans les journaux) des installations qui gardent Gold après la période de lancement
     goldInstalls: list(env.GOLD_INSTALLS, []),
+    // Gold offert par installation hors période de lancement (GOLD-a3-3, P44-1) : empreinte → date de fin, ou null
+    offeredInstalls: offeredFrom(env),
     // Coût Vertex du mois (src/costs.js) : Gold coupé au-delà de 15 €, toutes les analyses au-delà de 19 €
     goldMonthlyEur: num(env.GOLD_MONTHLY_EUR, 15),
     stopMonthlyEur: num(env.STOP_MONTHLY_EUR, 19),
