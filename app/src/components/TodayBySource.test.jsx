@@ -116,6 +116,15 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
     expect(within(row).getByLabelText('Variabilité cardiaque de la nuit plus haute')).toHaveTextContent('↑')
   })
 
+  it('une pesée du jour : ligne « Poids », couleur du corps, qui ouvre sa courbe (POLISH-SIM-84)', () => {
+    wrap({ entries: [{ type: 'weight', source: 'health_connect', at: at(8), payload: { valueKg: 72.4 } }] })
+    const row = valueEl('72,4 kg').closest('li')
+    expect(row).toHaveAttribute('data-tone', 'rose')
+    expect(within(row).getByText('Poids')).toBeInTheDocument()
+    expect(within(row).getByRole('link')).toHaveAttribute('href', '/tendances?mesure=weight')
+    expect(screen.getByText('D’après votre balance.')).toBeInTheDocument()
+  })
+
   it('rien du jour : rien du tout (premier jour)', () => {
     const { container } = wrap({ tiles: tiles.map((t) => ({ ...t, value: null })) })
     expect(container).toBeEmptyDOMElement()

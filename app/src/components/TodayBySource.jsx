@@ -20,7 +20,7 @@ import { monoDigits } from '../utils/monoDigits'
 
 const ICONS = {
   sleep: 'moon', hrv: 'pulse', restingHr: 'heart', steps: 'steps', screen: 'phone',
-  wellbeing: 'smile', gut: 'digestion', meals: 'meal', cigarettes: 'cigarette',
+  wellbeing: 'smile', gut: 'digestion', meals: 'meal', cigarettes: 'cigarette', weight: 'gauge',
 }
 /** Clé du thème de chaque ligne (src/theme/themes.js). */
 const THEME_KEYS = { screen: 'screenMinutes', cigarettes: 'phone' }
@@ -30,7 +30,7 @@ const HOMED_ELSEWHERE = new Set(['meals', 'wellbeing'])
 const FROM_YESTERDAY = new Set(['hier', 'nuit d’avant'])
 /** Courbe de chaque ligne dans Journal › Tendances (POLISH-SIM-2 : une ligne touchée ouvre sa courbe). */
 const TREND_KEYS = {
-  sleep: 'sleep', hrv: 'hrv', restingHr: 'restingHr', steps: 'steps', screen: 'screen', wellbeing: 'wellbeing', gut: 'digestion',
+  sleep: 'sleep', hrv: 'hrv', restingHr: 'restingHr', steps: 'steps', screen: 'screen', wellbeing: 'wellbeing', gut: 'digestion', weight: 'weight',
 }
 
 /**
