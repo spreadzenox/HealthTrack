@@ -41,13 +41,26 @@ envoyées par les merges du matin ; aucune soumission bêta avant la nuit procha
 - Aujourd'hui (« Vos données du jour ») et Tendances (menu « + ») : libellés vérifiés par les tests, pas regardés
   en capture.
 - « FC » (tuile du Journal), « FC nuit » et « FC automatique » gardent leur nom : POLISH-SIM-86b.
-- iPhone : les correctifs 17, 32, 56 et 57 ne s'appliquent plus sur ce code (essai à blanc des 52 correctifs) ;
-  ils sont à refaire au suivi de cette version (POLISH-SIM-86-iOS). La build iOS de #970 (v1046) n'en dépend pas.
+- iPhone : les correctifs 17, 32, 56 et 57 ne s'appliquaient plus sur ce code (essai à blanc des 52 correctifs) ;
+  refaits dans #970, voir « Fin du run ». Aucune capture iPhone regardée à ce run.
 - Charte, PRODUIT, BACKLOG, PARITE et journal iPhone lus par sections, pas en entier (plus de 1 Mo).
-- Release et taille de l'APK du run de 11:35 non relevées.
+
+## Fin du run
+- **#971 mergée** à 13:02 (a568661, v1047) : les 12 checks verts (Vitest, Build APK, relais, protocole montre,
+  budget de lectures, cinq émulateurs), branche à jour sur main.
+- **POLISH-SIM-86-iOS fait dans #970** : plutôt que de laisser finir une build macOS du code v1046 puis d'en lancer
+  une autre, la PR de suivi passe à la v1047. Les correctifs 17, 32, 56 et 57 ne cassaient que par leurs lignes de
+  contexte (« FC au repos », « SpO₂ », « Saturation en oxygène ») : refaits avec les nouveaux noms, sans autre
+  changement. Les 52 correctifs s'appliquent ; 3902 tests verts sur le code embarqué (test de garde compris), lint
+  sans erreur. Les correctifs 20 et 21 et deux tests de l'overlay ne disent les anciens noms qu'en commentaire.
+- **#970 reste ouverte** : la build iOS sur simulateur repart de zéro avec ce push (près d'une heure). Au run
+  suivant : la lire, regarder les captures iPhone du Journal (« Cœur au repos ») et d'Analyses › Bien-être, puis
+  merger.
+- Après le merge : Tests, Build & Release et Play — AAB verts sur a568661 ; **release v718** publiée, APK de
+  33,0 Mo (v717 du run de 11:35 : 33,0 Mo aussi). L'émulateur A56 de main tournait encore à la fin du run.
 
 ## Suite
-- Finir #970 (build macOS, capture d'Analyses › Bien-être), puis POLISH-SIM-86-iOS au suivi suivant.
+- Finir #970 (build macOS, captures du Journal et d'Analyses › Bien-être).
 - POLISH-SIM-90, 86b, 81b ; POLISH-SIM-72-iOS-c ; fin de POLISH-SIM-69 ; FUSION-2 ; POLISH-SIM-71b ; CYCLE-3a-2.
 - Maquettes de PROP-SIM-17 et PROP-SIM-18 à un run « idées ».
 - Nuit prochaine, après l'Alpha de 23:45 : soumettre la dernière build TestFlight traitée, puis expirer les

@@ -19,7 +19,7 @@ index f9392c2..c697e07 100644
 +    hrv_sdnn_ms: { label: 'Variabilité cardiaque (SDNN)', unit: 'ms', format: (v) => `${Math.round(v)} ms`, direction: 'higher_better', group: 'lifestyle' },
 +  } : {}),
    spo2_pct: {
-     label: 'Saturation en oxygène (SpO₂)',
+     label: 'Oxygène du sang',
      unit: '%',
 @@ -627,7 +632,7 @@ function ratingCutoffs(entries) {
   */
