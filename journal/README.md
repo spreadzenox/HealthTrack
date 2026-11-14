@@ -17,10 +17,9 @@
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **👉 Prochaine action du propriétaire (une seule, celle qui débloque le plus)**
-- **Rien aujourd'hui.** La mission PI1 (ce qu'Apple reproche aux trois abonnements) est en cours de votre côté
-  (vous la faites faire par Claude dans Chrome) : la routine attend son relevé et corrigera par l'API. Vos réponses
-  du 14/11 (« P44 oui », « P37 oui confirmé », Tendances › Jour en attente) sont prises en compte, détail juste
-  dessous.
+- **Rien aujourd'hui.** Le relevé de la mission PI1 (abonnements iPhone) est arrivé pendant le run de 17:35
+  (#979) : le run suivant en tire la suite (mission PI2, ce que l'API permet). Vos réponses du 14/11 (« P44 oui »,
+  « P37 oui confirmé », Tendances › Jour en attente) sont prises en compte, détail juste dessous.
 
 > 🥇 **Vos réponses du 14/11 : P37, P44, missions faites (14/11 17:35)** : « P37 oui confirmé » : l'empreinte de
 > votre installation (`5e4a69f72ffb`) est inscrite au relais. **Ce n'est que la moitié du chemin** : à ce stade elle
@@ -815,7 +814,7 @@
 > [sombre](runs/captures/2026-11-09-1035-vfc-habitude-sombre.png)).
 
 **Toujours en attente de vous (repris de la semaine dernière)**
-- **iPhone** (repris de l'ancien résumé iOS) : le relevé de la mission **PI1** (en cours de votre côté) ; le jour où vous voulez soumettre à
+- **iPhone** (repris de l'ancien résumé iOS) : mission **PI1** faite le 14/11 (relevé reçu, suite à tirer par la routine) ; le jour où vous voulez soumettre à
   l'App Store, **« fais la mission PI2 »** ([`PI2.md`](../iphone/journal/missions/PI2.md) : tout prêt jusqu'au bouton
   « Ajouter pour examen », que vous cliquez) ; la décision sur la licence des poids du visage (valence et éveil,
   appris sur AffectNet, éteints sur iPhone en attendant : DEM-IOS-9 du backlog) ; les essais sur l'iPhone 12.

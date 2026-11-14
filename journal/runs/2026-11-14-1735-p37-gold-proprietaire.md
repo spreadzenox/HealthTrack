@@ -26,8 +26,7 @@ refait à ce run ; aucune soumission bêta avant la nuit prochaine ; 844.344 int
    en service à ce run.
 4. **Journal** : P43, P46, P39 et P45 passées à « fait » (PRODUIT.md § 4.0 et tableau, index des missions) et retirées
    de « Toujours en attente de vous » avec P37 et P44 ; question Tendances › Jour retirée ; bloc « À faire par
-   l'orchestrateur » ajouté au résumé ; « prochaine action du propriétaire » : rien aujourd'hui (PI1 en cours de son
-   côté).
+   l'orchestrateur » ajouté au résumé ; « prochaine action du propriétaire » : rien aujourd'hui.
 5. Pas de note de Nouveautés : rien de visible dans l'app.
 
 ## Vérifs
@@ -37,6 +36,10 @@ refait à ce run ; aucune soumission bêta avant la nuit prochaine ; 844.344 int
   passe ; `npm run visual`, 18 pages « ok », aucune erreur JavaScript. Aucune capture regardée : aucun écran ne change.
 
 ## Limites
+- **Instructions changées pendant le run** : #979 (orchestrateur, « PI1 faite ») est arrivée sur main à 17:49,
+  après le contrôle d'empreinte de ce run (921d17b8…). Je n'ai pas agi sur ce nouveau texte : le résumé dit seulement
+  que le relevé PI1 est arrivé ; le run suivant, lancé avec la nouvelle empreinte, en tire la suite (PI2, encadré
+  « Declare Your Regulated Medical Device »).
 - GOLD-a3-2 n'est pas vérifiée en production à l'écriture de ce compte rendu : le déploiement du relais part au
   merge (voir « Fin du run »). Aucune analyse réelle du téléphone du propriétaire n'est observée avec la variable.
 - L'empreinte inscrite est celle lue dans les journaux le 03/11 ; le propriétaire a confirmé les quatre premiers
@@ -60,6 +63,7 @@ refait à ce run ; aucune soumission bêta avant la nuit prochaine ; 844.344 int
   heure) est à finir au run suivant.
 
 ## Suite
+- PI1 (relevé du 14/11 vers 17:15, dans les instructions depuis #979) : en tirer la suite au prochain run.
 - GOLD-a3-3 puis P44-1 (même mécanisme), P44-2 sans attendre (durée de conservation des journaux), avant le 02/12.
 - Vérifier P43 au bilan du prochain « Play — AAB », puis s'en servir (VITALS-1).
 - Finir #976 (suivi iPhone) : build iOS verte après la remise à jour, captures de l'accueil regardées, merge avant
