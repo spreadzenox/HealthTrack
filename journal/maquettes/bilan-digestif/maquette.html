@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette — bilan digestif avant le 28e jour (PROP-SIM-17)</title>
+<!--
+  Maquette statique d'une PROPOSITION (PROP-SIM-17) : rien n'est codé dans l'app sans l'accord du propriétaire.
+  Écran : Analyses › Digestion, avant les 28 jours notés. Données synthétiques.
+  Paramètres : ?state=j14|j5  ?theme=dark
+  Rendu : node journal/maquettes/bilan-digestif/render.mjs (depuis la racine du dépôt, app/ installé).
+-->
+<link rel="stylesheet" href="../../../app/src/theme/tokens.css">
+<style>
+  @font-face { font-family: 'Figtree Variable'; font-weight: 300 900;
+    src: url('../../../app/node_modules/@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'IBM Plex Mono'; font-weight: 400;
+    src: url('../../../app/node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-ink); font-family: var(--font-sans); }
+  .screen { width: 412px; margin: 0 auto; padding: 0 var(--gutter) 28px; }
+  .mono { font-family: var(--font-mono); }
+  .top { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+  .logo { display: flex; gap: 10px; align-items: center; font-weight: 800; font-size: 20px; }
+  .logo svg { width: 34px; height: 34px; border-radius: 10px; }
+  .tabs { display: flex; border-bottom: 1px solid var(--color-border); margin-bottom: 22px; }
+  .tabs div { flex: 1; text-align: center; padding: 10px 0; font-weight: 600; font-size: 15px; color: var(--color-ink-2); }
+  .tabs .on { color: var(--color-ink); border-bottom: 3px solid var(--color-brand); }
+  h1 { font-size: 24px; font-weight: 800; margin: 0 0 18px; }
+  h2 { font-size: 17px; font-weight: 800; margin: 26px 0 4px; }
+  .sub { font-size: 14px; color: var(--color-ink-2); margin: 0 0 12px; }
+
+  /* Compte à rebours, plus court qu'aujourd'hui */
+  .wait { background: var(--peach-bg); color: var(--peach-text); border-radius: var(--radius-card); padding: 16px 18px; }
+  .wait b { color: var(--peach-label); font-size: 16px; }
+  .bar { height: 8px; border-radius: 4px; background: var(--peach-track); margin: 12px 0 6px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--peach-label); border-radius: 4px; }
+  .wait .mono { font-size: 12px; }
+
+  /* Les jours notés */
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .day { aspect-ratio: 1; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 11px; line-height: 1.2; color: var(--peach-text); background: var(--peach-bg); }
+  .day b { font-size: 14px; }
+  .day.g { background: var(--peach-track); }
+  .day.d { background: var(--peach-label); color: var(--color-bg); }
+  .day.n { background: none; border: 1.5px dashed var(--color-border); color: var(--color-ink-2); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 12px; font-size: 14px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 12px; height: 12px; border-radius: 4px; background: var(--peach-bg); display: inline-block; }
+  .legend i.g { background: var(--peach-track); } .legend i.d { background: var(--peach-label); }
+  .legend b { font-weight: 800; }
+
+  /* Jours de douleur */
+  .pain { border: 1px solid var(--color-border); border-radius: var(--radius-choice); padding: 14px 16px; margin-top: 10px; }
+  .pain .when { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 15px; }
+  .pain .when .mono { font-size: 12px; font-weight: 400; color: var(--peach-label); }
+  .pain .lbl { font-size: 12px; color: var(--color-ink-2); margin: 10px 0 4px; }
+  .pain ul { list-style: none; margin: 0; padding: 0; }
+  .pain li { display: flex; gap: 10px; font-size: 15px; padding: 3px 0; }
+  .pain li .mono { font-size: 12px; color: var(--color-ink-2); width: 74px; flex: none; padding-top: 3px; }
+  .pain .open { margin-top: 8px; font-size: 14px; font-weight: 700; color: var(--color-brand); }
+  .none { border: 1.5px dashed var(--color-border); border-radius: var(--radius-choice); padding: 16px; font-size: 15px; color: var(--color-ink-2); margin-top: 10px; }
+  .foot { font-size: 13px; color: var(--color-ink-2); margin-top: 16px; line-height: 1.4; }
+  .link { font-size: 14px; text-decoration: underline; color: var(--color-ink-2); margin-top: 18px; display: block; }
+
+  .nav { margin: 0 auto; width: 412px; height: 64px; background: var(--color-bg);
+    border-top: 1px solid var(--color-border); display: flex; }
+  .nav div { flex: 1; text-align: center; font-size: 11px; padding-top: 36px; color: var(--color-ink-2); position: relative; }
+  .nav div::before { content: ''; position: absolute; left: 50%; top: 10px; width: 22px; height: 22px; margin-left: -11px; border-radius: 7px;
+    border: 2px solid currentColor; opacity: .7; }
+  .nav .on { color: var(--color-brand); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="top">
+    <div class="logo">
+      <svg viewBox="0 0 108 108"><rect width="108" height="108" fill="#10231D"/><rect x="30" y="28" width="11" height="52" rx="5.5" fill="#fff"/><rect x="67" y="28" width="11" height="52" rx="5.5" fill="#fff"/><path d="M36 64 C46 64 46 50 54 50 C62 50 62 42 72 42" fill="none" stroke="#5EE0B5" stroke-width="7" stroke-linecap="round"/><circle cx="54" cy="50" r="5.5" fill="#FFB84D"/></svg>
+      Halcya
+    </div>
+  </div>
+  <div class="tabs"><div>Bien-être</div><div class="on">Digestion</div></div>
+  <h1>Votre confort digestif</h1>
+
+  <div class="wait">
+    <b id="wait-title"></b>
+    <div class="bar"><i id="wait-bar"></i></div>
+    <span class="mono" id="wait-count"></span>
+  </div>
+
+  <h2 id="h-days"></h2>
+  <p class="sub">Ce que vous avez noté, jour par jour.</p>
+  <div class="days" id="days"></div>
+  <div class="legend" id="legend"></div>
+
+  <h2 id="h-pain"></h2>
+  <p class="sub" id="pain-sub">Ce que vous aviez mangé dans les 24 heures d'avant.</p>
+  <div id="pains"></div>
+
+  <p class="foot">Un relevé de vos notes. Pour dire ce qui joue sur votre ventre, Halcya attend 28 jours notés.</p>
+  <span class="link">Comment c'est calculé</span>
+</div>
+<div class="nav"><div>Aujourd'hui</div><div>Journal</div><div class="on">Analyses</div><div>Agir</div><div>Sources</div></div>
+<script>
+const q = new URLSearchParams(location.search)
+if (q.get('theme') === 'dark') document.documentElement.dataset.theme = 'dark'
+const state = q.get('state') || 'j14'
+// c = calme, g = gêne, d = douleur, n = pas noté
+const STATES = {
+  j14: {
+    days: ['c','c','g','c','d','c','c','n','c','g','c','d','g','c'], first: [1, 0], // 1er nov. = dimanche
+    pains: [
+      { when: 'Jeudi 12 novembre', at: 'douleur à 15:40', meals: [['mer. 20:15', 'Pizza quatre fromages'], ['jeu. 08:00', 'Café au lait, tartines'], ['jeu. 12:30', 'Salade de lentilles, pomme']] },
+      { when: 'Jeudi 5 novembre', at: 'douleur à 21:10', meals: [['jeu. 08:10', 'Yaourt, muesli'], ['jeu. 12:45', 'Pâtes carbonara'], ['jeu. 19:30', 'Soupe à l\'oignon, pain']] },
+    ],
+  },
+  j5: { days: ['c','g','c','c','c'], first: [10, 2], pains: [] },
+}
+const s = STATES[state]
+const noted = s.days.filter((d) => d !== 'n').length
+const count = (k) => s.days.filter((d) => d === k).length
+const pl = (n, one, many) => `${n} ${n > 1 ? many : one}`
+document.getElementById('wait-title').textContent = `Premiers résultats dans ${28 - noted} jours notés`
+document.getElementById('wait-bar').style.width = `${(noted / 28) * 100}%`
+document.getElementById('wait-count').textContent = `${noted}/28 jours notés`
+document.getElementById('h-days').textContent = `En attendant : vos ${noted} jours`
+const LETTERS = ['D', 'L', 'M', 'M', 'J', 'V', 'S']
+document.getElementById('days').innerHTML = s.days.map((d, i) =>
+  `<div class="day ${d}"><span>${LETTERS[(s.first[1] + i) % 7]}</span><b>${s.first[0] + i}</b></div>`).join('')
+document.getElementById('legend').innerHTML =
+  `<span><i></i><b>${count('c')}</b> ${count('c') > 1 ? 'calmes' : 'calme'}</span>` +
+  `<span><i class="g"></i><b>${count('g')}</b> avec une gêne</span>` +
+  `<span><i class="d"></i><b>${count('d')}</b> avec une douleur</span>`
+if (s.pains.length) {
+  document.getElementById('h-pain').textContent = `Vos ${pl(s.pains.length, 'jour', 'jours')} de douleur`
+  document.getElementById('pains').innerHTML = s.pains.map((p) =>
+    `<div class="pain"><div class="when"><span>${p.when}</span><span class="mono">${p.at}</span></div>
+      <ul>${p.meals.map(([t, m]) => `<li><span class="mono">${t}</span><span>${m}</span></li>`).join('')}</ul>
+      <div class="open">Voir ce jour dans le Journal</div></div>`).join('')
+} else {
+  document.getElementById('h-pain').textContent = 'Vos jours de douleur'
+  document.getElementById('pain-sub').remove()
+  document.getElementById('pains').innerHTML = '<div class="none">Aucune douleur notée pour l\'instant.</div>'
+}
+</script>
+</body>
+</html>

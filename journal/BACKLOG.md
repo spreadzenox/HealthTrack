@@ -718,10 +718,35 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   personas. iPhone : code partagé, arrive au prochain suivi.
 - [ ] **POLISH-SIM-89** (Outil) Config 5 : faire arriver les pesées par Health Connect (aujourd'hui `source:
   'withings'`, carte absente de la variante play) pour que Sources puisse les attribuer.
+- [ ] **POLISH-SIM-91** (Sportif J45 ; 3e persona J45) Analyses sans lien net : le bloc « Long terme » affiche
+  « +2,3 pt », « −2,1 pt », « +1,9 pt » sur une note sur 5, sous « Rien n'est net pour l'instant ». Ne pas montrer
+  un chiffre de cette taille pour un lien pas net (le sens seulement, ou rien) ; à traiter avec la fin de
+  POLISH-SIM-69. Capture : `simulations/captures/2026-11-14-2035-sportif-J45/analyses-rien-de-net.png`.
+- [ ] **POLISH-SIM-92** (Sportif J45) Agir vide : « D'ici là, notez votre bien-être chaque jour. » dit à qui le note
+  depuis 45 jours. Ne garder la phrase que si la note du jour manque.
+- [ ] **POLISH-SIM-93** (à vérifier ; Sportif J45) Analyses n'a que l'onglet « Bien-être » avec l'objectif sport,
+  alors que la digestion est notée chaque jour : l'onglet doit suivre les données, pas seulement l'objectif.
+- [ ] **POLISH-SIM-94** (Maigrir J1) Tendances après une première pesée : « Choisissez une courbe » sans « Poids ».
+  Puce grisée « Poids · dès 3 pesées », comme « Poids · en Mois » (POLISH-SIM-81b).
+- [ ] **POLISH-SIM-95** (Sportif J45) Tendances › Mois : le point du jour en cours fait plonger la courbe des pas.
+  Le dessiner comme partiel (point creux) ou l'écarter du tracé.
+- [ ] **POLISH-SIM-96** (à vérifier) Journal › Jours : tuile « FC » (écrire « Cœur ») ; étiquette « Écran tard »
+  d'une note de bien-être sans origine.
+- [ ] **POLISH-SIM-97** (Maigrir J1) Nutrition au 1er jour : « des repas manquent sans doute, apports sous-estimés »
+  après un seul repas noté. Ne pas l'afficher le premier jour de saisie.
+- [ ] **POLISH-SIM-98** (à vérifier sur captures ; Maigrir J1) Accueil : compteur « 01/06 » sur les trois premiers
+  écrans ; explication de l'envoi à l'IA lue trois fois ; visite guidée : « + 1 cigarette » montré à qui n'a pas
+  parlé de tabac.
+- POLISH-SIM-80 et POLISH-SIM-88 (ouverts) : revus par une 2e persona le 14/11 20:35 (synthèse du jour).
 - [ ] **PROP-SIM-17** (proposition avec maquette, pas de code sans accord) Bilan digestif simple avant le 28e jour :
-  jours calmes, de gêne, de douleur, et repas des jours de douleur, sans statistique.
+  jours calmes, de gêne, de douleur, et repas des jours de douleur, sans statistique. **Maquette faite le 14/11
+  20:35** : `maquettes/bilan-digestif/README.md` (réponse attendue du propriétaire : oui, variante prudente ou non).
 - [ ] **PROP-SIM-18** (proposition, pas de code sans accord ; Sportif sans montre) Noter une séance à la main ;
-  protéines et glucides à la saisie d'un repas ; objectif de protéines selon le poids.
+  protéines et glucides à la saisie d'un repas ; objectif de protéines selon le poids. Complétée le 14/11 20:35
+  (Sportif J45, Maigrir J1) : repère de calories par jour, « mangé / dépensé ». Maquette à faire.
+- [ ] **PROP-SIM-19** (proposition, pas de code sans accord ; Maigrir J1 deux fois, Sportif J1) Se peser en un geste
+  depuis Aujourd'hui quand l'objectif « poids » est coché (la pesée à la main n'existe que dans Journal › Nutrition ›
+  profil). Maquette à faire, avec PROP-SIM-18.
 - [ ] **PROP-SIM-16** (proposition avec maquette, pas de code sans accord ; Tout mesurer J45) Tendances n'offre que 5
   mesures (FC, dépense, oxygène, poids, calories absents) ; Journal › Jours sans saut à une date ; carte d'appareil
   de Sources sans la liste complète de ses mesures (température, phases). Rappels PROP-SIM-10 confirmés : essai lancé
