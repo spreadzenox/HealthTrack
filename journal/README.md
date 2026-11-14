@@ -41,7 +41,7 @@
 > net, vu sur capture : au 45e jour, Analyses écrit « Rien n'est net » puis affiche « +2,3 pt » ; Agir dit de noter
 > son bien-être à qui le fait depuis 45 jours ; se peser est introuvable depuis Aujourd'hui (3e persona : proposition
 > PROP-SIM-19, maquette à venir). Huit étapes de polish au BACKLOG (POLISH-SIM-91 à 98), les autres constats restent
-> à vérifier. **iPhone** : le lien « Ajouter un appareil » suit dans la PR #983 (code embarqué v1059, build en cours).
+> à vérifier. **iPhone** : le lien « Ajouter un appareil » est embarqué depuis le 14/11 23:30 (#983, code v1059).
 
 > ⌚ **Aujourd'hui : « Ajouter un appareil » (14/11 19:35)** : sous « Vos données du jour », le lien disait « Ajouter
 > une montre », même à qui a une balance. Il dit « Ajouter un appareil » (Android ; l'iPhone suit au prochain suivi
@@ -880,7 +880,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
-| 14/11 22:35 — [Agir vide : la phrase « notez chaque jour » seulement si la note manque](runs/2026-11-14-2235-agir-note-du-jour.md) | 🔧 | Main vert. #983 (suivi iPhone v1059) remise à jour sur main, build macOS relancée. POLISH-SIM-92 : sur Agir vide, « D'ici là, notez… » ne s'affiche que si rien n'est noté aujourd'hui ; option de capture `--wellbeing-today`. Parité 70 %. |
+| 14/11 22:35 — [Agir vide : la phrase « notez chaque jour » seulement si la note manque](runs/2026-11-14-2235-agir-note-du-jour.md) | 🔧 | Main vert. #983 (suivi iPhone v1059) remise à jour sur main, build iOS verte, mergée à 23:30 : l'iPhone embarque v1059 (« Ajouter un appareil »). POLISH-SIM-92 : sur Agir vide, « D'ici là, notez… » ne s'affiche que si rien n'est noté aujourd'hui ; option de capture `--wellbeing-today`. Parité 70 %. |
 | 14/11 21:35 — [Relevé des testeurs actifs (P44-2a)](runs/2026-11-14-2135-p44-2-testeurs-actifs.md) | 🔧 | Main vert. Le run de 20:35 finissait encore #983 (suivi iPhone v1059, build macOS relancée à 21:29) : étape indépendante dans `relay/`. Le bilan de « Relais — déploiement » liste les installations Android qui ont analysé un repas depuis le 08/11 (CI, robots et iPhone écartés) et la durée de conservation des journaux ; tri testé. Rien de visible dans l'app. TestFlight non relevé (1030.1031 chez les testeurs d'après 18:35). Parité 70 %. |
 | 14/11 20:35 — [Deux personas ; maquette du bilan digestif](runs/2026-11-14-2035-personas-bilan-digestif.md) | 🔭 | Run « idées », sans code produit. Main vert. Simulations « Prendre soin de soi, maigrir » J1 (Galaxy Watch) et « Sportif » J45 (Android seul) : POLISH-SIM-91 à 98, PROP-SIM-19. Maquette de PROP-SIM-17 (`maquettes/bilan-digestif/`), en attente de la réponse du propriétaire. Suivi iPhone : PR #983 (code embarqué v1059, 52 correctifs sans retouche), build macOS en cours à la fin du run. TestFlight non relevé. Parité 70 %. |
 | 14/11 19:35 — [Aujourd'hui : « Ajouter un appareil »](runs/2026-11-14-1935-aujourdhui-ajouter-un-appareil.md) | 🔧 | Main vert. Le run de 18:35 travaillait encore (#981) : étape indépendante dans `app/`. POLISH-SIM-84b, première partie : le lien sous « Vos données du jour » dit « Ajouter un appareil » ; tests écrits d'abord, captures claire et sombre regardées. Pas encore sur iPhone (suivi au run suivant). TestFlight : 1030.1031 chez les testeurs, 1054 envoyée au merge de #976. Parité 70 %. |

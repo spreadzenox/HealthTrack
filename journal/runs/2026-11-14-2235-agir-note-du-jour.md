@@ -45,12 +45,16 @@ soumission bêta avant la nuit prochaine ; 844.344 intacte  ·  **Parité** : 70
   comptes rendus de 19:35 et de 21:35.
 - `journal/PRODUIT.md` non modifié : ni jalon ni action du propriétaire ne change. « Prochaine action du
   propriétaire » laissée telle quelle. TestFlight non relevé.
-- Pas de ligne dans `iphone/journal/PARITE.md` dans cette PR (fichier modifié par #983) : voir « Fin du run ».
 
 ## Fin du run
-Voir la PR de ce run ; complété après les merges.
+- **PR #983** (suivi iPhone v1059) : build iOS sur simulateur verte à 23:26 sur la branche à jour (build
+  1059.1067), tous les checks verts, main inchangé entre-temps. Capture d'Aujourd'hui (démo, clair, iPhone 16e) de
+  `captures/pr-983` regardée : rien de cassé ; le lien « Ajouter un appareil » n'y figure pas (la démo a une
+  montre). Mergée à 23:30 (20e43e0). L'envoi TestFlight de ce code part de ce merge.
+- **PR #987** (ce run) : checks verts sur le premier commit à 22:56 ; remise à jour sur main après #983, avec les
+  lignes de `PARITE.md` des runs de 21:35 et 22:35. État final : voir la PR.
 
 ## Suite
-- Suivi iPhone de cette version (upstream v1059 → dernière), ligne `PARITE.md` des runs de 21:35 et 22:35.
+- Suivi iPhone de cette version (upstream v1059 → dernière) ; vérifier l'envoi TestFlight parti du merge de #983.
 - Nuit, après l'Alpha de 23:45 : soumettre la dernière build TestFlight traitée, puis expirer les anciennes.
 - P44-2b le 02/12 ; P44-3. POLISH-SIM-91 avec la fin de POLISH-SIM-69, puis 94, 97, 95.
