@@ -44,7 +44,6 @@ refait à ce run ; aucune soumission bêta avant la nuit prochaine ; 844.344 int
   merge (voir « Fin du run »). Aucune analyse réelle du téléphone du propriétaire n'est observée avec la variable.
 - L'empreinte inscrite est celle lue dans les journaux le 03/11 ; le propriétaire a confirmé les quatre premiers
   caractères, pas les douze. S'il réinstalle l'app, l'empreinte change.
-- P43 n'est pas vérifiée : je n'ai pas lu le bilan d'un « Play — AAB » pour voir si la lecture des plantages répond.
 - Les fichiers `journal/missions/P43.md`, `P46.md`, `P39.md` et `P45.md` gardent leur texte adressé au
   propriétaire ; seul l'index dit qu'elles sont faites.
 - La charte (`journal/README.md`, sous le résumé) ne dit pas encore « qui fait les missions » : inscrit dans
@@ -56,16 +55,22 @@ refait à ce run ; aucune soumission bêta avant la nuit prochaine ; 844.344 int
   dans les captures automatiques : le changement de #975 n'est pas vu sur iPhone.
 
 ## Fin du run
-- **PR #980** (ce run) : mergée une fois ses checks verts, avant la remise à jour de #976, pour que #976 ne
-  reprenne pas de retard ; déploiement du relais à vérifier après le merge (état final dans le tableau du résumé).
-- **PR #976** (suivi iPhone) : non mergée à ce run, parce qu'elle n'était plus à jour sur main. Remise à jour sur
-  main et code embarqué avancé au dernier « Play — AAB » vert (pesée du jour comprise) ; sa build macOS (près d'une
-  heure) est à finir au run suivant.
+- **PR #980 mergée à 18:15** (7b749a2, v1056), 12 checks verts, branche à jour sur main (après #979). Elle est
+  passée avant #976 pour que #976 ne reprenne pas de retard.
+- **Après le merge** : « Relais — déploiement » vert, révision `halcya-relay-00052-gpm` à 100 % du trafic, la ligne
+  `--set-env-vars` du log contient la variable, analyse de test passée. Build & Release vert : release v725, APK
+  34,6 Mo. Tests et Play — AAB verts ; l'émulateur A56 tournait encore à 18:21.
+- **P43 vérifiée** : le bilan de ce « Play — AAB » lit Android vitals (« Aucun plantage ni ANR signalé par Google
+  sur 30 jours »). VITALS-1 peut s'en servir.
+- **PR #976** (suivi iPhone) : non mergée à ce run, elle n'était plus à jour sur main. Remise à jour à 18:17,
+  `upstream.json` de v1052 à v1054 (pesée du jour comprise), 52 correctifs sans retouche (`upstream.sh --latest`) ;
+  ce compte rendu y est ajouté à 18:25, ce qui relance sa build macOS (près d'une heure) : à finir au run suivant.
+- Aucune analyse réelle du téléphone du propriétaire n'est observée avec la variable (limite inchangée).
 
 ## Suite
 - PI1 (relevé du 14/11 vers 17:15, dans les instructions depuis #979) : en tirer la suite au prochain run.
 - GOLD-a3-3 puis P44-1 (même mécanisme), P44-2 sans attendre (durée de conservation des journaux), avant le 02/12.
-- Vérifier P43 au bilan du prochain « Play — AAB », puis s'en servir (VITALS-1).
+- VITALS-1 : se servir de la lecture des plantages (P43 vérifiée à ce run).
 - Finir #976 (suivi iPhone) : build iOS verte après la remise à jour, captures de l'accueil regardées, merge avant
   toute autre PR.
 - POLISH-SIM-84b, 87b, 86b, 85 ; POLISH-SIM-72-iOS-c ; fin de POLISH-SIM-69 ; FUSION-2 ; POLISH-SIM-71b ; CYCLE-3a-2.
