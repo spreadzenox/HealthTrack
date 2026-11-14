@@ -639,12 +639,40 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   **Reste** (avec la fin de POLISH-SIM-69) : le même vocabulaire dans Analyses, où toucher « GOS » ou « sorbitol »
   n'explique rien ; réutiliser `hint` de `FODMAP_GROUPS`. iPhone : arrive au suivi de la v1040, aucun correctif ne
   touche `MealFodmapLine`.
-- [ ] **POLISH-SIM-78** (Outil, à vérifier) L'accord de l'IA est redemandé au 45e jour : poser l'accord dans
-  `persona-browse` pour un jour > 1, ou bug de l'app si l'accord y est déjà.
-- [ ] **POLISH-SIM-79** (Outil) `watch-hrv` joué en Apple Watch n'a pas d'oxygène du sang (config 3 : ✓) : Sources
-  dit « Jamais reçu ». Ajouter un matériel `apple-watch` (VFC et oxygène) ou une option.
+- [x] **POLISH-SIM-78** ✅ 14/11 08:35 (Outil) L'accord de l'IA redemandé au 45e jour venait de l'outil :
+  `persona-browse` pose l'accord pour un jour > 1 quand la persona note ses repas.
+- [x] **POLISH-SIM-79** ✅ 14/11 08:35 (Outil) Matériel `apple-watch` (VFC et oxygène du sang, source « Apple Watch ») et
+  `phone-scale` (config 5 : pas, calories, pesées) dans `personaData.mjs`, testés.
 - [ ] **POLISH-SIM-80** (à vérifier) Aujourd'hui : note de bien-être 3, puis 2,9, puis 3 sans saisie ; 4 lectures du
   visage annoncées, aucune ligne Bien-être dans le Journal du jour.
+- [ ] **POLISH-SIM-81** (bug probable ; Sportif J1, balance) Tendances : toucher la pastille « Poids » mène à
+  « Choisissez une courbe » avec « Pas » seul ; la courbe n'existe qu'en Mois. Garder la mesure choisie et passer à la
+  période où elle a des points (`simulations/2026-11-14-0835-synthese.md`).
+- [ ] **POLISH-SIM-82** (Ventre sans technique J14) Analyses › Digestion en attente : « Noter maintenant » reste
+  affiché quand la digestion du jour est déjà notée ; dire « Noté aujourd'hui » à la place.
+- [ ] **POLISH-SIM-83** (à vérifier) Objectif « Mon sport et ma récupération » : rien ne change de visible ensuite
+  (Aujourd'hui, Analyses, Agir). Relever ce que l'objectif règle vraiment ; s'il ne règle rien, le dire dans une
+  proposition plutôt que de le laisser promettre.
+- [ ] **POLISH-SIM-84** Aujourd'hui avec une balance et sans montre : aucune pesée dans « Vos données du jour », et le
+  seul lien est « Ajouter une montre ».
+- [ ] **POLISH-SIM-85** Visite guidée d'Agir : « Exemple au jour 14 » montré à une personne qui est à son 14e jour ;
+  « un jour sur deux tiré au sort » pas compris.
+- [ ] **POLISH-SIM-86** Journal : tuiles « SpO₂ » et « FC au repos », alors que Sources dit « oxygène du sang » et
+  « cœur au repos » : un seul nom par mesure (comme POLISH-SIM-72), avec un test de garde.
+- [ ] **POLISH-SIM-87** Accueil, écran 04/06 : bouton « Continuer sans » (sans quoi ?) ; l'écran 01 parle de « votre
+  montre » à tout le monde.
+- [ ] **POLISH-SIM-88** (à vérifier) Tendances › Jour dit « Aucune lecture du visage ce jour-là » alors qu'une note
+  existe ; « + » rond de la carte Pas d'Aujourd'hui sans effet visible ; « repas incomplets ? » du Journal ne réagit
+  pas ; « Dépense 2 352 kcal » sans explication.
+- [ ] **POLISH-SIM-90** Tendances, fiche d'un jour : « Confort digestif 2,4/5, estimé, avec votre note « douleur » »
+  sous la légende « Douleur 1 », et « Bien-être 3,2/5, votre note 3,4 et le visage » alors que la saisie n'accepte
+  que des entiers : montrer la note telle qu'elle a été donnée, et l'estimation à part (suite de POLISH-SIM-71).
+- [ ] **POLISH-SIM-89** (Outil) Config 5 : faire arriver les pesées par Health Connect (aujourd'hui `source:
+  'withings'`, carte absente de la variante play) pour que Sources puisse les attribuer.
+- [ ] **PROP-SIM-17** (proposition avec maquette, pas de code sans accord) Bilan digestif simple avant le 28e jour :
+  jours calmes, de gêne, de douleur, et repas des jours de douleur, sans statistique.
+- [ ] **PROP-SIM-18** (proposition, pas de code sans accord ; Sportif sans montre) Noter une séance à la main ;
+  protéines et glucides à la saisie d'un repas ; objectif de protéines selon le poids.
 - [ ] **PROP-SIM-16** (proposition avec maquette, pas de code sans accord ; Tout mesurer J45) Tendances n'offre que 5
   mesures (FC, dépense, oxygène, poids, calories absents) ; Journal › Jours sans saut à une date ; carte d'appareil
   de Sources sans la liste complète de ses mesures (température, phases). Rappels PROP-SIM-10 confirmés : essai lancé
@@ -688,6 +716,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   Body Battery lus par le téléphone, sans relais), Starter « push » = stockage serveur (HDS, accord requis) ;
   rétro-ingénierie Garmin écartée (casse la coexistence). Prochaine étape : proposition au propriétaire (ordre § 4)
   et lecture de la documentation du niveau personnel Garmin.
+  **14/11 08:35** : documentation lue. La clé personnelle est réservée par Garmin à l'usage individuel (« not
+  intended for commercial applications serving multiple end users ») : voie écartée pour l'app vendue. Restent Health
+  Connect et Santé (pris), l'import de fichiers FIT (proposition) et Starter ou Enterprise (question HDS).
 - [x] **META-1** (D) ✅ 08/11 00:35 : A en tête de `PRODUIT.md`, B et leçon 18 dans `DESIGN.md` § 9, C dans la charte ;
   (A) à (D) relayés en tête de `POUR-IOS.md`.
 

@@ -20,9 +20,12 @@ export const CONTEXT_TYPES = new Set(['weather', 'phone_usage'])
  *   respiration : Samsung ne les y écrit pas, PERSONAS.md config. 4 ; Garmin et Xiaomi ressemblent) ;
  * - watch-hrv : montre qui envoie aussi la VFC (Fitbit, Pixel Watch, Oura…) ;
  * - huawei : montre Huawei en direct (tout, dont VFC de jour, température, stress) ;
- * - full : montre + balance connectée (tout).
+ * - full : montre + balance connectée (tout) ;
+ * - apple-watch : Apple Watch (config. 3 : tout sauf la balance, VFC et SpO₂ comprises ; POLISH-SIM-79) ;
+ * - phone-scale : téléphone + balance connectée (config. 5 : pas, calories, pesées).
  */
-export const EQUIPMENT = ['phone', 'watch', 'watch-hrv', 'huawei', 'full']
+export const EQUIPMENT = ['phone', 'watch', 'watch-hrv', 'huawei', 'full', 'apple-watch', 'phone-scale']
+const WITH_SCALE = new Set(['full', 'phone-scale'])
 
 /** Ce qu'une balance connectée envoie : absent sans balance (POLISH-SIM-66 : « Pesée Withings » chez la Galaxy Watch). */
 const SCALE_TYPES = new Set(['weight', 'body_composition'])
@@ -31,7 +34,7 @@ export function keepForEquipment(entry, equipment) {
   // POLISH-SIM-63 : le compteur de cigarettes est une option que personne n'active par défaut ; aucune persona ne fume.
   if (entry.type === 'cigarette') return false
   if (APP_TYPES.has(entry.type)) return true
-  if (equipment !== 'full' && EQUIPMENT.includes(equipment) && SCALE_TYPES.has(entry.type)) return false
+  if (EQUIPMENT.includes(equipment) && SCALE_TYPES.has(entry.type)) return WITH_SCALE.has(equipment)
   const huawei = entry.source === 'huawei_watch'
   const hrv = entry.payload?.subtype === 'heartRateVariability'
   switch (equipment) {
@@ -40,7 +43,10 @@ export function keepForEquipment(entry, equipment) {
     case 'watch':
       return !huawei && !hrv && entry.payload?.subtype !== 'restingHeartRate'
         && !['body_temperature', 'respiratory_rate'].includes(entry.type)
+    case 'phone-scale':
+      return entry.type === 'steps' || entry.type === 'calories'
     case 'watch-hrv':
+    case 'apple-watch':
       return !huawei
     case 'huawei':
       return true
@@ -52,7 +58,7 @@ export function keepForEquipment(entry, equipment) {
 }
 
 /** App qui écrit dans Health Connect selon le matériel (les données de démo disent « Gadgetbridge »). */
-const SOURCE_NAME = { phone: 'Samsung Health', watch: 'Samsung Health', 'watch-hrv': 'Fitbit', huawei: 'Samsung Health', full: 'Withings' }
+const SOURCE_NAME = { phone: 'Samsung Health', watch: 'Samsung Health', 'watch-hrv': 'Fitbit', huawei: 'Samsung Health', full: 'Withings', 'apple-watch': 'Apple Watch', 'phone-scale': 'Samsung Health' }
 
 function withSourceName(entry, equipment, sourceName) {
   if (entry.source !== 'health_connect' || !entry.payload?.sourceName) return entry
@@ -64,7 +70,7 @@ function withSourceName(entry, equipment, sourceName) {
 const SPO2_VALUES = [96, 97, 95, 97, 98, 96, 94]
 
 function spo2Entries({ from, now, equipment, sourceName }) {
-  if (!['watch', 'full', 'huawei'].includes(equipment)) return []
+  if (!['watch', 'full', 'huawei', 'apple-watch'].includes(equipment)) return []
   const huawei = equipment === 'huawei'
   const out = []
   for (let n = 0; ; n++) {

@@ -154,6 +154,26 @@ describe('personaEntries', () => {
     expect(types(personaEntries(demo, { day: 45, equipment: 'full', now })).has('body_composition')).toBe(true)
   })
 
+  it('POLISH-SIM-79 : Apple Watch (config. 3) : VFC et oxygène du sang, source « Apple Watch », pas de balance', () => {
+    const list = personaEntries(demo, { day: 14, equipment: 'apple-watch', now })
+    expect(list.some((e) => e.payload?.subtype === 'heartRateVariability')).toBe(true)
+    expect(list.filter((e) => e.payload?.subtype === 'oxygenSaturation').length).toBeGreaterThanOrEqual(13)
+    expect(list.some((e) => e.source === 'huawei_watch')).toBe(false)
+    expect(types(list).has('weight')).toBe(false)
+    expect(list.filter((e) => e.source === 'health_connect' && e.payload?.sourceName).every((e) => e.payload.sourceName === 'Apple Watch')).toBe(true)
+  })
+
+  it('téléphone + balance (config. 5) : pas, calories et pesées ; ni sommeil ni cœur', () => {
+    const list = personaEntries(demo, { day: 45, equipment: 'phone-scale', now })
+    const t = types(list)
+    expect(t.has('steps')).toBe(true)
+    expect(t.has('weight') || t.has('body_composition')).toBe(true)
+    expect(t.has('sleep')).toBe(false)
+    expect(t.has('heart_rate')).toBe(false)
+    const day1 = types(personaEntries(demo, { day: 1, equipment: 'phone-scale', now }))
+    expect(day1.has('weight') || day1.has('body_composition')).toBe(true) // historique importé de la balance
+  })
+
   it('refuse un profil de saisie inconnu', () => {
     expect(() => personaEntries(demo, { day: 14, equipment: 'phone', now, notes: 'jamais' })).toThrow(/inconnu/)
   })

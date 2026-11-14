@@ -87,6 +87,33 @@ Lecture au regard des garde-fous :
   la persona « Tout mesurer » et le propriétaire ; à vérifier : conditions d'usage de la clé personnelle par une app
   tierce, en-têtes et points d'accès (documentation du niveau personnel, à lire avant tout code).
 
+### Niveau personnel : documentation lue le 14/11 (INTEG-1a) → voie écartée pour l'app vendue
+Ce que disent les pages officielles de Garmin (lues le 14/11/2026, liens en bas) :
+- **Usage prévu** (FAQ du niveau personnel) : « The Personal API is intended for individual Garmin users who want
+  programmatic access to their own data. » et « It is not intended for commercial applications serving multiple end
+  users. » ; le programme pour développeurs, lui, est « designed for organizations building integrations for
+  multiple users ».
+- **Clé** : créée par la personne sur le site Garmin Connect (réglages, page du jeton personnel) après acceptation
+  de conditions propres (non publiées hors de cette page : pas lues) ; durée au choix, 30, 90, 180 jours ou un an ;
+  affichée une seule fois ; Garmin demande de la protéger « like a password ».
+- **Jeton** : la clé s'échange contre un jeton d'accès valable 24 h (ou jusqu'à la fin de la clé), sans jeton de
+  renouvellement ; lecture seule, à la demande.
+- **Données** (client d'exemple officiel `garmin/connect-personal-api-python`, Apache 2.0, lu pour comprendre, rien
+  de copié ; 26 lectures) : VFC de la nuit (un jour ou une plage), stress par jour, Body Battery, sommeil (un jour ou
+  résumés sur une plage), FC du jour, SpO₂, résumés quotidiens, pas, poids, VO₂ max, cycle, activités (résumé et
+  fichier FIT). Absents d'après un essai tiers du 22/10 : préparation à l'entraînement, appareils. Limites de débit
+  et profondeur d'historique : non documentées.
+
+**Conclusion** : Halcya (variantes play et App Store) est une app commerciale pour plusieurs utilisateurs ; y faire
+coller une clé personnelle Garmin sort de l'usage prévu par Garmin, et cette clé se garde comme un mot de passe
+(garde-fou « jamais le mot de passe d'un compte d'un autre service »). **La voie « clé personnelle » est écartée
+pour l'app vendue.** Elle reste permise à une personne pour ses propres données, hors de l'app : sans intérêt pour
+le produit. Pour Garmin il reste donc : (a) Health Connect et Santé, déjà pris ; (b) l'import ponctuel de fichiers
+FIT (proposition) ; (c) le niveau Starter (entreprise validée, envoi vers notre serveur, donc la question HDS
+ci-dessus) ou Enterprise. La demande Starter est un geste du propriétaire (auto-entreprise, formulaire) : à lui
+proposer seulement s'il veut ouvrir la question de l'hébergement, avec une mission navigateur qui remplit le
+formulaire jusqu'au bouton d'envoi.
+
 ### Rétro-ingénierie
 Le protocole Bluetooth des montres Garmin est connu (Gadgetbridge le parle), mais une montre Garmin ne s'appaire
 qu'à une seule app : la lire en direct impose de quitter Garmin Connect. **Contraire à la coexistence : écarté.**
@@ -99,8 +126,9 @@ d'import ponctuel sans rétro-ingénierie : proposition possible pour « Tout me
    montres ; Sécurité des données à jour). Proposition avec maquette de l'écran Sources.
 2. **Samsung Health Data SDK** : température cutanée, Energy Score, tension ; dépend de la demande de partenariat
    (geste du propriétaire, à préparer pas à pas dans `PRODUIT.md` § 4).
-3. **Garmin, clé personnelle** : VFC, stress, Body Battery, SpO₂ lus par le téléphone ; après lecture de la
-   documentation du niveau personnel et de ses conditions.
+3. ~~Garmin, clé personnelle~~ : **écartée le 14/11** (réservée par Garmin à l'usage individuel, « not intended for
+   commercial applications serving multiple end users »). À la place, si le propriétaire le veut : import de fichiers
+   FIT (proposition avec maquette).
 4. **Garmin Starter/Enterprise** : seulement si le propriétaire accepte un hébergement HDS ou si l'Enterprise
    (ping/pull) est obtenu ; sinon attendre.
 5. **Samsung Sensor SDK** (VFC calculée sur la montre) : plus tard.
@@ -120,4 +148,8 @@ d'import ponctuel sans rétro-ingénierie : proposition possible pour « Tout me
 - Programme Garmin : https://developer.garmin.com/gc-developer-program/overview ,
   https://the5krunner.com/2026/10/22/garmin-personal-api/ (mis à jour le 30/10/2026),
   https://openwearables.io/blog/garmin-connect-developer-program-reopened
+- Niveau personnel (lus le 14/11/2026) : https://developer.garmin.com/gc-developer-program/personal/personal-api ,
+  https://developer.garmin.com/gc-developer-program/personal/personal-faq/ ,
+  https://github.com/garmin/connect-personal-api-python (client d'exemple, Apache 2.0) ; essai tiers du 22/10 :
+  https://github.com/tamcore/garmin-mcp/issues/42 . Documentation Swagger du niveau personnel : non lue.
 - Page Health API de Garmin : 404 le 08/11 (lien ancien) ; à relire depuis la page du programme.
