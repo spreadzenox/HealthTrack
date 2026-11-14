@@ -92,9 +92,13 @@ Ce qui a été constaté le 13/11, à savoir avant de recommencer :
    routine). Retirer ce qui est livré et n'a plus besoin d'être répété.
 2. Recalculer l'empreinte (`cat orchestration/routine/0[1-4]-*.md | sha256sum`) et la reporter dans
    `routine/LANCEUR.md`. `scripts/verifier-instructions.sh` doit répondre OK.
-3. Ouvrir une PR « [Orchestration] … », attendre les checks, merger. Entre le merge et le run suivant, remplacer le
-   texte du lanceur dans le prompt de la tâche planifiée du relais (mise à jour du prompt, jamais de suppression) : un
-   run lancé avec l'ancienne empreinte s'arrête sans rien faire, par construction.
+3. Ouvrir une PR « [Orchestration] … », attendre les checks, merger. Le relais reprend seul le nouveau lanceur à son
+   réveil suivant (consigne permanente du propriétaire du 14/11, écrite dans sa conversation) : si le lanceur de sa
+   tâche n'est plus le bloc de `routine/LANCEUR.md` sur `main` et que l'empreinte calculée est bien celle du bloc, il
+   le remplace, sans rien changer d'autre ; sinon il ne lance pas de run et notifie le propriétaire. L'orchestrateur ne
+   peut pas modifier lui-même le prompt de cette tâche (la plateforme le réserve à la conversation qui la reçoit) et le
+   relais ne le fait pas sur sa seule demande. Vérifier au créneau suivant qu'un run est parti et a passé le contrôle
+   d'empreinte ; à défaut, lancer soi-même le run du créneau avec le nouveau lanceur, comme le 13/11 au soir.
 
 Ces fichiers reprennent un prompt qui a grossi pendant un mois ; depuis le 13/11, un bloc en tête du premier dit que
 la routine est unique et prime sur ce que la suite dit encore de « la routine iOS ». Étape 5 du plan (§ 6) : tout
@@ -127,7 +131,7 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
 - Sur une machine du propriétaire : lecture seule d'abord, rien installé ni modifié sans son accord explicite, ne
   jamais ouvrir un fichier de secrets (`.env`, clés, jetons, `~/.ssh`).
 
-## 5. Demandes en cours et rappels (au 13/11/2026)
+## 5. Demandes en cours et rappels (au 14/11/2026)
 
 - **P48, déclaration Health Connect « Règles ».** Quand la routine écrit « P48 maintenant » en tête du résumé :
   notification sur le téléphone du propriétaire, avec la mission `journal/missions/P48.md`. Le lui rappeler à chaque
@@ -152,14 +156,16 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
 - **App Store.** TestFlight part de ce dépôt depuis le 13/11 (workflow `ios-testflight.yml`, version 893, build
   `<versionCode>.<commits de ce dépôt>`). La soumission publique est le geste du propriétaire ; le build 844.344 reste
   attaché à la version 844 pour elle.
-- **Après la bascule, pour le propriétaire** (`iphone/fusion/BASCULE.md`, étape 12) : révoquer l'ancienne clé App
-  Store Connect une fois la première build de ce dépôt traitée par Apple ; merger dans l'ancien dépôt iOS la PR qui
-  renvoie ici et retire le déclenchement automatique de TestFlight. Ne pas archiver l'ancien dépôt tant que
-  `iphone/README.md` (« Avant d'archiver ») le déconseille.
+- **Après la bascule** : fait le 14/11 par le propriétaire (ancienne clé App Store Connect révoquée, PR de renvoi
+  mergée dans l'ancien dépôt iOS). Ne pas archiver l'ancien dépôt tant que `iphone/README.md` (« Avant d'archiver »)
+  le déconseille.
 - **Gestes dans les consoles par le navigateur piloté** (machine du propriétaire, compte dédié ; détails hors dépôt) :
   l'orchestrateur lance chaque mission de `journal/missions/` dans une session à part et reporte le résultat dans les
-  instructions. Fait le 13/11 : P45 (adresse de retour déjà en place), état de la piste Alpha, lecture seule de P43
-  côté Play. En attente d'un geste du propriétaire : la partie Google Cloud de P43, P46 et P39.
+  instructions ; la routine range désormais ces missions sous « À faire par l'orchestrateur ». Fait : P45 et état de
+  la piste Alpha (13/11), P43, P46 et P39 (14/11). À refaire : relevé P45 les 16/11 et 19/11. La machine se voit dans
+  la liste des environnements (type « bridge »), pas dans celle des dossiers à attacher à la conversation.
+- **Questions de la routine au propriétaire**, à lui rappeler dans un bilan : P37 (empreinte de son installation),
+  P44 (remercier les testeurs, réponse avant le 20/11), Tendances › Jour, mission PI1 chez Apple.
 
 ## 6. Grand plan du 12/11 (demandé par le propriétaire)
 
