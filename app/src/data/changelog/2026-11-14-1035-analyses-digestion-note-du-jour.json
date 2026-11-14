@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-14",
+  "kind": "correctif",
+  "title": "Analyses : la digestion déjà notée se voit",
+  "items": [
+    "Dans Analyses › Digestion, avant les premiers résultats, le bouton « Noter maintenant » restait affiché même quand la digestion du jour était notée. La carte dit maintenant « Noté aujourd’hui » avec le niveau choisi, et propose « Ajouter une note »."
+  ]
+}

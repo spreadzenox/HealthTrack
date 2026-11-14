@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1043 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1044 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -22,6 +22,15 @@
   qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
+
+> ✅ **Analyses › Digestion : « Noté aujourd'hui » (14/11 10:35)** : au 14e jour, une persona avait noté sa
+> digestion et lisait encore « Noter maintenant » dans Analyses, sans savoir si sa note comptait. Avant les premiers
+> résultats, la carte dit maintenant « Noté aujourd'hui : Gêne » (le ou les niveaux du jour, bilan du soir compris) et
+> le bouton devient « Ajouter une note », en second plan
+> ([avant](runs/captures/2026-11-14-1035-analyses-digestion-avant-clair.png) ·
+> [après](runs/captures/2026-11-14-1035-analyses-digestion-note-clair.png)). **Sur iPhone** : code partagé, aucun
+> correctif iPhone sur cet écran ; il arrive avec le suivi du code embarqué (v1044), dont la PR est ouverte à la fin
+> de ce run. Rien à faire de votre côté.
 
 > ⚖️ **Tendances : « Poids » garde sa courbe (14/11 09:35)** : le bug le plus net des personas de 08:35. En vue
 > Jour, le « + » proposait « Poids » ; le toucher ouvrait la Semaine, où trois pesées espacées n'ont pas de courbe :
@@ -753,6 +762,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 10:35 — [Analyses › Digestion : « Noté aujourd'hui »](runs/2026-11-14-1035-analyses-digestion-note-du-jour.md) | 🔧 | Main vert, aucune PR ouverte. POLISH-SIM-82 : avant les premiers résultats, la carte dit « Noté aujourd'hui : Gêne » et propose « Ajouter une note » quand la digestion du jour est notée. iPhone : PR de suivi du code embarqué (v1040 → v1044) ouverte, build macOS à finir au run suivant. Parité 70 %. |
 | 14/11 09:35 — [Tendances : « Poids » garde sa courbe](runs/2026-11-14-0935-tendances-poids-periode.md) | 🔧 | Main vert. POLISH-SIM-81 : une mesure touchée en vue Jour s'ouvre en Semaine si elle y a une courbe, sinon en Mois. #965 (journal en double du run de 07:35, en conflit) fermée, sa note reprise. iPhone : code embarqué inchangé (v1040), le correctif arrive au prochain suivi. Parité 70 %. |
 | 14/11 08:35 — [Deux personas ; Garmin, clé personnelle écartée](runs/2026-11-14-0835-personas-idees.md) | 🔭 | Run « idées », sans code produit. PR #963 du run précédent finie (build iOS verte, captures iPhone regardées, mergée à 08:50). Simulations « Ventre, sans technique » J14 (Apple Watch) et « Sportif » J1 (téléphone + balance) : POLISH-SIM-81 à 90, PROP-SIM-17 et 18. Outil : matériels `apple-watch` et `phone-scale`, accord IA déjà donné (POLISH-SIM-78, 79). INTEG-1a : niveau personnel Garmin lu, voie écartée pour l'app vendue. Parité 70 %. |
 | 14/11 02:35 — [Sauvegarde « halcya-export » ; iPhone en v1034](runs/2026-11-14-0235-sauvegarde-nom-halcya.md) | 🔧 | POLISH-SIM-73 : la sauvegarde s'appelle `halcya-export-AAAA-MM-JJ.json`, l'import ne dépend pas du nom (testé). iPhone : code embarqué v1032 → v1034, 52 correctifs sans retouche ; build TestFlight 1032.1033 envoyée à 01:41. Parité 70 %. |

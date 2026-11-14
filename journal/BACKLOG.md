@@ -655,8 +655,13 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-81b** Tendances, Mois → Semaine avec une mesure qui n'a de courbe qu'en Mois (Poids seul) : on
   retombe sur « Choisissez une courbe » sans la mesure. Dire où elle se trouve (« Poids : en Mois ») ou la garder
   grisée. Outil des personas : `--dark` ne change pas le thème des captures (à corriger).
-- [ ] **POLISH-SIM-82** (Ventre sans technique J14) Analyses › Digestion en attente : « Noter maintenant » reste
-  affiché quand la digestion du jour est déjà notée ; dire « Noté aujourd'hui » à la place.
+- [x] **POLISH-SIM-82** (Ventre sans technique J14) Analyses › Digestion en attente : « Noter maintenant » reste
+  affiché quand la digestion du jour est déjà notée ; dire « Noté aujourd'hui » à la place. **Fait le 14/11 10:35** :
+  le compte à rebours lit les notes digestives du jour (au fil de l'eau et bilan du soir) et dit « Noté
+  aujourd'hui : Gêne » ; le bouton devient « Ajouter une note », secondaire (`Recommendations.jsx`,
+  `gutLevelsToday`). iPhone : code partagé, aucun correctif sur ce fichier, arrive au suivi de la v1044.
+- [ ] **POLISH-SIM-82b** (à vérifier) Analyses › Bien-être en attente : même question pour la note de bien-être du
+  jour (« Noté : 4/5 » ne s'affiche que juste après la saisie faite depuis Analyses).
 - [ ] **POLISH-SIM-83** (à vérifier) Objectif « Mon sport et ma récupération » : rien ne change de visible ensuite
   (Aujourd'hui, Analyses, Agir). Relever ce que l'objectif règle vraiment ; s'il ne règle rien, le dire dans une
   proposition plutôt que de le laisser promettre.

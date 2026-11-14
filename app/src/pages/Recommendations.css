@@ -831,3 +831,9 @@
   font-size: 0.85rem;
   color: var(--text-muted);
 }
+
+/* POLISH-SIM-82 : « Noté aujourd'hui » dans le compte à rebours, à la place du bouton principal */
+.reco-countdown .reco-noted {
+  margin: 12px 0 0;
+  color: inherit;
+}
