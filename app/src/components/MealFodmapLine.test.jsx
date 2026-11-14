@@ -19,14 +19,14 @@ describe('MealFodmapLine — FODMAP par sous-groupe sur la carte d’un repas (N
   it('le chevron montre les grammes, le repère de départ et l’origine des teneurs', () => {
     render(<MealFodmapLine items={[{ ingredient: 'Pomme', quantity_g: 150 }]} />)
     fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
-    expect(screen.getByText(/≈ 0,75 g · repère 0,4 g par repas/)).toBeTruthy()
+    expect(screen.getByText(/Environ 0,75 g, pour un repère de 0,4 g par repas/)).toBeTruthy()
     expect(screen.getByText(/hypothèse de départ : vos propres données priment/)).toBeTruthy()
   })
   it('mesures publiées divergentes : une fourchette et les deux sources (N3d)', () => {
     render(<MealFodmapLine items={[{ ingredient: 'Oignon, cru', quantity_g: 70 }]} />)
     expect(screen.getByText('Riche en fructanes')).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
-    expect(screen.getByText(/1,4 à 4,4 g selon les mesures publiées · repère 0,3 g par repas/)).toBeTruthy()
+    expect(screen.getByText(/1,4 à 4,4 g selon les mesures publiées, pour un repère de 0,3 g par repas/)).toBeTruthy()
     expect(screen.getByText(/Teneurs : Ferjančič 2024, Liljebo 2020\./)).toBeTruthy()
   })
   it('80 g de baguette : plus jamais dits pauvres, « probablement riche en fructanes » (N3d)', () => {
@@ -40,6 +40,17 @@ describe('MealFodmapLine — FODMAP par sous-groupe sur la carte d’un repas (N
     expect(screen.getByText('Probablement riche en GOS')).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
     expect(screen.getByText(/Teneurs : .*Siva 2019 \(pertes : Njoumi 2019\)/)).toBeTruthy()
+  })
+  it('détails en mots simples : où se trouve le groupe, puis les sources sur une ligne à part (POLISH-SIM-77)', () => {
+    render(<MealFodmapLine items={[{ ingredient: 'Oignon, cru', quantity_g: 70 }, { ingredient: 'Lentilles cuites', quantity_g: 150 }]} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
+    const note = screen.getByTestId('meal-fodmap-note').textContent
+    expect(note).toBe('Certaines personnes digèrent mal les fructanes (blé, oignon, ail) ou les GOS (pois chiches, lentilles), '
+      + 'd’autres très bien. Le repère est une hypothèse de départ : vos propres données priment.')
+    expect(note).not.toMatch(/Varney|Ferjančič|\d{4}/)
+    const sources = screen.getByTestId('meal-fodmap-sources').textContent
+    expect(sources).toMatch(/^Repères : Varney 2017\. Teneurs : .*Ferjančič 2024.*\.$/)
+    expect(screen.getByTestId('meal-fodmap').textContent).not.toMatch(/≈|·/)
   })
   it('rien quand aucun groupe ne dépasse son repère ou sans ingrédients', () => {
     const { container, rerender } = render(<MealFodmapLine items={[{ ingredient: 'Riz blanc cuit', quantity_g: 150 }]} />)

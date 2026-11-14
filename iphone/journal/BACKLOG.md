@@ -10,7 +10,7 @@
 > seule » n'a plus cours : le code partagé (`app/`, `relay/`) se corrige dans la même PR. Suite de la fusion :
 > FUSION-2 à FUSION-5 dans `journal/BACKLOG.md` ; les demandes de l'ancien `DEMANDES.md` encore ouvertes y sont
 > reprises (DEM-IOS-1 à 21).
-> Suivi d'Android au 14/11 05:35 : v1037 (POLISH-SIM-72-iOS : correctifs 13, 17, 30, 32, 45, 56 et 57 refaits, « Variabilité cardiaque (SDNN) » ; suite POLISH-SIM-72-iOS-b, `journal/BACKLOG.md`). Avant, 14/11 04:35 : v1036 (52 correctifs sans retouche) ; 14/11 03:35 : v1035 (correctifs 06 et 12 : contexte de `Data.jsx` refait) ; 14/11 02:35 : v1034 ; 14/11 00:35 : v1032 ; 13/11 22:35 : v1030
+> Suivi d'Android au 14/11 06:35 : inchangé, v1037 est le dernier commit dont « Play — AAB » est vert ; à suivre au prochain run : v1040 (POLISH-SIM-77, détail FODMAP d'un repas, aucun correctif concerné). Avant, 14/11 05:35 : v1037 (POLISH-SIM-72-iOS : correctifs 13, 17, 30, 32, 45, 56 et 57 refaits, « Variabilité cardiaque (SDNN) » ; suite POLISH-SIM-72-iOS-b, `journal/BACKLOG.md`). Avant, 14/11 04:35 : v1036 (52 correctifs sans retouche) ; 14/11 03:35 : v1035 (correctifs 06 et 12 : contexte de `Data.jsx` refait) ; 14/11 02:35 : v1034 ; 14/11 00:35 : v1032 ; 13/11 22:35 : v1030
 > (correctif 58 refait après CYCLE-3a-1, #948).
 
 - [x] **I0 — Mise en place** (27/10, session de configuration avec le propriétaire) : dépôt `HealthTrack-iOS`

@@ -619,8 +619,15 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   Bien-être sans le dire (T2 prévoit la puce grisée « une valeur par jour »).
 - [ ] **POLISH-SIM-76** (à vérifier ; Tout mesurer J45) Objectif « tout comprendre » et digestion notée : Analyses
   n'a que l'onglet Bien-être.
-- [ ] **POLISH-SIM-77** (Ventre sans technique J45) Repas, encadré « Riche en fructanes » : « ≈ 0,73 g · repère
+- [x] **POLISH-SIM-77** (Ventre sans technique J45) Repas, encadré « Riche en fructanes » : « ≈ 0,73 g · repère
   0,3 g », « Varney 2017 », « Ferjančič 2024 » à première vue. Les ranger derrière un détail (la source reste citée).
+  **Fait le 14/11 06:35** : ces mentions étaient déjà derrière le chevron ; c'est le détail déplié qui n'était pas
+  compris. Il dit maintenant « Environ 0,73 g, pour un repère de 0,3 g par repas. », puis « Certaines personnes
+  digèrent mal les fructanes (blé, oignon, ail), d'autres très bien. Le repère est une hypothèse de départ : vos
+  propres données priment. » ; les sources sur une dernière ligne, en petit (« Repères : Varney 2017. Teneurs : … »).
+  **Reste** (avec la fin de POLISH-SIM-69) : le même vocabulaire dans Analyses, où toucher « GOS » ou « sorbitol »
+  n'explique rien ; réutiliser `hint` de `FODMAP_GROUPS`. iPhone : arrive au suivi de la v1040, aucun correctif ne
+  touche `MealFodmapLine`.
 - [ ] **POLISH-SIM-78** (Outil, à vérifier) L'accord de l'IA est redemandé au 45e jour : poser l'accord dans
   `persona-browse` pour un jour > 1, ou bug de l'app si l'accord y est déjà.
 - [ ] **POLISH-SIM-79** (Outil) `watch-hrv` joué en Apple Watch n'a pas d'oxygène du sang (config 3 : ✓) : Sources
