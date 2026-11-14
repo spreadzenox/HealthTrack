@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1038 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; envoi du code de la v1036 lancé à 05:41 ; code de la v1037 (« variabilité cardiaque ») en vérification sur simulateur ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1039 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) et v1036 (05:46) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; envoi du code de la v1037 (« variabilité cardiaque ») lancé à 06:15 ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -23,14 +23,16 @@
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
 
-> 🫀 **iPhone : « variabilité cardiaque » aussi (14/11 05:35)** : la correction de 04:35 (ci-dessous) est sur main
-> depuis 05:41, vérification iPhone verte. Sur iPhone, la mesure venait de l'app Santé sous le nom « VFC (SDNN) »
-> ([Aujourd'hui avant](runs/captures/2026-11-14-0535-iphone-accueil-avant.png) ·
-> [Journal avant](runs/captures/2026-11-14-0535-iphone-journal-avant.png)) : elle s'appelle maintenant
-> « Variabilité cardiaque (SDNN) » sur Aujourd'hui, dans le Journal, Tendances et la norme. « (SDNN) » reste pour
-> l'instant, le temps de distinguer cette mesure autrement que par son nom ; les captures iPhone « après » viendront
-> avec la vérification sur simulateur (près d'une heure), que le prochain run regardera avant de fusionner : le nom
-> est plus long et peut passer sur deux lignes. Rien à faire de votre côté.
+> 🫀 **iPhone : « variabilité cardiaque » aussi (14/11 05:35, fini à 06:15)** : la correction de 04:35 (ci-dessous)
+> est sur main depuis 05:41. Sur iPhone, la mesure de l'app Santé s'appelait « VFC (SDNN) » : elle s'appelle
+> maintenant « Variabilité cardiaque (SDNN) » sur Aujourd'hui
+> ([avant](runs/captures/2026-11-14-0535-iphone-accueil-avant.png) ·
+> [après](runs/captures/2026-11-14-0535-iphone-accueil-apres.png)) et dans le Journal
+> ([avant](runs/captures/2026-11-14-0535-iphone-journal-avant.png) ·
+> [après](runs/captures/2026-11-14-0535-iphone-journal-apres.png)), Tendances et la norme. **Moins joli qu'avant** :
+> le nom passe sur deux lignes sur Aujourd'hui (« · hier » renvoyé à la ligne) et sur trois dans la tuile du
+> Journal. Prochaine étape iPhone : l'appeler « Variabilité cardiaque » tout court (POLISH-SIM-72-iOS-b). Fusionné à
+> 06:15, vérification sur simulateur verte ; partira sur TestFlight dans la foulée. Rien à faire de votre côté.
 
 > 🫀 **« Variabilité cardiaque » : un seul nom (14/11 04:35)** : une persona lisait « VFC » sur Aujourd'hui et
 > « variabilité cardiaque » dans Sources, sans voir que c'était la même mesure. L'app dit maintenant « variabilité
