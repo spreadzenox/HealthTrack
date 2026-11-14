@@ -37,6 +37,36 @@ describe('Agir (ORG-1, ORG-1b)', () => {
     expect(await screen.findByText('D’ici là, notez votre bien-être chaque jour.')).toBeInTheDocument()
   })
 
+  // POLISH-SIM-92 : la phrase ne s'adresse qu'à qui n'a pas encore noté aujourd'hui
+  it('état vide, bien-être déjà noté aujourd’hui : pas de « notez votre bien-être »', async () => {
+    const now = new Date(2026, 10, 14, 18, 0)
+    const read = async () => ({ challenges: [], gut: [], pistes: null, trialsData: null, results: null, wellbeing: [{ type: 'wellbeing', at: new Date(2026, 10, 14, 8, 0).toISOString(), payload: { score: 4 } }] })
+    render(<MemoryRouter><Act read={read} now={now} /></MemoryRouter>)
+    expect(await screen.findByText('Rien en cours pour l’instant')).toBeInTheDocument()
+    expect(screen.queryByText(/D’ici là/)).toBeNull()
+    expect(screen.getByRole('link', { name: 'Où en sont vos analyses' })).toBeInTheDocument()
+  })
+
+  it('état vide, dernière note de bien-être hier : la phrase reste', async () => {
+    const now = new Date(2026, 10, 14, 18, 0)
+    const read = async () => ({ challenges: [], gut: [], pistes: null, trialsData: null, results: null, wellbeing: [{ type: 'wellbeing', at: new Date(2026, 10, 13, 22, 0).toISOString(), payload: { score: 4 } }] })
+    render(<MemoryRouter><Act read={read} now={now} /></MemoryRouter>)
+    expect(await screen.findByText('D’ici là, notez votre bien-être chaque jour.')).toBeInTheDocument()
+  })
+
+  it('état vide, objectif ventre, digestion déjà notée aujourd’hui : pas de « notez votre digestion »', async () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['gut'] }))
+    try {
+      const now = new Date(2026, 10, 14, 18, 0)
+      const read = async () => ({ challenges: [], pistes: null, trialsData: null, results: null, gut: [{ type: 'gut', at: new Date(2026, 10, 14, 9, 0).toISOString(), payload: {} }] })
+      render(<MemoryRouter><Act read={read} now={now} /></MemoryRouter>)
+      expect(await screen.findByText('Rien en cours pour l’instant')).toBeInTheDocument()
+      expect(screen.queryByText(/D’ici là/)).toBeNull()
+    } finally {
+      localStorage.removeItem('healthtrack_onboarding')
+    }
+  })
+
   it('un groupe FODMAP repéré par une analyse digestive est proposé, avec « Commencer »', async () => {
     wrap({ challenges: [], gut: [], pistes: { gut: ['Fructanes → digestion'], levers: [] } })
     const section = await screen.findByRole('region', { name: 'Proposés par vos analyses' })

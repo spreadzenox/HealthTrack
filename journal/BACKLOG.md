@@ -722,8 +722,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   « +2,3 pt », « −2,1 pt », « +1,9 pt » sur une note sur 5, sous « Rien n'est net pour l'instant ». Ne pas montrer
   un chiffre de cette taille pour un lien pas net (le sens seulement, ou rien) ; à traiter avec la fin de
   POLISH-SIM-69. Capture : `simulations/captures/2026-11-14-2035-sportif-J45/analyses-rien-de-net.png`.
-- [ ] **POLISH-SIM-92** (Sportif J45) Agir vide : « D'ici là, notez votre bien-être chaque jour. » dit à qui le note
+- [x] **POLISH-SIM-92** (Sportif J45) Agir vide : « D'ici là, notez votre bien-être chaque jour. » dit à qui le note
   depuis 45 jours. Ne garder la phrase que si la note du jour manque.
+  **Fait le 14/11 22:35** : la phrase (bien-être ou digestion selon l'objectif) ne s'affiche que si rien n'est noté
+  aujourd'hui ; une lecture du visage ne compte pas comme une note. iPhone : au prochain suivi du code embarqué.
 - [ ] **POLISH-SIM-93** (à vérifier ; Sportif J45) Analyses n'a que l'onglet « Bien-être » avec l'objectif sport,
   alors que la digestion est notée chaque jour : l'onglet doit suivre les données, pas seulement l'objectif.
 - [ ] **POLISH-SIM-94** (Maigrir J1) Tendances après une première pesée : « Choisissez une courbe » sans « Poids ».

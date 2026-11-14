@@ -30,6 +30,7 @@
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *   npm run visual -- --routes=/tendances --history-days=2  # historique presque vide : seules les données des 2 derniers
  *                                          jours (aujourd'hui et hier) sont gardées (T3, captures à côté de la maquette)
+ *   npm run visual -- --routes=/agir --history-days=2 --wellbeing-today  # Agir vide, bien-être noté il y a une heure
  *   npm run visual -- --routes=/journal --cycle  # règles hier et avant-hier, symptômes : ligne « Règles » (CYCLE-1b)
  *   npm run visual -- --routes=/ --calibration  # notes de bien-être d'hier seulement : calibration de départ
  *                                          en cours (BE-BIAIS-2, 1 jour sur 3, note du jour demandée)
@@ -1237,6 +1238,10 @@ async function main() {
       const n = Math.max(1, Number(args['history-days']) || 2)
       const from = new Date(); from.setHours(0, 0, 0, 0); from.setDate(from.getDate() - (n - 1))
       entries = entries.filter((e) => new Date(e.at) >= from)
+    }
+    if (args['wellbeing-today']) {
+      // Bien-être déjà noté aujourd'hui, il y a une heure (POLISH-SIM-92 : Agir vide ne redemande pas la note).
+      entries.push({ type: 'wellbeing', source: 'app_wellbeing', at: new Date(Date.now() - 3600_000).toISOString(), payload: { score: 4 } })
     }
     if (args.calibration) {
       // Début de la lecture du visage : une seule note de bien-être, hier (calibration de départ, 1 jour sur 3).
