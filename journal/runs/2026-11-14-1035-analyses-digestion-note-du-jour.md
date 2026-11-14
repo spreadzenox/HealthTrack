@@ -39,6 +39,16 @@ sur a0fe1d1 (code de la v1040) ; aucune soumission bêta avant la nuit prochaine
 - Charte, PRODUIT, BACKLOG, PARITE et journal iPhone lus par sections, pas en entier (plus de 1 Mo).
 - Numéros des builds TestFlight des codes v1034 à v1040 non relevés.
 
+## Fin du run
+- #967 mergée à 10:55 (e9c7266, v1044) : checks de la PR verts (Vitest, Build APK, cinq émulateurs, relais, montre,
+  perf). Sur main : Build & Release, Tests et Play — AAB verts ; release v716, APK de 33,0 Mo.
+  « Test — émulateur A56 » de main encore en cours à la fin du run.
+- **Suivi iPhone, PR à part** : `upstream.json` passe de v1040 (b9db9de) à v1044 (e9c7266) ; les 52 correctifs
+  s'appliquent sans retouche (`scripts/upstream.sh`, lancé ici). Les tests de l'iPhone et la build simulateur
+  tournent sur GitHub (macOS, près d'une heure) : la PR reste ouverte, le run suivant la finit après avoir regardé
+  les captures de Tendances (« Poids », POLISH-SIM-81) et d'Analyses › Digestion (`captures/pr-<N>`).
+- Run plus long que prévu (environ 1 h 15, dont 20 min d'attente des émulateurs).
+
 ## Suite
 - Finir la PR de suivi iPhone (v1044) : build simulateur verte, captures de Tendances et d'Analyses regardées.
 - POLISH-SIM-90, 86, 81b, 82b ; POLISH-SIM-72-iOS-c ; fin de POLISH-SIM-69 ; FUSION-2 ; POLISH-SIM-71b ; CYCLE-3a-2.
