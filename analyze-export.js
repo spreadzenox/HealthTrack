@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Diagnostic script for HealthTrack export files.
- * Usage: node analyze-export.js healthtrack-export-YYYY-MM-DD.json
+ * Usage: node analyze-export.js halcya-export-YYYY-MM-DD.json
  */
 
 const fs = require('fs')

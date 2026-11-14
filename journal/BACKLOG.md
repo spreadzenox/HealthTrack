@@ -584,8 +584,11 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   digestif 2,0/5, noté "douleur" » alors que Douleur = 1. Seuil d'affichage, phrase quand rien ne pèse, moyenne dite.
 - [ ] **POLISH-SIM-72** « VFC » (Aujourd'hui, Journal, Analyses) et « variabilité cardiaque » (Sources, fiche d'un
   jour) : un seul nom.
-- [ ] **POLISH-SIM-73** (Tout mesurer J45) La sauvegarde s'appelle `healthtrack-export-AAAA-MM-JJ.json` : nom de la
+- [x] **POLISH-SIM-73** (Tout mesurer J45) La sauvegarde s'appelle `healthtrack-export-AAAA-MM-JJ.json` : nom de la
   marque (`config/brand.js`) ; l'import d'anciens fichiers ne dépend pas du nom (à vérifier par test).
+  **Fait le 14/11 02:35** : `halcya-export-AAAA-MM-JJ.json` (`EXPORT_FILE_PREFIX`, dérivé de `APP_NAME`) ; l'import
+  ne lit pas le nom (testé avec trois noms). Les fichiers du mode diagnostic caché (`healthtrack-visage-…`,
+  `healthtrack-journal-montre-…`, `healthtrack-debug-…`) gardent leur nom.
 - [ ] **POLISH-SIM-74** (à vérifier ; Tout mesurer J45) Analyses, long terme : « −2,1 pt pour 150 kcal d'activité de
   plus » sur une note sur 5, hachuré. Vérifier le calcul sur les données de la persona ; un chiffre pas net aussi
   grand doit-il s'afficher ?

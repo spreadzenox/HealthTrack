@@ -16,8 +16,13 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
-**Dernière version Android suivie** : v1032 (commit `55d4e43`, 14/11/2026), voir `upstream.json`. Livré par Android de
-v1031 à v1032 : #954 (POLISH-SIM-68, bilan du jour de la digestion sur Aujourd'hui : code partagé, repris tel quel ;
+**Dernière version Android suivie** : v1034 (commit `42a9ee7`, 14/11/2026), voir `upstream.json`. Livré par Android de
+v1033 à v1034 : #955 (POLISH-SIM-70, Agir vide suit l'objectif) et #956 (POLISH-SIM-69, Analyses sans lien net, barres
+repliées) : code partagé, repris tel quel ; les 52 correctifs s'appliquent sans retouche. La sonde de l'export
+(`overlay/app/src/ios/captureMode.js`) compte aussi les fichiers `halcya-export-*`, nom de la sauvegarde à partir de
+la v1035 (POLISH-SIM-73). Parité inchangée : 70 %. Build TestFlight 1032.1033 (code de la v1032) envoyée le 14/11 à
+01:41 ; 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33.
+Avant : Livré par Android de v1031 à v1032 : #954 (POLISH-SIM-68, bilan du jour de la digestion sur Aujourd'hui : code partagé, repris tel quel ;
 les 52 correctifs s'appliquent sans retouche) ; #953 (journal, suivi). Parité inchangée : 70 %. Build TestFlight
 1030.1031 (code de la v1030) chez les testeurs externes depuis le 14/11 à 00:33.
 Avant : Livré par Android de v1025 à v1030 : #948 (CYCLE-3a-1, règles lues dans Health Connect, côté app :

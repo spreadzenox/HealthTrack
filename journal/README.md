@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1034 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 n'était pas encore partie à 01:40, le cron de GitHub part souvent avec 3 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030, première build de ce dépôt validée par Apple, sans attente) ; code de la v1032 en vérification sur simulateur ; anciennes builds expirées par le nettoyage ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1035 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 n'était pas encore partie à 02:45, le cron de GitHub part souvent avec 3 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; build 1032.1033 (code de la v1032) envoyée sur TestFlight le 14/11 à 01:41, pour les testeurs la nuit prochaine ; code de la v1034 en vérification sur simulateur ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -22,6 +22,15 @@
   qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
+
+> 💾 **La sauvegarde porte le nom de l'app (14/11 02:35)** : une persona trouvait dans ses fichiers
+> `healthtrack-export-…json` sans reconnaître Halcya. Le fichier téléchargé depuis Vos données s'appelle maintenant
+> `halcya-export-2026-11-14.json` ([clair](runs/captures/2026-11-14-0235-sauvegarde-nom-clair.png) ·
+> [sombre](runs/captures/2026-11-14-0235-sauvegarde-nom-sombre.png)). Vos anciennes sauvegardes se restaurent comme
+> avant : l'import ne regarde pas le nom du fichier. Partira sur Alpha au prochain envoi du soir. **iPhone** : la
+> build 1032.1033 (bilan du jour de la digestion) est partie sur TestFlight à 01:41 ; le code de la v1034 (Agir vide,
+> Analyses repliées) est en vérification sur simulateur. L'envoi Alpha du 13/11 au soir n'était pas encore parti à
+> 02:45. Rien à faire de votre côté.
 
 > 🔎 **Analyses : tant que rien n'est net, plus de barres à lire de travers (14/11 01:35)** : deux personas lisaient
 > la liste hachurée comme un résultat (« Lactose −0,8 pt : j'arrête le lait ou pas ? »). Quand aucun lien n'est net,
@@ -669,6 +678,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 02:35 — [Sauvegarde « halcya-export » ; iPhone en v1034](runs/2026-11-14-0235-sauvegarde-nom-halcya.md) | 🔧 | POLISH-SIM-73 : la sauvegarde s'appelle `halcya-export-AAAA-MM-JJ.json`, l'import ne dépend pas du nom (testé). iPhone : code embarqué v1032 → v1034, 52 correctifs sans retouche ; build TestFlight 1032.1033 envoyée à 01:41. Parité 70 %. |
 | 14/11 01:35 — [Analyses : liens pas nets repliés](runs/2026-11-14-0135-analyses-liens-pas-nets-replies.md) | 🔧 | POLISH-SIM-69 (1re partie) : sans lien net, les barres hachurées sont repliées derrière « Voir les liens pas encore nets » ; facteurs comparés et jours restants dits en tête. #955 du run précédent mergée par sa session. iPhone : code embarqué inchangé (v1032). Parité 70 %. |
 | 14/11 00:35 — [Agir vide selon l'objectif ; iPhone 1030.1031 chez les testeurs](runs/2026-11-14-0035-agir-vide-objectif-ventre.md) | 🔧 | Nuit : build TestFlight 1030.1031 ajoutée au groupe externe et soumise à l'examen bêta (00:33), validée aussitôt (« en test ») ; nettoyage des anciennes builds. POLISH-SIM-70 : Agir vide ouvre Analyses › Digestion avec l'objectif ventre, et dit quoi noter. iPhone : code embarqué v1030 → v1032, 52 correctifs s'appliquent. Parité 70 %. |
 | 13/11 23:35 — [Digestion : bilan du jour visible](runs/2026-11-13-2335-digestion-bilan-du-jour.md) | 🔧 | POLISH-SIM-68 : « Bilan du jour : Gêne » sur Aujourd'hui, plus de « Dernière note … hier » après le bilan. PR iPhone #953 finie (build simulateur verte, captures regardées) et mergée : build TestFlight 1030.1031 envoyée. Tests (3507), lint, build, visual verts. Parité 70 %. Rien à faire de votre côté |
