@@ -23,6 +23,10 @@
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
 
+> ⌚ **Aujourd'hui : « Ajouter un appareil » (14/11 19:35)** : sous « Vos données du jour », le lien disait « Ajouter
+> une montre », même à qui a une balance. Il dit « Ajouter un appareil » (Android ; l'iPhone suit au prochain suivi
+> du code embarqué).
+
 > 🍏 **iPhone : la suite du relevé PI1 (14/11 18:35)** : Apple ne reproche rien aux trois abonnements ; ils partent
 > à l'examen avec la version de l'app, il n'y a rien à corriger par l'API. La mission PI2 est réécrite en
 > conséquence. **Ce qui change pour vous** : (1) Apple demande une déclaration « Regulated Medical Device » aux apps
@@ -856,6 +860,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 19:35 — [Aujourd'hui : « Ajouter un appareil »](runs/2026-11-14-1935-aujourdhui-ajouter-un-appareil.md) | 🔧 | Main vert. Le run de 18:35 travaillait encore (#981) : étape indépendante dans `app/`. POLISH-SIM-84b, première partie : le lien sous « Vos données du jour » dit « Ajouter un appareil » ; tests écrits d'abord, captures claire et sombre regardées. Pas encore sur iPhone (suivi au run suivant). TestFlight : 1030.1031 chez les testeurs, 1054 envoyée au merge de #976. Parité 70 %. |
 | 14/11 18:35 — [Suite de PI1 (mission PI2), Gold offert par installation](runs/2026-11-14-1835-pi2-gold-offert.md) | 🔧 | Main vert. Mission PI2 réécrite d'après le relevé PI1 (déclaration « dispositif médical » sur « No » jusqu'à « Save » ; brouillon de soumission jusqu'à « Submit for Review ») ; écrans non vus. GOLD-a3-3 et P44-1 : période offerte par installation au relais (231 tests verts) ; liste P44 vide, rien en service. P43 vérifiée : la lecture des plantages répond, aucun plantage ni ANR. TestFlight : 1030.1031 en test, rien en attente. PR #976 (suivi iPhone, code v1054) finie : build iOS verte, captures de la première carte de l'accueil (« vos appareils ») et d'Aujourd'hui regardées, mergée à 19:26 ; la pesée du jour et « Continuer » ne sont pas dans les captures automatiques. Parité 70 %. |
 | 14/11 17:35 — [Réponses du 14/11 : P37 au relais, P44 découpée](runs/2026-11-14-1735-p37-gold-proprietaire.md) | 🔧 | Main vert. Réponses du propriétaire du 14/11 inscrites. GOLD-a3-2 : `GOLD_INSTALLS=5e4a69f72ffb` dans le déploiement du relais, test de garde (225 tests du relais verts) ; ne donne que le modèle Gold, droits complets à faire (GOLD-a3-3). P44 découpée (P44-1 à P44-3). P43, P46, P39, P45 passées à « fait ». #980 mergée (v1056), relais redéployé (révision 00052, vert), release v725, APK 34,6 Mo ; P43 vérifiée (lecture des plantages : aucun plantage ni ANR sur 30 jours). PR #976 (suivi iPhone) verte mais en retard sur main : remise à jour (code embarqué v1054), build macOS à finir au run suivant. Parité 70 %. |
 | 14/11 16:35 — [Aujourd'hui : la pesée du jour](runs/2026-11-14-1635-aujourdhui-pesee-du-jour.md) | 🔧 | Main vert, aucune PR de la routine ouverte. Suivi iPhone : PR #976 (code embarqué v1050 → v1052, 52 correctifs sans retouche), build macOS et captures de l'accueil à finir au run suivant. POLISH-SIM-84 : une pesée du jour a sa ligne « Poids » dans « Vos données du jour » ; option `--weigh-in` de l'outil de captures. 3548 tests verts. Parité 70 %. |

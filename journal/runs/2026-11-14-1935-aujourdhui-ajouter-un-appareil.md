@@ -1,6 +1,6 @@
 # Run 14/11 19:35 — Aujourd'hui : « Ajouter un appareil » (POLISH-SIM-84b, première partie)
 
-**Type** : code (polish, une ligne de texte)  ·  **Android** : v1057 sur main au début (#976)  ·
+**Type** : code (polish, une ligne de texte)  ·  **Android** : main à #976 au début (v1056 au run précédent, numéro non relu)  ·
 **TestFlight** : 1030.1031 chez les testeurs externes d'après le relevé du run de 18:35 ; pas de relevé refait à ce
 run ; l'envoi de 1054 est parti du merge de #976 (workflow « iOS — TestFlight » vert à 19:28) ; aucune soumission
 bêta avant la nuit prochaine ; 844.344 intacte  ·  **Parité** : 70 % (33/47), inchangée
