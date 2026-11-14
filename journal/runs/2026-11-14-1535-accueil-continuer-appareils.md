@@ -45,7 +45,7 @@ nuit prochaine ; 844.344 intacte  ·  **Parité** : 70 % (33/47)
   `iphone/README.md` relu ; `iphone/journal/README.md`, `DESIGN.md` et `INFRA.md` non relus à ce run.
 
 ## Fin du run
-- **PR de suivi iPhone #974 finie et mergée** à 15:55 (52b8f5d) : 15 checks verts, dont « Build iOS (simulateur) et
+- **PR de suivi iPhone #974 finie et mergée** à 15:53 (52b8f5d) : 15 checks verts, dont « Build iOS (simulateur) et
   captures » (fini à 15:52) ; capture iPhone de Tendances regardée (`captures/pr-974`, build 1050.1052) : la vue par
   défaut s'affiche normalement. La fiche d'un jour et « Poids · en Mois » ne sont pas dans les captures
   automatiques : non vus sur iPhone. `upstream.json` en v1050 ; `PARITE.md` § 5 mis à jour.
