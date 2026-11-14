@@ -292,6 +292,14 @@ export default function TrendsViewer({
     [isDay, states, days, now],
   )
   const dailyPeriod = (k) => (weekAvailable.includes(k) ? 'week' : 'month')
+  // POLISH-SIM-81b : en Semaine, une mesure choisie qui n'a de courbe qu'en Mois reste dans les puces, grisée ;
+  // la toucher ramène au Mois (elle disparaissait sans un mot, jusqu'à « Choisissez une courbe »)
+  const absent = period === 'week' ? keys.filter((k) => !data.available.includes(k)).join(' ') : ''
+  const monthOnly = useMemo(() => {
+    if (!absent) return []
+    const month = buildTrendSeries({ states, days, period: 'month', now: now || new Date() }).available
+    return absent.split(' ').filter((k) => month.includes(k))
+  }, [absent, states, days, now])
   const choosePeriod = (id) => {
     if (id === 'day') setDayDate(selected && selected <= data.today ? selected : null)
     onPeriod(id)
@@ -334,6 +342,14 @@ export default function TrendsViewer({
               </li>
             )
           })}
+          {monthOnly.map((k) => (
+            <li key={k}>
+              <button type="button" className="trends-chip is-daily" aria-label={`${trendMeasure(k).label}, en Mois`}
+                onClick={() => choosePeriod('month')}>
+                <span className="trends-chip-dot" aria-hidden="true" />{trendMeasure(k).label} · en Mois
+              </button>
+            </li>
+          ))}
           {(isDay ? dayAddable.length > 0 : addable.length > 0 && shown.length > 0) && (
             <li>
               <button type="button" className="trends-add" aria-label="Ajouter une mesure" aria-expanded={adding}

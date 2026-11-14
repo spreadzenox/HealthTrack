@@ -353,4 +353,20 @@ describe('POLISH-SIM-81 : une mesure touchée en Jour garde sa courbe', () => {
     await open(steps)
     expect(screen.getByText('Une valeur par jour, en Semaine')).toBeInTheDocument()
   })
+  // POLISH-SIM-81b : du Mois à la Semaine, la mesure choisie qui n'a de courbe qu'en Mois reste visible, grisée
+  it('« Poids » choisi en Mois reste en Semaine, grisé, et ramène au Mois', async () => {
+    const menu = await open([...steps, ...weighIns])
+    fireEvent.click(within(menu).getByRole('button', { name: /Poids/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'Semaine' }))
+    expect(screen.queryByRole('img', { name: 'Courbe de Poids' })).toBeNull()
+    const back = screen.getByRole('button', { name: 'Poids, en Mois' })
+    fireEvent.click(back)
+    expect(screen.getByRole('button', { name: 'Mois' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('img', { name: 'Courbe de Poids' })).toBeInTheDocument()
+  })
+  it('une mesure qui a sa courbe en Semaine n’est pas doublée d’une puce grisée', async () => {
+    const menu = await open([...steps, ...weighIns])
+    fireEvent.click(within(menu).getByRole('button', { name: /Pas/ }))
+    expect(screen.queryByRole('button', { name: /, en Mois$/ })).toBeNull()
+  })
 })

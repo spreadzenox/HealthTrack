@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-14",
+  "kind": "correctif",
+  "title": "Tendances : la mesure qui n'a de courbe qu'en Mois reste visible",
+  "items": [
+    "En passant du Mois à la Semaine, une mesure avec peu de points (trois pesées espacées, par exemple) disparaissait. Elle reste maintenant dans les mesures, grisée, avec « en Mois » : la toucher rouvre sa courbe."
+  ]
+}
