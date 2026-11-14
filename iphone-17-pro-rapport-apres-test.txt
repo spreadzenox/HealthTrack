@@ -1,0 +1,232 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=98A0BFA3-CEC3-4FD6-9916-5A2149774DBF "-only-testing:HalcyaUITests/DonneesUITests/testEnregistrerLeRapportDansFichiers"
+
+2026-11-14 16:17:13.062 xcodebuild[2628:273648] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-14 16:17:13.096 xcodebuild[2628:273648] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:98A0BFA3-CEC3-4FD6-9916-5A2149774DBF, OS:26.2, name:iPhone 17 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:98A0BFA3-CEC3-4FD6-9916-5A2149774DBF, OS:26.2, name:iPhone 17 Pro }
+2026-11-14 16:17:19.342 xcodebuild[2628:273648] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-14 16:17:27.042207+0000 HalcyaUITests-Runner[3387:275440] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-14 16:17:30.926.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-14 16:17:30.928.
+Test Suite 'DonneesUITests' started at 2026-11-14 16:17:30.928.
+Test Case '-[HalcyaUITests.DonneesUITests testEnregistrerLeRapportDansFichiers]' started.
+    t =     0.01s Start Test at 2026-11-14 16:17:30.943
+    t =     0.17s Set Up
+    t =     0.17s Open fr.jpesquet.sante
+    t =     0.17s     Activate fr.jpesquet.sante
+    t =     0.43s         Wait for fr.jpesquet.sante to idle
+    t =     0.49s Waiting 1.0s for "Annuler" Button to exist
+    t =     1.49s     Checking `Expect predicate `existsNoRetry == 1` for object "Annuler" Button`
+    t =     1.50s         Checking existence of `"Annuler" Button`
+    t =     1.70s         Capturing element debug description
+    t =     1.71s     Checking existence of `"Annuler" Button`
+    t =     1.81s Collecting debug information to assist test failure triage
+    t =     1.81s     Requesting snapshot of accessibility hierarchy for app with pid 67228
+    t =     1.98s Waiting 30.0s for Any (First Match) to exist
+    t =     3.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.04s         Checking existence of `Any (First Match)`
+    t =     3.10s         Capturing element debug description
+    t =     3.98s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.98s         Checking existence of `Any (First Match)`
+    t =     4.05s         Capturing element debug description
+    t =     4.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     4.99s         Checking existence of `Any (First Match)`
+    t =     5.05s         Capturing element debug description
+    t =     5.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     5.99s         Checking existence of `Any (First Match)`
+    t =     6.07s         Capturing element debug description
+    t =     6.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     6.99s         Checking existence of `Any (First Match)`
+    t =     7.07s         Capturing element debug description
+    t =     7.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     7.99s         Checking existence of `Any (First Match)`
+    t =     8.03s         Capturing element debug description
+    t =     8.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     8.99s         Checking existence of `Any (First Match)`
+    t =     9.07s         Capturing element debug description
+    t =    10.00s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    10.00s         Checking existence of `Any (First Match)`
+    t =    10.07s         Capturing element debug description
+    t =    10.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    10.99s         Checking existence of `Any (First Match)`
+    t =    11.04s         Capturing element debug description
+    t =    11.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    11.99s         Checking existence of `Any (First Match)`
+    t =    12.05s         Capturing element debug description
+    t =    12.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    12.99s         Checking existence of `Any (First Match)`
+    t =    13.05s         Capturing element debug description
+    t =    13.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    13.99s         Checking existence of `Any (First Match)`
+    t =    14.04s         Capturing element debug description
+    t =    14.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    14.99s         Checking existence of `Any (First Match)`
+    t =    15.06s         Capturing element debug description
+    t =    15.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    15.99s         Checking existence of `Any (First Match)`
+    t =    16.03s         Capturing element debug description
+    t =    16.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    16.99s         Checking existence of `Any (First Match)`
+    t =    17.06s         Capturing element debug description
+    t =    17.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    18.00s         Checking existence of `Any (First Match)`
+    t =    18.05s         Capturing element debug description
+    t =    19.00s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    19.00s         Checking existence of `Any (First Match)`
+    t =    19.04s         Capturing element debug description
+    t =    19.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    19.99s         Checking existence of `Any (First Match)`
+    t =    20.04s         Capturing element debug description
+    t =    20.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    20.99s         Checking existence of `Any (First Match)`
+    t =    21.02s         Capturing element debug description
+    t =    22.06s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    22.06s         Checking existence of `Any (First Match)`
+    t =    22.10s         Capturing element debug description
+    t =    23.03s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    23.03s         Checking existence of `Any (First Match)`
+    t =    23.11s         Capturing element debug description
+    t =    24.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    24.04s         Checking existence of `Any (First Match)`
+    t =    24.10s         Capturing element debug description
+    t =    25.03s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    25.04s         Checking existence of `Any (First Match)`
+    t =    25.12s         Capturing element debug description
+    t =    26.03s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    26.04s         Checking existence of `Any (First Match)`
+    t =    26.12s         Capturing element debug description
+    t =    27.06s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    27.06s         Checking existence of `Any (First Match)`
+    t =    27.11s         Capturing element debug description
+    t =    28.05s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    28.05s         Checking existence of `Any (First Match)`
+    t =    28.11s         Capturing element debug description
+    t =    29.05s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    29.05s         Checking existence of `Any (First Match)`
+    t =    29.18s         Capturing element debug description
+    t =    30.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    30.04s         Checking existence of `Any (First Match)`
+    t =    30.15s         Capturing element debug description
+    t =    30.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    30.99s         Checking existence of `Any (First Match)`
+    t =    31.09s         Capturing element debug description
+    t =    31.99s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    31.99s         Checking existence of `Any (First Match)`
+    t =    32.03s         Capturing element debug description
+    t =    32.03s     Checking existence of `Any (First Match)`
+    t =    32.09s Collecting debug information to assist test failure triage
+    t =    32.09s     Requesting snapshot of accessibility hierarchy for app with pid 67228
+    t =    32.19s Requesting snapshot of accessibility hierarchy for app with pid 67228
+    t =    32.69s Requesting snapshot of accessibility hierarchy for app with pid 67228
+Attributes: Application, 0x1056590e0, pid: 67228, label: 'Halcya'
+Element subtree:
+ →Application, 0x1056590e0, pid: 67228, label: 'Halcya'
+    Window (Main), 0x105659200, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x1056595c0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x1056596e0, {{0.0, 0.0}, {402.0, 874.0}}
+          WebView, 0x105659320, {{0.0, 0.0}, {402.0, 874.0}}
+            WebView, 0x105659440, {{0.0, 0.0}, {402.0, 874.0}}
+              WebView, 0x105659800, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x105659920, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x105659a40, {{0.0, 0.0}, {402.0, 874.0}}
+                    Other, 0x105659b60, {{0.0, 0.0}, {402.0, 874.0}}
+                      Other, 0x105659c80, {{0.0, 0.0}, {402.0, 1386.0}}, label: 'Halcya – ventre et bien-être', Focused
+                        Other, 0x105659da0, {{16.0, 62.0}, {370.0, 70.0}}, label: 'bannière', Focused
+                          Other, 0x105659ec0, {{58.0, 86.0}, {61.0, 24.0}}, label: 'Halcya', value: 1, Focused
+                            StaticText, 0x105659fe0, {{58.0, 86.0}, {61.0, 24.0}}, label: 'Halcya', value: Halcya, Focused
+                          Link, 0x10565a100, {{342.0, 76.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                        Other, 0x10565a220, {{16.0, 132.0}, {370.0, 1148.0}}, label: 'principal', Focused
+                          Other, 0x10565a340, {{16.0, 132.0}, {370.0, 24.0}}, label: 'Vos données', value: 2, Focused
+                            StaticText, 0x10565a460, {{16.0, 132.0}, {118.0, 24.0}}, label: 'Vos données', value: Vos données, Focused
+                          Other, 0x10565a580, {{16.0, 164.0}, {370.0, 110.0}}, Focused
+                            StaticText, 0x10565a6a0, {{16.0, 165.0}, {337.0, 41.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                            StaticText, 0x10565a7c0, {{16.0, 187.0}, {355.0, 85.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                          Other, 0x10565ab80, {{32.0, 306.0}, {338.0, 20.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                            StaticText, 0x10565aca0, {{32.0, 306.0}, {163.0, 20.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                          Other, 0x10565adc0, {{32.0, 338.0}, {338.0, 20.0}}, Focused
+                            StaticText, 0x10565aee0, {{32.0, 339.0}, {236.0, 18.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                          Other, 0x10565b000, {{32.0, 366.0}, {338.0, 18.0}}, Focused
+                            StaticText, 0x10565b120, {{32.0, 366.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                            StaticText, 0x10565b240, {{41.0, 367.0}, {2.0, 17.0}}, value:  , Focused
+                            StaticText, 0x10565b360, {{42.0, 366.0}, {24.0, 18.0}}, label: '258', value: 258, Focused
+                            StaticText, 0x10565b480, {{65.0, 367.0}, {48.0, 17.0}}, label: 'entrées', value:  entrées, Focused
+                            StaticText, 0x10565b5a0, {{112.0, 367.0}, {82.0, 17.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                          Button, 0x10565b6c0, {{32.0, 396.0}, {338.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                          Other, 0x10565b7e0, {{32.0, 460.0}, {338.0, 36.0}}, Focused
+                            StaticText, 0x10565b900, {{32.0, 460.0}, {324.0, 36.0}}, label: 'halcya-export-2026-11-14.json est aussi dans l’app Fichiers › Sur mon iPhone › Halcya.', value: halcya-export-2026..., Focused
+                          Other, 0x10565ba20, {{16.0, 536.0}, {370.0, 206.0}}, label: 'article', Focused
+                            StaticText, 0x10565bb40, {{34.0, 552.0}, {235.0, 20.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                            Other, 0x10565bc60, {{34.0, 580.0}, {334.0, 60.0}}, Focused
+                              StaticText, 0x10565bd80, {{34.0, 581.0}, {333.0, 58.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                            StaticText, 0x10565c0e0, {{42.0, 649.0}, {46.0, 14.0}}, label: 'premium', value: premium, Focused
+                            Link, 0x10565c200, {{163.0, 690.0}, {76.0, 20.0}}, label: 'Débloquer', Focused
+                              StaticText, 0x10565c320, {{163.0, 690.0}, {76.0, 20.0}}, label: 'Débloquer', value: Débloquer, Focused
+                          Other, 0x10565c440, {{32.0, 782.0}, {338.0, 20.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                            StaticText, 0x10565c560, {{32.0, 782.0}, {146.0, 20.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                          Other, 0x10565c680, {{32.0, 814.0}, {338.0, 40.0}}, Focused
+                            StaticText, 0x10565c7a0, {{32.0, 815.0}, {315.0, 38.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                          Button, 0x10565c8c0, {{16.0, 766.0}, {370.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                          Button, 0x10565c9e0, {{32.0, 866.0}, {338.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                          Button, 0x10565cb00, {{32.0, 930.0}, {338.0, 68.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                          Other, 0x10565cc20, {{32.0, 1010.0}, {338.0, 18.0}}, Focused
+                            StaticText, 0x10565cd40, {{32.0, 1010.0}, {336.0, 18.0}}, label: '2 entrées ajoutées. Le tableau de bord se met à jour.', value: 2 entrées ajoutées..., Focused
+                          Other, 0x10565ce60, {{32.0, 1084.0}, {338.0, 20.0}}, label: 'Supprimer', value: 3, Focused
+                            StaticText, 0x10565cf80, {{32.0, 1084.0}, {77.0, 20.0}}, label: 'Supprimer', value: Supprimer, Focused
+                          Other, 0x10565d0a0, {{32.0, 1116.0}, {338.0, 60.0}}, Focused
+                            StaticText, 0x10565d1c0, {{32.0, 1117.0}, {324.0, 58.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                          Button, 0x10565d560, {{32.0, 1188.0}, {338.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                        Other, 0x10565d680, {{0.0, 779.0}, {402.0, 95.0}}, label: 'Principal, navigation', Focused
+                          Link, 0x10565d7a0, {{16.0, 819.0}, {61.0, 15.0}}, label: 'Aujourd’hui', Focused
+                            StaticText, 0x10565d8c0, {{16.0, 819.0}, {61.0, 15.0}}, label: 'Aujourd’hui', value: Aujourd’hui, Focused
+                          Link, 0x10565d9e0, {{104.0, 819.0}, {39.0, 15.0}}, label: 'Journal', Focused
+                            StaticText, 0x10565db00, {{104.0, 819.0}, {39.0, 15.0}}, label: 'Journal', value: Journal, Focused
+                          Link, 0x10565dc20, {{177.0, 819.0}, {48.0, 15.0}}, label: 'Analyses', Focused
+                            StaticText, 0x10565dd40, {{177.0, 819.0}, {48.0, 15.0}}, label: 'Analyses', value: Analyses, Focused
+                          Link, 0x10565de60, {{267.0, 819.0}, {22.0, 15.0}}, label: 'Agir', Focused
+                            StaticText, 0x10565df80, {{267.0, 819.0}, {22.0, 15.0}}, label: 'Agir', value: Agir, Focused
+                          Link, 0x10565e0a0, {{334.0, 819.0}, {43.0, 15.0}}, label: 'Sources', Focused
+                            StaticText, 0x10565e1c0, {{334.0, 819.0}, {43.0, 15.0}}, label: 'Sources', value: Sources, Focused
+              Other, 0x10565e2e0, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 0 %
+                Other, 0x10565e400, {{396.0, 65.0}, {3.0, 486.0}}
+              Other, 0x10565e520, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x10565e640, {{65.0, 868.0}, {272.0, 3.0}}
+              Other, 0x10565e760, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 0 %
+                Other, 0x10565e880, {{396.0, 65.0}, {3.0, 486.0}}
+              Other, 0x10565e9a0, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x10565eac0, {{65.0, 868.0}, {272.0, 3.0}}
+    Window, 0x10565ebe0, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x10565ed00, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10565ee20, {{0.0, 0.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x1056590e0, pid: 67228, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x1056bb710, pid: 67228, label: 'Halcya'
+  }
+
+/Users/runner/work/HealthTrack/HealthTrack/iphone/uitests/HalcyaUITests/SanteUITests.swift:288: error: -[HalcyaUITests.DonneesUITests testEnregistrerLeRapportDansFichiers] : failed - « Créer le PDF » introuvable
+    t =    32.93s Tear Down
+Test Case '-[HalcyaUITests.DonneesUITests testEnregistrerLeRapportDansFichiers]' failed (33.004 seconds).
+Test Suite 'DonneesUITests' failed at 2026-11-14 16:18:03.946.
+	 Executed 1 test, with 1 failure (0 unexpected) in 33.004 (33.018) seconds
+Test Suite 'HalcyaUITests.xctest' failed at 2026-11-14 16:18:03.947.
+	 Executed 1 test, with 1 failure (0 unexpected) in 33.004 (33.019) seconds
+Test Suite 'Selected tests' failed at 2026-11-14 16:18:03.947.
+	 Executed 1 test, with 1 failure (0 unexpected) in 33.004 (33.021) seconds
+2026-11-14 16:18:39.531 xcodebuild[2628:273648] [MT] IDETestOperationsObserverDebug: 80.172 elapsed -- Testing started completed.
+2026-11-14 16:18:39.532 xcodebuild[2628:273648] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-14 16:18:39.533 xcodebuild[2628:273648] [MT] IDETestOperationsObserverDebug: 80.173 sec, +80.173 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-eneqaiydcyqewabpsjfqiswlwffj/Logs/Test/Test-HalcyaUITests-2026.11.14_16-17-13-+0000.xcresult
+
+Failing tests:
+	DonneesUITests.testEnregistrerLeRapportDansFichiers()
+
+** TEST EXECUTE FAILED **
+
+Testing started
