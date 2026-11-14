@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-14",
+  "kind": "correctif",
+  "title": "Tendances : une mesure choisie garde sa courbe",
+  "items": [
+    "Dans Tendances, en vue Jour, toucher « Poids » pouvait mener à un écran sans courbe quand les pesées dataient de plus d'une semaine. La mesure s'ouvre maintenant en Mois quand elle n'a pas assez de points en Semaine."
+  ]
+}

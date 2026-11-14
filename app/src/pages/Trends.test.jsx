@@ -318,3 +318,38 @@ describe('POLISH-SIM-47 : graduations du poids', () => {
     expect(labels).not.toContain('77,3')
   })
 })
+
+describe('POLISH-SIM-81 : une mesure touchée en Jour garde sa courbe', () => {
+  // Des pas cette semaine, trois pesées plus anciennes (une balance, un premier jour) : le poids n'a de courbe qu'en Mois
+  const steps = [4, 5, 6, 7].map((d) => ({ dateKey: `2026-11-0${d}`, summary: { steps: 6000 + d } }))
+  const weighIns = [14, 21, 28].map((d, i) => ({ dateKey: `2026-10-${d}`, summary: { weightKg: [78.2, 77.9, 77.6][i] } }))
+  const note = [{ type: 'wellbeing', at: new Date(2026, 10, 7, 9).toISOString(), payload: { score: 4 } }]
+  const open = async (d) => {
+    render(
+      <MemoryRouter initialEntries={['/tendances?vue=jour']}>
+        <Trends now={NOW} readDays={async () => d} readDayStates={async () => null}
+          readFaceEntries={async () => note} readDayContributions={async () => null} readDayChanges={async () => null} />
+      </MemoryRouter>,
+    )
+    fireEvent.click(await screen.findByRole('button', { name: 'Ajouter une mesure' }))
+    return screen.getByRole('list', { name: 'Mesures à ajouter' })
+  }
+  it('« Poids » sans courbe en Semaine ouvre le Mois, avec sa courbe', async () => {
+    const menu = await open([...steps, ...weighIns])
+    expect(screen.getByText('Une valeur par jour, en Semaine ou en Mois')).toBeInTheDocument()
+    fireEvent.click(within(menu).getByRole('button', { name: /Poids/ }))
+    expect(screen.getByRole('img', { name: 'Courbe de Poids' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Mois' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByText('Choisissez une courbe')).toBeNull()
+  })
+  it('« Pas », qui a sa courbe en Semaine, ouvre toujours la Semaine', async () => {
+    const menu = await open([...steps, ...weighIns])
+    fireEvent.click(within(menu).getByRole('button', { name: /Pas/ }))
+    expect(screen.getByRole('img', { name: 'Courbe de Pas' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Semaine' })).toHaveAttribute('aria-pressed', 'true')
+  })
+  it('toutes les mesures ont une courbe en Semaine : la phrase ne parle que de la Semaine', async () => {
+    await open(steps)
+    expect(screen.getByText('Une valeur par jour, en Semaine')).toBeInTheDocument()
+  })
+})

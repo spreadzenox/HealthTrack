@@ -285,6 +285,13 @@ export default function TrendsViewer({
   const day = dayDate ?? (initialDay && initialDay <= data.today ? initialDay : data.today)
   // En Jour, seul le bien-être a un détail heure par heure : les autres mesures sont grisées dans « + »
   const dayAddable = data.available.filter((k) => k !== 'wellbeing')
+  // POLISH-SIM-81 : une mesure touchée en Jour s'ouvre là où elle a une courbe, la Semaine d'abord, sinon le Mois
+  // (trois pesées espacées n'ont de courbe qu'en Mois : en Semaine la mesure choisie disparaissait)
+  const weekAvailable = useMemo(
+    () => (isDay ? buildTrendSeries({ states, days, period: 'week', now: now || new Date() }).available : []),
+    [isDay, states, days, now],
+  )
+  const dailyPeriod = (k) => (weekAvailable.includes(k) ? 'week' : 'month')
   const choosePeriod = (id) => {
     if (id === 'day') setDayDate(selected && selected <= data.today ? selected : null)
     onPeriod(id)
@@ -345,14 +352,16 @@ export default function TrendsViewer({
       </div>
       {adding && isDay && (
         <>
-        <p className="trends-add-caption">Une valeur par jour, en Semaine</p>
+        <p className="trends-add-caption">
+          {dayAddable.every((k) => dailyPeriod(k) === 'week') ? 'Une valeur par jour, en Semaine' : 'Une valeur par jour, en Semaine ou en Mois'}
+        </p>
         <ul className="trends-add-menu" aria-label="Mesures à ajouter">
           {dayAddable.map((k) => {
             const m = trendMeasure(k)
             return (
               <li key={k}>
                 <button type="button" className="trends-chip is-daily" data-tone={m.tone}
-                  onClick={() => { setKeys(shown.includes(k) ? shown : canAdd(shown, k) ? [...shown, k] : [k]); choosePeriod('week') }}>
+                  onClick={() => { setKeys(shown.includes(k) ? shown : canAdd(shown, k) ? [...shown, k] : [k]); choosePeriod(dailyPeriod(k)) }}>
                   <span className="trends-chip-dot" aria-hidden="true" />{m.label}
                 </button>
               </li>

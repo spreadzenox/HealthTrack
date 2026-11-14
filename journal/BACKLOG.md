@@ -645,9 +645,16 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   `phone-scale` (config 5 : pas, calories, pesées) dans `personaData.mjs`, testés.
 - [ ] **POLISH-SIM-80** (à vérifier) Aujourd'hui : note de bien-être 3, puis 2,9, puis 3 sans saisie ; 4 lectures du
   visage annoncées, aucune ligne Bien-être dans le Journal du jour.
-- [ ] **POLISH-SIM-81** (bug probable ; Sportif J1, balance) Tendances : toucher la pastille « Poids » mène à
+- [x] **POLISH-SIM-81** (bug ; Sportif J1, balance) Tendances : toucher la pastille « Poids » mène à
   « Choisissez une courbe » avec « Pas » seul ; la courbe n'existe qu'en Mois. Garder la mesure choisie et passer à la
-  période où elle a des points (`simulations/2026-11-14-0835-synthese.md`).
+  période où elle a des points (`simulations/2026-11-14-0835-synthese.md`). **Fait le 14/11 09:35** : le menu « + »
+  de la vue Jour proposait les mesures qui ont une courbe en Mois, puis ouvrait toujours la Semaine. La mesure
+  touchée s'ouvre en Semaine si elle y a 3 points, sinon en Mois (`TrendsViewer.jsx`, `dailyPeriod`) ; la phrase du
+  menu dit « en Semaine ou en Mois » dans ce cas. iPhone : code partagé, aucun correctif sur ce fichier, arrive au
+  prochain suivi du code embarqué.
+- [ ] **POLISH-SIM-81b** Tendances, Mois → Semaine avec une mesure qui n'a de courbe qu'en Mois (Poids seul) : on
+  retombe sur « Choisissez une courbe » sans la mesure. Dire où elle se trouve (« Poids : en Mois ») ou la garder
+  grisée. Outil des personas : `--dark` ne change pas le thème des captures (à corriger).
 - [ ] **POLISH-SIM-82** (Ventre sans technique J14) Analyses › Digestion en attente : « Noter maintenant » reste
   affiché quand la digestion du jour est déjà notée ; dire « Noté aujourd'hui » à la place.
 - [ ] **POLISH-SIM-83** (à vérifier) Objectif « Mon sport et ma récupération » : rien ne change de visible ensuite
