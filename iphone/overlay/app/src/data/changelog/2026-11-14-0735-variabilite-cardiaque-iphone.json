@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-14",
+  "kind": "amélioration",
+  "variants": ["appstore"],
+  "title": "« Variabilité cardiaque », tout court",
+  "items": [
+    "La mesure de l’app Santé s’appelle « Variabilité cardiaque » sur Aujourd’hui, dans le Journal et dans Tendances. La méthode de mesure (SDNN) n’est plus dite que sous sa courbe, dans Tendances."
+  ]
+}

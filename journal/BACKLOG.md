@@ -604,9 +604,20 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   libellé, parce que le code reconnaît la mesure de l'app Santé à son libellé (Aujourd'hui, Journal) et qu'un fichier
   importé d'Android peut apporter l'autre mesure (RMSSD) ; le dire une seule fois demande une clé à la place du
   libellé : **POLISH-SIM-72-iOS-b**.
-- [ ] **POLISH-SIM-72-iOS-b** iPhone : distinguer la variabilité cardiaque de l'app Santé par une clé (`hrvSdnn`) et
+- [x] **POLISH-SIM-72-iOS-b** iPhone : distinguer la variabilité cardiaque de l'app Santé par une clé (`hrvSdnn`) et
   non par son libellé (`TodayBySource.jsx`, `DailyJournal.jsx`, `journalChips.js`, correctifs 30, 56, 57), puis
   l'appeler « Variabilité cardiaque » tout court, la méthode dite une fois (ligne sous la courbe de Tendances).
+  **Fait le 14/11 07:35** (PR ouverte, build iOS et captures à regarder avant le merge) : la ligne d'Aujourd'hui
+  porte `measure: 'hrvSdnn'` (correctif 30), la tuile du Journal un quatrième élément `'hrvSdnn'` (correctif 17) ;
+  `TodayBySource.jsx` et `DailyJournal.jsx` lisent cette clé (correctifs 56, 57). Libellé « Variabilité cardiaque »
+  sur Aujourd'hui, dans le Journal, dans Tendances et au premier import (« de variabilité cardiaque en moyenne »,
+  correctif 32) ; sous la courbe de Tendances : « en millisecondes (SDNN), telle que la mesure l'app Santé ». Si un
+  fichier importé d'Android apporte une RMSSD le même jour, la tuile du Journal de l'app Santé dit
+  « Variabilité cardiaque, app Santé ». Code embarqué v1037 → v1040.
+- [ ] **POLISH-SIM-72-iOS-c** iPhone : « (SDNN) » reste dans la carte des normes (`sdnnBaseline.js`), dans Analyses
+  (`hrv_sdnn_ms`, correctif 32) et dans la liste des données de l'app Santé (`healthApps.js`, correctif 19) ; aucun
+  de ces écrans ne reconnaît la mesure à son libellé. Dans Tendances, si une RMSSD importée d'Android existe aussi,
+  le sélecteur propose deux « Variabilité cardiaque » : les distinguer (« , app Santé »).
 - [x] **POLISH-SIM-73** (Tout mesurer J45) La sauvegarde s'appelle `healthtrack-export-AAAA-MM-JJ.json` : nom de la
   marque (`config/brand.js`) ; l'import d'anciens fichiers ne dépend pas du nom (à vérifier par test).
   **Fait le 14/11 02:35** : `halcya-export-AAAA-MM-JJ.json` (`EXPORT_FILE_PREFIX`, dérivé de `APP_NAME`) ; l'import

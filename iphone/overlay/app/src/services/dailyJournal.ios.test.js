@@ -8,20 +8,28 @@ const sdnn = { type: 'heart_rate', source: 'health_connect', at: '2026-10-20T03:
 const hr = { type: 'heart_rate', source: 'health_connect', at: '2026-10-20T09:00:00Z', payload: { bpm: 70, subtype: 'heartRate' } }
 
 describe('Journal : VFC en SDNN (iPhone)', () => {
-  it('« Variabilité cardiaque (SDNN) » à part ; ni fréquence cardiaque, ni VFC RMSSD', () => {
+  it('« Variabilité cardiaque » de l’app Santé, à part (clé hrvSdnn) ; ni fréquence cardiaque, ni VFC RMSSD', () => {
     const [day] = buildDailyJournal([sdnn, hr])
     expect(day.summary.hrvSdnn).toBe(48)
     expect(day.summary.hrv).toBeNull()
     const chips = summaryChips(day.summary)
-    expect(chips).toContainEqual(['Variabilité cardiaque (SDNN)', '48 ms'])
+    expect(chips).toContainEqual(['Variabilité cardiaque', '48 ms', undefined, 'hrvSdnn'])
     expect(chips).toContainEqual(['FC', '70 bpm']) // la SDNN n'entre pas dans la fréquence cardiaque
     expect(chips.map(([label]) => label)).not.toContain('VFC')
   })
 
   // Correctif 56 (9/11) : la tuile était grise, avec l'icône par défaut ; elle a celles de la VFC, sans « d'habitude »
-  it('« Variabilité cardiaque (SDNN) » a l’icône et la couleur de la VFC (thème corps)', () => {
-    expect(chipKey('Variabilité cardiaque (SDNN)')).toBe('hrvDay')
-    expect(chipTheme('Variabilité cardiaque (SDNN)')).toBe(chipTheme('Variabilité cardiaque'))
+  it('avec une RMSSD le même jour (fichier d’Android), celle de l’app Santé dit d’où elle vient, même icône et même couleur', () => {
+    const chips = summaryChips({ hrv: 41, hrvSdnn: 48 })
+    expect(chips).toContainEqual(['Variabilité cardiaque', '41 ms'])
+    expect(chips).toContainEqual(['Variabilité cardiaque, app Santé', '48 ms', undefined, 'hrvSdnn'])
+    expect(chipKey('Variabilité cardiaque, app Santé')).toBe('hrvDay')
+    expect(chipTheme('Variabilité cardiaque, app Santé')).toBe(chipTheme('Variabilité cardiaque'))
+  })
+
+  // POLISH-SIM-72-iOS-b : la mesure se reconnaît à sa clé, plus à un libellé « (SDNN) »
+  it('aucune tuile ne dit « SDNN »', () => {
+    for (const s of [{ hrvSdnn: 48 }, { hrv: 41, hrvSdnn: 48 }]) expect(summaryChips(s).map(([label]) => label).join(' ')).not.toMatch(/SDNN/)
   })
 })
 

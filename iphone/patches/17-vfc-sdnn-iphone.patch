@@ -34,7 +34,7 @@ index 69dedb9..60d5b24 100644
    if (s.restingHr != null) chips.push(['FC au repos', `${Math.round(s.restingHr)} bpm`])
    if (s.hrv != null) chips.push(['Variabilité cardiaque', `${Math.round(s.hrv)} ms`])
    if (s.hrvDay != null) chips.push(['Variabilité cardiaque, jour', `${s.hrvDay} ms`])
-+  if (s.hrvSdnn != null) chips.push(['Variabilité cardiaque (SDNN)', `${Math.round(s.hrvSdnn)} ms`])
++  if (s.hrvSdnn != null) chips.push([s.hrv != null ? 'Variabilité cardiaque, app Santé' : 'Variabilité cardiaque', `${Math.round(s.hrvSdnn)} ms`, undefined, 'hrvSdnn'])
    if (s.spo2 != null) chips.push(['SpO₂', `${frNumber(s.spo2)} %`])
    if (s.respiratoryRate != null) chips.push(['Respiration', `${frNumber(s.respiratoryRate)} /min`])
    if (s.temperatureC != null) chips.push(['Température', `${frNumber(s.temperatureC)} °C`])

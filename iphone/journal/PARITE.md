@@ -16,7 +16,11 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
-**Dernière version Android suivie** : v1034 (commit `42a9ee7`, 14/11/2026), voir `upstream.json`. Livré par Android de
+**Dernière version Android suivie** : v1040 (commit `b9db9de`, 14/11/2026), voir `upstream.json`. Livré par Android de
+v1037 à v1040 (14/11 07:35) : #962 (POLISH-SIM-77, détail d'une ligne « Riche en… » d'un repas) : code partagé, repris
+tel quel ; les 52 correctifs s'appliquent. Dans la même PR, POLISH-SIM-72-iOS-b : la variabilité cardiaque de l'app
+Santé s'appelle « Variabilité cardiaque » (Aujourd'hui, Journal, Tendances, premier import), reconnue par la clé
+`hrvSdnn` (correctifs 17, 30, 32, 56, 57). Parité inchangée : 70 %. Avant, de
 v1033 à v1034 : #955 (POLISH-SIM-70, Agir vide suit l'objectif) et #956 (POLISH-SIM-69, Analyses sans lien net, barres
 repliées) : code partagé, repris tel quel ; les 52 correctifs s'appliquent sans retouche. La sonde de l'export
 (`overlay/app/src/ios/captureMode.js`) compte aussi les fichiers `halcya-export-*`, nom de la sauvegarde à partir de

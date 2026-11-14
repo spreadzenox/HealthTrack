@@ -4,12 +4,13 @@ index 5d28710..fd53c03 100644
 +++ b/app/src/components/DailyJournal.jsx
 @@ -350,14 +350,16 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays
          <dl className="day-summary">
-           {chips.map(([label, value, note]) => {
+-          {chips.map(([label, value, note]) => {
++          {chips.map(([label, value, note, measure]) => {
              const key = chipKey(label)
 -            const n = note ? null : norms[NORM_KEYS[key]]
 +            // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé a sa propre habitude, en SDNN (correctif 57)
-+            const n = note ? null : norms[label === 'Variabilité cardiaque (SDNN)' ? 'hrvSdnn' : NORM_KEYS[key]]
-+            const trend = label === 'Variabilité cardiaque (SDNN)' ? 'hrvSdnn' : TREND_KEYS[key] // et sa propre courbe (Android v974)
++            const n = note ? null : norms[measure ?? NORM_KEYS[key]]
++            const trend = measure ?? TREND_KEYS[key] // et sa propre courbe (Android v974)
              return (
                <div key={label} className="day-summary-item" data-theme={chipTheme(label)}>
                  <dt><LineIcon name={CHIP_ICONS[key] ?? 'dots'} size={14} />{label}</dt>
