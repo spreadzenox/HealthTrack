@@ -165,8 +165,8 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
   la piste Alpha (13/11), P43, P46 et P39 (14/11). À refaire : relevé P45 les 16/11 et 19/11. La machine se voit dans
   la liste des environnements (type « bridge »), pas dans celle des dossiers à attacher à la conversation.
 - **Questions de la routine au propriétaire** : P37 et P44 ont leur réponse (« oui » aux deux, 14/11) ; Tendances ›
-  Jour est en attente à sa demande (une refonte est à l'étude) ; la mission PI1, chez Apple, reste à lui faire faire
-  par Claude dans Chrome, puis à reporter dans les instructions.
+  Jour est en attente à sa demande (une refonte est à l'étude) ; PI1 est faite (14/11, relevé dans les instructions :
+  Apple ne reproche rien aux abonnements, ils doivent partir avec une nouvelle version de l'app).
 
 ## 6. Grand plan du 12/11 (demandé par le propriétaire)
 
