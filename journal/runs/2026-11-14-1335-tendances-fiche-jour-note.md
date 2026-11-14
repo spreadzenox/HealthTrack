@@ -41,3 +41,18 @@ nuit prochaine ; 844.344 intacte  ·  **Parité** : 70 % (33/47)
 - Seul `/tendances` a été capturé (seul écran touché) ; les 18 pages n'ont pas été rejouées.
 - Charte, PRODUIT, BACKLOG, PARITE et journal iPhone lus par sections, pas en entier (plus de 1 Mo) ;
   `iphone/journal/README.md` § 3, 4 et 8 non relus à ce run.
+
+## Fin du run
+- **#970 finie et mergée** à 14:05 (67e82cc) : « Build iOS (simulateur) et captures » verte à 14:02 (53 min),
+  les 15 checks verts, branche à jour sur main. Captures de la build 1047.1051 regardées : le Journal dit « Cœur au
+  repos » sur deux lignes, comme sur Android ; Analyses › Bien-être s'affiche avec ses résultats (les données de
+  démo ne passent pas par l'état d'attente : « Noté aujourd'hui » n'est donc pas vu sur iPhone, seulement testé).
+- **#972** (ce run) : remise à jour sur main après ce merge ; mergée si ses checks sont verts, sinon laissée
+  ouverte pour le run suivant (voir le résumé de la semaine).
+
+## Suite
+- Vérifier l'envoi TestFlight du merge de #970 et, au prochain suivi iPhone, embarquer ce correctif.
+- POLISH-SIM-86b, 81b, 84, 87 ; POLISH-SIM-72-iOS-c ; fin de POLISH-SIM-69 ; FUSION-2 ; POLISH-SIM-71b ; CYCLE-3a-2.
+- Maquettes de PROP-SIM-17 et PROP-SIM-18 à un run « idées ».
+- Nuit prochaine, après l'Alpha de 23:45 : soumettre la dernière build TestFlight traitée, puis expirer les
+  anciennes.
