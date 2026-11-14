@@ -18,7 +18,7 @@ describe('Normes : VFC en SDNN (iPhone)', () => {
     const days = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => day(n, { hrvSdnn: 50, hrv: 30 }))
     days.push(day(9, { hrvSdnn: 62 }))
     const { norms } = measureNorms(days, NOW)
-    expect(norms.hrvSdnn).toMatchObject({ usual: 'd’habitude 50 ms', value: '62 ms', direction: 'up', text: 'VFC plus haute' })
+    expect(norms.hrvSdnn).toMatchObject({ usual: 'd’habitude 50 ms', value: '62 ms', direction: 'up', text: 'Variabilité cardiaque plus haute' })
     expect(norms.hrv).toBeUndefined() // pas de RMSSD aujourd'hui : rien à comparer, et jamais la SDNN à sa place
   })
 

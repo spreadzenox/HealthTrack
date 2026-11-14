@@ -8,8 +8,8 @@ index 5d28710..fd53c03 100644
              const key = chipKey(label)
 -            const n = note ? null : norms[NORM_KEYS[key]]
 +            // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé a sa propre habitude, en SDNN (correctif 57)
-+            const n = note ? null : norms[label === 'VFC (SDNN)' ? 'hrvSdnn' : NORM_KEYS[key]]
-+            const trend = label === 'VFC (SDNN)' ? 'hrvSdnn' : TREND_KEYS[key] // et sa propre courbe (Android v974)
++            const n = note ? null : norms[label === 'Variabilité cardiaque (SDNN)' ? 'hrvSdnn' : NORM_KEYS[key]]
++            const trend = label === 'Variabilité cardiaque (SDNN)' ? 'hrvSdnn' : TREND_KEYS[key] // et sa propre courbe (Android v974)
              return (
                <div key={label} className="day-summary-item" data-theme={chipTheme(label)}>
                  <dt><LineIcon name={CHIP_ICONS[key] ?? 'dots'} size={14} />{label}</dt>
@@ -29,9 +29,9 @@ index 6a5842b..546466e 100644
 @@ -37,6 +37,8 @@ function hm(minutes) {
  const METRICS = [
    { key: 'sleep', field: 'sleepMinutes', up: 'Nuit plus longue', down: 'Nuit plus courte', minAbs: 20, fmt: hm },
-   { key: 'hrv', field: 'hrv', up: 'VFC de la nuit plus haute', down: 'VFC de la nuit plus basse', minAbs: 4, fmt: (v) => `${Math.round(v)} ms` },
+   { key: 'hrv', field: 'hrv', up: 'Variabilité cardiaque de la nuit plus haute', down: 'Variabilité cardiaque de la nuit plus basse', minAbs: 4, fmt: (v) => `${Math.round(v)} ms` },
 +  // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé, en SDNN, comparée à sa propre habitude, jamais à la RMSSD (correctif 57)
-+  { key: 'hrvSdnn', field: 'hrvSdnn', up: 'VFC plus haute', down: 'VFC plus basse', minAbs: 4, fmt: (v) => `${Math.round(v)} ms` },
++  { key: 'hrvSdnn', field: 'hrvSdnn', up: 'Variabilité cardiaque plus haute', down: 'Variabilité cardiaque plus basse', minAbs: 4, fmt: (v) => `${Math.round(v)} ms` },
    { key: 'restingHr', field: 'restingHr', up: 'FC au repos plus haute', down: 'FC au repos plus basse', minAbs: 3, fmt: (v) => `${Math.round(v)} bpm` },
    { key: 'steps', field: 'steps', up: 'Plus de pas', down: 'Moins de pas', minAbs: 1000, cumulative: true, fmt: (v) => Math.round(v).toLocaleString(appLocale()) },
    { key: 'screen', field: 'screenMinutes', up: 'Plus de temps d’écran', down: 'Moins de temps d’écran', minAbs: 20, cumulative: true, fmt: hm },

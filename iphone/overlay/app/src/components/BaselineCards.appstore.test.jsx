@@ -23,7 +23,7 @@ describe('BaselineCards sur iPhone (variante appstore)', () => {
     const history = Array.from({ length: 60 }, (_, i) => sdnn(i + 7, 45 + (i % 2 ? -2 : 2)))
     listEntries.mockResolvedValue([...history, sdnn(0, 45), sdnn(1, 44), sdnn(2, 46)])
     render(<BrowserRouter><BaselineCards /></BrowserRouter>)
-    expect(await screen.findByText('VFC (SDNN)')).toBeTruthy()
+    expect(await screen.findByText('Variabilité cardiaque (SDNN)')).toBeTruthy()
     expect(listEntries.mock.calls[0][0].subtypes).toContain('heartRateVariabilitySdnn')
   })
 })

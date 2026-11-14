@@ -18,25 +18,25 @@ describe('Source des entrées importées sur iPhone', () => {
 })
 
 // La VFC de l'app Santé est en SDNN, rangée à part (`heartRateVariabilitySdnn`) : la tuile VFC de l'Accueil la
-// montre sous son nom, « VFC (SDNN) », au lieu d'un « — » (correctif 30) ; une VFC RMSSD (fichier d'Android) garde
-// « VFC nuit »
+// montre sous son nom, « Variabilité cardiaque (SDNN) », au lieu d'un « — » (correctif 30) ; une VFC RMSSD (fichier d'Android) garde
+// « Variabilité cardiaque »
 describe('Tuile VFC de l’Accueil sur iPhone', () => {
   const NOW = new Date(2026, 9, 21, 12, 0)
   const at = (d, h = 9) => new Date(2026, 9, d, h, 0).toISOString()
   const sdnn = (d, value) => ({ type: 'heart_rate', source: 'health_connect', at: at(d, 3), payload: { value, unit: 'millisecond', subtype: 'heartRateVariabilitySdnn', sourceName: 'Apple Watch' } })
 
-  it('« VFC (SDNN) » de l’app Santé, avec sa source', () => {
+  it('« Variabilité cardiaque (SDNN) » de l’app Santé, avec sa source', () => {
     const tiles = measureTiles({ hrv: null, hrvSdnn: 52.4 }, [sdnn(21, 52.4)], NOW)
-    expect(tiles[1]).toMatchObject({ key: 'hrv', label: 'VFC (SDNN)', value: '52 ms', when: null, sources: ['App Santé · Apple Watch'] })
+    expect(tiles[1]).toMatchObject({ key: 'hrv', label: 'Variabilité cardiaque (SDNN)', value: '52 ms', when: null, sources: ['App Santé · Apple Watch'] })
   })
 
   it('celle de la veille, marquée « hier », plutôt qu’un « — »', () => {
     const tiles = measureTiles({ hrv: null, hrvSdnn: null }, [sdnn(20, 47)], NOW, { hrv: null, hrvSdnn: 47 })
-    expect(tiles[1]).toMatchObject({ label: 'VFC (SDNN)', value: '47 ms', when: 'hier' })
+    expect(tiles[1]).toMatchObject({ label: 'Variabilité cardiaque (SDNN)', value: '47 ms', when: 'hier' })
   })
 
-  it('une VFC RMSSD (fichier d’Android) garde « VFC nuit » ; rien du tout, la tuile reste « VFC nuit » vide', () => {
-    expect(measureTiles({ hrv: 41, hrvSdnn: 52 }, [], NOW)[1]).toMatchObject({ label: 'VFC nuit', value: '41 ms' })
-    expect(measureTiles({}, [], NOW)[1]).toMatchObject({ label: 'VFC nuit', value: null })
+  it('une VFC RMSSD (fichier d’Android) garde « Variabilité cardiaque » ; rien du tout, la tuile reste « Variabilité cardiaque » vide', () => {
+    expect(measureTiles({ hrv: 41, hrvSdnn: 52 }, [], NOW)[1]).toMatchObject({ label: 'Variabilité cardiaque', value: '41 ms' })
+    expect(measureTiles({}, [], NOW)[1]).toMatchObject({ label: 'Variabilité cardiaque', value: null })
   })
 })

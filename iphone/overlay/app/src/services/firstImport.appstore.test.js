@@ -33,14 +33,14 @@ describe('VFC du premier import sur iPhone', () => {
     payload: { value, unit: 'ms', subtype, sourceName: 'Apple Watch' },
   })
 
-  it('« de VFC (SDNN) en moyenne », avec sa source', () => {
+  it('« de Variabilité cardiaque (SDNN) en moyenne », avec sa source', () => {
     const facts = summarizeImport([hrv('18', 40, 'heartRateVariabilitySdnn'), hrv('19', 50, 'heartRateVariabilitySdnn')], now)
-    expect(facts.find((f) => f.key === 'hrv')).toMatchObject({ value: '45 ms', label: 'de VFC (SDNN) en moyenne, sur 2 mesures', source: 'Apple Watch via l’app Santé' })
+    expect(facts.find((f) => f.key === 'hrv')).toMatchObject({ value: '45 ms', label: 'de Variabilité cardiaque (SDNN) en moyenne, sur 2 mesures', source: 'Apple Watch via l’app Santé' })
   })
 
-  it('une RMSSD (fichier d’Android) garde « de VFC en moyenne », sans mêler la SDNN', () => {
+  it('une RMSSD (fichier d’Android) garde « de variabilité cardiaque en moyenne », sans mêler la SDNN', () => {
     const facts = summarizeImport([hrv('18', 30, 'heartRateVariability'), hrv('19', 50, 'heartRateVariabilitySdnn')], now)
-    expect(facts.find((f) => f.key === 'hrv')).toMatchObject({ value: '30 ms', label: 'de VFC en moyenne, sur 1 mesure' })
+    expect(facts.find((f) => f.key === 'hrv')).toMatchObject({ value: '30 ms', label: 'de variabilité cardiaque en moyenne, sur 1 mesure' })
   })
 })
 

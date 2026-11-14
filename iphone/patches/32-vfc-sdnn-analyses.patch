@@ -105,7 +105,7 @@ index f932f90..0abc153 100644
 +    facts.push({
 +      key: 'hrv',
 +      value: `${Math.round(sdnn.reduce((s, e) => s + e.payload.value, 0) / sdnn.length)} ms`,
-+      label: `de VFC (SDNN) en moyenne, sur ${sdnn.length} mesure${sdnn.length > 1 ? 's' : ''}`,
++      label: `de Variabilité cardiaque (SDNN) en moyenne, sur ${sdnn.length} mesure${sdnn.length > 1 ? 's' : ''}`,
 +      source: sourceLine(sdnn),
 +    })
 +  }

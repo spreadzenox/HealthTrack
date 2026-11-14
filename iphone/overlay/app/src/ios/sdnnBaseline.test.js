@@ -18,7 +18,7 @@ describe('norme personnelle de la VFC SDNN (iPhone)', () => {
   })
 
   it('même méthode que la VFC d’Android, sous son propre nom', () => {
-    expect(SDNN_BASELINE).toMatchObject({ key: 'heartRateVariabilitySdnn', label: 'VFC (SDNN)', unit: 'ms', log: true })
+    expect(SDNN_BASELINE).toMatchObject({ key: 'heartRateVariabilitySdnn', label: 'Variabilité cardiaque (SDNN)', unit: 'ms', log: true })
     expect(SDNN_BASELINE.generalHigherIsBetter).toBe(BASELINE_METRICS.heartRateVariability.generalHigherIsBetter)
     expect(SDNN_BASELINE.plausible).toEqual(BASELINE_METRICS.heartRateVariability.plausible)
   })

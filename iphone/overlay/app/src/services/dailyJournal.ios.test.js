@@ -8,20 +8,20 @@ const sdnn = { type: 'heart_rate', source: 'health_connect', at: '2026-10-20T03:
 const hr = { type: 'heart_rate', source: 'health_connect', at: '2026-10-20T09:00:00Z', payload: { bpm: 70, subtype: 'heartRate' } }
 
 describe('Journal : VFC en SDNN (iPhone)', () => {
-  it('« VFC (SDNN) » à part ; ni fréquence cardiaque, ni VFC RMSSD', () => {
+  it('« Variabilité cardiaque (SDNN) » à part ; ni fréquence cardiaque, ni VFC RMSSD', () => {
     const [day] = buildDailyJournal([sdnn, hr])
     expect(day.summary.hrvSdnn).toBe(48)
     expect(day.summary.hrv).toBeNull()
     const chips = summaryChips(day.summary)
-    expect(chips).toContainEqual(['VFC (SDNN)', '48 ms'])
+    expect(chips).toContainEqual(['Variabilité cardiaque (SDNN)', '48 ms'])
     expect(chips).toContainEqual(['FC', '70 bpm']) // la SDNN n'entre pas dans la fréquence cardiaque
     expect(chips.map(([label]) => label)).not.toContain('VFC')
   })
 
   // Correctif 56 (9/11) : la tuile était grise, avec l'icône par défaut ; elle a celles de la VFC, sans « d'habitude »
-  it('« VFC (SDNN) » a l’icône et la couleur de la VFC (thème corps)', () => {
-    expect(chipKey('VFC (SDNN)')).toBe('hrvDay')
-    expect(chipTheme('VFC (SDNN)')).toBe(chipTheme('VFC nuit'))
+  it('« Variabilité cardiaque (SDNN) » a l’icône et la couleur de la VFC (thème corps)', () => {
+    expect(chipKey('Variabilité cardiaque (SDNN)')).toBe('hrvDay')
+    expect(chipTheme('Variabilité cardiaque (SDNN)')).toBe(chipTheme('Variabilité cardiaque'))
   })
 })
 

@@ -431,7 +431,7 @@ export async function probeHealthKit({ signal, waitAck, wait, log, health, conne
     const { startDate, endDate } = healthSampleWindow()
     await Health.saveSample({ dataType: 'steps', value: 1234, startDate, endDate }).then(() => say('saveSample', 'ok'), failed('saveSample'))
     // VFC de démonstration : HealthKit la donne en SDNN, que le connecteur doit ranger à part de la RMSSD d'Android
-    await Health.saveSample({ dataType: 'heartRateVariability', value: 48, startDate, endDate }).then(() => say('saveSample VFC', 'ok'), failed('saveSample VFC'))
+    await Health.saveSample({ dataType: 'heartRateVariability', value: 48, startDate, endDate }).then(() => say('saveSample HRV', 'ok'), failed('saveSample HRV'))
     await Health.readSamples({ dataType: 'steps', startDate, endDate, limit: 10 }).then(
       (r) => say('readSamples', { count: r?.samples?.length ?? 0, values: (r?.samples || []).map((x) => x.value) }),
       failed('readSamples'),

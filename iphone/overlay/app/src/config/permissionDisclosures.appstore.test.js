@@ -15,7 +15,7 @@ describe('Divulgation Santé sur iPhone', () => {
     const text = [d.title, ...d.points, d.leaves].join(' ')
     expect(d.title).toBe('Avant d’autoriser l’app Santé')
     expect(text).toMatch(/iOS vous laisse choisir type par type/)
-    expect(text).toMatch(/fréquence cardiaque, VFC, activité/)
+    expect(text).toMatch(/fréquence cardiaque, variabilité cardiaque, activité/)
     expect(text).not.toMatch(/Health Connect|Android/)
   })
 
