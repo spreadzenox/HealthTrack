@@ -1168,9 +1168,30 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     Play Integrity accepté (hors CI et robots), avec leurs jours. Lu avant l'arrivée des testeurs, c'est l'empreinte du
     téléphone du propriétaire (seul `passed`) ; reste : sa confirmation (P37 simplifiée : les 4 premiers caractères),
     puis `GOLD_INSTALLS=<empreinte>` dans `relay-deploy.yml` (GOLD-a3-2), avant le 27/11.
-  - [ ] **GOLD-a3-2** dès « P37 oui » : `GOLD_INSTALLS=5e4a69f72ffb` dans `relay-deploy.yml` (test 123 couvre déjà le
-    mécanisme), vérifier au bilan. Sans réponse le 20/11 : le redemander en tête du résumé (ne pas l'ajouter sans
-    confirmation : une erreur donnerait Gold à un testeur).
+  - [x] **GOLD-a3-2** (14/11 17:35, « P37 oui confirmé » du 14/11 vers 16:50) : `GOLD_INSTALLS=5e4a69f72ffb` dans
+    `relay-deploy.yml`, test de garde dans `relay/test/workflow.test.js` (la liste ne contient que cette empreinte).
+  - [ ] **GOLD-a3-3** (avant le 02/12, fin de la période de lancement) : aujourd'hui `GOLD_INSTALLS` ne change que le
+    modèle servi (`tierOf` dans `relay/src/server.js`). Hors période, l'installation listée reste « gratuite » pour
+    les crédits (`credits.take` avec `premium: false`) et pour l'app (`verifyResponse` de `relay/src/billing.js` rend
+    `premium: false` : paywall, pas de « Gold »). À faire : l'installation listée reçoit les droits Gold complets
+    (20 analyses par jour, `premium: true`, `tier: 'gold'`), par le même mécanisme que P44-1 (une période offerte par
+    installation), tests sur `/v1/billing/verify`, `/v1/credits` et `/v1/analyze` ; vérifier le texte que l'app
+    affiche alors (aujourd'hui « Gold offert pendant le test, jusqu'au … » pour `source: 'launch'`).
+- [ ] **P44 — un mois de Gold en plus pour les testeurs actifs** (« P44 oui », propriétaire, 14/11 vers 16:50) :
+  Gold jusqu'au 27/12 pour les installations qui ont analysé au moins un repas pendant le test, sans carte ni donnée
+  personnelle, sous les plafonds du budget ; jamais lié à un avis (règles Play). À livrer avant le 02/12.
+  - [ ] **P44-1** (relais) : une période offerte par installation, par empreinte (`hashInstallId`, 12 caractères) :
+    liste et date de fin (« 2026-12-27T23:00:00Z ») dans un fichier du relais ou une variable du déploiement ;
+    `verifyResponse` rend `premium: true`, `tier: 'gold'`, `source: 'launch'` et `launchUntil` à cette date pour
+    ces installations une fois la période générale finie ; crédits et modèle suivent ; plafonds inchangés
+    (`GOLD_DAILY_CAP`, 15 € et 19 € du mois). Tests. L'iPhone n'est pas concerné (période finie le 06/11).
+  - [ ] **P44-2** (CI) : le bilan de « Relais — déploiement » liste les empreintes Android qui ont au moins un
+    événement `analyze` (hors CI, robots et Test Lab) entre le 08/11 et le 02/12 ; vérifier combien de jours les
+    journaux Cloud Logging sont gardés (30 par défaut) et faire un premier relevé sans attendre. Inscrire la liste
+    le 02/12 au matin (un testeur qui analyse son premier repas le dernier jour compte).
+  - [ ] **P44-3** (app et textes) : vérifier sur l'émulateur ce que lit un testeur le 02/12 (cartes FIN-LANCEMENT-1
+    et 2, « Gold offert … jusqu'au 27 décembre »), et ce que lit celui qui n'a rien analysé ; note de Nouveautés
+    (`"variants": ["play"]`) ; `INVITATION-TESTEURS.md` et la fiche du test si elles donnent la date du 2 décembre.
 - [x] **GOLD-a4 — prix 2027** (02/11 00:33) : `PRICE_SCHEDULE = [{ from: '2027-01-01', factor: 2 }]` dans
   `relay/src/costs.js` ; `pricesAt(ms)` multiplie la grille (par défaut ou `MODEL_PRICES`, toujours en prix 2026) et
   le cumul du mois l'applique à la date de chaque appel (décembre ×1, janvier ×2) ; facteur noté dans l'événement

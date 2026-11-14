@@ -17,11 +17,20 @@
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **👉 Prochaine action du propriétaire (une seule, celle qui débloque le plus)**
-- **Mission PI1** (3 min, lecture seule) : dans Chrome, connecté à App Store Connect, dites à Claude
-  **« fais la mission PI1 »** ([`iphone/journal/missions/PI1.md`](../iphone/journal/missions/PI1.md)) : elle relève ce
-  qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
-  la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
-  sous « Toujours en attente de vous ».
+- **Rien aujourd'hui.** La mission PI1 (ce qu'Apple reproche aux trois abonnements) est en cours de votre côté
+  (vous la faites faire par Claude dans Chrome) : la routine attend son relevé et corrigera par l'API. Vos réponses
+  du 14/11 (« P44 oui », « P37 oui confirmé », Tendances › Jour en attente) sont prises en compte, détail juste
+  dessous.
+
+> 🥇 **Vos réponses du 14/11 : P37, P44, missions faites (14/11 17:35)** : « P37 oui confirmé » : l'empreinte de
+> votre installation (`5e4a69f72ffb`) est inscrite au relais. **Ce n'est que la moitié du chemin** : à ce stade elle
+> garde le modèle Gold, pas encore les 20 analyses par jour ni l'affichage « Gold » ; le reste (GOLD-a3-3) est à
+> livrer avant le 2 décembre, fin de Gold offert pour tous, et d'ici là rien ne change pour vous. « P44 oui » : le
+> mois de Gold en plus pour les testeurs qui ont analysé au moins un repas (jusqu'au 27/12) est découpé en trois
+> étapes au BACKLOG (P44-1 à P44-3), à livrer avant le 2 décembre ; rien n'est encore en service. Tendances › Jour :
+> question retirée, vue non retouchée sur ce point. P43, P46, P39 et P45, faites par l'orchestrateur, sont rangées
+> « fait ». **Sur iPhone** : rien de ce run ne touche l'app ; la PR de suivi #976 (code embarqué, accueil et pesée
+> du jour) est remise à jour en fin de run, sa build macOS est à finir au run suivant. Rien à faire de votre côté.
 
 > ⚖️ **Aujourd'hui : votre pesée du jour (14/11 16:35)** : une persona avec une balance connectée et sans
 > montre ne voyait aucune pesée sur Aujourd'hui. Une pesée faite dans la journée a maintenant sa ligne « Poids »
@@ -806,27 +815,23 @@
 > [sombre](runs/captures/2026-11-09-1035-vfc-habitude-sombre.png)).
 
 **Toujours en attente de vous (repris de la semaine dernière)**
-- **iPhone** (repris de l'ancien résumé iOS) : mission **PI1** (ci-dessus) ; le jour où vous voulez soumettre à
+- **iPhone** (repris de l'ancien résumé iOS) : le relevé de la mission **PI1** (en cours de votre côté) ; le jour où vous voulez soumettre à
   l'App Store, **« fais la mission PI2 »** ([`PI2.md`](../iphone/journal/missions/PI2.md) : tout prêt jusqu'au bouton
   « Ajouter pour examen », que vous cliquez) ; la décision sur la licence des poids du visage (valence et éveil,
   appris sur AffectNet, éteints sur iPhone en attendant : DEM-IOS-9 du backlog) ; les essais sur l'iPhone 12.
-- **Tendances › Jour** (question du 08/11) : « Nuits plus longues (7 h 46) » est la moyenne des derniers jours ;
-  voulez-vous la nuit du seul jour, au singulier, comme la maquette ?
-- **P45** (1 min, avant d'inviter, nouveau) : Play Console → Halcya → Tester → Test fermé → Alpha → onglet Testeurs → « Adresse e-mail ou URL pour les commentaires » : si vide, mettez l'adresse de contact de la fiche Play. Ensuite, aux jours 4, 8 et 11, collez les retours des testeurs dans une consigne (« RETOURS TESTEURS jour N : … », sans nom ni adresse) : aucune API ne permet à la routine de les lire seule.
-- **P43** (1 min, nouveau, pas urgent) : activer « Google Play Developer Reporting API » dans la console Google Cloud (projet healthtrack-824b26 → API et services → Bibliothèque → Activer). La routine pourra alors lire elle-même les plantages signalés par Google et choisir les versions Alpha du test sans plantage connu.
-- **P37 — votre Gold après la période de lancement (simplifié le 03/11 18:35)** : le relais a trouvé une seule
-  installation Android au jeton accepté, la vôtre en toute vraisemblance : empreinte **`5e4a69f72ffb`** (vue du 29/10
-  au 02/11). Il suffit de **confirmer** : Paramètres → touchez 7 fois « Version » → « Empreinte de l'installation »
-  commence-t-elle par **5e4a** ? Répondez « P37 oui » (ou donnez l'empreinte affichée si elle diffère) : la routine
-  l'ajoute alors au relais et vous gardez Gold après le 30/11.
-- **P44** (question, réponse avant le 20/11) : remercier les testeurs restés jusqu'au bout par **un mois de Gold en plus** (jusqu'au 27/12, sans carte bancaire, sous les plafonds du budget) ? Répondez « P44 oui » ou « P44 non » dans une consigne ; détail dans [`PRODUIT.md`](PRODUIT.md) §4.
-- **P39** (pas urgent) : expiration des clés App Attest dans Firestore, même geste que P33 (commande dans `PRODUIT.md` §4).
 - **P32** (pays de vente) : le jour de la production, 2 min, geste exact dans [`PRODUIT.md`](PRODUIT.md) §4 (abonnements déjà prêts dans les 5 pays ; Suisse 4,90 / 29,00 / 9,90 CHF, Canada 6,99 / 39,99 / 12,99 $CA hors taxes : dites-le si vous voulez d'autres prix).
-- P34 (encart « Enregistrez vos applications » dans la Play Console) : pas urgents, détail dans
-  [`semaines/2026-S44.md`](semaines/2026-S44.md).
+
+**À faire par l'orchestrateur (missions Play Console et Google Cloud, quand vous le lui écrivez)**
+- Relevés des commentaires des testeurs du 16/11 et du 19/11 ([P45](missions/P45.md)) : il les donne à la routine.
+- [P29](missions/P29.md) (rôle Éditeur du compte Compute par défaut) et [P34](missions/P34.md) (encart
+  « Enregistrez vos applications ») : pas urgentes.
+- [ETAT-PLAY](missions/ETAT-PLAY.md) : état d'examen des pistes chez Google, à la demande.
+- Faites le 13/11 et le 14/11 : P43 (lecture des plantages, à vérifier au prochain « Play — AAB »), P46 et P39
+  (expiration des avis et des clés App Attest), P45 (adresse de commentaires ; aucun commentaire depuis le 08/11).
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 17:35 — [Réponses du 14/11 : P37 au relais, P44 découpée](runs/2026-11-14-1735-p37-gold-proprietaire.md) | 🔧 | Main vert. Réponses du propriétaire du 14/11 inscrites. GOLD-a3-2 : `GOLD_INSTALLS=5e4a69f72ffb` dans le déploiement du relais, test de garde (226 tests du relais verts) ; ne donne que le modèle Gold, droits complets à faire (GOLD-a3-3). P44 découpée (P44-1 à P44-3). P43, P46, P39, P45 passées à « fait ». PR #976 (suivi iPhone) verte mais en retard sur main : remise à jour en fin de run. Parité 70 %. |
 | 14/11 16:35 — [Aujourd'hui : la pesée du jour](runs/2026-11-14-1635-aujourdhui-pesee-du-jour.md) | 🔧 | Main vert, aucune PR de la routine ouverte. Suivi iPhone : PR #976 (code embarqué v1050 → v1052, 52 correctifs sans retouche), build macOS et captures de l'accueil à finir au run suivant. POLISH-SIM-84 : une pesée du jour a sa ligne « Poids » dans « Vos données du jour » ; option `--weigh-in` de l'outil de captures. 3548 tests verts. Parité 70 %. |
 | 14/11 15:35 — [Accueil : « Continuer » et « vos appareils »](runs/2026-11-14-1535-accueil-continuer-appareils.md) | 🔧 | Main vert. PR #974 du run précédent finie (build iOS verte, capture iPhone de Tendances regardée) et mergée : iPhone en code v1050. POLISH-SIM-87 : à l'accueil, « Continuer sans » devient « Continuer », « votre montre » devient « vos appareils » ; PR #975. 3545 tests verts. iPhone : au prochain suivi. Parité 70 %. |
 | 14/11 14:35 — [Tendances : « Poids · en Mois »](runs/2026-11-14-1435-tendances-mesure-en-mois.md) | 🔧 | Main vert, aucune PR de la routine ouverte ; envoi TestFlight du merge de #970 réussi. POLISH-SIM-81b : en Semaine, une mesure choisie qui n'a de courbe qu'en Mois reste dans les puces, grisée, et ramène au Mois ; `--dark` de l'outil des personas corrigé. 3545 tests verts. #973 mergée (v1050), 12 checks verts ; release v720, APK 34,6 Mo. Suivi iPhone : PR ouverte (code embarqué v1047 → v1050, 52 correctifs sans retouche, 3905 tests verts), build macOS et captures à finir au run suivant. Parité 70 %. |
