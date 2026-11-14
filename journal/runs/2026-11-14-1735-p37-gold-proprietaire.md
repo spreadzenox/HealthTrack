@@ -30,13 +30,13 @@ refait à ce run ; aucune soumission bêta avant la nuit prochaine ; 844.344 int
 5. Pas de note de Nouveautés : rien de visible dans l'app.
 
 ## Vérifs
-- `relay` : `npm test`, 226 tests verts (225 avant). Le nouveau test échoue sans la variable (vérifié en retirant le
+- `relay` : `npm test`, 225 tests verts (224 avant). Le nouveau test échoue sans la variable (vérifié en retirant le
   changement du workflow).
 - `app` (aucun fichier touché) : `npm run test`, 3548 verts, 44 ignorés ; `npm run lint`, aucune erreur ; `npm run build`
   passe ; `npm run visual`, 18 pages « ok », aucune erreur JavaScript. Aucune capture regardée : aucun écran ne change.
 
 ## Limites
-- **Instructions changées pendant le run** : #979 (orchestrateur, « PI1 faite ») est arrivée sur main à 17:49,
+- **Instructions changées pendant le run** : #979 (orchestrateur, « PI1 faite ») est arrivée sur main à 17:52,
   après le contrôle d'empreinte de ce run (921d17b8…). Je n'ai pas agi sur ce nouveau texte : le résumé dit seulement
   que le relevé PI1 est arrivé ; le run suivant, lancé avec la nouvelle empreinte, en tire la suite (PI2, encadré
   « Declare Your Regulated Medical Device »).
