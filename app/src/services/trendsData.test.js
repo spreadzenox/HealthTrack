@@ -80,8 +80,13 @@ describe('detailSource (POLISH-SIM-4) : d’où vient le chiffre d’un jour pas
     expect(detailSource('wellbeing', { value: 3.42, note: 3.4, readings: 2 })).toBe('votre note')
   })
   it('bien-être différent de la note : dit ce qui s’y mêle (visage ou jours voisins)', () => {
-    expect(detailSource('wellbeing', { value: 3.2, note: 3.4, readings: 2 })).toBe('votre note 3,4 et le visage')
-    expect(detailSource('wellbeing', { value: 3.2, note: 3.4, readings: 0 })).toBe('votre note 3,4 et les jours voisins')
+    expect(detailSource('wellbeing', { value: 3.2, note: 3.4, noteChoice: 3, readings: 2 })).toBe('vous avez noté 3 · estimé avec le visage')
+    expect(detailSource('wellbeing', { value: 3.2, note: 3.4, noteChoice: 3, readings: 0 })).toBe('vous avez noté 3 · estimé avec les jours voisins')
+  })
+  it('POLISH-SIM-90 : la note se dit telle qu’elle a été donnée (un choix de 1 à 5), jamais « 3,4 »', () => {
+    expect(detailSource('wellbeing', { value: 3.9, note: 4, noteChoice: 4, readings: 1 })).toBe('vous avez noté 4 · estimé avec le visage')
+    // sans le choix (ancien appelant), la note s'arrondit au choix le plus proche
+    expect(detailSource('wellbeing', { value: 3.2, note: 3.4, readings: 2 })).toBe('vous avez noté 3 · estimé avec le visage')
   })
   it('bien-être sans note : lu sur le visage, ou estimé', () => {
     expect(detailSource('wellbeing', { value: 3.2, note: null, readings: 3 })).toBe('d’après le visage')
@@ -92,7 +97,7 @@ describe('detailSource (POLISH-SIM-4) : d’où vient le chiffre d’un jour pas
     expect(detailSource('digestion', { value: 2, observed: false })).toBe('estimé')
   })
   it('POLISH-SIM-71 : un chiffre qui s’écarte de la note du jour se dit estimé, avec la note', () => {
-    expect(detailSource('digestion', { value: 2, gut: 'douleur', gutScore: 1, observed: true })).toBe('estimé, avec votre note « douleur »')
+    expect(detailSource('digestion', { value: 2, gut: 'douleur', gutScore: 1, observed: true })).toBe('vous avez noté « douleur » (1) · estimé avec les jours voisins')
     expect(detailSource('digestion', { value: 1.04, gut: 'douleur', gutScore: 1, observed: true })).toBe('noté « douleur »')
     expect(detailSource('digestion', { value: 3, gut: 'gêne', gutScore: 3, observed: true })).toBe('noté « gêne »')
   })
