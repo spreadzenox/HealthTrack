@@ -1,6 +1,9 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { loadConfig } from '../src/config.js'
 
 // Le déploiement du 22/10 (#278) a échoué : le séparateur « ^@^ » de --set-env-vars coupait l'adresse e-mail de
@@ -66,4 +69,38 @@ test('workflow relais : bilan des analyses IA (GOLD-a2) qui sépare la CI et lit
   assert.match(step, /jsonPayload\.event=\\"analyze\\"/)
   assert.match(step, /jsonPayload\.event=\\"gold_fallback\\"/)
   assert.match(step, /jsonPayload\.ci == true/)
+})
+
+test('workflow relais : relevé des testeurs actifs (P44-2), robots, CI et iPhone écartés', () => {
+  const at = (day) => `2026-11-${day}T10:00:00Z`
+  const analyze = (install, day, more = {}) => ({ timestamp: at(day), jsonPayload: { event: 'analyze', kind: 'photo', install, ...more } })
+  const integrity = (install, more = {}) => ({ timestamp: at('09'), jsonPayload: { event: 'integrity', status: 'passed', install, ...more } })
+  const dir = mkdtempSync(join(tmpdir(), 'p44-'))
+  writeFileSync(join(dir, 'a.json'), JSON.stringify([
+    analyze('aaaaaaaaaaaa', '09'), analyze('aaaaaaaaaaaa', '12', { kind: 'text' }),
+    analyze('bbbbbbbbbbbb', '10'), // jamais de jeton accepté
+    analyze('cccccccccccc', '10'), // robot Google
+    analyze('dddddddddddd', '10'), // iPhone
+    analyze('eeeeeeeeeeee', '10', { ci: true }),
+    analyze('ffffffffffff', '10', { kind: 'stool' }), // pas un repas
+    analyze('111111111111', '10', { unreadable: true }),
+  ]))
+  writeFileSync(join(dir, 'i.json'), JSON.stringify([
+    integrity('aaaaaaaaaaaa'), integrity('bbbbbbbbbbbb', { status: 'missing' }),
+    integrity('cccccccccccc', { testlab: true }), integrity('dddddddddddd', { status: 'not_android', platform: 'ios' }),
+    integrity('ffffffffffff'), { timestamp: at('09'), jsonPayload: { event: 'integrity', status: 'unavailable' } },
+  ]))
+  const out = execFileSync('jq', ['-r', '--slurpfile', 'integrity', join(dir, 'i.json'), '-f', new URL('../p44-active.jq', import.meta.url).pathname, join(dir, 'a.json')], { encoding: 'utf8' })
+  assert.equal(out, [
+    'Testeurs actifs (P44) : 1 installation(s) à inscrire, 1 sans jeton accepté, 2 écartée(s) (CI, robots, réseau de test, iPhone)',
+    'À inscrire dans offered.installs : ["aaaaaaaaaaaa"]',
+    '- aaaaaaaaaaaa : 2 repas, 2026-11-09 → 2026-11-12',
+    '- bbbbbbbbbbbb : 1 repas, 2026-11-10 → 2026-11-10 (sans jeton accepté)',
+    '',
+  ].join('\n'))
+  // L'étape lit la période du test, pas les 7 derniers jours, et ne bloque jamais le déploiement
+  const step = workflow.slice(workflow.indexOf('Testeurs actifs (P44-2'))
+  assert.match(step, /continue-on-error: true/)
+  assert.match(step, /timestamp>=\\"2026-11-08T00:00:00Z\\" AND timestamp<\\"2026-12-02T23:00:00Z\\"/)
+  assert.match(step, /p44-active\.jq/)
 })

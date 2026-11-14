@@ -1217,7 +1217,20 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     `verifyResponse` rend `premium: true`, `tier: 'gold'`, `source: 'launch'` et `launchUntil` à cette date pour
     ces installations une fois la période générale finie ; crédits et modèle suivent ; plafonds inchangés
     (`GOLD_DAILY_CAP`, 15 € et 19 € du mois). Tests. L'iPhone n'est pas concerné (période finie le 06/11).
-  - [ ] **P44-2** (CI) : le bilan de « Relais — déploiement » liste les empreintes Android qui ont au moins un
+  - [x] **P44-2a** (14/11 21:35) : étape « Testeurs actifs (P44-2, non bloquant) » de `relay-deploy.yml`, tri dans
+    `relay/p44-active.jq` (testé dans `relay/test/workflow.test.js` sur des événements synthétiques). Un repas =
+    événement `analyze` de type `photo` ou `text`, lisible ; une empreinte est écartée si un de ses contrôles Play
+    Integrity est marqué CI, robot, réseau de test ou iPhone ; « à inscrire » = au moins un jeton accepté, les
+    autres sont listées à part. Le bilan donne aussi la durée de conservation des journaux.
+  - [ ] **P44-2b** — **premier relevé, 14/11 21:55** (déploiement de #985) : 3 installations à inscrire,
+    `5e4a69f72ffb` (celle du propriétaire, 37 repas, 08/11 → 14/11), `8419337c4894` (3 repas, 10/11 → 14/11),
+    `b029a1141987` (7 repas, 08/11 → 11/11) ; 0 sans jeton accepté ; 123 écartées (robots, réseau de test, iPhone) ;
+    246 analyses et 239 contrôles lus ; conservation des journaux : 30 jours (le 02/12, le 08/11 sera encore lisible).
+    Suite : lire le premier relevé (bilan du déploiement qui suit le merge) et le noter ici ; si la
+    conservation est inférieure à 25 jours, garder les relevés successifs dans le journal. Le 02/12 au matin :
+    relancer « Relais — déploiement » (workflow_dispatch), inscrire la liste « à inscrire » dans `offered.installs`
+    de `relay/src/launch-period.json` par une PR, décider des « sans jeton accepté » (par défaut : non inscrites).
+  - [ ] **P44-2** (CI, découpée en 2a et 2b le 14/11 21:35) : le bilan de « Relais — déploiement » liste les empreintes Android qui ont au moins un
     événement `analyze` (hors CI, robots et Test Lab) entre le 08/11 et le 02/12 ; vérifier combien de jours les
     journaux Cloud Logging sont gardés (30 par défaut) et faire un premier relevé sans attendre. Inscrire la liste
     le 02/12 au matin (un testeur qui analyse son premier repas le dernier jour compte).

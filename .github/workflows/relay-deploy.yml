@@ -329,3 +329,26 @@ jobs:
                   | map("\(.[0].jsonPayload.reason // "—")\(if .[0].jsonPayload.status then " HTTP \(.[0].jsonPayload.status)" else "" end) × \(length)") | join(", ")) end' \
               "$RUNNER_TEMP/analyses.json"
           } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Testeurs actifs (P44-2, non bloquant)
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          # P44 (« P44 oui », 14/11) : un mois de Gold en plus aux installations Android qui ont analysé au moins un repas
+          # pendant le test. Relevé sur toute la période (08/11 → 02/12), tri dans relay/p44-active.jq (testé). La liste
+          # « à inscrire » va dans offered.installs de relay/src/launch-period.json le 02/12 au matin, par une PR.
+          # Durée de conservation des journaux : si elle est plus courte que le test, le relevé du 02/12 perd le début.
+          for event in analyze integrity; do
+            gcloud logging read \
+              "resource.type=cloud_run_revision AND resource.labels.service_name=$SERVICE AND jsonPayload.event=\"$event\" AND timestamp>=\"2026-11-08T00:00:00Z\" AND timestamp<\"2026-12-02T23:00:00Z\"" \
+              --project="$GCP_PROJECT" --limit=20000 --format=json > "$RUNNER_TEMP/p44-$event.json" 2>/dev/null || echo '[]' > "$RUNNER_TEMP/p44-$event.json"
+          done
+          retention=$(gcloud logging buckets describe _Default --location=global --project="$GCP_PROJECT" --format='value(retentionDays)' 2>/dev/null || true)
+          {
+            echo
+            echo "### Testeurs actifs (P44) — du 08/11 au 02/12"
+            echo
+            jq -r --slurpfile integrity "$RUNNER_TEMP/p44-integrity.json" -f relay/p44-active.jq "$RUNNER_TEMP/p44-analyze.json"
+            echo
+            echo "Événements lus : $(jq 'length' "$RUNNER_TEMP/p44-analyze.json") analyses (dès le $(jq -r 'map(.timestamp[0:10]) | min // "—"' "$RUNNER_TEMP/p44-analyze.json")), $(jq 'length' "$RUNNER_TEMP/p44-integrity.json") contrôles Play Integrity. Conservation des journaux : ${retention:-inconnue} jour(s)."
+          } | tee -a "$GITHUB_STEP_SUMMARY"
