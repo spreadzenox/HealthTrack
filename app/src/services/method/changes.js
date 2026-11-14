@@ -28,7 +28,7 @@ export const CHANGE_METRICS = [
   { key: 'wellbeing', label: 'Bien-être', theme: 'wellbeing' },
   { key: 'digestion', label: 'Confort digestif', theme: 'digestion' },
   { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep' },
-  { key: 'hrv_ms', label: 'VFC', theme: 'body' },
+  { key: 'hrv_ms', label: 'Variabilité cardiaque', theme: 'body' },
   { key: 'restingHR', label: 'FC au repos', theme: 'body' },
   { key: 'steps', label: 'Pas', theme: 'activity' },
   { key: 'screen_minutes', label: 'Temps d’écran', theme: 'context' },

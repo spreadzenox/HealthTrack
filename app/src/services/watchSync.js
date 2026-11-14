@@ -209,7 +209,7 @@ async function writeWatchData(data, { t, since, until, lastUntil, watchKey, watc
   if (nights) parts.push(plural(nights, 'nuit', 'nuits'))
   if (workouts) parts.push(plural(workouts, 'séance', 'séances'))
   if (data.totals?.steps) parts.push(`${plural(data.totals.steps, 'pas', 'pas')} aujourd’hui`)
-  if (data.hrvDay?.length) parts.push(plural(data.hrvDay.length, 'VFC de journée', 'VFC de journée'))
+  if (data.hrvDay?.length) parts.push(plural(data.hrvDay.length, 'mesure de variabilité cardiaque', 'mesures de variabilité cardiaque'))
   if (data.skinTemp?.length) parts.push(plural(data.skinTemp.length, 'température de la peau', 'températures de la peau'))
   if (data.stress?.length) parts.push(plural(data.stress.length, 'mesure de stress', 'mesures de stress'))
   // Où la montre a calé (I69) : dit à l'écran, détaillé dans le journal (`services`, `hints`)

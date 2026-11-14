@@ -108,7 +108,7 @@ export function summarizeImport(entries, now = new Date()) {
     facts.push({
       key: 'hrv',
       value: `${Math.round(hrv.reduce((s, e) => s + e.payload.value, 0) / hrv.length)} ms`,
-      label: `de VFC en moyenne, sur ${hrv.length} mesure${hrv.length > 1 ? 's' : ''}`,
+      label: `de variabilité cardiaque en moyenne, sur ${hrv.length} mesure${hrv.length > 1 ? 's' : ''}`,
       source: sourceLine(hrv),
     })
   }

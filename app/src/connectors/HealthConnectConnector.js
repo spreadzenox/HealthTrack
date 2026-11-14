@@ -61,7 +61,7 @@ export const READ_TYPE_LABELS = {
   sleep: 'sommeil',
   heartRate: 'fréquence cardiaque',
   restingHeartRate: 'FC au repos',
-  heartRateVariability: 'VFC',
+  heartRateVariability: 'Variabilité cardiaque',
   oxygenSaturation: 'SpO₂',
   calories: 'calories',
   distance: 'distance',

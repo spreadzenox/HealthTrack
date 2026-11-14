@@ -18,8 +18,8 @@ const SESSION_MS = 5 * 60 * 1000
 const SCAN_MS = 8000
 
 const HRV_REASONS = {
-  short: 'VFC non calculée : il faut au moins 1 minute de battements propres.',
-  noisy: 'VFC non calculée : trop de battements parasites (capteur mal ajusté ou peau trop sèche ?).',
+  short: 'Variabilité cardiaque non calculée : il faut au moins 1 minute de battements propres.',
+  noisy: 'Variabilité cardiaque non calculée : trop de battements parasites (capteur mal ajusté ou peau trop sèche ?).',
   no_rr: 'Ce capteur n’envoie pas l’intervalle entre les battements : fréquence cardiaque seulement.',
 }
 
@@ -251,7 +251,7 @@ export default function BleDevices({
           <p className="my-device-meta">
             {formatClock(Date.now() - live.startedAt)} / {formatClock(sessionMs)} · {live.beats} battements reçus
           </p>
-          <p className="my-device-message">Restez assis ou allongé, sans bouger, et respirez normalement. Pour suivre votre VFC, mesurez le matin au réveil.</p>
+          <p className="my-device-message">Restez assis ou allongé, sans bouger, et respirez normalement. Pour suivre votre variabilité cardiaque, mesurez le matin au réveil.</p>
           <div className="my-device-actions">
             <button type="button" className="btn btn-primary connector-btn" onClick={() => finish()}>
               Terminer et enregistrer
@@ -316,12 +316,12 @@ export default function BleDevices({
             <>
               <p className="ble-live-title">
                 Enregistré : FC moyenne {result.summary.meanBpm} bpm (de {result.summary.minBpm} à {result.summary.maxBpm})
-                {result.summary.rmssdMs != null && ` · VFC (RMSSD) ${Math.round(result.summary.rmssdMs)} ms`}
+                {result.summary.rmssdMs != null && ` · variabilité cardiaque (RMSSD) ${Math.round(result.summary.rmssdMs)} ms`}
               </p>
               {result.summary.rmssdMs == null && <p className="my-device-message">{HRV_REASONS[result.summary.quality]}</p>}
               {result.disconnected && <p className="my-device-message">Le capteur s’est déconnecté avant la fin.</p>}
               <p className="my-device-meta">
-                La VFC varie beaucoup d’un jour à l’autre : comparez-la à votre propre norme (carte « Votre cœur ») plutôt qu’à des
+                La variabilité cardiaque varie beaucoup d’un jour à l’autre : comparez-la à votre propre norme (carte « Votre cœur ») plutôt qu’à des
                 valeurs de référence.
               </p>
             </>
@@ -361,7 +361,7 @@ export default function BleDevices({
                       <div className="my-device-actions">
                         {d.driver.mode === 'live' && (
                           <button type="button" className="btn btn-primary connector-btn" onClick={() => measure(d)}>
-                            Mesurer ma VFC (5 min)
+                            Mesurer ma variabilité cardiaque (5 min)
                           </button>
                         )}
                         {d.driver.mode === 'receive' && (

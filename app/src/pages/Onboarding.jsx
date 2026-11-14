@@ -518,7 +518,7 @@ function FoundStep({ health, goals, imported, onImported, installed, huawei, onC
         </section>
       ))}
       {measures?.groups.length > 0 && measures.notMeasured.length > 0 && (
-        <p className="onb-fine">Pas mesuré par vos appareils : {measures.notMeasured.map((l) => (l.startsWith('FC') || l === 'VFC' ? l : l.toLowerCase())).join(', ')}.</p>
+        <p className="onb-fine">Pas mesuré par vos appareils : {measures.notMeasured.map((l) => (l.startsWith('FC') ? l : l.toLowerCase())).join(', ')}.</p>
       )}
       {facts?.length > 0 && (
         <>

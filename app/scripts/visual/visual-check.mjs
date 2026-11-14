@@ -1424,7 +1424,7 @@ async function main() {
           await page.getByRole('button', { name: 'Rechercher autour de moi' }).click()
           await page.waitForTimeout(700)
           if (args.ble === 'measure') {
-            await page.getByRole('button', { name: /Mesurer ma VFC/ }).click()
+            await page.getByRole('button', { name: /Mesurer ma variabilité cardiaque/ }).click()
             await page.waitForTimeout(2500)
           }
           if (args.ble === 'receive' || args.ble === 'received') {

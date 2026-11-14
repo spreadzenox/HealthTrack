@@ -52,7 +52,7 @@ describe('montre Huawei → tuiles de l’Accueil et export', () => {
 
     expect(sleep).toMatchObject({ label: 'Sommeil', value: '7 h 30', sources: ['Montre Huawei'] })
     // 47 ms (nuit), pas 29 ms (journée)
-    expect(hrv).toMatchObject({ label: 'VFC nuit', value: '47 ms', sources: ['Montre Huawei'] })
+    expect(hrv).toMatchObject({ label: 'Variabilité cardiaque', value: '47 ms', sources: ['Montre Huawei'] })
   })
 
   it('exporte et réimporte toutes les entrées de la montre', async () => {

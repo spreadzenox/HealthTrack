@@ -18,7 +18,7 @@ const wrap = (props) => render(
 
 const tiles = [
   { key: 'sleep', label: 'Sommeil', value: '7 h 32', when: 'cette nuit', sources: ['Health Connect · Garmin'] },
-  { key: 'hrv', label: 'VFC nuit', value: null, sources: [] },
+  { key: 'hrv', label: 'Variabilité cardiaque', value: null, sources: [] },
   { key: 'steps', label: 'Pas', value: '3 456', when: null, sources: ['Health Connect'] },
 ]
 
@@ -110,10 +110,10 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
       const v = d === 20 ? 62 : 46 + (d % 3) * 2
       hist.push({ type: 'heart_rate', at: new Date(2026, 9, d, 4).toISOString(), payload: { subtype: 'heartRateVariability', value: v } })
     }
-    wrap({ tiles: [{ key: 'hrv', label: 'VFC nuit', value: '62 ms', when: 'hier', sources: [] }], readNorms: async () => hist })
+    wrap({ tiles: [{ key: 'hrv', label: 'Variabilité cardiaque', value: '62 ms', when: 'hier', sources: [] }], readNorms: async () => hist })
     const row = valueEl('62 ms').closest('li')
     await waitFor(() => expect(row).toHaveTextContent('d’habitude 48 ms'))
-    expect(within(row).getByLabelText('VFC de la nuit plus haute')).toHaveTextContent('↑')
+    expect(within(row).getByLabelText('Variabilité cardiaque de la nuit plus haute')).toHaveTextContent('↑')
   })
 
   it('rien du jour : rien du tout (premier jour)', () => {

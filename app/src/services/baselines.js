@@ -38,7 +38,7 @@ export const BASELINE_METRICS = {
   },
   heartRateVariability: {
     key: 'heartRateVariability',
-    label: 'VFC (variabilité cardiaque)',
+    label: 'Variabilité cardiaque',
     unit: 'ms',
     generalHigherIsBetter: true,
     log: true,

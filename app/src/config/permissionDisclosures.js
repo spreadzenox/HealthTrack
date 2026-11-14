@@ -76,7 +76,7 @@ export const DISCLOSURES = {
   health_connect: {
     title: 'Avant d’autoriser Health Connect',
     points: [
-      `${APP_NAME} lit ce que vos montres, bagues et applis santé écrivent dans Health Connect : sommeil, pas, fréquence cardiaque, VFC, activité et quelques mesures (poids, température…). Il n’y écrit rien.`,
+      `${APP_NAME} lit ce que vos montres, bagues et applis santé écrivent dans Health Connect : sommeil, pas, fréquence cardiaque, variabilité cardiaque, activité et quelques mesures (poids, température…). Il n’y écrit rien.`,
       'Android vous laisse choisir type par type : tout est facultatif.',
       'Les 30 derniers jours sont importés tout de suite, puis les nouvelles données au fil des jours.',
       'Elles restent dans vos données, sur le téléphone. Vous pouvez retirer l’accès à tout moment dans Health Connect.',

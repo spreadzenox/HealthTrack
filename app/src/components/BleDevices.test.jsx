@@ -39,7 +39,7 @@ describe('BleDevices', () => {
     // montre Huawei : connexion directe, sans son app
     expect(screen.getByText('Connexion directe')).toBeInTheDocument()
     expect(screen.getByText(new RegExp(`${APP_NAME} se connecte directement à elle`))).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Mesurer ma VFC/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Mesurer ma variabilité cardiaque/ })).toBeInTheDocument()
     // appareil de mesure standard : réception directe
     expect(screen.getByRole('button', { name: 'Recevoir la mesure' })).toBeInTheDocument()
     expect(screen.getByText(/Appairée à ce téléphone/)).toBeInTheDocument()
@@ -99,7 +99,7 @@ describe('BleDevices', () => {
     const save = vi.fn(async () => {})
     render(<BleDevices available scan={async ({ onUpdate }) => (onUpdate([H10]), [H10])} startSession={startSession} save={save} />)
     fireEvent.click(screen.getByRole('button', { name: 'Rechercher autour de moi' }))
-    fireEvent.click(await screen.findByRole('button', { name: /Mesurer ma VFC/ }))
+    fireEvent.click(await screen.findByRole('button', { name: /Mesurer ma variabilité cardiaque/ }))
     expect(await screen.findByText(/Mesure en cours/)).toBeInTheDocument()
 
     const t0 = Date.parse('2026-10-12T06:00:00Z')
@@ -113,7 +113,7 @@ describe('BleDevices', () => {
     })
     expect(screen.getByText('59')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Terminer et enregistrer' }))
-    expect(await screen.findByText(/VFC \(RMSSD\) 30 ms/)).toBeInTheDocument()
+    expect(await screen.findByText(/variabilité cardiaque \(RMSSD\) 30 ms/)).toBeInTheDocument()
     expect(stop).toHaveBeenCalled()
     const saved = save.mock.calls[0][0]
     expect(saved.some((e) => e.payload.subtype === 'heartRateVariability' && e.source === 'ble')).toBe(true)
@@ -131,7 +131,7 @@ describe('BleDevices', () => {
       />,
     )
     fireEvent.click(screen.getByRole('button', { name: 'Rechercher autour de moi' }))
-    fireEvent.click(await screen.findByRole('button', { name: /Mesurer ma VFC/ }))
+    fireEvent.click(await screen.findByRole('button', { name: /Mesurer ma variabilité cardiaque/ }))
     await screen.findByText(/Mesure en cours/)
     act(() => {
       emit({ at: 1000, bpm: 70, rrMs: [860] })
@@ -193,7 +193,7 @@ describe('BleDevices', () => {
     const save = vi.fn(async () => {})
     render(<BleDevices available scan={async ({ onUpdate }) => (onUpdate([H10]), [H10])} startSession={startSession} save={save} />)
     fireEvent.click(screen.getByRole('button', { name: 'Rechercher autour de moi' }))
-    fireEvent.click(await screen.findByRole('button', { name: /Mesurer ma VFC/ }))
+    fireEvent.click(await screen.findByRole('button', { name: /Mesurer ma variabilité cardiaque/ }))
     fireEvent.click(await screen.findByRole('button', { name: 'Annuler' }))
     await act(async () => connected())
     expect(stop).toHaveBeenCalled()

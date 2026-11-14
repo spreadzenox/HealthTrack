@@ -44,7 +44,7 @@ export const SLEEP_METRIC = {
 
 export const RADAR_METRICS = [
   { ...BASELINE_METRICS.restingHeartRate, threshold: 1.5 },
-  { ...BASELINE_METRICS.heartRateVariability, label: 'VFC', threshold: 1.5 },
+  { ...BASELINE_METRICS.heartRateVariability, threshold: 1.5 },
   { ...SLEEP_METRIC, threshold: 1.5 },
 ]
 

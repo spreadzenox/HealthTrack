@@ -797,6 +797,6 @@ describe('carte Health Connect (VC-27)', () => {
     expect(c.description).toMatch(/Samsung Health, Garmin, Withings/)
     expect(c.description.length).toBeLessThan(140)
     expect(c.importedList).toEqual(Object.values(READ_TYPE_LABELS))
-    expect(c.importedList).toContain('VFC')
+    expect(c.importedList).toContain('Variabilité cardiaque')
   })
 })
