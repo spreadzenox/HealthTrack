@@ -148,7 +148,7 @@ export const VARIABLE_META = {
     group: 'lifestyle',
   },
   restingHR: {
-    label: 'FC repos',
+    label: 'Cœur au repos',
     unit: 'bpm',
     format: (v) => `${Math.round(v)} bpm`,
     direction: 'lower_better',
@@ -169,7 +169,7 @@ export const VARIABLE_META = {
     group: 'lifestyle',
   },
   spo2_pct: {
-    label: 'Saturation en oxygène (SpO₂)',
+    label: 'Oxygène du sang',
     unit: '%',
     format: (v) => `${frDecimal(v, 1)} %`,
     direction: 'higher_better',

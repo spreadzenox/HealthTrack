@@ -183,6 +183,6 @@ describe('describeMeasurement', () => {
     expect(describeMeasurement({ kind: 'weight', weightKg: 72.36 })).toBe('Poids 72,4 kg')
     expect(describeMeasurement({ kind: 'body_composition', weightKg: 70, fatRatioPct: 23.4 })).toBe('Poids 70 kg · masse grasse 23,4 %')
     expect(describeMeasurement({ kind: 'body_temperature', valueC: 36.9 })).toBe('Température 36,9 °C')
-    expect(describeMeasurement({ kind: 'spo2', spo2: 97, pulseBpm: 66 })).toBe('SpO₂ 97 % · pouls 66')
+    expect(describeMeasurement({ kind: 'spo2', spo2: 97, pulseBpm: 66 })).toBe('Oxygène du sang 97 % · pouls 66')
   })
 })

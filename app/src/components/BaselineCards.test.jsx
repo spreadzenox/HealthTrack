@@ -53,7 +53,7 @@ describe('BaselineCards', () => {
     renderCards({ onStatus })
     await vi.waitFor(() => expect(onStatus).toHaveBeenCalledWith('heart', {
       active: false,
-      soon: [{ id: 'restingHeartRate', label: 'FC au repos', progress: 'encore 13 j' }],
+      soon: [{ id: 'restingHeartRate', label: 'Cœur au repos', progress: 'encore 13 j' }],
     }))
     expect(document.querySelector('.baseline-card')).toBeNull()
   })

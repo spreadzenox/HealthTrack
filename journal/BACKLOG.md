@@ -673,8 +673,21 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   seul lien est « Ajouter une montre ».
 - [ ] **POLISH-SIM-85** Visite guidée d'Agir : « Exemple au jour 14 » montré à une personne qui est à son 14e jour ;
   « un jour sur deux tiré au sort » pas compris.
-- [ ] **POLISH-SIM-86** Journal : tuiles « SpO₂ » et « FC au repos », alors que Sources dit « oxygène du sang » et
-  « cœur au repos » : un seul nom par mesure (comme POLISH-SIM-72), avec un test de garde.
+- [x] **POLISH-SIM-86** Journal : tuiles « SpO₂ » et « FC au repos », alors que Sources dit « oxygène du sang » et
+  « cœur au repos » : un seul nom par mesure (comme POLISH-SIM-72), avec un test de garde. **Fait le 14/11 12:35
+  (Android)** : « Cœur au repos » et « Oxygène du sang » dans tous les textes de `src/` (tuiles du Journal,
+  Aujourd'hui, Tendances, normes, Analyses, « Ce qui change », types Health Connect, oxymètre Bluetooth, écran
+  Montre) ; « plus haute / plus basse » devient « plus rapide / plus lent », comme dans la fiche d'un jour ; test de
+  garde `src/data/measureNames.test.js` (ni « SpO₂ », ni « saturation en oxygène », ni « FC au repos / FC repos »
+  hors commentaires, Nouveautés passées et `huawei/sync.js`). Dans le Journal, « Cœur au repos » tient sur deux
+  lignes (une avant). La tuile « FC » (fourchette du jour) et « FC nuit » gardent leur nom : **POLISH-SIM-86b**.
+- [ ] **POLISH-SIM-86-iOS** Porter ces noms sur iPhone au suivi de cette version : les correctifs 17, 32, 56 et 57 ne
+  s'appliquent plus (lignes de contexte de `journalChips.js`, `analysisEngine.js`, `trendsData.js`,
+  `dayDeviations.js`) ; « SpO₂ » ou « FC au repos » restent dans les correctifs 20 et 21, dans
+  `BaselineCards.appstore.test.jsx` et `sdnnRadar.test.js` de l'overlay. Le test de garde doit être vert sur le code
+  embarqué.
+- [ ] **POLISH-SIM-86b** « FC » (tuile du Journal, « FC nuit », « FC automatique ») à côté de « fréquence cardiaque »
+  et « cœur » dans Sources : choisir un nom, même méthode.
 - [ ] **POLISH-SIM-87** Accueil, écran 04/06 : bouton « Continuer sans » (sans quoi ?) ; l'écran 01 parle de « votre
   montre » à tout le monde.
 - [ ] **POLISH-SIM-88** (à vérifier) Tendances › Jour dit « Aucune lecture du visage ce jour-là » alors qu'une note

@@ -238,7 +238,7 @@ export async function runAssociation(
 
   if (firstTime) {
     if (canAsk(caps, FITNESS, FIT_ASSOC.AUTO_HR)) await ask('auto_hr', 'FC automatique activée', FITNESS, FIT_ASSOC.AUTO_HR, [{ tag: 1, value: [1] }])
-    if (canAsk(caps, FITNESS, FIT_ASSOC.AUTO_SPO2)) await ask('auto_spo2', 'SpO₂ automatique activée', FITNESS, FIT_ASSOC.AUTO_SPO2, [{ tag: 1, value: [1] }])
+    if (canAsk(caps, FITNESS, FIT_ASSOC.AUTO_SPO2)) await ask('auto_spo2', 'Oxygène du sang automatique activé', FITNESS, FIT_ASSOC.AUTO_SPO2, [{ tag: 1, value: [1] }])
   }
 
   return {

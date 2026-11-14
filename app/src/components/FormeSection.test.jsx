@@ -44,7 +44,7 @@ describe('FormeSection', () => {
     render(<BrowserRouter><FormeSection /></BrowserRouter>)
     const soon = await screen.findByTestId('forme-soon')
     expect(within(soon).getByText('Bientôt')).toBeInTheDocument()
-    expect(await within(soon).findByText('FC au repos')).toBeInTheDocument()
+    expect(await within(soon).findByText('Cœur au repos')).toBeInTheDocument()
     expect(within(soon).getByText(/encore \d+ j/)).toBeInTheDocument()
     expect(await within(soon).findByText('Radar forme')).toBeInTheDocument()
     expect(await within(soon).findByText('Horaires de sommeil')).toBeInTheDocument()

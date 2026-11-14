@@ -219,7 +219,7 @@ export function describeMeasurement(m) {
     case 'body_temperature':
       return `Température ${fmt(m.valueC)} °C`
     case 'spo2':
-      return `SpO₂ ${m.spo2} %${m.pulseBpm != null ? ` · pouls ${m.pulseBpm}` : ''}`
+      return `Oxygène du sang ${m.spo2} %${m.pulseBpm != null ? ` · pouls ${m.pulseBpm}` : ''}`
     default:
       return 'Mesure'
   }

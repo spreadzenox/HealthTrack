@@ -60,9 +60,9 @@ export const READ_TYPE_LABELS = {
   steps: 'pas',
   sleep: 'sommeil',
   heartRate: 'fréquence cardiaque',
-  restingHeartRate: 'FC au repos',
+  restingHeartRate: 'cœur au repos',
   heartRateVariability: 'Variabilité cardiaque',
-  oxygenSaturation: 'SpO₂',
+  oxygenSaturation: 'oxygène du sang',
   calories: 'calories',
   distance: 'distance',
   workouts: 'séances de sport',
@@ -969,9 +969,9 @@ export class HealthConnectConnector extends BaseConnector {
     // ── Resting heart rate ─────────────────────────────────────────────────
     step('restingHeartRate')
     if (canRead('restingHeartRate')) try {
-      debugDebug(TAG, 'Lecture FC repos…')
+      debugDebug(TAG, 'Lecture du cœur au repos…')
       const samples = await readSamplesInWindows(Health, { dataType: 'restingHeartRate', startDate, endDate, limit: 500, windowMs: Infinity })
-      debugInfo(TAG, `FC repos : ${samples.length} entrées récupérées`)
+      debugInfo(TAG, `Cœur au repos : ${samples.length} entrées récupérées`)
       const entries = samples.map((s) => ({
         type: 'heart_rate',
         source: 'health_connect',
@@ -988,16 +988,16 @@ export class HealthConnectConnector extends BaseConnector {
       await writer(entries)
       synced += entries.length
     } catch (e) {
-      debugError(TAG, `Erreur lecture FC repos : ${e?.message || e}`, { error: e })
+      debugError(TAG, `Erreur de lecture du cœur au repos : ${e?.message || e}`, { error: e })
       errors.push(`restingHeartRate: ${e.message || e}`)
     }
 
     // ── Oxygen saturation (SpO₂) ───────────────────────────────────────────
     step('oxygenSaturation')
     if (canRead('oxygenSaturation')) try {
-      debugDebug(TAG, 'Lecture SpO₂…')
+      debugDebug(TAG, 'Lecture de l’oxygène du sang…')
       const samples = await readSamplesInWindows(Health, { dataType: 'oxygenSaturation', startDate, endDate, limit: 500, windowMs: Infinity })
-      debugInfo(TAG, `SpO₂ : ${samples.length} entrées récupérées`)
+      debugInfo(TAG, `Oxygène du sang : ${samples.length} entrées récupérées`)
       const entries = samples.map((s) => ({
         type: 'heart_rate',
         source: 'health_connect',
@@ -1014,7 +1014,7 @@ export class HealthConnectConnector extends BaseConnector {
       await writer(entries)
       synced += entries.length
     } catch (e) {
-      debugError(TAG, `Erreur lecture SpO₂ : ${e?.message || e}`, { error: e })
+      debugError(TAG, `Erreur de lecture de l’oxygène du sang : ${e?.message || e}`, { error: e })
       errors.push(`oxygenSaturation: ${e.message || e}`)
     }
 

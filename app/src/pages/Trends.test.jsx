@@ -83,9 +83,9 @@ describe('Journal › Tendances (ORG-3)', () => {
     const gloss = () => [...container.querySelectorAll('.trends-gloss li')].map((li) => li.textContent)
     expect(gloss()).toEqual(['Variabilité cardiaque : mesurée pendant la nuit, en millisecondes'])
     fireEvent.click(screen.getByRole('button', { name: 'Ajouter une mesure' }))
-    fireEvent.click(within(screen.getByRole('list', { name: 'Mesures à ajouter' })).getByRole('button', { name: /FC au repos/ }))
+    fireEvent.click(within(screen.getByRole('list', { name: 'Mesures à ajouter' })).getByRole('button', { name: /Cœur au repos/ }))
     expect(gloss()).toHaveLength(2)
-    expect(gloss()[1]).toBe('FC au repos : fréquence cardiaque au repos, en battements par minute')
+    expect(gloss()[1]).toBe('Cœur au repos : fréquence cardiaque au repos, en battements par minute')
   })
 
   it('POLISH-SIM-6 : rien à expliquer pour le bien-être seul', async () => {

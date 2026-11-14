@@ -199,7 +199,7 @@ export const FACTORS = [
     text: (a) => `${fmtInt(a)} g de lipides de plus` },
   { key: 'alcohol_g', label: 'Alcool', theme: 'nutrition', actionable: true, unit: 'g', step: 5,
     text: (a) => `${fmtInt(a)} g d’alcool de plus` },
-  { key: 'restingHR', label: 'FC au repos', theme: 'body', actionable: false, unit: 'bpm', step: 1,
+  { key: 'restingHR', label: 'Cœur au repos', theme: 'body', actionable: false, unit: 'bpm', step: 1,
     text: (a) => `${fmtInt(a)} bpm de plus au repos` },
   { key: 'hrv_ms', label: 'Variabilité cardiaque', theme: 'body', actionable: false, unit: 'ms', step: 1,
     text: (a) => `${fmtInt(a)} ms de variabilité cardiaque de plus` },
