@@ -91,4 +91,9 @@ describe('detailSource (POLISH-SIM-4) : d’où vient le chiffre d’un jour pas
     expect(detailSource('digestion', { value: 2, gut: 'Gêné', observed: true })).toBe('noté « Gêné »')
     expect(detailSource('digestion', { value: 2, observed: false })).toBe('estimé')
   })
+  it('POLISH-SIM-71 : un chiffre qui s’écarte de la note du jour se dit estimé, avec la note', () => {
+    expect(detailSource('digestion', { value: 2, gut: 'douleur', gutScore: 1, observed: true })).toBe('estimé, avec votre note « douleur »')
+    expect(detailSource('digestion', { value: 1.04, gut: 'douleur', gutScore: 1, observed: true })).toBe('noté « douleur »')
+    expect(detailSource('digestion', { value: 3, gut: 'gêne', gutScore: 3, observed: true })).toBe('noté « gêne »')
+  })
 })

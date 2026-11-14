@@ -579,9 +579,15 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   l'objectif est le ventre ; ouvrir Digestion pour ce profil. L'état vide ne dit pas quoi faire d'ici là.
   **Fait le 14/11 00:35** : avec l'objectif digestion ou cycle (`wantsGut`, comme la barre d'onglets), le lien ouvre
   `/recommendations/ventre` ; une phrase « D'ici là, notez votre digestion chaque jour. » (ou « votre bien-être »).
-- [ ] **POLISH-SIM-71** (deux personas J45) Tendances, fiche d'un jour : un jour à 1,4/5, « Ce qui a pu peser » ne
+- [x] **POLISH-SIM-71** (deux personas J45) Tendances, fiche d'un jour : un jour à 1,4/5, « Ce qui a pu peser » ne
   liste que des « + » ; ailleurs des −0,01 et −0,02 pt, sans dire s'il s'agit du ventre ou du bien-être ; « Confort
   digestif 2,0/5, noté "douleur" » alors que Douleur = 1. Seuil d'affichage, phrase quand rien ne pèse, moyenne dite.
+  **Fait le 14/11 03:35** : « Sur votre bien-être (ou confort digestif), en points sur 5. » sous le titre ; effets de
+  moins de 0,05 pt masqués ; « Rien de marquant ce jour-là… » si tous le sont ; « Rien de ce que Halcya compare
+  n'explique cette note basse. » pour une note ≤ 2,5 sans effet négatif affiché ; « estimé, avec votre note
+  « douleur » » quand le chiffre s'écarte de la note.
+- [ ] **POLISH-SIM-71b** Fiche d'un jour : lien « Voir toute la journée » vers Journal › Jours à cette date ; pour un
+  profil ventre, les repas de la veille (à maquetter si cela ajoute un bloc).
 - [ ] **POLISH-SIM-72** « VFC » (Aujourd'hui, Journal, Analyses) et « variabilité cardiaque » (Sources, fiche d'un
   jour) : un seul nom.
 - [x] **POLISH-SIM-73** (Tout mesurer J45) La sauvegarde s'appelle `healthtrack-export-AAAA-MM-JJ.json` : nom de la

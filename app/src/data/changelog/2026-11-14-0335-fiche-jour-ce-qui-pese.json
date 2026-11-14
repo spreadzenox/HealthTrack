@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-14",
+  "kind": "correctif",
+  "title": "Tendances : la fiche d'un jour se lit mieux",
+  "items": [
+    "« Ce qui a pu peser ce jour-là » dit sur quelle note portent les points et ne montre plus les effets de moins de 0,05 pt.",
+    "Un jour à la note basse sans rien qui la tire vers le bas : la fiche dit que rien de ce qui est comparé ne l'explique.",
+    "Confort digestif : quand le chiffre du jour s'écarte de votre note, il est dit « estimé, avec votre note »."
+  ]
+}

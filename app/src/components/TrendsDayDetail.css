@@ -150,3 +150,9 @@
   border-radius: 3px;
   background: repeating-linear-gradient(135deg, var(--text-muted) 0 2px, transparent 2px 4px);
 }
+
+/* POLISH-SIM-71 : sur quelle note portent les points, juste sous le titre */
+.tdd-weigh-on {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+}

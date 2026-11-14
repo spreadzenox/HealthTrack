@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { render } from '@testing-library/react'
-import { MoodMap, ContributionBars } from './TrendsDayDetail'
+import { render, screen, within } from '@testing-library/react'
+import TrendsDayDetail, { MoodMap, ContributionBars } from './TrendsDayDetail'
 
 describe('MoodMap', () => {
   const points = [{ v: 0.2, a: -0.1 }, { v: -0.3, a: 0.4 }]
@@ -52,5 +52,48 @@ describe('ContributionBars', () => {
     const { container } = render(<ContributionBars items={items} />)
     expect(container.querySelector('.is-unsure')).toBeNull()
     expect(container.textContent).not.toMatch(/pas assez net/)
+  })
+})
+
+describe('TrendsDayDetail, « Ce qui a pu peser ce jour-là » (POLISH-SIM-71)', () => {
+  const c = (key, points, extra = {}) => ({ key, label: key, theme: 'sleep', horizon: 'short', points, value: 300, usual: 420, ...extra })
+  const region = () => screen.getByRole('region', { name: 'Ce qui a pu peser ce jour-là' })
+
+  it('dit sur quelle note portent les points', () => {
+    const { unmount } = render(<TrendsDayDetail face={null} contributions={[c('sleepMinutes', -0.4)]} outcome="wellbeing" value={3.1} />)
+    expect(region()).toHaveTextContent('Sur votre bien-être, en points sur 5.')
+    unmount()
+    render(<TrendsDayDetail face={null} contributions={[c('sleepMinutes', -0.4)]} outcome="digestion" value={3.1} />)
+    expect(region()).toHaveTextContent('Sur votre confort digestif, en points sur 5.')
+  })
+
+  it('n’affiche pas un effet de moins de 0,05 pt', () => {
+    render(<TrendsDayDetail face={null} contributions={[c('sleepMinutes', -0.4), c('restingHR', -0.02), c('hrv_ms', 0.01)]} outcome="digestion" value={3} />)
+    expect(within(region()).getAllByRole('listitem')).toHaveLength(1)
+    expect(region().textContent).not.toMatch(/0,0[12] pt/)
+  })
+
+  it('tous les effets sont négligeables : une phrase, aucune barre', () => {
+    render(<TrendsDayDetail face={null} contributions={[c('restingHR', -0.02), c('hrv_ms', -0.01)]} outcome="digestion" value={2} />)
+    expect(within(region()).queryAllByRole('listitem')).toHaveLength(0)
+    expect(region()).toHaveTextContent('Rien de marquant ce jour-là parmi ce que Halcya compare.')
+  })
+
+  it('note basse et seulement des « + » : dit que rien ne l’explique', () => {
+    render(<TrendsDayDetail face={null} contributions={[c('steps', 0.39), c('sleepMinutes', 0.11)]} outcome="wellbeing" value={1.4} />)
+    expect(region()).toHaveTextContent('Rien de ce que Halcya compare n’explique cette note basse.')
+  })
+
+  it('note basse avec un « − » affiché, ou note ordinaire : pas de phrase en plus', () => {
+    const { unmount } = render(<TrendsDayDetail face={null} contributions={[c('steps', 0.39), c('sleepMinutes', -0.3)]} outcome="wellbeing" value={1.4} />)
+    expect(region().textContent).not.toMatch(/explique|marquant/)
+    unmount()
+    render(<TrendsDayDetail face={null} contributions={[c('steps', 0.39)]} outcome="wellbeing" value={3.6} />)
+    expect(region().textContent).not.toMatch(/explique|marquant/)
+  })
+
+  it('sans contribution calculée, le bloc reste absent', () => {
+    render(<TrendsDayDetail face={null} contributions={[]} outcome="wellbeing" value={1.4} />)
+    expect(screen.queryByRole('region', { name: 'Ce qui a pu peser ce jour-là' })).toBeNull()
   })
 })

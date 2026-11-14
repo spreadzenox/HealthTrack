@@ -16,6 +16,8 @@ import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
 
 const DAY_MS = 86_400_000
+/** Mêmes notes que GUT_COMFORT (analysisResults), redites ici pour ne pas charger le moteur d'Analyses. */
+export const GUT_SCORE = { calm: 5, discomfort: 3, pain: 1 }
 const HABIT_DAYS = 28
 /** Écart de valence ou d'éveil moyen (sur −1…1) à partir duquel on dit « plus » ou « moins que d'habitude ». */
 export const VA_SHIFT = 0.1
@@ -86,6 +88,8 @@ export function dayFaceDetail(entries, dateKey) {
   return {
     readings: ofDay.length,
     gut: gutLevel ? gutLevelLabel(gutLevel).toLowerCase() : null,
+    // POLISH-SIM-71 : la note de ce niveau (douleur = 1), pour dire quand le chiffre du jour s'en écarte
+    gutScore: gutLevel ? GUT_SCORE[gutLevel] : null,
     note: lastNote ? toDisplay(lastNote.payload.score) : null,
     mix: withHabit,
     shifts: shiftsSentence(habitShifts(withHabit)),
@@ -203,4 +207,24 @@ export function contributionText(c) {
 export function formatPoints(v) {
   const n = Math.abs(v).toLocaleString(appLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   return `${v > 0 ? '+' : '−'}${n} pt`
+}
+
+/** POLISH-SIM-71 : en dessous, un effet ne se montre pas (« −0,02 pt » sur une note sur 5 ne dit rien). */
+export const MIN_SHOWN_POINTS = 0.05
+/** Note sur 5 à partir de laquelle un jour est dit « bas » : un demi-point sous le milieu de l'échelle. */
+export const LOW_DAY = 2.5
+
+/**
+ * Ce que « Ce qui a pu peser ce jour-là » montre : les effets d'au moins 0,05 pt, et la phrase à dire quand il n'y en
+ * a aucun, ou quand la note du jour est basse sans qu'aucun effet affiché ne la tire vers le bas.
+ * @param {object[] | null} contributions  contributions du jour (dayContributions)
+ * @param {number | null} value            note du jour sur 5
+ * @returns {{ items: object[], note: 'none' | 'unexplained' | null } | null} null : rien à afficher
+ */
+export function weighView(contributions, value = null) {
+  if (!contributions?.length) return null
+  const items = contributions.filter((c) => Math.abs(c.points) >= MIN_SHOWN_POINTS)
+  if (!items.length) return { items, note: 'none' }
+  const low = isNum(value) && value <= LOW_DAY
+  return { items, note: low && !items.some((c) => c.points < 0) ? 'unexplained' : null }
 }
