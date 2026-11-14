@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Recommendations from './Recommendations'
+import { choiceToScore } from '../services/mood/wellbeingScale'
 
 vi.mock('../storage/localHealthStorage', () => ({
   createEntry: vi.fn(() => Promise.resolve(1)),
@@ -75,8 +76,52 @@ describe('POLISH-SIM-62 : Analyses au premier jour de résultats', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Noter maintenant' }))
     fireEvent.click(screen.getByRole('button', { name: 'Note 4 sur 5' }))
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
-    expect(await screen.findByRole('status')).toHaveTextContent(/^Noté : 4\/5$/)
+    expect(await screen.findByRole('status')).toHaveTextContent(/^Noté aujourd’hui : 4\/5$/)
+    expect(screen.getAllByRole('status')).toHaveLength(1)
     expect(screen.queryByRole('dialog')).toBeNull()
+  })
+})
+
+describe('POLISH-SIM-82b : Analyses › Bien-être en attente, bien-être du jour déjà noté', () => {
+  beforeEach(() => localStorage.clear())
+  const today = (h) => { const d = new Date(); d.setHours(h, 0, 0, 0); return d.toISOString() }
+  const yesterday = () => new Date(Date.now() - 86_400_000).toISOString()
+  const note = (at, score) => ({ id: at, type: 'wellbeing', source: 'app_wellbeing', at, payload: { score } })
+  const wbLocked = () => {
+    const r = day14([])
+    r.outcomes.wellbeing.status = 'locked'
+    r.outcomes.wellbeing.daysToFirst = 3
+    r.outcomes.wellbeing.horizons.short.status = 'locked'
+    return r
+  }
+  const renderWb = (readWellbeing) => render(
+    <MemoryRouter><Recommendations read={async () => wbLocked()} readWellbeing={readWellbeing} /></MemoryRouter>,
+  )
+
+  it('aucune note aujourd’hui : « Noter maintenant »', async () => {
+    renderWb(async () => [note(yesterday(), 0.75)])
+    expect(await screen.findByRole('button', { name: 'Noter maintenant' })).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/Noté aujourd/)
+  })
+
+  it('une note aujourd’hui : « Noté aujourd’hui : 4/5 » et « Ajouter une note »', async () => {
+    renderWb(async () => [note(today(0), choiceToScore(4)), note(yesterday(), choiceToScore(2))])
+    expect(await screen.findByTestId('reco-noted-today')).toHaveTextContent(/^Noté aujourd’hui : 4\/5$/)
+    expect(screen.queryByRole('button', { name: 'Noter maintenant' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une note' }))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+  })
+
+  it('deux notes dans la journée : dans l’ordre où elles ont été données', async () => {
+    const early = new Date(); early.setHours(0, 0, 0, 0)
+    const later = new Date(early.getTime() + 60_000)
+    renderWb(async () => [note(later.toISOString(), choiceToScore(2)), note(early.toISOString(), choiceToScore(4))])
+    expect(await screen.findByTestId('reco-noted-today')).toHaveTextContent(/^Noté aujourd’hui : 4\/5, 2\/5$/)
+  })
+
+  it('lecture des notes impossible : le bouton habituel reste', async () => {
+    renderWb(() => { throw new Error('x') })
+    expect(await screen.findByRole('button', { name: 'Noter maintenant' })).toBeInTheDocument()
   })
 })
 

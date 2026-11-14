@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-14",
+  "kind": "correctif",
+  "title": "Analyses : le bien-être déjà noté se voit",
+  "items": [
+    "Dans Analyses › Bien-être, avant les premiers résultats, le bouton « Noter maintenant » restait affiché même quand le bien-être du jour était noté. La carte dit maintenant « Noté aujourd’hui » avec votre note, et propose « Ajouter une note »."
+  ]
+}
