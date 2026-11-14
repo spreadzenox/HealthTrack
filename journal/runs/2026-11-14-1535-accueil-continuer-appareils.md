@@ -43,3 +43,18 @@ nuit prochaine ; 844.344 intacte  ·  **Parité** : 70 % (33/47)
   embarqué.
 - Charte, PRODUIT, BACKLOG, PARITE et journal iPhone lus par sections, pas en entier (plus de 1 Mo) ;
   `iphone/README.md` relu ; `iphone/journal/README.md`, `DESIGN.md` et `INFRA.md` non relus à ce run.
+
+## Fin du run
+- **PR de suivi iPhone #974 finie et mergée** à 15:55 (52b8f5d) : 15 checks verts, dont « Build iOS (simulateur) et
+  captures » (fini à 15:52) ; capture iPhone de Tendances regardée (`captures/pr-974`, build 1050.1052) : la vue par
+  défaut s'affiche normalement. La fiche d'un jour et « Poids · en Mois » ne sont pas dans les captures
+  automatiques : non vus sur iPhone. `upstream.json` en v1050 ; `PARITE.md` § 5 mis à jour.
+- **PR #975** (ce correctif) : remise à jour sur main après le merge de #974 ; merge une fois ses checks verts
+  (état final dans le tableau du résumé de la semaine).
+
+## Suite
+- Suivi iPhone du code de ce run (`scripts/upstream.sh --latest`), captures de l'accueil iPhone à regarder.
+- POLISH-SIM-87b, 86b, 84, 85 ; POLISH-SIM-72-iOS-c ; fin de POLISH-SIM-69 ; FUSION-2 ; POLISH-SIM-71b ; CYCLE-3a-2.
+- Maquettes de PROP-SIM-17 et PROP-SIM-18 à un run « idées ».
+- Nuit prochaine, après l'Alpha de 23:45 : soumettre la dernière build TestFlight traitée, puis expirer les
+  anciennes.

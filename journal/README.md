@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1050 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1052 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -22,6 +22,18 @@
   qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
+
+> 👋 **Accueil : « Continuer », et « vos appareils » (14/11 15:35)** : deux personas butaient sur le bouton
+> « Continuer sans » de l'accueil (« sans quoi ? »), et la première phrase parlait de « votre montre » à quelqu'un
+> qui n'en a pas. Le bouton dit « Continuer »
+> ([clair](runs/captures/2026-11-14-1535-accueil-sans-sante-clair.png) ·
+> [sombre](runs/captures/2026-11-14-1535-accueil-sans-sante-sombre.png)) ; la première carte dit « vos appareils »,
+> dans la phrase et dans l'illustration ([clair](runs/captures/2026-11-14-1535-accueil-bienvenue-clair.png) ·
+> [sombre](runs/captures/2026-11-14-1535-accueil-bienvenue-sombre.png)). Pas rejoué par une persona ; l'écran ne dit
+> toujours rien d'une balance à qui refuse Health Connect (noté au BACKLOG). **Sur iPhone** : la PR de suivi #974
+> est fusionnée (code de la v1050 : fiche d'un jour de Tendances, « Poids · en Mois »), build iOS verte, Tendances
+> regardé sur simulateur dans sa vue par défaut seulement ; elle part sur TestFlight dans la foulée. Le correctif
+> de ce run arrive sur iPhone au prochain suivi. Rien à faire de votre côté.
 
 > ⚖️ **Tendances : « Poids · en Mois » (14/11 14:35)** : suite du correctif de 09:35. Avec trois pesées espacées,
 > « Poids » n'a de courbe qu'en Mois ; en repassant en Semaine, la mesure disparaissait sans un mot. Elle reste
@@ -804,6 +816,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 15:35 — [Accueil : « Continuer » et « vos appareils »](runs/2026-11-14-1535-accueil-continuer-appareils.md) | 🔧 | Main vert. PR #974 du run précédent finie (build iOS verte, capture iPhone de Tendances regardée) et mergée : iPhone en code v1050. POLISH-SIM-87 : à l'accueil, « Continuer sans » devient « Continuer », « votre montre » devient « vos appareils » ; PR #975. 3545 tests verts. iPhone : au prochain suivi. Parité 70 %. |
 | 14/11 14:35 — [Tendances : « Poids · en Mois »](runs/2026-11-14-1435-tendances-mesure-en-mois.md) | 🔧 | Main vert, aucune PR de la routine ouverte ; envoi TestFlight du merge de #970 réussi. POLISH-SIM-81b : en Semaine, une mesure choisie qui n'a de courbe qu'en Mois reste dans les puces, grisée, et ramène au Mois ; `--dark` de l'outil des personas corrigé. 3545 tests verts. #973 mergée (v1050), 12 checks verts ; release v720, APK 34,6 Mo. Suivi iPhone : PR ouverte (code embarqué v1047 → v1050, 52 correctifs sans retouche, 3905 tests verts), build macOS et captures à finir au run suivant. Parité 70 %. |
 | 14/11 13:35 — [Tendances, fiche d'un jour : la note telle que donnée](runs/2026-11-14-1335-tendances-fiche-jour-note.md) | 🔧 | Main vert. PR #970 du run précédent finie (build iOS verte, capture iPhone du Journal regardée : « Cœur au repos ») et mergée. POLISH-SIM-90 : « vous avez noté 3 · estimé avec le visage » à la place de « votre note 3,4 et le visage » ; digestion : « vous avez noté « douleur » (1) » ; PR #972. 3543 tests verts. Parité 70 %. |
 | 14/11 12:35 — [« Cœur au repos », « Oxygène du sang » : un seul nom](runs/2026-11-14-1235-coeur-au-repos-oxygene-du-sang.md) | 🔧 | Main vert, aucune PR ouverte. POLISH-SIM-86 : « Cœur au repos » et « Oxygène du sang » remplacent « FC au repos » et « SpO₂ » dans tous les textes, test de garde ; #971 mergée (v1047), 12 checks verts. Suivi iPhone : PR #970 (code embarqué v1044 → v1047, correctifs 17, 32, 56 et 57 refaits, 3902 tests verts), build macOS et captures à finir au run suivant. Release v718, APK 33,0 Mo. Parité 70 %. |
