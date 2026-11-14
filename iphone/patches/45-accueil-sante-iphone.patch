@@ -4,7 +4,7 @@ index 8668336..171949e 100644
 +++ b/app/src/config/permissionDisclosures.js
 @@ -142,7 +142,7 @@ if (FEATURES.iosStore) {
      points: [
-       `${APP_NAME} lit ce que votre montre, votre bague et vos applis santé écrivent dans l’app Santé : sommeil, pas, fréquence cardiaque, VFC, activité et quelques mesures (poids, température…). Il n’y écrit rien.`,
+       `${APP_NAME} lit ce que votre montre, votre bague et vos applis santé écrivent dans l’app Santé : sommeil, pas, fréquence cardiaque, variabilité cardiaque, activité et quelques mesures (poids, température…). Il n’y écrit rien.`,
        'iOS vous laisse choisir type par type : tout est facultatif.',
 -      'Les 30 derniers jours sont importés tout de suite, puis les nouvelles données au fil des jours.',
 +      'Les 6 derniers mois sont importés tout de suite, puis les nouvelles données au fil des jours.',

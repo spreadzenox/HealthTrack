@@ -818,7 +818,7 @@ describe('mode captures iOS : données de démo de l’iPhone', () => {
     ])
   })
 
-  it('la VFC de la démo est en SDNN, comme celle de l’app Santé (« VFC (SDNN) » dans le Journal et sur l’Accueil)', () => {
+  it('la VFC de la démo est en SDNN, comme celle de l’app Santé (« Variabilité cardiaque (SDNN) » dans le Journal et sur l’Accueil)', () => {
     const rmssd = { source: 'health_connect', type: 'heart_rate', payload: { value: 46, unit: 'ms', subtype: 'heartRateVariability', sourceName: 'Gadgetbridge' } }
     const resting = { source: 'health_connect', type: 'heart_rate', payload: { bpm: 61, subtype: 'restingHeartRate', sourceName: 'Gadgetbridge' } }
     expect(iphoneDemoEntries([rmssd, resting])).toEqual([

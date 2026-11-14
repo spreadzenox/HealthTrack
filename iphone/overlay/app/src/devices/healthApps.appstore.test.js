@@ -18,7 +18,7 @@ describe('« qui envoie quoi » avec la VFC de l’app Santé (SDNN, iPhone)', (
     expect(METRICS.find((m) => m.key === 'heartRateVariabilitySdnn').watch).toBeFalsy()
   })
 
-  it('une Apple Watch qui envoie la VFC (SDNN) : jamais « variabilité cardiaque » dans ce qui manque', () => {
+  it('une Apple Watch qui envoie la Variabilité cardiaque (SDNN) : jamais « variabilité cardiaque » dans ce qui manque', () => {
     const watch = [{ key: 'heartRate' }, { key: 'restingHeartRate' }, { key: 'heartRateVariabilitySdnn' }, { key: 'sleep' }, { key: 'steps' }]
     expect(missingWatchMetrics(watch)).toEqual(['oxygène du sang'])
     expect(missingWatchMetrics([{ key: 'heartRate' }, { key: 'sleep' }, { key: 'steps' }])).toEqual(['cœur au repos', 'variabilité cardiaque', 'oxygène du sang'])
