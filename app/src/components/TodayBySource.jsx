@@ -110,7 +110,7 @@ export default function TodayBySource({
       </div>
       {!todayBySource.hasWatch(groups) && (
         <Link to="/connectors" className="today-sources-add">
-          Ajouter une montre
+          Ajouter un appareil
           <LineIcon name="chevron" size={16} />
         </Link>
       )}
