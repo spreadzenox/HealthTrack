@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-14",
+  "kind": "correctif",
+  "title": "Accueil : « Continuer », et « vos appareils »",
+  "items": [
+    "Sans connexion aux données de santé du téléphone, le bouton de l'accueil disait « Continuer sans ». Il dit « Continuer ».",
+    "La première phrase de l'accueil parlait de « votre montre » à tout le monde. Elle dit « vos appareils »."
+  ]
+}

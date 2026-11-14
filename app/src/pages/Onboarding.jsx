@@ -66,7 +66,7 @@ function TutoIllustration() {
   const pills = [
     { label: 'Repas', cls: 'onb-pill--meal' },
     { label: 'Sommeil', cls: 'onb-pill--sleep' },
-    { label: 'Montre', cls: 'onb-pill--activity' },
+    { label: 'Appareils', cls: 'onb-pill--activity' },
     { label: 'Ressenti', cls: 'onb-pill--wellbeing' },
   ]
   return (
@@ -112,7 +112,7 @@ function TutoStep({ card, onCard }) {
         <>
           <TutoIllustration />
           <h1 className="onb-title">Bienvenue dans {APP_NAME}</h1>
-          <p className="onb-lead">Vos repas, votre sommeil, votre montre et votre ressenti, au même endroit.</p>
+          <p className="onb-lead">Vos repas, votre sommeil, vos appareils et votre ressenti, au même endroit.</p>
         </>
       )}
       {card === 1 && (
@@ -851,7 +851,6 @@ export default function Onboarding() {
 
   let footerLabel = 'Continuer'
   if (step === 'tuto') footerLabel = card < TUTO_CARDS - 1 ? 'Suivant' : 'Commencer'
-  if (step === 'found' && state.health !== 'granted') footerLabel = 'Continuer sans'
   if (step === 'first' && firstChosen && !firstSaved) footerLabel = 'Enregistrer'
   const faceUndecided = step === 'face' && state.face == null && !isFaceSenseEnabled()
   const showFooter = !(step === 'premium' && !launch) && !faceUndecided

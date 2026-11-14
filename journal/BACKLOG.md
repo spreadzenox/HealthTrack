@@ -692,8 +692,13 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   Journal avant le merge de #970.
 - [ ] **POLISH-SIM-86b** « FC » (tuile du Journal, « FC nuit », « FC automatique ») à côté de « fréquence cardiaque »
   et « cœur » dans Sources : choisir un nom, même méthode.
-- [ ] **POLISH-SIM-87** Accueil, écran 04/06 : bouton « Continuer sans » (sans quoi ?) ; l'écran 01 parle de « votre
-  montre » à tout le monde.
+- [x] **POLISH-SIM-87** Accueil, écran 04/06 : bouton « Continuer sans » (sans quoi ?) ; l'écran 01 parle de « votre
+  montre » à tout le monde. **Fait le 14/11 15:35** : le bouton dit « Continuer » ; la première phrase dit « vos
+  appareils » et la pastille de l'illustration « Appareils » (`Onboarding.jsx`). Reste **POLISH-SIM-87b** : l'écran 04/06 ne dit
+  rien d'une balance à qui a refusé Health Connect ; dans la variante play une balance n'arrive que par Health
+  Connect (carte Withings absente, POLISH-SIM-89) : à vérifier, puis une ligne courte près de « Connecter Health
+  Connect » (« montre, bague, balance »). iPhone : code partagé, les correctifs 23, 45, 52 et 55 ne touchent pas ces lignes ; arrive au prochain
+  suivi du code embarqué.
 - [ ] **POLISH-SIM-88** (à vérifier) Tendances › Jour dit « Aucune lecture du visage ce jour-là » alors qu'une note
   existe ; « + » rond de la carte Pas d'Aujourd'hui sans effet visible ; « repas incomplets ? » du Journal ne réagit
   pas ; « Dépense 2 352 kcal » sans explication.
