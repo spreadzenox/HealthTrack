@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { loadConfig } from '../src/config.js'
 
 // Le déploiement du 22/10 (#278) a échoué : le séparateur « ^@^ » de --set-env-vars coupait l'adresse e-mail de
 // relay-runtime. On relit la ligne du workflow comme gcloud (gcloud topic escaping) et on vérifie chaque variable.
@@ -50,6 +51,12 @@ test('workflow relais : Gold sur le dernier Flash de la zone eu, réflexion MEDI
   // Gold puis son secours tiennent dans les 60 s de Cloud Run
   assert.ok(Number(vars.GOLD_TIMEOUT_MS) + Number(vars.VERTEX_TIMEOUT_MS) < 60_000)
   assert.match(workflow, /--timeout=60/)
+})
+
+test('workflow relais : GOLD_INSTALLS ne liste que l’installation confirmée par le propriétaire (P37, GOLD-a3-2)', () => {
+  const vars = Object.fromEntries(envVars().map((item) => item.split(/=(.*)/s).slice(0, 2)))
+  // Empreinte de 12 caractères (hashInstallId), rien de personnel ; une de plus donnerait Gold à un testeur
+  assert.deepEqual(loadConfig({ GOLD_INSTALLS: vars.GOLD_INSTALLS }).goldInstalls, ['5e4a69f72ffb'])
 })
 
 test('workflow relais : bilan des analyses IA (GOLD-a2) qui sépare la CI et lit les secours Gold', () => {

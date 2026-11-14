@@ -36,14 +36,20 @@ retour à la routine.
 
 ## Index (classement du 12/11, détail dans `PRODUIT.md` § 4)
 
+> Depuis le 14/11, une mission qui se passe dans la Play Console ou la console Google Cloud est faite par
+> l'orchestrateur (navigateur piloté, compte Google dédié aux droits d'administrateur), quand le propriétaire le lui
+> écrit ; le résumé de la semaine la range sous « À faire par l'orchestrateur ». Restent au propriétaire : Apple
+> (PI1, PI2), son téléphone, ses réponses, et tout ce qui l'engage (envoi pour examen, production, paiement,
+> signature, identité : la mission prépare alors tout jusqu'à ce bouton).
+
 | Mission | Objet | Voie | Quand |
 |---|---|---|---|
-| [P43](P43.md) | Activer l'API qui lit les plantages (Android vitals) | b | maintenant |
-| [P46](P46.md) | Expiration des avis au bout de 90 jours (Firestore `feedback`) | b | maintenant |
-| [P39](P39.md) | Expiration des clés App Attest (Firestore `appattest`) | b | maintenant (pas urgent) |
+| [P43](P43.md) | Activer l'API qui lit les plantages (Android vitals) | b | ✅ fait le 14/11 par l'orchestrateur |
+| [P46](P46.md) | Expiration des avis au bout de 90 jours (Firestore `feedback`) | b | ✅ fait le 14/11 par l'orchestrateur |
+| [P39](P39.md) | Expiration des clés App Attest (Firestore `appattest`) | b | ✅ fait le 14/11 par l'orchestrateur |
 | [P29](P29.md) | Retirer le rôle Éditeur du compte de service Compute par défaut | b | maintenant (pas urgent) |
 | [P34](P34.md) | Vérifier l'enregistrement de Halcya (vérification des développeurs Android) | b | maintenant (pas urgent) |
-| [P45](P45.md) | Adresse de commentaires du test fermé, puis relevé anonyme des commentaires des testeurs | b | maintenant, puis jours 4, 8, 11 |
+| [P45](P45.md) | Adresse de commentaires du test fermé, puis relevé anonyme des commentaires des testeurs | b | ✅ adresse en place (13/11) ; relevés du 16/11 et du 19/11 par l'orchestrateur |
 | [ETAT-PLAY](ETAT-PLAY.md) | Relevé de l'état d'examen des pistes Alpha et test interne | b | quand le résumé le demande |
 | [P48](P48.md) | Ajouter « Menstruation » à la déclaration Health Connect | b puis c | **pas encore** (« P48 maintenant » en tête du résumé) |
 | [P30](P30.md) | Demander l'accès à la production | b puis c | au jour 14 du test fermé |
