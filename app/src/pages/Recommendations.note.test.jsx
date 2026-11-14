@@ -27,6 +27,23 @@ const day14 = (factors) => ({
     },
   },
 })
+/** Digestion avant les premiers résultats : le compte à rebours. */
+const gutLocked = () => ({
+  outcomes: {
+    digestion: {
+      status: 'locked', beatsPersistence: false, daysToFirst: 14,
+      horizons: {
+        short: h('short', 'Court terme', 'le jour même et la veille', 'locked', [], 28),
+        medium: h('medium', 'Moyen terme', 'de 2 à 6 jours avant', 'locked', [], 35),
+        long: h('long', 'Long terme', 'de 7 à 27 jours avant', 'locked', [], 56),
+      },
+    },
+  },
+})
+const gutNote = (at, level, scope) => ({ id: at, type: 'gut', at, payload: { level, ...(scope ? { scope } : {}) } })
+const renderGut = (notes) => render(
+  <MemoryRouter><Recommendations view="gut" read={async () => gutLocked()} readGut={async () => notes} /></MemoryRouter>,
+)
 const renderPage = (results) => render(
   <MemoryRouter><Recommendations read={async () => results} /></MemoryRouter>,
 )
@@ -60,5 +77,34 @@ describe('POLISH-SIM-62 : Analyses au premier jour de résultats', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
     expect(await screen.findByRole('status')).toHaveTextContent(/^Noté : 4\/5$/)
     expect(screen.queryByRole('dialog')).toBeNull()
+  })
+})
+
+describe('POLISH-SIM-82 : Analyses › Digestion en attente, digestion du jour déjà notée', () => {
+  beforeEach(() => localStorage.clear())
+  const today = (h) => { const d = new Date(); d.setHours(h, 0, 0, 0); return d.toISOString() }
+  const yesterday = () => new Date(Date.now() - 86_400_000).toISOString()
+
+  it('aucune note aujourd’hui : « Noter maintenant »', async () => {
+    renderGut([gutNote(yesterday(), 'discomfort')])
+    expect(await screen.findByRole('button', { name: 'Noter maintenant' })).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/Noté aujourd/)
+  })
+
+  it('une note aujourd’hui : « Noté aujourd’hui » avec le niveau, et « Ajouter une note »', async () => {
+    renderGut([gutNote(today(0), 'discomfort'), gutNote(yesterday(), 'pain')])
+    expect(await screen.findByTestId('reco-noted-today')).toHaveTextContent(/^Noté aujourd’hui : Gêne$/)
+    expect(screen.queryByRole('button', { name: 'Noter maintenant' })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Ajouter une note' })).toBeInTheDocument()
+  })
+
+  it('plusieurs notes et le bilan du jour : chaque niveau une fois, dans l’ordre', async () => {
+    renderGut([gutNote(today(0), 'calm', 'day'), gutNote(today(0), 'pain'), gutNote(today(0), 'pain')])
+    expect(await screen.findByTestId('reco-noted-today')).toHaveTextContent(/^Noté aujourd’hui : Calme, Douleur$/)
+  })
+
+  it('lecture des notes impossible : le bouton habituel reste', async () => {
+    render(<MemoryRouter><Recommendations view="gut" read={async () => gutLocked()} readGut={() => { throw new Error('x') }} /></MemoryRouter>)
+    expect(await screen.findByRole('button', { name: 'Noter maintenant' })).toBeInTheDocument()
   })
 })

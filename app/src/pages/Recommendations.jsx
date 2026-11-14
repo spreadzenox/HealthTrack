@@ -22,6 +22,9 @@ import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
 import { isExampleMode } from '../storage/exampleMode'
 import { THEME_TONE, pistesTitles, resultsView } from '../services/resultsView'
+import { readGutNotes } from '../services/gutNotes'
+import { GUT_LEVELS, GUT_TYPE } from '../services/today'
+import { localDateKey } from '../services/analysisEngine'
 import { eveningNotePlugin } from '../services/eveningNote'
 import { APP_NAME } from '../config/brand'
 import { FEATURES } from '../config/distribution'
@@ -52,7 +55,14 @@ function rememberTitles(results) {
   }
 }
 
-function Countdown({ outcome, view, onNote, onReminder }) {
+/** POLISH-SIM-82 : les niveaux notés aujourd'hui (notes au fil de l'eau et bilan du jour), dans l'ordre de l'échelle. */
+function gutLevelsToday(gutEntries, now = new Date()) {
+  const today = localDateKey(now.toISOString())
+  const seen = new Set((gutEntries || []).filter((e) => e?.type === GUT_TYPE && e.at && localDateKey(e.at) === today).map((e) => e.payload?.level))
+  return GUT_LEVELS.filter((l) => seen.has(l.id)).map((l) => l.label)
+}
+
+function Countdown({ outcome, view, onNote, onReminder, notedToday = [] }) {
   const w = WORDS[outcome]
   const n = view.daysLeft
   const title = n != null && n > 0
@@ -78,7 +88,14 @@ function Countdown({ outcome, view, onNote, onReminder }) {
           Il faut aussi <span className="mono">{view.symptoms.need}</span> jours avec une gêne ou une douleur notée : vous en avez <span className="mono">{view.symptoms.have}</span>.
         </p>
       )}
-      <button type="button" className="reco-cta" onClick={onNote}>Noter maintenant</button>
+      {notedToday.length > 0 ? (
+        <>
+          <p className="reco-noted" role="status" data-testid="reco-noted-today">Noté aujourd’hui : {notedToday.join(', ')}</p>
+          <button type="button" className="reco-cta is-secondary" onClick={onNote}>Ajouter une note</button>
+        </>
+      ) : (
+        <button type="button" className="reco-cta" onClick={onNote}>Noter maintenant</button>
+      )}
       {outcome === 'wellbeing'
         ? onReminder && <button type="button" className="reco-cta is-secondary" onClick={onReminder}>Recevoir un rappel</button>
         : <GutEveningReminder />}
@@ -248,7 +265,7 @@ function HowItWorks() {
   )
 }
 
-export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults') }) {
+export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults'), readGut = readGutNotes }) {
   const outcome = view === 'gut' ? 'digestion' : 'wellbeing'
   const [results, setResults] = useState(() => peekAnalysis('analysisResults').result ?? null)
   const [error, setError] = useState(null)
@@ -258,6 +275,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const [ent] = useEntitlement()
   const navigate = useNavigate()
   const [showGut] = useState(() => gutCardMode() !== 'hide')
+  const [gutToday, setGutToday] = useState([])
 
   useEffect(() => {
     const onUpdate = () => setRevision((r) => r + 1)
@@ -277,6 +295,18 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       alive = false
     }
   }, [read, revision])
+
+  useEffect(() => {
+    if (outcome !== 'digestion') return undefined
+    let alive = true
+    Promise.resolve()
+      .then(readGut)
+      .then((list) => alive && setGutToday(gutLevelsToday(list)))
+      .catch(() => alive && setGutToday([]))
+    return () => {
+      alive = false
+    }
+  }, [outcome, readGut, revision])
 
   const v = results ? resultsView(results.outcomes?.[outcome]) : { state: 'loading' }
   // Version Play sans abonnement (hors période de lancement) : les pistes restent floues, comme avant
@@ -299,7 +329,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       {v.state === 'loading' && !error && (
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul des analyses…</p></div>
       )}
-      {v.state === 'locked' && <Countdown outcome={outcome} view={v} onNote={onNote} onReminder={onReminder} />}
+      {v.state === 'locked' && <Countdown outcome={outcome} view={v} onNote={onNote} onReminder={onReminder} notedToday={outcome === 'digestion' ? gutToday : []} />}
       {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} />}
       {outcome === 'digestion' && v.state === 'results' && <DoctorReportCard />}
       <HowItWorks />
