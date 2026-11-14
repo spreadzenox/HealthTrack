@@ -681,11 +681,11 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   garde `src/data/measureNames.test.js` (ni « SpO₂ », ni « saturation en oxygène », ni « FC au repos / FC repos »
   hors commentaires, Nouveautés passées et `huawei/sync.js`). Dans le Journal, « Cœur au repos » tient sur deux
   lignes (une avant). La tuile « FC » (fourchette du jour) et « FC nuit » gardent leur nom : **POLISH-SIM-86b**.
-- [ ] **POLISH-SIM-86-iOS** Porter ces noms sur iPhone au suivi de cette version : les correctifs 17, 32, 56 et 57 ne
-  s'appliquent plus (lignes de contexte de `journalChips.js`, `analysisEngine.js`, `trendsData.js`,
-  `dayDeviations.js`) ; « SpO₂ » ou « FC au repos » restent dans les correctifs 20 et 21, dans
-  `BaselineCards.appstore.test.jsx` et `sdnnRadar.test.js` de l'overlay. Le test de garde doit être vert sur le code
-  embarqué.
+- [x] **POLISH-SIM-86-iOS** Porter ces noms sur iPhone au suivi de cette version. **Fait le 14/11 12:35** (PR #970,
+  code embarqué v1047) : correctifs 17, 32, 56 et 57 refaits (seules leurs lignes de contexte disaient « FC au
+  repos », « SpO₂ », « Saturation en oxygène ») ; les correctifs 20 et 21 et deux tests de l'overlay ne les disent
+  qu'en commentaire ; test de garde vert sur le code embarqué (3902 tests). Reste à regarder les captures iPhone du
+  Journal avant le merge de #970.
 - [ ] **POLISH-SIM-86b** « FC » (tuile du Journal, « FC nuit », « FC automatique ») à côté de « fréquence cardiaque »
   et « cœur » dans Sources : choisir un nom, même méthode.
 - [ ] **POLISH-SIM-87** Accueil, écran 04/06 : bouton « Continuer sans » (sans quoi ?) ; l'écran 01 parle de « votre
