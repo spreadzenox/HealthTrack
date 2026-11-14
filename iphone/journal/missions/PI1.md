@@ -1,5 +1,12 @@
 # Mission PI1 — Relevé : ce qu'Apple reproche aux abonnements
 
+> ✅ **Faite le 14/11 vers 17:15** (Claude dans Chrome, lecture seule). Relevé : aucun message rouge ou orange, aucune
+> section incomplète, dans le groupe Halcya comme dans les trois abonnements, tous à l'état « Prepare for
+> Submission ». Seul message, en bleu : « Your first subscription group must be submitted with a new app version ».
+> Sur la page de la version 844, la section « Achats intégrés et abonnements » n'apparaît pas ; chaque abonnement a un
+> bouton « Add for Review », non touché. Encadré bleu « Declare Your Regulated Medical Device » sur la même page.
+> Rien à corriger par l'API. Suite : [PI2](PI2.md), réécrite le 14/11 d'après ce relevé.
+
 - **Voie** : b (mission navigateur), en **lecture seule**, puis a (la routine corrige par l'API). Voie a seule écartée :
   l'API d'App Store Connect dit les trois abonnements « MISSING_METADATA » sans dire quoi ; tout ce qu'elle expose est
   rempli (relevés du 3 au 6/11 : noms, descriptions, prix dans les 5 pays, essai de 2 semaines, capture pour l'examen,

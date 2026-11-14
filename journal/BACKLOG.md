@@ -1170,7 +1170,11 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     puis `GOLD_INSTALLS=<empreinte>` dans `relay-deploy.yml` (GOLD-a3-2), avant le 27/11.
   - [x] **GOLD-a3-2** (14/11 17:35, « P37 oui confirmé » du 14/11 vers 16:50) : `GOLD_INSTALLS=5e4a69f72ffb` dans
     `relay-deploy.yml`, test de garde dans `relay/test/workflow.test.js` (la liste ne contient que cette empreinte).
-  - [ ] **GOLD-a3-3** (avant le 02/12, fin de la période de lancement) : aujourd'hui `GOLD_INSTALLS` ne change que le
+  - [x] **GOLD-a3-3** (14/11 18:35 : fait avec P44-1, `offeredFor` dans `relay/src/billing.js` ; une empreinte de
+    `GOLD_INSTALLS` a une période offerte sans fin : `premium: true`, `tier: 'gold'`, `source: 'launch'`,
+    `launchUntil: null`, 20 analyses par jour ; l'app dit alors « Gold offert pendant le test : vous n'avez rien à
+    payer. », texte à revoir pour lui avec P44-3 ; pas vérifié sur son téléphone, sans effet avant le 02/12)
+    (avant le 02/12, fin de la période de lancement) : aujourd'hui `GOLD_INSTALLS` ne change que le
     modèle servi (`tierOf` dans `relay/src/server.js`). Hors période, l'installation listée reste « gratuite » pour
     les crédits (`credits.take` avec `premium: false`) et pour l'app (`verifyResponse` de `relay/src/billing.js` rend
     `premium: false` : paywall, pas de « Gold »). À faire : l'installation listée reçoit les droits Gold complets
@@ -1180,7 +1184,10 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
 - [ ] **P44 — un mois de Gold en plus pour les testeurs actifs** (« P44 oui », propriétaire, 14/11 vers 16:50) :
   Gold jusqu'au 27/12 pour les installations qui ont analysé au moins un repas pendant le test, sans carte ni donnée
   personnelle, sous les plafonds du budget ; jamais lié à un avis (règles Play). À livrer avant le 02/12.
-  - [ ] **P44-1** (relais) : une période offerte par installation, par empreinte (`hashInstallId`, 12 caractères) :
+  - [x] **P44-1** (14/11 18:35 : clé `offered` de `relay/src/launch-period.json`, `{ until: "2026-12-27T23:00:00Z",
+    installs: [] }` ; la liste est vide, personne n'en bénéficie encore : P44-2 la remplit le 02/12 au matin ;
+    `relay/test/offered.test.js`, 6 tests ; jamais pour une requête iPhone ; pendant la période générale, la date
+    affichée reste le 02/12) (relais) : une période offerte par installation, par empreinte (`hashInstallId`, 12 caractères) :
     liste et date de fin (« 2026-12-27T23:00:00Z ») dans un fichier du relais ou une variable du déploiement ;
     `verifyResponse` rend `premium: true`, `tier: 'gold'`, `source: 'launch'` et `launchUntil` à cette date pour
     ces installations une fois la période générale finie ; crédits et modèle suivent ; plafonds inchangés
@@ -1352,7 +1359,8 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
   « Votre avis — résumé », `scripts/play/reviews.mjs`, 10 tests : étoiles, moyenne, versions, Android, thèmes de
   « Votre avis », avis répondus et avis ≤ 3 étoiles sans réponse ; jamais le texte, le nom, l'identifiant ni
   l'appareil ; 403 → geste « Répondre aux avis » ; aucun avis tant que l'app n'est pas en production). Plantages :
-  VITALS-1 (attend P43).
+  VITALS-1 (P43 faite le 14/11 ; vérifié au « Play — AAB » du 14/11 à 18:20, v1056 : la lecture répond,
+  « Aucun plantage ni ANR signalé par Google sur 30 jours »).
 - [ ] **VENTRE-BE-1** (retour (3), étude I220) ~~d'ici la réponse du propriétaire : chaque piste dit « Ventre » ou
   « Bien-être » (étiquette pêche / menthe)~~ ✅ 04/11 21:35 (`DomainTag`, Analyses) ; **I220 OUI (propriétaire, 05/11)** :
   → ~~**VENTRE-BE-2** : une note « gêne » ou « douleur » entre dans l'estimation du bien-être comme

@@ -1,7 +1,11 @@
 {
-  "_lisez-moi": "Période de lancement (P23 ②) : premium offert à toute installation de la variante play, sans achat, du « from » (inclus) au « until » (exclu), heure UTC au format ISO. « until » vide = aucune période. « iosUntil » arrête la période plus tôt pour l'app iPhone seulement (décision du 02/11 : l'écran d'achat doit s'afficher pendant l'examen d'Apple ; vide = même date que until). « off »: true coupe tout de suite la période (pour retester l'abonnement). Modifier ce fichier sur main redéploie le relais en quelques minutes, sans mise à jour de l'app. Voir journal/PRODUIT.md (P23).",
+  "_lisez-moi": "Période de lancement (P23 ②) : premium offert à toute installation de la variante play, sans achat, du « from » (inclus) au « until » (exclu), heure UTC au format ISO. « until » vide = aucune période. « iosUntil » arrête la période plus tôt pour l'app iPhone seulement (décision du 02/11 : l'écran d'achat doit s'afficher pendant l'examen d'Apple ; vide = même date que until). « off »: true coupe tout de suite la période (pour retester l'abonnement). Modifier ce fichier sur main redéploie le relais en quelques minutes, sans mise à jour de l'app. Voir journal/PRODUIT.md (P23). « offered » (P44) : une fois la période finie, les installations dont l'empreinte (12 caractères, comme dans les journaux du relais) est dans « installs » gardent Gold jusqu'à « offered.until » (exclu) ; jamais pour l'app iPhone ; rien de personnel dans cette liste.",
   "from": "2026-10-25T12:00:00Z",
   "until": "2026-12-02T23:00:00Z",
   "iosUntil": "2026-11-06T23:00:00Z",
-  "off": false
+  "off": false,
+  "offered": {
+    "until": "2026-12-27T23:00:00Z",
+    "installs": []
+  }
 }

@@ -418,9 +418,19 @@
     sous-onglets d'Analyses (Android v786, 5/11) : l'écran « Vos analyses » (capture 2) n'y a pas la rangée Bien-être,
     Ventre, FODMAP, Tendances. Rien d'obligatoire pour Apple (les captures montrent l'app, pas une version exacte) ;
     à refaire seulement si la build finale change l'allure d'un écran montré ;
-  - [ ] **12/11 : mission PI1** (`journal/missions/PI1.md`, lecture seule dans App Store Connect par Claude dans Chrome,
-    décision du propriétaire de 16:15) : relever ce que la page de chaque abonnement signale ; puis corriger par l'API
-    (`store-subscriptions.yml`). Soumission préparée par la mission PI2, arrêt avant « Ajouter pour examen ».
+  - [x] **12/11 : mission PI1** (`journal/missions/PI1.md`, lecture seule dans App Store Connect par Claude dans Chrome,
+    décision du propriétaire de 16:15) : **faite le 14/11 vers 17:15**. Apple ne signale rien (ni rouge ni orange,
+    aucune section incomplète) ; les trois abonnements sont à « Prepare for Submission » ; seul message : « Your first
+    subscription group must be submitted with a new app version ». Rien à corriger par l'API : le `MISSING_METADATA`
+    de l'API n'est donc pas un manque à combler (état de l'API non relu le 14/11).
+  - [ ] **14/11 : mission PI2 réécrite** d'après ce relevé (run de 18:35) : la section « Achats intégrés et
+    abonnements » manque sur la page de la version 844, la mission passe par « Add for Review » de chaque abonnement
+    et s'arrête avant « Submit for Review » ; partie A, déclaration « Regulated Medical Device » préparée sur « No »,
+    arrêt avant « Save ». Écrans non vus par la routine (aide d'Apple et relevé PI1 seulement). À lancer par le
+    propriétaire le jour de la soumission.
+  - [ ] **Avant la soumission, à trancher par la routine** : les adresses de `notes-examen.md` et de la fiche pointent
+    encore vers le site de l'ancien dépôt (`spreadzenox.github.io/HealthTrack-iOS/`), qui doit rester en ligne
+    (`iphone/README.md`, « Site ») ; les vérifier (200) le jour de PI2, ou les déménager avant.
   - [ ] (6/11 10:10 et 16:05, Paris) toujours `MISSING_METADATA` ; forum d'Apple (fils 815654, 820990) : cause la plus
     citée, la localisation du **groupe** (la nôtre existe, fr-FR « Halcya ») ; question au propriétaire précisée
     (`POUR-ORCHESTRATEUR.md`, 16:10).
