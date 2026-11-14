@@ -123,6 +123,7 @@ Une ligne par livraison Android reportée ici (date, PR `[Auto]`, ce que ça cha
 
 | Date | PR Android | Ce que ça demande côté iOS | État |
 |---|---|---|---|
+| 14/11 11:35 | PR du run de 11:35 | POLISH-SIM-82b : Analyses › Bien-être en attente dit « Noté aujourd'hui : 4/5 » quand le bien-être du jour est noté (`Recommendations.jsx`). Code partagé, aucun correctif iPhone sur ce fichier. | à reprendre au prochain suivi (`upstream.json` en v1044) |
 | 14/11 10:35 | PR du run de 10:35 (v1044) | POLISH-SIM-82 : Analyses › Digestion en attente dit « Noté aujourd'hui » quand la digestion du jour est notée (`Recommendations.jsx`). Code partagé, aucun correctif iPhone sur ce fichier. | embarqué (`upstream.json` en v1044, 52 correctifs sans retouche) ; build simulateur et captures d'Analyses à regarder avant le merge |
 | 14/11 09:35 | PR du run de 09:35 (v1043) | POLISH-SIM-81 : Tendances, une mesure touchée en vue Jour s'ouvre en Semaine si elle y a une courbe, sinon en Mois (`TrendsViewer.jsx`). Code partagé, aucun correctif iPhone sur ce fichier. | embarqué (`upstream.json` en v1044) ; capture de Tendances à regarder avant le merge |
 | 14/11 06:35 | PR du run de 06:35 (v1040) | POLISH-SIM-77 : sous un repas, le détail déplié d'une ligne « Riche en… » est en clair (`MealFodmapLine.jsx` et `.css`). Code partagé, aucun correctif iPhone sur ce fichier ; note de Nouveautés `2026-11-14-0635-repas-fodmap-detail-en-clair` pour tous. Pas encore embarqué : `upstream.json` reste en v1037 jusqu'au « Play — AAB » vert de ce merge | ⏳ (prochain suivi) |
