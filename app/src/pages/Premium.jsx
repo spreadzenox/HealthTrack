@@ -147,10 +147,10 @@ export default function Premium({ context = null, onClose = null }) {
         )}
       </div>
 
-      <h2 className="paywall-title">{launch ? 'Gold offert pendant le test' : 'Comprendre vos bons et mauvais jours'}</h2>
+      <h2 className="paywall-title">{launch ? (ent.launchUntil ? 'Gold offert pendant le test' : 'Gold offert') : 'Comprendre vos bons et mauvais jours'}</h2>
       <p className="paywall-lead">
         {launch
-          ? `Merci de tester l’app ! ${ent.launchUntil ? `Jusqu’au ${lastLaunchDay(ent.launchUntil)}, tout` : 'Tout'} ce qui suit est débloqué : vous n’avez rien à payer, aucune carte bancaire n’est demandée.`
+          ? `${ent.launchUntil ? `Merci de tester l’app ! Jusqu’au ${lastLaunchDay(ent.launchUntil)}, tout` : 'Tout'} ce qui suit est débloqué : vous n’avez rien à payer, aucune carte bancaire n’est demandée.`
           : onboarding
           ? <>Vos pistes arriveront vers le <Ordinal n={FIRST_RESULTS_DAY.wellbeing} /> jour de suivi. Le premium les débloque dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.</>
           : offeredTiers.length > 1
