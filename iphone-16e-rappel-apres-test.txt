@@ -1,0 +1,147 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=73903A6E-DECF-4552-ADBB-B4B1F348F51F "-only-testing:HalcyaUITests/NotificationsUITests/testToucherLeRappelDePortion"
+
+2026-11-14 07:02:34.228 xcodebuild[50744:139840] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-14 07:02:34.258 xcodebuild[50744:139840] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:73903A6E-DECF-4552-ADBB-B4B1F348F51F, OS:26.2, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:73903A6E-DECF-4552-ADBB-B4B1F348F51F, OS:26.2, name:iPhone 16e }
+2026-11-14 07:02:34.972 xcodebuild[50744:139840] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-14 07:02:38.762003+0000 HalcyaUITests-Runner[51447:141476] [Default] Running tests...
+2026-11-14 07:02:38.835721+0000 HalcyaUITests-Runner[51447:141558] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+    t =      nans Interface orientation changed to Portrait
+2026-11-14 07:02:40.290035+0000 HalcyaUITests-Runner[51447:141558] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+Test Suite 'Selected tests' started at 2026-11-14 07:02:40.413.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-14 07:02:40.415.
+Test Suite 'NotificationsUITests' started at 2026-11-14 07:02:40.415.
+Test Case '-[HalcyaUITests.NotificationsUITests testToucherLeRappelDePortion]' started.
+    t =     0.00s Start Test at 2026-11-14 07:02:40.417
+    t =     0.09s Set Up
+    t =     0.09s Pressing Home button
+    t =     1.16s Waiting 90.0s for Any (First Match) to exist
+    t =     2.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     2.18s         Checking existence of `Any (First Match)`
+    t =     2.33s         Capturing element debug description
+    t =     3.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.17s         Checking existence of `Any (First Match)`
+    t =     3.26s         Capturing element debug description
+    t =     4.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     4.17s         Checking existence of `Any (First Match)`
+    t =     4.30s         Capturing element debug description
+    t =     5.20s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     5.20s         Checking existence of `Any (First Match)`
+    t =     5.28s         Capturing element debug description
+    t =     6.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     6.17s         Checking existence of `Any (First Match)`
+    t =     6.23s         Capturing element debug description
+    t =     7.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     7.17s         Checking existence of `Any (First Match)`
+    t =     7.22s         Capturing element debug description
+    t =     8.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     8.17s         Checking existence of `Any (First Match)`
+    t =     8.23s         Capturing element debug description
+    t =     9.19s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     9.19s         Checking existence of `Any (First Match)`
+    t =     9.23s         Capturing element debug description
+    t =    10.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    10.17s         Checking existence of `Any (First Match)`
+    t =    10.21s         Capturing element debug description
+    t =    11.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    11.17s         Checking existence of `Any (First Match)`
+    t =    11.22s         Capturing element debug description
+    t =    12.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    12.17s         Checking existence of `Any (First Match)`
+    t =    12.23s         Capturing element debug description
+    t =    13.18s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    13.18s         Checking existence of `Any (First Match)`
+    t =    13.23s         Capturing element debug description
+    t =    14.19s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    14.19s         Checking existence of `Any (First Match)`
+    t =    14.23s         Capturing element debug description
+    t =    15.19s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    15.19s         Checking existence of `Any (First Match)`
+    t =    15.24s         Capturing element debug description
+    t =    16.19s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    16.19s         Checking existence of `Any (First Match)`
+    t =    16.24s         Capturing element debug description
+    t =    17.19s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    17.19s         Checking existence of `Any (First Match)`
+    t =    17.24s         Capturing element debug description
+    t =    18.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    18.17s         Checking existence of `Any (First Match)`
+    t =    18.24s         Capturing element debug description
+    t =    19.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    19.17s         Checking existence of `Any (First Match)`
+    t =    19.23s         Capturing element debug description
+    t =    20.18s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    20.18s         Checking existence of `Any (First Match)`
+    t =    20.25s         Capturing element debug description
+    t =    21.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    21.17s         Checking existence of `Any (First Match)`
+    t =    21.24s         Capturing element debug description
+    t =    22.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    22.17s         Checking existence of `Any (First Match)`
+    t =    22.22s         Capturing element debug description
+    t =    23.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    23.17s         Checking existence of `Any (First Match)`
+    t =    23.29s         Capturing element debug description
+    t =    24.22s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    24.22s         Checking existence of `Any (First Match)`
+    t =    24.27s         Capturing element debug description
+    t =    25.22s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    25.22s         Checking existence of `Any (First Match)`
+    t =    25.28s         Capturing element debug description
+    t =    26.22s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    26.22s         Checking existence of `Any (First Match)`
+    t =    26.29s         Capturing element debug description
+    t =    27.23s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    27.24s         Checking existence of `Any (First Match)`
+    t =    27.29s         Capturing element debug description
+    t =    28.24s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    28.24s         Checking existence of `Any (First Match)`
+    t =    28.30s         Capturing element debug description
+    t =    29.25s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    29.25s         Checking existence of `Any (First Match)`
+    t =    29.31s         Capturing element debug description
+    t =    30.25s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    30.25s         Checking existence of `Any (First Match)`
+    t =    30.31s         Capturing element debug description
+    t =    31.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    31.17s         Checking existence of `Any (First Match)`
+    t =    31.27s         Capturing element debug description
+    t =    32.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    32.17s         Checking existence of `Any (First Match)`
+    t =    32.23s         Capturing element debug description
+    t =    33.17s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    33.17s         Checking existence of `Any (First Match)`
+    t =    33.22s         Capturing element debug description
+    t =    34.18s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    34.18s         Checking existence of `Any (First Match)`
+    t =    34.34s         Capturing element debug description
+    t =    35.22s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    35.23s         Checking existence of `Any (First Match)`
+    t =    35.29s Tap Any (First Match)
+    t =    35.29s     Wait for com.apple.springboard to idle
+    t =    36.13s     Find the Any (First Match)
+    t =    36.20s     Check for interrupting elements affecting "NotificationShortLookView" BannerNotification
+    t =    36.36s     Synthesize event
+    t =    37.40s     Wait for com.apple.springboard to idle
+    t =    38.17s Wait for fr.jpesquet.sante to become Running Foreground
+    t =    38.18s Tear Down
+Test Case '-[HalcyaUITests.NotificationsUITests testToucherLeRappelDePortion]' passed (38.720 seconds).
+Test Suite 'NotificationsUITests' passed at 2026-11-14 07:03:19.137.
+	 Executed 1 test, with 0 failures (0 unexpected) in 38.720 (38.723) seconds
+Test Suite 'HalcyaUITests.xctest' passed at 2026-11-14 07:03:19.139.
+	 Executed 1 test, with 0 failures (0 unexpected) in 38.720 (38.724) seconds
+Test Suite 'Selected tests' passed at 2026-11-14 07:03:19.140.
+	 Executed 1 test, with 0 failures (0 unexpected) in 38.720 (38.727) seconds
+2026-11-14 07:03:20.143 xcodebuild[50744:139840] [MT] IDETestOperationsObserverDebug: 45.159 elapsed -- Testing started completed.
+2026-11-14 07:03:20.144 xcodebuild[50744:139840] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-14 07:03:20.144 xcodebuild[50744:139840] [MT] IDETestOperationsObserverDebug: 45.159 sec, +45.159 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-cwnffqmlynmdxaesvjpbdiwyyrre/Logs/Test/Test-HalcyaUITests-2026.11.14_07-02-34-+0000.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
