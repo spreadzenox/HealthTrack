@@ -114,7 +114,7 @@ describe('Dashboard', () => {
     expect(await screen.findByRole('heading', { name: 'Vos données du jour' })).toBeInTheDocument()
     expect(screen.getByText('Pas').closest('li')).toHaveAttribute('data-tone', 'lilac')
     expect(screen.getByText('D’après votre téléphone.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Ajouter une montre/ })).toHaveAttribute('href', '/connectors')
+    expect(screen.getByRole('link', { name: /Ajouter un appareil/ })).toHaveAttribute('href', '/connectors')
     expect(screen.getByTestId('digest-block')).toBeInTheDocument()
     expect(screen.queryByTestId('pistes-card')).toBeNull()
     // TESTEUR-4b : le bouton est le libellé d'un champ photo arrière ; la photo prise part vers Repas.

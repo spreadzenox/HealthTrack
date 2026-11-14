@@ -65,9 +65,9 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
     expect(sourcesSentence(['watch', 'phone', 'noted'])).toBe('D’après votre montre, votre téléphone et vos notes.')
   })
 
-  it('sans montre : un lien discret vers Sources', () => {
+  it('sans montre : un lien discret vers Sources, qui vaut aussi pour une balance (POLISH-SIM-84b)', () => {
     wrap({ tiles: [tiles[2]] })
-    expect(screen.getByRole('link', { name: /Ajouter une montre/ })).toHaveAttribute('href', '/connectors')
+    expect(screen.getByRole('link', { name: /Ajouter un appareil/ })).toHaveAttribute('href', '/connectors')
   })
 
   it('notes du jour : digestion en pêche seulement avec « Ma digestion » ; le bien-être reste dans sa carte (POLISH-SIM-40)', () => {
@@ -122,6 +122,9 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
     expect(row).toHaveAttribute('data-tone', 'rose')
     expect(within(row).getByText('Poids')).toBeInTheDocument()
     expect(within(row).getByRole('link')).toHaveAttribute('href', '/tendances?mesure=weight')
+    // POLISH-SIM-84b : avec une balance et sans montre, le lien ne parle pas que de montre
+    expect(screen.getByRole('link', { name: /Ajouter un appareil/ })).toHaveAttribute('href', '/connectors')
+    expect(screen.queryByText(/Ajouter une montre/)).toBeNull()
     expect(screen.getByText('D’après votre balance.')).toBeInTheDocument()
   })
 
