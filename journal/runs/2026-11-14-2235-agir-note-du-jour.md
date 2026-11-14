@@ -52,7 +52,14 @@ soumission bêta avant la nuit prochaine ; 844.344 intacte  ·  **Parité** : 70
   `captures/pr-983` regardée : rien de cassé ; le lien « Ajouter un appareil » n'y figure pas (la démo a une
   montre). Mergée à 23:30 (20e43e0). L'envoi TestFlight de ce code part de ce merge.
 - **PR #987** (ce run) : checks verts sur le premier commit à 22:56 ; remise à jour sur main après #983, avec les
-  lignes de `PARITE.md` des runs de 21:35 et 22:35. État final : voir la PR.
+  lignes de `PARITE.md` des runs de 21:35 et 22:35. Checks verts sur la branche à jour (Tests, Build APK, cinq
+  émulateurs), mergée à 23:46 (0995beb).
+- Après le merge de #987 : Build & Release vert, **release v729 publiée, APK de 34,6 Mo** ; Play — AAB et Tests
+  verts ; émulateur A56 de main encore en cours à 23:56.
+- Après le merge de #983 : « iOS — TestFlight » et « iOS — modèles du visage » verts ; build iOS sur simulateur de
+  main encore en cours à 23:56. « iOS — TestFlight » a fini en 4 minutes : je n'ai pas lu son bilan, donc pas
+  vérifié qu'une build du code v1059 est bien partie chez Apple. À relever au prochain run.
+- Alpha de 23:45 : pas regardé (le cron part souvent avec plusieurs heures de retard).
 
 ## Suite
 - Suivi iPhone de cette version (upstream v1059 → dernière) ; vérifier l'envoi TestFlight parti du merge de #983.
