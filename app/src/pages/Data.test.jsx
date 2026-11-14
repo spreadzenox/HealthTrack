@@ -117,7 +117,7 @@ describe('Data page — export (web)', () => {
       fireEvent.click(screen.getByRole('button', { name: /Télécharger la sauvegarde/i }))
     })
     expect(capturedAnchor).not.toBeNull()
-    expect(capturedAnchor.download).toMatch(/^healthtrack-export-\d{4}-\d{2}-\d{2}\.json$/)
+    expect(capturedAnchor.download).toMatch(/^halcya-export-\d{4}-\d{2}-\d{2}\.json$/)
     expect(capturedAnchor.href).toBe('blob:fake-url')
   })
 
@@ -127,7 +127,7 @@ describe('Data page — export (web)', () => {
       fireEvent.click(screen.getByRole('button', { name: /Télécharger la sauvegarde/i }))
     })
     // POLISH-SIM-57 : le lieu du fichier n'est dit qu'une fois, après l'export, et jamais deux lieux différents.
-    expect(screen.getByText(/^healthtrack-export-\d{4}-\d{2}-\d{2}\.json téléchargé\.$/)).toBeInTheDocument()
+    expect(screen.getByText(/^halcya-export-\d{4}-\d{2}-\d{2}\.json téléchargé\.$/)).toBeInTheDocument()
     expect(screen.queryByText(/Documents/)).toBeNull()
   })
 
@@ -183,7 +183,7 @@ describe('Data page — export (Android native)', () => {
     const { Filesystem } = await import('@capacitor/filesystem')
     expect(Filesystem.writeFile).toHaveBeenCalledWith(
       expect.objectContaining({
-        path: expect.stringMatching(/^healthtrack-export-\d{4}-\d{2}-\d{2}\.json$/),
+        path: expect.stringMatching(/^halcya-export-\d{4}-\d{2}-\d{2}\.json$/),
       })
     )
   })
@@ -193,7 +193,7 @@ describe('Data page — export (Android native)', () => {
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /Télécharger la sauvegarde/i }))
     })
-    expect(screen.getByText(/healthtrack-export-.*\.json enregistré dans Documents/i)).toBeInTheDocument()
+    expect(screen.getByText(/halcya-export-.*\.json enregistré dans Documents/i)).toBeInTheDocument()
   })
 })
 
@@ -217,10 +217,10 @@ describe('Data page — import (aperçu puis choix)', () => {
     storage.importFromJson.mockResolvedValue({ imported: 3, skipped: 0, invalid: 0 })
   })
 
-  async function chooseFile() {
+  async function chooseFile(name = 'healthtrack-export-2026-10-01.json') {
     renderData()
     const input = screen.getByLabelText(/Choisir un fichier de sauvegarde/i)
-    const file = { name: 'healthtrack-export-2026-10-01.json', text: () => Promise.resolve('{"entries":[]}') }
+    const file = { name, text: () => Promise.resolve('{"entries":[]}') }
     await act(async () => {
       fireEvent.change(input, { target: { files: [file] } })
     })
@@ -235,6 +235,21 @@ describe('Data page — import (aperçu puis choix)', () => {
     expect(screen.getByText(/1 repas/)).toBeInTheDocument()
     expect(importFromJson).not.toHaveBeenCalled()
   })
+
+  // POLISH-SIM-73 : la sauvegarde porte le nom de la marque ; l'import ne regarde jamais le nom du fichier.
+  it.each(['healthtrack-export-2026-10-01.json', 'halcya-export-2026-11-14.json', 'sauvegarde (2).json'])(
+    'imports « %s » whatever its name',
+    async (name) => {
+      const { importFromJson } = await import('../storage/localHealthStorage')
+      importFromJson.mockResolvedValue({ imported: 3, skipped: 0, invalid: 0 })
+      await chooseFile(name)
+      expect(screen.getByText(/3 entrées/)).toBeInTheDocument()
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: /Ajouter à mes données/i }))
+      })
+      expect(importFromJson).toHaveBeenCalledWith('{"entries":[]}', { merge: true })
+    },
+  )
 
   it('« Ajouter » merges with the current data', async () => {
     const { importFromJson } = await import('../storage/localHealthStorage')

@@ -777,7 +777,7 @@ describe('sonde de l’export par la feuille de partage (I3)', () => {
       signal: vi.fn(async (name) => {
         calls.push(`capture ${name}`)
         // l'export écrit son fichier, puis « Enregistrer dans Fichiers › Garder les deux » en ajoute une copie
-        names = [...names, 'healthtrack-export-2026-10-28.json', 'healthtrack-export-2026-10-28 2.json']
+        names = [...names, 'halcya-export-2026-10-28.json', 'halcya-export-2026-10-28 2.json']
       }),
       waitAck: vi.fn(async () => true),
       wait: async () => {},

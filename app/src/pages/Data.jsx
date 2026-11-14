@@ -4,7 +4,7 @@ import { compactWatchSpo2Once } from '../services/spo2Slots'
 import { fixWatchKcalOnce } from '../services/watchKcalFix'
 import { deleteAllMyData } from '../services/deleteAllData'
 import { activityLevel } from '../services/nutrientReferenceIntakes'
-import { APP_NAME } from '../config/brand'
+import { APP_NAME, EXPORT_FILE_PREFIX } from '../config/brand'
 import DoctorReportCard from '../components/DoctorReportCard'
 import '../Food.css'
 import { appLocale, localeDate } from '../i18n/locale.js'
@@ -91,7 +91,7 @@ export default function Data() {
     setExportStatus(null)
     try {
       const json = await exportToJson()
-      const filename = `healthtrack-export-${new Date().toISOString().slice(0, 10)}.json`
+      const filename = `${EXPORT_FILE_PREFIX}${new Date().toISOString().slice(0, 10)}.json`
 
       if (await isAndroidNative()) {
         const { Filesystem, Directory } = await import('@capacitor/filesystem')

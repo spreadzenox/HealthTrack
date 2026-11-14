@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-14",
+  "kind": "correctif",
+  "title": "La sauvegarde s'appelle « halcya-export »",
+  "items": [
+    "Le fichier téléchargé depuis Vos données porte le nom de l'app, suivi de la date : halcya-export-2026-11-14.json.",
+    "Vos anciennes sauvegardes se restaurent comme avant, quel que soit leur nom."
+  ]
+}
