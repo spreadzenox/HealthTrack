@@ -46,7 +46,8 @@ nuit prochaine ; 844.344 intacte  ·  **Parité** : 70 % (33/47)
   Les captures ne jouent ni « Poids » en vue Jour ni une digestion notée le jour même : ces deux cas sont couverts
   par les tests du code partagé, verts avec les correctifs iPhone. Mergée à 11:55 (5ea019c) : l'iPhone embarque le
   code de la v1044.
-FIN_SUITE
+- La PR de ce run part après ce merge, branche à jour sur main ; ses checks (Vitest, Build APK, émulateurs) sont
+  attendus avant le merge. Release et taille de l'APK : au compte rendu suivant si le run s'arrête avant.
 
 ## Suite
 - Suivi iPhone du code de ce run au prochain passage (`scripts/upstream.sh --latest`), captures d'Analyses › Bien-être.
