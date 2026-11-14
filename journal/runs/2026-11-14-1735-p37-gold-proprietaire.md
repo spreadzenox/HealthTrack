@@ -33,7 +33,8 @@ refait à ce run ; aucune soumission bêta avant la nuit prochaine ; 844.344 int
 ## Vérifs
 - `relay` : `npm test`, 226 tests verts (225 avant). Le nouveau test échoue sans la variable (vérifié en retirant le
   changement du workflow).
-- `app` : `npm run test`, `npm run lint`, `npm run build` : voir « Fin du run ». `npm run visual` : voir « Fin du run ».
+- `app` (aucun fichier touché) : `npm run test`, 3548 verts, 44 ignorés ; `npm run lint`, aucune erreur ; `npm run build`
+  passe ; `npm run visual`, 18 pages « ok », aucune erreur JavaScript. Aucune capture regardée : aucun écran ne change.
 
 ## Limites
 - GOLD-a3-2 n'est pas vérifiée en production à l'écriture de ce compte rendu : le déploiement du relais part au
@@ -47,10 +48,16 @@ refait à ce run ; aucune soumission bêta avant la nuit prochaine ; 844.344 int
   PRODUIT.md § 4 (ligne du 14/11 17:35) et dans l'index des missions seulement.
 - Charte, PRODUIT, BACKLOG, PARITE lus par sections, pas en entier (plus de 1 Mo) ; `iphone/README.md` relu ;
   `iphone/journal/README.md` et `BACKLOG.md` iPhone, `DESIGN.md` et `INFRA.md` non relus à ce run.
-- Captures iPhone de #976 (`captures/pr-976`, accueil) : voir « Fin du run ».
+- Captures iPhone de #976 (`captures/pr-976`) : une seule regardée (accueil, écran 02/07 « Qu'est-ce qui vous
+  amène ? », normal). La première carte (« vos appareils ») et l'écran « Sans Santé » (« Continuer ») ne sont pas
+  dans les captures automatiques : le changement de #975 n'est pas vu sur iPhone.
 
 ## Fin du run
-- Voir le tableau du résumé de la semaine et la PR pour l'état final.
+- **PR #980** (ce run) : mergée une fois ses checks verts, avant la remise à jour de #976, pour que #976 ne
+  reprenne pas de retard ; déploiement du relais à vérifier après le merge (état final dans le tableau du résumé).
+- **PR #976** (suivi iPhone) : non mergée à ce run, parce qu'elle n'était plus à jour sur main. Remise à jour sur
+  main et code embarqué avancé au dernier « Play — AAB » vert (pesée du jour comprise) ; sa build macOS (près d'une
+  heure) est à finir au run suivant.
 
 ## Suite
 - GOLD-a3-3 puis P44-1 (même mécanisme), P44-2 sans attendre (durée de conservation des journaux), avant le 02/12.
