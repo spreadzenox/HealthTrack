@@ -1,7 +1,8 @@
 /**
  * Carte d'un repas (N4) : « Riche en fructanes : oignon », un groupe FODMAP par ligne, simple d'abord. Le chevron
- * montre les grammes estimés (une fourchette quand les mesures publiées divergent), le repère de départ et d'où
- * viennent les teneurs. Rien quand aucun groupe ne dépasse son repère (un groupe inconnu n'est jamais présenté comme
+ * montre les grammes estimés (une fourchette quand les mesures publiées divergent) et le repère de départ, en une
+ * phrase ; puis où se trouve le groupe et ce que le repère vaut ; les sources sur une ligne à part, en petit
+ * (POLISH-SIM-77 : « ≈ 0,73 g · repère 0,3 g », « Varney 2017 » n'étaient pas compris). Rien quand aucun groupe ne dépasse son repère (un groupe inconnu n'est jamais présenté comme
  * bas). Repères = hypothèses de départ (règle 6).
  */
 import { useState } from 'react'
@@ -17,6 +18,13 @@ import { appLocale } from '../i18n/locale.js'
 const LABELS = Object.fromEntries(FODMAP_GROUPS.map((g) => [g.id, g.label.toLowerCase()]))
 LABELS.gos = 'GOS'
 LABELS.fructose = 'fructose en excès'
+
+const ARTICLES = { fructans: 'les', gos: 'les', fructose: 'le', lactose: 'le', sorbitol: 'le', mannitol: 'le' }
+const HINTS = Object.fromEntries(FODMAP_GROUPS.map((g) => [g.id, g.hint]))
+/** « les fructanes (blé, oignon, ail) ou les GOS (pois chiches, lentilles) » */
+const groupsInWords = (highlights) => highlights
+  .map((h) => `${ARTICLES[h.group]} ${h.group === 'fructose' ? 'fructose' : LABELS[h.group]} (${HINTS[h.group]})`)
+  .join(' ou ')
 
 /** « Ciqual (Anses), Ferjančič 2024 » : les sources des teneurs affichées (attribution des licences CC BY). */
 function citeSources(highlights) {
@@ -44,8 +52,8 @@ export default function MealFodmapLine({ items }) {
               <span className="meal-fodmap-detail">
                 {h.high != null
                   ? <>{grams(h.g)} à {grams(h.high)} g selon les mesures publiées</>
-                  : <>≈ {grams(h.g)} g</>}
-                {' '}· repère {grams(h.cutoff)} g par repas{h.probable && h.high == null && ' · teneurs approchées'}
+                  : <>Environ {grams(h.g)} g</>}
+                , pour un repère de {grams(h.cutoff)} g par repas.{h.probable && h.high == null && ' Teneurs approchées.'}
               </span>
             )}
           </li>
@@ -53,10 +61,15 @@ export default function MealFodmapLine({ items }) {
       </ul>
       <DetailsToggle on={open} onToggle={() => setOpen((v) => !v)} />
       {open && (
-        <p className="meal-fodmap-note">
-          Repères généraux (Varney 2017), une hypothèse de départ : vos propres données priment. Teneurs :{' '}
-          {citeSources(highlights)}.
-        </p>
+        <>
+          <p className="meal-fodmap-note" data-testid="meal-fodmap-note">
+            Certaines personnes digèrent mal {groupsInWords(highlights)}, d’autres très bien. Le repère est une
+            hypothèse de départ : vos propres données priment.
+          </p>
+          <p className="meal-fodmap-sources" data-testid="meal-fodmap-sources">
+            Repères : Varney 2017. Teneurs : {citeSources(highlights)}.
+          </p>
+        </>
       )}
     </div>
   )

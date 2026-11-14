@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1039 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) et v1036 (05:46) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; envoi du code de la v1037 (« variabilité cardiaque ») lancé à 06:15 ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1040 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -22,6 +22,15 @@
   qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
+
+> 🍝 **Repas : le détail « Riche en fructanes » en clair (14/11 06:35)** : une persona dépliait la ligne pêche sous
+> un repas et lisait « ≈ 0,73 g · repère 0,3 g par repas », « Varney 2017 », « Ferjančič 2024 » sans comprendre ni le
+> mot ni les noms. Le détail dit maintenant la quantité en une phrase, puis où se trouve ce sucre (« blé, oignon,
+> ail ») et que certaines personnes le digèrent mal, d'autres très bien ; les sources restent citées, en petit, sur
+> la dernière ligne ([clair](runs/captures/2026-11-14-0635-repas-fodmap-detail-clair.png) ·
+> [sombre](runs/captures/2026-11-14-0635-repas-fodmap-detail-sombre.png)). La ligne repliée ne change pas. **Sur
+> iPhone** au prochain suivi du code (v1040) : aucun correctif iPhone ne touche cet écran. Le code de la v1037 est
+> parti sur TestFlight à 06:19. Rien à faire de votre côté.
 
 > 🫀 **iPhone : « variabilité cardiaque » aussi (14/11 05:35, fini à 06:15)** : la correction de 04:35 (ci-dessous)
 > est sur main depuis 05:41. Sur iPhone, la mesure de l'app Santé s'appelait « VFC (SDNN) » : elle s'appelle
@@ -712,6 +721,7 @@
 | Run | Type | Résultat |
 |---|---|---|
 | 14/11 02:35 — [Sauvegarde « halcya-export » ; iPhone en v1034](runs/2026-11-14-0235-sauvegarde-nom-halcya.md) | 🔧 | POLISH-SIM-73 : la sauvegarde s'appelle `halcya-export-AAAA-MM-JJ.json`, l'import ne dépend pas du nom (testé). iPhone : code embarqué v1032 → v1034, 52 correctifs sans retouche ; build TestFlight 1032.1033 envoyée à 01:41. Parité 70 %. |
+| 14/11 06:35 — [Repas : détail FODMAP en clair](runs/2026-11-14-0635-repas-fodmap-detail-en-clair.md) | 🔧 | #961 du run précédent mergée (journal). POLISH-SIM-77 : le détail d'une ligne « Riche en… » d'un repas dit la quantité en une phrase, où se trouve le groupe, et range les sources sur une ligne à part. iPhone : code embarqué inchangé (v1037, déjà le dernier « Play — AAB » vert) ; build TestFlight du code v1037 envoyée à 06:19. Parité 70 %. |
 | 14/11 05:35 — [iPhone : « variabilité cardiaque » ; v1037](runs/2026-11-14-0535-vfc-iphone.md) | 🔧 | PR #959 du run précédent finie (build iOS verte, captures regardées, mergée à 05:41). POLISH-SIM-72-iOS : sept correctifs iPhone refaits, « Variabilité cardiaque (SDNN) » ; code embarqué v1036 → v1037 ; test de garde vert sur le code embarqué. Parité 70 %. |
 | 14/11 04:35 — [« Variabilité cardiaque » : un seul nom ; iPhone en v1036](runs/2026-11-14-0435-variabilite-cardiaque-un-seul-nom.md) | 🔧 | POLISH-SIM-72 : « variabilité cardiaque » partout à la place de « VFC » (Aujourd'hui, Journal, Tendances, Analyses, Sources) ; test de garde. iPhone : code embarqué v1035 → v1036, 52 correctifs sans retouche ; le nouveau nom reste à porter dans les correctifs « VFC SDNN » (POLISH-SIM-72-iOS). Alpha du 13/11 au soir partie à 03:41. Parité 70 %. |
 | 14/11 03:35 — [Tendances, fiche d'un jour ; iPhone en v1035](runs/2026-11-14-0335-fiche-jour-ce-qui-pese.md) | 🔧 | POLISH-SIM-71 : « Ce qui a pu peser » dit la note concernée, masque les effets de moins de 0,05 pt, dit quand rien n'explique une note basse ; confort digestif « estimé, avec votre note ». iPhone : code embarqué v1034 → v1035, correctifs 06 et 12 refaits ; build TestFlight du code v1034 envoyée à 03:32. Parité 70 %. |
