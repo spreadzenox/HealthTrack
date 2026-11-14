@@ -164,8 +164,9 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
   instructions ; la routine range désormais ces missions sous « À faire par l'orchestrateur ». Fait : P45 et état de
   la piste Alpha (13/11), P43, P46 et P39 (14/11). À refaire : relevé P45 les 16/11 et 19/11. La machine se voit dans
   la liste des environnements (type « bridge »), pas dans celle des dossiers à attacher à la conversation.
-- **Questions de la routine au propriétaire**, à lui rappeler dans un bilan : P37 (empreinte de son installation),
-  P44 (remercier les testeurs, réponse avant le 20/11), Tendances › Jour, mission PI1 chez Apple.
+- **Questions de la routine au propriétaire** : P37 et P44 ont leur réponse (« oui » aux deux, 14/11) ; Tendances ›
+  Jour est en attente à sa demande (une refonte est à l'étude) ; la mission PI1, chez Apple, reste à lui faire faire
+  par Claude dans Chrome, puis à reporter dans les instructions.
 
 ## 6. Grand plan du 12/11 (demandé par le propriétaire)
 
