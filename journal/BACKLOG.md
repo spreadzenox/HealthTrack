@@ -607,7 +607,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-72-iOS-b** iPhone : distinguer la variabilité cardiaque de l'app Santé par une clé (`hrvSdnn`) et
   non par son libellé (`TodayBySource.jsx`, `DailyJournal.jsx`, `journalChips.js`, correctifs 30, 56, 57), puis
   l'appeler « Variabilité cardiaque » tout court, la méthode dite une fois (ligne sous la courbe de Tendances).
-  **Fait le 14/11 07:35** (PR ouverte, build iOS et captures à regarder avant le merge) : la ligne d'Aujourd'hui
+  **Fait le 14/11 07:35** (#963, build iOS verte, captures regardées, mergée à 08:46) : la ligne d'Aujourd'hui
   porte `measure: 'hrvSdnn'` (correctif 30), la tuile du Journal un quatrième élément `'hrvSdnn'` (correctif 17) ;
   `TodayBySource.jsx` et `DailyJournal.jsx` lisent cette clé (correctifs 56, 57). Libellé « Variabilité cardiaque »
   sur Aujourd'hui, dans le Journal, dans Tendances et au premier import (« de variabilité cardiaque en moyenne »,
