@@ -23,6 +23,20 @@
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
 
+> 🧪 **Une proposition à regarder, deux personas (14/11 20:35)** : **[maquette du bilan digestif avant le 28e
+> jour](maquettes/bilan-digestif/README.md)** (PROP-SIM-17). Aujourd'hui, Analyses › Digestion ne montre qu'un
+> compte à rebours pendant 28 jours notés ; les personas « ventre » y cherchent « quoi éviter » et repartent sans
+> rien. La maquette ajoute un relevé de ce qui est déjà noté : les jours calmes, de gêne, de douleur, et les repas
+> des 24 heures avant chaque douleur, sans suspect ni chiffre. **Votre réponse** : « PROP-SIM-17 oui », « oui,
+> variante prudente » (les jours seulement, sans les repas) ou « non » ; rien n'est codé sans elle. **Limites** :
+> maquette statique sur données inventées, pas montrée à une persona ; montrer les repas d'avant une douleur peut
+> pousser à conclure seul. **Simulations du soir** ([synthèse](simulations/2026-11-14-2035-synthese.md)) :
+> « Prendre soin de soi, maigrir » au 1er jour (Galaxy Watch) et « Sportif » au 45e jour (téléphone seul). Le plus
+> net, vu sur capture : au 45e jour, Analyses écrit « Rien n'est net » puis affiche « +2,3 pt » ; Agir dit de noter
+> son bien-être à qui le fait depuis 45 jours ; se peser est introuvable depuis Aujourd'hui (3e persona : proposition
+> PROP-SIM-19, maquette à venir). Huit étapes de polish au BACKLOG (POLISH-SIM-91 à 98), les autres constats restent
+> à vérifier. **iPhone** : le lien « Ajouter un appareil » suit dans la PR #983 (code embarqué v1059, build en cours).
+
 > ⌚ **Aujourd'hui : « Ajouter un appareil » (14/11 19:35)** : sous « Vos données du jour », le lien disait « Ajouter
 > une montre », même à qui a une balance. Il dit « Ajouter un appareil » (Android ; l'iPhone suit au prochain suivi
 > du code embarqué).
@@ -860,6 +874,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 14/11 20:35 — [Deux personas ; maquette du bilan digestif](runs/2026-11-14-2035-personas-bilan-digestif.md) | 🔭 | Run « idées », sans code produit. Main vert. Simulations « Prendre soin de soi, maigrir » J1 (Galaxy Watch) et « Sportif » J45 (Android seul) : POLISH-SIM-91 à 98, PROP-SIM-19. Maquette de PROP-SIM-17 (`maquettes/bilan-digestif/`), en attente de la réponse du propriétaire. Suivi iPhone : PR #983 (code embarqué v1059, 52 correctifs sans retouche), build macOS en cours à la fin du run. TestFlight non relevé. Parité 70 %. |
 | 14/11 19:35 — [Aujourd'hui : « Ajouter un appareil »](runs/2026-11-14-1935-aujourdhui-ajouter-un-appareil.md) | 🔧 | Main vert. Le run de 18:35 travaillait encore (#981) : étape indépendante dans `app/`. POLISH-SIM-84b, première partie : le lien sous « Vos données du jour » dit « Ajouter un appareil » ; tests écrits d'abord, captures claire et sombre regardées. Pas encore sur iPhone (suivi au run suivant). TestFlight : 1030.1031 chez les testeurs, 1054 envoyée au merge de #976. Parité 70 %. |
 | 14/11 18:35 — [Suite de PI1 (mission PI2), Gold offert par installation](runs/2026-11-14-1835-pi2-gold-offert.md) | 🔧 | Main vert. Mission PI2 réécrite d'après le relevé PI1 (déclaration « dispositif médical » sur « No » jusqu'à « Save » ; brouillon de soumission jusqu'à « Submit for Review ») ; écrans non vus. GOLD-a3-3 et P44-1 : période offerte par installation au relais (231 tests verts) ; liste P44 vide, rien en service. P43 vérifiée : la lecture des plantages répond, aucun plantage ni ANR. TestFlight : 1030.1031 en test, rien en attente. PR #976 (suivi iPhone, code v1054) finie : build iOS verte, captures de la première carte de l'accueil (« vos appareils ») et d'Aujourd'hui regardées, mergée à 19:26 ; la pesée du jour et « Continuer » ne sont pas dans les captures automatiques. Parité 70 %. |
 | 14/11 17:35 — [Réponses du 14/11 : P37 au relais, P44 découpée](runs/2026-11-14-1735-p37-gold-proprietaire.md) | 🔧 | Main vert. Réponses du propriétaire du 14/11 inscrites. GOLD-a3-2 : `GOLD_INSTALLS=5e4a69f72ffb` dans le déploiement du relais, test de garde (225 tests du relais verts) ; ne donne que le modèle Gold, droits complets à faire (GOLD-a3-3). P44 découpée (P44-1 à P44-3). P43, P46, P39, P45 passées à « fait ». #980 mergée (v1056), relais redéployé (révision 00052, vert), release v725, APK 34,6 Mo ; P43 vérifiée (lecture des plantages : aucun plantage ni ANR sur 30 jours). PR #976 (suivi iPhone) verte mais en retard sur main : remise à jour (code embarqué v1054), build macOS à finir au run suivant. Parité 70 %. |
