@@ -26,7 +26,7 @@ bêta avant la nuit prochaine ; 844.344 intacte  ·  **Parité** : 70 % (33/47),
 ## Vérifs
 - Captures regardées par la routine : Analyses et Agir au 45e jour, « Autre chose » et Tendances au 1er jour (les
   cinq « constats vérifiés » de la synthèse) ; les trois captures de la maquette.
-- `app` : voir « Fin du run ».
+- `app` : `npm run test`, 3548 verts, 44 ignorés. `app/` et `relay/` non touchés : ni build ni `npm run visual` refaits.
 
 ## Limites
 - Les autres constats des agents ne sont pas vérifiés (marqués « à vérifier » au BACKLOG). Version web : ni Health
@@ -41,7 +41,11 @@ bêta avant la nuit prochaine ; 844.344 intacte  ·  **Parité** : 70 % (33/47),
   `INFRA.md`, `iphone/journal/README.md` et le BACKLOG iPhone non relus.
 
 ## Fin du run
-Complété ci-dessous après les merges.
+- **PR #984** (journal de ce run) : checks verts (Tests, Build APK, émulateurs), branche à jour sur main, mergée
+  vers 21:00.
+- **PR #983** (suivi iPhone, v1059) : tous les checks verts sauf « Build iOS (simulateur) et captures », encore en
+  cours à 20:58 (lancée à 20:31). Si elle est mergée à ce run, la ligne de `PARITE.md` le dit dans la PR ; sinon le
+  run suivant la finit (captures d'Aujourd'hui à regarder, branche à remettre à jour sur main).
 
 ## Suite
 - Finir #983 si sa build macOS n'était pas verte à la fin de ce run ; regarder Aujourd'hui sur iPhone.
