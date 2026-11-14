@@ -48,6 +48,9 @@
 >   État au 08/11 08:35 : étude Garmin et Samsung faite (`protocoles/garmin-samsung.md`, ordre proposé § 4 : lire
 >   dans Health Connect étages, température cutanée et cycle ; Samsung Health Data SDK après l’enregistrement chez
 >   Samsung, geste du propriétaire ; Garmin par la clé personnelle, lue par le téléphone ; Starter en push = HDS).
+>   **14/11 08:35** : la clé personnelle Garmin est écartée pour l'app vendue (Garmin la réserve à l'usage individuel,
+>   « not intended for commercial applications serving multiple end users ») ; restent Health Connect et Santé,
+>   l'import de fichiers FIT (proposition) et Starter ou Enterprise (question HDS, à vous de l'ouvrir).
 > - **(C) Simulation de personas** : agent sans connaissance de l'app, accès visuel seul, persona + matériel (pondéré par
 >   les parts de marché) + moment (J1, J14, J45) ; 7 personas ; configurations dans l'artefact « Personas et matériel »
 >   (à recopier dans `PERSONAS.md`) ; deux simulations par jour (runs « idées ») et un passage complet avant chaque envoi
