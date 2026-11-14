@@ -1,0 +1,109 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=73903A6E-DECF-4552-ADBB-B4B1F348F51F "-only-testing:HalcyaUITests/NotificationsUITests/testAutoriserLesNotifications"
+
+2026-11-14 15:13:37.715 xcodebuild[39683:113665] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-14 15:13:37.799 xcodebuild[39683:113665] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:73903A6E-DECF-4552-ADBB-B4B1F348F51F, OS:26.2, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:73903A6E-DECF-4552-ADBB-B4B1F348F51F, OS:26.2, name:iPhone 16e }
+2026-11-14 15:13:50.130 xcodebuild[39683:113665] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-14 15:14:00.053297+0000 HalcyaUITests-Runner[41186:117270] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-14 15:14:03.645.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-14 15:14:03.646.
+Test Suite 'NotificationsUITests' started at 2026-11-14 15:14:03.646.
+Test Case '-[HalcyaUITests.NotificationsUITests testAutoriserLesNotifications]' started.
+    t =     0.02s Start Test at 2026-11-14 15:14:03.663
+    t =     0.45s Set Up
+    t =     0.45s Open fr.jpesquet.sante
+    t =     0.45s     Activate fr.jpesquet.sante
+    t =     0.53s         Wait for fr.jpesquet.sante to idle
+    t =     0.57s Waiting 20.0s for "Autoriser" Button to exist
+    t =     1.60s     Checking `Expect predicate `existsNoRetry == 1` for object "Autoriser" Button`
+    t =     1.60s         Checking existence of `"Autoriser" Button`
+    t =     2.05s Checking existence of `"Autoriser" Button`
+    t =     2.11s Tap "Autoriser" Button
+    t =     2.11s     Wait for com.apple.springboard to idle
+    t =     2.11s     Find the "Autoriser" Button
+    t =     2.17s     Check for interrupting elements affecting "Autoriser" Button
+    t =     2.31s     Synthesize event
+    t =     2.65s     Wait for com.apple.springboard to idle
+    t =     4.54s Checking `Expect predicate `exists == 0` for object "Autoriser" Button`
+    t =     4.55s     Checking existence of `"Autoriser" Button`
+    t =     4.66s     Capturing element debug description
+    t =     4.67s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     4.84s         Find: Descendants matching type Alert
+    t =     4.84s         Find: Descendants matching type Button
+    t =     4.84s         Find: Elements matching predicate '"Autoriser" IN identifiers'
+    t =     4.85s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     5.00s         Find: Descendants matching type Alert
+    t =     5.00s         Find: Descendants matching type Button
+    t =     5.01s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     5.12s         Find: Descendants matching type Alert
+    t =     5.13s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     5.49s Checking `Expect predicate `exists == 0` for object "Autoriser" Button`
+    t =     5.49s     Checking existence of `"Autoriser" Button`
+    t =     5.56s     Capturing element debug description
+    t =     5.56s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     5.64s         Find: Descendants matching type Alert
+    t =     5.64s         Find: Descendants matching type Button
+    t =     5.64s         Find: Elements matching predicate '"Autoriser" IN identifiers'
+    t =     5.64s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     5.72s         Find: Descendants matching type Alert
+    t =     5.72s         Find: Descendants matching type Button
+    t =     5.73s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     5.81s         Find: Descendants matching type Alert
+    t =     5.81s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     6.49s Checking `Expect predicate `exists == 0` for object "Autoriser" Button`
+    t =     6.49s     Checking existence of `"Autoriser" Button`
+    t =     6.55s     Capturing element debug description
+    t =     6.55s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     6.63s         Find: Descendants matching type Alert
+    t =     6.63s         Find: Descendants matching type Button
+    t =     6.63s         Find: Elements matching predicate '"Autoriser" IN identifiers'
+    t =     6.64s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     6.72s         Find: Descendants matching type Alert
+    t =     6.72s         Find: Descendants matching type Button
+    t =     6.73s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     6.81s         Find: Descendants matching type Alert
+    t =     6.82s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     7.49s Checking `Expect predicate `exists == 0` for object "Autoriser" Button`
+    t =     7.49s     Checking existence of `"Autoriser" Button`
+    t =     7.54s     Capturing element debug description
+    t =     7.54s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     7.62s         Find: Descendants matching type Alert
+    t =     7.63s         Find: Descendants matching type Button
+    t =     7.63s         Find: Elements matching predicate '"Autoriser" IN identifiers'
+    t =     7.63s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     7.68s         Find: Descendants matching type Alert
+    t =     7.69s         Find: Descendants matching type Button
+    t =     7.69s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     7.77s         Find: Descendants matching type Alert
+    t =     7.77s         Requesting snapshot of accessibility hierarchy for app with pid 14550
+    t =     7.79s Checking existence of `"Autoriser" Button`
+    t =     7.87s Tap "Autoriser" Button
+    t =     7.87s     Wait for com.apple.springboard to idle
+    t =     7.88s     Find the "Autoriser" Button
+    t =     7.93s     Check for interrupting elements affecting "Autoriser" Button
+    t =     8.00s     Synthesize event
+    t =     8.37s     Wait for com.apple.springboard to idle
+    t =     9.89s Checking `Expect predicate `exists == 0` for object "Autoriser" Button`
+    t =     9.90s     Checking existence of `"Autoriser" Button`
+    t =     9.94s Tear Down
+Test Case '-[HalcyaUITests.NotificationsUITests testAutoriserLesNotifications]' passed (9.985 seconds).
+Test Suite 'NotificationsUITests' passed at 2026-11-14 15:14:13.648.
+	 Executed 1 test, with 0 failures (0 unexpected) in 9.985 (10.002) seconds
+Test Suite 'HalcyaUITests.xctest' passed at 2026-11-14 15:14:13.649.
+	 Executed 1 test, with 0 failures (0 unexpected) in 9.985 (10.003) seconds
+Test Suite 'Selected tests' passed at 2026-11-14 15:14:13.649.
+	 Executed 1 test, with 0 failures (0 unexpected) in 9.985 (10.005) seconds
+2026-11-14 15:14:14.325 xcodebuild[39683:113665] [MT] IDETestOperationsObserverDebug: 24.147 elapsed -- Testing started completed.
+2026-11-14 15:14:14.325 xcodebuild[39683:113665] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-14 15:14:14.325 xcodebuild[39683:113665] [MT] IDETestOperationsObserverDebug: 24.147 sec, +24.147 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-cawvkdxomuztppclunuthpbuhjfe/Logs/Test/Test-HalcyaUITests-2026.11.14_15-13-37-+0000.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
