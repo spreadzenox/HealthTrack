@@ -268,7 +268,7 @@ export function measureTiles(summary, entries, now = new Date(), yesterday = nul
       when: sleep.s.sleepMinutes == null ? null : sleep.when ? 'nuit d’avant' : 'cette nuit',
       sources: sourcesOf('sleep', sleep.d),
     },
-    { key: 'hrv', label: 'VFC nuit', value: hrv.s.hrv != null ? `${Math.round(hrv.s.hrv)} ms` : null, when: hrv.when, sources: sourcesOf('hrv', hrv.d) },
+    { key: 'hrv', label: 'Variabilité cardiaque', value: hrv.s.hrv != null ? `${Math.round(hrv.s.hrv)} ms` : null, when: hrv.when, sources: sourcesOf('hrv', hrv.d) },
     {
       key: 'steps',
       label: 'Pas',

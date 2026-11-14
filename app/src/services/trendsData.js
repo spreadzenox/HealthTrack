@@ -33,8 +33,8 @@ export const TREND_MEASURES = [
   { key: 'steps', label: 'Pas', unit: 'pas', tone: 'lilac', field: 'steps', fmt: (v) => n0(v) },
   // POLISH-SIM-47 : la pesée (à la main ou balance), dernière du jour ; thème corps
   { key: 'weight', label: 'Poids', unit: 'kg', tone: 'rose', field: 'weightKg', fmt: (v) => `${n1(v)} kg` },
-  { key: 'hrv', label: 'VFC nuit', unit: 'ms', tone: 'rose', field: 'hrv', fmt: (v) => `${n0(v)} ms`,
-    gloss: 'variabilité de la fréquence cardiaque pendant la nuit, en millisecondes' },
+  { key: 'hrv', label: 'Variabilité cardiaque', unit: 'ms', tone: 'rose', field: 'hrv', fmt: (v) => `${n0(v)} ms`,
+    gloss: 'mesurée pendant la nuit, en millisecondes' },
   { key: 'restingHr', label: 'FC au repos', unit: 'bpm', tone: 'rose', field: 'restingHr', fmt: (v) => `${n0(v)} bpm`,
     gloss: 'fréquence cardiaque au repos, en battements par minute' },
   { key: 'screen', label: 'Écran', unit: 'h', tone: 'stone', field: 'screenMinutes', scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },
@@ -115,7 +115,7 @@ export function canAdd(keys, key) {
 
 /** Mesure de Tendances → courbe des changements durables (TS-2, services/method/changes.js). */
 export const CHANGE_KEYS = { wellbeing: 'wellbeing', digestion: 'digestion', sleep: 'sleepMinutes', hrv: 'hrv_ms', restingHr: 'restingHR', steps: 'steps', screen: 'screen_minutes' }
-const CHANGE_LABELS = { wellbeing: 'Bien-être', digestion: 'Confort digestif', sleepMinutes: 'Sommeil', hrv_ms: 'VFC', restingHR: 'FC au repos', steps: 'Pas', screen_minutes: 'Temps d’écran' }
+const CHANGE_LABELS = { wellbeing: 'Bien-être', digestion: 'Confort digestif', sleepMinutes: 'Sommeil', hrv_ms: 'Variabilité cardiaque', restingHR: 'FC au repos', steps: 'Pas', screen_minutes: 'Temps d’écran' }
 
 /**
  * Repères « changement » des mesures affichées dans la période (vue Mois) : niveau avant et après, dans l'unité de

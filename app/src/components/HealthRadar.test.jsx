@@ -67,7 +67,7 @@ describe('HealthRadar', () => {
     mockEntries([...history(), rhr(0, 60), hrv(0, 50), sleep(0, 450)])
     render(<HealthRadar />)
     expect(await screen.findByText('Rien d’inhabituel')).toBeInTheDocument()
-    expect(screen.getByText(/FC au repos, VFC et sommeil/)).toBeInTheDocument()
+    expect(screen.getByText(/FC au repos, variabilité cardiaque et sommeil/)).toBeInTheDocument()
   })
 
   it('lists the unusual signals of the day with the usual value', async () => {

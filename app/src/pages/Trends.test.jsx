@@ -77,11 +77,11 @@ describe('Journal › Tendances (ORG-3)', () => {
           readFaceEntries={async () => []} readDayContributions={async () => null} readDayChanges={async () => null} />
       </MemoryRouter>,
     )
-    await screen.findByRole('img', { name: 'Courbe de VFC nuit' })
+    await screen.findByRole('img', { name: 'Courbe de Variabilité cardiaque' })
     // Pas d'attendu tracé pour la VFC : pas de mot « attendu » au-dessus d'un futur vide
     expect(container.querySelector('.trends-future-label')).toBeNull()
     const gloss = () => [...container.querySelectorAll('.trends-gloss li')].map((li) => li.textContent)
-    expect(gloss()).toEqual(['VFC nuit : variabilité de la fréquence cardiaque pendant la nuit, en millisecondes'])
+    expect(gloss()).toEqual(['Variabilité cardiaque : mesurée pendant la nuit, en millisecondes'])
     fireEvent.click(screen.getByRole('button', { name: 'Ajouter une mesure' }))
     fireEvent.click(within(screen.getByRole('list', { name: 'Mesures à ajouter' })).getByRole('button', { name: /FC au repos/ }))
     expect(gloss()).toHaveLength(2)

@@ -39,7 +39,7 @@ export const WATCH_GUIDES = [
       </>,
       <>
         Gadgetbridge → Réglages → <em>Intégrations externes</em> → <strong>Health Connect</strong> : activez,
-        autorisez les types (FC, VFC, SpO₂, sommeil, respiration, température…) et cochez
+        autorisez les types (FC, variabilité cardiaque, SpO₂, sommeil, respiration, température…) et cochez
         « Synchroniser après la synchro de l’appareil ».
       </>,
       HC_IN_HEALTHTRACK,

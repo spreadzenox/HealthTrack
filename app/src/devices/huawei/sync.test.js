@@ -458,7 +458,7 @@ describe('montre Huawei : synchro de bout en bout (fausse montre)', () => {
       [new Date(Date.UTC(2026, 9, 22, 7, 3, 35)).toISOString(), 38, 'day'],
       [new Date(Date.UTC(2026, 9, 22, 9, 3, 35)).toISOString(), 52, 'day'],
     ])
-    expect(report.sync.label).toMatch(/2 VFC de journée/)
+    expect(report.sync.label).toMatch(/2 mesures de variabilité cardiaque/)
     expect(getWatchSyncState('H', storage).dictUntil).toEqual({ 500044: t0 + 7200_000 + 60_000 })
     // synchro suivante : repart 1 s après la dernière lue
     const second = await run({}, now + 3600_000)

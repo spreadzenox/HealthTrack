@@ -116,7 +116,7 @@ function standardDriver(id, service, label, measures, { mode = null, howTo = nul
  * données passent par cette app → Health Connect.
  */
 export const DRIVERS = [
-  standardDriver('ble_heart_rate', 0x180d, 'Capteur cardio', 'fréquence cardiaque et VFC', { mode: 'live' }),
+  standardDriver('ble_heart_rate', 0x180d, 'Capteur cardio', 'fréquence cardiaque et variabilité cardiaque', { mode: 'live' }),
   standardDriver('ble_blood_pressure', 0x1810, 'Tensiomètre', 'tension artérielle et pouls', { mode: 'receive', howTo: 'Lancez une mesure sur le tensiomètre' }),
   standardDriver('ble_weight_scale', 0x181d, 'Balance', 'poids', { mode: 'receive', howTo: 'Montez sur la balance' }),
   standardDriver('ble_body_composition', 0x181b, 'Balance impédancemètre', 'poids et masse grasse', { mode: 'receive', howTo: 'Montez pieds nus sur la balance' }),

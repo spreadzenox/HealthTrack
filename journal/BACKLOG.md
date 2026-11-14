@@ -588,8 +588,14 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   « douleur » » quand le chiffre s'écarte de la note.
 - [ ] **POLISH-SIM-71b** Fiche d'un jour : lien « Voir toute la journée » vers Journal › Jours à cette date ; pour un
   profil ventre, les repas de la veille (à maquetter si cela ajoute un bloc).
-- [ ] **POLISH-SIM-72** « VFC » (Aujourd'hui, Journal, Analyses) et « variabilité cardiaque » (Sources, fiche d'un
+- [x] **POLISH-SIM-72** « VFC » (Aujourd'hui, Journal, Analyses) et « variabilité cardiaque » (Sources, fiche d'un
   jour) : un seul nom.
+  **Fait le 14/11 04:35 (Android)** : « variabilité cardiaque » dans tous les textes de `src/` ; test de garde
+  `src/data/hrvName.test.js` (aucun « VFC » hors commentaires, Nouveautés passées et `huawei/sync.js`).
+- [ ] **POLISH-SIM-72-iOS** Porter le nom sur iPhone au suivi de la v1037 : douze correctifs disent « VFC SDNN » (08,
+  13, 17, 19, 20, 21, 30, 32, 45, 53, 56, 57) et huit tests de l'overlay l'attendent ; 17, 30, 56 et 57 ne
+  s'appliquent plus sur le code de la v1037. Nom à retenir : « variabilité cardiaque » (la méthode SDNN dite une fois,
+  là où elle sert), puis étendre le test de garde au code embarqué.
 - [x] **POLISH-SIM-73** (Tout mesurer J45) La sauvegarde s'appelle `healthtrack-export-AAAA-MM-JJ.json` : nom de la
   marque (`config/brand.js`) ; l'import d'anciens fichiers ne dépend pas du nom (à vérifier par test).
   **Fait le 14/11 02:35** : `halcya-export-AAAA-MM-JJ.json` (`EXPORT_FILE_PREFIX`, dérivé de `APP_NAME`) ; l'import

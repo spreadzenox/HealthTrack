@@ -67,7 +67,7 @@ describe('summarizeImport — le « aha » des 30 derniers jours', () => {
     ], NOW)
     expect(facts.map((f) => f.key)).toEqual(['sleep', 'steps', 'hrv', 'resting'])
     expect(facts[1].value).toBe((5000).toLocaleString('fr-FR'))
-    expect(facts[2]).toMatchObject({ value: '40 ms', label: 'de VFC en moyenne, sur 1 mesure' })
+    expect(facts[2]).toMatchObject({ value: '40 ms', label: 'de variabilité cardiaque en moyenne, sur 1 mesure' })
   })
 
   it('séances de sport quand il reste de la place', () => {

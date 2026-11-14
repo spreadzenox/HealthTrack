@@ -139,7 +139,7 @@ describe('measureTiles', () => {
 
   it('donne sommeil, VFC et pas du jour avec la source de chaque chiffre', () => {
     const tiles = measureTiles({ sleepMinutes: 452, hrv: 41.2, steps: 3456 }, entries, NOW)
-    expect(tiles.map((t) => [t.label, t.value])).toEqual([['Sommeil', '7 h 32'], ['VFC nuit', '41 ms'], ['Pas', '3 456']])
+    expect(tiles.map((t) => [t.label, t.value])).toEqual([['Sommeil', '7 h 32'], ['Variabilité cardiaque', '41 ms'], ['Pas', '3 456']])
     expect(tiles[0].sources).toEqual(['Health Connect · Garmin'])
     expect(tiles[1].sources).toEqual(['Montre Huawei'])
     expect(tiles[2].sources).toEqual([])
@@ -269,7 +269,7 @@ describe('gutEveningCheck (bilan du soir, I170)', () => {
 describe('todayBySource (TESTEUR-1d-b)', () => {
   const tiles = (over = {}) => [
     { key: 'sleep', label: 'Sommeil', value: '7 h 32', when: 'cette nuit', sources: ['Montre Huawei'], ...over.sleep },
-    { key: 'hrv', label: 'VFC nuit', value: '41 ms', when: null, sources: ['Montre Huawei'], ...over.hrv },
+    { key: 'hrv', label: 'Variabilité cardiaque', value: '41 ms', when: null, sources: ['Montre Huawei'], ...over.hrv },
     { key: 'steps', label: 'Pas', value: '3 456', when: null, sources: ['Health Connect'], ...over.steps },
   ]
   const ids = (groups) => groups.map((g) => g.id)

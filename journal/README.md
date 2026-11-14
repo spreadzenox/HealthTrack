@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1036 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 n'était pas encore partie à 04:05, le cron de GitHub part souvent avec 3 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41) et v1034 (03:32) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; code de la v1035 en vérification sur simulateur ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1037 sur main (14/11) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32) et v1035 (04:23) envoyées sur TestFlight, pour les testeurs la nuit prochaine ; code de la v1036 en vérification sur simulateur ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -22,6 +22,17 @@
   qu'Apple reproche encore aux trois abonnements (« Métadonnées manquantes »). Renvoyez « PI1 fait » avec son relevé :
   la routine corrigera par l'API. Le reste (P45, P43, P37, P44, mission PI2 le jour de la soumission) est plus bas,
   sous « Toujours en attente de vous ».
+
+> 🫀 **« Variabilité cardiaque » : un seul nom (14/11 04:35)** : une persona lisait « VFC » sur Aujourd'hui et
+> « variabilité cardiaque » dans Sources, sans voir que c'était la même mesure. L'app dit maintenant « variabilité
+> cardiaque » partout : Aujourd'hui ([clair](runs/captures/2026-11-14-0435-variabilite-aujourdhui-clair.png) ·
+> [sombre](runs/captures/2026-11-14-0435-variabilite-aujourdhui-sombre.png)), Journal
+> ([clair](runs/captures/2026-11-14-0435-variabilite-journal-clair.png) ·
+> [sombre](runs/captures/2026-11-14-0435-variabilite-journal-sombre.png)), Tendances, Analyses, Sources. **Pas encore
+> sur iPhone** : ses écrans disent « VFC SDNN » par des correctifs à refaire au prochain run. L'envoi Alpha du 13/11
+> au soir est parti le 14/11 à 03:41, vert (le résumé de 03:35 le disait encore en attente, à tort). **iPhone** : le
+> code de la v1035 est parti sur TestFlight à 04:23 ; celui de la v1036 est en vérification sur simulateur. Rien à
+> faire de votre côté.
 
 > 📈 **Tendances : la fiche d'un jour se lit mieux (14/11 03:35)** : deux personas ne comprenaient pas « Ce qui a pu
 > peser ce jour-là » (des −0,02 pt, sans savoir s'il s'agissait du ventre ou du bien-être ; un jour à 1,4/5 avec
@@ -690,6 +701,7 @@
 | Run | Type | Résultat |
 |---|---|---|
 | 14/11 02:35 — [Sauvegarde « halcya-export » ; iPhone en v1034](runs/2026-11-14-0235-sauvegarde-nom-halcya.md) | 🔧 | POLISH-SIM-73 : la sauvegarde s'appelle `halcya-export-AAAA-MM-JJ.json`, l'import ne dépend pas du nom (testé). iPhone : code embarqué v1032 → v1034, 52 correctifs sans retouche ; build TestFlight 1032.1033 envoyée à 01:41. Parité 70 %. |
+| 14/11 04:35 — [« Variabilité cardiaque » : un seul nom ; iPhone en v1036](runs/2026-11-14-0435-variabilite-cardiaque-un-seul-nom.md) | 🔧 | POLISH-SIM-72 : « variabilité cardiaque » partout à la place de « VFC » (Aujourd'hui, Journal, Tendances, Analyses, Sources) ; test de garde. iPhone : code embarqué v1035 → v1036, 52 correctifs sans retouche ; le nouveau nom reste à porter dans les correctifs « VFC SDNN » (POLISH-SIM-72-iOS). Alpha du 13/11 au soir partie à 03:41. Parité 70 %. |
 | 14/11 03:35 — [Tendances, fiche d'un jour ; iPhone en v1035](runs/2026-11-14-0335-fiche-jour-ce-qui-pese.md) | 🔧 | POLISH-SIM-71 : « Ce qui a pu peser » dit la note concernée, masque les effets de moins de 0,05 pt, dit quand rien n'explique une note basse ; confort digestif « estimé, avec votre note ». iPhone : code embarqué v1034 → v1035, correctifs 06 et 12 refaits ; build TestFlight du code v1034 envoyée à 03:32. Parité 70 %. |
 | 14/11 01:35 — [Analyses : liens pas nets repliés](runs/2026-11-14-0135-analyses-liens-pas-nets-replies.md) | 🔧 | POLISH-SIM-69 (1re partie) : sans lien net, les barres hachurées sont repliées derrière « Voir les liens pas encore nets » ; facteurs comparés et jours restants dits en tête. #955 du run précédent mergée par sa session. iPhone : code embarqué inchangé (v1032). Parité 70 %. |
 | 14/11 00:35 — [Agir vide selon l'objectif ; iPhone 1030.1031 chez les testeurs](runs/2026-11-14-0035-agir-vide-objectif-ventre.md) | 🔧 | Nuit : build TestFlight 1030.1031 ajoutée au groupe externe et soumise à l'examen bêta (00:33), validée aussitôt (« en test ») ; nettoyage des anciennes builds. POLISH-SIM-70 : Agir vide ouvre Analyses › Digestion avec l'objectif ventre, et dit quoi noter. iPhone : code embarqué v1030 → v1032, 52 correctifs s'appliquent. Parité 70 %. |
