@@ -693,9 +693,13 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-88** (à vérifier) Tendances › Jour dit « Aucune lecture du visage ce jour-là » alors qu'une note
   existe ; « + » rond de la carte Pas d'Aujourd'hui sans effet visible ; « repas incomplets ? » du Journal ne réagit
   pas ; « Dépense 2 352 kcal » sans explication.
-- [ ] **POLISH-SIM-90** Tendances, fiche d'un jour : « Confort digestif 2,4/5, estimé, avec votre note « douleur » »
+- [x] **POLISH-SIM-90** Tendances, fiche d'un jour : « Confort digestif 2,4/5, estimé, avec votre note « douleur » »
   sous la légende « Douleur 1 », et « Bien-être 3,2/5, votre note 3,4 et le visage » alors que la saisie n'accepte
-  que des entiers : montrer la note telle qu'elle a été donnée, et l'estimation à part (suite de POLISH-SIM-71).
+  que des entiers : montrer la note telle qu'elle a été donnée, et l'estimation à part (suite de POLISH-SIM-71). **Fait le 14/11 13:35** :
+  « vous avez noté 3 · estimé avec le visage » (ou « les jours voisins ») ; digestion : « vous avez noté « douleur »
+  (1) · estimé avec les jours voisins » (`detailSource`, `noteChoice` de `dayFaceDetail`). Reste : plusieurs notes
+  le même jour (seule la dernière est dite) ; le cas digestion à regarder en capture au prochain passage des
+  personas. iPhone : code partagé, arrive au prochain suivi.
 - [ ] **POLISH-SIM-89** (Outil) Config 5 : faire arriver les pesées par Health Connect (aujourd'hui `source:
   'withings'`, carte absente de la variante play) pour que Sources puisse les attribuer.
 - [ ] **PROP-SIM-17** (proposition avec maquette, pas de code sans accord) Bilan digestif simple avant le 28e jour :

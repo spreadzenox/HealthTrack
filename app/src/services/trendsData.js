@@ -165,21 +165,23 @@ export function defaultTrendsView({ asked = null, askedDay = false, available = 
  * POLISH-SIM-4 : ce que dit la ligne d'un jour passé à côté de son chiffre, pour qu'un bien-être de 3,2 à côté d'une
  * note de 3,4 se comprenne (l'estimation du jour mêle la note au visage, ou aux jours voisins quand il n'a pas de
  * lecture). Le sens de l'échelle digestive est dit sous la courbe (POLISH-SIM-54).
+ * POLISH-SIM-90 : quand le chiffre s'écarte de la note, la note se dit d'abord, telle qu'elle a été donnée (un choix
+ * de 1 à 5, « douleur » avec sa valeur), puis ce qui fait l'estimation.
  * @param {'wellbeing'|'digestion'} key
- * @param {{ value: number, note?: number|null, readings?: number, gut?: string|null, gutScore?: number|null,
- *   observed?: boolean }} d
+ * @param {{ value: number, note?: number|null, noteChoice?: number|null, readings?: number, gut?: string|null,
+ *   gutScore?: number|null, observed?: boolean }} d
  */
-export function detailSource(key, { value, note = null, readings = 0, gut = null, gutScore = null, observed = false }) {
+export function detailSource(key, { value, note = null, noteChoice = null, readings = 0, gut = null, gutScore = null, observed = false }) {
   // POLISH-SIM-54 : l'échelle est dite une fois sous la courbe (gloss), plus à chaque jour
   if (key === 'digestion') {
     // POLISH-SIM-71 : « 2,0 /5, noté « douleur » » contredit l'échelle (douleur = 1) : le chiffre est une estimation
-    if (gut && gutScore != null && Math.round(value) !== gutScore) return `estimé, avec votre note « ${gut} »`
+    if (gut && gutScore != null && Math.round(value) !== gutScore) return `vous avez noté « ${gut} » (${gutScore}) · estimé avec les jours voisins`
     return gut ? `noté « ${gut} »` : observed ? 'noté' : 'estimé'
   }
   if (note != null) {
     if (Math.round(value * 10) === Math.round(note * 10)) return 'votre note'
-    const n = note.toLocaleString(appLocale(), { maximumFractionDigits: 1 })
-    return `votre note ${n} et ${readings > 0 ? 'le visage' : 'les jours voisins'}`
+    const n = noteChoice ?? Math.min(5, Math.max(1, Math.round(note)))
+    return `vous avez noté ${n} · estimé avec ${readings > 0 ? 'le visage' : 'les jours voisins'}`
   }
   if (readings > 0) return 'd’après le visage'
   return observed ? 'noté' : 'estimé'
