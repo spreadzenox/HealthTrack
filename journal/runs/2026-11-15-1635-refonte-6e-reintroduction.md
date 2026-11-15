@@ -56,8 +56,8 @@ testeurs externes)  ·  **Parité** : 70 % (33/47), inchangée
 - REFONTE-6d : le banc à n = 7 et 14 d'abord (run « idées » de 20 h), puis les seuils.
 - IOS-HEAD avant l'étape 7.
 
-## Fin de run (17:15)
-- **#1016 mergée à 17:12** (c8af00f) : « Build iOS (simulateur) et captures » verte à 17:08, 15 checks verts, à jour
+## Fin de run (17:12)
+- **#1016 mergée à 17:09** (c8af00f) : « Build iOS (simulateur) et captures » verte à 17:08, 15 checks verts, à jour
   sur main. Captures regardées sur `captures/pr-1016` (iPhone 17 Pro, clair, données de démo) : le bloc « Par
   famille » (Sommeil, lien moyen), le détail de la famille Sommeil (piste et barres par délai), Agir (« 5 jours
   avec, 5 jours sans, tirés au sort »). Non regardés : iPhone 16e, sombre, grand texte. Agir écrit encore « Tous vos

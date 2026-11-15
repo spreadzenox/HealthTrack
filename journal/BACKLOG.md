@@ -166,7 +166,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     sont floutées. « Comment est calculé votre bien-être ? » en lien replié. Écarts avec la SPEC : « Par famille »
     et « Lien fort » au lieu de « Ce qui influence » et « Influence forte » (règle 5) ; pas de moyenne par famille ;
     pas de feuille du bas.
-  - [x] **REFONTE-6b-iOS et 6c-1-iOS** (**#1016 mergée le 15/11 à 17:12**, build iOS verte, captures `-abonne` et Agir regardées sur iPhone 17 Pro. Avant, 15/11 16:15 : **#1016 complétée**, à jour sur main, code **v1092** (6c-2 compris), deux
+  - [x] **REFONTE-6b-iOS et 6c-1-iOS** (**#1016 mergée le 15/11 à 17:09**, build iOS verte, captures `-abonne` et Agir regardées sur iPhone 17 Pro. Avant, 15/11 16:15 : **#1016 complétée**, à jour sur main, code **v1092** (6c-2 compris), deux
     captures d'abonné : détail du bien-être et famille Sommeil ; build macOS relancée). **À merger avant toute PR
     Android**, une fois la build verte et les deux captures regardées. Note d'avant (14:45) : code v1090, 51
     correctifs sans retouche ; capture `demo-clair-recommendations-bien-etre-abonne` ajoutée (droits de
@@ -184,7 +184,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     (« Piste à tester », « Ce qui a été comparé », retour « ← Votre bien-être »). Famille inconnue, sans facteur,
     avant les résultats ou pistes floutées : retour au détail de l'objectif. Écart avec la SPEC § 6.5 : pas
     d'histoire propre au sommeil (14 nuits, deux moyennes).
-  - [x] **REFONTE-6c-1-iOS** : fait dans #1016, mergée le 15/11 à 17:12.
+  - [x] **REFONTE-6c-1-iOS** : fait dans #1016, mergée le 15/11 à 17:09.
   - [x] **REFONTE-6c-2 — La piste en défi doux** (15/11 15:35, Android) : sans réponse du propriétaire, le tirage
     d'ORG-8 est gardé. Un nouvel essai dure 10 jours, 5 « avec » et 5 « sans » (`TRIAL_DAYS`, `services/trials.js`) ;
     un essai commencé garde ses 14 jours ; `trialStatus` rend `total`, `goal`, `kept`, `missed`, `bilan`
@@ -193,7 +193,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     (l'ancien verdict disait « vérifié » dans les deux sens). Écarts avec la SPEC § 7 : pas de soirs libres ni de
     comparaison aux 14 nuits ; grille sur la fourchette, pas en minutes ; ni lanternes ni rituel (étapes 10 à 12).
     Si le propriétaire dit « défi libre » : refaire d'après la SPEC.
-  - [x] **REFONTE-6c-2-iOS** : fait dans #1016 (code **v1092**, 51 correctifs sans retouche), mergée le 15/11 à 17:12 ; Agir dit « 5 jours avec, 5 jours sans » sur iPhone.
+  - [x] **REFONTE-6c-2-iOS** : fait dans #1016 (code **v1092**, 51 correctifs sans retouche), mergée le 15/11 à 17:09 ; Agir dit « 5 jours avec, 5 jours sans » sur iPhone.
   - [ ] **REFONTE-6c-3 — Restes de 6c-1 et 6c-2** : (6c-2) rejouer sur le banc un essai de 5 et 5 (taux de
     « Plutôt oui » à tort avec ± 2 erreurs types ; passer au seuil de Student si plus de 5 %) ; Agir allume
     l'onglet Accueil et l'écran d'un essai l'onglet Objectifs ; une piste finie est reproposée aussitôt ; captures
