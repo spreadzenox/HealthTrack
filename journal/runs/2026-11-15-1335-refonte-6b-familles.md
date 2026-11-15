@@ -91,5 +91,14 @@
 - Constat pour 6b sur iPhone : sans abonnement, le bloc « Par famille » sera masqué dans les captures actuelles.
 - Main fusionnée dans la branche de #1015 après ce merge (sans conflit) ; merge après les checks du nouveau commit
   (état final : voir la PR).
+- **#1015 mergée à 14:31** (6d86ddf, v1090), sur 44a0b4a, 12 checks verts, branche à jour sur main. Le merge n'a
+  pas été fait par cette session : elle attendait les checks et l'a trouvée mergée (sans doute le run suivant ;
+  aucun commentaire sur la PR).
+- Après ce merge : « Build & Release » vert, **release v742**, APK 34,6 Mo ; « Play — AAB » vert (v1090 en test
+  interne) ; « Tests » vert. **« Test — émulateur » de main rouge** : « Build APK » a échoué sur un 429 de Maven
+  Central (`kotlin-stdlib-2.2.0.pom`, « Too Many Requests »), les 5 émulateurs n'ont pas tourné ; jobs échoués
+  relancés à 14:40 (résultat : voir la ligne suivante, ou le run suivant si elle manque).
+- Main 3036290 (#1014) : « iOS — TestFlight » vert (le code v1088 est parti vers TestFlight, arrivée non vérifiée) ;
+  la build simulateur de main tournait encore.
 - Ce run a dépassé les 50 minutes visées : l'attente de la build macOS de #1014.
 
