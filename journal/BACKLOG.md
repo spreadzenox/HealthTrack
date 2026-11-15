@@ -211,7 +211,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [ ] **REFONTE-6e-2 — Restes de 6e** : capturer « À tester d'après vos analyses » (données de démo avec un lien
     net sur un groupe FODMAP), le sombre, 320 px, la version Play sans abonnement ; retirer les tests FODMAP d'Agir
     quand Agir rejoint l'Accueil (étape 10).
-- [ ] **IOS-HEAD — Une seule PR pour `app/` et `iphone/`** — **en PR depuis le 15/11 17:35** (à merger par le run
+- [ ] **IOS-HEAD — Une seule PR pour `app/` et `iphone/`** — **en PR depuis le 15/11 17:35 (#1022)** (à merger par le run
   suivant, build macOS verte et captures regardées) : `iphone/upstream.json` suit `HEAD` ; `ios-build.yml` suit
   aussi `app/**` et `relay/**` (son job Ubuntu est le contrôle « les correctifs s'appliquent »), `ios-testflight.yml`
   suit `app/**` ; `iphone/scripts/version.sh` donne le numéro (nombre de commits) ; `--latest` ne fait plus rien ;
