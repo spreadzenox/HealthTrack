@@ -22,7 +22,7 @@ const readChanges = () => getAnalysis('changes').catch(() => null)
 const readContributions = () => getAnalysis('analysisResults').then((r) => r?.contributions ?? null).catch(() => null)
 
 export default function Trends({
-  readDays = readMeasureDays, readDayStates = readStates, readFaceEntries = readFace, readDayContributions = readContributions, readDayChanges = readChanges, now,
+  readDays = readMeasureDays, readDayStates = readStates, readFaceEntries = readFace, readDayContributions = readContributions, readDayChanges = readChanges, readDayEntries, now,
 }) {
   const [params] = useSearchParams()
   const asked = params.get('mesure')
@@ -96,6 +96,7 @@ export default function Trends({
           initialDay={latestReadingDay(data.face, now || new Date())}
           dayExtra={dayExtra}
           changes={changes}
+          readDayEntries={readDayEntries}
         />
       ) : (
         <div className="loading"><div className="spinner" aria-hidden /></div>
