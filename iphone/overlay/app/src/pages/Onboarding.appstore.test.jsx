@@ -67,8 +67,8 @@ describe('nouvel accueil sur iPhone (variante appstore)', () => {
     delete window.__healthtrackFakePhoneUsage
   })
 
-  it('« Branchez vos sources » : la carte dit Santé, l’iPhone et 6 mois ; jamais Health Connect ni Huawei', async () => {
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'sources' })
+  it('temps 2, « Oui » : la carte dit Santé, l’iPhone et 6 mois ; jamais Health Connect ni Huawei', async () => {
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'watch', watch: 'yes' })
     renderAt()
     expect(await screen.findByRole('button', { name: 'Connecter Santé' })).toBeInTheDocument()
     expect(screen.getByText('votre iPhone et votre montre')).toBeInTheDocument()
@@ -81,7 +81,7 @@ describe('nouvel accueil sur iPhone (variante appstore)', () => {
   it('temps d’écran : l’iPhone demande l’accord, aucun réglage d’Android', async () => {
     window.__healthtrackFakePhoneUsage = true
     usage.access = { granted: false, supported: true }
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'sources' })
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'watch', watch: 'yes' })
     renderAt()
     expect(await screen.findByText(/L’iPhone demande votre accord \(Face ID ou code\)/)).toBeInTheDocument()
     expect(screen.queryByText(/Android/)).not.toBeInTheDocument()
@@ -101,7 +101,7 @@ describe('nouvel accueil sur iPhone (variante appstore)', () => {
   it('temps d’écran sous iOS 26.4 : pas de ligne à l’accueil', async () => {
     window.__healthtrackFakePhoneUsage = true
     usage.access = { granted: false, supported: false }
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'sources' })
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'watch', watch: 'yes' })
     renderAt()
     expect(await screen.findByRole('button', { name: 'Connecter Santé' })).toBeInTheDocument()
     await waitFor(() => expect(screen.queryByText('Temps d’écran')).not.toBeInTheDocument())
