@@ -235,6 +235,35 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(page).not.toMatch(/moyenne|Fiabilité mesurée|diagnostic|Deux modèles embarqués|Valence/i)
   })
 
+  it('étape 7a : le détail d’un jour passé liste « Vos saisies » (lues pour ce jour seulement) ; un jour futur, rien', async () => {
+    const asked = []
+    const readDayEntries = async ({ since }) => {
+      asked.push(new Date(since).getDate())
+      return [{ id: 9, type: 'gut', source: 'app_gut', at: new Date(2026, 10, 5, 20).toISOString(), payload: { level: 'discomfort' } }]
+        .filter((e) => new Date(e.at).getDate() === new Date(since).getDate())
+    }
+    render(
+      <MemoryRouter initialEntries={['/tendances']}>
+        <Trends now={NOW} readDays={async () => days} readDayStates={async () => states}
+          readFaceEntries={async () => face} readDayContributions={async () => contributions}
+          readDayChanges={async () => changes} readDayEntries={readDayEntries} />
+      </MemoryRouter>,
+    )
+    await screen.findByRole('img', { name: /Courbe/ })
+    fireEvent.click(screen.getByRole('button', { name: 'jeudi 5 novembre' }))
+    const detail = screen.getByRole('group', { name: /Détail du jeudi 5 novembre/ })
+    const mine = await within(detail).findByRole('region', { name: 'Vos saisies' })
+    expect(within(mine).getByText('Gêne')).toBeInTheDocument()
+    expect(asked).toContain(5)
+    fireEvent.click(screen.getByRole('button', { name: 'Jour' }))
+    const dayDetail = screen.getByRole('group', { name: /Détail du jeudi 5 novembre/ })
+    expect(await within(dayDetail).findByRole('region', { name: 'Vos saisies' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Semaine' }))
+    fireEvent.click(screen.getByRole('button', { name: 'dimanche 8 novembre' }))
+    const future = screen.getByRole('group', { name: /Détail du dimanche 8 novembre/ })
+    expect(within(future).queryByRole('region', { name: 'Vos saisies' })).toBeNull()
+  })
+
   it('T2 : un jour touché en Semaine s’ouvre en Jour', async () => {
     renderAt('/tendances')
     await screen.findByRole('img', { name: /Courbe/ })
