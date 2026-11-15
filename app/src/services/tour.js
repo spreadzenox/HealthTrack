@@ -1,7 +1,7 @@
 /**
  * Visite guidée (ACC-8) : étapes et relance (« Voir un exemple »), hors du composant.
  */
-import { FIRST_RESULTS_DAY } from '../config/firstResults'
+import { FIRST_RESULTS_DAY, FIRST_SCORE_DAY } from '../config/firstResults'
 import { APP_NAME } from '../config/brand'
 import { healthStoreName } from './onboardingFlow'
 import { loadOnboarding } from '../settings/onboarding'
@@ -35,6 +35,8 @@ export function startIndex(steps, from) {
 
 const W = FIRST_RESULTS_DAY.wellbeing
 const D = FIRST_RESULTS_DAY.digestion
+const SW = FIRST_SCORE_DAY.wellbeing
+const SD = FIRST_SCORE_DAY.digestion
 
 /**
  * Étapes (textes exacts de la maquette v3, journal/maquettes/accueil/TEXTES.md § 08). `days` : écran rempli de
@@ -47,13 +49,13 @@ export function tourSteps({ hc, face, gut }) {
     { route: '/', days: W, anchor: '.today-sources', title: 'Vos mesures du jour', text: hc ? 'Ce que vos appareils envoient, comparé à vos habitudes.' : `Avec ${healthStoreName()} ou une montre, vos nuits et vos pas s’affichent ici.`, button: 'Suivant' },
     { route: '/journal', title: 'Vos journées', text: 'Chacune de vos journées sera gardée ici.', button: `Exemple au jour ${W}` },
     { route: '/journal', days: W, reveal: true, anchor: '.day-card', title: 'Une journée d’un coup d’œil', text: 'Sommeil, pas, cœur, repas et notes au même endroit.', button: 'Suivant' },
-    { route: '/recommendations/bien-etre', title: 'Objectifs', text: gut ? `Vos analyses : bien-être après ${W} jours notés, digestion après ${D}.` : `Vos analyses démarrent après ${W} jours notés.`, button: `Exemple au jour ${W}` },
+    { route: '/recommendations/bien-etre', title: 'Objectifs', text: gut ? `Bien-être : un score après ${SW} jours notés, des pistes après ${W}. Digestion : ${SD} et ${D}.` : `Un premier score après ${SW} jours notés, vos pistes après ${W}.`, button: `Exemple au jour ${W}` },
     { route: '/recommendations/bien-etre', days: W, reveal: true, anchor: '[aria-labelledby="reco-pistes-wellbeing"]', title: `Au jour ${W} : vos premières pistes`, text: 'Ce qui va avec vos bons et vos mauvais jours. Des pistes, pas des causes.', button: 'Suivant' },
     { route: '/recommendations/bien-etre', days: W, anchor: '[aria-labelledby="reco-weigh-wellbeing"]', title: 'Le détail de chaque piste', text: 'De combien chaque facteur joue sur votre bien-être, en points sur 5.', button: 'Suivant' },
   ]
   if (gut) {
     steps.push(
-      { route: '/recommendations/ventre', title: 'Votre digestion', text: `Ses analyses demandent ${D} jours notés, dont 5 avec une gêne.`, button: `Exemple au jour ${D}` },
+      { route: '/recommendations/ventre', title: 'Votre digestion', text: `Son score après ${SD} jours notés, ses pistes après ${D}, dont 5 avec une gêne.`, button: `Exemple au jour ${D}` },
       { route: '/recommendations/ventre', days: D, reveal: true, anchor: '[aria-labelledby="reco-weigh-digestion"]', title: `Au jour ${D} : ce qui va avec votre ventre`, text: 'Repas, sommeil, écran : ce qui va avec vos jours calmes et vos jours de gêne.', button: 'Suivant' },
     )
   }

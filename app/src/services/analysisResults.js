@@ -132,9 +132,12 @@ export const HORIZONS = [
   { id: 'long', label: 'Long terme', window: 'de 7 à 27 jours avant', from: 7, to: 27 },
 ]
 
-/** Seuils de déblocage (ORG-6) : jours du résultat connus, par horizon. */
+/**
+ * Seuils de déblocage (ORG-6) : jours du résultat connus, par horizon. Bien-être moyen terme à 35 jours (REFONTE-6d,
+ * banc du 15/11) : ouvert à 21, un vrai lien fort donnait 6 à 7 % de jeux avec un faux lien sur cet horizon.
+ */
 export const UNLOCK_DAYS = {
-  wellbeing: { short: FIRST_RESULTS_DAY.wellbeing, medium: 21, long: 42 },
+  wellbeing: { short: FIRST_RESULTS_DAY.wellbeing, medium: 35, long: 42 },
   digestion: { short: FIRST_RESULTS_DAY.digestion, medium: 35, long: 56 },
 }
 /** Digestion : au moins 5 jours de gêne ou de douleur (sans eux, rien à expliquer). */

@@ -203,7 +203,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     terme sur les données de démo) ne devrait pas s'afficher en chiffre (voir `outOfScale`, POLISH-SIM-16) ; le
     détail de l'objectif répète ce que la famille montre (alléger « Ce qui va avec » quand 6c-2 sera là) ; captures
     à 320 px, en grand texte, confort digestif avec résultats ; moyenne de la famille (« 7 h 05 par nuit »).
-  - [ ] **REFONTE-6d** (seuils 7 et 14) — **banc fait le 15/11 à 20:35**
+  - [x] **REFONTE-6d** (seuils 7 et 14) — **code fait le 15/11 à 21:35 (en PR, Android ; iPhone dans la même PR, IOS-HEAD)** : `UNLOCK_DAYS.wellbeing.medium` 21 → 35, deux cas au banc (`bench.test.js`, effet fort à 21 et 28 jours, 400 jeux : 7,25 % et 6 % avant, ≤ 5 % après), visite guidée (« Un premier score après 7 jours notés, vos pistes après 14. » ; digestion « 14 et 28 ») et Premium à l'accueil (« Votre premier score arrive au 7e jour noté, vos pistes vers le 14e. ») ; « Voir un exemple » n'a pas de délai écrit, inchangé. Reste **REFONTE-6d-2** : capture de la visite guidée et du paywall d'accueil (le banc visuel ne sait pas les ouvrir), suivi iPhone vérifié par la build de la PR. — **banc fait le 15/11 à 20:35**
     ([`ETAPE-6D-BANC.md`](maquettes/compagnon-etapes/ETAPE-6D-BANC.md)) : **lecture A retenue**. Le run de code :
     (1) `FIRST_RESULTS_DAY` reste à 14 / 28 (pistes), `FIRST_SCORE_DAY` 7 / 14 (score, déjà livré en 6a) ;
     (2) `UNLOCK_DAYS.wellbeing.medium` de 21 à 35 (à 21 j, 6 à 7 % de jeux avec un faux lien quand un vrai effet

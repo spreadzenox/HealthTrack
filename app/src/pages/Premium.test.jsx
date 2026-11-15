@@ -287,6 +287,15 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
       expect(screen.queryByText('Continuer gratuitement')).toBeNull()
     })
 
+    it('onboarding après la période : le premier score au 7e jour, les pistes vers le 14e (REFONTE-6d)', () => {
+      billing.loadPlans.mockResolvedValue([YEAR, MONTH])
+      launchEnt('2020-01-01T00:00:00.000Z')
+      const { container } = render(<MemoryRouter><Premium context="onboarding" onClose={() => {}} /></MemoryRouter>)
+      expect(container.querySelector('.paywall-lead').textContent).toBe(
+        'Votre premier score arrive au 7e jour noté, vos pistes vers le 14e. Le premium débloque les pistes dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.',
+      )
+    })
+
     it('à l’échéance : le parcours d’achat revient tel quel', async () => {
       billing.loadPlans.mockResolvedValue([YEAR, MONTH])
       launchEnt('2020-01-01T00:00:00.000Z')

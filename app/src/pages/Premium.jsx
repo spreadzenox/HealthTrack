@@ -11,7 +11,7 @@ import './Premium.css'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { REMINDER_DAYS_BEFORE, trialReminderAvailable } from '../services/trialReminder'
 import Ordinal from '../components/Ordinal'
-import { FIRST_RESULTS_DAY } from '../config/firstResults'
+import { FIRST_RESULTS_DAY, FIRST_SCORE_DAY } from '../config/firstResults'
 
 
 const PER = { year: 'an', month: 'mois' }
@@ -152,7 +152,7 @@ export default function Premium({ context = null, onClose = null }) {
         {launch
           ? `${ent.launchUntil ? `Merci de tester l’app ! Jusqu’au ${lastLaunchDay(ent.launchUntil)}, tout` : 'Tout'} ce qui suit est débloqué : vous n’avez rien à payer, aucune carte bancaire n’est demandée.`
           : onboarding
-          ? <>Vos pistes arriveront vers le <Ordinal n={FIRST_RESULTS_DAY.wellbeing} /> jour de suivi. Le premium les débloque dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.</>
+          ? <>Votre premier score arrive au <Ordinal n={FIRST_SCORE_DAY.wellbeing} /> jour noté, vos pistes vers le <Ordinal n={FIRST_RESULTS_DAY.wellbeing} />. Le premium débloque les pistes dès qu’elles sont prêtes ; rien ne presse, vous pouvez décider plus tard.</>
           : offeredTiers.length > 1
           ? 'Silver ou Gold : Gold analyse plus de repas par jour et estime mieux les quantités.'
           : 'Voici ce que l’abonnement ajoute.'}

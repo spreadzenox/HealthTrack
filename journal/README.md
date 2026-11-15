@@ -17,7 +17,8 @@
 - **Probable** : 6d, tranchée par le banc du 15/11 à 20:35 ([`ETAPE-6D-BANC.md`](maquettes/compagnon-etapes/ETAPE-6D-BANC.md)) :
   le score s'ouvre à 7 et 14 jours notés (déjà là depuis 6a) ; les **pistes restent à 14 et 28 jours** (avant 8 jours le
   moteur ne compare rien, et à 7-10 jours il ne retrouve pas même un effet très fort) ; l'horizon moyen du bien-être
-  passe de 21 à 35 jours (à 21 jours, 6 à 7 % de faux liens quand un vrai lien existe ; 4 % à 35). Puis Nunito.
+  passe de 21 à 35 jours (à 21 jours, 6 à 7 % de faux liens quand un vrai lien existe ; 4 % à 35). **Code de 6d fait
+  le 15/11 à 21:35** (en PR, après 7a). Puis Nunito.
 - **Pas prêt le 22/11** : Pilou en 3D et son île (étapes 8 à 13), le double numérique (14 et 15).
 - **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs.
 
@@ -1156,6 +1157,7 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
 
 | Run | Type | Résultat |
 |---|---|---|
+| 15/11 21:35 — [Refonte « Compagnon », étape 6d : score au 7e jour, pistes au 14e](runs/2026-11-15-2135-refonte-6d-horizon-moyen.md) | 🧸 | Main vert au début (#1025). #1024 (7a) : 14 checks verts, capture iPhone de Tendances regardée ; en retard sur main et en conflit dans ce résumé : remise à jour (les deux lignes gardées), build iOS relancée, à merger au run de 22:35. Étape 6d en PR : l'horizon moyen du bien-être s'ouvre à 35 jours notés au lieu de 21 (banc : 7,25 % et 6 % de faux liens à 21 et 28 jours avant, ≤ 5 % après) ; visite guidée et paywall de l'accueil distinguent le score (7e jour) et les pistes (14e). |
 | 15/11 20:35 — [Idées : banc des seuils 7 et 14 (REFONTE-6d)](runs/2026-11-15-2035-idees-banc-6d.md) | 🔭 | Run « idées », sans code produit. Main vert ; #1024 (7a) ouverte par le run de 19:35, pas touchée. Banc rejoué à 7, 8, 10, 14, 21 et 28 jours (400 jeux par scénario) : avant 8 jours notés le moteur ne compare aucun facteur ; à 14 jours, 2 à 3,5 % de faux liens et un effet fort retrouvé 1 fois sur 20 ; digestion à 14 jours au bord des 5 %. Décision proposée : pistes à 14 et 28 jours inchangées, score à 7 et 14 (déjà là). Trouvé : l'horizon moyen du bien-être à 21 jours donne 6 à 7 % de faux liens avec un vrai effet ; à 35 jours, 4 %. Essai 5 + 5 : « Plutôt oui » à tort 3,9 à 4,4 %, la règle ± 2 erreurs types reste. TestFlight non relevé. Parité 70 %. |
 | 15/11 18:35 — [Préparation de l'étape 7 (Données, fin du Journal)](runs/2026-11-15-1835-refonte-7-preparation.md) | 📝 | Main vert au début (v1094 en test interne). #1022 (IOS-HEAD) remise à jour sur main à 18:32 : build iOS relancée, à merger par le run de 19:35. Pendant la build, inventaire de l'étape 7 : 10 choses qu'on ne fait que dans le Journal et leur nouvelle maison, découpage 7a à 7d. Résumé : bloc « prêt le 22/11 », réponses du propriétaire du 15/11 retirées des questions. Rien mergé (pour ne pas remettre #1022 en retard). |
 | 15/11 17:35 — [Une seule PR pour Android et l'iPhone (IOS-HEAD)](runs/2026-11-15-1735-ios-head.md) | 🔧 | Main vert au début (#1020 mergée, release v745), aucune PR de la routine ouverte. Étape 1 de « Sort des correctifs » : `iphone/upstream.json` suit `HEAD`, `ios-build.yml` et `ios-testflight.yml` suivent `app/**`, `scripts/version.sh`, charte. Les 51 correctifs s'appliquent sur le code du jour (6e compris) ; tests iPhone verts en local (4067). **#1022** ouverte, build macOS en cours : à merger par le run suivant. |

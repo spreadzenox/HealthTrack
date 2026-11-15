@@ -67,4 +67,14 @@ describe('banc de la méthode (ORG-5a)', () => {
     // sleepMinutes n'agit que sur le bien-être : « net » en digestion serait un faux lien, compté ici.
     expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
   }, 120_000)
+
+  // REFONTE-6d (banc du 15/11 20:35) : avec l'horizon moyen ouvert à 21 jours, un vrai lien fort donnait 7,2 % (21 j) et
+  // 6 % (28 j) de jeux avec un faux lien, presque tous sur l'horizon moyen. Ouvert à 35 jours : 3,8 à 4 %.
+  for (const days of [21, 28]) {
+    it(`effet fort sur le bien-être, ${days} jours tous notés : au plus 5 % de jeux avec un faux lien`, () => {
+      const eff = { outcome: 'wellbeing', key: 'sleepMinutes', horizon: 'short', size: 1 }
+      const b = runBench(analyzeMatrix, { days, effects: [eff], wellbeingMissing: 0, digestionMissing: 0 }, { reps: 400 })
+      expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
+    }, 120_000)
+  }
 })
