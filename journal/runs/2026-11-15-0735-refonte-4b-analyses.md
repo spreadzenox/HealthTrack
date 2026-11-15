@@ -26,7 +26,10 @@ aucune » ; 844.344 intacte  ·  **Parité** : 70 % (33/47), inchangée
      magasins).
 2. **Marqueurs de conflit git dans `iphone/journal/BACKLOG.md`** (lignes 17 à 20), laissés par le run précédent dans
    la branche de #1002 : retirés ici, dans #1004 (les corriger dans #1002 aurait relancé une heure de build macOS).
-3. Journal : résumé, `BACKLOG.md` (REFONTE-4b cochée ; 4b-2, 4b-3, 4b-4 ajoutées), `PRODUIT.md`, `PARITE.md`,
+3. **#1002 finie** (suivi iPhone des étapes 3 et 4a, code v1078) : build iOS sur simulateur verte, 15 checks verts,
+   branche à jour sur main ; captures iPhone regardées (iPhone 17 Pro : Ma journée en clair, en sombre et sur
+   installation vide ; Paramètres avec « Vos habitudes ») ; mergée vers 08:05 (d29ed96).
+4. Journal : résumé, `BACKLOG.md` (REFONTE-4b cochée ; 4b-2, 4b-3, 4b-4 ajoutées), `PRODUIT.md`, `PARITE.md`,
    `iphone/journal/BACKLOG.md`. Les fichiers de journal partent de ceux de #1002.
 
 ## Vérifs
@@ -61,9 +64,12 @@ aucune » ; 844.344 intacte  ·  **Parité** : 70 % (33/47), inchangée
   peser ») avec une habitude.
 - Une réponse importée sans `created_at` d'origine prend la date de l'import : un jour noté avant 20 h, elle est
   alors écartée.
+- iPhone, #1002 : aucune capture avec une habitude suivie (les lignes miel n'ont pas été vues sur simulateur) ;
+  iPhone 16e et grand texte non regardés ; la build TestFlight du code v1078 non vérifiée.
 - iPhone : rien d'embarqué pour 4b ; les correctifs non rejoués en séquence.
 - TestFlight : seule la fin du relevé a été lue ; l'arrivée de la build du code v1075 n'est pas vérifiée ;
   `ios-store-push.yml` non lancé ; pas de soumission ni d'expiration à ce run (aucune nouvelle build constatée).
+- L'horloge du conteneur retarde sur celle de GitHub : les heures de ce compte rendu sont approximatives.
 - Non relus en entier : la charte, `PRODUIT.md`, `DESIGN.md`, `INFRA.md`, les deux `BACKLOG.md`, `PARITE.md`,
   `iphone/journal/README.md` (§ 3, 4 et 8 non relus), `specs/`. `DESIGN.md` ne décrit toujours pas le miel.
 
