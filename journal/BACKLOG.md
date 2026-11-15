@@ -70,8 +70,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   (compte à rebours des analyses) reste dans Ma journée alors qu'il relève d'Objectifs (étape 6) ; 18 h au lieu des
   19 h de la spec, à confirmer par le propriétaire ; une journée à deux repas ne finit jamais (proposer « Pas de
   repas » sur un cercle ?) ; « Hier » et « Bon retour » (spec § 10) non faits ; ouverture depuis le widget (étape 13).
-- [x] **REFONTE-4a — Habitudes : modèle, saisie, miel** (15/11 06:35, Android : #1003 ; **iPhone : à embarquer avec
-  l'étape 3, PR #1002**) : `services/habits.js` (entrées ordinaires `type: 'habit'`, `source: 'app_habit'`,
+- [x] **REFONTE-4a — Habitudes : modèle, saisie, miel** (15/11 06:35, Android : #1003 mergée à 06:59, v1078 ; **iPhone : embarquée avec
+  l'étape 3 dans la PR #1002, à finir**) : `services/habits.js` (entrées ordinaires `type: 'habit'`, `source: 'app_habit'`,
   `payload: { habit, label, done }`, une par habitude et par jour, rangée à midi avec une minute propre à chaque
   habitude ; **aucune migration de schéma**, comme le cycle) ; `settings/habits.js` (liste suivie dans
   `healthtrack_habits` : les 4 proposées et une habitude libre, jointe à l'export, relue à l'import, effacée par
@@ -81,11 +81,23 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   (brief § 3.3) ; plusieurs habitudes libres ; renommer l'habitude libre en fait une autre (identifiant tiré du
   nom) ; réduire le bandeau d'ajout à « Autre chose » ; le choix des habitudes à l'onboarding (étape 5) ; la
   méditation de Pilou et « Hier » (étapes 10 et 11).
-- [ ] **REFONTE-4b — Habitudes dans les analyses** : chaque habitude suivie devient une entrée X (oui / non du jour)
-  de `analysisEngine.js` ; règle 5 : test qui échoue si `habit` entre dans l'estimateur du bien-être ; règle 6 :
-  aucun sens imposé (une habitude peut aller avec de moins bons jours) ; comparaisons multiples et taille
-  d'échantillon minimale ; banc des nulles relancé ; `ANALYSIS_LIMITS` (type `habit`, 1000 par défaut : assez pour
-  5 habitudes sur 200 jours, à relever).
+- [x] **REFONTE-4b — Habitudes dans les analyses** (15/11 07:35, Android : #1004 ; **iPhone : à embarquer**) :
+  `analysisResults.js`, un facteur `habit_<id>` par habitude qui a des réponses (oui = 1, non = 0, sans réponse =
+  inconnu), thème `habit` (miel), même pente, même Holm et même modèle régularisé que les autres facteurs ; règle 5
+  testée (le résultat est le même avec et sans habitudes ; un jour noté avant 20 h, une réponse donnée plus d'une
+  heure après la note reste inconnue, `HABIT_SAME_SESSION_MS`) ; règle 6 testée (lien planté négatif) ; 10 mondes
+  sans lien, aucune habitude nette ; `ANALYSIS_LIMITS.types.habit = 3000` ; phrase de Tendances (« Méditation » plus
+  souvent que d'habitude) ; `npm run visual -- --habits=history`.
+- [ ] **REFONTE-4b-2 — Effet d'une habitude sous-estimé** : sur 70 jours simulés, un effet planté de 0,8 point
+  ressort entre 0,37 et 0,55, et 0,4 entre 0,05 et 0,15 ; la fourchette ne contient pas la vraie valeur. Cause
+  probable : le résultat de chaque jour est l'estimation lissée de TS-1, et un facteur qui change d'un jour à l'autre
+  (oui / non) y perd plus qu'un facteur lent. Ajouter un facteur binaire quotidien au banc (`method/bench.test.js`),
+  mesurer, puis corriger la méthode ou dire la sous-estimation à l'écran.
+- [ ] **REFONTE-4b-3 — Essai d'Agir sur une habitude** : la consigne dit « Un peu plus de méditation que
+  d'habitude » ; elle devrait dire « Méditation » les jours « avec », et l'essai devrait lire la réponse de Ma
+  journée au lieu de reposer la question (`trials.js`, `MEASURED`).
+- [ ] **REFONTE-4b-4 — Heure réelle d'une habitude** : la réponse ne dit pas quand l'habitude a eu lieu ; l'ordre
+  temporel repose sur l'heure de saisie et une tolérance d'une heure. À revoir si la durée ou l'heure est demandée.
 - [ ] **REFONTE-5 — Onboarding** : les 4 temps du brief § 3.4 et la migration des utilisateurs existants (objectifs
   déduits de leurs réglages, dont les anciens « cycle » et « sport », données intactes).
 - [ ] **REFONTE-6 — Objectifs** : score et tendance, ce qui l'influence (3 familles), le détail, la piste en défi

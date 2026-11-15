@@ -75,3 +75,16 @@ testeurs externes ; 844.344 intacte)  ·  **Parité** : 70 % (33/47), inchangée
 ## Suite
 - Finir #1002 en y embarquant aussi l'étape 4a ; regarder les captures iPhone de Ma journée et de Paramètres.
 - Étape 4b, puis étape 5 (onboarding : le choix des habitudes y entre).
+
+## Fin du run (07:10)
+- `npm run visual` complet : 19 pages ok.
+- **#1003 mergée à 06:59** : 12 checks verts (Tests, émulateurs Android 9 à 16, Build APK, relais), branche à jour
+  sur main. Release **v737**, APK 34,6 Mo (34 639 730 octets) ; « Play — AAB » vert sur 410db86 (v1078).
+- **TestFlight**, relevé de 07:02 (`ios-store-beta.yml`, lecture seule) : « en test 1072.1073 ; refusées aucune ; en
+  attente aucune ». Aucune soumission ni expiration à ce run. La build du code v1075 n'apparaît pas dans ce relevé
+  (il ne liste que le groupe externe) : son arrivée chez Apple reste non vérifiée.
+- **#1002** : remise à jour sur main (deux conflits de journal, résolus en prenant la version de main, qui contient
+  celle de la PR), puis `scripts/upstream.sh --latest` : code embarqué de v1077 à **v1078** (410db86), **51 correctifs
+  appliqués**. La PR porte donc les étapes 3 et 4a. Sa build macOS en cours (≈ 40 min sur 60) est abandonnée et
+  relancée : une build de perdue, mais la PR n'aurait pas pu être mergée sans être à jour sur main.
+- Non fait : tests du code embarqué lancés ici (la CI de la PR les lance) ; captures iPhone ; merge de #1002.
