@@ -17,6 +17,11 @@ import {
   TRACKS,
   goalsOf,
   handNotes,
+  migrateGoals,
+  ensureGoalsMigrated,
+  wantsGut,
+  OBJECTIVES,
+  GOALS_VERSION,
 } from './onboarding'
 
 describe('settings/onboarding', () => {
@@ -173,9 +178,9 @@ describe('settings/onboarding', () => {
       saveOnboarding({ goal: 'gut', watch: 'none', tracks: ['gut'], step: 2 })
       finishOnboarding('skipped')
       const d = onboardingDiagnostic()
-      expect(d).toMatchObject({ done: true, endedBy: 'skipped', goal: 'gut', goals: ['gut'], watch: 'none', step: 2, maxStep: 2 })
+      expect(d).toMatchObject({ done: true, endedBy: 'skipped', goal: 'gut', goals: ['wellbeing', 'gut'], goalsBefore: ['gut'], watch: 'none', step: 2, maxStep: 2 })
       expect(Object.keys(d).sort()).toEqual(
-        ['done', 'doneAt', 'endedBy', 'face', 'goal', 'goals', 'health', 'huawei', 'lastScreen', 'maxStep', 'screen', 'screens', 'seen', 'step', 'unlockLater', 'unlockReminderDone', 'watch', 'weather'],
+        ['done', 'doneAt', 'endedBy', 'face', 'goal', 'goals', 'goalsBefore', 'health', 'huawei', 'lastScreen', 'maxStep', 'screen', 'screens', 'seen', 'step', 'unlockLater', 'unlockReminderDone', 'watch', 'weather'],
       )
     })
   })
@@ -226,5 +231,130 @@ describe('handNotes (POLISH-SIM-51) : ce que l’on note sans source, selon l’
   })
   it('« Mon stress et mon sommeil » : ni digestion ni poids', () => {
     expect(handNotes(['stress'])).toEqual(['bien-être', 'repas en photo'])
+  })
+})
+
+describe('migration des objectifs (refonte étape 5a) : bien-être toujours, confort digestif facultatif', () => {
+  beforeEach(() => localStorage.clear())
+  const day = 86_400_000
+  const now = Date.parse('2026-11-15T10:00:00Z')
+  const gutNote = (ago) => ({ type: 'gut', at: new Date(now - ago).toISOString() })
+
+  it('les deux objectifs de la refonte : Bien-être (verrouillé) et Confort digestif', () => {
+    expect(OBJECTIVES.map((o) => [o.id, o.label, !!o.locked])).toEqual([
+      ['wellbeing', 'Bien-être', true],
+      ['gut', 'Confort digestif', false],
+    ])
+  })
+
+  it.each([
+    [{ goals: ['gut'] }, ['wellbeing', 'gut']],
+    [{ goals: ['gut', 'stress', 'all'] }, ['wellbeing', 'gut']],
+    [{ goals: ['stress'] }, ['wellbeing']],
+    [{ goals: ['care', 'all'] }, ['wellbeing']],
+    [{ goals: ['sport'] }, ['wellbeing']],
+    [{ goal: 'gut' }, ['wellbeing', 'gut']],
+    [{ goal: 'energy' }, ['wellbeing']],
+    [{ goal: 'all' }, ['wellbeing']],
+  ])('%j devient %j', (before, after) => {
+    const next = migrateGoals({ done: true, ...before })
+    expect(next.goals).toEqual(after)
+    expect(next.goalsVersion).toBe(GOALS_VERSION)
+  })
+
+  it('l’ancien « Mon cycle » garde le ventre et l’affichage du cycle', () => {
+    const next = migrateGoals({ done: true, goals: ['cycle', 'sport'] })
+    expect(next.goals).toEqual(['wellbeing', 'gut', 'cycle'])
+    expect(wantsGut(goalsOf(next))).toBe(true)
+  })
+
+  it('sans aucun objectif : le ventre reste seulement à qui l’a noté ces 7 derniers jours', () => {
+    expect(migrateGoals({ done: true }, true).goals).toEqual(['wellbeing', 'gut'])
+    expect(migrateGoals({ done: true }, false).goals).toEqual(['wellbeing'])
+    expect(migrateGoals({ done: true, goals: [] }, true).goals).toEqual(['wellbeing', 'gut'])
+    // une note récente n’ajoute pas le ventre à qui avait choisi autre chose
+    expect(migrateGoals({ done: true, goals: ['stress'] }, true).goals).toEqual(['wellbeing'])
+  })
+
+  it('garde les anciens choix (goalsBefore) et ne touche à rien d’autre', () => {
+    const s = { done: true, goals: ['care', 'sport'], goal: 'all', watch: 'huawei', step: 4, tour: 'done' }
+    const next = migrateGoals(s)
+    expect(next).toMatchObject({ done: true, goal: 'all', watch: 'huawei', step: 4, tour: 'done' })
+    expect(next.goalsBefore).toEqual(['care', 'sport'])
+    expect(s.goals).toEqual(['care', 'sport'])
+  })
+
+  it('idempotente : une seconde passe ne change rien, même si une note du ventre est apparue', () => {
+    const once = migrateGoals({ done: true, goals: ['stress'] })
+    expect(migrateGoals(once, true)).toEqual(once)
+  })
+
+  it('après la migration, le ventre est montré ou caché, jamais « selon l’usage »', () => {
+    expect(gutCardMode(migrateGoals({ done: true }, false))).toBe('hide')
+    expect(gutCardMode(migrateGoals({ done: true }, true))).toBe('show')
+    expect(gutCardMode({ done: true })).toBe('used')
+  })
+
+  describe('ensureGoalsMigrated (au démarrage)', () => {
+    it('ne fait rien tant que l’accueil n’est pas fini', async () => {
+      saveOnboarding({ goals: ['gut'], step: 2 })
+      const list = vi.fn()
+      await ensureGoalsMigrated({ list, now })
+      expect(loadOnboarding().goalsVersion).toBeUndefined()
+      expect(list).not.toHaveBeenCalled()
+    })
+
+    it('migre sans lire la base quand un objectif était choisi', async () => {
+      saveOnboarding({ done: true, goals: ['gut', 'care'] })
+      const list = vi.fn()
+      await ensureGoalsMigrated({ list, now })
+      expect(loadOnboarding()).toMatchObject({ goals: ['wellbeing', 'gut'], goalsBefore: ['gut', 'care'] })
+      expect(list).not.toHaveBeenCalled()
+    })
+
+    it('sans objectif : lit les notes du ventre, 7 jours comptent, 8 non', async () => {
+      saveOnboarding({ done: true })
+      await ensureGoalsMigrated({ list: async () => [gutNote(6 * day)], now })
+      expect(loadOnboarding().goals).toEqual(['wellbeing', 'gut'])
+      localStorage.clear()
+      saveOnboarding({ done: true })
+      await ensureGoalsMigrated({ list: async () => [gutNote(8 * day)], now })
+      expect(loadOnboarding().goals).toEqual(['wellbeing'])
+    })
+
+    it('base illisible : rien n’est figé, la migration réessaiera', async () => {
+      saveOnboarding({ done: true })
+      await ensureGoalsMigrated({ list: async () => { throw new Error('idb') }, now })
+      expect(loadOnboarding().goalsVersion).toBeUndefined()
+      expect(gutCardMode()).toBe('used')
+    })
+
+    it('une seule fois : un choix fait ensuite dans Réglages n’est pas écrasé', async () => {
+      saveOnboarding({ done: true, goals: ['gut'] })
+      await ensureGoalsMigrated({ now })
+      saveOnboarding({ goals: ['wellbeing'] })
+      await ensureGoalsMigrated({ list: async () => [gutNote(day)], now })
+      expect(loadOnboarding().goals).toEqual(['wellbeing'])
+    })
+  })
+
+  it('finishOnboarding migre les choix d’un accueil terminé ou passé', () => {
+    saveOnboarding({ goals: ['stress', 'gut'], step: 3 })
+    expect(finishOnboarding('completed')).toMatchObject({ goals: ['wellbeing', 'gut'], goalsBefore: ['stress', 'gut'] })
+    localStorage.clear()
+    expect(finishOnboarding('skipped').goals).toEqual(['wellbeing'])
+  })
+
+  it('utilisateur existant sans accueil : needsOnboarding lance la migration avec ses notes', async () => {
+    const list = vi.fn(async () => [gutNote(day)])
+    expect(await needsOnboarding({ countEntries: async () => 12, list, now })).toBe(false)
+    await vi.waitFor(() => expect(loadOnboarding().goals).toEqual(['wellbeing', 'gut']))
+    expect(loadOnboarding().endedBy).toBe('existing')
+  })
+
+  it('le diagnostic garde les anciens choix', () => {
+    saveOnboarding({ done: true, goals: ['care'] })
+    finishOnboarding('completed')
+    expect(onboardingDiagnostic()).toMatchObject({ goals: ['wellbeing'], goalsBefore: ['care'] })
   })
 })

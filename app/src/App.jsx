@@ -1,10 +1,11 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './Layout'
 import Dashboard from './pages/Dashboard'
 import './pageStyles'
 import { DebugProvider } from './contexts/DebugContext'
 import { loadNutritionTable } from './data/nutritionTable'
+import { ensureGoalsMigrated } from './settings/onboarding'
 
 // Perf D2 : seul l'Accueil est dans le fichier principal ; les autres pages arrivent à la demande
 // (fichiers séparés, chargés en quelques ms depuis l'APK). Celles qui calculent des nutriments
@@ -30,6 +31,10 @@ const Licences = lazy(() => import('./pages/Licences'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
 
 export default function App() {
+  // Refonte étape 5a : objectifs d'avant la refonte convertis une fois (bien-être toujours, confort digestif facultatif)
+  useEffect(() => {
+    ensureGoalsMigrated().catch(() => {})
+  }, [])
   return (
     <DebugProvider>
       <BrowserRouter>

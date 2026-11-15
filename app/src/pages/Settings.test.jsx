@@ -67,33 +67,60 @@ describe('Settings — Cigarettes', () => {
   })
 })
 
-describe('Settings — Ce qui vous amène (I155)', () => {
+describe('Settings — Vos objectifs (refonte étape 5a)', () => {
   beforeEach(() => localStorage.clear())
+  const stored = () => JSON.parse(localStorage.getItem('healthtrack_onboarding'))
 
-  it('reprend l’ancien objectif de l’onboarding (goal) en cases, et retient plusieurs choix (ACC-3)', () => {
+  it('Bien-être toujours suivi et verrouillé, Confort digestif à cocher', () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['wellbeing'], goalsVersion: 2 }))
+    renderSettings()
+    const group = screen.getByRole('group', { name: 'Vos objectifs' })
+    expect(within(group).getAllByRole('checkbox')).toHaveLength(2)
+    const wellbeing = within(group).getByRole('checkbox', { name: /Bien-être/ })
+    expect(wellbeing).toBeChecked()
+    expect(wellbeing).toBeDisabled()
+    expect(within(group).getByText('Toujours suivi')).toBeInTheDocument()
+    const gut = within(group).getByRole('checkbox', { name: 'Confort digestif' })
+    expect(gut).not.toBeChecked()
+    fireEvent.click(gut)
+    expect(stored().goals).toEqual(['wellbeing', 'gut'])
+    fireEvent.click(gut)
+    expect(stored().goals).toEqual(['wellbeing'])
+  })
+
+  it('reprend les anciens choix : « Ma digestion » (ancien goal) coche Confort digestif ; les autres non', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
+    const { unmount } = renderSettings()
+    expect(screen.getByRole('checkbox', { name: 'Confort digestif' })).toBeChecked()
+    unmount()
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['stress', 'care'] }))
     renderSettings()
-    const group = screen.getByRole('group', { name: 'Ce qui vous amène' })
-    expect(within(group).getByRole('checkbox', { name: 'Ma digestion' })).toBeChecked()
-    expect(within(group).getAllByRole('checkbox')).toHaveLength(4)
-    fireEvent.click(within(group).getByRole('checkbox', { name: 'Mon stress et mon sommeil' }))
-    expect(JSON.parse(localStorage.getItem('healthtrack_onboarding'))).toMatchObject({ done: true, goals: ['gut', 'stress'] })
+    expect(screen.getByRole('checkbox', { name: 'Confort digestif' })).not.toBeChecked()
+    expect(screen.queryByRole('checkbox', { name: /Mon stress|Prendre soin|Tout mesurer|Mon cycle|Mon sport/ })).toBeNull()
   })
 
-  it('« Mon cycle » et « Mon sport » ne sont plus proposés ; qui les avait cochés les garde (refonte étape 1)', () => {
-    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['cycle', 'sport'] }))
+  it('un choix fait avant la migration du démarrage écrit la nouvelle forme et garde les anciens choix', () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['stress', 'sport'] }))
     renderSettings()
-    expect(screen.queryByRole('checkbox', { name: /Mon cycle|Mon sport/ })).toBeNull()
-    fireEvent.click(screen.getByRole('checkbox', { name: 'Prendre soin de moi' }))
-    expect(JSON.parse(localStorage.getItem('healthtrack_onboarding')).goals).toEqual(['cycle', 'sport', 'care'])
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Confort digestif' }))
+    expect(stored()).toMatchObject({ goals: ['wellbeing', 'gut'], goalsBefore: ['stress', 'sport'], goalsVersion: 2 })
   })
 
-  it('sans objectif choisi, dit quand la digestion est proposée, et pas de rappel du soir (refonte étape 1)', () => {
+  it('l’ancien « Mon cycle » : décocher Confort digestif garde le marqueur du cycle et retire le ventre', () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['cycle'] }))
+    renderSettings()
+    const gut = screen.getByRole('checkbox', { name: 'Confort digestif' })
+    expect(gut).toBeChecked()
+    fireEvent.click(gut)
+    expect(stored().goals).toEqual(['wellbeing', 'cycle'])
+    expect(gut).not.toBeChecked()
+    expect(screen.queryByRole('checkbox', { name: 'Rappel du bilan digestif, le soir' })).toBeNull()
+  })
+
+  it('sans Confort digestif, pas de rappel du soir', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true }))
     renderSettings()
-    expect(screen.getByText(/Sans objectif, seulement si vous l’avez notée ces 7 derniers jours/)).toBeInTheDocument()
     expect(screen.queryByRole('checkbox', { name: 'Rappel du bilan digestif, le soir' })).toBeNull()
-    fireEvent.click(screen.getByRole('checkbox', { name: 'Ma digestion' }))
     expect(screen.queryByText(/Sans objectif/)).not.toBeInTheDocument()
   })
 
@@ -106,8 +133,7 @@ describe('Settings — Ce qui vous amène (I155)', () => {
       renderSettings()
       expect(screen.getByRole('checkbox', { name: 'Rappel du bilan digestif, le soir' })).toBeChecked()
       expect(await screen.findByText(/Vers 20 h 30/)).toBeInTheDocument()
-      fireEvent.click(screen.getByRole('checkbox', { name: 'Ma digestion' }))
-      fireEvent.click(screen.getByRole('checkbox', { name: 'Mon stress et mon sommeil' }))
+      fireEvent.click(screen.getByRole('checkbox', { name: 'Confort digestif' }))
       expect(screen.queryByRole('checkbox', { name: 'Rappel du bilan digestif, le soir' })).not.toBeInTheDocument()
       await waitFor(() => expect(configure).toHaveBeenLastCalledWith({ enabled: false }))
       expect(JSON.parse(localStorage.getItem('healthtrack_gut_evening'))).toEqual({ enabled: true })

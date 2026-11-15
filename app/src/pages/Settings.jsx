@@ -10,7 +10,7 @@ import { isCigaretteCounterPinned, setCigaretteCounterPinned } from '../settings
 import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../theme/theme'
 import { DISTRIBUTION, FEATURES, STORE, storeOfPurchase } from '../config/distribution'
 import { feedbackLink } from '../config/feedback'
-import { GOALS, goalsOf, gutCardMode, loadOnboarding, saveOnboarding } from '../settings/onboarding'
+import { OBJECTIVES, goalsOf, loadOnboarding, migrateGoals, saveOnboarding, wantsGut } from '../settings/onboarding'
 import { syncGutEvening } from '../services/gutEvening'
 import GutEveningReminder from '../components/GutEveningReminder'
 import AiCreditsHint from '../components/AiCreditsHint'
@@ -159,9 +159,14 @@ export default function Settings() {
     }
   }
 
-  const handleGoal = (id) => {
-    const value = goals.includes(id) ? goals.filter((g) => g !== id) : [...goals, id]
-    saveOnboarding({ goals: value })
+  const gutGoal = wantsGut(goals)
+  const handleGutGoal = () => {
+    // forme de la refonte (étape 5a) : bien-être toujours, confort digestif coché ou non ; le marqueur de
+    // l'ancien « Mon cycle » reste (affichage du cycle)
+    const migrated = migrateGoals(loadOnboarding())
+    const kept = migrated.goals.filter((g) => g !== 'gut')
+    const value = gutGoal ? kept : [...kept, 'gut']
+    saveOnboarding({ ...migrated, goals: value })
     setGoals(value)
     // sans carte ventre, plus de rappel du bilan du soir (le choix est gardé pour plus tard)
     syncGutEvening()
@@ -198,29 +203,33 @@ export default function Settings() {
       {/* Jalon 9 : caché tant que l'anglais n'est pas complet (interrupteur de build VITE_I18N_EN) */}
       {I18N_EN && <LanguageSetting />}
 
-      {/* L'objectif de l'onboarding règle l'Accueil (I155, POL-4) : carte ventre seulement avec « Mon ventre ». */}
+      {/* Refonte étape 5a (brief § 3.2) : le bien-être pour tout le monde, le confort digestif en plus si on le veut. */}
       <div className="settings-block">
-        <h3 className="section-title">Ce qui vous amène</h3>
-        <div className="theme-choices" role="group" aria-label="Ce qui vous amène">
-          {GOALS.map((g) => (
-            <label key={g.id} className={`theme-choice${goals.includes(g.id) ? ' is-selected' : ''}`}>
-              <input
-                type="checkbox"
-                name="goals"
-                value={g.id}
-                checked={goals.includes(g.id)}
-                onChange={() => handleGoal(g.id)}
-              />
-              <span>{g.label}</span>
-            </label>
-          ))}
+        <h3 className="section-title">Vos objectifs</h3>
+        <div className="theme-choices" role="group" aria-label="Vos objectifs">
+          {OBJECTIVES.map((o) => {
+            const checked = o.locked || gutGoal
+            return (
+              <label key={o.id} className={`theme-choice${checked ? ' is-selected' : ''}`}>
+                <input
+                  type="checkbox"
+                  name="goals"
+                  value={o.id}
+                  checked={checked}
+                  disabled={o.locked}
+                  onChange={o.locked ? undefined : handleGutGoal}
+                />
+                <span>{o.label}</span>
+                {o.locked && <span className="goal-locked">Toujours suivi</span>}
+              </label>
+            )
+          })}
         </div>
         <p className="hint">
-          Avec «&nbsp;Ma digestion&nbsp;», {APP_NAME} vous propose de noter votre digestion
-          {goals.length ? '' : '. Sans objectif, seulement si vous l’avez notée ces 7 derniers jours'}. Vos notes sont
-          gardées, quel que soit votre choix.
+          Avec «&nbsp;Confort digestif&nbsp;», {APP_NAME} vous propose de noter votre digestion. Vos notes sont gardées,
+          quel que soit votre choix.
         </p>
-        {gutCardMode({ ...loadOnboarding(), goals }) === 'show' && <GutEveningReminder variant="setting" />}
+        {gutGoal && <GutEveningReminder variant="setting" />}
       </div>
 
       {/* Refonte étape 4 : ce que la personne note par oui ou non dans Ma journée. */}
