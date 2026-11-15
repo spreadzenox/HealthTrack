@@ -152,7 +152,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     « ← Objectifs » ; l'onglet n'ouvre plus Digestion d'office (POLISH-SIM-33 retiré). Écarts avec la SPEC : « Des
     estimations, pas un diagnostic. » non affichée (SLOP-1 : jamais en refrain) ; « ventre » remplacé par
     « digestion » ; ni en-tête « Vos 7 derniers jours » avec Pilou ni phrase « Plutôt une bonne semaine. ».
-  - [ ] **REFONTE-6a-iOS** : embarquer 6a (`upstream.sh --latest`), ajouter `/recommendations/bien-etre` au plan de
+  - [ ] **REFONTE-6a-iOS** (15/11 13:30 : **en PR**, branche `claude/iphone-code-6a`, code v1088, 51 correctifs sans retouche, plan de captures complété ; reste la build sur simulateur et les captures d'Objectifs à regarder) : embarquer 6a (`upstream.sh --latest`), ajouter `/recommendations/bien-etre` au plan de
     captures (`captureMode.js`), regarder Objectifs sur simulateur (clair, sombre, vierge).
   - [ ] **REFONTE-6a-2 — Restes de 6a** : la visite guidée ne montre pas la vue d'ensemble (ses 3 étapes d'Objectifs
     pointent sur le détail du bien-être) ; captures à 320 px et en grand texte ; état « pas assez de notes cette
