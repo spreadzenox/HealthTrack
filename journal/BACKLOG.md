@@ -70,8 +70,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   (compte à rebours des analyses) reste dans Ma journée alors qu'il relève d'Objectifs (étape 6) ; 18 h au lieu des
   19 h de la spec, à confirmer par le propriétaire ; une journée à deux repas ne finit jamais (proposer « Pas de
   repas » sur un cercle ?) ; « Hier » et « Bon retour » (spec § 10) non faits ; ouverture depuis le widget (étape 13).
-- [x] **REFONTE-4a — Habitudes : modèle, saisie, miel** (15/11 06:35, Android : #1003 ; **iPhone : à embarquer avec
-  l'étape 3, PR #1002**) : `services/habits.js` (entrées ordinaires `type: 'habit'`, `source: 'app_habit'`,
+- [x] **REFONTE-4a — Habitudes : modèle, saisie, miel** (15/11 06:35, Android : #1003 mergée à 06:59, v1078 ; **iPhone : embarquée avec
+  l'étape 3 dans la PR #1002, à finir**) : `services/habits.js` (entrées ordinaires `type: 'habit'`, `source: 'app_habit'`,
   `payload: { habit, label, done }`, une par habitude et par jour, rangée à midi avec une minute propre à chaque
   habitude ; **aucune migration de schéma**, comme le cycle) ; `settings/habits.js` (liste suivie dans
   `healthtrack_habits` : les 4 proposées et une habitude libre, jointe à l'export, relue à l'import, effacée par

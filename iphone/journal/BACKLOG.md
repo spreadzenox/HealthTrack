@@ -16,7 +16,7 @@
 > à finir : « Play — AAB » vert sur c0f316e, build simulateur, captures `ma-journee` regardées.
 <<<<<<< HEAD
 =======
-> 15/11 06:35 : l'étape 4a (#1003, habitudes) suit ; à embarquer dans la même PR #1002 après son merge.
+> 15/11 07:10 : l'étape 4a (#1003, habitudes) est embarquée dans la même PR #1002 (code v1078, 51 correctifs) ; build simulateur relancée, à finir.
 >>>>>>> origin/main
 
 - [x] **I0 — Mise en place** (27/10, session de configuration avec le propriétaire) : dépôt `HealthTrack-iOS`
