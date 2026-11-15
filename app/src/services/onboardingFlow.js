@@ -30,17 +30,45 @@ export function healthConnector() {
 export const healthStoreName = () => (Capacitor?.getPlatform?.() === 'ios' ? 'Santé' : 'Health Connect')
 
 /**
- * Écrans fixes du nouvel accueil (ACC-1, 08/11) : tuto (3 cartes), objectifs, sources, ce qui a été trouvé, visage
- * (si le téléphone sait le lire), première note, Gold (variante play). Aucun écran ne dépend d'un choix : le
- * compteur est calculé une fois et ne bouge plus.
+ * Écrans de l'accueil en 4 temps (refonte « Compagnon », étape 5b, brief § 3.4) : une carte d'ouverture, les 4 temps
+ * (objectifs, montre, ce que Halcya suit seule, ce qu'on note), puis le visage (si le téléphone sait le lire) et
+ * Gold (variante play). Aucun écran ne dépend d'un choix : le compteur ne bouge pas.
  */
+export const TEMPS = ['goal', 'watch', 'auto', 'notes']
 export function stepsFor() {
-  const steps = ['tuto', 'goal', 'sources', 'found']
+  const steps = ['intro', ...TEMPS]
   if (isFaceSenseAvailable()) steps.push('face')
-  steps.push('first')
   if (FEATURES.billing) steps.push('premium')
   return steps
 }
+
+/**
+ * Temps 3 : ce que Halcya suit sans rien demander (brief § 3.3 ; le « stress » de la montre n'y est pas). Sans
+ * montre, seuls le temps d'écran et la météo viennent du téléphone : le reste est annoncé pour plus tard.
+ */
+export const AUTO_TILES = [
+  { id: 'sleep', label: 'Sommeil', tone: 'night', watch: true },
+  { id: 'steps', label: 'Pas', tone: 'lilac', watch: true },
+  { id: 'workouts', label: 'Séances de sport', tone: 'lilac', watch: true },
+  { id: 'heart', label: 'Cœur', tone: 'rose', watch: true },
+  { id: 'hrv', label: 'Variabilité cardiaque', tone: 'rose', watch: true },
+  { id: 'breath', label: 'Respiration', tone: 'rose', watch: true },
+  { id: 'skin', label: 'Température de la peau', tone: 'rose', watch: true },
+  { id: 'screen', label: 'Temps d’écran', tone: 'stone' },
+  { id: 'weather', label: 'Météo', tone: 'stone' },
+]
+
+/** Temps 4 : ce qui se note à la main chaque jour, hors habitudes (la digestion seulement avec son objectif). */
+export function dailyNotes(gut) {
+  return [
+    { id: 'meals', label: 'Repas', detail: 'en photo, 3 par jour', tone: 'peach' },
+    { id: 'wellbeing', label: 'Bien-être', detail: 'une note rapide', tone: 'mint' },
+    gut && { id: 'gut', label: 'Digestion', detail: 'le soir', tone: 'peach' },
+  ].filter(Boolean)
+}
+
+/** Résumé du temps 4 : « 5 choses par jour · environ 1 minute ». */
+export const dailySummary = (count) => `${count} choses par jour · environ 1 minute`
 
 
 /** Au-delà, « ce qui a été trouvé » s'affiche sans attendre la fin de l'import (qui continue en arrière-plan). */
@@ -120,18 +148,3 @@ export function foundDevices(entries, installed) {
     .map((a) => ({ id: a.id, name: a.name, sending: false, hint: a.enableHint }))
   return [...sending.values(), ...silent]
 }
-
-
-export const FEELINGS = [
-  { value: 1, label: 'Mal' },
-  { value: 2, label: 'Bof' },
-  { value: 3, label: 'Neutre' },
-  { value: 4, label: 'Bien' },
-  { value: 5, label: 'Très bien' },
-]
-export const BELLY = [
-  { id: 'calm', label: 'Calme' },
-  { id: 'discomfort', label: 'Gêné' },
-  { id: 'pain', label: 'Douloureux' },
-]
-

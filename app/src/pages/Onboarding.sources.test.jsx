@@ -51,7 +51,7 @@ const night = (day) => ({
   payload: { endDate: new Date(Date.now() - day * 86400000).toISOString(), sourceName: 'com.garmin.android.apps.connectmobile' },
 })
 
-describe('Nouvel accueil (ACC-4) : « Branchez vos sources »', () => {
+describe('Accueil, temps 2 : les sources quand on a une montre', () => {
   beforeEach(() => {
     localStorage.clear()
     vi.clearAllMocks()
@@ -64,12 +64,12 @@ describe('Nouvel accueil (ACC-4) : « Branchez vos sources »', () => {
     hc.sync.mockResolvedValue({ synced: 3, skipped: 0, errors: [] })
     geo.getApproxPosition.mockResolvedValue({ lat: 45.76, lon: 4.84 })
     weather.syncWeather.mockResolvedValue({})
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'sources' })
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'watch', watch: 'yes' })
   })
 
   it('la divulgation est au-dessus du bouton ; « Connecter Health Connect » demande l’accès d’un geste, puis l’import part', async () => {
     renderAt()
-    expect(screen.getByRole('heading', { name: 'Branchez vos sources' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Avez-vous une montre ou un bracelet ?' })).toBeInTheDocument()
     expect(screen.getByText(/Elle n’écrit rien et n’envoie rien/)).toBeInTheDocument()
     expect(btn('Continuer')).toBeEnabled()
     fireEvent.click(btn('Connecter Health Connect'))
@@ -86,9 +86,22 @@ describe('Nouvel accueil (ACC-4) : « Branchez vos sources »', () => {
     expect(await screen.findByText(/Sans cet accès, Halcya vivra de vos notes et de votre visage/)).toBeInTheDocument()
     expect(btn('Réessayer')).toBeInTheDocument()
     fireEvent.click(btn('Continuer'))
-    expect(screen.getByRole('heading', { name: 'Votre téléphone suffit pour commencer' })).toBeInTheDocument()
-    fireEvent.click(btn('Connecter Health Connect'))
-    expect(screen.getByRole('heading', { name: 'Branchez vos sources' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Ce que Halcya suit pour vous, sans rien faire' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Ce que Halcya a trouvé' })).not.toBeInTheDocument()
+  })
+
+  it('« Non, pas pour l’instant » : aucune permission demandée, aucun import lancé', async () => {
+    saveOnboarding({ watch: null })
+    renderAt()
+    fireEvent.click(screen.getByRole('radio', { name: 'Non, pas pour l’instant' }))
+    fireEvent.click(btn('Continuer'))
+    fireEvent.click(btn('Continuer'))
+    fireEvent.click(btn('C’est parti !'))
+    expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
+    expect(hc.availabilityDetails).not.toHaveBeenCalled()
+    expect(hc.checkPermissions).not.toHaveBeenCalled()
+    expect(hc.requestPermissions).not.toHaveBeenCalled()
+    expect(hc.sync).not.toHaveBeenCalled()
   })
 
   it('Health Connect absent : une ligne discrète, pas de carte', async () => {
@@ -108,7 +121,11 @@ describe('Nouvel accueil (ACC-4) : « Branchez vos sources »', () => {
     expect(await screen.findByText('Montre Huawei trouvée')).toBeInTheDocument()
     fireEvent.click(btn('Relier ma montre'))
     expect(loadOnboarding().huawei).toBe('pair')
-    saveOnboarding({ lastScreen: 'first', step: 4 })
+    saveOnboarding({ lastScreen: 'notes', step: 4 })
+    unmount()
+    renderAt()
+    fireEvent.click(btn('C’est parti !'))
+    expect(await screen.findByText('Page Sources')).toBeInTheDocument()
     unmount()
   })
 
@@ -129,7 +146,7 @@ describe('Nouvel accueil (ACC-4) : « Branchez vos sources »', () => {
   })
 })
 
-describe('Nouvel accueil (ACC-5) : « Voici ce que Halcya recevra »', () => {
+describe('Accueil, temps 3 : ce que Halcya a trouvé, quand l’accès est donné', () => {
   beforeEach(() => {
     localStorage.clear()
     vi.clearAllMocks()
@@ -141,9 +158,10 @@ describe('Nouvel accueil (ACC-5) : « Voici ce que Halcya recevra »', () => {
   })
 
   it('appareils et tuiles des 30 derniers jours, après l’import', async () => {
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'found', health: 'granted' })
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'auto', watch: 'yes', health: 'granted' })
     renderAt()
-    expect(screen.getByRole('heading', { name: 'Voici ce que Halcya recevra' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Ce que Halcya suit pour vous, sans rien faire' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Ce que Halcya a trouvé' })).toBeInTheDocument()
     expect(await screen.findByText('Garmin Connect')).toBeInTheDocument()
     expect(screen.getByText(/de sommeil en moyenne/)).toBeInTheDocument()
     expect(btn('Continuer')).toBeEnabled()
@@ -152,11 +170,11 @@ describe('Nouvel accueil (ACC-5) : « Voici ce que Halcya recevra »', () => {
 
   it('« Continuer » ne bloque jamais, même pendant l’import', () => {
     hc.sync.mockReturnValue(new Promise(() => {}))
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'found', health: 'granted' })
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'auto', watch: 'yes', health: 'granted' })
     renderAt()
     expect(screen.getByRole('progressbar', { name: 'Import de vos 30 derniers jours' })).toBeInTheDocument()
     fireEvent.click(btn('Continuer'))
-    expect(screen.getByRole('heading', { name: 'Comment vous sentez-vous maintenant ?' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Ce que vous noterez chaque jour' })).toBeInTheDocument()
   })
 
   it('foundDevices : les apps qui envoient, puis celles installées qui n’envoient encore rien, avec leur réglage', () => {
@@ -183,7 +201,7 @@ describe('Nouvel accueil (ACC-5) : mesures par thème', () => {
   it('Samsung : reçu, pas partagée avec sa raison, et ce qui n’est pas mesuré en une ligne', async () => {
     const sam = (type, payload = {}) => ({ type, source: 'health_connect', at: new Date(Date.now() - 86400000).toISOString(), payload: { sourceName: 'com.sec.android.app.shealth', ...payload } })
     stored.entries = [sam('steps', { count: 8000 }), sam('heart_rate', { bpm: 70 })]
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'found', health: 'granted', imported: true })
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'auto', watch: 'yes', health: 'granted', imported: true })
     renderAt()
     expect(await screen.findByRole('region', { name: 'Corps' })).toBeInTheDocument()
     expect(screen.getByText('votre montre la mesure, Samsung ne la partage avec aucune app')).toBeInTheDocument()

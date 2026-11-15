@@ -1,27 +1,29 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   FLOW_VERSION,
-  GOALS,
-  defaultTracks,
+  OBJECTIVES,
+  chooseObjectives,
   finishOnboarding,
   goalsOf,
-  handNotes,
   loadOnboarding,
   markScreenSeen,
   saveOnboarding,
   wantsGut,
 } from '../settings/onboarding'
-import { createEntry, listEntries, updateEntry } from '../storage/localHealthStorage'
-import { GUT_SOURCE, GUT_TYPE } from '../services/today'
+import { listEntries } from '../storage/localHealthStorage'
+import { getHabits, setHabits } from '../settings/habits'
+import { CUSTOM_PREFIX, MAX_HABIT_LABEL, SUGGESTED_HABITS, customHabit } from '../services/habits'
 import { FEATURES } from '../config/distribution'
 import Premium from './Premium'
 import { AHA_DAYS, summarizeImport } from '../services/firstImport'
 import {
-  BELLY,
+  AUTO_TILES,
   DATA_LEAVES,
-  FEELINGS,
   IMPORT_PATIENCE_MS,
+  TEMPS,
+  dailyNotes,
+  dailySummary,
   foundDevices,
   healthConnector,
   healthStoreName,
@@ -45,7 +47,6 @@ import {
   isPhoneUsageAvailable,
   openPhoneUsageAccessSettings,
 } from '../services/phoneUsageSync'
-import { choiceToScore } from '../services/mood/wellbeingScale'
 import { detectPhoneApps } from '../devices/phoneApps'
 import { GOLD_AI_DAILY } from '../config/premiumBenefits'
 import { useEntitlement } from '../hooks/useEntitlement'
@@ -56,11 +57,7 @@ import { monoDigits } from '../utils/monoDigits'
 const withTimeout = (promise, ms, fallback) =>
   Promise.race([promise, new Promise((resolve) => setTimeout(() => resolve(fallback), ms))])
 
-const pad = (n) => String(n).padStart(2, '0')
-
-/* ───────────────────────── Tuto (ACC-2) ───────────────────────── */
-
-const TUTO_CARDS = 3
+/* ───────────────────────── Ouverture (une carte, étape 5b) ───────────────────────── */
 
 function TutoIllustration() {
   const pills = [
@@ -86,122 +83,72 @@ function TutoIllustration() {
   )
 }
 
-const TABS_EXPLAINED = [
-  { tab: 'Données', text: 'voir vos journées, vos repas, vos mesures' },
-  { tab: 'Objectifs', text: `les liens que ${APP_NAME} trouve dans vos données` },
-  { tab: 'Agir', text: 'vérifier une piste par un essai' },
-]
-
-function TutoStep({ card, onCard }) {
-  const touch = useRef(null)
-  const onTouchStart = (e) => {
-    touch.current = e.touches?.[0]?.clientX ?? null
-  }
-  const onTouchEnd = (e) => {
-    const start = touch.current
-    const end = e.changedTouches?.[0]?.clientX
-    touch.current = null
-    if (start == null || end == null) return
-    const dx = end - start
-    if (dx < -40 && card < TUTO_CARDS - 1) onCard(card + 1)
-    if (dx > 40 && card > 0) onCard(card - 1)
-  }
+/** Carte d'ouverture : ce qu'est Halcya et les seuls cas où des données quittent le téléphone. */
+function IntroStep() {
   return (
-    <div className="onb-tuto" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-      {card === 0 && (
-        <>
-          <TutoIllustration />
-          <h1 className="onb-title">Bienvenue dans {APP_NAME}</h1>
-          <p className="onb-lead">Vos repas, votre sommeil, vos appareils et votre ressenti, au même endroit.</p>
-        </>
-      )}
-      {card === 1 && (
-        <>
-          <h1 className="onb-title">{APP_NAME} cherche ce qui va avec vos bons et mauvais jours</h1>
-          <p className="onb-lead">Trois usages :</p>
-          <ul className="onb-tabs-list">
-            {TABS_EXPLAINED.map((t) => (
-              <li key={t.tab}>
-                <span className="onb-tabs-name">{t.tab}</span>
-                <span className="onb-tabs-text">{t.text}</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-      {card === 2 && (
-        <>
-          <h1 className="onb-title">Vos données restent sur votre téléphone</h1>
-          <p className="onb-lead">Elles n’en sortent que dans ces cas :</p>
-          <h2 className="onb-leaves-group">Quand vous le demandez</h2>
-          <ul className="onb-leaves">
-            {DATA_LEAVES.onDemand.map((l) => (
-              <li key={l.title}>
-                <span className="onb-leaves-title">{l.title}</span>
-                <span className="onb-leaves-detail">{l.detail}</span>
-              </li>
-            ))}
-          </ul>
-          <h2 className="onb-leaves-group">Si vous l’activez</h2>
-          <ul className="onb-leaves">
-            {DATA_LEAVES.ifEnabled.map((l) => (
-              <li key={l.title}>
-                <span className="onb-leaves-title">{l.title}</span>
-                <span className="onb-leaves-detail">{l.detail}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="onb-fine">
-            La lecture du visage se fait sur le téléphone : aucune image n’en sort. Pour l’abonnement, seul un numéro
-            anonyme est vérifié. {APP_NAME} ne pose pas de diagnostic. En continuant, vous confirmez avoir 18 ans ou plus.
-          </p>
-        </>
-      )}
-      <div className="onb-dots" role="tablist" aria-label="Cartes">
-        {Array.from({ length: TUTO_CARDS }, (_, i) => (
-          <button
-            key={i}
-            type="button"
-            role="tab"
-            aria-selected={i === card}
-            aria-label={`Carte ${i + 1} sur ${TUTO_CARDS}`}
-            className={`onb-dot${i === card ? ' is-current' : ''}`}
-            onClick={() => onCard(i)}
-          />
+    <>
+      <TutoIllustration />
+      <h1 className="onb-title">Bienvenue dans {APP_NAME}</h1>
+      <p className="onb-lead">Vos repas, votre sommeil, vos appareils et votre ressenti, au même endroit.</p>
+      <h2 className="onb-question">Vos données restent sur votre téléphone</h2>
+      <p className="onb-lead">Elles n’en sortent que dans ces cas :</p>
+      <h3 className="onb-leaves-group">Quand vous le demandez</h3>
+      <ul className="onb-leaves">
+        {DATA_LEAVES.onDemand.map((l) => (
+          <li key={l.title}>
+            <span className="onb-leaves-title">{l.title}</span>
+            <span className="onb-leaves-detail">{l.detail}</span>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+      <h3 className="onb-leaves-group">Si vous l’activez</h3>
+      <ul className="onb-leaves">
+        {DATA_LEAVES.ifEnabled.map((l) => (
+          <li key={l.title}>
+            <span className="onb-leaves-title">{l.title}</span>
+            <span className="onb-leaves-detail">{l.detail}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="onb-fine">
+        La lecture du visage se fait sur le téléphone : aucune image n’en sort. Pour l’abonnement, seul un numéro
+        anonyme est vérifié. {APP_NAME} ne pose pas de diagnostic. En continuant, vous confirmez avoir 18 ans ou plus.
+      </p>
+    </>
   )
 }
 
-/* ───────────────────────── Objectifs (ACC-3) ───────────────────────── */
+/* ───────────────────────── Temps 1 : objectifs ───────────────────────── */
 
-function GoalStep({ goals, onToggle }) {
+function GoalStep({ gut, onGut }) {
   return (
     <>
       <h1 className="onb-title">Qu’est-ce qui vous amène ?</h1>
-      <p className="onb-lead">Cochez tout ce qui compte pour vous. {APP_NAME} vous le montrera d’abord.</p>
+      <p className="onb-lead">Choisissez ce que vous voulez améliorer.</p>
       <fieldset className="onb-choices">
-        <legend className="onb-sr">Ce qui vous amène</legend>
-        {GOALS.map((g) => {
-          const checked = goals.includes(g.id)
+        <legend className="onb-sr">Vos objectifs</legend>
+        {OBJECTIVES.map((g) => {
+          const checked = g.locked || gut
           return (
-            <label key={g.id} className={`onb-choice${checked ? ' is-selected' : ''}`}>
+            <label key={g.id} className={`onb-choice${checked ? ' is-selected' : ''}${g.locked ? ' is-locked' : ''}`}>
               <span className="onb-choice-text">
                 <span className="onb-choice-label">{g.label}</span>
                 <span className="onb-choice-hint">{g.hint}</span>
+                {g.locked && <span className="onb-choice-badge">Toujours suivi</span>}
+                {!g.locked && checked && <span className="onb-choice-badge">Ajouté</span>}
               </span>
-              <input type="checkbox" name="goals" checked={checked} onChange={() => onToggle(g.id)} />
+              <input type="checkbox" name="goals" checked={checked} disabled={g.locked} onChange={g.locked ? undefined : () => onGut(!gut)} />
             </label>
           )
         })}
       </fieldset>
+      <p className="onb-fine">Inclus : le bien-être + 1 objectif.</p>
       <p className="onb-fine">Vous pourrez le changer dans Réglages › Paramètres (roue en haut à droite).</p>
     </>
   )
 }
 
-/* ───────────────────────── Sources (ACC-4) ───────────────────────── */
+/* ───────────────────────── Temps 2 : montre et sources ───────────────────────── */
 
 function Switch({ checked, onChange, label, disabled = false }) {
   return (
@@ -389,28 +336,81 @@ function ScreenTimeRow({ screen, onScreen }) {
   )
 }
 
-function SourcesStep({ state, update, installed }) {
+const WATCH_CHOICES = [
+  { id: 'yes', label: 'Oui' },
+  { id: 'no', label: 'Non, pas pour l’instant' },
+]
+
+/** « Oui » ouvre les cartes des sources ; « Non » ne demande aucune permission et ne lance aucun import. */
+function WatchStep({ state, update, installed }) {
   const huaweiFound = (installed || []).some((a) => a.directWatch)
+  const watch = state.watch === 'yes' || state.watch === 'no' ? state.watch : null
+  const name = healthStoreName()
   return (
     <>
-      <h1 className="onb-title">Branchez vos sources</h1>
-      <p className="onb-lead">Chaque accès se donne ici, d’un geste, et se retire quand vous voulez.</p>
-      <HealthCard health={state.health} onHealth={(health) => update({ health })} />
-      {huaweiFound && <HuaweiCard huawei={state.huawei} onHuawei={(huawei) => update({ huawei })} />}
+      <h1 className="onb-title">Avez-vous une montre ou un bracelet ?</h1>
+      <p className="onb-lead">On la branche une seule fois.</p>
+      <div className="onb-face-modes" role="radiogroup" aria-label="Avez-vous une montre ou un bracelet ?">
+        {WATCH_CHOICES.map((c) => (
+          <label key={c.id} className={`onb-face-mode${watch === c.id ? ' is-selected' : ''}`}>
+            <input type="radio" name="watch" checked={watch === c.id} onChange={() => update({ watch: c.id })} />
+            <span className="onb-face-mode-title">{c.label}</span>
+          </label>
+        ))}
+      </div>
+      {watch === 'yes' && (
+        <>
+          <HealthCard health={state.health} onHealth={(health) => update({ health })} />
+          {huaweiFound && <HuaweiCard huawei={state.huawei} onHuawei={(huawei) => update({ huawei })} />}
+          <p className="onb-fine">Une seule fois. Ensuite, vos sources se gèrent dans Réglages › Sources.</p>
+        </>
+      )}
+      {watch === 'no' && (
+        <p className="onb-quiet" role="status">
+          Si votre téléphone compte vos pas, vous pourrez relier {name} dans Réglages › Sources.
+        </p>
+      )}
+      <h2 className="onb-leaves-group">Sur ce téléphone</h2>
       <div className="onb-rows">
         <WeatherRow weather={state.weather} onWeather={(weather) => update({ weather })} />
         {isPhoneUsageAvailable() && <ScreenTimeRow screen={state.screen} onScreen={(screen) => update({ screen })} />}
       </div>
-      <p className="onb-fine">D’autres sources se trouvent dans Réglages › Sources.</p>
     </>
   )
 }
 
-/* ───────────────────────── Ce qui a été trouvé (ACC-5) ───────────────────────── */
+/* ───────────────────────── Temps 3 : ce que Halcya suit seule ───────────────────────── */
+
+function AutoStep({ watch, children }) {
+  const tiles = AUTO_TILES.filter((t) => watch || !t.watch)
+  const later = AUTO_TILES.filter((t) => !watch && t.watch).map((t) => t.label.toLowerCase())
+  return (
+    <>
+      <h1 className="onb-title">Ce que {APP_NAME} suit pour vous, sans rien faire</h1>
+      <p className="onb-lead">Pour information : rien à valider.</p>
+      <ul className="onb-auto" aria-label="Suivi sans rien faire">
+        {tiles.map((t) => (
+          <li key={t.id} data-tone={t.tone}>
+            {t.label}
+          </li>
+        ))}
+      </ul>
+      <p className="onb-fine">
+        {watch
+          ? 'Rien à cocher : tout se fait en arrière-plan, grâce à votre montre et à votre téléphone.'
+          : 'Rien à cocher : tout se fait en arrière-plan, si vous l’avez activé à l’écran précédent.'}
+      </p>
+      {later.length > 0 && <p className="onb-quiet">Avec une montre ou un bracelet : {later.join(', ')}.</p>}
+      {children}
+    </>
+  )
+}
+
+/* ───────────────────────── Ce qui a été trouvé (sous le temps 3, accès donné) ───────────────────────── */
 
 const pct = (p) => (p && p.total ? Math.round((p.done / p.total) * 100) : 0)
 
-function FoundStep({ health, goals, imported, onImported, installed, huawei, onConnect }) {
+function FoundStep({ health, imported, onImported, installed, huawei }) {
   const [progress, setProgress] = useState(importProgressNow)
   const [entries, setEntries] = useState(null)
   const [error, setError] = useState(false)
@@ -441,28 +441,7 @@ function FoundStep({ health, goals, imported, onImported, installed, huawei, onC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [granted])
 
-  if (!granted) {
-    const name = healthStoreName()
-    return (
-      <>
-        <h1 className="onb-title">Votre téléphone suffit pour commencer</h1>
-        <p className="onb-lead">
-          Sans {name}, {APP_NAME} part de vos notes, de vos repas et, si vous l’activez, de votre visage.
-        </p>
-        <div className="onb-row">
-          <div className="onb-row-text">
-            <span className="onb-row-title">Ce que vous noterez</span>
-            <span className="onb-row-detail">{handNotes(goals).join(', ')}</span>
-          </div>
-        </div>
-        {health !== 'unavailable' && healthConnector() && (
-          <button type="button" className="btn btn-secondary onb-action" onClick={onConnect}>
-            Connecter {name}
-          </button>
-        )}
-      </>
-    )
-  }
+  if (!granted) return null
 
   const facts = entries ? summarizeImport(entries) : null
   const devices = entries ? foundDevices(entries, installed) : []
@@ -473,7 +452,7 @@ function FoundStep({ health, goals, imported, onImported, installed, huawei, onC
 
   return (
     <>
-      <h1 className="onb-title">Voici ce que {APP_NAME} recevra</h1>
+      <h2 className="onb-question">Ce que {APP_NAME} a trouvé</h2>
       {!entries && !error && (
         <>
           <div
@@ -662,86 +641,69 @@ function FaceStep({ face, onFace, onLater }) {
   )
 }
 
-/* ───────────────────────── Première note (ACC-7) ───────────────────────── */
+/* ───────────────────────── Temps 4 : ce que vous noterez ───────────────────────── */
 
-/** Visage dessiné (1 = bouche vers le bas, 5 = grand sourire), sans emoji. */
-function Face({ value }) {
-  const curve = (value - 3) * 4
-  return (
-    <svg className="onb-feeling-face" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
-      <circle cx="16" cy="16" r="14" />
-      <circle className="onb-face-eye" cx="11" cy="13" r="1.8" />
-      <circle className="onb-face-eye" cx="21" cy="13" r="1.8" />
-      <path d={`M10 ${21 - curve / 4} Q16 ${21 + curve} 22 ${21 - curve / 4}`} />
-    </svg>
-  )
-}
+/** Habitudes de départ : celles déjà choisies, sinon la méditation, proposée cochée (SPEC « comprendre » § 4). */
+const startingHabits = (chosen) => (chosen ? getHabits() : SUGGESTED_HABITS.slice(0, 1))
 
-function FirstStep({ goals, first, choice, onChoice }) {
-  const gut = wantsGut(goals)
-  const saved = first?.wellbeing != null || first?.gut != null
+function NotesStep({ gut, habits, onHabits }) {
+  const [name, setName] = useState('')
+  const ids = habits.map((h) => h.id)
+  const custom = habits.find((h) => h.id.startsWith(CUSTOM_PREFIX))
+  const notes = dailyNotes(gut)
+  const toggle = (h) => onHabits(ids.includes(h.id) ? habits.filter((x) => x.id !== h.id) : [...habits, h])
+  const add = () => {
+    const h = customHabit(name)
+    if (!h) return
+    onHabits([...habits.filter((x) => !x.id.startsWith(CUSTOM_PREFIX)), h])
+    setName('')
+  }
   return (
     <>
-      <h1 className="onb-title">Comment vous sentez-vous maintenant ?</h1>
-      <p className="onb-lead">Votre première note. Les premiers jours, elle sert aussi à régler l’estimation du visage sur vous.</p>
-      <div className="onb-feelings" role="group" aria-label="Comment vous sentez-vous maintenant ?">
-        {FEELINGS.map((f) => (
-          <button
-            key={f.value}
-            type="button"
-            className={`onb-feeling${choice.wellbeing === f.value ? ' is-selected' : ''}`}
-            aria-pressed={choice.wellbeing === f.value}
-            onClick={() => onChoice({ ...choice, wellbeing: f.value })}
-          >
-            <Face value={f.value} />
-            <span className="onb-feeling-label">{f.label}</span>
-          </button>
+      <h1 className="onb-title">Ce que vous noterez chaque jour</h1>
+      <p className="onb-lead">Décochez les habitudes qui ne vous parlent pas.</p>
+      <ul className="onb-notes" aria-label="Chaque jour">
+        {notes.map((n) => (
+          <li key={n.id} data-tone={n.tone}>
+            <span className="onb-notes-label">{n.label}</span>
+            <span className="onb-notes-detail">{n.detail}</span>
+          </li>
         ))}
-      </div>
-      {gut && (
-        <>
-          <h2 className="onb-question">Et votre ventre ?</h2>
-          <div className="onb-gesture" role="group" aria-label="Et votre ventre ?">
-            {BELLY.map((b) => (
-              <button
-                key={b.id}
-                type="button"
-                className={`onb-gesture-btn${choice.gut === b.id ? ' is-selected' : ''}`}
-                aria-pressed={choice.gut === b.id}
-                onClick={() => onChoice({ ...choice, gut: b.id })}
-              >
-                {b.label}
-              </button>
-            ))}
-          </div>
-        </>
+      </ul>
+      <fieldset className="onb-choices onb-habits" data-tone="honey">
+        <legend className="onb-leaves-group">Vos habitudes, par oui ou non</legend>
+        {[...SUGGESTED_HABITS, ...(custom ? [custom] : [])].map((h) => (
+          <label key={h.id} className={`onb-choice${ids.includes(h.id) ? ' is-selected' : ''}`}>
+            <span className="onb-choice-text">
+              <span className="onb-choice-label">{h.label}</span>
+            </span>
+            <input type="checkbox" name="habits" checked={ids.includes(h.id)} onChange={() => toggle(h)} />
+          </label>
+        ))}
+      </fieldset>
+      {!custom && (
+        <div className="onb-habit-add">
+          <input
+            type="text"
+            className="onb-habit-input"
+            value={name}
+            maxLength={MAX_HABIT_LABEL}
+            placeholder="Ajouter une habitude…"
+            aria-label="Ajouter une habitude"
+            autoComplete="off"
+            onChange={(e) => setName(e.target.value)}
+          />
+          <button type="button" className="btn btn-secondary" onClick={add} disabled={!customHabit(name)}>
+            Ajouter
+          </button>
+        </div>
       )}
-      {saved && (
-        <p className="onb-note onb-note-ok" role="status">
-          C’est noté. Vous la retrouverez dans le Journal.
-        </p>
-      )}
+      <p className="onb-summary" role="status">
+        {monoDigits(dailySummary(notes.length + habits.length))}
+      </p>
+      <p className="onb-motto">Partez de ce que vous faites déjà : ce n’est pas une liste de bonnes résolutions.</p>
     </>
   )
-}
-
-/** Enregistre la première note : de vraies entrées (bien-être, ventre), modifiées si on revient sur l'écran. */
-async function saveFirst(choice, first = {}) {
-  const next = { ...first }
-  if (choice.wellbeing != null) {
-    const payload = { score: choiceToScore(choice.wellbeing) }
-    if (first.wellbeingId != null) await updateEntry(first.wellbeingId, { payload })
-    else next.wellbeingId = await createEntry({ type: 'wellbeing', source: 'app_wellbeing', payload })
-    next.wellbeing = choice.wellbeing
-  }
-  if (choice.gut != null) {
-    const payload = { level: choice.gut }
-    if (first.gutId != null) await updateEntry(first.gutId, { payload })
-    else next.gutId = await createEntry({ type: GUT_TYPE, source: GUT_SOURCE, payload })
-    next.gut = choice.gut
-  }
-  window.dispatchEvent(new CustomEvent('health-entries-updated'))
-  return next
 }
 
 /* ───────────────────────── Gold (ACC-9) ───────────────────────── */
@@ -767,27 +729,27 @@ function LaunchStep({ until }) {
 /* ───────────────────────── Parcours ───────────────────────── */
 
 /**
- * Nouvel accueil du premier lancement (ACC-1 à ACC-9, 08/11) : plein écran, sans barre d'onglets, reprend à l'écran
- * où la personne s'était arrêtée. « Continuer » n'est jamais bloqué par une autorisation ni par un choix.
+ * Accueil du premier lancement, en 4 temps (refonte « Compagnon », étape 5b) : plein écran, sans barre d'onglets,
+ * reprend à l'écran où la personne s'était arrêtée. « Continuer » n'est jamais bloqué par une autorisation ni par un
+ * choix. La rencontre de Pilou viendra à l'étape 12.
  */
 export default function Onboarding() {
   const navigate = useNavigate()
   const [STEPS] = useState(stepsFor)
   const [state, setState] = useState(() => {
     const s = loadOnboarding()
-    // Ancien accueil commencé (avant le 08/11) : on repart du début, les réponses restent.
-    if (s.flow !== FLOW_VERSION) return saveOnboarding({ flow: FLOW_VERSION, step: 0, card: 0 })
+    // Accueil d'une version précédente, commencé : on repart du début, les réponses restent.
+    if (s.flow !== FLOW_VERSION) return saveOnboarding({ flow: FLOW_VERSION, step: 0 })
     const at = STEPS.indexOf(s.lastScreen)
     const step = at >= 0 ? at : Math.min(s.step || 0, STEPS.length - 1)
     return step === s.step ? s : saveOnboarding({ step })
   })
   const [installed, setInstalled] = useState(null)
-  const [choice, setChoice] = useState(() => ({ wellbeing: state.first?.wellbeing ?? null, gut: state.first?.gut ?? null }))
-  const [saveError, setSaveError] = useState(false)
+  const [habits, setHabitList] = useState(() => startingHabits(state.habitsChosen))
   const [ent] = useEntitlement()
   const step = STEPS[state.step]
-  const card = state.card || 0
-  const goals = goalsOf(state)
+  const gut = wantsGut(goalsOf(state))
+  const temps = TEMPS.indexOf(step)
 
   const update = (patch) => setState(saveOnboarding(patch))
 
@@ -813,45 +775,33 @@ export default function Onboarding() {
   const end = () => {
     const s = finishOnboarding('completed')
     // La montre Huawei s'appaire depuis Sources (long, pas au milieu de l'accueil) ; sinon la visite guidée (ACC-8)
-    // s'ouvre sur Aujourd'hui. Elle reste relançable par « Voir un exemple ».
+    // s'ouvre sur l'Accueil. Elle reste relançable par « Voir un exemple ».
     if (s.huawei !== 'pair') saveOnboarding({ tour: 'pending' })
     navigate(s.huawei === 'pair' ? '/connectors' : '/', { replace: true })
   }
 
+  // Les habitudes sont un réglage ordinaire (settings/habits.js) : enregistrées au premier changement, ou à la
+  // sortie du temps 4 si la personne garde la proposition.
+  const chooseHabits = (list) => {
+    setHabitList(setHabits(list))
+    update({ habitsChosen: true })
+  }
+
   const go = (i) => update({ step: i })
-  const next = async () => {
-    if (step === 'tuto' && card < TUTO_CARDS - 1) {
-      update({ card: card + 1 })
-      return
-    }
-    if (step === 'goal') update({ goals, tracks: defaultTracks(goals) })
-    if (step === 'first' && (choice.wellbeing != null || choice.gut != null)) {
-      try {
-        update({ first: await saveFirst(choice, state.first || {}) })
-      } catch {
-        setSaveError(true)
-        return
-      }
-    }
+  const next = () => {
+    if (step === 'goal') update(chooseObjectives(state, gut))
+    if (step === 'notes') chooseHabits(habits)
     if (state.step >= STEPS.length - 1) end()
     else go(state.step + 1)
   }
-  const back = () => {
-    if (step === 'tuto') update({ card: Math.max(0, card - 1) })
-    else if (STEPS[state.step - 1] === 'tuto') update({ step: state.step - 1, card: TUTO_CARDS - 1 })
-    else go(state.step - 1)
-  }
-  const atStart = step === 'tuto' && card === 0
-
-  const toggleGoal = (id) => update({ goals: goals.includes(id) ? goals.filter((g) => g !== id) : [...goals, id] })
+  const back = () => go(state.step - 1)
+  const atStart = state.step === 0
 
   const launch = ent.premium && ent.source === 'launch'
-  const firstChosen = choice.wellbeing != null || choice.gut != null
-  const firstSaved = state.first && choice.wellbeing === state.first.wellbeing && choice.gut === (state.first.gut ?? null)
 
   let footerLabel = 'Continuer'
-  if (step === 'tuto') footerLabel = card < TUTO_CARDS - 1 ? 'Suivant' : 'Commencer'
-  if (step === 'first' && firstChosen && !firstSaved) footerLabel = 'Enregistrer'
+  if (step === 'intro') footerLabel = 'Commencer'
+  if (step === 'notes') footerLabel = 'C’est parti !'
   const faceUndecided = step === 'face' && state.face == null && !isFaceSenseEnabled()
   const showFooter = !(step === 'premium' && !launch) && !faceUndecided
 
@@ -865,57 +815,54 @@ export default function Onboarding() {
             ‹
           </button>
         )}
-        <div
-          className="onb-progress"
-          role="progressbar"
-          aria-label="Avancement"
-          aria-valuemin={1}
-          aria-valuemax={STEPS.length}
-          aria-valuenow={state.step + 1}
-        >
-          <span style={{ width: `${((state.step + 1) / STEPS.length) * 100}%` }} />
-        </div>
-        <span className="onb-count">
-          {pad(state.step + 1)}/{pad(STEPS.length)}
-        </span>
-        {step === 'tuto' && card < TUTO_CARDS - 1 && (
-          <button type="button" className="onb-skip" onClick={() => update({ card: TUTO_CARDS - 1 })}>
-            Passer
-          </button>
+        {temps >= 0 && (
+          <>
+            <div
+              className="onb-progress onb-progress--segments"
+              role="progressbar"
+              aria-label="Avancement"
+              aria-valuemin={1}
+              aria-valuemax={TEMPS.length}
+              aria-valuenow={temps + 1}
+            >
+              {TEMPS.map((t, i) => (
+                <span key={t} className={i <= temps ? 'is-done' : undefined} />
+              ))}
+            </div>
+            <span className="onb-count">
+              {temps + 1} sur {TEMPS.length}
+            </span>
+          </>
         )}
       </div>
 
       <main className="onb-body">
-        {step === 'tuto' && <TutoStep card={card} onCard={(c) => update({ card: c })} />}
-        {step === 'goal' && <GoalStep goals={goals} onToggle={toggleGoal} />}
-        {step === 'sources' && <SourcesStep state={state} update={update} installed={installed} />}
-        {step === 'found' && (
-          <FoundStep
-            health={state.health}
-            goals={goals}
-            imported={!!state.imported}
-            onImported={() => update({ imported: true })}
-            installed={installed}
-            huawei={state.huawei}
-            onConnect={() => go(STEPS.indexOf('sources'))}
-          />
+        {step === 'intro' && <IntroStep />}
+        {step === 'goal' && <GoalStep gut={gut} onGut={(on) => update(chooseObjectives(state, on))} />}
+        {step === 'watch' && <WatchStep state={state} update={update} installed={installed} />}
+        {step === 'auto' && (
+          <AutoStep watch={state.watch === 'yes'}>
+            <FoundStep
+              health={state.health}
+              imported={!!state.imported}
+              onImported={() => update({ imported: true })}
+              installed={installed}
+              huawei={state.huawei}
+            />
+          </AutoStep>
         )}
+        {step === 'notes' && <NotesStep gut={gut} habits={habits} onHabits={chooseHabits} />}
         {step === 'face' && (
           <FaceStep
             face={state.face}
             onFace={(face) => update({ face })}
-            onLater={() => update({ face: 'later', unlockLater: true, step: state.step + 1 })}
+            onLater={() => {
+              update({ face: 'later', unlockLater: true })
+              // Dernier écran (variante sans Gold) : « Plus tard » termine l'accueil
+              if (state.step >= STEPS.length - 1) end()
+              else go(state.step + 1)
+            }}
           />
-        )}
-        {step === 'first' && (
-          <>
-            <FirstStep goals={goals} first={state.first} choice={choice} onChoice={setChoice} />
-            {saveError && (
-              <p className="onb-note" role="alert">
-                L’enregistrement n’a pas abouti. Réessayez, ou notez-le plus tard depuis Ma journée.
-              </p>
-            )}
-          </>
         )}
         {step === 'premium' && (launch ? <LaunchStep until={ent.launchUntil} /> : <Premium context="onboarding" onClose={end} />)}
       </main>
@@ -930,4 +877,3 @@ export default function Onboarding() {
     </div>
   )
 }
-

@@ -19,6 +19,8 @@ vi.mock('../connectors/connectorRegistry', () => ({ getConnector: () => undefine
 import Onboarding from './Onboarding'
 import onboardingSource from './Onboarding.jsx?raw'
 import { FLOW_VERSION, loadOnboarding, saveOnboarding } from '../settings/onboarding'
+import { getHabits, setHabits } from '../settings/habits'
+import { stepsFor, TEMPS, AUTO_TILES, dailyNotes, dailySummary } from '../services/onboardingFlow'
 import { CHANGELOG } from '../data/changelog'
 import { getLastSeenId } from '../services/whatsNew'
 
@@ -37,49 +39,26 @@ function renderAt() {
 const btn = (name) => screen.getByRole('button', { name })
 const heading = (name) => screen.getByRole('heading', { name })
 
-describe('Nouvel accueil (ACC-1, ACC-2) : tuto en trois cartes', () => {
+const at = (lastScreen, extra = {}) => saveOnboarding({ flow: FLOW_VERSION, lastScreen, ...extra })
+const check = (name) => screen.getByRole('checkbox', { name })
+const radio = (name) => screen.getByRole('radio', { name })
+
+describe('Accueil en 4 temps (refonte étape 5b) : le parcours', () => {
   beforeEach(() => {
     localStorage.clear()
     stored.created = []
   })
 
-  it('carte 1 : bienvenue, « Suivant », « Passer », pas de retour ; compteur fixe 01/05 (sideload, sans visage)', () => {
+  it('écrans : ouverture, puis les 4 temps (sideload, sans visage ni Gold)', () => {
+    expect(TEMPS).toEqual(['goal', 'watch', 'auto', 'notes'])
+    expect(stepsFor()).toEqual(['intro', 'goal', 'watch', 'auto', 'notes'])
+  })
+
+  it('une seule carte d’ouverture : bienvenue et ce qui quitte le téléphone ; ni compteur, ni retour, ni « Passer »', () => {
     renderAt()
     expect(heading('Bienvenue dans Halcya')).toBeInTheDocument()
-    expect(screen.getByText('Vos repas, votre sommeil, vos appareils et votre ressenti, au même endroit.')).toBeInTheDocument()
     expect(document.querySelector('.onb-tuto-pills').textContent).toBe('RepasSommeilAppareilsRessenti')
-    expect(screen.getByText('01/05')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Retour' })).not.toBeInTheDocument()
-    expect(btn('Suivant')).toBeEnabled()
-    expect(btn('Passer')).toBeInTheDocument()
-  })
-
-  it('carte 2 : les trois onglets ; « Suivant » mène à la carte 3, qui finit par « Commencer »', () => {
-    renderAt()
-    fireEvent.click(btn('Suivant'))
-    expect(heading('Halcya cherche ce qui va avec vos bons et mauvais jours')).toBeInTheDocument()
-    expect(screen.getByText('vérifier une piste par un essai')).toBeInTheDocument()
-    expect(screen.queryByText(/deux semaines/)).toBeNull()
-    // POLISH-SIM-38 : la barre a cinq onglets, la carte n'en compte pas trois.
-    expect(screen.getByText('Trois usages :')).toBeInTheDocument()
-    expect(screen.queryByText(/Trois onglets/)).not.toBeInTheDocument()
-    expect(btn('Retour')).toBeInTheDocument()
-    fireEvent.click(btn('Suivant'))
     expect(heading('Vos données restent sur votre téléphone')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Passer' })).not.toBeInTheDocument()
-    expect(btn('Commencer')).toBeInTheDocument()
-  })
-
-  it('« Passer » mène à la carte confidentialité, jamais au-delà', () => {
-    renderAt()
-    fireEvent.click(btn('Passer'))
-    expect(heading('Vos données restent sur votre téléphone')).toBeInTheDocument()
-    expect(loadOnboarding().done).toBe(false)
-  })
-
-  it('carte 3 : la liste des cas où les données sortent, en deux groupes, et les 18 ans', () => {
-    saveOnboarding({ flow: FLOW_VERSION, card: 2 })
-    renderAt()
     expect(screen.getByText('Quand vous le demandez')).toBeInTheDocument()
     expect(screen.getByText('Si vous l’activez')).toBeInTheDocument()
     for (const t of ['Analyser un repas ou une photo de selles', 'Exporter vos données, partager le rapport pour votre médecin', 'Envoyer votre avis', 'Météo', 'Sauvegarde du téléphone']) {
@@ -87,46 +66,111 @@ describe('Nouvel accueil (ACC-1, ACC-2) : tuto en trois cartes', () => {
     }
     expect(screen.getByText(/18 ans ou plus/)).toBeInTheDocument()
     expect(screen.getByText(/ne pose pas de diagnostic/)).toBeInTheDocument()
+    expect(screen.queryByRole('progressbar')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Retour' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Passer' })).toBeNull()
+    // la carte des onglets (« Agir » n'est plus un onglet) a disparu
+    expect(onboardingSource).not.toContain('Trois usages')
+    fireEvent.click(btn('Commencer'))
+    expect(heading('Qu’est-ce qui vous amène ?')).toBeInTheDocument()
   })
 
-  it('glisser vers la gauche passe à la carte suivante', () => {
+  it('parcours complet sans rien toucher : aucun écran ne bloque, aucune saisie créée, bien-être seul, méditation proposée', async () => {
     renderAt()
-    const card = heading('Bienvenue dans Halcya').closest('.onb-tuto')
-    fireEvent.touchStart(card, { touches: [{ clientX: 300 }] })
-    fireEvent.touchEnd(card, { changedTouches: [{ clientX: 100 }] })
-    expect(heading('Halcya cherche ce qui va avec vos bons et mauvais jours')).toBeInTheDocument()
+    fireEvent.click(btn('Commencer'))
+    expect(screen.getByText('1 sur 4')).toBeInTheDocument()
+    fireEvent.click(btn('Continuer'))
+    expect(heading('Avez-vous une montre ou un bracelet ?')).toBeInTheDocument()
+    expect(screen.getByText('2 sur 4')).toBeInTheDocument()
+    fireEvent.click(btn('Continuer'))
+    expect(heading('Ce que Halcya suit pour vous, sans rien faire')).toBeInTheDocument()
+    expect(screen.getByText('3 sur 4')).toBeInTheDocument()
+    fireEvent.click(btn('Continuer'))
+    expect(heading('Ce que vous noterez chaque jour')).toBeInTheDocument()
+    expect(screen.getByText('4 sur 4')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Avancement' })).toHaveAttribute('aria-valuenow', '4')
+    fireEvent.click(btn('C’est parti !'))
+    expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
+    expect(loadOnboarding()).toMatchObject({ done: true, endedBy: 'completed', goals: ['wellbeing'], goalsVersion: 2, tour: 'pending' })
+    expect(getHabits().map((h) => h.id)).toEqual(['meditation'])
+    expect(stored.created).toEqual([])
+  })
+
+  it('la première note a quitté l’accueil', () => {
+    expect(onboardingSource).not.toContain('Comment vous sentez-vous maintenant')
+    expect(onboardingSource).not.toContain('createEntry')
+  })
+
+  it('un accueil d’une version précédente, commencé, repart du début en gardant les réponses', () => {
+    saveOnboarding({ flow: 2, goals: ['gut', 'care'], step: 4, lastScreen: 'first' })
+    renderAt()
+    expect(heading('Bienvenue dans Halcya')).toBeInTheDocument()
+    expect(loadOnboarding()).toMatchObject({ flow: FLOW_VERSION, goals: ['gut', 'care'], step: 0 })
+  })
+
+  it('note les écrans vus pour le diagnostic local (I156)', () => {
+    renderAt()
+    expect(loadOnboarding()).toMatchObject({ seen: ['intro'], lastScreen: 'intro', screens: 5 })
   })
 
   it('installation neuve : l’historique des nouveautés est déjà « lu » (VC-5)', () => {
     renderAt()
     expect(getLastSeenId()).toBe(CHANGELOG[0].id)
   })
+
+  it('le retour du temps 1 ramène à l’ouverture', () => {
+    at('goal', { step: 1 })
+    renderAt()
+    fireEvent.click(btn('Retour'))
+    expect(heading('Bienvenue dans Halcya')).toBeInTheDocument()
+  })
 })
 
-describe('Nouvel accueil (ACC-3) : objectifs à choix multiple', () => {
+describe('Temps 1 : « Qu’est-ce qui vous amène ? »', () => {
   beforeEach(() => localStorage.clear())
 
-  it('quatre cases, sans « Mon cycle » ni « Mon sport » (refonte étape 1), rien de coché, « Continuer » jamais grisé ; plusieurs choix gardés', () => {
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'goal' })
+  it('Bien-être coché et verrouillé (« Toujours suivi »), Confort digestif à cocher (« Ajouté »), la ligne « Inclus »', () => {
+    at('goal')
     renderAt()
-    expect(heading('Qu’est-ce qui vous amène ?')).toBeInTheDocument()
-    expect(screen.getByText('02/05')).toBeInTheDocument()
-    const boxes = screen.getAllByRole('checkbox')
-    expect(boxes.map((b) => b.closest('label').querySelector('.onb-choice-label').textContent)).toEqual([
-      'Ma digestion', 'Mon stress et mon sommeil', 'Prendre soin de moi', 'Tout mesurer',
-    ])
-    expect(screen.queryByRole('checkbox', { name: /Mon cycle|Mon sport/ })).toBeNull()
-    boxes.forEach((b) => expect(b).not.toBeChecked())
-    expect(btn('Continuer')).toBeEnabled()
-    fireEvent.click(screen.getByRole('checkbox', { name: /Ma digestion/ }))
-    fireEvent.click(screen.getByRole('checkbox', { name: /Prendre soin de moi/ }))
+    expect(screen.getByText('Choisissez ce que vous voulez améliorer.')).toBeInTheDocument()
+    expect(screen.getAllByRole('checkbox')).toHaveLength(2)
+    expect(check(/Bien-être/)).toBeChecked()
+    expect(check(/Bien-être/)).toBeDisabled()
+    expect(screen.getByText('Toujours suivi')).toBeInTheDocument()
+    expect(screen.getByText('Comprendre ce qui influence comment vous vous sentez.')).toBeInTheDocument()
+    expect(check(/Confort digestif/)).not.toBeChecked()
+    expect(screen.queryByText('Ajouté')).toBeNull()
+    expect(screen.getByText('Inclus : le bien-être + 1 objectif.')).toBeInTheDocument()
+    fireEvent.click(check(/Confort digestif/))
+    expect(screen.getByText('Ajouté')).toBeInTheDocument()
+    expect(loadOnboarding()).toMatchObject({ goals: ['wellbeing', 'gut'], goalsVersion: 2 })
+    fireEvent.click(check(/Confort digestif/))
+    expect(loadOnboarding().goals).toEqual(['wellbeing'])
+  })
+
+  it('les anciens objectifs ne sont plus proposés', () => {
+    at('goal')
+    renderAt()
+    expect(screen.queryByText(/Mon stress|Prendre soin de moi|Tout mesurer|Mon cycle|Mon sport/)).toBeNull()
+  })
+
+  it('accueil commencé avant la mise à jour avec « Ma digestion » : Confort digestif déjà coché, anciens choix gardés', () => {
+    at('goal', { goals: ['gut', 'care'] })
+    renderAt()
+    expect(check(/Confort digestif/)).toBeChecked()
     fireEvent.click(btn('Continuer'))
-    expect(loadOnboarding()).toMatchObject({ goals: ['gut', 'care'], tracks: expect.arrayContaining(['gut', 'activity']) })
-    expect(heading('Branchez vos sources')).toBeInTheDocument()
+    expect(loadOnboarding()).toMatchObject({ goals: ['wellbeing', 'gut'], goalsBefore: ['gut', 'care'], goalsVersion: 2 })
+  })
+
+  it('l’ancien « Mon cycle » garde son marqueur d’affichage', () => {
+    at('goal', { goals: ['cycle'] })
+    renderAt()
+    fireEvent.click(btn('Continuer'))
+    expect(loadOnboarding().goals).toEqual(['wellbeing', 'gut', 'cycle'])
   })
 
   it('renvoie au même nom que la roue : « Réglages › Paramètres » (POLISH-SIM-44)', () => {
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'goal' })
+    at('goal')
     renderAt()
     expect(screen.getByText('Vous pourrez le changer dans Réglages › Paramètres (roue en haut à droite).')).toBeInTheDocument()
   })
@@ -136,98 +180,137 @@ describe('Nouvel accueil (ACC-3) : objectifs à choix multiple', () => {
     expect(onboardingSource).toContain("'à tout moment, dans Réglages › Paramètres'")
     expect(onboardingSource).not.toMatch(/dans Paramètres/)
   })
+})
 
-  it('l’ancien objectif reste lu (goal: energy → Mon stress et mon sommeil coché)', () => {
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'goal', goal: 'energy' })
+describe('Temps 2 : « Avez-vous une montre ou un bracelet ? » (sans Health Connect sur le téléphone)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('rien de choisi : ni carte de source, ni permission ; la météo reste proposée par son interrupteur', () => {
+    at('watch')
     renderAt()
-    expect(screen.getByRole('checkbox', { name: /Mon stress et mon sommeil/ })).toBeChecked()
+    expect(screen.getByText('On la branche une seule fois.')).toBeInTheDocument()
+    expect(radio('Oui')).not.toBeChecked()
+    expect(radio('Non, pas pour l’instant')).not.toBeChecked()
+    expect(screen.queryByText(/Health Connect/)).toBeNull()
+    expect(screen.getByRole('switch', { name: 'Météo' })).not.toBeChecked()
+    expect(btn('Continuer')).toBeEnabled()
   })
 
-  it('le retour du premier écran après le tuto ramène à la carte 3', () => {
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'goal', step: 1 })
+  it('« Oui » ouvre les sources et dit qu’elles vivent ensuite dans Réglages › Sources', async () => {
+    at('watch')
     renderAt()
-    fireEvent.click(btn('Retour'))
-    expect(heading('Vos données restent sur votre téléphone')).toBeInTheDocument()
+    fireEvent.click(radio('Oui'))
+    expect(loadOnboarding().watch).toBe('yes')
+    expect(await screen.findByText(/Health Connect n’est pas sur ce téléphone/)).toBeInTheDocument()
+    expect(screen.getByText('Une seule fois. Ensuite, vos sources se gèrent dans Réglages › Sources.')).toBeInTheDocument()
+  })
+
+  it('« Non, pas pour l’instant » : une ligne discrète, aucune carte', () => {
+    at('watch')
+    renderAt()
+    fireEvent.click(radio('Non, pas pour l’instant'))
+    expect(loadOnboarding().watch).toBe('no')
+    expect(screen.getByText('Si votre téléphone compte vos pas, vous pourrez relier Health Connect dans Réglages › Sources.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Connecter/ })).toBeNull()
+  })
+
+  it('une ancienne réponse (« none », accueil d’avant le 08/11) ne coche rien', () => {
+    at('watch', { watch: 'none' })
+    renderAt()
+    expect(radio('Oui')).not.toBeChecked()
+    expect(radio('Non, pas pour l’instant')).not.toBeChecked()
   })
 })
 
-describe('Nouvel accueil : parcours complet sans Health Connect', () => {
-  beforeEach(() => {
-    localStorage.clear()
-    stored.created = []
+describe('Temps 3 : « Ce que Halcya suit pour vous, sans rien faire »', () => {
+  beforeEach(() => localStorage.clear())
+  const tiles = () => [...screen.getByRole('list', { name: 'Suivi sans rien faire' }).children].map((li) => li.textContent)
+
+  it('avec une montre : les 9 tuiles du brief, sans le « stress » de la montre, aux couleurs des thèmes', () => {
+    at('auto', { watch: 'yes' })
+    renderAt()
+    expect(screen.getByText('Pour information : rien à valider.')).toBeInTheDocument()
+    expect(tiles()).toEqual(['Sommeil', 'Pas', 'Séances de sport', 'Cœur', 'Variabilité cardiaque', 'Respiration', 'Température de la peau', 'Temps d’écran', 'Météo'])
+    expect(AUTO_TILES.some((t) => /stress/i.test(t.label))).toBe(false)
+    expect(screen.getByText('Sommeil').closest('li')).toHaveAttribute('data-tone', 'night')
+    expect(screen.getByText('Rien à cocher : tout se fait en arrière-plan, grâce à votre montre et à votre téléphone.')).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox')).toBeNull()
   })
 
-  it('« Votre téléphone suffit » suit l’objectif : le poids pour « Prendre soin de moi » (POLISH-SIM-51)', () => {
+  it('sans montre : seulement ce que le téléphone donne ; le reste est annoncé pour plus tard, sans le promettre', () => {
+    at('auto', { watch: 'no' })
     renderAt()
-    fireEvent.click(btn('Suivant'))
-    fireEvent.click(btn('Suivant'))
-    fireEvent.click(btn('Commencer'))
-    fireEvent.click(screen.getByRole('checkbox', { name: /Prendre soin de moi/ }))
-    fireEvent.click(btn('Continuer'))
-    fireEvent.click(btn('Continuer'))
-    expect(heading('Votre téléphone suffit pour commencer')).toBeInTheDocument()
-    expect(screen.getByText('bien-être, repas en photo, poids')).toBeInTheDocument()
-  })
-
-  it('aucun écran ne bloque ; « Que voulez-vous suivre ? » et « Avez-vous une montre ? » ont disparu', async () => {
-    renderAt()
-    fireEvent.click(btn('Suivant'))
-    fireEvent.click(btn('Suivant'))
-    fireEvent.click(btn('Commencer'))
-    fireEvent.click(screen.getByRole('checkbox', { name: /Ma digestion/ }))
-    fireEvent.click(btn('Continuer'))
-    expect(heading('Branchez vos sources')).toBeInTheDocument()
-    expect(screen.getByText(/Health Connect n’est pas sur ce téléphone/)).toBeInTheDocument()
-    expect(screen.queryByText(/Que voulez-vous suivre/)).not.toBeInTheDocument()
-    fireEvent.click(btn('Continuer'))
-    expect(heading('Votre téléphone suffit pour commencer')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Continuer sans' })).not.toBeInTheDocument()
-    fireEvent.click(btn('Continuer'))
-    expect(heading('Comment vous sentez-vous maintenant ?')).toBeInTheDocument()
-    expect(screen.getByText('05/05')).toBeInTheDocument()
-    fireEvent.click(btn('Continuer'))
-    expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
-    expect(loadOnboarding()).toMatchObject({ done: true, endedBy: 'completed', goals: ['wellbeing', 'gut'], goalsBefore: ['gut'] })
-    expect(stored.created).toEqual([])
-  })
-
-  it('un accueil de l’ancien parcours, commencé, repart du tuto en gardant les réponses', () => {
-    saveOnboarding({ goal: 'gut', watch: 'none', step: 4 })
-    renderAt()
-    expect(heading('Bienvenue dans Halcya')).toBeInTheDocument()
-    expect(loadOnboarding()).toMatchObject({ flow: FLOW_VERSION, goal: 'gut', step: 0 })
-  })
-
-  it('note les écrans vus pour le diagnostic local (I156)', () => {
-    renderAt()
-    expect(loadOnboarding()).toMatchObject({ seen: ['tuto'], lastScreen: 'tuto', screens: 5 })
+    expect(tiles()).toEqual(['Temps d’écran', 'Météo'])
+    expect(screen.getByText('Avec une montre ou un bracelet : sommeil, pas, séances de sport, cœur, variabilité cardiaque, respiration, température de la peau.')).toBeInTheDocument()
+    expect(screen.queryByText(/grâce à votre montre/)).toBeNull()
   })
 })
 
-describe('Nouvel accueil (ACC-7) : première note', () => {
-  beforeEach(() => {
-    localStorage.clear()
-    stored.created = []
+describe('Temps 4 : « Ce que vous noterez chaque jour »', () => {
+  beforeEach(() => localStorage.clear())
+  const notes = () => [...screen.getByRole('list', { name: 'Chaque jour' }).children].map((li) => li.textContent)
+
+  it('sans l’objectif digestion : repas et bien-être, méditation cochée ; « 3 choses par jour »', () => {
+    at('notes', { goals: ['wellbeing'] })
+    renderAt()
+    expect(notes()).toEqual(['Repasen photo, 3 par jour', 'Bien-êtreune note rapide'])
+    expect(screen.queryByText('Digestion')).toBeNull()
+    expect(check('Méditation')).toBeChecked()
+    for (const h of ['Étirements', 'Relaxation', 'Lecture']) expect(check(h)).not.toBeChecked()
+    expect(screen.getByRole('status')).toHaveTextContent('3 choses par jour · environ 1 minute')
+    expect(screen.getByText('Partez de ce que vous faites déjà : ce n’est pas une liste de bonnes résolutions.')).toBeInTheDocument()
+    // rien n'est enregistré tant que la personne n'a ni changé ni validé
+    expect(getHabits()).toEqual([])
   })
 
-  it('cinq visages ; « Enregistrer » crée une vraie note de bien-être', async () => {
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'first', goals: ['stress'] })
+  it('avec l’objectif digestion : la ligne « Digestion · le soir » et « 4 choses par jour » ; jamais « ventre »', () => {
+    at('notes', { goals: ['wellbeing', 'gut'] })
     renderAt()
-    for (const l of ['Mal', 'Bof', 'Neutre', 'Bien', 'Très bien']) expect(btn(l)).toBeInTheDocument()
-    expect(screen.queryByText('Et votre ventre ?')).not.toBeInTheDocument()
-    fireEvent.click(btn('Bien'))
-    fireEvent.click(btn('Enregistrer'))
-    expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
-    expect(stored.created).toEqual([{ type: 'wellbeing', source: 'app_wellbeing', payload: { score: expect.any(Number) } }])
+    expect(notes()).toEqual(['Repasen photo, 3 par jour', 'Bien-êtreune note rapide', 'Digestionle soir'])
+    expect(screen.getByRole('status')).toHaveTextContent('4 choses par jour · environ 1 minute')
+    expect(document.body.textContent).not.toMatch(/ventre/i)
+    expect(dailyNotes(false).map((n) => n.id)).toEqual(['meals', 'wellbeing'])
+    expect(dailySummary(5)).toBe('5 choses par jour · environ 1 minute')
   })
 
-  it('avec « Mon cycle » : aussi « Et votre ventre ? » (Calme, Gêné, Douloureux)', async () => {
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'first', goals: ['cycle'] })
+  it('cocher, décocher : le réglage des habitudes suit aussitôt, le résumé aussi', () => {
+    at('notes', { goals: ['wellbeing'] })
     renderAt()
-    expect(heading('Et votre ventre ?')).toBeInTheDocument()
-    fireEvent.click(btn('Gêné'))
-    fireEvent.click(btn('Enregistrer'))
+    fireEvent.click(check('Étirements'))
+    expect(getHabits().map((h) => h.id)).toEqual(['meditation', 'stretching'])
+    expect(screen.getByRole('status')).toHaveTextContent('4 choses par jour')
+    fireEvent.click(check('Méditation'))
+    expect(getHabits().map((h) => h.id)).toEqual(['stretching'])
+    expect(loadOnboarding().habitsChosen).toBe(true)
+  })
+
+  it('une habitude libre : « Ajouter » grisé sans nom, puis une case cochée de plus ; une seule habitude libre', () => {
+    at('notes', { goals: ['wellbeing'] })
+    renderAt()
+    expect(btn('Ajouter')).toBeDisabled()
+    fireEvent.change(screen.getByRole('textbox', { name: 'Ajouter une habitude' }), { target: { value: '  Marche du soir ' } })
+    fireEvent.click(btn('Ajouter'))
+    expect(check('Marche du soir')).toBeChecked()
+    expect(getHabits()).toEqual([{ id: 'meditation', label: 'Méditation' }, { id: 'custom:marche-du-soir', label: 'Marche du soir' }])
+    expect(screen.queryByRole('textbox', { name: 'Ajouter une habitude' })).toBeNull()
+    fireEvent.click(check('Marche du soir'))
+    expect(screen.getByRole('textbox', { name: 'Ajouter une habitude' })).toBeInTheDocument()
+  })
+
+  it('tout décoché puis « C’est parti ! » : aucune habitude, la méditation ne revient pas', async () => {
+    at('notes', { goals: ['wellbeing'] })
+    renderAt()
+    fireEvent.click(check('Méditation'))
+    fireEvent.click(btn('C’est parti !'))
     expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
-    expect(stored.created).toEqual([expect.objectContaining({ type: 'gut', payload: { level: 'discomfort' } })])
+    expect(getHabits()).toEqual([])
+  })
+
+  it('habitudes déjà choisies (retour sur l’écran) : relues telles quelles', () => {
+    setHabits([{ id: 'reading', label: 'Lecture' }])
+    at('notes', { goals: ['wellbeing'], habitsChosen: true })
+    renderAt()
+    expect(check('Lecture')).toBeChecked()
+    expect(check('Méditation')).not.toBeChecked()
   })
 })

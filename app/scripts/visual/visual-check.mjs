@@ -116,12 +116,13 @@
  *   (météo : jamais d'appel à Open-Meteo ; avec les données de démo, météo activée sur Paris et à jour ;
  *    --empty → carte « Météo, pression et air » à activer)
  *   npm run visual -- --empty --routes=/ --onboarding   # premier lancement : l'Accueil redirige vers /bienvenue (jalon 4)
- *   npm run visual -- --routes=/bienvenue --click="Mon ventre > Continuer"  # écrans suivants de l'onboarding
+ *   npm run visual -- --routes=/bienvenue --click="Commencer > Continuer"  # écrans suivants de l'onboarding
  *                                          (sans --onboarding, il est noté « fait » pour que les autres pages s'affichent)
- *   npm run visual -- --routes=/bienvenue --onboarding=found   # nouvel accueil (ACC-1 à 9) : tuto-2, tuto-3, goal,
- *                                          sources, sources-huawei, found, found-none, found-none-care, face (avec --face=on), first,
- *                                          first-stress, premium (avec --play), tour (visite guidée, route /,
- *                                          --click="Exemple au jour 14" pour l'exemple)
+ *   npm run visual -- --routes=/bienvenue --onboarding=notes   # accueil en 4 temps (refonte, étape 5b) : goal, goal-gut,
+ *                                          watch, watch-yes, watch-huawei, watch-no, auto, auto-none, auto-found, notes,
+ *                                          notes-gut, face (avec --face=on), premium (avec --play), tour (visite
+ *                                          guidée, route /, --click="Exemple au jour 14" pour l'exemple) ; sans valeur
+ *                                          avec --empty : la carte d'ouverture
  *   npm run visual -- --play --face=on --face-unlock=off --routes=/ --onboarding=unlock-later   # rappel discret de la
  *                                          lecture au déverrouillage dans la carte Bien-être (POL-PLAY-84)
  *   npm run visual -- --routes=/ --goal=energy   # Accueil réglé par l'objectif « énergie et sommeil » (I155 ; sans carte ventre, POL-4)
@@ -760,22 +761,23 @@ async function main() {
     // (ou avec --onboarding, pour vérifier la redirection d'une installation vierge).
     // Écrans de l'onboarding ouverts directement : « aha » (jalon 4b, résumé depuis les données de démo, sans relire
     // Health Connect), premier geste et paywall soft (jalon 4c ; ce dernier avec --play).
-    // Nouvel accueil (ACC-1 à ACC-9, 08/11) : écran ouvert par son nom (lastScreen), parcours version 2.
-    const at = (lastScreen, extra = {}) => ({ flow: 2, lastScreen, ...extra })
+    // Accueil en 4 temps (refonte « Compagnon », étape 5b) : écran ouvert par son nom (lastScreen), parcours version 3.
+    const at = (lastScreen, extra = {}) => ({ flow: 3, lastScreen, ...extra })
     const ONBOARDING_AT = {
-      'tuto-2': at('tuto', { card: 1 }),
-      'tuto-3': at('tuto', { card: 2 }),
-      goal: at('goal', { goals: ['gut', 'stress'] }),
-      sources: at('sources', { goals: ['gut'] }),
-      'sources-huawei': at('sources', { goals: ['gut'], huawei: 'pair' }),
-      // « Voici ce que Halcya recevra » : résumé depuis les données de démo, sans relire Health Connect
-      found: at('found', { goals: ['gut'], health: 'granted', imported: true }),
-      'found-none': at('found', { goals: ['gut'], health: 'declined' }),
-      'found-none-care': at('found', { goals: ['care'], health: 'declined' }),
-      face: at('face', { goals: ['gut'] }),
-      first: at('first', { goals: ['gut', 'cycle'] }),
-      'first-stress': at('first', { goals: ['stress'] }),
-      premium: at('premium', { goals: ['gut'] }),
+      goal: at('goal', { goals: ['wellbeing'], goalsVersion: 2 }),
+      'goal-gut': at('goal', { goals: ['wellbeing', 'gut'], goalsVersion: 2 }),
+      watch: at('watch'),
+      'watch-yes': at('watch', { watch: 'yes' }),
+      'watch-huawei': at('watch', { watch: 'yes', huawei: 'pair' }),
+      'watch-no': at('watch', { watch: 'no' }),
+      auto: at('auto', { watch: 'yes' }),
+      'auto-none': at('auto', { watch: 'no' }),
+      // « Ce que Halcya a trouvé » sous les tuiles : résumé depuis les données de démo, sans relire Health Connect
+      'auto-found': at('auto', { watch: 'yes', health: 'granted', imported: true }),
+      notes: at('notes', { goals: ['wellbeing'], goalsVersion: 2 }),
+      'notes-gut': at('notes', { goals: ['wellbeing', 'gut'], goalsVersion: 2 }),
+      face: at('face', { goals: ['wellbeing', 'gut'], goalsVersion: 2 }),
+      premium: at('premium', { goals: ['wellbeing', 'gut'], goalsVersion: 2 }),
       // Visite guidée (ACC-8) : accueil fini à l'instant ; --click="Exemple au jour 14" pour l'exemple
       tour: { flow: 2, done: true, endedBy: 'completed', doneAt: new Date().toISOString(), goals: ['gut'], health: 'granted', tour: 'pending' },
       // Accueil fini à l'instant, visite déjà vue, sans objectif digestion : « Voir un exemple » en bas des écrans
