@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Pilou · esquisse 2 · Figurine de collection</title>
+<style>
+  @font-face { font-family: 'Nunito'; src: url('fonts/nunito-latin-wght-normal.woff2') format('woff2'); font-weight: 200 1000; }
+  html, body { margin: 0; background: #F6E7D8; overflow: hidden; }
+  #stage { position: relative; width: 1920px; height: 1080px; }
+  #c { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block; }
+  #cartouche { position: absolute; left: 48px; bottom: 44px; padding: 10px 18px 11px; border-radius: 999px;
+    background: rgba(255, 248, 238, .72); color: #5A3E30; font: 600 21px/1.2 'Nunito', sans-serif; letter-spacing: .01em;
+    box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 6px 18px rgba(120, 70, 40, .10); }
+  #cartouche b { font-weight: 800; color: #3F2A20; }
+  #ui { position: fixed; left: 24px; right: 24px; bottom: 16px; display: flex; gap: 12px; align-items: center; font: 600 14px 'Nunito', sans-serif; color: #5A3E30; }
+  #ui input { flex: 1; }
+  #ui button { font: inherit; padding: 6px 14px; border-radius: 999px; border: 1px solid #C9A58C; background: #FFF6EC; cursor: pointer; }
+  body.render #ui { display: none; }
+  body.petit #stage { width: 390px; height: 330px; }
+  body.petit #c { width: 390px; height: 330px; }
+  body.petit #cartouche, body.petit #ui { display: none; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c"></canvas>
+  <div id="cartouche"><b>Pilou</b> · esquisse 2 · Figurine de collection</div>
+</div>
+<div id="ui"><button id="play">Pause</button><input id="t" type="range" min="0" max="10000" step="33.333" value="0"><span id="lbl">0,0 s</span></div>
+<script type="module">
+import { clamp } from './pilou.js';
+import { createFigurine } from './figurine.js';
+import { DURATION, poseAt, camAt, dropAt, setPuddlePoint } from './scenario.js';
+
+const Q = new URLSearchParams(location.search);
+const RENDER = Q.has('render'), PETIT = Q.has('petit'), SS = +(Q.get('ss') || 1);
+document.body.classList.toggle('render', RENDER || PETIT); document.body.classList.toggle('petit', PETIT);
+const canvas = document.getElementById('c');
+const W = PETIT ? 390 : 1920, Hh = PETIT ? 330 : 1080;
+const fig = createFigurine({ canvas, width: W, height: Hh, pixelRatio: SS, mode: PETIT ? 'petit' : 'video' });
+setPuddlePoint([fig.DROP.x, fig.WATER_Y, fig.DROP.z]);
+const cart = document.getElementById('cartouche');
+
+window.DURATION = DURATION;
+window.seek = ms => {
+  const t = clamp(ms, 0, DURATION);
+  const P = poseAt(t);
+  let cam = camAt(t);
+  if (PETIT) { // cadrage de l'écran d'accueil : Pilou ≈ 240 px de haut
+    const az = -.1, el = .16, d = 7.2, look = [0, .8, 0];
+    cam = { pos: [d * Math.cos(el) * Math.sin(az), look[1] + d * Math.sin(el), d * Math.cos(el) * Math.cos(az)], look, fov: 20 };
+  }
+  const drop = dropAt(t, fig.DROP.y0, fig.WATER_Y);
+  fig.render({ t: t / 1000, pose: P, cam, drop, exposure: PETIT ? 1.02 : 1, shadowR: .23, debug: window.__debug });
+  cart.style.opacity = String(1 - clamp((t - 1500) / 500));
+  return t;
+};
+window.__ready = (async () => { await document.fonts.ready; window.seek(PETIT ? 9200 : 0); return true; })();
+window.__stats = () => fig.stats();
+window.__fig = fig;
+
+if (!RENDER && !PETIT) {
+  const sl = document.getElementById('t'), lbl = document.getElementById('lbl'), btn = document.getElementById('play');
+  let playing = true, t0 = performance.now(), cur = 0;
+  btn.onclick = () => { playing = !playing; btn.textContent = playing ? 'Pause' : 'Lecture'; t0 = performance.now() - cur; };
+  sl.oninput = () => { cur = +sl.value; t0 = performance.now() - cur; window.seek(cur); lbl.textContent = (cur / 1000).toFixed(1).replace('.', ',') + ' s'; };
+  const loop = () => {
+    if (playing) { cur = (performance.now() - t0) % DURATION; window.seek(cur); sl.value = cur; lbl.textContent = (cur / 1000).toFixed(1).replace('.', ',') + ' s'; }
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>
