@@ -16,6 +16,7 @@
 > à finir : « Play — AAB » vert sur c0f316e, build simulateur, captures `ma-journee` regardées.
 > 15/11 07:10 : l'étape 4a (#1003, habitudes) est embarquée dans la même PR #1002 (code v1078, 51 correctifs) ; build simulateur relancée, à finir.
 > 15/11 07:35 : l'étape 4b (#1004, habitudes dans les analyses) est du code partagé, sans rien de natif ; le correctif 32, seul à toucher un fichier modifié (`analysisEngine.js`), s'applique. À embarquer au run suivant (`upstream.sh --latest`), captures d'Objectifs à regarder.
+> 15/11 08:35 : **en PR** : code embarqué v1080 (étape 4b, #1004), 51 correctifs sans retouche ; à finir : build simulateur, captures d'Objectifs regardées, merge.
 
 - [x] **I0 — Mise en place** (27/10, session de configuration avec le propriétaire) : dépôt `HealthTrack-iOS`
   public, charte, parité de départ, `upstream.json` + `scripts/upstream.sh` (testé : récupère Android v514, applique

@@ -77,3 +77,12 @@ aucune » ; 844.344 intacte  ·  **Parité** : 70 % (33/47), inchangée
 - Embarquer 4b sur iPhone (`upstream.sh --latest`), regarder Objectifs sur simulateur.
 - REFONTE-4b-2 (banc avec un facteur binaire) avant de montrer ces lignes à des testeurs comme fiables.
 - Étape 5 : onboarding en 4 temps (le choix des habitudes y entre).
+
+## Fin de run (vers 08:35)
+- **#1004 mergée** (44f4107, 12 checks verts sur f636cda, branche à jour sur main). Sur main : Tests et « Play — AAB »
+  verts (v1080 en test interne) ; **« Build & Release » a échoué une fois** (Maven Central a répondu 429 « Too Many
+  Requests » pendant la résolution des dépendances Gradle, rien du code), relancé (`rerun_failed_jobs`) : vert,
+  **release v738, APK de 34,6 Mo**. Émulateurs de main encore en cours à la fin du run : non vérifiés.
+- **#1005 ouverte** (suivi iPhone de 4b, code v1080, 51 correctifs sans retouche) : build macOS en cours, à finir
+  par le run suivant (captures d'Objectifs à regarder).
+- Ce run a duré bien plus que les 50 minutes visées (attente de la build macOS de #1002).
