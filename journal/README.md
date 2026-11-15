@@ -12,7 +12,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1065 en test interne (15/11 à 00:09) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, puis celle du code v1059 le 14/11 à 23:30 (état chez Apple non relevé depuis le 14/11 à 18:35), pour les testeurs après l'Alpha de la nuit ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1067 en test interne (15/11 à 01:29, #990 ; envoi non relu à ce run) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, puis celle du code v1059 le 14/11 à 23:30 (état chez Apple non relevé depuis le 14/11 à 18:35), pour les testeurs après l'Alpha de la nuit ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -22,6 +22,16 @@
   ([`PI2.md`](../iphone/journal/missions/PI2.md), réécrite le 14/11 d'après le relevé PI1). Claude prépare tout et
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
+
+> 🥇 **Gold prolongé : la nouvelle date s'affiche (15/11 01:35)** : suite de « P44 oui ». Jusqu'ici, rien ne disait
+> à un testeur inscrit que Gold continuait après le 2 décembre : la date changeait seulement dans Paramètres. Quand le
+> relais recule la fin, Aujourd'hui affiche une fois « Gold offert jusqu'au 27 déc. 2026 · Gold est prolongé : vous
+> n'avez rien à payer. » ([clair](runs/captures/2026-11-15-0135-gold-prolonge-clair.png) ·
+> [sombre](runs/captures/2026-11-15-0135-gold-prolonge-sombre.png)). Et « Le test est terminé. Merci ! » attend que
+> l'app ait revérifié les droits : un inscrit ne la voit plus par erreur le 3 décembre. **Limites** : vu sur un relais
+> factice, avec une date fabriquée ; du 30 novembre au 2 décembre, un inscrit lit encore « Gold offert jusqu'au
+> 2 déc. », la nouvelle date n'arrive qu'à sa première ouverture en ligne du 3 décembre ; la liste des inscrits reste
+> vide jusqu'au 2 décembre (P44-2b). Android seulement, rien sur iPhone.
 
 > 🥗 **Nutrition : plus de reproche au premier repas (15/11 00:35)** : après un seul repas noté, Journal › Nutrition
 > écrivait « des repas manquent sans doute, apports sous-estimés » (une persona au 1er jour : « me gronde alors que
@@ -41,8 +51,8 @@
 > [Paramètres](runs/captures/2026-11-14-2335-gold-sans-fin-parametres-clair.png)). **Limites** : vu sur un relais
 > factice, pas sur votre téléphone ni contre le vrai relais ; il faut que votre téléphone
 > ait la version de ce run (ou une suivante) avant le 2 décembre, sinon le bug reste. Rien ne change pour les
-> testeurs ni sur iPhone. Reste de P44-3 : dire aux testeurs inscrits que Gold continue jusqu'au 27 décembre
-> (aujourd'hui rien ne l'annonce, la date change seulement dans Paramètres).
+> testeurs ni sur iPhone. P44-3b (dire aux testeurs inscrits que Gold continue
+> jusqu'au 27 décembre) : faite le 15/11 à 01:35, voir plus haut.
 
 > 🎯 **Agir : plus de « notez chaque jour » quand c'est fait (14/11 22:35)** : quand rien n'est en cours, Agir
 > demandait de noter son bien-être (ou sa digestion) chaque jour, même à qui venait de le faire. La phrase ne
@@ -901,6 +911,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 15/11 01:35 — [Gold prolongé : la nouvelle date s'affiche (P44-3b)](runs/2026-11-15-0135-gold-prolonge.md) | 🔧 | Main : #990 mergée à 01:29, workflows en cours au début. P44-3b : quand le relais recule la fin de Gold offert, Aujourd'hui affiche une fois la nouvelle date ; « Le test est terminé » attend la vérification des droits. 9 tests écrits d'abord, 3568 verts. Suivi iPhone (v1067) dans une PR à part, après le merge. Alpha de 23:45 pas encore partie, pas de soumission bêta. |
 | 15/11 00:35 — [Nutrition au premier repas : « journée en cours » ; iPhone v1065](runs/2026-11-15-0035-nutrition-journee-en-cours.md) | 🔧 | Main vert, #989 mergée par son run. Suivi iPhone : `upstream.json` de v1059 à v1065, 52 correctifs sans retouche, 3915 tests verts sur le code embarqué. POLISH-SIM-97 : Nutrition n'écrit plus « des repas manquent sans doute » quand seul le jour en cours est saisi. Envoi TestFlight du code v1059 vérifié (parti à 23:30). Alpha de 23:45 pas encore partie, pas de soumission bêta. |
 | 14/11 23:35 — [Gold sans date de fin : l'app le lisait comme fini (P44-3a)](runs/2026-11-14-2335-gold-sans-fin.md) | 🔧 | Main vert. Le run de 22:35 finissait #987 (Agir) : étape indépendante, suite de « P37 oui confirmé ». `getEntitlement` éteignait un Gold offert sans date (`launchUntil: null`, ce que le relais sert à l'installation du propriétaire après le 02/12) : corrigé, testé ; textes « Gold offert » sans « pendant le test » dans ce cas. Rien de visible aujourd'hui, pas de note de Nouveautés. Reste P44-3b (annonce aux testeurs inscrits) et P44-2b (02/12). |
 | 14/11 22:35 — [Agir vide : la phrase « notez chaque jour » seulement si la note manque](runs/2026-11-14-2235-agir-note-du-jour.md) | 🔧 | Main vert. #983 (suivi iPhone v1059) remise à jour sur main, build iOS verte, mergée à 23:30 : l'iPhone embarque v1059 (« Ajouter un appareil »). POLISH-SIM-92 : sur Agir vide, « D'ici là, notez… » ne s'affiche que si rien n'est noté aujourd'hui ; option de capture `--wellbeing-today`. Parité 70 %. |

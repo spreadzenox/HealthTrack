@@ -1248,14 +1248,21 @@ Ordre : (a) bascule du relais → polissage des textes « slop IA » (demande du
     `npm run visual -- --play --routes=/premium,/settings --subscription=launch --launch-ends-in=never`.
     Vu sur relais factice ; pas sur le téléphone du propriétaire. `LaunchStep` de l'accueil dit encore
     « Gold est offert pendant le test » (ne se voit qu'à une réinstallation, qui change l'empreinte de toute façon).
-  - [ ] **P44-3b** : un testeur inscrit voit « Gold offert jusqu'au 2 déc. » (carte FIN-LANCEMENT-1, du 30/11 au
+  - [x] **P44-3b** (fait le 15/11 01:35, voir la fin de l'entrée) : un testeur inscrit voit « Gold offert jusqu'au 2 déc. » (carte FIN-LANCEMENT-1, du 30/11 au
     02/12), puis rien ne lui dit que Gold continue : la date passe au 27 déc. dans Paramètres et l'écran Gold
     (« Gold offert pendant le test, jusqu'au 27 déc. 2026 », vu en capture avec une date factice), la carte revient
     le 24/12. À faire : une carte d'Aujourd'hui, une fois, quand la date servie par le relais recule
     (`halcya_launch_last_until` plus ancienne que `launchUntil`) : « Gold offert jusqu'au 27 décembre », sans lien
     avec un avis. Vérifier aussi que la carte « Le test est terminé. Merci ! » ne s'affiche pas à un inscrit entre la
     fin de la période et sa première vérification (hors connexion le 03/12).
-  - [ ] **P44-3** (app et textes ; 3a faite, 3b à faire) : vérifier sur l'émulateur ce que lit un testeur le 02/12 (cartes FIN-LANCEMENT-1
+    **Fait le 15/11 01:35** : `refreshEntitlement` note une fin reculée (`halcya_launch_extended`) ;
+    `launchExtendedNotice` → carte « Gold offert jusqu'au 27 déc. 2026 · Gold est prolongé : vous n'avez rien à
+    payer. », une fois, avec le lien vers l'écran Gold ; `launchEndedNotice` se tait tant que le dernier état connu
+    est encore `source: 'launch'` (pas revérifié depuis la fin). Outil : `--launch-extended`. Vu sur relais factice.
+    Reste connu : du 30/11 au 02/12 l'inscrit lit « Gold offert jusqu'au 2 déc. » (le relais ne sert le 27/12
+    qu'après la fin de la période commune) ; entre l'ouverture du 03/12 et la réponse du relais, version gratuite
+    sans carte.
+  - [ ] **P44-3** (app et textes ; 3a et 3b faites, reste la vérification) : vérifier sur l'émulateur ce que lit un testeur le 02/12 (cartes FIN-LANCEMENT-1
     et 2, « Gold offert … jusqu'au 27 décembre »), et ce que lit celui qui n'a rien analysé ; note de Nouveautés
     (`"variants": ["play"]`) ; `INVITATION-TESTEURS.md` et la fiche du test si elles donnent la date du 2 décembre.
 - [x] **GOLD-a4 — prix 2027** (02/11 00:33) : `PRICE_SCHEDULE = [{ from: '2027-01-01', factor: 2 }]` dans
