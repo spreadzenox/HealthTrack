@@ -28,7 +28,9 @@ if [ "$(git -C "$REPO" rev-parse --is-shallow-repository)" = "true" ]; then
   exit 1
 fi
 
-if [ "${1:-}" = "--latest" ]; then
+if [ "${1:-}" = "--latest" ] && [ "$(node -p "require('$ROOT/upstream.json').commit")" = "HEAD" ]; then
+  echo "upstream.json suit HEAD : le code embarqué est celui du dossier de travail, --latest n'a plus rien à avancer"
+elif [ "${1:-}" = "--latest" ]; then
   git -C "$REPO" fetch --quiet origin main
   API="repos/$SLUG/actions/workflows/play-bundle.yml/runs?branch=main&status=success&per_page=1"
   if command -v gh >/dev/null 2>&1 && gh api "$API" >/dev/null 2>&1; then
@@ -48,7 +50,7 @@ if [ "${1:-}" = "--latest" ]; then
 fi
 
 SHA="$(node -p "require('$ROOT/upstream.json').commit")"
-EXPECTED="$(node -p "require('$ROOT/upstream.json').versionCode")"
+EXPECTED="$(node -p "require('$ROOT/upstream.json').versionCode ?? ''")"
 
 # Dossier remis à neuf, sauf app/node_modules (long à réinstaller)
 if [ -d "$DEST" ]; then

@@ -6,7 +6,7 @@ Ce dossier contient tout ce qui vivait dans le dépôt `spreadzenox/HealthTrack-
 
 | Ici | Rôle |
 | --- | --- |
-| `upstream.json` | le commit de **ce dépôt** dont le code est embarqué dans l'app iPhone, et son numéro de version |
+| `upstream.json` | `"commit": "HEAD"` depuis le 15/11 : l'app iPhone embarque le code du commit construit (avant : un commit épinglé) |
 | `scripts/upstream.sh` | prépare `upstream/` (ignoré par git) : le code à ce commit + `patches/` + `overlay/` + `ios/` |
 | `patches/`, `overlay/` | correctifs du code partagé et fichiers ajoutés pour l'iPhone |
 | `ios/`, `uitests/` | projet Xcode, paquets Swift, tests d'interface |
@@ -42,7 +42,10 @@ correctifs s'y appliquent, l'app construite est la même. C'est ce qui rend la b
 
 Ensuite, la routine unique fait fondre `patches/` dans le code partagé, un sujet à la fois :
 
-1. passer `upstream.json` à `"commit": "HEAD"` : `upstream.sh` prend alors les fichiers du dossier de travail, et une
+1. **FAIT le 15/11 (IOS-HEAD)** : `ios-build.yml` et `ios-testflight.yml` suivent aussi `app/**` (et `relay/**`
+   pour la build), le job Ubuntu « Tests d'Android avec les correctifs iOS » de `ios-build.yml` est le contrôle
+   « les correctifs s'appliquent » de toute PR qui touche `app/`, et `scripts/version.sh` donne le numéro de
+   version. Ce qui était demandé : passer `upstream.json` à `"commit": "HEAD"` : `upstream.sh` prend alors les fichiers du dossier de travail, et une
    même PR peut changer `app/` et le correctif qui en dépend. Ajouter dans la même PR `app/**` et `relay/**` aux
    filtres de `ios-build.yml` (pas `app/android/**`), et un job léger (Ubuntu) « les correctifs s'appliquent » aux
    PR qui touchent `app/src/**`, pour qu'une PR Android ne casse plus l'iPhone sans le voir ;
@@ -52,14 +55,17 @@ Ensuite, la routine unique fait fondre `patches/` dans le code partagé, un suje
 3. quand `patches/` et `overlay/` sont vides : `ios/` devient `app/ios/`, `upstream.sh` et `upstream.json`
    disparaissent, la build iOS se fait dans `app/`.
 
-Tant que l'étape 1 n'est pas faite, la routine avance `upstream.json` comme avant (`scripts/upstream.sh --latest`).
+Depuis l'étape 1, il n'y a plus de « suivi » à faire : une PR qui change `app/` passe la build iOS et, une fois sur
+`main`, part sur Google Play et sur TestFlight. `scripts/upstream.sh --latest` ne fait plus rien. Si un correctif
+ne s'applique plus, c'est la PR qui l'a cassé qui le refait (ou, mieux, le remplace par une condition dans `app/src/`).
 
 ## Versions
 
-- **Version affichée dans l'app** : le `versionCode` du code embarqué (`upstream.json`), comme avant.
+- **Version affichée dans l'app** : le `versionCode` du code embarqué, soit le nombre de commits du commit construit
+  (`scripts/version.sh`) : le même nombre qu'Android pour le même commit de `main`.
 - **Version TestFlight** (`CFBundleShortVersionString`) : `testflight-version.json` (893 pendant le cycle), comme avant.
 - **Numéro de build** (`CFBundleVersion`) : `<versionCode du code embarqué>.<nombre de commits de main de ce dépôt>`,
-  par exemple `1019.1040`. C'est la même ligne dans les workflows (`git rev-list --count HEAD`), mais le compteur est
+  par exemple `1019.1040` ; depuis le 15/11 les deux moitiés sont égales (`1095.1095`). C'est la même ligne dans les workflows (`git rev-list --count HEAD`), mais le compteur est
   désormais celui du dépôt unique. Il est plus grand que le dernier compteur du dépôt iOS (520 à l'import) et le
   restera, donc chaque build est acceptée par TestFlight après les précédentes de la version 893 ; il augmente à
   chaque merge ; et il se lit seul : « code de la version 1019, construit au 1040ᵉ commit du dépôt ». Aucun

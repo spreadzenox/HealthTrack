@@ -14,7 +14,8 @@ name: iOS — TestFlight
 on:
   push:
     branches: [main]
-    paths: ["iphone/upstream.json", "iphone/patches/**", "iphone/overlay/**", "iphone/ios/**", "iphone/scripts/upstream.sh", "iphone/scripts/face-models.sh"]
+    # app/ compris depuis le 15/11 : upstream.json suit HEAD, le code partagé part sur TestFlight au merge qui le change
+    paths: ["app/**", "!app/android/**", "!app/store/**", "!app/**.md", "iphone/upstream.json", "iphone/patches/**", "iphone/overlay/**", "iphone/ios/**", "iphone/scripts/upstream.sh", "iphone/scripts/version.sh", "iphone/scripts/face-models.sh"]
   workflow_dispatch:
 
 permissions:
@@ -84,11 +85,11 @@ jobs:
         run: scripts/face-models.sh
       - name: Numéros de version
         run: |
-          ANDROID="$(node -p "require('./upstream.json').versionCode")"
+          ANDROID="$(scripts/version.sh)"
           echo "ANDROID_VERSION=$ANDROID" >> "$GITHUB_ENV"
           # Numéro de version fixe des builds de test pendant un cycle (testflight-version.json, décision du propriétaire
           # du 07/11 vers 19:35) ; à défaut, celui d'Android. Le numéro de build et la version affichée suivent Android.
-          MARKETING="$(node -p "require('fs').existsSync('testflight-version.json') ? require('./testflight-version.json').version : require('./upstream.json').versionCode")"
+          MARKETING="$(node -p "require('fs').existsSync('testflight-version.json') ? require('./testflight-version.json').version : $ANDROID")"
           echo "MARKETING_VERSION_IOS=$MARKETING" >> "$GITHUB_ENV"
           echo "IOS_BUILD=$ANDROID.$(git rev-list --count HEAD)" >> "$GITHUB_ENV"
           echo "Version $MARKETING, build $ANDROID.$(git rev-list --count HEAD) (app : version $ANDROID d'Android)"
