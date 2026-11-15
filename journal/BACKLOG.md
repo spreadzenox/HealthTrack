@@ -157,7 +157,21 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [ ] **REFONTE-6a-2 — Restes de 6a** : la visite guidée ne montre pas la vue d'ensemble (ses 3 étapes d'Objectifs
     pointent sur le détail du bien-être) ; captures à 320 px et en grand texte ; état « pas assez de notes cette
     semaine » jamais capturé ; fourchette du score non montrée (méta-leçon 4).
-  - [ ] **REFONTE-6b** (3 familles), **6c** (détail et défi doux), **6d** (seuils 7 et 14 : banc d'abord), **6e**
+  - [x] **REFONTE-6b — Les liens par famille** (15/11 13:35, Android) : bloc « Par famille » en tête des résultats
+    du détail d'un objectif (`services/influenceFamilies.js`, `pages/Recommendations.jsx`) : Sommeil (avec « Écran
+    tard le soir »), Alimentation, Activité, plus Habitudes et Écrans s'ils ont un lien net ; force du lien net le
+    plus fort en trois points et en mots (faible sous 0,25 point sur 5, moyen jusqu'à 0,5, fort au-delà : repères
+    d'affichage) ; « Pas de lien net pour l'instant » ou « Pas assez de données » sinon ; masqué tant que les pistes
+    sont floutées. « Comment est calculé votre bien-être ? » en lien replié. Écarts avec la SPEC : « Par famille »
+    et « Lien fort » au lieu de « Ce qui influence » et « Influence forte » (règle 5) ; pas de moyenne par famille ;
+    pas de feuille du bas.
+  - [ ] **REFONTE-6b-iOS** : embarquer 6b (`upstream.sh --latest`), regarder le détail du bien-être sur simulateur.
+  - [ ] **REFONTE-6b-2 — Restes de 6b** : test et capture de la version Play sans abonnement (bloc masqué) ;
+    captures des trois niveaux côte à côte, d'une ligne Habitudes ou Écrans, du confort digestif avec résultats, à
+    320 px et en grand texte ; moyenne par famille (« 7 h 05 par nuit ») ; « Comment est calculé votre
+    bien-être ? » et « Comment c'est calculé » se suivent avec deux libellés proches ; les seuils 0,25 et 0,5 à
+    confronter au banc de 6d.
+  - [ ] **REFONTE-6c** (détail d'une famille et défi doux), **6d** (seuils 7 et 14 : banc d'abord), **6e**
     (réintroduction sous Confort digestif) : voir la préparation.
 - [ ] **REFONTE-7 — Données et suppression du Journal** : Données s'ouvre sur Tendances, Nutrition en second onglet ;
   **inventaire d'abord** de ce qui n'est accessible que par le Journal (modifier ou supprimer une saisie passée, la

@@ -9,6 +9,9 @@
  *   terme, barres de part et d'autre de zéro en points sur 5 pour une variation habituelle, fourchette, couleur du
  *   thème, hachurées si pas assez net) et, à part, « À regarder, pas à changer » ;
  * - « Comment c'est calculé » en lien discret en bas.
+ * REFONTE-6b : en tête des résultats, « Par famille » : Sommeil, Alimentation, Activité (et Habitudes ou Écrans s'ils
+ * ont un lien net), chacune avec la force de son lien le plus net en trois points et en mots
+ * (services/influenceFamilies.js). Le titre de la SPEC, « Ce qui influence », n'est pas repris : ce sont des liens.
  * Retirés : l'historique, « Sur quelques semaines », « Autres liens repérés », « Bientôt » et l'analyse « dans les
  * heures ». Des liens statistiques, jamais une cause ni un diagnostic.
  */
@@ -22,6 +25,7 @@ import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
 import { isExampleMode } from '../storage/exampleMode'
 import { THEME_TONE, pistesTitles, resultsView } from '../services/resultsView'
+import { influenceFamilies } from '../services/influenceFamilies'
 import { readGutNotes } from '../services/gutNotes'
 import { listEntries } from '../storage/localHealthStorage'
 import { scoreToChoice } from '../services/mood/wellbeingScale'
@@ -165,7 +169,32 @@ function Unit({ w }) {
   return <p className="reco-unit">pt : points de votre note {w.scale}, sur 5{w.levels ?? ''}. + : {w.plus}.</p>
 }
 
-function Results({ outcome, view, locked }) {
+/** REFONTE-6b : la force du lien le plus net de chaque famille, en trois points et en mots. */
+function Families({ outcome, families }) {
+  return (
+    <section className="reco-block" aria-labelledby={`reco-families-${outcome}`}>
+      <h3 id={`reco-families-${outcome}`} className="reco-section-title">Par famille</h3>
+      <ul className="reco-families">
+        {families.map((fam) => (
+          <li key={fam.id} className={`today-card reco-family${fam.level ? '' : ' is-quiet'}`} data-tone={fam.tone} data-testid={`reco-family-${fam.id}`}>
+            <span className="reco-family-name">
+              {fam.label}
+              {fam.lead && fam.lead !== fam.label && <span className="reco-family-lead">{fam.lead}</span>}
+            </span>
+            {fam.level > 0 && (
+              <span className="reco-family-dots" aria-hidden="true">
+                {[1, 2, 3].map((i) => <span key={i} className={`reco-family-dot${i <= fam.level ? ' is-on' : ''}`} />)}
+              </span>
+            )}
+            <span className="reco-family-word">{fam.word}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+function Results({ outcome, view, locked, families = [] }) {
   const w = WORDS[outcome]
   const showWeigh = !locked && view.weigh && view.weigh.length > 0
   // POLISH-SIM-69 : rien de net, les barres hachurées étaient lues comme un résultat. Elles se replient, et le
@@ -181,6 +210,7 @@ function Results({ outcome, view, locked }) {
   )
   return (
     <>
+      {!locked && families.length > 0 && <Families outcome={outcome} families={families} />}
       <section className="reco-block" aria-labelledby={`reco-pistes-${outcome}`}>
         <h3 id={`reco-pistes-${outcome}`} className="reco-section-title">Pistes à tester</h3>
         {view.pistes.length ? (
@@ -247,6 +277,24 @@ function Results({ outcome, view, locked }) {
       )}
       {!quiet && nextLock}
     </>
+  )
+}
+
+/** REFONTE-6b (SPEC § 6.4, sans feuille ni Pilou) : d'où vient le chiffre du bien-être, dit une fois, replié. */
+function HowWellbeing() {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="reco-how">
+      <button type="button" className="reco-how-link" aria-expanded={open} onClick={() => setOpen(!open)}>
+        Comment est calculé votre bien-être ?
+      </button>
+      {open && (
+        <p className="reco-how-text" data-testid="reco-how-wellbeing">
+          Deux sources, réunies chaque jour : votre note et la lecture du visage, si vous l’utilisez. Un jour sans
+          note ni lecture, {APP_NAME} l’estime d’après les jours voisins.
+        </p>
+      )}
+    </div>
   )
 }
 
@@ -351,8 +399,9 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul des analyses…</p></div>
       )}
       {v.state === 'locked' && <Countdown outcome={outcome} view={v} onNote={onNote} onReminder={onReminder} notedToday={notedToday} />}
-      {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} />}
+      {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} families={influenceFamilies(results.outcomes?.[outcome])} />}
       {outcome === 'digestion' && v.state === 'results' && <DoctorReportCard />}
+      {outcome === 'wellbeing' && <HowWellbeing />}
       <HowItWorks />
       <SeeExample />
       <WellbeingPrompt open={!!noteOpen} initialMode={noteOpen === 'reminder' ? 'reminder' : 'now'} onClose={() => setNoteOpen(false)} onSaved={setNoted} />

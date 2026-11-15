@@ -21,7 +21,7 @@
 est sur iPhone depuis le 15/11 à 06:00, #1000). Étape 4, première moitié (4a), faite sur Android le 15/11 à
 06:35 (#1003 mergée à 06:59, release v737) ; sur iPhone avec #1002 (code v1078, captures de Ma journée et de Paramètres regardées sur simulateur) : les habitudes se choisissent dans Réglages et se notent par oui ou non dans Ma journée. **Étape 4, seconde moitié
 (4b), faite sur Android le 15/11 à 07:35 (#1004) : chaque habitude entre dans les analyses d'Objectifs ; l'étape 4
-est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 vers 09:25, code v1080 ; la build part seule sur TestFlight) : l'étape 4 est finie des deux côtés. Étape 5 (onboarding), première partie (5a), faite sur Android le 15/11 à 09:35 : vos objectifs deviennent « bien-être toujours, confort digestif en option » ; son suivi iPhone est fait (#1008 mergée le 15/11 vers 11:12, code v1083). Seconde partie (5b), faite sur Android le 15/11 à 10:35 (#1009) : l'accueil d'une nouvelle installation tient en 4 écrans ; l'étape 5 est donc finie sur Android ; son suivi iPhone est fait (#1011 mergée le 15/11 vers 12:40, code v1085, captures des 4 temps regardées sur simulateur) : l'étape 5 est finie des deux côtés. Prochaine : l'étape 6 (Objectifs), [préparée](maquettes/compagnon-etapes/ETAPE-6-OBJECTIFS.md).** **Étape 6 (Objectifs) commencée : première partie (6a), faite sur Android le 15/11 à 12:35 : l'onglet s'ouvre sur une carte par objectif, avec son score ; pas encore sur iPhone ; restent 6b à 6e (3 familles, défi doux, seuils des pistes, réintroduction).** Les 15 étapes :
+est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 vers 09:25, code v1080 ; la build part seule sur TestFlight) : l'étape 4 est finie des deux côtés. Étape 5 (onboarding), première partie (5a), faite sur Android le 15/11 à 09:35 : vos objectifs deviennent « bien-être toujours, confort digestif en option » ; son suivi iPhone est fait (#1008 mergée le 15/11 vers 11:12, code v1083). Seconde partie (5b), faite sur Android le 15/11 à 10:35 (#1009) : l'accueil d'une nouvelle installation tient en 4 écrans ; l'étape 5 est donc finie sur Android ; son suivi iPhone est fait (#1011 mergée le 15/11 vers 12:40, code v1085, captures des 4 temps regardées sur simulateur) : l'étape 5 est finie des deux côtés. Prochaine : l'étape 6 (Objectifs), [préparée](maquettes/compagnon-etapes/ETAPE-6-OBJECTIFS.md).** **Étape 6 (Objectifs) commencée : première partie (6a), faite sur Android le 15/11 à 12:35 : l'onglet s'ouvre sur une carte par objectif, avec son score ; pas encore sur iPhone ; restent 6b à 6e (3 familles, défi doux, seuils des pistes, réintroduction).** **Deuxième partie (6b), faite sur Android le 15/11 à 13:35 : le détail d'un objectif s'ouvre sur les liens par famille (sommeil, alimentation, activité) ; pas encore sur iPhone ; restent 6c à 6e.** Les 15 étapes :
 [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le brief :
 [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -32,6 +32,24 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
 
+> 🧸 **Refonte « Compagnon », étape 6b : les liens par famille (15/11 13:35)** : en touchant la carte d'un
+> objectif, vous voyez d'abord trois familles, Sommeil, Alimentation, Activité
+> ([capture](runs/captures/2026-11-15-1335-refonte-6b-familles.png) ·
+> [sombre](runs/captures/2026-11-15-1335-refonte-6b-familles-sombre.png)) : chacune dit la force de son lien le plus
+> net, en trois points et en mots (« Lien fort », « Lien moyen », « Lien faible »), ou « Pas de lien net pour
+> l'instant ». Les pistes et le détail par délai restent en dessous. En bas du bien-être, un lien « Comment est
+> calculé votre bien-être ? » (votre note et la lecture du visage, réunies chaque jour). **Quatre choix faits pour
+> vous, à corriger si vous préférez autre chose** : (1) la maquette écrit « Ce qui influence votre bien-être » et
+> « Influence forte » ; l'app écrit « Par famille » et « Lien fort », parce que ce sont des liens observés, pas des
+> causes établies ; (2) deux familles de plus que la maquette, seulement quand elles ont un lien net : Habitudes
+> (miel) et Écrans (temps d'écran, réseaux sociaux) ; « Écran tard le soir » est rangé sous Sommeil, comme dans la
+> maquette ; (3) fort à partir de 0,5 point sur 5 pour une variation habituelle, moyen à partir de 0,25, faible en
+> dessous : ce sont des repères que j'ai choisis, pas des tests ; (4) « Comment est calculé… » est un texte
+> replié, pas une feuille illustrée. **Limites** : les cartes des familles ne s'ouvrent pas encore (étape 6c) ; pas
+> de moyenne par famille (« 7 h 05 par nuit ») ; ni Pilou ni galets ; sur les données de démo, une seule famille a
+> un lien net, les trois niveaux côte à côte n'ont donc jamais été vus à l'écran ; captures regardées à 412 px
+> seulement ; **pas encore sur iPhone**.
+>
 > 🧸 **Refonte « Compagnon », étape 6a : Objectifs s'ouvre sur vos scores (15/11 12:35)** : une carte par objectif
 > ([capture](runs/captures/2026-11-15-1235-refonte-6a-objectifs.png) ·
 > [sombre](runs/captures/2026-11-15-1235-refonte-6a-objectifs-sombre.png)) : le score sur 5 de vos 7 derniers jours
