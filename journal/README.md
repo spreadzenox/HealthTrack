@@ -32,6 +32,30 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
 
+> 🧸 **Refonte « Compagnon », étape 6c, première moitié : le détail d'une famille (15/11 14:35)** : dans le détail
+> d'un objectif, chaque famille qui a des facteurs comparés s'ouvre maintenant (un « › » après son nom, toute la
+> carte se touche) : [Sommeil](runs/captures/2026-11-15-1435-refonte-6c-famille-sommeil.png) ·
+> [Habitudes, sombre](runs/captures/2026-11-15-1435-refonte-6c-famille-habitudes-sombre.png) ·
+> [Alimentation sans lien net, sombre](runs/captures/2026-11-15-1435-refonte-6c-famille-alimentation-sombre.png).
+> On y lit d'abord la ou les pistes à tester de la famille (« Essayer dans Agir », comme avant), puis « Ce qui a
+> été comparé » : les seuls facteurs de la famille, délai par délai, avec leur fourchette. Sans lien net :
+> « Aucun lien assez net pour l'instant dans cette famille. » Aucun calcul nouveau. **Trois choix faits pour vous,
+> à corriger si vous préférez autre chose** : (1) la maquette raconte une histoire propre au sommeil (14 nuits en
+> barres, deux moyennes, « vous dormez 40 min de moins ») ; l'app montre pour toute famille les mêmes barres que le
+> détail de l'objectif, parce que c'est ce que la méthode calcule aujourd'hui ; (2) la piste mène toujours à
+> l'essai d'Agir (jours « avec » et « sans » tirés au sort, validé le 07/11) : le défi doux de 5 soirs de la
+> maquette est la seconde moitié de 6c, et il pose une question pour vous (ci-dessous) ; (3) sans abonnement, une
+> famille ne s'ouvre pas (comme les pistes, floutées). **❓ Question pour la suite de 6c** : la maquette remplace
+> l'essai tiré au sort par « 5 soirs, pas forcément d'affilée », comparés à vos 14 nuits habituelles. C'est plus
+> simple à vivre et moins solide (pas de tirage, donc un soir « avec » n'est pas comparable à un soir « sans ») ;
+> le bilan le dirait (« À confirmer sur plus de soirs »). Sans réponse, je garde le tirage au sort sous la surface
+> et je n'en change que les mots et la durée. **Limites** : la carte Sommeil et sa piste répètent en partie le
+> détail de l'objectif ; sur les données de démo, « Méditation » affiche −3,3 point à long terme, hachuré : un
+> chiffre non net aussi grand devrait sans doute être masqué (noté au backlog) ; captures regardées à 412 px
+> seulement ; confort digestif avec résultats jamais capturé ; **pas encore sur iPhone**. **Étape 6b sur iPhone** :
+> en cours (#1016, code v1090), avec une capture « comme un abonné » ajoutée pour voir « Par famille » sur
+> simulateur ; à finir par le run suivant.
+>
 > 🧸 **Refonte « Compagnon », étape 6b : les liens par famille (15/11 13:35)** : en touchant la carte d'un
 > objectif, vous voyez d'abord trois familles, Sommeil, Alimentation, Activité
 > ([capture](runs/captures/2026-11-15-1335-refonte-6b-familles.png) ·
@@ -1089,6 +1113,7 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
 
 | Run | Type | Résultat |
 |---|---|---|
+| 15/11 14:35 — [Refonte « Compagnon », étape 6c-1 : le détail d'une famille](runs/2026-11-15-1435-refonte-6c-famille.md) | 🔧 | Main vert au début. #1015 (6b, Android) trouvée ouverte, 12 checks verts, à jour : **mergée à 14:31** (v1090). Étape 6c, première moitié, sur Android : une famille s'ouvre sur sa piste et ses facteurs comparés (`familyDetail`, routes `…/famille/:family`). Suivi iPhone de 6b ouvert (#1016, code v1090, capture « abonné »). 3687 tests verts. |
 | 15/11 13:35 — [Refonte « Compagnon », étape 6b : les liens par famille](runs/2026-11-15-1335-refonte-6b-familles.md) | 🔧 | Main vert au début ; #1014 (6a sur iPhone, ouverte à 13:28) en build macOS. Étape 6b sur Android (#1015) : « Par famille » en tête du détail d'un objectif (Sommeil, Alimentation, Activité ; Habitudes et Écrans s'ils ont un lien net), force du lien en trois points et en mots ; « Comment est calculé votre bien-être ? » replié. 3677 tests verts en local, lint, build, `npm run visual` (20 pages) ; captures regardées en clair, en sombre et avec une habitude. **#1014 mergée à 14:15** après sa build iOS verte et les captures d'Objectifs regardées sur iPhone 17 Pro : l'étape 6a est sur iPhone (code v1088, la build part seule sur TestFlight). TestFlight relevé à 13:43 : 1072.1073 en test, rien de refusé. État final de #1015 : voir le compte rendu. |
 | 15/11 12:35 — [Refonte « Compagnon », étape 6a : Objectifs, vue d'ensemble](runs/2026-11-15-1235-refonte-6a-objectifs.md) | 🔧 | Main vert au début ; #1011 (5b sur iPhone) en build macOS, mergée à 12:36 par son run. Étape 6a sur Android : une carte par objectif (score sur 5 des 7 derniers jours, tendance en mots, 7 barres ; avant 7 ou 14 jours notés, une jauge), détail du bien-être à `/recommendations/bien-etre`, sous-onglets retirés. Tests, lint, build et `npm run visual` (20 pages) verts ; 3 captures regardées. **#1013 mergée à 13:22** (v1088 en test interne, release v741, APK 34,6 Mo) ; #1010 (doublon de #1011) fermée sans merge ; suivi iPhone de 6a ouvert (code v1088, 51 correctifs sans retouche), build macOS à finir par le run suivant. |
 | 15/11 11:35 — [Refonte « Compagnon », étape 5b sur iPhone](runs/2026-11-15-1135-refonte-5b-iphone.md) | 🔧 | Main vert au début, aucune PR ouverte. La branche iPhone annoncée à 10:35 n'avait pas été poussée : suivi refait depuis main (#1011) : code embarqué v1085, correctifs 23 et 55 refaits, 49 autres sans retouche, captures iPhone des 4 temps ajoutées au plan, test de la variante App Store adapté. Tests de l'accueil et du mode captures verts en local ; build sur simulateur verte (relancée par chaque push de journal, finie à 12:35) ; captures des 4 temps regardées sur iPhone 17 Pro, ouverture sur iPhone 16e ; **#1011 mergée vers 12:40**, la build part seule sur TestFlight. Rien de changé côté Android. Étape 6 (Objectifs) préparée pendant la build : [inventaire et découpage](maquettes/compagnon-etapes/ETAPE-6-OBJECTIFS.md). TestFlight relevé à 11:39 : 1072.1073 en test, rien en attente. |

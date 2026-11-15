@@ -919,6 +919,29 @@
   color: var(--text-muted);
 }
 
+/* REFONTE-6c : une famille qui a des facteurs comparés ouvre son détail ; la carte entière est le lien */
+.reco-family.is-link {
+  display: block;
+  padding: 0;
+}
+
+.reco-family-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 2px;
+  padding: 16px 18px;
+  border-radius: inherit;
+  color: inherit;
+  text-decoration: none;
+}
+
+.reco-family-link:focus-visible {
+  outline: 2px solid var(--tone-label, var(--accent));
+  outline-offset: 2px;
+}
+
 /* REFONTE-6b : deux liens « Comment… » à la suite se tiennent ensemble */
 .reco-how + .reco-how {
   margin-top: 0;

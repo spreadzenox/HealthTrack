@@ -52,3 +52,30 @@ export function influenceFamilies(outcome) {
   // Tri stable : la famille au lien le plus fort d'abord ; sans lien net, l'ordre de FAMILIES
   return rows.sort((a, b) => b.strength - a.strength).map(({ strength, always, ...r }) => r) // eslint-disable-line no-unused-vars
 }
+
+/**
+ * REFONTE-6c : le détail d'une famille (brief § 4 : « puis le détail d'une famille et la piste à tester »).
+ * Ses facteurs, délai prêt par délai prêt, et ses liens nets (un par facteur, au délai où il est le plus fort).
+ * `bars` suit la règle de « Ce qui va avec » : les barres ne se montrent que si la méthode prévoit mieux que
+ * « demain comme aujourd'hui ». Null pour une famille inconnue, avant les résultats ou sans facteur comparé.
+ * @returns {{ id, label, tone, bars: boolean, count: number, horizons: { id, label, window, factors: object[] }[], pistes: object[] } | null}
+ */
+export function familyDetail(outcome, familyId) {
+  const fam = FAMILIES.find((x) => x.id === familyId)
+  if (!fam || !outcome || outcome.status === 'locked') return null
+  const horizons = Object.values(outcome.horizons || {})
+    .filter((h) => h.status === 'ready')
+    .map((h) => ({ id: h.id, label: h.label, window: h.window, factors: (h.factors || []).filter((f) => familyOf(f) === familyId) }))
+    .filter((h) => h.factors.length)
+  if (!horizons.length) return null
+  const best = new Map()
+  for (const h of horizons) {
+    for (const f of h.factors.filter((x) => x.net && !x.outOfScale)) {
+      const cur = best.get(f.key)
+      if (!cur || Math.abs(f.effect) > Math.abs(cur.effect)) best.set(f.key, { ...f, horizonLabel: h.label })
+    }
+  }
+  const pistes = [...best.values()].sort((a, b) => Math.abs(b.effect) - Math.abs(a.effect))
+  const count = new Set(horizons.flatMap((h) => h.factors.map((f) => f.key))).size
+  return { id: fam.id, label: fam.label, tone: fam.tone, bars: outcome.beatsPersistence === true, count, horizons, pistes }
+}
