@@ -1,6 +1,7 @@
 /**
- * Onglet Analyses (ORG-4 et ORG-6, revue design du 07/11 ; leçon 14 : Analyses = comprendre les liens statistiques).
- * Deux sous-onglets de même structure, Bien-être et Digestion, sur le contrat de la méthode (services/analysisResults.js,
+ * Détail d'un objectif (ORG-4 et ORG-6, revue design du 07/11 ; leçon 14 : comprendre les liens statistiques).
+ * Ouvert depuis sa carte de l'onglet Objectifs (pages/Objectives.jsx, refonte « Compagnon », étape 6a), à la place
+ * des deux sous-onglets. Deux écrans de même structure, Bien-être et Digestion, sur le contrat de la méthode (services/analysisResults.js,
  * calculé dans le worker) :
  * - avant les résultats, un seul compte à rebours avec la phrase du propriétaire, « Noter maintenant » et « Recevoir
  *   un rappel » ;
@@ -14,7 +15,6 @@
 import SeeExample from '../components/SeeExample'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import AnalysesTabs from '../components/AnalysesTabs'
 import DoctorReportCard from '../components/DoctorReportCard'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import GutEveningReminder from '../components/GutEveningReminder'
@@ -336,7 +336,8 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
 
   return (
     <section className="reco-page" data-tone={outcome === 'digestion' ? 'peach' : 'mint'}>
-      <AnalysesTabs />
+      {/* REFONTE-6a : le détail d'un objectif s'ouvre depuis sa carte d'Objectifs */}
+      <p className="reco-back"><Link to="/recommendations">← Objectifs</Link></p>
       <h2 className="page-title">{outcome === 'digestion' ? 'Votre confort digestif' : 'Votre bien-être'}</h2>
       {/* Pendant l'exemple (« Voir un exemple »), la digestion fictive s'affiche : pas de bandeau « masqué » (POLISH-SIM-37b) */}
       {outcome === 'digestion' && !showGut && !isExampleMode() && (

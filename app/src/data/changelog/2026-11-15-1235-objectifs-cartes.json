@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-15",
+  "kind": "nouveau",
+  "title": "Objectifs : un score par objectif",
+  "items": [
+    "L’onglet Objectifs s’ouvre sur une carte par objectif : votre score sur 5 des 7 derniers jours et sa tendance.",
+    "Le premier score du bien-être arrive après 7 jours notés, celui du confort digestif après 14.",
+    "Touchez une carte pour voir ce qui va avec cet objectif, comme avant."
+  ]
+}

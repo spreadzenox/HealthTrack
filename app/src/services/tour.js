@@ -47,9 +47,9 @@ export function tourSteps({ hc, face, gut }) {
     { route: '/', days: W, anchor: '.today-sources', title: 'Vos mesures du jour', text: hc ? 'Ce que vos appareils envoient, comparé à vos habitudes.' : `Avec ${healthStoreName()} ou une montre, vos nuits et vos pas s’affichent ici.`, button: 'Suivant' },
     { route: '/journal', title: 'Vos journées', text: 'Chacune de vos journées sera gardée ici.', button: `Exemple au jour ${W}` },
     { route: '/journal', days: W, reveal: true, anchor: '.day-card', title: 'Une journée d’un coup d’œil', text: 'Sommeil, pas, cœur, repas et notes au même endroit.', button: 'Suivant' },
-    { route: '/recommendations', title: 'Objectifs', text: gut ? `Vos analyses : bien-être après ${W} jours notés, digestion après ${D}.` : `Vos analyses démarrent après ${W} jours notés.`, button: `Exemple au jour ${W}` },
-    { route: '/recommendations', days: W, reveal: true, anchor: '[aria-labelledby="reco-pistes-wellbeing"]', title: `Au jour ${W} : vos premières pistes`, text: 'Ce qui va avec vos bons et vos mauvais jours. Des pistes, pas des causes.', button: 'Suivant' },
-    { route: '/recommendations', days: W, anchor: '[aria-labelledby="reco-weigh-wellbeing"]', title: 'Le détail de chaque piste', text: 'De combien chaque facteur joue sur votre bien-être, en points sur 5.', button: 'Suivant' },
+    { route: '/recommendations/bien-etre', title: 'Objectifs', text: gut ? `Vos analyses : bien-être après ${W} jours notés, digestion après ${D}.` : `Vos analyses démarrent après ${W} jours notés.`, button: `Exemple au jour ${W}` },
+    { route: '/recommendations/bien-etre', days: W, reveal: true, anchor: '[aria-labelledby="reco-pistes-wellbeing"]', title: `Au jour ${W} : vos premières pistes`, text: 'Ce qui va avec vos bons et vos mauvais jours. Des pistes, pas des causes.', button: 'Suivant' },
+    { route: '/recommendations/bien-etre', days: W, anchor: '[aria-labelledby="reco-weigh-wellbeing"]', title: 'Le détail de chaque piste', text: 'De combien chaque facteur joue sur votre bien-être, en points sur 5.', button: 'Suivant' },
   ]
   if (gut) {
     steps.push(

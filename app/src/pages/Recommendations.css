@@ -837,3 +837,18 @@
   margin: 12px 0 0;
   color: inherit;
 }
+
+/* REFONTE-6a : retour vers les cartes d'Objectifs */
+.reco-back {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+}
+
+.reco-back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  color: var(--color-brand);
+  font-weight: 600;
+  text-decoration: none;
+}

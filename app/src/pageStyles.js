@@ -24,6 +24,7 @@ import './pages/Nutrition.css'
 import './pages/More.css'
 import './pages/WatchData.css'
 import './pages/Premium.css'
+import './pages/Objectives.css'
 import './pages/Onboarding.css'
 // Historique du bien-être (POL-2, 24/10)
 // Journal › Tendances, le visualiseur (ORG-3, 07/11)
