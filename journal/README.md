@@ -32,6 +32,27 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
 
+> 🧸 **Refonte « Compagnon », étape 5b : l'accueil en 4 écrans (15/11 10:35, #1009)** : une nouvelle installation
+> voit une carte d'ouverture ([capture](runs/captures/2026-11-15-1035-refonte-5b-ouverture.png)), puis
+> [« Qu'est-ce qui vous amène ? »](runs/captures/2026-11-15-1035-refonte-5b-temps-1.png),
+> [« Avez-vous une montre ou un bracelet ? »](runs/captures/2026-11-15-1035-refonte-5b-temps-2.png),
+> [« Ce que Halcya suit pour vous, sans rien faire »](runs/captures/2026-11-15-1035-refonte-5b-temps-3.png) et
+> [« Ce que vous noterez chaque jour »](runs/captures/2026-11-15-1035-refonte-5b-temps-4.png)
+> ([sombre](runs/captures/2026-11-15-1035-refonte-5b-temps-4-sombre.png)). Les trois choix annoncés au run de 08:35
+> sont faits : une seule carte d'ouverture, l'écran du visage gardé après les 4 temps, la première note retirée.
+> **Vous ne le verrez pas sur votre téléphone** : qui a fini l'accueil ne le revoit pas (il faut une installation
+> neuve, ou les captures). **Quatre choix faits pour vous, à corriger si vous préférez autre chose** : (1) la
+> maquette écrit « ventre » deux fois ; l’app écrit « digestion » (votre règle « digestif, jamais ventre ») ; (2) au dernier écran,
+> seules les habitudes se décochent : repas et bien-être sont des lignes fixes, puisque rien dans l'app ne permet de
+> ne pas les suivre ; (3) à « Non, pas pour l'instant », l'écran suivant ne montre que le temps d'écran et la
+> météo, et annonce le reste « avec une montre ou un bracelet », au lieu de promettre 9 mesures ; (4) à la fin,
+> l'app s'ouvre sur l'Accueil et sa visite guidée, pas sur Ma journée comme annoncé à 08:35. **Limites** : sans
+> Pilou ni animation (étape 12) ; sans montre, aucune séance de sport à noter à la main (la maquette le prévoit,
+> Ma journée ne le sait pas) ; quand l'accès aux données est donné, le troisième écran est long (les mesures
+> trouvées répètent en partie les tuiles) ; captures regardées à 412 px seulement, sans 320 px ni grand texte, et
+> pas dans la variante Play avec visage et Gold ; tests écrits après le code pour cette étape ; **pas encore sur
+> iPhone** (deux correctifs à refaire).
+>
 > 🧸 **Refonte « Compagnon », étape 5a : deux objectifs (15/11 09:35, #1007)** : dans **Réglages › Vos objectifs**, le
 > **Bien-être** est « Toujours suivi » et le **Confort digestif** se coche en plus
 > ([capture](runs/captures/2026-11-15-0935-refonte-5a-reglages.png) ·
