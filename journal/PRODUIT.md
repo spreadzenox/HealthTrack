@@ -7,8 +7,9 @@
 
 ## 0. Ce qu'on cherche (méta-leçons A, validées par le propriétaire le 07/11 au soir) — font foi
 
-1. Halcya est un outil de science personnelle : voir (Journal), comprendre (Analyses), agir et vérifier (Agir) ; la
-   valeur finale est une réponse vérifiée par un essai, pas une corrélation.
+1. Halcya est un outil de science personnelle : voir (Données), comprendre, agir et vérifier (Objectifs ; avant la
+   refonte « Compagnon » : Journal, Analyses, Agir) ; la valeur finale est une réponse vérifiée par un essai, pas une
+   corrélation.
 2. Ne demander à la personne que ce que les données ne disent pas.
 3. Un même objet, une seule mesure (notes et visage forment un seul bien-être).
 4. L'incertitude se montre (fourchette), elle ne s'écrit pas ; jamais « dégradé ».
@@ -17,6 +18,30 @@
 
 > Méta-leçons B (conception, 7 à 11, et leçon de design 18) : `DESIGN.md` § 9 ; C (travail de la routine, 12 à 17) :
 > charte de `README.md`.
+
+> **Refonte « Compagnon » (décisions du propriétaire des 13, 14 et 15/11, exception au mode polish).** Ses mots :
+> « Celle avec le compagnon est clairement la meilleure. » ; « Nunito oui, 7 jours bien-être, 14 jours digestion,
+> l'écran journal jour par jour tel qu'il existe devrait purement et simplement être supprimé son intérêt est moindre.
+> L'écran de visualisation privilégié devient celui des tendances (cf discussion) » ; « 1: oui à priori sauf si le
+> design plus réaliste y change quelque chose 2: oui propre couleur pour les habitudes 3: objectifs très bien 4: oui
+> il garde la montre » ; « sur la partie Pilou lui-même j'aimerais ajouter des détails et du réalisme autant que faire
+> se peut » ; « j'aimerais que l'apparence du Pilou soit un peu le double numérique de l'utilisateur […] Pour que ce
+> soit viable il faut que les combinaisons soient multiples » ; 15/11 : « figurine avec les yeux et la lumière de la
+> créature » et « Les étapes 1 à 7 du § 10 peuvent partir tout de suite ».
+> Halcya devient une app à compagnon (« Pilou », nommé par l'utilisateur) sur 4 onglets (Accueil · Ma journée ·
+> Objectifs · Données) et une icône Réglages. Cible : les curieux de leurs données (bien-être) et les gens qui ont mal
+> au ventre ; sportifs et cible endométriose abandonnés, le cycle reste un contexte de la digestion. Le brief fait
+> foi : [`maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md). Il prime
+> sur ce que ce fichier dit encore du Journal, des objectifs « sport » et « cycle », de l'onboarding en 8 à 12 écrans,
+> des seuils de 14 et 28 jours, de Figtree et des couleurs par thème.
+> **Les 15 étapes (§ 10 du brief ; cases et détail : `BACKLOG.md`, REFONTE-1 à REFONTE-15), un run de code par étape,
+> parité iPhone dans le même run :** 1 Cohérence (**faite sur Android le 15/11 02:35**, iPhone en cours) · 2 Navigation
+> · 3 Ma journée · 4 Habitudes · 5 Onboarding · 6 Objectifs (seuils 7 et 14 jours) · 7 Données et suppression du
+> Journal (Nunito et tokens ici ou en 8) · 8 Compagnon 1a, la scène · 9 Compagnon 1b, Pilou · 10 Compagnon 2, bulles
+> et jauge · 11 Compagnon 3, nourrir Pilou · 12 Compagnon 4, rencontre et jour 7 · 13 Compagnon 5, cycle du jour,
+> widget · 14 Double numérique a, Studio à la main · 15 Double numérique b, la photo (seule sortie nouvelle du
+> téléphone ; dans aucune version des testeurs avant l'envoi par le propriétaire des déclarations Play et App Store
+> que la routine lui prépare).
 
 > **Chantier accueil du 08/11 au soir** (détail et cases : `BACKLOG.md`, ACC-1 à ACC-10). Mots du propriétaire
 > (08/11 vers 13:30) : « Non, aujourd'hui, ce sur quoi on va travailler, ça va être l'ensemble du tutoriel d'accueil. Je pense qu'on peut le rework complètement aujourd'hui. Quand à la première installation, il y a beaucoup de choses qui se passent, mais je suis pas du tout convaincu. J'aimerais bien faire un petit tutoriel qui explique bien comment fonctionne l'app, etc. La première installation qui permet à la personne de brancher toutes ses sources etc., etc. Et ensuite d'avoir potentiellement une petite preview en fait de ce que donnera l'application une fois qu'elle aura des données. » Il veut que ce soit « prêt avant minuit ce soir ». Maquette v3 validée le 08/11 vers
@@ -362,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **15/11 02:35** — **Refonte « Compagnon », étape 1 (cohérence), Android.** Les 15 étapes du brief inscrites ici (§ 0) et au BACKLOG (REFONTE-1 à 15). Le ventre n'est plus demandé sans l'objectif digestion (bouton « Digestion », « Selles » et bloc digestif d'Aujourd'hui) ; « Mon cycle » et « Mon sport et ma récupération » retirés du choix des objectifs, réglages et données gardés ; Sources quitte la barre d'onglets pour Réglages. Limites au BACKLOG (ancien « Mon cycle » encore lu comme objectif digestion jusqu'à l'étape 5 ; plus d'entrée pour noter ses règles sur une nouvelle installation). iPhone : PR de suivi du code embarqué, à finir au run suivant. #992 (P44-3b, run de 01:35) mergée en début de run.
 - **15/11 01:35** — **P44-3b (app).** Quand le relais recule la fin de Gold offert, Aujourd'hui affiche une fois « Gold offert jusqu'au 27 déc. 2026 · Gold est prolongé : vous n'avez rien à payer. » ; « Le test est terminé. Merci ! » attend que l'app ait revérifié les droits après la fin. Vu sur relais factice. Reste de P44 : rejouer le 2 décembre sur l'émulateur (P44-3) et inscrire les installations le 02/12 au matin (P44-2b).
 - **14/11 23:35** — **P44-3a (app).** Bug trouvé en vérifiant ce que lira le propriétaire le 03/12 : l'app lisait un Gold offert sans date de fin (`launchUntil: null`, servi à son installation par GOLD-a3-3) comme expiré, et serait repassée en gratuit avec l'écran d'achat. Corrigé et testé ; textes « Gold offert » sans « pendant le test » pour ce cas. À avoir sur son téléphone avant le 02/12 (versions du soir sur Alpha). Reste P44-3b (annoncer aux testeurs inscrits que Gold continue jusqu'au 27/12) et P44-2b (inscription le 02/12).
 - **14/11 21:35** — **P44-2a (CI du relais).** Le bilan de « Relais — déploiement » relève les installations Android qui ont analysé au moins un repas du 08/11 au 02/12 (CI, robots, réseau de test et iPhone écartés ; jeton Play Integrity accepté exigé pour « à inscrire ») et la durée de conservation des journaux. Reste P44-2b (inscrire la liste le 02/12 au matin) et P44-3 (textes).

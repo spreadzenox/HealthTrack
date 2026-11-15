@@ -253,7 +253,7 @@ function HealthCard({ health, onHealth }) {
   if (health === 'unavailable') {
     return (
       <p className="onb-quiet" role="status">
-        {name} n’est pas sur ce téléphone. Vous pourrez le relier plus tard dans Sources.
+        {name} n’est pas sur ce téléphone. Vous pourrez le relier plus tard dans Réglages › Sources.
       </p>
     )
   }
@@ -356,7 +356,7 @@ function WeatherRow({ weather, onWeather }) {
         <span className="onb-row-detail">
           votre ville, à quelques kilomètres près : le téléphone demande votre position approximative
         </span>
-        {weather === 'unavailable' && <span className="onb-row-detail">Position indisponible. Choisissez une ville dans Sources.</span>}
+        {weather === 'unavailable' && <span className="onb-row-detail">Position indisponible. Choisissez une ville dans Réglages › Sources.</span>}
       </div>
       <Switch checked={on} onChange={toggle} disabled={busy} label="Météo" />
     </div>
@@ -401,7 +401,7 @@ function SourcesStep({ state, update, installed }) {
         <WeatherRow weather={state.weather} onWeather={(weather) => update({ weather })} />
         {isPhoneUsageAvailable() && <ScreenTimeRow screen={state.screen} onScreen={(screen) => update({ screen })} />}
       </div>
-      <p className="onb-fine">D’autres sources se trouvent dans l’onglet Sources.</p>
+      <p className="onb-fine">D’autres sources se trouvent dans Réglages › Sources.</p>
     </>
   )
 }
@@ -543,7 +543,7 @@ function FoundStep({ health, goals, imported, onImported, installed, huawei, onC
       )}
       {error && (
         <p className="onb-note" role="status">
-          L’import n’a pas abouti. {APP_NAME} réessaiera seule, ou relancez-le depuis l’onglet Sources.
+          L’import n’a pas abouti. {APP_NAME} réessaiera seule, ou relancez-le depuis Réglages › Sources.
         </p>
       )}
     </>
@@ -633,12 +633,12 @@ function FaceStep({ face, onFace, onLater }) {
       )}
       {face === 'denied' && (
         <p className="onb-note" role="status">
-          Accès à la caméra refusé : rien n’est activé. Vous pourrez revenir dessus depuis l’onglet Sources.
+          Accès à la caméra refusé : rien n’est activé. Vous pourrez revenir dessus depuis Réglages › Sources.
         </p>
       )}
       {face === 'failed' && (
         <p className="onb-note" role="status">
-          La lecture n’a pas démarré. Vous pourrez réessayer depuis l’onglet Sources.
+          La lecture n’a pas démarré. Vous pourrez réessayer depuis Réglages › Sources.
         </p>
       )}
       {face !== 'on' && !already && (modes.length > 0 || !appOpen) && (

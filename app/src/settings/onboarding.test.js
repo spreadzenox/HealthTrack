@@ -12,6 +12,8 @@ import {
   shouldShowUnlockReminder,
   dismissUnlockReminder,
   GOALS,
+  RETIRED_GOALS,
+  gutAsked,
   TRACKS,
   goalsOf,
   handNotes,
@@ -40,14 +42,16 @@ describe('settings/onboarding', () => {
   })
 
   it('gutCardMode : carte ventre avec « Ma digestion » ou « Mon cycle » ; sans objectif, selon l’installation (ACC-3)', () => {
-    expect(gutCardMode()).toBe('show')
+    expect(gutCardMode()).toBe('used')
     saveOnboarding({ goals: ['cycle'] })
     expect(gutCardMode()).toBe('show')
     expect(gutCardMode({ goals: ['gut', 'sport'] })).toBe('show')
     expect(gutCardMode({ goals: ['stress'] })).toBe('hide')
     expect(gutCardMode({ goals: ['all'] })).toBe('hide')
     expect(gutCardMode({ goals: [], endedBy: 'existing' })).toBe('used')
-    expect(gutCardMode({ goals: [], endedBy: 'skipped' })).toBe('show')
+    // refonte étape 1 : accueil passé sans choisir → on ne demande plus le ventre
+    expect(gutCardMode({ goals: [], endedBy: 'skipped' })).toBe('used')
+    expect(gutCardMode({ goals: ['sport'] })).toBe('hide')
     // ancien format (un seul objectif)
     expect(gutCardMode({ goal: 'gut' })).toBe('show')
     expect(gutCardMode({ goal: 'energy' })).toBe('hide')
@@ -60,7 +64,21 @@ describe('settings/onboarding', () => {
     expect(goalsOf({ goal: 'all' })).toEqual(['all'])
     expect(goalsOf({ goal: null })).toEqual([])
     expect(goalsOf({ goal: 'gut', goals: ['sport', 'x'] })).toEqual(['sport'])
-    expect(GOALS.map((g) => g.id)).toEqual(['gut', 'cycle', 'stress', 'sport', 'care', 'all'])
+    // refonte étape 1 : « Mon cycle » et « Mon sport » ne sont plus proposés, mais restent lus (anciens réglages)
+    expect(GOALS.map((g) => g.id)).toEqual(['gut', 'stress', 'care', 'all'])
+    expect(RETIRED_GOALS).toEqual(['cycle', 'sport'])
+    expect(goalsOf({ goals: ['cycle', 'gut', 'sport'] })).toEqual(['cycle', 'gut', 'sport'])
+  })
+
+  it('gutAsked : le ventre n’est demandé qu’avec l’objectif digestion, ou à qui le note déjà (refonte étape 1)', () => {
+    const now = Date.parse('2026-11-15T12:00:00Z')
+    const gut = (daysAgo) => ({ type: 'gut', at: new Date(now - daysAgo * 86_400_000).toISOString() })
+    expect(gutAsked('show', [], now)).toBe(true)
+    expect(gutAsked('hide', [gut(0)], now)).toBe(false)
+    expect(gutAsked('used', [], now)).toBe(false)
+    expect(gutAsked('used', [{ type: 'food', at: new Date(now).toISOString() }], now)).toBe(false)
+    expect(gutAsked('used', [gut(8)], now)).toBe(false)
+    expect(gutAsked('used', [gut(6)], now)).toBe(true)
   })
 
   it('maxStep ne recule jamais (écran le plus loin atteint, pour le diagnostic)', () => {
@@ -195,9 +213,10 @@ describe('settings/onboarding', () => {
 })
 
 describe('handNotes (POLISH-SIM-51) : ce que l’on note sans source, selon l’objectif', () => {
-  it('sans objectif ou « Tout mesurer » : bien-être, digestion, repas en photo', () => {
-    expect(handNotes([])).toEqual(['bien-être', 'digestion', 'repas en photo'])
-    expect(handNotes(['all'])).toEqual(['bien-être', 'digestion', 'repas en photo'])
+  it('sans objectif ou « Tout mesurer » : bien-être et repas en photo, pas la digestion (refonte étape 1)', () => {
+    expect(handNotes([])).toEqual(['bien-être', 'repas en photo'])
+    expect(handNotes(['all'])).toEqual(['bien-être', 'repas en photo'])
+    expect(handNotes(['gut'])).toEqual(['bien-être', 'digestion', 'repas en photo'])
   })
   it('« Prendre soin de moi » : le poids, pas la digestion', () => {
     expect(handNotes(['care'])).toEqual(['bien-être', 'repas en photo', 'poids'])

@@ -14,7 +14,7 @@ function renderAt(path) {
 describe('TabBar', () => {
   beforeEach(() => localStorage.clear())
 
-  it('shows the five tabs (ORG-1 : Aujourd’hui, Journal, Analyses, Agir, Sources)', () => {
+  it('shows the four tabs, without Sources (refonte « Compagnon », étape 1)', () => {
     renderAt('/')
     const nav = screen.getByRole('navigation', { name: 'Principal' })
     const links = within(nav).getAllByRole('link')
@@ -23,7 +23,6 @@ describe('TabBar', () => {
       ['Journal', '/journal'],
       ['Analyses', '/recommendations'],
       ['Agir', '/agir'],
-      ['Sources', '/connectors'],
     ])
   })
 
@@ -49,16 +48,10 @@ describe('TabBar', () => {
     expect(screen.getByRole('link', { name: 'Journal' })).toHaveAttribute('aria-current', 'page')
   })
 
-  it('keeps « Sources » active on the Withings callback', () => {
-    renderAt('/connectors/withings/callback')
-    expect(screen.getByRole('link', { name: 'Sources' })).toHaveAttribute('aria-current', 'page')
-  })
-
   it.each([
     ['/reintroduction', 'Agir'],
     ['/recommendations/ventre', 'Analyses'],
     ['/tendances', 'Journal'],
-    ['/montre', 'Sources'],
     ['/bien-etre', 'Journal'],
   ])('keeps the parent tab active on the sub-page %s (POL-PLAY-82)', (path, tab) => {
     renderAt(path)
@@ -67,7 +60,7 @@ describe('TabBar', () => {
     expect(within(nav).getAllByRole('link').filter((a) => a.getAttribute('aria-current'))).toHaveLength(1)
   })
 
-  it.each(['/premium', '/plus', '/data', '/settings', '/nouveautes'])('highlights no tab on settings page %s', (path) => {
+  it.each(['/premium', '/plus', '/data', '/settings', '/nouveautes', '/connectors', '/connectors/withings/callback', '/montre'])('highlights no tab on settings page %s', (path) => {
     renderAt(path)
     const nav = screen.getByRole('navigation', { name: 'Principal' })
     within(nav).getAllByRole('link').forEach((a) => expect(a).not.toHaveAttribute('aria-current'))

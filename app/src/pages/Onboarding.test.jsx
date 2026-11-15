@@ -106,21 +106,22 @@ describe('Nouvel accueil (ACC-1, ACC-2) : tuto en trois cartes', () => {
 describe('Nouvel accueil (ACC-3) : objectifs à choix multiple', () => {
   beforeEach(() => localStorage.clear())
 
-  it('six cases, rien de coché, « Continuer » jamais grisé ; plusieurs choix gardés', () => {
+  it('quatre cases, sans « Mon cycle » ni « Mon sport » (refonte étape 1), rien de coché, « Continuer » jamais grisé ; plusieurs choix gardés', () => {
     saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'goal' })
     renderAt()
     expect(heading('Qu’est-ce qui vous amène ?')).toBeInTheDocument()
     expect(screen.getByText('02/05')).toBeInTheDocument()
     const boxes = screen.getAllByRole('checkbox')
     expect(boxes.map((b) => b.closest('label').querySelector('.onb-choice-label').textContent)).toEqual([
-      'Ma digestion', 'Mon cycle', 'Mon stress et mon sommeil', 'Mon sport et ma récupération', 'Prendre soin de moi', 'Tout mesurer',
+      'Ma digestion', 'Mon stress et mon sommeil', 'Prendre soin de moi', 'Tout mesurer',
     ])
+    expect(screen.queryByRole('checkbox', { name: /Mon cycle|Mon sport/ })).toBeNull()
     boxes.forEach((b) => expect(b).not.toBeChecked())
     expect(btn('Continuer')).toBeEnabled()
-    fireEvent.click(screen.getByRole('checkbox', { name: /Mon cycle/ }))
-    fireEvent.click(screen.getByRole('checkbox', { name: /Mon sport/ }))
+    fireEvent.click(screen.getByRole('checkbox', { name: /Ma digestion/ }))
+    fireEvent.click(screen.getByRole('checkbox', { name: /Prendre soin de moi/ }))
     fireEvent.click(btn('Continuer'))
-    expect(loadOnboarding()).toMatchObject({ goals: ['cycle', 'sport'], tracks: expect.arrayContaining(['gut', 'activity']) })
+    expect(loadOnboarding()).toMatchObject({ goals: ['gut', 'care'], tracks: expect.arrayContaining(['gut', 'activity']) })
     expect(heading('Branchez vos sources')).toBeInTheDocument()
   })
 

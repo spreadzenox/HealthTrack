@@ -21,6 +21,74 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🧸 Refonte « Compagnon » — décisions du propriétaire des 13, 14 et 15/11 (exception au mode polish)
+
+> Le brief fait foi : [`maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md)
+> (à lire en entier à chaque run tant que la refonte dure ; kit décrit par le `README.md` du même dossier).
+> **Un run de code = une étape du § 10, dans l'ordre**, testable et mergeable, parité iPhone dans le même run,
+> captures face aux maquettes du kit, une note de Nouveautés par étape visible. 15/11 : « Les étapes 1 à 7 du § 10
+> peuvent partir tout de suite » ; le double numérique vient en dernier (14 et 15). Plus aucun polish sur ce qui
+> disparaît (Journal jour par jour, objectifs « sport » et « cycle »). Les runs « idées » préparent l'étape suivante.
+
+- [x] **REFONTE-1 — Cohérence** (15/11 02:35, Android ; suivi iPhone dans la PR du code embarqué) :
+  - le ventre n'est plus demandé sans l'objectif digestion : `gutCardMode` rend `'used'` pour toute installation
+    sans objectif (avant : `'show'` après un accueil passé sans choisir) et `gutAsked(mode, entries)` décide sur
+    Aujourd'hui du bouton « Digestion », de « Selles » et du bloc digestif (avant : « Digestion » était toujours dans
+    le bandeau, même avec un autre objectif ; `'used'` n'était plus appliqué nulle part). Sans objectif, ils ne
+    s'affichent qu'à qui a noté son ventre ces 7 derniers jours. « Votre téléphone suffit » de l'accueil ne liste plus
+    « digestion » sans l'objectif ; Paramètres ne propose le rappel du soir qu'avec l'objectif ;
+  - « Mon cycle » et « Mon sport et ma récupération » retirés du choix (accueil et Paramètres) : `GOALS` a 4 entrées,
+    `RETIRED_GOALS` garde les deux identifiants lisibles ; qui les avait cochés les garde enregistrés, aucune donnée
+    touchée ;
+  - Sources quitte la barre d'onglets (4 onglets : Aujourd'hui, Journal, Analyses, Agir) et devient la première ligne
+    de Réglages ; la roue est « page courante » sur `/connectors` et `/montre` ; « l'onglet Sources » devient
+    « Réglages › Sources » dans les textes de l'accueil.
+  - **Limites, à reprendre aux étapes citées** : l'ancien « Mon cycle » compte encore comme objectif digestion pour qui
+    l'avait coché (migration des objectifs : étape 5) ; sans objectif, Analyses garde son onglet Digestion (il ne
+    demande rien d'office, mais son compte à rebours invite à noter) ; une nouvelle installation n'a plus de moyen de
+    commencer à noter ses règles à la main (le bouton « Règles » ne vient qu'avec l'ancien objectif ou une donnée de
+    cycle) : à décider à l'étape 5 (« Ce que vous noterez chaque jour ») ou 7 ; la page Sources n'a pas de lien de
+    retour vers Réglages (la roue y ramène) ; le Journal (qui disparaît) n'a pas été revu.
+- [ ] **REFONTE-2 — Navigation** : les 4 onglets du brief § 4 (Accueil · Ma journée · Objectifs · Données) et l'icône
+  Réglages ; routes actuelles redirigées (liens profonds, notifications, widget), aucune vers un écran vide ; le
+  contenu existant est simplement rangé dans les nouveaux onglets. À préparer : table route actuelle → nouvel onglet
+  (`App.jsx`, `TabBar.jsx`, notifications natives, visite guidée `tour.js`, outil de capture, tests d'interface iOS).
+- [ ] **REFONTE-3 — Ma journée** : la checklist (3 cercles des repas, oui ou non, lignes qui partent, « Plus rien à
+  faire ») ; `specs/journee.SPEC.md`.
+- [ ] **REFONTE-4 — Habitudes** : modèle de données (migration IndexedDB rétrocompatible testée, export et import),
+  saisie, couleur miel (brief § 6, contrastes dans `tokens.test.js`), prise en compte dans les analyses comme entrées
+  (règle 5 : jamais dans l'estimateur du bien-être).
+- [ ] **REFONTE-5 — Onboarding** : les 4 temps du brief § 3.4 et la migration des utilisateurs existants (objectifs
+  déduits de leurs réglages, dont les anciens « cycle » et « sport », données intactes).
+- [ ] **REFONTE-6 — Objectifs** : score et tendance, ce qui l'influence (3 familles), le détail, la piste en défi
+  doux ; puis les seuils 7 jours (bien-être) et 14 jours (digestion) dans `app/src/config/firstResults.js` ;
+  `specs/comprendre.SPEC.md`.
+- [ ] **REFONTE-7 — Données et suppression du Journal** : Données s'ouvre sur Tendances, Nutrition en second onglet ;
+  **inventaire d'abord** de ce qui n'est accessible que par le Journal (modifier ou supprimer une saisie passée, la
+  ligne « Règles · 2e jour », les ajouts rapides…) et une autre maison pour chaque chose ; puis suppression de
+  l'écran, de ses routes (redirigées vers Tendances) et du code mort, tests compris. Nunito et les tokens
+  (`tokens.css`, `DESIGN.md`) ici ou à l'étape 8.
+- [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
+  de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
+  écran, repli image fixe ; Pilou encore simple.
+- [ ] **REFONTE-9 — Compagnon 1b, Pilou** : corps figurine (§ 7.3), yeux de la créature (§ 7.4), antenne et point
+  ambre, montre, boucle de repos, réactions au toucher, 12 expressions, mouvements réduits ; test de couleur du menthe
+  (ΔE ≤ 6) ; captures face aux aperçus du kit.
+- [ ] **REFONTE-10 — Compagnon 2** : les bulles (2D) et leur éclatement, la jauge d'humeur, les fleurs, la barre de la
+  première semaine et les cadeaux.
+- [ ] **REFONTE-11 — Compagnon 3** : nourrir Pilou (repas), refléter le bien-être, méditer avec lui, la fin de journée.
+- [ ] **REFONTE-12 — Compagnon 4** : la rencontre et le nom à l'onboarding (Pilou enfile sa montre), la cérémonie du
+  jour 7, Pilou guide discret dans Objectifs, petite tête dans Données.
+- [ ] **REFONTE-13 — Compagnon 5** : le cycle du jour sur la lumière dorée, la météo sur l'île, la croissance au fil
+  des semaines, le widget et les notifications (images pré-rendues).
+- [ ] **REFONTE-14 — Double numérique a, Studio Pilou à la main** : rebrancher `traits.js` sur le rendu figurine
+  (première chose à vérifier), fiche locale, export, « Surprenez-moi », retour au Pilou d'origine.
+- [ ] **REFONTE-15 — Double numérique b, la photo** : route du relais `POST /v1/pilou/style` (schéma imposé, aucun
+  stockage, 3 par mois), information et consentement séparés, capture en mémoire, effacement, « À vérifier » ; brief
+  § 9 à la lettre. **N'entre dans aucune version envoyée aux testeurs tant que le propriétaire n'a pas envoyé les
+  déclarations** (Play : Sécurité des données ; App Store : étiquettes de confidentialité) que la routine lui aura
+  préparées.
+
 ## 📱 Routine unique — Android et iPhone dans ce dépôt (décision du 13/11 vers 19:05, « go bascule »)
 
 > Depuis la fusion (#945, #950), la version iPhone vit dans `iphone/` et cette routine fait les deux apps. Le backlog

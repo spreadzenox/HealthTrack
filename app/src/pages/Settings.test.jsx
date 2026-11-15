@@ -75,17 +75,26 @@ describe('Settings — Ce qui vous amène (I155)', () => {
     renderSettings()
     const group = screen.getByRole('group', { name: 'Ce qui vous amène' })
     expect(within(group).getByRole('checkbox', { name: 'Ma digestion' })).toBeChecked()
-    expect(within(group).getAllByRole('checkbox')).toHaveLength(6)
+    expect(within(group).getAllByRole('checkbox')).toHaveLength(4)
     fireEvent.click(within(group).getByRole('checkbox', { name: 'Mon stress et mon sommeil' }))
     expect(JSON.parse(localStorage.getItem('healthtrack_onboarding'))).toMatchObject({ done: true, goals: ['gut', 'stress'] })
   })
 
-  it('sans objectif choisi, dit que la carte ventre reste affichée (POL-PLAY-13)', () => {
+  it('« Mon cycle » et « Mon sport » ne sont plus proposés ; qui les avait cochés les garde (refonte étape 1)', () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['cycle', 'sport'] }))
+    renderSettings()
+    expect(screen.queryByRole('checkbox', { name: /Mon cycle|Mon sport/ })).toBeNull()
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Prendre soin de moi' }))
+    expect(JSON.parse(localStorage.getItem('healthtrack_onboarding')).goals).toEqual(['cycle', 'sport', 'care'])
+  })
+
+  it('sans objectif choisi, dit quand la digestion est proposée, et pas de rappel du soir (refonte étape 1)', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true }))
     renderSettings()
-    expect(screen.getByText(/ou tant que rien n’est coché/)).toBeInTheDocument()
+    expect(screen.getByText(/Sans objectif, seulement si vous l’avez notée ces 7 derniers jours/)).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: 'Rappel du bilan digestif, le soir' })).toBeNull()
     fireEvent.click(screen.getByRole('checkbox', { name: 'Ma digestion' }))
-    expect(screen.queryByText(/ou tant que rien n’est coché/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Sans objectif/)).not.toBeInTheDocument()
   })
 
   it('rappel du bilan digestif : seulement avec la carte ventre, et retiré du natif quand l’objectif change (I170)', async () => {

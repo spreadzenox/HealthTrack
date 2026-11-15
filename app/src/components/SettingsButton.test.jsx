@@ -21,7 +21,7 @@ describe('SettingsButton (réglages en haut à droite)', () => {
     expect(screen.getByRole('link', { name: 'Réglages' })).toHaveAttribute('href', '/plus')
   })
 
-  it.each(['/plus', '/data', '/settings', '/nouveautes'])('is the current page on %s', (path) => {
+  it.each(['/plus', '/data', '/settings', '/nouveautes', '/connectors', '/montre'])('is the current page on %s', (path) => {
     renderAt(path)
     expect(screen.getByRole('link', { name: 'Réglages' })).toHaveAttribute('aria-current', 'page')
   })

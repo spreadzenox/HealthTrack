@@ -18,13 +18,16 @@ describe('More page', () => {
     renderMore()
     expect(screen.getByRole('heading', { name: 'Réglages' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Données/ })).toHaveAttribute('href', '/data')
+    // refonte « Compagnon », étape 1 : Sources vit dans Réglages, en premier
+    expect(screen.getAllByRole('link')[0]).toHaveAttribute('href', '/connectors')
+    expect(screen.getByRole('link', { name: /Sources/ })).toHaveTextContent('Montres, apps de santé, météo, lecture du visage')
     expect(screen.getByRole('link', { name: /Paramètres/ })).toHaveAttribute('href', '/settings')
     expect(screen.getByRole('link', { name: /Nouveautés/ })).toHaveAttribute('href', '/nouveautes')
   })
 
-  it('no longer lists the sources, which have their own tab', () => {
+  it('lists the sources once, which have left the tab bar (refonte « Compagnon », étape 1)', () => {
     renderMore()
-    expect(screen.queryByRole('link', { name: /Connecteurs|Sources/ })).not.toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: /Connecteurs|Sources/ })).toHaveLength(1)
   })
 
   it('tells how many news are unread', () => {
