@@ -68,7 +68,10 @@ jobs:
 
   perf-budget:
     name: Budget de lectures (perf)
-    runs-on: ubuntu-latest
+    # 15/11 : ubuntu-latest passe à Ubuntu 26.04, où Playwright 1.56.1 refuse d'installer Chromium
+    # (« Playwright does not support chromium on ubuntu26.04-x64 »). Épinglé sur 24.04 jusqu'à une version de
+    # Playwright qui la prend en charge (CI-UBUNTU-26 au BACKLOG).
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
