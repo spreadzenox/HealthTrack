@@ -13,6 +13,7 @@
  */
 import { getBodySettings, setBodySettings, sanitizeBodySettings } from '../settings/bodySettings'
 import { getHiddenLinks, setHiddenLinks, sanitizeHiddenLinks } from '../settings/hiddenLinks'
+import { getHabits, setHabits, sanitizeHabits } from '../settings/habits'
 import { bumpDataRevision } from './dataRevision'
 import { exampleEntries, isExampleMode, readExample, waitForRealData } from './exampleMode'
 import { AGG_STORE, DENSE_SERIES, markDirty, readAggregatedEntries } from './dailyAggregates'
@@ -616,6 +617,8 @@ export async function exportToJson() {
   if (Object.keys(profile).length > 0) backup.profile = profile
   const hiddenLinks = getHiddenLinks()
   if (hiddenLinks.length > 0) backup.hiddenLinks = hiddenLinks
+  const habits = getHabits()
+  if (habits.length > 0) backup.habits = habits
   return JSON.stringify(backup, null, 2)
 }
 
@@ -697,7 +700,8 @@ export function parseBackup(json) {
   const cleanProfile = Array.isArray(data) ? {} : sanitizeBodySettings(data.profile)
   const profile = Object.keys(cleanProfile).length > 0 ? cleanProfile : null
   const hiddenLinks = Array.isArray(data) ? [] : sanitizeHiddenLinks(data.hiddenLinks)
-  return { entries, invalid: raw.length - entries.length, exportedAt, firstAt, lastAt, byType, profile, hiddenLinks }
+  const habits = Array.isArray(data) ? [] : sanitizeHabits(data.habits)
+  return { entries, invalid: raw.length - entries.length, exportedAt, firstAt, lastAt, byType, profile, hiddenLinks, habits }
 }
 
 /**
@@ -729,7 +733,7 @@ function restoreProfile(profile, merge) {
  */
 export async function importFromJson(json, opts = {}) {
   await waitForRealData()
-  const { entries, invalid, profile, hiddenLinks } = parseBackup(json)
+  const { entries, invalid, profile, hiddenLinks, habits } = parseBackup(json)
   if (entries.length === 0) return { imported: 0, skipped: 0, invalid, profileRestored: false }
 
   const db = await openDB()
@@ -767,6 +771,8 @@ export async function importFromJson(json, opts = {}) {
       if (imported > 0 || !opts.merge) bumpDataRevision()
       // I86 : liens masqués du fichier (remplacer : ceux du fichier ; ajouter : réunis) ; ancien fichier : rien ne change
       if (hiddenLinks.length > 0) setHiddenLinks(opts.merge ? [...getHiddenLinks(), ...hiddenLinks] : hiddenLinks)
+      // Habitudes suivies (refonte étape 4), même règle ; l'habitude libre de l'appareil prime à l'ajout
+      if (habits.length > 0) setHabits(opts.merge ? [...getHabits(), ...habits] : habits)
       resolve({ imported, skipped, invalid, profileRestored: restoreProfile(profile, opts.merge) })
     }
     tx.onerror = () => reject(tx.error)

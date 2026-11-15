@@ -83,3 +83,49 @@ describe('DayChecklist (refonte étape 3)', () => {
     expect(screen.queryByText(/kcal/)).not.toBeInTheDocument()
   })
 })
+
+describe('DayChecklist : habitudes (refonte étape 4)', () => {
+  const habits = [{ id: 'meditation', label: 'Méditation' }, { id: 'reading', label: 'Lecture' }]
+  const answer = (habit, done) => ({ id: `h-${habit.id}`, type: 'habit', at: at(12, 1), payload: { habit: habit.id, label: habit.label, done } })
+
+  it('une ligne miel par habitude, avec « Oui » et « Non » de même poids', () => {
+    const onHabit = vi.fn()
+    show({ habits, onHabit })
+    expect(screen.getByText('Encore 4 choses aujourd’hui')).toBeInTheDocument()
+    const line = screen.getByRole('group', { name: 'Méditation' })
+    expect(line).toHaveAttribute('data-tone', 'honey')
+    const [oui, non] = within(line).getAllByRole('button')
+    expect(oui).toHaveTextContent('Oui')
+    expect(non).toHaveTextContent('Non')
+    expect(oui.className).toBe(non.className)
+    fireEvent.click(oui)
+    expect(onHabit).toHaveBeenCalledWith(habits[0], true)
+    fireEvent.click(within(screen.getByRole('group', { name: 'Lecture' })).getByRole('button', { name: 'Non' }))
+    expect(onHabit).toHaveBeenCalledWith(habits[1], false)
+  })
+
+  it('« non » fait partir la ligne comme « oui », avec le même mot', async () => {
+    const { again } = show({ habits, onHabit: vi.fn() })
+    again({ entries: [answer(habits[1], false)] })
+    const line = screen.getByRole('group', { name: 'Lecture' })
+    expect(line.className).toContain('is-leaving')
+    expect(within(line).getByText('Noté')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Lecture : noté. Encore 3 choses aujourd’hui.')
+    await waitFor(() => expect(screen.queryByRole('group', { name: 'Lecture' })).not.toBeInTheDocument(), { timeout: 2000 })
+  })
+
+  it('« Déjà noté » dit la réponse et permet de la changer', () => {
+    const onHabitUndo = vi.fn()
+    const done = answer(habits[0], true)
+    show({ habits, entries: [done, answer(habits[1], false)], onHabit: vi.fn(), onHabitUndo })
+    fireEvent.click(screen.getByRole('button', { name: /Déjà noté \(2\)/ }))
+    expect(screen.getByText('Lecture · non')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Méditation · oui, changer la réponse' }))
+    expect(onHabitUndo).toHaveBeenCalledWith(done)
+  })
+
+  it('sans habitude suivie, aucune ligne de plus', () => {
+    show()
+    expect(screen.queryByRole('button', { name: 'Oui' })).not.toBeInTheDocument()
+  })
+})

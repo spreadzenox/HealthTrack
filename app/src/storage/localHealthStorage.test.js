@@ -17,6 +17,7 @@ beforeEach(() => {
 // Import after IDB is set up
 import { getBodySettings, setBodySettings } from '../settings/bodySettings'
 import { getHiddenLinks, setHiddenLinks } from '../settings/hiddenLinks'
+import { getHabits, setHabits } from '../settings/habits'
 import {
   createEntry,
   listEntries,
@@ -993,5 +994,36 @@ describe('deleteAllEntries (VC-10)', () => {
 
   it('sur une base vide, renvoie 0', async () => {
     expect(await deleteAllEntries()).toBe(0)
+  })
+})
+
+describe('habitudes dans la sauvegarde (refonte étape 4)', () => {
+  const entry = { type: 'habit', source: 'app_habit', at: '2026-11-15T11:01:00.000Z', payload: { habit: 'meditation', label: 'Méditation', done: false } }
+  beforeEach(async () => {
+    localStorage.clear()
+    await deleteAllEntries()
+  })
+
+  it('exporte les réponses (oui comme non) et la liste suivie, et les relit', async () => {
+    expect(JSON.parse(await exportToJson())).not.toHaveProperty('habits')
+    setHabits([{ id: 'meditation' }, { id: 'custom:marche', label: 'Marche' }])
+    await createEntry(entry)
+    const json = await exportToJson()
+    expect(JSON.parse(json).habits).toEqual([{ id: 'meditation', label: 'Méditation' }, { id: 'custom:marche', label: 'Marche' }])
+    localStorage.clear()
+    await importFromJson(json)
+    expect(getHabits().map((h) => h.id)).toEqual(['meditation', 'custom:marche'])
+    const rows = await listEntries({ type: 'habit' })
+    expect(rows).toHaveLength(1)
+    expect(rows[0].payload).toEqual(entry.payload)
+  })
+
+  it('lit un ancien fichier sans habitudes sans rien changer, et réunit à l’ajout', async () => {
+    setHabits([{ id: 'reading' }, { id: 'custom:piano', label: 'Piano' }])
+    await importFromJson(JSON.stringify({ version: 1, entries: [entry] }))
+    expect(getHabits().map((h) => h.id)).toEqual(['reading', 'custom:piano'])
+    await importFromJson(JSON.stringify({ version: 1, entries: [entry], habits: [{ id: 'meditation' }, { id: 'custom:marche', label: 'Marche' }] }), { merge: true })
+    expect(getHabits().map((h) => h.id)).toEqual(['meditation', 'reading', 'custom:piano'])
+    expect(parseBackup(JSON.stringify([entry])).habits).toEqual([])
   })
 })

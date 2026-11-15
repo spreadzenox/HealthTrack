@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { habitEntry } from './habits'
 import { dayChecklist, mealSlotOf, MEAL_SLOTS } from './dayChecklist'
 
 const at = (h, m = 0, dayOffset = 0) => new Date(2026, 10, 15 + dayOffset, h, m).toISOString()
@@ -87,5 +88,31 @@ describe('dayChecklist', () => {
     const c = dayChecklist([meal(8)], { now: NOON, askGut: false })
     expect(c.noted).toHaveLength(1)
     expect(c.remaining).toBe(2)
+  })
+})
+
+describe('habitudes dans la checklist (refonte étape 4)', () => {
+  const now = new Date(2026, 10, 15, 14, 0)
+  const habits = [{ id: 'meditation', label: 'Méditation' }, { id: 'reading', label: 'Lecture' }]
+
+  it('ajoute une ligne par habitude suivie, entre le bien-être et la digestion', () => {
+    const list = dayChecklist([], { now, askGut: true, habits })
+    expect(list.tasks.map((t) => t.id)).toEqual(['meals', 'wellbeing', 'habit:meditation', 'habit:reading', 'gut'])
+    expect(list.remaining).toBe(5)
+  })
+
+  it('tient « non » pour une réponse : la ligne est faite, et rangée dans « Déjà noté »', () => {
+    const entries = [{ id: 7, ...habitEntry(habits[1], '2026-11-15', false) }, { id: 8, ...habitEntry(habits[0], '2026-11-14', true) }]
+    const list = dayChecklist(entries, { now, habits })
+    expect(list.tasks.find((t) => t.id === 'habit:reading')).toMatchObject({ done: true, entry: { id: 7 } })
+    expect(list.tasks.find((t) => t.id === 'habit:meditation').done).toBe(false)
+    expect(list.noted).toEqual([{ kind: 'habit', entry: entries[0], habit: habits[1] }])
+  })
+
+  it('ne demande rien pour une habitude qui n’est plus suivie', () => {
+    const entries = [{ id: 7, ...habitEntry(habits[1], '2026-11-15', true) }]
+    const list = dayChecklist(entries, { now, habits: [] })
+    expect(list.tasks.map((t) => t.id)).toEqual(['meals', 'wellbeing'])
+    expect(list.noted).toEqual([])
   })
 })

@@ -34,6 +34,10 @@
   --peach-text: #5a4033;
   --peach-label: #8a3a12;
   --peach-track: #f2bb93;
+  --honey-bg: #fff3d1; /* miel = habitudes (refonte « Compagnon », brief § 6) */
+  --honey-text: #5a4520;
+  --honey-label: #7a5200;
+  --honey-track: #eecb6c; /* le #f2d27a du brief ne fait que 1,33:1 sur le fond : assombri au plus juste (1,42:1) */
   --lilac-bg: #ece9ff; /* lilas = activité et sport */
   --lilac-text: #3e3870;
   --lilac-bar: #4b3fc9;
@@ -124,6 +128,10 @@
   --peach-bg: #3e2a1e;
   --peach-text: #f3dccd;
   --peach-label: #ffb27a;
+  --honey-bg: #3a2f14;
+  --honey-text: #f3e6c4;
+  --honey-label: #f2c14e;
+  --honey-track: #6b5520;
   --lilac-bg: #27244a;
   --lilac-text: #dcd8ff;
   --lilac-bar: #a99fff;
@@ -170,6 +178,7 @@
  */
 [data-tone='mint'] { --tone-bg: var(--mint-bg); --tone-text: var(--mint-text); --tone-label: var(--mint-label); --tone-track: var(--mint-track); }
 [data-tone='peach'] { --tone-bg: var(--peach-bg); --tone-text: var(--peach-text); --tone-label: var(--peach-label); --tone-track: var(--peach-track); }
+[data-tone='honey'] { --tone-bg: var(--honey-bg); --tone-text: var(--honey-text); --tone-label: var(--honey-label); --tone-track: var(--honey-track); }
 [data-tone='lilac'] { --tone-bg: var(--lilac-bg); --tone-text: var(--lilac-text); --tone-label: var(--lilac-bar); --tone-track: var(--lilac-track); }
 [data-tone='night'] { --tone-bg: var(--night-bg); --tone-text: var(--night-text); --tone-label: var(--night-label); --tone-track: var(--night-track); }
 [data-tone='rose'] { --tone-bg: var(--rose-bg); --tone-text: var(--rose-text); --tone-label: var(--rose-label); --tone-track: var(--rose-track); }
