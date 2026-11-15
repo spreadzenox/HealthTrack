@@ -1,6 +1,6 @@
 import SeeExample from '../components/SeeExample'
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { eveningNotePlugin } from '../services/eveningNote'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import CigaretteQuickAdd from '../components/CigaretteQuickAdd'
@@ -27,7 +27,14 @@ import { listEntries } from '../storage/localHealthStorage'
 import { CYCLE_TYPE, cycleVisible } from '../services/cycle'
 import { goalsOf } from '../settings/onboarding'
 
-export default function Dashboard() {
+/**
+ * Refonte « Compagnon », étape 2 : l'ancien écran Aujourd'hui est rangé dans deux onglets. `view="home"` (Accueil) :
+ * le bien-être du jour, les mesures, le lien vers Agir. `view="day"` (Ma journée) : ce qui se note à la main (bandeau
+ * d'ajout, bloc digestif, repas). La vraie checklist arrive à l'étape 3, Pilou à l'étape 8.
+ */
+export default function Dashboard({ view = 'home' }) {
+  const home = view === 'home'
+  const day = !home
   // Entrées des derniers jours : tuiles du jour et compteur de cigarettes (le journal des jours est dans l'onglet Journal)
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
@@ -120,37 +127,50 @@ export default function Dashboard() {
   return (
     <section className="dashboard">
       <header className="today-head">
-        <h1 className="today-date">{head.date}</h1>
+        <h1 className="today-date">{day ? 'Ma journée' : head.date}</h1>
       </header>
-      {/* Nouvel écran Aujourd'hui (07/11, AUJ-1) : le seul vrai endroit pour ajouter, juste sous la date. */}
-      <AddStrip
-        open={addOpen}
-        onOpenChange={setAddOpen}
-        onWellbeing={() => setWellbeingOpen(true)}
-        digestion={askGut ? <GutCard title="Ma digestion" details={details} onToggleDetails={toggleDetails} /> : null}
-        stool={askGut ? <StoolPhotoLine /> : null}
-        period={cycleOn ? <PeriodSheet /> : null}
-        cigarette={!loading && <CigaretteQuickAdd />}
-        cigaretteInStrip={!loading && shouldShowCigaretteCounter(entries)}
-        onCountCigarettes={() => { setCigaretteCounterPinned(true); setCigaretteTick((t) => t + 1) }}
-      />
-      <PaymentIssueCard />
-      <LaunchEndCard />
+      {/* Le seul vrai endroit pour ajouter (AUJ-1), désormais en tête de Ma journée. */}
+      {day && (
+        <AddStrip
+          open={addOpen}
+          onOpenChange={setAddOpen}
+          onWellbeing={() => setWellbeingOpen(true)}
+          digestion={askGut ? <GutCard title="Ma digestion" details={details} onToggleDetails={toggleDetails} /> : null}
+          stool={askGut ? <StoolPhotoLine /> : null}
+          period={cycleOn ? <PeriodSheet /> : null}
+          cigarette={!loading && <CigaretteQuickAdd />}
+          cigaretteInStrip={!loading && shouldShowCigaretteCounter(entries)}
+          onCountCigarettes={() => { setCigaretteCounterPinned(true); setCigaretteTick((t) => t + 1) }}
+        />
+      )}
+      {home && <PaymentIssueCard />}
+      {home && <LaunchEndCard />}
       {/* AUJ-2 : le bien-être du jour (valeur, lectures, courbe) ; détails dans l'historique. */}
-      <DayStatusCard data={loading ? undefined : wellbeing} entries={entries}
-        onAddManual={() => setWellbeingOpen(true)} onReminder={eveningNotePlugin() ? () => setWellbeingOpen('reminder') : undefined}
-        unlockReminder={unlockReminder}
-        onDismissReminder={closeUnlockReminder} />
-      {/* AUJ-3 : vos données du jour, un bloc, l'écart à votre norme sur chaque mesure ; puis les analyses. */}
-      {!loading && !error && (
+      {home && (
+        <DayStatusCard data={loading ? undefined : wellbeing} entries={entries}
+          onAddManual={() => setWellbeingOpen(true)} onReminder={eveningNotePlugin() ? () => setWellbeingOpen('reminder') : undefined}
+          unlockReminder={unlockReminder}
+          onDismissReminder={closeUnlockReminder} />
+      )}
+      {/* AUJ-3 : vos données du jour, un bloc, l'écart à votre norme sur chaque mesure. */}
+      {home && !loading && !error && (
         <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} />
       )}
-      {/* AUJ-4 : le bloc digestif ; les résultats des analyses n'ont qu'une maison, l'onglet Analyses (leçon 16). */}
-      {!loading && askGut && <DigestBlock onNote={() => setAddOpen('digestion')}
+      {/* Agir n'a plus d'onglet : il se range sous l'Accueil (brief § 4), en attendant les défis d'Objectifs (étape 6). */}
+      {home && !loading && (
+        <Link to="/agir" className="more-item home-act-link">
+          <span className="more-text">
+            <span className="more-title">Agir</span>
+            <span className="more-desc">Vérifier une piste par un essai</span>
+          </span>
+          <span className="more-chevron" aria-hidden="true">›</span>
+        </Link>
+      )}
+      {/* AUJ-4 : le bloc digestif ; les résultats des analyses n'ont qu'une maison (leçon 16). */}
+      {day && !loading && askGut && <DigestBlock onNote={() => setAddOpen('digestion')}
         meals={entries.filter((e) => e.type === 'food' && e.at && localDateKey(e.at) === todayKey)} />}
       {/* AUJ-5 : les repas du jour, ou un bouton qui ouvre l'appareil photo. */}
-      {!loading && !error && <TodayMeals entries={entries} />}
-
+      {day && !loading && !error && <TodayMeals entries={entries} />}
 
       <WellbeingPrompt open={!!wellbeingOpen} initialMode={wellbeingOpen === 'reminder' ? 'reminder' : 'now'}
         onClose={() => setWellbeingOpen(false)} />
@@ -162,7 +182,7 @@ export default function Dashboard() {
         </div>
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}
-      <SeeExample />
+      {home && <SeeExample />}
     </section>
   )
 }

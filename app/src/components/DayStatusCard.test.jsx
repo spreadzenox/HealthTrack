@@ -76,7 +76,7 @@ describe('Bloc bien-être du jour (AUJ-2)', () => {
     view({ data: null, onAddManual: vi.fn() })
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Bien-être aujourd’hui')
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
-    expect(screen.getByText(/Notez votre bien-être en haut/)).toBeInTheDocument()
+    expect(screen.getByText(/Notez votre bien-être dans Ma journée/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'à activer dans Sources' })).toHaveAttribute('href', '/connectors')
     expect(screen.queryByRole('link', { name: /Bien-être aujourd’hui/ })).not.toBeInTheDocument()
   })

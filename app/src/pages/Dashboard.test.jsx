@@ -60,10 +60,10 @@ vi.mock('../services/faceSense', async (orig) => ({
   getFaceSenseStatus: vi.fn(async () => faceStatus.value),
 }))
 
-function renderDashboard() {
+function renderDashboard(view = 'home') {
   return render(
     <BrowserRouter>
-      <Dashboard />
+      <Dashboard view={view} />
     </BrowserRouter>
   )
 }
@@ -78,24 +78,35 @@ describe('Dashboard', () => {
     countEntries.mockResolvedValue(0)
   })
 
-  it('renders the « Aujourd’hui » header and, without any data, no filler sentence (AUJ-2, leçon 2)', async () => {
+  it('Accueil : la date, le bien-être du jour et le lien vers Agir, sans bandeau d’ajout (refonte étape 2)', async () => {
     renderDashboard()
-    // Nouvel écran du 07/11 : la date seule, sans « Bonjour », puis le bandeau d'ajout juste dessous
     const date = screen.getByRole('heading', { level: 1 })
-    expect(date.textContent).not.toMatch(/·|Bonjour/)
+    expect(date.textContent).not.toMatch(/·|Bonjour|Ma journée/)
     expect(screen.queryByText(/Bonjour/)).toBeNull()
-    const strip = screen.getByRole('region', { name: 'Ajouter' })
-    expect(date.compareDocumentPosition(strip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    // AUJ-2 : sans lecture ni note, le bloc « Bien-être aujourd'hui » renvoie au bandeau, sans verdict
+    expect(screen.queryByRole('region', { name: 'Ajouter' })).toBeNull()
+    // AUJ-2 : sans lecture ni note, le bloc « Bien-être aujourd'hui », sans verdict
     expect(await screen.findByRole('heading', { level: 2, name: 'Bien-être aujourd’hui' })).toBeInTheDocument()
     expect(screen.queryByText(/Pas encore d’avis|Votre journée/)).toBeNull()
     expect(screen.queryByRole('button', { name: 'Noter comment je me sens' })).not.toBeInTheDocument()
     expect(screen.queryByRole('region', { name: 'Noter' })).toBeNull()
-    fireEvent.click(within(strip).getByRole('button', { name: 'Bien-être' }))
-    expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
+    await loaded()
+    expect(screen.getByRole('link', { name: /Agir/ })).toHaveAttribute('href', '/agir')
     // Plus de phrase de présentation (leçon 2 : aucun texte de remplissage)
     expect(screen.queryByText(/ce qui va avec vos bons et mauvais jours/i)).toBeNull()
     expect(screen.queryByText(/Pas et nuits/)).not.toBeInTheDocument()
+  })
+
+  it('Ma journée : le titre, puis le bandeau d’ajout ; ni bien-être du jour ni mesures (refonte étape 2)', async () => {
+    renderDashboard('day')
+    const title = screen.getByRole('heading', { level: 1, name: 'Ma journée' })
+    const strip = screen.getByRole('region', { name: 'Ajouter' })
+    expect(title.compareDocumentPosition(strip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    await loaded()
+    expect(screen.queryByRole('heading', { name: 'Bien-être aujourd’hui' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Vos données du jour' })).toBeNull()
+    expect(screen.queryByRole('link', { name: /Agir/ })).toBeNull()
+    fireEvent.click(within(strip).getByRole('button', { name: 'Bien-être' }))
+    expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
   })
 
   it('sans aucune donnée : pas de liens « … dans le Journal » (VC-26)', async () => {
@@ -104,20 +115,24 @@ describe('Dashboard', () => {
     expect(screen.queryByRole('link', { name: /dans le Journal/ })).not.toBeInTheDocument()
   })
 
-  it('montre les données du jour, le bloc digestif, et « Repas » ouvre l’appareil photo puis les repas', async () => {
+  it('Accueil : les données du jour ; Ma journée : le bloc digestif, et « Repas » ouvre l’appareil photo puis les repas', async () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([
       { id: 1, type: 'steps', source: 'health_connect', at: new Date().toISOString(), payload: { value: 4321, period: 'day' } },
     ])
-    renderDashboard()
+    const { unmount } = renderDashboard()
     // AUJ-3 : les données du jour en un bloc ; les sources une fois, en bas (ici, le téléphone seul)
     expect(await screen.findByRole('heading', { name: 'Vos données du jour' })).toBeInTheDocument()
     expect(screen.getByText('Pas').closest('li')).toHaveAttribute('data-tone', 'lilac')
     expect(screen.getByText('D’après votre téléphone.')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Ajouter un appareil/ })).toHaveAttribute('href', '/connectors')
-    expect(screen.getByTestId('digest-block')).toBeInTheDocument()
+    expect(screen.queryByTestId('digest-block')).toBeNull()
     expect(screen.queryByTestId('pistes-card')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Repas' })).toBeNull()
+    unmount()
+    renderDashboard('day')
+    expect(await screen.findByTestId('digest-block')).toBeInTheDocument()
     // TESTEUR-4b : le bouton est le libellé d'un champ photo arrière ; la photo prise part vers Repas.
     const photo = screen.getByRole('button', { name: 'Repas' })
     const input = document.getElementById(photo.getAttribute('for'))
@@ -146,8 +161,8 @@ describe('Dashboard', () => {
     listEntries.mockResolvedValue([
       { id: 1, type: 'gut', source: 'app_gut', at: new Date(Date.now() - 9 * 86_400_000).toISOString(), payload: { level: 'calm' } },
     ])
-    const { unmount } = renderDashboard()
-    await screen.findByRole('heading', { name: 'Bien-être aujourd’hui' })
+    const { unmount } = renderDashboard('day')
+    await loaded()
     await loaded()
     expect(screen.queryByTestId('digest-block')).toBeNull()
     expect(screen.queryByRole('button', { name: 'Digestion' })).toBeNull()
@@ -156,7 +171,7 @@ describe('Dashboard', () => {
     listEntries.mockResolvedValue([
       { id: 1, type: 'gut', source: 'app_gut', at: new Date(Date.now() - 2 * 86_400_000).toISOString(), payload: { level: 'calm' } },
     ])
-    renderDashboard()
+    renderDashboard('day')
     expect(await screen.findByTestId('digest-block')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Digestion' })).toBeInTheDocument()
     localStorage.removeItem('healthtrack_onboarding')
@@ -164,7 +179,7 @@ describe('Dashboard', () => {
 
   it('« Digestion » (bandeau) ouvre « Ma digestion » dans une fenêtre, sans carte « Ma digestion » sur l’écran (07/11)', async () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
-    renderDashboard()
+    renderDashboard('day')
     await screen.findByTestId('digest-block')
     expect(screen.queryByTestId('gut-card')).not.toBeInTheDocument()
     expect(screen.queryByText('Ma digestion')).toBeNull()
@@ -180,14 +195,14 @@ describe('Dashboard', () => {
 
   it('AUJ-1b : « Selles » (bandeau) ouvre la photo des selles avec l’objectif digestion, jamais ailleurs', async () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
-    const { unmount } = renderDashboard()
+    const { unmount } = renderDashboard('day')
     fireEvent.click(await screen.findByRole('button', { name: 'Selles' }))
     const dialog = screen.getByRole('dialog', { name: 'Photo des selles' })
     expect(within(dialog).getByRole('button', { name: /Selles : estimer la forme avec une photo/ })).toBeInTheDocument()
     unmount()
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'energy' }))
-    renderDashboard()
-    await screen.findByRole('heading', { name: 'Bien-être aujourd’hui' })
+    renderDashboard('day')
+    await loaded()
     expect(screen.queryByRole('button', { name: 'Selles' })).toBeNull()
     localStorage.removeItem('healthtrack_onboarding')
   })
@@ -230,21 +245,21 @@ describe('Dashboard', () => {
   })
 
   it('un seul endroit pour ajouter : le bandeau, plus de section « Noter » ni de « Photo du repas » en bas', async () => {
-    renderDashboard()
+    renderDashboard('day')
     expect(screen.getByRole('button', { name: 'Repas' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Photo du repas' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Ajouter une note' })).not.toBeInTheDocument()
   })
 
   it('« Bien-être » (bandeau) ouvre la note manuelle', async () => {
-    renderDashboard()
+    renderDashboard('day')
     fireEvent.click(await screen.findByRole('button', { name: 'Bien-être' }))
     expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
   })
 
   it('hides the cigarette quick-add button for a non-smoker (no recent cigarette)', async () => {
     localStorage.clear()
-    renderDashboard()
+    renderDashboard('day')
     await waitFor(() => expect(screen.queryByText(/Chargement des données/i)).not.toBeInTheDocument())
     expect(screen.queryByRole('button', { name: /Ajouter une cigarette/i })).not.toBeInTheDocument()
   })
@@ -254,19 +269,19 @@ describe('Dashboard', () => {
     listEntries.mockResolvedValue([
       { id: 1, type: 'cigarette', source: 'app_cigarette', at: new Date().toISOString(), payload: { count: 1 } },
     ])
-    renderDashboard()
+    renderDashboard('day')
     expect(await screen.findByRole('button', { name: /Ajouter une cigarette/i })).toBeInTheDocument()
   })
 
   it('shows the cigarette quick-add button when pinned in Settings', async () => {
     localStorage.setItem('healthtrack_cigarette_counter', 'on')
-    renderDashboard()
+    renderDashboard('day')
     expect(await screen.findByRole('button', { name: /Ajouter une cigarette/i })).toBeInTheDocument()
     localStorage.clear()
   })
 
   it('la note manuelle s’ouvre vierge et se ferme', async () => {
-    renderDashboard()
+    renderDashboard('day')
     fireEvent.click(await screen.findByRole('button', { name: 'Bien-être' }))
     expect(screen.getByRole('dialog')).not.toHaveTextContent('Édition')
     fireEvent.click(screen.getByRole('button', { name: /Fermer/i }))
@@ -301,19 +316,19 @@ describe('Dashboard', () => {
 
   it('CYCLE-2 : « Règles » dans le bandeau avec « Mon cycle », ou dès qu’une donnée de cycle existe', async () => {
     const { listEntries } = await import('../storage/localHealthStorage')
-    const { unmount } = renderDashboard()
+    const { unmount } = renderDashboard('day')
     await loaded()
     expect(screen.queryByRole('button', { name: 'Règles' })).toBeNull()
     unmount()
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['cycle'] }))
-    const second = renderDashboard()
+    const second = renderDashboard('day')
     expect(await screen.findByRole('button', { name: 'Règles' })).toBeInTheDocument()
     second.unmount()
     localStorage.removeItem('healthtrack_onboarding')
     listEntries.mockImplementation(async (opts = {}) => (opts.type === 'cycle'
       ? [{ id: 1, type: 'cycle', source: 'app_cycle', at: new Date().toISOString(), payload: { subtype: 'period', flow: 'light' } }]
       : []))
-    renderDashboard()
+    renderDashboard('day')
     expect(await screen.findByRole('button', { name: 'Règles' })).toBeInTheDocument()
   })
 })

@@ -17,7 +17,7 @@ describe('More page', () => {
   it('links to every secondary page', () => {
     renderMore()
     expect(screen.getByRole('heading', { name: 'Réglages' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Données/ })).toHaveAttribute('href', '/data')
+    expect(screen.getByRole('link', { name: /Sauvegarde/ })).toHaveAttribute('href', '/data')
     // refonte « Compagnon », étape 1 : Sources vit dans Réglages, en premier
     expect(screen.getAllByRole('link')[0]).toHaveAttribute('href', '/connectors')
     expect(screen.getByRole('link', { name: /Sources/ })).toHaveTextContent('Montres, apps de santé, météo, lecture du visage')
@@ -50,8 +50,8 @@ describe('More page', () => {
 
   it('describes Données by what it holds (backup and restore, no history any more)', () => {
     renderMore()
-    const link = screen.getByRole('link', { name: /Données/ })
-    expect(link).toHaveTextContent(/Sauvegarde et restauration/)
+    const link = screen.getByRole('link', { name: /Sauvegarde/ })
+    expect(link).toHaveTextContent(/Exporter et restaurer vos données/)
     expect(link).not.toHaveTextContent(/historique/)
   })
 

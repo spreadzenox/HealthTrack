@@ -294,7 +294,7 @@ export default function BleDevices({
                 ))}
               </ul>
               <p className="my-device-meta">
-                Retrouvez-les dans « Vos derniers jours » et dans Analyses. Une seule mesure compte peu. Une valeur vous
+                Retrouvez-les dans « Vos derniers jours » et dans Objectifs. Une seule mesure compte peu. Une valeur vous
                 inquiète : parlez-en à votre médecin.
               </p>
             </>

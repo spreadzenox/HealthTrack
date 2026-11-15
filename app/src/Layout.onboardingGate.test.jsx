@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 
 // Premier lancement (C4) : l'Accueil ne se monte pas tant qu'on ne sait pas s'il faut l'onboarding,
 // sinon il calcule pour rien et s'affiche un instant avant de laisser la place à « Bienvenue ».
@@ -28,22 +28,22 @@ describe('Layout — attente de la décision d’onboarding', () => {
 
   it('nouvelle installation : ni Accueil ni calcul avant la réponse, puis l’onboarding', async () => {
     const { container } = render(<App />)
-    expect(screen.queryByRole('button', { name: 'Repas' })).not.toBeInTheDocument()
+    expect(container.querySelector('.dashboard')).not.toBeInTheDocument()
     expect(container.querySelector('main .loading')).toBeInTheDocument()
     resolveNeeded(true)
     await waitFor(() => expect(window.location.pathname).toBe('/bienvenue'))
   })
 
   it('base déjà remplie : l’Accueil s’affiche dès la réponse', async () => {
-    render(<App />)
+    const { container } = render(<App />)
     resolveNeeded(false)
-    expect(await screen.findByRole('button', { name: 'Repas' })).toBeInTheDocument()
+    await waitFor(() => expect(container.querySelector('.dashboard')).toBeInTheDocument())
     expect(window.location.pathname).toBe('/')
   })
 
   it('onboarding déjà fait : l’Accueil s’affiche tout de suite, sans attendre', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true }))
-    render(<App />)
-    expect(screen.getByRole('button', { name: 'Repas' })).toBeInTheDocument()
+    const { container } = render(<App />)
+    expect(container.querySelector('.dashboard')).toBeInTheDocument()
   })
 })
