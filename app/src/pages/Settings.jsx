@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { APP_NAME } from '../config/brand'
 import { Link } from 'react-router-dom'
 import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
 import { GEMINI_MODELS, getGeminiModel, setGeminiModel } from '../settings/geminiModel'
@@ -10,7 +11,6 @@ import { THEME_CHOICES, getThemeChoice, setThemeChoice, applyTheme } from '../th
 import { DISTRIBUTION, FEATURES, STORE, storeOfPurchase } from '../config/distribution'
 import { feedbackLink } from '../config/feedback'
 import { GOALS, goalsOf, gutCardMode, loadOnboarding, saveOnboarding } from '../settings/onboarding'
-import { APP_NAME } from '../config/brand'
 import { syncGutEvening } from '../services/gutEvening'
 import GutEveningReminder from '../components/GutEveningReminder'
 import AiCreditsHint from '../components/AiCreditsHint'
