@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-15",
+  "kind": "amélioration",
+  "title": "Vos saisies d’un jour passé, dans Tendances",
+  "items": [
+    "Dans Tendances, le détail d’un jour liste maintenant vos saisies de ce jour-là : notes, repas, habitudes, règles et séances.",
+    "Chacune se modifie ou se supprime depuis « … », comme dans le Journal."
+  ]
+}
