@@ -12,7 +12,7 @@
   (4deb1cf) pendant que celui-ci codait. Sa préparation (`ETAPE-5-ONBOARDING.md`) a servi de plan. #51 non touchée.
 
 ## Fait
-1. **Étape 5a sur Android** (`app/src/settings/onboarding.js`) :
+1. **Étape 5a sur Android, #1007** (`app/src/settings/onboarding.js`) :
    - `migrateGoals(s, gutRecent)`, pure et idempotente : `goals` devient `wellbeing`, plus `gut` si « Ma digestion »,
      l'ancien « Mon cycle », ou (sans aucun objectif) une note de digestion de moins de 7 jours ; anciens choix
      gardés dans `goalsBefore` ; `goalsVersion: 2`.
@@ -29,7 +29,8 @@
    `iphone/journal/BACKLOG.md`.
 
 ## Vérifs
-- `app/` : `npm run test` vert après correction (voir « Écarts ») ; `npm run lint` sans erreur ; `npm run build`.
+- `app/` : `npm run test` 3647 verts, 44 ignorés (suite complète relancée après correction, voir « Écarts ») ;
+  `npm run lint` sans erreur ; `npm run build`.
 - Tests écrits avant le code : une ligne de la table de migration par test, idempotence, `goalsBefore`, cycle,
   démarrage (accueil pas fini, sans lecture de la base, 7 jours et 8 jours, base illisible, choix de Réglages non
   écrasé), fin d'accueil, utilisateur existant, diagnostic ; Réglages (5 tests).
@@ -46,8 +47,7 @@
   `digestifWording.test.js` (aucun texte visible ne dit « ventre », AUJ-7). Je l'avais écrit dans `OBJECTIVES` sans
   l'afficher ; retiré. À trancher en 5b (REFONTE-5a-2).
 - La première passe de la suite complète avait 2 échecs (ce texte, et une attente de `Onboarding.test.jsx` sur
-  l'ancienne forme de `goals`), corrigés ; la suite complète n'a pas été relancée en entier après, seulement les
-  13 fichiers touchés ou voisins (122 tests) : la CI de la PR fait foi.
+  l'ancienne forme de `goals`), corrigés ; la suite complète relancée ensuite est verte.
 - Les réglages de l'accueil ne sont pas dans l'export JSON : pas de test d'import d'anciens fichiers (la
   préparation en demandait).
 

@@ -106,7 +106,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   Préparée le 15/11 à 08:35 : [`ETAPE-5-ONBOARDING.md`](maquettes/compagnon-etapes/ETAPE-5-ONBOARDING.md)
   (inventaire de l'accueil actuel, ce que chaque objectif change dans le code, table de migration, choix A à F à
   trancher, correctifs iPhone touchés). Découpage proposé :
-  - [x] **REFONTE-5a — Migration des objectifs** (15/11 09:35) : `migrateGoals` et `ensureGoalsMigrated`
+  - [x] **REFONTE-5a — Migration des objectifs** (15/11 09:35, #1007) : `migrateGoals` et `ensureGoalsMigrated`
     (`settings/onboarding.js`), une fois au démarrage quand l'accueil est fini ; `goals` = `wellbeing`, plus `gut`
     (« Ma digestion », ancien « Mon cycle », ou note de digestion de moins de 7 jours sans objectif) ; anciens choix
     dans `goalsBefore` ; l'ancien `cycle` reste dans `goals` comme marqueur d'affichage du cycle (le correctif
