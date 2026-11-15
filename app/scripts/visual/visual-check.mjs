@@ -63,6 +63,8 @@
  *                                          --ios-launch=ended : période de lancement finie sur iPhone (02/11)
  *   npm run visual -- --play --routes=/ --subscription=launch --launch-ends-in=2  # fin de Gold offert dans 2 jours :
  *                                          carte de l'Accueil (FIN-LANCEMENT-1)
+ *   npm run visual -- --play --routes=/ --subscription=launch --launch-ends-in=42 --launch-extended  # le relais
+ *                                          recule la fin de Gold offert : carte « Gold offert jusqu'au … » (P44-3b)
  *   npm run visual -- --play --routes=/premium,/settings --subscription=launch --launch-ends-in=never  # Gold offert
  *                                          sans date de fin (installation du propriétaire, GOLD-a3-3)
  *   npm run visual -- --play --routes=/ --launch-ended=2  # période de lancement finie il y a 2 jours (relais factice
@@ -689,6 +691,12 @@ async function main() {
         // rappel local de fin d'essai (VC-18b) : le paywall le promet là où le téléphone sait le programmer
         window.__HT_TRIAL_REMINDER__ = { schedule: async () => ({ notifications: true }), cancel: async () => ({}) }
       }, String(args.billing ?? ''))
+    }
+    // --launch-extended : l'app avait retenu une fin de période plus proche (hier) que celle du relais factice (P44-3b)
+    if (args['launch-extended']) {
+      await context.addInitScript((iso) => {
+        if (!localStorage.getItem('halcya_launch_extended')) localStorage.setItem('halcya_launch_last_until', iso)
+      }, new Date(Date.now() - 86_400_000).toISOString())
     }
     // Abonnement (variante play) : jamais d'appel au vrai relais ; état factice choisi par --subscription
     await context.route('**/v1/subscription/verify', (route) => {

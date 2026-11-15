@@ -17,6 +17,10 @@ const LAUNCH_LAST_UNTIL_KEY = 'halcya_launch_last_until'
 const LAUNCH_END_SEEN_KEY = 'halcya_launch_end_seen'
 /** Fin de période pour laquelle la carte « Le test est terminé » a été vue (FIN-LANCEMENT-2). */
 const LAUNCH_ENDED_SEEN_KEY = 'halcya_launch_ended_seen'
+/** Nouvelle fin de période quand le relais la recule (Gold prolongé, P44-3b). */
+const LAUNCH_EXTENDED_KEY = 'halcya_launch_extended'
+/** Fin de période pour laquelle la carte « Gold offert jusqu'au … » de la prolongation a été fermée (P44-3b). */
+const LAUNCH_EXTENDED_SEEN_KEY = 'halcya_launch_extended_seen'
 /** Événement `window` émis à chaque nouvel état donné par le relais (`detail` : les droits à jour). */
 export const ENTITLEMENT_EVENT = 'halcya:entitlement'
 export const ENTITLEMENT_TIMEOUT_MS = 15_000
@@ -94,7 +98,13 @@ export async function refreshEntitlement({ purchaseToken = null, renewalInfo = n
     const ent = fromRelay(data)
     try {
       localStorage.setItem(ENTITLEMENT_KEY, JSON.stringify(ent))
-      if (ent.source === 'launch' && ent.launchUntil) localStorage.setItem(LAUNCH_LAST_UNTIL_KEY, ent.launchUntil)
+      if (ent.source === 'launch' && ent.launchUntil) {
+        // Le relais recule la fin (période prolongée pour tous, ou pour cette installation) : à dire une fois
+        const before = Date.parse(localStorage.getItem(LAUNCH_LAST_UNTIL_KEY) ?? '')
+        if (Date.parse(ent.launchUntil) > before) localStorage.setItem(LAUNCH_EXTENDED_KEY, ent.launchUntil)
+        else if (Date.parse(ent.launchUntil) < before) localStorage.removeItem(LAUNCH_EXTENDED_KEY)
+        localStorage.setItem(LAUNCH_LAST_UNTIL_KEY, ent.launchUntil)
+      }
     } catch {
       // stockage indisponible : l'état sera redemandé
     }
@@ -173,6 +183,8 @@ const readKey = (key) => {
  */
 export function launchEndedNotice(ent, { now = Date.now(), last = lastLaunchUntil(), seen = readKey(LAUNCH_ENDED_SEEN_KEY) } = {}) {
   if (!last || ent?.premium) return null
+  // Dernier état connu encore « période de lancement » : pas revérifié depuis la fin, le relais a pu la prolonger (P44)
+  if (ent?.source === 'launch') return null
   const end = Date.parse(last)
   if (!Number.isFinite(end) || now < end || now >= end + LAUNCH_ENDED_NOTICE_MS) return null
   if (seen === last) return null
@@ -183,6 +195,28 @@ export function launchEndedNotice(ent, { now = Date.now(), last = lastLaunchUnti
 export function dismissLaunchEndedNotice(until) {
   try {
     localStorage.setItem(LAUNCH_ENDED_SEEN_KEY, until)
+  } catch {
+    // stockage indisponible : la carte reviendra au prochain lancement
+  }
+}
+
+/** Fin de période reculée par le relais (ISO), ou null. */
+export const launchExtension = () => readKey(LAUNCH_EXTENDED_KEY)
+
+/**
+ * Carte « Gold offert jusqu'au … » quand le relais recule la fin (P44-3b) : une fois par nouvelle date, tant que
+ * cette date est celle des droits en cours. Null sinon.
+ */
+export function launchExtendedNotice(ent, { now = Date.now(), extended = launchExtension(), seen = readKey(LAUNCH_EXTENDED_SEEN_KEY) } = {}) {
+  if (!extended || !ent?.premium || ent.source !== 'launch' || ent.launchUntil !== extended) return null
+  if (seen === extended || !(now < Date.parse(extended))) return null
+  return { until: extended, lastDay: lastLaunchDay(extended) }
+}
+
+/** Marque la carte de la prolongation comme vue pour cette date. */
+export function dismissLaunchExtendedNotice(until) {
+  try {
+    localStorage.setItem(LAUNCH_EXTENDED_SEEN_KEY, until)
   } catch {
     // stockage indisponible : la carte reviendra au prochain lancement
   }
