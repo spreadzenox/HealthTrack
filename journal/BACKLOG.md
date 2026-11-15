@@ -166,7 +166,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     et « Lien fort » au lieu de « Ce qui influence » et « Influence forte » (règle 5) ; pas de moyenne par famille ;
     pas de feuille du bas.
   - [ ] **REFONTE-6b-iOS** : embarquer 6b (`upstream.sh --latest`), regarder le détail du bien-être sur simulateur.
-  - [ ] **REFONTE-6b-2 — Restes de 6b** : test et capture de la version Play sans abonnement (bloc masqué) ;
+  - [ ] **REFONTE-6b-2 — Restes de 6b** : capture de la version Play sans abonnement (bloc masqué, testé) ;
     captures des trois niveaux côte à côte, d'une ligne Habitudes ou Écrans, du confort digestif avec résultats, à
     320 px et en grand texte ; moyenne par famille (« 7 h 05 par nuit ») ; « Comment est calculé votre
     bien-être ? » et « Comment c'est calculé » se suivent avec deux libellés proches ; les seuils 0,25 et 0,5 à

@@ -38,7 +38,9 @@
   complet (20 pages) sans erreur, lancé avant l'ajout de la règle CSS qui rapproche les deux liens du bas ; ensuite
   seule `/recommendations/bien-etre` a été recapturée (sombre).
 - Tests : ceux du service (6 cas) écrits dans la même commande que le service, donc jamais vus rouges ; ceux de
-  l'écran (4 cas) écrits avec l'écran.
+  l'écran (4 cas) écrits avec l'écran ; celui de la version Play sans abonnement écrit après, vert du premier coup.
+  Après ce dernier test, seuls les tests de `Recommendations` (27) ont été relancés en local ; la suite complète
+  tourne sur la PR.
 - Captures regardées (Android, 412 px, données de démo) : détail du bien-être, haut de page, clair et sombre (une
   famille avec un lien faible, deux sans lien net) ; bas de page, clair et sombre (les deux liens « Comment… ») ;
   détail du confort digestif avant les résultats (inchangé, pas de familles).
@@ -60,7 +62,7 @@
 - « Comment est calculé votre bien-être ? » et « Comment c'est calculé » se suivent : deux libellés proches.
 - États jamais capturés : trois niveaux différents côte à côte, une ligne Habitudes ou Écrans, « Pas assez de
   données », le confort digestif avec des résultats, le lien déplié. La version Play sans abonnement (bloc masqué)
-  n'a ni test ni capture.
+  a un test (`Recommendations.play.test.jsx`), pas de capture.
 - Captures non regardées : 320 px, grand texte, les 19 autres pages du passage complet (lancé pour ses erreurs).
 - Pas de Pilou, pas de galets, aucune animation.
 - iPhone : rien d'embarqué à ce run pour 6b.
