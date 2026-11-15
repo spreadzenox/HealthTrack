@@ -69,3 +69,16 @@
 ## Suite
 - REFONTE-5b-iOS : embarquer 5b, refaire les correctifs 23 et 55, regarder les 4 temps sur simulateur.
 - REFONTE-6 (Objectifs, seuils 7 et 14 jours).
+
+## Fin de run (vers 11:15)
+- **#1008 mergée** (5486462, vers 11:12) : 15 checks verts, build iOS sur simulateur verte après 51 minutes ;
+  capture de Paramètres regardée (iPhone 17 Pro, clair) : « Vos objectifs », Bien-être « Toujours suivi », Confort
+  digestif, puis « Vos habitudes ». Sombre et grand texte non regardés.
+- **TestFlight**, relevé de 10:48 : « en test 1072.1073 ; refusées aucune ; en attente aucune ». Rien à soumettre
+  ni à expirer. Arrivée des builds des codes v1075, v1078, v1080 et v1083 : non vérifiée (aucune n'apparaît dans le
+  relevé, qui ne liste que le groupe externe).
+- **#1009** : 12 checks verts sur 4a542cc ; remise à jour sur main après #1008, journal complété ; merge après les
+  checks du nouveau commit (voir le résumé pour l'état final).
+- **Suivi iPhone de 5b** : branche `claude/iphone-code-5b` préparée (correctifs 23 et 55 refaits, états de capture,
+  test de la variante appstore) ; ni testée ni construite à l'heure où ces lignes sont écrites.
+- Ce run a dépassé les 50 minutes visées (attente de la build macOS de #1008).
