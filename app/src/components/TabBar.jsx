@@ -24,30 +24,24 @@ const ICONS = {
       <circle className="tabbar-dot" cx="12" cy="12" r="1.2" />
     </>
   ),
-  sources: (
-    <>
-      <rect x="7" y="6" width="10" height="12" rx="3" />
-      <path d="M9 6V3h6v3M9 18v3h6v-3M12 10v2l1.5 1" />
-    </>
-  ),
 }
 
 /**
- * Navigation en 5 onglets (jalon 2c, puis ORG-1 du 07/11 : Aujourd'hui, Journal, Analyses, Agir, Sources). Les réglages (Données, Paramètres,
+ * Navigation en 4 onglets : Aujourd'hui, Journal, Analyses, Agir (jalon 2c, ORG-1 du 07/11, puis refonte « Compagnon »
+ * étape 1 du 15/11 : Sources quitte la barre et se range dans Réglages). Les réglages (Sources, Données, Paramètres,
  * Nouveautés) passent par le bouton en haut à droite (SettingsButton) : aucun onglet n'y est actif.
- * `paths` : préfixes de pages rangées sous l'onglet (Repas et Nutrition sous Journal, Digestion et Tendances sous Analyses, la réintroduction FODMAP sous Agir,
- * données de la montre et retour Withings sous Sources, historique du bien-être sous Aujourd'hui — POL-PLAY-82).
+ * `paths` : préfixes de pages rangées sous l'onglet (Repas et Nutrition sous Journal, Digestion et Tendances sous
+ * Analyses, la réintroduction FODMAP sous Agir, historique du bien-être sous Aujourd'hui — POL-PLAY-82).
  */
 const TABS = [
   { to: '/', label: 'Aujourd’hui', icon: 'today', end: true },
   { to: '/journal', label: 'Journal', icon: 'journal', paths: ['/journal', '/food', '/nutrition', '/tendances', '/bien-etre'] },
   { to: '/recommendations', label: 'Analyses', icon: 'pistes', paths: ['/recommendations'] },
   { to: '/agir', label: 'Agir', icon: 'act', paths: ['/agir', '/reintroduction'] },
-  { to: '/connectors', label: 'Sources', icon: 'sources', paths: ['/connectors', '/montre'] },
 ]
 
 /**
- * Analyses s'ouvre sur Digestion pour qui a choisi « Ma digestion » ou « Mon cycle » (POLISH-SIM-33) : l'onglet
+ * Analyses s'ouvre sur Digestion pour qui a l'objectif digestion (POLISH-SIM-33) : l'onglet
  * Bien-être reste à un geste.
  */
 function tabTarget(tab) {

@@ -19,7 +19,7 @@ import StoolPhotoLine from '../components/StoolPhotoLine'
 import TodayBySource from '../components/TodayBySource'
 import { useDetailsMode } from '../hooks/useDetailsMode'
 import { headerLine, measureTiles } from '../services/today'
-import { gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
+import { gutAsked, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
 import AddStrip from '../components/AddStrip'
 import PeriodSheet from '../components/PeriodSheet'
@@ -114,6 +114,8 @@ export default function Dashboard() {
     [todaySummary, yesterdaySummary, entries])
 
   const head = headerLine()
+  // Refonte étape 1 : sans l'objectif digestion, on ne demande pas le ventre (sauf à qui le note déjà)
+  const askGut = gutAsked(gutMode, entries)
 
   return (
     <section className="dashboard">
@@ -125,8 +127,8 @@ export default function Dashboard() {
         open={addOpen}
         onOpenChange={setAddOpen}
         onWellbeing={() => setWellbeingOpen(true)}
-        digestion={<GutCard title="Ma digestion" details={details} onToggleDetails={toggleDetails} />}
-        stool={gutMode !== 'hide' ? <StoolPhotoLine /> : null}
+        digestion={askGut ? <GutCard title="Ma digestion" details={details} onToggleDetails={toggleDetails} /> : null}
+        stool={askGut ? <StoolPhotoLine /> : null}
         period={cycleOn ? <PeriodSheet /> : null}
         cigarette={!loading && <CigaretteQuickAdd />}
         cigaretteInStrip={!loading && shouldShowCigaretteCounter(entries)}
@@ -144,7 +146,7 @@ export default function Dashboard() {
         <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} />
       )}
       {/* AUJ-4 : le bloc digestif ; les résultats des analyses n'ont qu'une maison, l'onglet Analyses (leçon 16). */}
-      {!loading && gutMode !== 'hide' && <DigestBlock onNote={() => setAddOpen('digestion')}
+      {!loading && askGut && <DigestBlock onNote={() => setAddOpen('digestion')}
         meals={entries.filter((e) => e.type === 'food' && e.at && localDateKey(e.at) === todayKey)} />}
       {/* AUJ-5 : les repas du jour, ou un bouton qui ouvre l'appareil photo. */}
       {!loading && !error && <TodayMeals entries={entries} />}

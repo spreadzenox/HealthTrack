@@ -19,13 +19,15 @@ describe('App', () => {
     expect(within(nav).getByRole('link', { name: /Aujourd’hui/ })).toHaveAttribute('href', '/')
     expect(within(nav).getByRole('link', { name: /Journal/ })).toHaveAttribute('href', '/journal')
     expect(within(nav).getByRole('link', { name: /Analyses/ })).toHaveAttribute('href', '/recommendations')
-    expect(within(nav).getByRole('link', { name: /Sources/ })).toHaveAttribute('href', '/connectors')
+    // refonte « Compagnon », étape 1 : Sources n'est plus un onglet
+    expect(within(nav).queryByRole('link', { name: /Sources/ })).toBeNull()
   })
 
   it('reaches secondary pages through the « Réglages » button at the top right', async () => {
     render(<App />)
     fireEvent.click(screen.getByRole('link', { name: /^Réglages/ }))
     expect(await screen.findByRole('link', { name: /Données/ })).toHaveAttribute('href', '/data')
+    expect(screen.getByRole('link', { name: /Sources/ })).toHaveAttribute('href', '/connectors')
     expect(screen.getByRole('link', { name: /Paramètres/ })).toHaveAttribute('href', '/settings')
   })
 

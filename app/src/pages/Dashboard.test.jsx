@@ -105,6 +105,7 @@ describe('Dashboard', () => {
   })
 
   it('montre les données du jour, le bloc digestif, et « Repas » ouvre l’appareil photo puis les repas', async () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
     const { listEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([
       { id: 1, type: 'steps', source: 'health_connect', at: new Date().toISOString(), payload: { value: 4321, period: 'day' } },
@@ -129,12 +130,35 @@ describe('Dashboard', () => {
     expect(takePendingMealPhoto()).toBe(file)
   })
 
-  it('objectif « énergie et sommeil » : pas de bloc digestif ; la digestion reste dans le bandeau', async () => {
+  it('objectif « énergie et sommeil » : ni bloc digestif ni « Digestion » dans le bandeau (refonte étape 1)', async () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'energy' }))
     renderDashboard()
     await screen.findByRole('heading', { name: 'Bien-être aujourd’hui' })
     expect(screen.queryByTestId('digest-block')).toBeNull()
     expect(screen.queryByTestId('gut-card')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Digestion' })).toBeNull()
+    localStorage.removeItem('healthtrack_onboarding')
+  })
+
+  it('sans objectif : le ventre n’est pas demandé, sauf à qui l’a noté ces 7 derniers jours (refonte étape 1)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'skipped' }))
+    listEntries.mockResolvedValue([
+      { id: 1, type: 'gut', source: 'app_gut', at: new Date(Date.now() - 9 * 86_400_000).toISOString(), payload: { level: 'calm' } },
+    ])
+    const { unmount } = renderDashboard()
+    await screen.findByRole('heading', { name: 'Bien-être aujourd’hui' })
+    await loaded()
+    expect(screen.queryByTestId('digest-block')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Digestion' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Selles' })).toBeNull()
+    unmount()
+    listEntries.mockResolvedValue([
+      { id: 1, type: 'gut', source: 'app_gut', at: new Date(Date.now() - 2 * 86_400_000).toISOString(), payload: { level: 'calm' } },
+    ])
+    renderDashboard()
+    expect(await screen.findByTestId('digest-block')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Digestion' })).toBeInTheDocument()
     localStorage.removeItem('healthtrack_onboarding')
   })
 
@@ -163,7 +187,7 @@ describe('Dashboard', () => {
     unmount()
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'energy' }))
     renderDashboard()
-    await screen.findByRole('button', { name: 'Digestion' })
+    await screen.findByRole('heading', { name: 'Bien-être aujourd’hui' })
     expect(screen.queryByRole('button', { name: 'Selles' })).toBeNull()
     localStorage.removeItem('healthtrack_onboarding')
   })

@@ -2,8 +2,11 @@ import { Link, useLocation } from 'react-router-dom'
 import { useChangelog } from '../hooks/useChangelog'
 import { getLastSeenId, getUnseenEntries } from '../services/whatsNew'
 
-/** Pages rangées derrière le bouton « Réglages » (en haut à droite, jalon 2c). */
-const SETTINGS_PATHS = ['/plus', '/data', '/settings', '/nouveautes']
+/**
+ * Pages rangées derrière le bouton « Réglages » (en haut à droite, jalon 2c) ; Sources et les données de la montre
+ * depuis la refonte « Compagnon », étape 1.
+ */
+const SETTINGS_PATHS = ['/plus', '/connectors', '/montre', '/data', '/settings', '/nouveautes']
 
 export default function SettingsButton({ changelog: given }) {
   const changelog = useChangelog(given)

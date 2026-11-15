@@ -13,16 +13,18 @@ const KEY = 'healthtrack_onboarding'
 /**
  * Objectifs de l'accueil (ACC-3, 08/11) : choix multiple, une option par persona. Stockés dans `goals` (tableau).
  * L'ancien `goal` (un seul choix : gut, energy, all) reste lu : voir legacyGoals.
+ * Refonte « Compagnon », étape 1 (15/11) : « Mon cycle » et « Mon sport et ma récupération » ne sont plus proposés
+ * (brief § 3.1). Qui les avait cochés les garde enregistrés (RETIRED_GOALS) et ne perd aucune donnée.
  */
 export const GOALS = [
   { id: 'gut', label: 'Ma digestion', hint: 'ballonnements, SII, inconforts' },
-  { id: 'cycle', label: 'Mon cycle', hint: 'règles, douleurs, endométriose' },
   { id: 'stress', label: 'Mon stress et mon sommeil', hint: 'fatigue, nuits, charge mentale' },
-  { id: 'sport', label: 'Mon sport et ma récupération', hint: 'entraînements, cœur, repos' },
   { id: 'care', label: 'Prendre soin de moi', hint: 'alimentation, poids, forme' },
   { id: 'all', label: 'Tout mesurer', hint: 'toutes mes montres et mesures au même endroit' },
 ]
-const GOAL_IDS = new Set(GOALS.map((g) => g.id))
+/** Objectifs retirés du choix : encore lus dans les réglages enregistrés, jamais proposés. */
+export const RETIRED_GOALS = ['cycle', 'sport']
+const GOAL_IDS = new Set([...GOALS.map((g) => g.id), ...RETIRED_GOALS])
 
 /** Ancien accueil (un seul objectif) → tableau : gut → [gut], energy → [stress], all → [all]. */
 export function legacyGoals(goal) {
@@ -35,7 +37,10 @@ export function goalsOf(s = loadOnboarding()) {
   return legacyGoals(s?.goal)
 }
 
-/** Le ventre est mis en avant avec « Ma digestion » ou « Mon cycle » (ventre et douleurs). */
+/**
+ * L'objectif digestion : « Ma digestion », ou l'ancien « Mon cycle » (ventre et douleurs) pour qui l'avait coché
+ * avant son retrait. Sans lui, l'app ne demande jamais de noter son ventre (brief § 3.2).
+ */
 export const wantsGut = (goals) => goals.includes('gut') || goals.includes('cycle')
 
 /**
@@ -68,13 +73,13 @@ export function defaultTracks(goals) {
 
 /**
  * Ce que l'on note à la main quand aucune source n'est reliée (« Votre téléphone suffit », POLISH-SIM-51) : la liste
- * suit les objectifs (poids avec « Prendre soin de moi », règles avec « Mon cycle », digestion avec le ventre).
+ * suit les objectifs (poids avec « Prendre soin de moi », règles avec l'ancien « Mon cycle », digestion seulement
+ * avec l'objectif digestion).
  */
 export function handNotes(goals = []) {
-  const broad = !goals.length || goals.includes('all')
   return [
     'bien-être',
-    (broad || wantsGut(goals)) && 'digestion',
+    wantsGut(goals) && 'digestion',
     goals.includes('cycle') && 'règles',
     'repas en photo',
     goals.includes('care') && 'poids',
@@ -97,16 +102,30 @@ export function homeFocus(goals = goalsOf()) {
 }
 
 /**
- * Carte « Votre ventre » de l'Accueil (POL-4, ACC-3) : avec « Ma digestion » ou « Mon cycle », toujours ; avec
- * d'autres objectifs seulement, jamais. Sans objectif : installation d'avant l'onboarding ('existing') → seulement
- * pour qui a noté son ventre ces 7 derniers jours ; accueil passé sans choisir → affichée. Masquer n'efface rien.
+ * Le ventre dans l'app (POL-4, ACC-3, refonte étape 1) : avec l'objectif digestion, toujours ; avec d'autres
+ * objectifs seulement, jamais. Sans aucun objectif (installation d'avant l'onboarding, ou accueil passé sans
+ * choisir) : 'used', l'app ne demande rien et ne montre le ventre qu'à qui l'a noté ces 7 derniers jours
+ * (gutAsked). Masquer n'efface rien.
  * @returns {'show'|'used'|'hide'}
  */
 export function gutCardMode(s = loadOnboarding()) {
   const goals = goalsOf(s)
   if (wantsGut(goals)) return 'show'
-  if (goals.length) return 'hide'
-  return s.endedBy === 'existing' ? 'used' : 'show'
+  return goals.length ? 'hide' : 'used'
+}
+
+/** Notes du ventre regardées pour 'used' : les 7 derniers jours. */
+export const GUT_USED_MS = 7 * 86_400_000
+
+/**
+ * Faut-il proposer de noter le ventre (bouton « Digestion », photo des selles, bloc digestif d'Aujourd'hui) ?
+ * Oui avec l'objectif digestion ; sans aucun objectif, seulement si une note du ventre a moins de 7 jours.
+ * @param {'show'|'used'|'hide'} mode
+ * @param {object[]} entries entrées du journal (toutes sortes)
+ */
+export function gutAsked(mode, entries = [], now = Date.now()) {
+  if (mode !== 'used') return mode === 'show'
+  return entries.some((e) => e?.type === 'gut' && now - Date.parse(e.at) < GUT_USED_MS)
 }
 
 export function loadOnboarding() {

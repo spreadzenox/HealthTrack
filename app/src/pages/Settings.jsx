@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { APP_NAME } from '../config/brand'
 import { Link } from 'react-router-dom'
 import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
 import { GEMINI_MODELS, getGeminiModel, setGeminiModel } from '../settings/geminiModel'
@@ -214,12 +215,11 @@ export default function Settings() {
           ))}
         </div>
         <p className="hint">
-          L’Accueil montre la carte «&nbsp;Votre digestion&nbsp;» avec «&nbsp;Ma digestion&nbsp;» ou «&nbsp;Mon cycle&nbsp;»
-          {goals.length ? '' : gutCardMode(loadOnboarding()) === 'used'
-            ? ', ou si vous avez noté votre digestion ces 7 derniers jours'
-            : ', ou tant que rien n’est coché'}. Vos notes sont gardées, quel que soit votre choix.
+          Avec «&nbsp;Ma digestion&nbsp;», {APP_NAME} vous propose de noter votre digestion
+          {goals.length ? '' : '. Sans objectif, seulement si vous l’avez notée ces 7 derniers jours'}. Vos notes sont
+          gardées, quel que soit votre choix.
         </p>
-        {gutCardMode({ ...loadOnboarding(), goals }) !== 'hide' && <GutEveningReminder variant="setting" />}
+        {gutCardMode({ ...loadOnboarding(), goals }) === 'show' && <GutEveningReminder variant="setting" />}
       </div>
 
       {FEATURES.billing && <SubscriptionBlock />}

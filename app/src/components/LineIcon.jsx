@@ -5,6 +5,13 @@ import './LineIcon.css'
  * Décoratives : le texte voisin porte le sens, d'où aria-hidden.
  */
 const PATHS = {
+  // Sources dans Réglages (refonte « Compagnon », étape 1) : la montre de l'ancien onglet
+  watch: (
+    <>
+      <rect x="7" y="6" width="10" height="12" rx="3" />
+      <path d="M9 6V3h6v3M9 18v3h6v-3M12 10v2l1.5 1" />
+    </>
+  ),
   folder: <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />,
   gear: (
     <>
