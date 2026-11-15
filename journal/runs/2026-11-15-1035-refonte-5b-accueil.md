@@ -82,3 +82,9 @@
 - **Suivi iPhone de 5b** : branche `claude/iphone-code-5b` préparée (correctifs 23 et 55 refaits, états de capture,
   test de la variante appstore) ; ni testée ni construite à l'heure où ces lignes sont écrites.
 - Ce run a dépassé les 50 minutes visées (attente de la build macOS de #1008).
+- **#1009 mergée** (aca48cc, vers 11:27) : 12 checks verts sur f337b9d, branche à jour sur main. Captures iPhone
+  des 4 temps : pas regardées avant ce merge (le code partagé n'entre dans l'app iPhone qu'avec la PR de suivi).
+- **Suivi iPhone de 5b en PR** (code v1085, aca48cc) : 51 correctifs appliqués, 23 et 55 refaits ; avec les
+  correctifs, 4015 tests verts et lint sans erreur (lancés sur le même code avant le merge). Build macOS à finir par
+  le run suivant ; captures `vierge-onboarding-*` à regarder.
+- Release et « Play — AAB » de aca48cc : voir le résumé (lignes ajoutées par la PR de suivi si connues à son envoi).
