@@ -12,13 +12,13 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1075 (15/11 à 05:06, #999 : étape 2 de la refonte, les 4 onglets ; release v735 ; « Play — AAB » en cours à 05:12, v1072 en test interne d'ici là) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** ; **1072.1073 (étape 1 de la refonte) soumise à l'examen bêta le 15/11 à 04:45** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, puis celle du code v1059 le 14/11 à 23:30 (état chez Apple non relevé depuis le 14/11 à 18:35), pour les testeurs après l'Alpha de la nuit ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1075 en test interne (15/11 à 05:11, #999 : étape 2 de la refonte, les 4 onglets ; release v735 ; « Play — AAB » vert) ; l'étape 3 (#1001) suit au merge ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** ; **1072.1073 (étape 1 de la refonte) soumise à l'examen bêta le 15/11 à 04:45** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, puis celle du code v1059 le 14/11 à 23:30 (état chez Apple non relevé depuis le 14/11 à 18:35), pour les testeurs après l'Alpha de la nuit ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
-**🧸 Refonte « Compagnon » (vos décisions des 13, 14 et 15/11) : étape 2 sur 15 faite sur Android le 15/11 à 04:35
-(navigation en 4 onglets, #999 mergée à 05:06, release v735) ; son suivi iPhone est en PR (build macOS à finir au run suivant). Étape 1 faite des deux côtés.
-Prochaine : étape 3, la checklist de Ma journée.** Les 15 étapes :
+**🧸 Refonte « Compagnon » (vos décisions des 13, 14 et 15/11) : étape 3 sur 15 faite sur Android le 15/11 à 05:35
+(la checklist de Ma journée, #1001) ; son suivi iPhone reste à faire. Étapes 1 et 2 faites des deux côtés (l'étape 2
+est sur iPhone depuis le 15/11 à 06:00, #1000). Prochaine : étape 4, les habitudes.** Les 15 étapes :
 [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le brief :
 [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -28,6 +28,27 @@ Prochaine : étape 3, la checklist de Ma journée.** Les 15 étapes :
   ([`PI2.md`](../iphone/journal/missions/PI2.md), réécrite le 14/11 d'après le relevé PI1). Claude prépare tout et
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
+
+> 🧸 **Refonte « Compagnon », étape 3 : Ma journée devient une liste à cocher (15/11 05:35)** : l'onglet s'ouvre
+> sur ce qu'il reste à noter aujourd'hui. **Repas** : trois cercles Matin, Midi, Soir ; toucher un cercle vide ouvre
+> l'appareil photo, le repas noté le remplit. **Bien-être** : « Noter ». **Votre digestion ce soir** : seulement avec
+> l'objectif digestion, grisée jusqu'à 18 h. Une ligne part quand c'est fait ; tout noté, l'écran dit « Plus rien à
+> faire ». « Déjà noté (n) » rouvre les saisies du jour. Captures Android :
+> [journée à faire](runs/captures/2026-11-15-0535-refonte-3-demo.png) ·
+> [installation vide](runs/captures/2026-11-15-0535-refonte-3-empty.png) ·
+> [un repas et le bien-être notés](runs/captures/2026-11-15-0535-refonte-3-partial.png) ·
+> [tout noté](runs/captures/2026-11-15-0535-refonte-3-done.png) ·
+> [sombre](runs/captures/2026-11-15-0535-refonte-3-done-dark.png). **Trois choix faits pour vous, à corriger si vous
+> préférez autre chose** : (1) la digestion du soir s'ouvre à **18 h**, l'heure du bilan du soir qui existe déjà,
+> et non 19 h comme dans la maquette ; (2) un repas remplit le cercle de **son heure** (avant 11 h, avant 16 h,
+> après), pas celui qu'on a touché ; (3) seule une **note** de bien-être coche la ligne, pas une lecture du visage.
+> **Limites** : pas de Pilou, de bulle ni de bouton « Annuler » (étapes 8 à 11), pas d'habitudes (étape 4) ; le
+> bandeau d'ajout reste sous la liste, donc Repas, Bien-être et Digestion sont à l'écran deux fois ; qui saute un
+> repas ne voit jamais la ligne Repas partir ; la liste des repas du jour avec ses calories a quitté cet écran (les
+> calories restent dans Données › Nutrition et Repas) ; l'animation de départ d'une ligne n'a été vue que par les
+> tests, pas sur un téléphone ; pas de maquette de la liste dans le kit, captures jugées seules ; **pas encore sur
+> iPhone**. **iPhone, étape 2** : les 4 onglets y sont depuis le 15/11 à 06:00 (#1000 : Accueil, Ma journée et
+> Données vus sur simulateur, clair, sombre et installation vide) ; la build part seule sur TestFlight.
 
 > 🧸 **Refonte « Compagnon », étape 2 : les 4 onglets (15/11 04:35)** : la barre du bas devient **Accueil · Ma
 > journée · Objectifs · Données**. Ce que vous verrez sur Android : **Accueil** garde le bien-être du jour, vos mesures
@@ -946,6 +967,7 @@ Prochaine : étape 3, la checklist de Ma journée.** Les 15 étapes :
 
 | Run | Type | Résultat |
 |---|---|---|
+| 15/11 05:35 — [Refonte « Compagnon », étape 3 : la checklist de Ma journée](runs/2026-11-15-0535-refonte-3-ma-journee.md) | 🔧 | Main vert. #1000 (suivi iPhone de l'étape 2, ouverte par le run de 04:35) : 15 checks verts, captures iPhone regardées, mergée à 06:00. Étape 3 sur Android (#1001) : Ma journée s'ouvre sur la checklist (repas en trois cercles, bien-être, digestion le soir), lignes qui partent, « Plus rien à faire », « Déjà noté » ; « Mes repas du jour » retiré. 17 tests écrits d'abord, 3593 verts ; captures de six états regardées. TestFlight non relevé. Suivi iPhone de l'étape 3 : à faire. |
 | 15/11 04:35 — [Refonte « Compagnon », étape 2 : navigation en 4 onglets](runs/2026-11-15-0435-refonte-2-navigation.md) | 🔧 | Main vert, aucune PR de la routine ouverte. Étape 2 : Accueil · Ma journée · Objectifs · Données (#999) ; l'ancien Aujourd'hui rangé dans Accueil et Ma journée ; Réglages › Données devient « Sauvegarde ». #999 mergée à 05:06 (12 checks verts), release v735 (APK 34,6 Mo). TestFlight : build 1072.1073 ajoutée au groupe externe et soumise à l'examen bêta. PR de suivi iPhone ouverte (v1075, 51 correctifs, 3938 tests verts), pas mergée. |
 | 15/11 03:35 — [Refonte, étape 1 sur iPhone ; préparation de l'étape 2](runs/2026-11-15-0335-refonte-1-iphone.md) | 🔧 | Main vert. #996 (suivi iPhone de l'étape 1, ouverte par le run de 02:35) : 15 checks verts, captures iPhone regardées (Aujourd'hui, Réglages, Paramètres, accueil), mergée à 04:20. Doublon #997 ouvert par erreur puis fermé, ses builds annulées. Table des routes de l'étape 2 écrite. Pas de code produit ; TestFlight et soumission bêta non relevés. |
 | 15/11 02:35 — [Refonte « Compagnon », étape 1 : cohérence](runs/2026-11-15-0235-refonte-1-coherence.md) | 🔧 | Main vert. #992 (P44-3b, run de 01:35) mergée en début de run, checks verts. Premier run de la refonte : 15 étapes inscrites au BACKLOG et dans PRODUIT.md. Étape 1 sur Android : le ventre n'est plus demandé sans l'objectif digestion, « Mon cycle » et « Mon sport » retirés du choix, Sources passe de la barre d'onglets à Réglages. #995 mergée à 03:19, release v734 (APK 34,6 Mo). iPhone : PR de suivi ouverte (code embarqué v1072, correctif 59 retiré, 3932 tests verts), build macOS à finir au run suivant. Alpha de 23:45 pas encore partie à 02:55, pas de soumission bêta ; TestFlight non relevé. |
