@@ -16,8 +16,9 @@
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
-**🧸 Refonte « Compagnon » (vos décisions des 13, 14 et 15/11) : étape 1 sur 15 faite sur Android le 15/11 à 02:35
-(cohérence), et sur iPhone le 15/11 à 04:20 (#996, captures regardées) ; prochaine : étape 2, la navigation en 4 onglets ([préparation](maquettes/compagnon-etapes/ETAPE-2-NAVIGATION.md)).** Les 15 étapes :
+**🧸 Refonte « Compagnon » (vos décisions des 13, 14 et 15/11) : étape 2 sur 15 faite sur Android le 15/11 à 04:35
+(navigation en 4 onglets, #999) ; son suivi iPhone est à ouvrir après le merge. Étape 1 faite des deux côtés.
+Prochaine : étape 3, la checklist de Ma journée.** Les 15 étapes :
 [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le brief :
 [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -27,6 +28,22 @@
   ([`PI2.md`](../iphone/journal/missions/PI2.md), réécrite le 14/11 d'après le relevé PI1). Claude prépare tout et
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
+
+> 🧸 **Refonte « Compagnon », étape 2 : les 4 onglets (15/11 04:35)** : la barre du bas devient **Accueil · Ma
+> journée · Objectifs · Données**. Ce que vous verrez sur Android : **Accueil** garde le bien-être du jour, vos mesures
+> et un lien vers Agir ([capture](runs/captures/2026-11-15-0435-refonte-2-accueil.png) ·
+> [installation vide](runs/captures/2026-11-15-0435-refonte-2-accueil-vide.png) ·
+> [sombre](runs/captures/2026-11-15-0435-refonte-2-accueil-sombre.png)) ; **Ma journée** reçoit le bandeau d'ajout,
+> le bloc digestif et les repas du jour ([capture](runs/captures/2026-11-15-0435-refonte-2-ma-journee.png) ·
+> [vide](runs/captures/2026-11-15-0435-refonte-2-ma-journee-vide.png) ·
+> [sombre](runs/captures/2026-11-15-0435-refonte-2-ma-journee-sombre.png)) ; **Objectifs** contient les analyses ;
+> **Données** s'ouvre sur Tendances ([capture](runs/captures/2026-11-15-0435-refonte-2-donnees.png)), le Journal y
+> est le dernier sous-onglet (« Jours ») jusqu'à sa suppression à l'étape 7. **Un choix fait pour vous, à corriger si
+> vous préférez autre chose** : dans Réglages, la ligne « Données » s'appelle maintenant **« Sauvegarde »**
+> ([capture](runs/captures/2026-11-15-0435-refonte-2-reglages.png)), pour ne pas avoir deux « Données ». **Limites** :
+> rien de nouveau dans les écrans, seulement leur rangement ; Ma journée n'est pas encore la checklist (étape 3) ;
+> l'Accueil d'une installation vide est court ; la visite guidée ne passe pas par Ma journée ; pas de maquette du kit
+> pour cette étape, captures jugées seules ; **pas encore sur iPhone**.
 
 > 🧸 **Refonte « Compagnon », étape 1 : cohérence (15/11 02:35)** : première des 15 étapes. Ce que vous verrez sur
 > Android : la barre du bas n'a plus que 4 onglets, **Sources est la première ligne de Réglages**
@@ -929,6 +946,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 15/11 04:35 — [Refonte « Compagnon », étape 2 : navigation en 4 onglets](runs/2026-11-15-0435-refonte-2-navigation.md) | 🔧 | Main vert, aucune PR de la routine ouverte. Étape 2 : Accueil · Ma journée · Objectifs · Données (#999) ; l'ancien Aujourd'hui rangé dans Accueil et Ma journée ; Réglages › Données devient « Sauvegarde ». Soumission bêta TestFlight lancée. Suivi iPhone après le merge. |
 | 15/11 03:35 — [Refonte, étape 1 sur iPhone ; préparation de l'étape 2](runs/2026-11-15-0335-refonte-1-iphone.md) | 🔧 | Main vert. #996 (suivi iPhone de l'étape 1, ouverte par le run de 02:35) : 15 checks verts, captures iPhone regardées (Aujourd'hui, Réglages, Paramètres, accueil), mergée à 04:20. Doublon #997 ouvert par erreur puis fermé, ses builds annulées. Table des routes de l'étape 2 écrite. Pas de code produit ; TestFlight et soumission bêta non relevés. |
 | 15/11 02:35 — [Refonte « Compagnon », étape 1 : cohérence](runs/2026-11-15-0235-refonte-1-coherence.md) | 🔧 | Main vert. #992 (P44-3b, run de 01:35) mergée en début de run, checks verts. Premier run de la refonte : 15 étapes inscrites au BACKLOG et dans PRODUIT.md. Étape 1 sur Android : le ventre n'est plus demandé sans l'objectif digestion, « Mon cycle » et « Mon sport » retirés du choix, Sources passe de la barre d'onglets à Réglages. #995 mergée à 03:19, release v734 (APK 34,6 Mo). iPhone : PR de suivi ouverte (code embarqué v1072, correctif 59 retiré, 3932 tests verts), build macOS à finir au run suivant. Alpha de 23:45 pas encore partie à 02:55, pas de soumission bêta ; TestFlight non relevé. |
 | 15/11 01:35 — [Gold prolongé : la nouvelle date s'affiche (P44-3b)](runs/2026-11-15-0135-gold-prolonge.md) | 🔧 | Main : #990 mergée à 01:29, workflows en cours au début. P44-3b : quand le relais recule la fin de Gold offert, Aujourd'hui affiche une fois la nouvelle date ; « Le test est terminé » attend la vérification des droits. 9 tests écrits d'abord, 3568 verts. Suivi iPhone (v1067) dans une PR à part, après le merge. Alpha de 23:45 pas encore partie, pas de soumission bêta. |

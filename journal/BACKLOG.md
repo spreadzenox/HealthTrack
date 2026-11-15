@@ -50,10 +50,15 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     commencer à noter ses règles à la main (le bouton « Règles » ne vient qu'avec l'ancien objectif ou une donnée de
     cycle) : à décider à l'étape 5 (« Ce que vous noterez chaque jour ») ou 7 ; la page Sources n'a pas de lien de
     retour vers Réglages (la roue y ramène) ; le Journal (qui disparaît) n'a pas été revu.
-- [ ] **REFONTE-2 — Navigation** : les 4 onglets du brief § 4 (Accueil · Ma journée · Objectifs · Données) et l'icône
-  Réglages ; routes actuelles redirigées (liens profonds, notifications, widget), aucune vers un écran vide ; le
-  contenu existant est simplement rangé dans les nouveaux onglets. À préparer : table route actuelle → nouvel onglet
-  (`App.jsx`, `TabBar.jsx`, notifications natives, visite guidée `tour.js`, outil de capture, tests d'interface iOS).
+- [x] **REFONTE-2 — Navigation** (15/11 04:35, Android : #999 ; **iPhone : suivi à ouvrir après le merge**, les 51
+  correctifs s'appliquent à blanc) : barre Accueil · Ma journée · Objectifs · Données, aucune adresse changée ;
+  l'ancien Aujourd'hui rangé dans Accueil (bien-être du jour, mesures, lien Agir) et Ma journée (`/ma-journee` :
+  bandeau d'ajout, bloc digestif, repas) ; Données s'ouvre sur Tendances (sous-onglets Tendances, Nutrition, Repas,
+  Jours) ; Réglages › Données devient « Sauvegarde ». **Restes** : la visite guidée ne passe pas par Ma journée ;
+  l'Accueil d'une installation vide est court et montre « Agir » dès le 1er jour (Pilou et les bulles : étapes 8 et
+  10) ; « Vos Analyses » reste écrit dans trois cartes de Sources (l'onglet s'appelle Objectifs) ; l'écran
+  Réglages › Sauvegarde garde le titre « Vos données » ; services de notification natifs non lus (aucune route
+  trouvée par recherche de texte).
 - [ ] **REFONTE-3 — Ma journée** : la checklist (3 cercles des repas, oui ou non, lignes qui partent, « Plus rien à
   faire ») ; `specs/journee.SPEC.md`.
 - [ ] **REFONTE-4 — Habitudes** : modèle de données (migration IndexedDB rétrocompatible testée, export et import),
