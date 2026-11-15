@@ -256,6 +256,15 @@
   accent-color: var(--color-brand);
 }
 
+/* Refonte étape 5a : l'objectif Bien-être, toujours suivi, n'est pas un choix */
+.theme-choice .goal-locked {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+
 .settings-input {
   width: 100%;
   max-width: 400px;

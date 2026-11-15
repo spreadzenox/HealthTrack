@@ -187,7 +187,7 @@ describe('Nouvel accueil : parcours complet sans Health Connect', () => {
     expect(screen.getByText('05/05')).toBeInTheDocument()
     fireEvent.click(btn('Continuer'))
     expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
-    expect(loadOnboarding()).toMatchObject({ done: true, endedBy: 'completed', goals: ['gut'] })
+    expect(loadOnboarding()).toMatchObject({ done: true, endedBy: 'completed', goals: ['wellbeing', 'gut'], goalsBefore: ['gut'] })
     expect(stored.created).toEqual([])
   })
 

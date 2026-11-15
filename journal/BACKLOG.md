@@ -106,9 +106,16 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   Préparée le 15/11 à 08:35 : [`ETAPE-5-ONBOARDING.md`](maquettes/compagnon-etapes/ETAPE-5-ONBOARDING.md)
   (inventaire de l'accueil actuel, ce que chaque objectif change dans le code, table de migration, choix A à F à
   trancher, correctifs iPhone touchés). Découpage proposé :
-  - [ ] **REFONTE-5a — Migration des objectifs** : `goals` réduit à `wellbeing` (toujours) et `gut` ; anciens
-    identifiants gardés (`goalsBefore`) ; le cycle reste affiché à qui avait « Mon cycle » ; `gutCardMode` sans
-    `used` ; Réglages ; tests d'import d'anciens fichiers.
+  - [x] **REFONTE-5a — Migration des objectifs** (15/11 09:35, #1007) : `migrateGoals` et `ensureGoalsMigrated`
+    (`settings/onboarding.js`), une fois au démarrage quand l'accueil est fini ; `goals` = `wellbeing`, plus `gut`
+    (« Ma digestion », ancien « Mon cycle », ou note de digestion de moins de 7 jours sans objectif) ; anciens choix
+    dans `goalsBefore` ; l'ancien `cycle` reste dans `goals` comme marqueur d'affichage du cycle (le correctif
+    iPhone 58 le lit) ; Réglages › Vos objectifs (Bien-être verrouillé, Confort digestif). Écart avec la préparation :
+    `used` reste le repli tant que la migration n'a pas pu lire la base. Les réglages de l'accueil ne sont pas dans
+    l'export : aucun test d'import à écrire. iPhone : à embarquer (`upstream.sh --latest`).
+  - [ ] **REFONTE-5a-2 — « ventre » dans la SPEC** : le sous-titre de Confort digestif de la SPEC (« Pour un ventre
+    sensible… ») contredit la règle AUJ-7 (`digestifWording.test.js` : aucun texte visible ne dit « ventre »). À
+    trancher à l'étape 5b : autre formulation, ou exception dans le test.
   - [ ] **REFONTE-5b — Les 4 temps** : écrans et textes de `specs/comprendre.SPEC.md` § 4 sans Pilou, habitudes
     écrites par `setHabits`, `FLOW_VERSION` 3, captures (clair, sombre, 320 px, avec et sans montre ou digestion),
     correctifs iPhone 23, 45, 52 et 55.

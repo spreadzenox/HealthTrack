@@ -6,7 +6,7 @@
  * reprendre là où la personne s'est arrêtée ; `maxStep` (écran le plus loin atteint) sert au diagnostic (I156),
  * rien n'est envoyé. L'objectif et les suivis ne cachent ni n'effacent aucune donnée.
  */
-import { countAllEntries } from '../storage/localHealthStorage'
+import { countAllEntries, listEntries } from '../storage/localHealthStorage'
 
 const KEY = 'healthtrack_onboarding'
 
@@ -24,7 +24,19 @@ export const GOALS = [
 ]
 /** Objectifs retirés du choix : encore lus dans les réglages enregistrés, jamais proposés. */
 export const RETIRED_GOALS = ['cycle', 'sport']
-const GOAL_IDS = new Set([...GOALS.map((g) => g.id), ...RETIRED_GOALS])
+
+/**
+ * Refonte « Compagnon », étape 5a (brief § 3.2) : le bien-être pour tout le monde, plus un objectif facultatif, le
+ * confort digestif. C'est la forme enregistrée après migrateGoals ; GOALS reste la liste de l'ancien accueil
+ * jusqu'à l'étape 5b.
+ */
+export const OBJECTIVES = [
+  { id: 'wellbeing', label: 'Bien-être', locked: true },
+  { id: 'gut', label: 'Confort digestif' },
+]
+/** Forme des objectifs enregistrés : 2 = `goals` ne contient plus que wellbeing, gut et l'ancien marqueur cycle. */
+export const GOALS_VERSION = 2
+const GOAL_IDS = new Set([...OBJECTIVES.map((g) => g.id), ...GOALS.map((g) => g.id), ...RETIRED_GOALS])
 
 /** Ancien accueil (un seul objectif) → tableau : gut → [gut], energy → [stress], all → [all]. */
 export function legacyGoals(goal) {
@@ -39,9 +51,30 @@ export function goalsOf(s = loadOnboarding()) {
 
 /**
  * L'objectif digestion : « Ma digestion », ou l'ancien « Mon cycle » (ventre et douleurs) pour qui l'avait coché
- * avant son retrait. Sans lui, l'app ne demande jamais de noter son ventre (brief § 3.2).
+ * avant son retrait. Sans lui, l'app ne demande jamais de noter son ventre (brief § 3.2). Après la migration de
+ * l'étape 5a (`wellbeing` présent), « cycle » n'est plus qu'un marqueur d'affichage du cycle : seul `gut` compte.
  */
-export const wantsGut = (goals) => goals.includes('gut') || goals.includes('cycle')
+export const wantsGut = (goals) =>
+  goals.includes('gut') || (goals.includes('cycle') && !goals.includes('wellbeing'))
+
+/**
+ * Objectifs de la refonte déduits des anciens choix (étape 5a). Fonction pure, sans effet si c'est déjà fait.
+ * - « Ma digestion » ou l'ancien « Mon cycle » : bien-être et confort digestif ;
+ * - d'autres objectifs seulement : bien-être (le ventre était déjà masqué) ;
+ * - aucun objectif : confort digestif seulement si le ventre a été noté ces 7 derniers jours (`gutRecent`), ce
+ *   que l'app montrait déjà.
+ * L'ancien « Mon cycle » reste dans `goals` comme marqueur : le cycle continue de s'afficher à qui l'avait coché
+ * (cycleVisible). Les choix d'avant sont gardés dans `goalsBefore`. Aucune donnée n'est touchée.
+ * @param {object} s réglages de l'accueil
+ * @param {boolean} [gutRecent] une note du ventre de moins de 7 jours existe
+ */
+export function migrateGoals(s, gutRecent = false) {
+  if (s?.goalsVersion === GOALS_VERSION) return s
+  const before = goalsOf(s)
+  const gut = wantsGut(before) || (!before.length && gutRecent)
+  const goals = ['wellbeing', gut && 'gut', before.includes('cycle') && 'cycle'].filter(Boolean)
+  return { ...s, goals, goalsBefore: before, goalsVersion: GOALS_VERSION }
+}
 
 /**
  * Anciens suivis (écran « Que voulez-vous suivre ? », retiré le 08/11) : déduits des objectifs pour les anciens
@@ -128,6 +161,24 @@ export function gutAsked(mode, entries = [], now = Date.now()) {
   return entries.some((e) => e?.type === 'gut' && now - Date.parse(e.at) < GUT_USED_MS)
 }
 
+/**
+ * Migration des objectifs au démarrage (étape 5a), une seule fois, quand l'accueil est fini. Sans objectif
+ * enregistré, lit les notes du ventre ; si la base ne se lit pas, rien n'est figé : on réessaiera.
+ */
+export async function ensureGoalsMigrated({ list = listEntries, now = Date.now() } = {}) {
+  const s = loadOnboarding()
+  if (!s.done || s.goalsVersion === GOALS_VERSION) return s
+  let gutRecent = false
+  if (!goalsOf(s).length) {
+    try {
+      gutRecent = gutAsked('used', await list({ type: 'gut', limit: 50 }), now)
+    } catch {
+      return s
+    }
+  }
+  return saveOnboarding(migrateGoals(loadOnboarding(), gutRecent))
+}
+
 export function loadOnboarding() {
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) || 'null')
@@ -171,6 +222,7 @@ export function onboardingDiagnostic(s = loadOnboarding()) {
     doneAt: s.doneAt ?? null,
     goal: s.goal ?? null,
     goals: goalsOf(s),
+    goalsBefore: Array.isArray(s.goalsBefore) ? s.goalsBefore : null,
     huawei: s.huawei ?? null,
     weather: s.weather ?? null,
     screen: s.screen ?? null,
@@ -210,7 +262,10 @@ export function dismissUnlockReminder() {
 
 /** @param {'completed'|'skipped'|'existing'} endedBy */
 export function finishOnboarding(endedBy = 'completed') {
-  return saveOnboarding({ done: true, endedBy, doneAt: new Date().toISOString() })
+  const end = { done: true, endedBy, doneAt: new Date().toISOString() }
+  // utilisateur existant : ses objectifs dépendent de ses notes, ensureGoalsMigrated s'en charge
+  if (endedBy === 'existing') return saveOnboarding(end)
+  return saveOnboarding(migrateGoals({ ...loadOnboarding(), ...end }))
 }
 
 /**
@@ -219,7 +274,7 @@ export function finishOnboarding(endedBy = 'completed') {
  * Un onboarding déjà commencé (au moins un écran passé) reprend même si la base s'est remplie entre-temps : ce
  * sont l'import Health Connect et le premier geste de l'onboarding lui-même.
  */
-export async function needsOnboarding({ countEntries = countAllEntries } = {}) {
+export async function needsOnboarding({ countEntries = countAllEntries, list, now } = {}) {
   const s = loadOnboarding()
   if (s.done) return false
   if (s.maxStep > 0) return true
@@ -231,6 +286,7 @@ export async function needsOnboarding({ countEntries = countAllEntries } = {}) {
   }
   if (count > 0) {
     finishOnboarding('existing')
+    ensureGoalsMigrated({ list, now }).catch(() => {})
     return false
   }
   return true

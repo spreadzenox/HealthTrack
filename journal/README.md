@@ -21,7 +21,7 @@
 est sur iPhone depuis le 15/11 à 06:00, #1000). Étape 4, première moitié (4a), faite sur Android le 15/11 à
 06:35 (#1003 mergée à 06:59, release v737) ; sur iPhone avec #1002 (code v1078, captures de Ma journée et de Paramètres regardées sur simulateur) : les habitudes se choisissent dans Réglages et se notent par oui ou non dans Ma journée. **Étape 4, seconde moitié
 (4b), faite sur Android le 15/11 à 07:35 (#1004) : chaque habitude entre dans les analyses d'Objectifs ; l'étape 4
-est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 vers 09:25, code v1080 ; la build part seule sur TestFlight) : l'étape 4 est finie des deux côtés. Prochaine étape : 5, l'onboarding, préparée le 15/11 à 08:35 ([`ETAPE-5-ONBOARDING.md`](maquettes/compagnon-etapes/ETAPE-5-ONBOARDING.md)).** Les 15 étapes :
+est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 vers 09:25, code v1080 ; la build part seule sur TestFlight) : l'étape 4 est finie des deux côtés. Étape 5 (onboarding), première partie (5a), faite sur Android le 15/11 à 09:35 : vos objectifs deviennent « bien-être toujours, confort digestif en option » ; reste 5b, les 4 écrans de l'accueil ([`ETAPE-5-ONBOARDING.md`](maquettes/compagnon-etapes/ETAPE-5-ONBOARDING.md)), et le suivi iPhone de 5a.** Les 15 étapes :
 [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le brief :
 [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -32,6 +32,19 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
 
+> 🧸 **Refonte « Compagnon », étape 5a : deux objectifs (15/11 09:35, #1007)** : dans **Réglages › Vos objectifs**, le
+> **Bien-être** est « Toujours suivi » et le **Confort digestif** se coche en plus
+> ([capture](runs/captures/2026-11-15-0935-refonte-5a-reglages.png) ·
+> [sombre](runs/captures/2026-11-15-0935-refonte-5a-reglages-sombre.png)). À la première ouverture après la mise à
+> jour, votre choix d'avant est converti une fois : « Ma digestion » ou l'ancien « Mon cycle » gardent le confort
+> digestif ; les autres choix donnent le bien-être seul ; sans aucun choix, le confort digestif n'est coché que si
+> vous avez noté votre digestion ces 7 derniers jours (c'est ce que l'app montrait déjà). Aucune donnée n'est
+> touchée, et vos anciens choix restent enregistrés. **Limites** : l'accueil d'une nouvelle installation propose
+> encore les 4 anciennes cases (étape 5b) ; les cases « Mon stress et mon sommeil », « Prendre soin de moi » et
+> « Tout mesurer » ne se recochent plus dans Réglages (elles ne changeaient rien dans l'app) ; captures regardées
+> seulement sans Confort digestif coché ; **pas encore sur iPhone**. **Un texte de la maquette à trancher** : le
+> sous-titre « Pour un ventre sensible… » contredit votre règle « digestif, jamais ventre » ; il n'est pas affiché.
+>
 > 🧭 **Étape 5 préparée : l'onboarding en 4 temps (15/11 08:35, run « idées », rien de changé dans l'app)** :
 > [la préparation](maquettes/compagnon-etapes/ETAPE-5-ONBOARDING.md) part de l'accueil actuel
 > ([objectifs](runs/captures/2026-11-15-0835-onboarding-actuel-objectifs.png) ·
@@ -1018,6 +1031,7 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
 
 | Run | Type | Résultat |
 |---|---|---|
+| 15/11 09:35 — [Refonte « Compagnon », étape 5a : migration des objectifs](runs/2026-11-15-0935-refonte-5a-objectifs.md) | 🔧 | Main vert au début ; #1006 (run « idées » de 08:35) mergée par ce run-là. Étape 5a sur Android (#1007) : objectifs convertis une fois au démarrage (bien-être toujours, confort digestif facultatif), anciens choix gardés, Réglages › Vos objectifs. Tests de migration écrits d'abord, 3647 verts ; captures de Réglages regardées (clair, sombre). Suivi iPhone à faire. |
 | 15/11 08:35 — [Idées : préparation de l'étape 5 (onboarding)](runs/2026-11-15-0835-idees-refonte-5-preparation.md) | 🔭 | Main vert. #1005 (suivi iPhone de 4b) : build iOS échouée en 35 s sur un plantage de l'outil de build Swift, relancée, verte ; 15 checks verts, captures d'Objectifs regardées (iPhone 17 Pro, clair et sombre), mergée vers 09:25. Préparation de l'étape 5 : inventaire de l'accueil, effet réel de chaque objectif dans le code, table de migration, 6 choix à trancher, découpage 5a, 5b, 5c. Relevé TestFlight : 1072.1073 en test, rien de refusé ni en attente. Pas de simulation de personas. |
 | 15/11 07:35 — [Refonte « Compagnon », étape 4b : les habitudes dans les analyses](runs/2026-11-15-0735-refonte-4b-analyses.md) | 🔧 | Main vert au début. #1002 (suivi iPhone des étapes 3 et 4a) : 15 checks verts, captures iPhone regardées (Ma journée clair, sombre, vide ; Paramètres), mergée vers 08:05. Étape 4b sur Android (#1004) : chaque habitude est un facteur d'Objectifs, en miel ; règles 5 et 6 testées ; 3623 tests verts. Limite mesurée : effet d'une habitude sous-estimé d'environ moitié (REFONTE-4b-2). Marqueurs de conflit retirés du journal iPhone. 4b pas encore sur iPhone. |
 | 15/11 06:35 — [Refonte « Compagnon », étape 4a : les habitudes](runs/2026-11-15-0635-refonte-4-habitudes.md) | 🔧 | Main vert au début. #1002 (suivi iPhone de l'étape 3, ouverte à 06:27 par le run de 05:35) : build macOS en cours pendant tout le run, pas mergée. Étape 4a sur Android (#1003) : Réglages › Vos habitudes, ligne miel « Oui / Non » par habitude dans Ma journée, réponses en entrées ordinaires, liste suivie dans l'export, tokens miel (rail assombri pour le contraste). 3617 tests verts, lint et build propres, captures de cinq états regardées. Les analyses (4b) restent à faire. #1003 mergée à 06:59 (12 checks verts), release v737 (APK 34,6 Mo), « Play — AAB » vert. TestFlight relevé à 07:02 : 1072.1073 en test, rien en attente. #1002 mise à jour sur main, code embarqué avancé à v1078 (51 correctifs), build macOS relancée, pas mergée. |
