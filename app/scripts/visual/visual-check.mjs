@@ -45,6 +45,8 @@
  *                                          une mesure du jour (TESTEUR-1d-3) ; =short-night : nuit de 5 h 20
  *   npm run visual -- --routes=/bien-etre --face-dense --click=Jour  # aujourd'hui, une lecture du visage toutes
  *                                          les 6 min depuis 7 h (déverrouillages fréquents) : vue Jour par heure (I83)
+ *   npm run visual -- --routes=/recommendations --onboarding=gut  # Objectifs avec l'objectif digestion : les deux
+ *                                          cartes (REFONTE-6a) ; --history-days=2 : avant le premier score
  *   npm run visual -- --routes=/recommendations --gut-links  # bilans du soir du ventre : une piste repas → ventre
  *                                          --gut-links=lactose : gêne les jours de lait ou yaourt (piste par sous-groupe, N5)
  *   npm run visual -- --routes=/reintroduction --fodmap  # réintroduction guidée (7b) : 8 jours de ventre calme, choix ;
@@ -183,6 +185,7 @@ const DEFAULT_ROUTES = [
   ['/data', 'data'],
   ['/connectors', 'connectors'],
   ['/recommendations', 'recommendations'],
+  ['/recommendations/bien-etre', 'recommendations-bien-etre'],
   ['/recommendations/ventre', 'recommendations-ventre'],
   ['/settings', 'settings'],
   ['/plus', 'plus'],
@@ -783,6 +786,9 @@ async function main() {
       // Accueil fini à l'instant, visite déjà vue, sans objectif digestion : « Voir un exemple » en bas des écrans
       // (POLISH-SIM-37 : --routes=/recommendations/ventre --click="Voir un exemple")
       recent: { flow: 2, done: true, endedBy: 'completed', doneAt: new Date().toISOString(), goals: ['stress'], tour: 'done' },
+      // Accueil fini il y a un mois, avec l'objectif digestion : les deux cartes d'Objectifs (REFONTE-6a,
+      // --routes=/recommendations --onboarding=gut)
+      gut: { flow: 3, done: true, endedBy: 'completed', doneAt: new Date(Date.now() - 30 * 86_400_000).toISOString(), goals: ['wellbeing', 'gut'], goalsVersion: 2, tour: 'done' },
     }
     if (args.onboarding === 'unlock-later') {
       // « Plus tard » à la lecture au déverrouillage il y a 3 jours (POL-PLAY-84) : rappel discret dans la carte

@@ -14,6 +14,7 @@ const withNutrition = (load) => lazy(() => Promise.all([load(), loadNutritionTab
 const Food = withNutrition(() => import('./pages/Food'))
 const Nutrition = withNutrition(() => import('./pages/Nutrition'))
 const Recommendations = withNutrition(() => import('./pages/Recommendations'))
+const Objectives = lazy(() => import('./pages/Objectives'))
 const Journal = lazy(() => import('./pages/Journal'))
 const Trends = lazy(() => import('./pages/Trends'))
 const Data = lazy(() => import('./pages/Data'))
@@ -58,7 +59,9 @@ export default function App() {
             <Route path="data" element={<Data />} />
             <Route path="connectors" element={<Connectors />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="recommendations" element={<Recommendations />} />
+            {/* REFONTE-6a : Objectifs s'ouvre sur les cartes des objectifs ; chaque carte mène à son détail */}
+            <Route path="recommendations" element={<Objectives />} />
+            <Route path="recommendations/bien-etre" element={<Recommendations />} />
             <Route path="recommendations/ventre" element={<Recommendations key="gut" view="gut" />} />
             <Route path="plus" element={<More />} />
             <Route path="nouveautes" element={<WhatsNew />} />

@@ -143,6 +143,22 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   [`ETAPE-6-OBJECTIFS.md`](maquettes/compagnon-etapes/ETAPE-6-OBJECTIFS.md) (inventaire, où vivent les seuils,
   découpage 6a vue d'ensemble, 6b trois familles, 6c défi doux, 6d seuils après le banc à n = 7 et 14, 6e
   réintroduction).
+  - [x] **REFONTE-6a — La vue d'ensemble** (15/11 12:35, Android) : `/recommendations` s'ouvre sur une carte par
+    objectif (`pages/Objectives.jsx`, `services/objectivesOverview.js`) : score sur 5 des 7 derniers jours (les
+    valeurs de Tendances), tendance en mots (3 derniers jours contre les 4 d'avant, stable sous 0,3 point), 7 barres ;
+    avant 7 jours notés (bien-être) ou 14 (confort digestif), « Premier score dans N jours notés » et une jauge
+    (`FIRST_SCORE_DAY`, lecture A de la préparation : seuls le score et la tendance s'ouvrent à 7 et 14). Le détail
+    du bien-être passe à `/recommendations/bien-etre` ; les sous-onglets (`AnalysesTabs`) sont retirés, remplacés par
+    « ← Objectifs » ; l'onglet n'ouvre plus Digestion d'office (POLISH-SIM-33 retiré). Écarts avec la SPEC : « Des
+    estimations, pas un diagnostic. » non affichée (SLOP-1 : jamais en refrain) ; « ventre » remplacé par
+    « digestion » ; ni en-tête « Vos 7 derniers jours » avec Pilou ni phrase « Plutôt une bonne semaine. ».
+  - [ ] **REFONTE-6a-iOS** : embarquer 6a (`upstream.sh --latest`), ajouter `/recommendations/bien-etre` au plan de
+    captures (`captureMode.js`), regarder Objectifs sur simulateur (clair, sombre, vierge).
+  - [ ] **REFONTE-6a-2 — Restes de 6a** : la visite guidée ne montre pas la vue d'ensemble (ses 3 étapes d'Objectifs
+    pointent sur le détail du bien-être) ; captures à 320 px et en grand texte ; état « pas assez de notes cette
+    semaine » jamais capturé ; fourchette du score non montrée (méta-leçon 4).
+  - [ ] **REFONTE-6b** (3 familles), **6c** (détail et défi doux), **6d** (seuils 7 et 14 : banc d'abord), **6e**
+    (réintroduction sous Confort digestif) : voir la préparation.
 - [ ] **REFONTE-7 — Données et suppression du Journal** : Données s'ouvre sur Tendances, Nutrition en second onglet ;
   **inventaire d'abord** de ce qui n'est accessible que par le Journal (modifier ou supprimer une saisie passée, la
   ligne « Règles · 2e jour », les ajouts rapides…) et une autre maison pour chaque chose ; puis suppression de

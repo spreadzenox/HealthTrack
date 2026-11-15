@@ -26,15 +26,10 @@ describe('TabBar', () => {
     ])
   })
 
-  it.each([
-    [['gut'], '/recommendations/ventre'],
-    [['cycle', 'sport'], '/recommendations/ventre'],
-    [['stress'], '/recommendations'],
-    [['all'], '/recommendations'],
-  ])('opens Objectifs on the tab of the goal %j (POLISH-SIM-33)', (goals, href) => {
+  it.each([[['gut']], [['cycle', 'sport']], [['stress']]])('opens Objectifs on the overview whatever the goals %j (REFONTE-6a)', (goals) => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals }))
     renderAt('/')
-    expect(screen.getByRole('link', { name: 'Objectifs' })).toHaveAttribute('href', href)
+    expect(screen.getByRole('link', { name: 'Objectifs' })).toHaveAttribute('href', '/recommendations')
   })
 
   it.each([
@@ -42,6 +37,7 @@ describe('TabBar', () => {
     ['/agir', 'Accueil'],
     ['/ma-journee', 'Ma journée'],
     ['/recommendations', 'Objectifs'],
+    ['/recommendations/bien-etre', 'Objectifs'],
     ['/recommendations/ventre', 'Objectifs'],
     ['/reintroduction', 'Objectifs'],
     ['/agir/essai/sleep', 'Objectifs'],

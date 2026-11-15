@@ -1,0 +1,90 @@
+/* Onglet Objectifs, vue d'ensemble (refonte « Compagnon », étape 6a) */
+.objectives-page {
+  padding-bottom: 32px;
+}
+
+.objectives-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.objective-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--tone-bg);
+  color: var(--tone-text);
+  text-decoration: none;
+}
+
+.objective-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--tone-label);
+}
+
+.objective-score {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.objective-trend,
+.objective-wait {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.objective-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 56px;
+  margin-top: 6px;
+}
+
+.objective-bar {
+  flex: 1;
+  border-radius: 6px 6px 2px 2px;
+  background: var(--tone-label);
+}
+
+/* Jour sans note : la valeur estimée par le modèle, plus claire */
+.objective-bar.is-estimated {
+  opacity: 0.45;
+}
+
+.objective-bar.is-empty {
+  height: 4px;
+  background: var(--tone-track);
+}
+
+.objective-gauge {
+  display: flex;
+  gap: 4px;
+  margin: 6px 0 2px;
+}
+
+.objective-seg {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--tone-track);
+}
+
+.objective-seg.is-full {
+  background: var(--tone-label);
+}
+
+.objective-note {
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.objective-more {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--tone-label);
+}

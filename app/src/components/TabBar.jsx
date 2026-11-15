@@ -1,5 +1,4 @@
 import { Link, useLocation } from 'react-router-dom'
-import { goalsOf, wantsGut } from '../settings/onboarding'
 import './TabBar.css'
 
 const ICONS = {
@@ -43,15 +42,6 @@ const TABS = [
   { to: '/tendances', label: 'Données', icon: 'data', paths: ['/tendances', '/nutrition', '/food', '/journal', '/bien-etre'] },
 ]
 
-/**
- * Objectifs s'ouvre sur Digestion pour qui a l'objectif digestion (POLISH-SIM-33) : l'onglet
- * Bien-être reste à un geste.
- */
-function tabTarget(tab) {
-  if (tab.to === '/recommendations' && wantsGut(goalsOf())) return '/recommendations/ventre'
-  return tab.to
-}
-
 export default function TabBar() {
   const { pathname } = useLocation()
   const isUnder = (p) => pathname === p || pathname.startsWith(p + '/')
@@ -64,7 +54,7 @@ export default function TabBar() {
         return (
           <Link
             key={tab.to}
-            to={tabTarget(tab)}
+            to={tab.to}
             aria-current={active ? 'page' : undefined}
             className={'tabbar-link' + (active ? ' active' : '')}
           >
