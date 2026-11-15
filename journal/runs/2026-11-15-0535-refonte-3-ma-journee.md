@@ -64,3 +64,26 @@ arrivée non vérifiée) ; aucune soumission à ce run ; 844.344 intacte  ·  **
   `INFRA.md` et la charte non relus en entier (plus de 1 Mo) : sections touchées seulement.
 - TestFlight : `ios-store-push.yml` (renommage de la version « Prête à soumettre », charte iPhone § 4) non lancé après
   l'expiration ; la build du code v1075 non relevée.
+
+## Fin du run
+- **PR #1001 mergée à 06:23** (squash, c0f316e, v1077) : 12 checks verts (Vitest, Build APK, quatre émulateurs, WebView
+  ancienne, relais, perf, protocole montre), branche à jour sur main.
+- Après le merge : **release v736, APK 33,0 Mo** (06:26). « Play — AAB », Tests et l'émulateur de main encore en
+  cours à 06:28 : à relire au run suivant.
+- « iOS — TestFlight » vert sur 30960fc (merge de #1000, code v1075) ; la build n'a pas été relevée chez Apple.
+- **iPhone, étape 3 : PR de suivi ouverte, pas mergée** (branche `claude/iphone-refonte-3`) : `upstream.json` de
+  v1075 à v1077 (c0f316e, écrit à la main : `--latest` attend la fin de « Play — AAB »). À blanc, sous Linux, sur
+  le code de l'étape 3 : les 51 correctifs s'appliquent sans retouche ; tests du code embarqué : 3944 verts,
+  44 ignorés, **3 échecs et 1 fichier non chargé**, tous sur des fichiers lus hors du dossier (`store/app-store/…`,
+  `.github/workflows/…` : `ENOENT`), parce que j'avais préparé `upstream/` dans un dossier temporaire et non dans
+  `iphone/upstream` ; non relancés au bon endroit : la CI de la PR tranche.
+
+## Suite
+- **Finir la PR de suivi iPhone de l'étape 3** : « Play — AAB » vert sur c0f316e, checks verts (dont « Tests
+  d'Android avec les correctifs iOS »), captures `captures/pr-<N>` de Ma journée regardées (démo clair, sombre,
+  vide, grand texte : la ligne Repas tient-elle en grand texte ?), puis merge.
+- **Étape 4 (Habitudes)** : modèle de données et migration IndexedDB, saisie, couleur miel, analyses ; y réduire le
+  bandeau d'ajout de Ma journée à ce que la checklist ne porte pas.
+- Réponses attendues du propriétaire sur les trois choix de l'étape 3 (18 h, cercle selon l'heure, note seule).
+- Relever la build du code v1075 chez Apple ; elle part chez les testeurs après l'Alpha de ce soir.
+- Restes de l'étape 2 et de l'étape 3 au BACKLOG ; le bouton « + 1 cigarette » sur iPhone, toujours non regardé.

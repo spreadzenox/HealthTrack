@@ -59,7 +59,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   10) ; « Vos Analyses » reste écrit dans trois cartes de Sources (l'onglet s'appelle Objectifs) ; l'écran
   Réglages › Sauvegarde garde le titre « Vos données » ; services de notification natifs non lus (aucune route
   trouvée par recherche de texte) ; `/ma-journee` absente des captures de la fiche Play et du balayage natif.
-- [x] **REFONTE-3 — Ma journée** (15/11 05:35, Android : #1001 ; **iPhone : suivi du code embarqué à faire**) : la
+- [x] **REFONTE-3 — Ma journée** (15/11 05:35, Android : #1001 mergée à 06:23, v1077 ; **iPhone : PR de suivi ouverte, à finir**, 51 correctifs appliqués à blanc) : la
   checklist en tête de Ma journée (`DayChecklist.jsx`, `services/dayChecklist.js`) : Repas en trois cercles (Matin
   avant 11 h, Midi avant 16 h, Soir ; un cercle vide ouvre l'appareil photo), Bien-être (« Noter »), « Votre digestion
   ce soir » (objectif digestion seulement, à partir de 18 h : `GUT_EVENING_FROM_HOUR`) ; une ligne faite dit « Noté »
