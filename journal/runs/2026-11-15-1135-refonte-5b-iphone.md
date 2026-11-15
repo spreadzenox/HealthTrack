@@ -23,7 +23,12 @@
      `-suivi`, `-notes`, `-visage` ;
    - `Onboarding.appstore.test.jsx` : « Connecter Santé », l'iPhone et 6 mois, l'accord pour le temps d'écran et
      l'absence de ligne avant iOS 26.4 se vérifient au temps 2, à « Oui ».
-2. Journal : résumé, les deux `BACKLOG.md`, `PARITE.md`, `PRODUIT.md`.
+2. **Étape 6 préparée** pendant la build macOS, sans code :
+   [`ETAPE-6-OBJECTIFS.md`](../maquettes/compagnon-etapes/ETAPE-6-OBJECTIFS.md) : ce que montrent aujourd'hui
+   Objectifs, Agir et l'essai ; les facteurs du moteur par thème ; les 6 endroits qui lisent les seuils 14 et 28 ;
+   deux lectures de « 7 jours » (le score seul, ou aussi les liens) à départager par le banc des nulles à n = 7 et
+   14 ; découpage en 6a à 6e. Rien n'y a été essayé dans l'app.
+3. Journal : résumé, les deux `BACKLOG.md`, `PARITE.md`, `PRODUIT.md`.
 
 ## Vérifs
 - `iphone/scripts/upstream.sh` : « upstream/ prêt : v1085, 51 correctif(s) ».

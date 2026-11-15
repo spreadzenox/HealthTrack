@@ -138,7 +138,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     ou à laisser tomber sur décision du propriétaire.
 - [ ] **REFONTE-6 — Objectifs** : score et tendance, ce qui l'influence (3 familles), le détail, la piste en défi
   doux ; puis les seuils 7 jours (bien-être) et 14 jours (digestion) dans `app/src/config/firstResults.js` ;
-  `specs/comprendre.SPEC.md`.
+  `specs/comprendre.SPEC.md`. **Préparée le 15/11 11:35** :
+  [`ETAPE-6-OBJECTIFS.md`](maquettes/compagnon-etapes/ETAPE-6-OBJECTIFS.md) (inventaire, où vivent les seuils,
+  découpage 6a vue d'ensemble, 6b trois familles, 6c défi doux, 6d seuils après le banc à n = 7 et 14, 6e
+  réintroduction).
 - [ ] **REFONTE-7 — Données et suppression du Journal** : Données s'ouvre sur Tendances, Nutrition en second onglet ;
   **inventaire d'abord** de ce qui n'est accessible que par le Journal (modifier ou supprimer une saisie passée, la
   ligne « Règles · 2e jour », les ajouts rapides…) et une autre maison pour chaque chose ; puis suppression de
