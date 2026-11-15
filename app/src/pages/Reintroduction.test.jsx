@@ -249,11 +249,12 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
   })
 })
 
-describe('POLISH-REINTRO-AGIR : la réintroduction est rangée sous Agir', () => {
-  it('pas de sous-onglets d’Analyses, un retour « ← Agir » comme la page d’un essai', async () => {
+describe('REFONTE-6e : la réintroduction est rangée sous Confort digestif', () => {
+  it('pas de sous-onglets d’Analyses, un retour vers le détail du confort digestif', async () => {
     renderPage(makeStore())
     await screen.findByRole('button', { name: /Lactose/ })
     expect(screen.queryByRole('navigation', { name: 'Analyses' })).toBeNull()
-    expect(screen.getByRole('link', { name: '← Agir' })).toHaveAttribute('href', '/agir')
+    expect(screen.getByRole('link', { name: '← Votre confort digestif' })).toHaveAttribute('href', '/recommendations/ventre')
+    expect(screen.queryByRole('link', { name: '← Agir' })).toBeNull()
   })
 })

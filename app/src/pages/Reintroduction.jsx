@@ -402,7 +402,8 @@ export default function Reintroduction({ now: nowProp = null, store = defaultSto
 
   return (
     <section className="fodmap-page">
-      <p className="act-back"><Link to="/agir">← Agir</Link></p>
+      {/* REFONTE-6e : la réintroduction est rangée sous Confort digestif */}
+      <p className="act-back"><Link to="/recommendations/ventre">← Votre confort digestif</Link></p>
       <h2 className="page-title">Réintroduction guidée</h2>
       {!view && <div className="loading"><div className="spinner" aria-hidden /></div>}
       {error && <p className="error-msg" role="alert">{error}</p>}
