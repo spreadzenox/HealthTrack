@@ -77,6 +77,15 @@
 - **#1013** (cette étape) : 12 checks verts sur 67c4d00 (Tests, Build APK, 5 émulateurs, budget de lectures). Main
   avait avancé (#1012, journal du run de 11:35) : main fusionnée dans la branche, conflits de journal seulement,
   résolus en gardant les lignes des deux runs ; merge après les checks du nouveau commit (état final : voir la PR).
+- **#1013 mergée à 13:22** (06ae67b, v1088) : 12 checks verts sur le commit fusionné 4cd41a2. « Build & Release »
+  vert : **release v741**, APK 34,6 Mo. « Play — AAB » vert : v1088 en test interne. « Tests » vert ; l'émulateur de
+  main tournait encore à 13:27.
+- **Suivi iPhone de 6a ouvert** (branche `claude/iphone-code-6a`) : `upstream.json` de v1085 à v1088, 51 correctifs
+  sans retouche, `/recommendations/bien-etre` ajouté au plan de captures ; tests de `captureMode`, d'Objectifs et de
+  la barre d'onglets verts avec les correctifs (88) ; suite complète et build sur simulateur laissées à la PR. **À
+  finir par le run suivant** : build verte, captures `demo-clair-recommendations`, `demo-sombre-recommendations`,
+  `vierge-clair-recommendations` et `demo-clair-recommendations-bien-etre` regardées, puis merge.
+- Ce run a dépassé les 50 minutes visées (deux tours de checks, à cause du conflit de journal avec #1012).
 - **#1010** fermée sans merge (doublon de #1011), avec un commentaire ; branche `claude/iphone-code-5b` laissée.
 - **Main 0d79999** (#1011) : « iOS — TestFlight » vert (le code v1085 est parti vers TestFlight ; arrivée chez Apple
   non vérifiée).
