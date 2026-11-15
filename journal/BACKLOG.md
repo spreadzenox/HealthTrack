@@ -123,7 +123,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     (`--onboarding=goal`, `watch-yes`, `auto`, `notes-gut`…). Écarts avec la SPEC et limites : compte rendu du run.
   - [x] **REFONTE-5c — Carte du tuto fausse depuis l'étape 2** (15/11 10:35, avec 5b) : la carte des onglets est
     retirée ; il reste une carte d'ouverture.
-  - [ ] **REFONTE-5b-iOS — L'accueil en 4 temps sur iPhone** : `upstream.sh --latest` après le merge de #1009 ; les
+  - [ ] **REFONTE-5b-iOS — L'accueil en 4 temps sur iPhone** (15/11 11:35 : **en PR #1011**, code v1085, correctifs 23
+    et 55 refaits, plan de captures au parcours 3 ; reste la build sur simulateur et les 4 temps à regarder) : `upstream.sh --latest` après le merge de #1009 ; les
     correctifs 45 et 52 s'appliquent encore, **23 et 55 sont à refaire** (23 : la ligne `SnapshotWelcome` s'ancrait
     sur `{step === 'tuto' …}`, devenu `{step === 'intro' …}` ; 55 : l'import de `checkPhoneUsageAccess` s'ancrait
     sur une ligne d'import retirée). Captures iPhone des 4 temps à regarder (« Santé » au temps 2).
