@@ -31,6 +31,9 @@
  *   npm run visual -- --routes=/tendances --history-days=2  # historique presque vide : seules les données des 2 derniers
  *                                          jours (aujourd'hui et hier) sont gardées (T3, captures à côté de la maquette)
  *   npm run visual -- --routes=/agir --history-days=2 --wellbeing-today  # Agir vide, bien-être noté il y a une heure
+ *   npm run visual -- --routes=/ma-journee --day-done --tz=Pacific/Kiritimati  # Ma journée finie : « Plus rien à
+ *                                          faire » (refonte étape 3 ; un fuseau où il est tard) ; =partial : un repas
+ *                                          et le bien-être notés, « Déjà noté (2) »
  *   npm run visual -- --empty --routes=/nutrition --first-meal  # un seul repas, noté aujourd'hui (POLISH-SIM-97)
  *   npm run visual -- --routes=/journal --cycle  # règles hier et avant-hier, symptômes : ligne « Règles » (CYCLE-1b)
  *   npm run visual -- --routes=/ --calibration  # notes de bien-être d'hier seulement : calibration de départ
@@ -1354,6 +1357,23 @@ async function main() {
       // Un seul repas, noté aujourd'hui (POLISH-SIM-97 : Nutrition au premier jour dit « journée en cours »).
       const at = new Date(Math.max(new Date().setHours(0, 0, 0, 0), Date.now() - 3600_000))
       entries.push({ type: 'food', source: 'app_food', at: at.toISOString(), payload: { items: FIRST_MEAL_ITEMS, provider: 'gemini' } })
+    }
+    if (args['day-done']) {
+      // Ma journée finie (refonte étape 3) : trois repas, la note de bien-être et le bilan digestif du jour.
+      // À lancer le soir du fuseau (--tz) pour que les heures soient passées ; =partial : un repas et le bien-être.
+      // Heures calculées dans le fuseau de la page, pas dans celui de ce script.
+      const t = await page.evaluate(() => {
+        const at = (h, m = 0) => { const d = new Date(); d.setHours(h, m, 0, 0); return d.toISOString() }
+        return { start: at(0), m1: at(0, 10), w: at(0, 20), m2: at(11, 10), m3: at(16, 10), g: at(18, 5) }
+      })
+      entries = entries.filter((e) => e.at < t.start || !['food', 'wellbeing', 'gut'].includes(e.type))
+      const meal = (at, dish) => ({ type: 'food', source: 'app_food', at, payload: { dish, items: FIRST_MEAL_ITEMS, provider: 'gemini' } })
+      const partial = args['day-done'] === 'partial'
+      entries.push(meal(t.m1, 'Yaourt et banane'), { type: 'wellbeing', source: 'app_wellbeing', at: t.w, payload: { score: 3.75 } })
+      if (!partial) {
+        entries.push(meal(t.m2, 'Salade de lentilles'), meal(t.m3, 'Soupe de légumes'),
+          { type: 'gut', source: 'app_gut', at: t.g, payload: { level: 'calm', scope: 'day' } })
+      }
     }
     const seedResult = await page.evaluate(async (list) => {
       await new Promise((res) => {

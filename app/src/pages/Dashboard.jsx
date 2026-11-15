@@ -14,7 +14,7 @@ import { buildDailyJournal } from '../services/dailyJournal'
 import { localDateKey } from '../services/analysisEngine'
 import { GutCard } from '../components/TodayCards'
 import DigestBlock from '../components/DigestBlock'
-import TodayMeals from '../components/TodayMeals'
+import DayChecklist from '../components/DayChecklist'
 import StoolPhotoLine from '../components/StoolPhotoLine'
 import TodayBySource from '../components/TodayBySource'
 import { useDetailsMode } from '../hooks/useDetailsMode'
@@ -29,8 +29,8 @@ import { goalsOf } from '../settings/onboarding'
 
 /**
  * Refonte « Compagnon », étape 2 : l'ancien écran Aujourd'hui est rangé dans deux onglets. `view="home"` (Accueil) :
- * le bien-être du jour, les mesures, le lien vers Agir. `view="day"` (Ma journée) : ce qui se note à la main (bandeau
- * d'ajout, bloc digestif, repas). La vraie checklist arrive à l'étape 3, Pilou à l'étape 8.
+ * le bien-être du jour, les mesures, le lien vers Agir. `view="day"` (Ma journée) : ce qui se note à la main, la
+ * checklist du jour d'abord (étape 3), puis le bandeau d'ajout et le bloc digestif. Pilou arrive à l'étape 8.
  */
 export default function Dashboard({ view = 'home' }) {
   const home = view === 'home'
@@ -40,6 +40,8 @@ export default function Dashboard({ view = 'home' }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [wellbeingOpen, setWellbeingOpen] = useState(false)
+  // « Déjà noté » de Ma journée rouvre la note du jour pour la modifier
+  const [wellbeingEntry, setWellbeingEntry] = useState(undefined)
   // Écarts de « Ce qui change aujourd'hui », relus par la carte des analyses (TESTEUR-1d-3)
   // « Noter maintenant » d'Analyses › Digestion arrive ici avec la fenêtre « Ma digestion » ouverte (ORG-4)
   const location = useLocation()
@@ -129,12 +131,18 @@ export default function Dashboard({ view = 'home' }) {
       <header className="today-head">
         <h1 className="today-date">{day ? 'Ma journée' : head.date}</h1>
       </header>
-      {/* Le seul vrai endroit pour ajouter (AUJ-1), désormais en tête de Ma journée. */}
+      {/* Refonte étape 3 : la checklist du jour, ce qu'il reste à noter et ce qui l'est déjà. */}
+      {day && !loading && !error && (
+        <DayChecklist entries={entries} askGut={askGut}
+          onWellbeing={(entry) => { setWellbeingEntry(entry); setWellbeingOpen(true) }}
+          onGut={() => setAddOpen('digestion')} />
+      )}
+      {/* Le seul vrai endroit pour ajouter le reste (AUJ-1), sous la checklist. */}
       {day && (
         <AddStrip
           open={addOpen}
           onOpenChange={setAddOpen}
-          onWellbeing={() => setWellbeingOpen(true)}
+          onWellbeing={() => { setWellbeingEntry(undefined); setWellbeingOpen(true) }}
           digestion={askGut ? <GutCard title="Ma digestion" details={details} onToggleDetails={toggleDetails} /> : null}
           stool={askGut ? <StoolPhotoLine /> : null}
           period={cycleOn ? <PeriodSheet /> : null}
@@ -169,11 +177,9 @@ export default function Dashboard({ view = 'home' }) {
       {/* AUJ-4 : le bloc digestif ; les résultats des analyses n'ont qu'une maison (leçon 16). */}
       {day && !loading && askGut && <DigestBlock onNote={() => setAddOpen('digestion')}
         meals={entries.filter((e) => e.type === 'food' && e.at && localDateKey(e.at) === todayKey)} />}
-      {/* AUJ-5 : les repas du jour, ou un bouton qui ouvre l'appareil photo. */}
-      {day && !loading && !error && <TodayMeals entries={entries} />}
 
       <WellbeingPrompt open={!!wellbeingOpen} initialMode={wellbeingOpen === 'reminder' ? 'reminder' : 'now'}
-        onClose={() => setWellbeingOpen(false)} />
+        entry={wellbeingEntry} onClose={() => { setWellbeingOpen(false); setWellbeingEntry(undefined) }} />
 
       {loading && (
         <div className="loading">
