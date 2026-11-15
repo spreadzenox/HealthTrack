@@ -166,7 +166,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     sont floutées. « Comment est calculé votre bien-être ? » en lien replié. Écarts avec la SPEC : « Par famille »
     et « Lien fort » au lieu de « Ce qui influence » et « Influence forte » (règle 5) ; pas de moyenne par famille ;
     pas de feuille du bas.
-  - [ ] **REFONTE-6b-iOS et 6c-1-iOS** (15/11 15:50 : **#1016 complétée**, à jour sur main, code **v1091**, deux
+  - [ ] **REFONTE-6b-iOS et 6c-1-iOS** (15/11 16:15 : **#1016 complétée**, à jour sur main, code **v1092** (6c-2 compris), deux
     captures d'abonné : détail du bien-être et famille Sommeil ; build macOS relancée). **À merger avant toute PR
     Android**, une fois la build verte et les deux captures regardées. Note d'avant (14:45) : code v1090, 51
     correctifs sans retouche ; capture `demo-clair-recommendations-bien-etre-abonne` ajoutée (droits de
@@ -193,8 +193,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     (l'ancien verdict disait « vérifié » dans les deux sens). Écarts avec la SPEC § 7 : pas de soirs libres ni de
     comparaison aux 14 nuits ; grille sur la fourchette, pas en minutes ; ni lanternes ni rituel (étapes 10 à 12).
     Si le propriétaire dit « défi libre » : refaire d'après la SPEC.
-  - [ ] **REFONTE-6c-2-iOS** : embarquer 6c-2 (code partagé, rien de natif ; aucun correctif ne touche `trials.js`,
-    `Trial.jsx`, `Act.jsx`, `tour.js` : à vérifier par `upstream.sh`).
+  - [ ] **REFONTE-6c-2-iOS** : fait dans #1016 (15/11 16:15, code **v1092**, 51 correctifs sans retouche), à merger.
   - [ ] **REFONTE-6c-3 — Restes de 6c-1 et 6c-2** : (6c-2) rejouer sur le banc un essai de 5 et 5 (taux de
     « Plutôt oui » à tort avec ± 2 erreurs types ; passer au seuil de Student si plus de 5 %) ; Agir allume
     l'onglet Accueil et l'écran d'un essai l'onglet Objectifs ; une piste finie est reproposée aussitôt ; captures

@@ -21,6 +21,10 @@ export const DARK_ROUTES = ['/', '/ma-journee', '/journal', '/recommendations']
 // d'Android), pour voir sur iPhone ce que chaque page dit avant la première donnée
 export const EMPTY_ROUTES = ['/', '/ma-journee', '/journal', '/tendances', '/food', '/nutrition', '/recommendations', '/bien-etre',
   '/connectors']
+// (REFONTE-6b) Pages recapturées comme les voit un abonné (`-abonne`) : sans abonnement, le détail d'un objectif
+// floute ses pistes et masque « Par famille », et depuis la fin de la période de lancement sur iPhone (06/11) le
+// relais ne rend plus Gold au simulateur
+export const SUBSCRIBED_ROUTES = ['/recommendations/bien-etre', '/recommendations/bien-etre/famille/sleep']
 // Pages longues : écrans suivants, défilés d'environ 80 % de l'écran chacun (`-2`, `-3`…)
 // (I6) Écran d'abonnement défilé : formules, prix, bouton, renouvellement et liens, sous le pli (capture pour Apple)
 export const SCROLLS = { '/connectors': 2, '/data': 1, '/settings': 1, '/premium': 1 }
@@ -92,7 +96,7 @@ export const MORE_ONBOARDING = [
 ]
 
 export function buildPlan(routes = ROUTES, darkRoutes = DARK_ROUTES, scrolls = SCROLLS, reveals = REVEALS, moreOnboarding = [],
-  emptyRoutes = [], emptyScrolls = {}) {
+  emptyRoutes = [], emptyScrolls = {}, subscribedRoutes = []) {
   const light = (route) => {
     const base = { name: `demo-clair-${pageName(route)}`, route, data: 'demo', theme: 'light' }
     const more = Array.from({ length: scrolls[route] || 0 }, (_, k) => ({ ...base, name: `${base.name}-${k + 2}`, scroll: k + 1 }))
@@ -109,6 +113,7 @@ export function buildPlan(routes = ROUTES, darkRoutes = DARK_ROUTES, scrolls = S
       return [base, ...Array.from({ length: emptyScrolls[route] || 0 }, (_, k) => ({ ...base, name: `${base.name}-${k + 2}`, scroll: k + 1 }))]
     }),
     ...routes.flatMap(light),
+    ...subscribedRoutes.map((route) => ({ name: `demo-clair-${pageName(route)}-abonne`, route, data: 'demo', theme: 'light', subscribed: true })),
     ...darkRoutes.map((route) => ({ name: `demo-sombre-${pageName(route)}`, route, data: 'demo', theme: 'dark' })),
   ]
 }
@@ -332,6 +337,57 @@ export function installBillingFake({ target = window, storage = window.localStor
   }
 }
 
+/**
+ * (REFONTE-6b) Droits d'un abonné Silver pour les seules captures `-abonne` : rendus à la place du relais et posés
+ * dans l'état connu de l'app, avec l'événement qui met à jour les écrans déjà affichés. La vraie réponse du relais
+ * (« sans abonnement »), partie avant l'installation, peut arriver après : elle est alors recouverte. Retirés avant
+ * de passer à la page suivante (`removeSubscriptionFake`).
+ */
+const ENTITLEMENT_STORAGE_KEY = 'halcya_entitlement'
+export const CAPTURE_ENTITLEMENT_EVENT = 'halcya:entitlement'
+export const needsSubscriptionFake = (step) => step?.subscribed === true
+
+const subscribedRights = (now = Date.now()) => ({
+  premium: true, source: 'appstore', state: 'active', tier: 'silver', productId: 'halcya_premium',
+  expiresAt: new Date(now + 30 * 86_400_000).toISOString(), launchUntil: null, autoRenewing: true, trial: false,
+  checkedAt: new Date(now).toISOString(),
+})
+
+export function installSubscriptionFake({ target = window, storage = window.localStorage, now = Date.now() } = {}) {
+  const rights = subscribedRights(now)
+  if (!target.__htFakeSubscribed && typeof target.fetch === 'function') {
+    const realFetch = target.fetch.bind(target)
+    target.__htFakeSubscribed = true
+    target.fetch = (url, init) =>
+      String(url?.url ?? url).includes('/v1/subscription/verify')
+        ? Promise.resolve(new Response(JSON.stringify({ ok: true, ...rights }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+        : realFetch(url, init)
+  }
+  const announce = () => {
+    try {
+      storage.setItem(ENTITLEMENT_STORAGE_KEY, JSON.stringify(rights))
+    } catch {
+      /* stockage indisponible */
+    }
+    target.dispatchEvent(new CustomEvent(CAPTURE_ENTITLEMENT_EVENT, { detail: rights }))
+  }
+  // Réponse tardive du vrai relais : on repose les droits de la capture, une fois tous les écrans prévenus de la
+  // première (reposés dans le même tour, les écrans abonnés après nous finiraient sur « sans abonnement »)
+  target.addEventListener?.(CAPTURE_ENTITLEMENT_EVENT, (e) => {
+    if (e.detail?.premium !== true) setTimeout(() => target.__htFakeSubscribed && announce(), 0)
+  })
+  announce()
+}
+
+export function removeSubscriptionFake({ target = window, storage = window.localStorage } = {}) {
+  target.__htFakeSubscribed = false
+  try {
+    storage.removeItem(ENTITLEMENT_STORAGE_KEY)
+  } catch {
+    /* rien en cache */
+  }
+}
+
 export async function installCaptureMode() {
   watchRejections()
   try {
@@ -344,16 +400,20 @@ export async function installCaptureMode() {
     const file = { directory: Directory.Documents, encoding: Encoding.UTF8 }
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
     const largeText = textSizeAdjusted()
-    const plan = largeText ? largeTextPlan() : buildPlan(ROUTES, DARK_ROUTES, SCROLLS, REVEALS, MORE_ONBOARDING, EMPTY_ROUTES, EMPTY_SCROLLS)
+    const plan = largeText ? largeTextPlan() : buildPlan(ROUTES, DARK_ROUTES, SCROLLS, REVEALS, MORE_ONBOARDING, EMPTY_ROUTES, EMPTY_SCROLLS, SUBSCRIBED_ROUTES)
     const step = plan[Number(window.localStorage.getItem(STEP_KEY) ?? 0)]
     if (step?.data === 'demo') installPhoneUsageFake()
     if (needsBillingFake(step)) installBillingFake()
+    if (needsSubscriptionFake(step)) installSubscriptionFake()
     await runCaptureStep(plan, {
       storage,
       demoEntries: () => iphoneDemoEntries(demo.generateDemoEntries()),
       latestChangelogId: lastSeenChangelogId(changelog),
       localStorage: window.localStorage,
-      go: (path) => window.location.assign(path),
+      go: (path) => {
+        if (needsSubscriptionFake(step)) removeSubscriptionFake()
+        window.location.assign(path)
+      },
       scroll: (screens) => window.scrollTo({ top: screens * Math.round(window.innerHeight * 0.8), behavior: 'instant' }),
       reveal: async ({ click, open, target }) => {
         ;[...document.querySelectorAll('button')].find((b) => b.textContent.trim() === click)?.click()
