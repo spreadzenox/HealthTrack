@@ -16,12 +16,18 @@
 > à finir : « Play — AAB » vert sur c0f316e, build simulateur, captures `ma-journee` regardées.
 > 15/11 07:10 : l'étape 4a (#1003, habitudes) est embarquée dans la même PR #1002 (code v1078, 51 correctifs) ; build simulateur relancée, à finir.
 > 15/11 07:35 : l'étape 4b (#1004, habitudes dans les analyses) est du code partagé, sans rien de natif ; le correctif 32, seul à toucher un fichier modifié (`analysisEngine.js`), s'applique. À embarquer au run suivant (`upstream.sh --latest`), captures d'Objectifs à regarder.
+> 15/11 12:40 : **#1011 mergée** (code v1085, étape 5b sur iPhone) : build simulateur verte, captures des 4 temps regardées. À savoir : chaque push sur une PR qui touche `iphone/` relance la build macOS, même un push de journal seul (le filtre porte sur toute la PR) ; pousser le journal après, dans une PR à part.
 > 15/11 11:40 : **en PR #1011** : code embarqué v1085 (étape 5b), correctifs 23 et 55 refaits depuis main (la branche `claude/iphone-code-5b` n'avait pas été poussée), `captureMode.js` au parcours 3, `Onboarding.appstore.test.jsx` au temps 2 ; à finir : build simulateur, captures des 4 temps regardées, merge.
 > 15/11 11:15 : l'étape 5a est embarquée (#1008 mergée, code v1083) ; Paramètres vu sur simulateur. L'étape 5b (#1009, accueil en 4 temps) casse les correctifs 23 et 55 : refaits sur la branche `claude/iphone-code-5b`, avec `captureMode.js` et `Onboarding.appstore.test.jsx` ; à embarquer après le merge de #1009 (REFONTE-5b-iOS, `journal/BACKLOG.md`).
 > 15/11 10:20 : **en PR** : code embarqué v1083 (étape 5a, #1007), 51 correctifs sans retouche ; à finir : build simulateur, capture de Paramètres regardée, merge.
 > 15/11 09:35 : l'étape 5a (migration des objectifs) est du code partagé, sans rien de natif ; aucun correctif ne touche les fichiers modifiés (`settings/onboarding.js`, `Settings.jsx`, `App.jsx`, `Food.css`) ; le correctif 58 lit toujours `goalsOf().includes('cycle')`, que la migration conserve. À embarquer au run suivant (`upstream.sh --latest`), capture de Paramètres à regarder.
 > 15/11 09:25 : l'étape 4b est embarquée (#1005 mergée, code v1080, 51 correctifs sans retouche) ; Objectifs vu sur simulateur, verrouillé sans Gold : lignes miel non vues (REFONTE-4b-iOS, `journal/BACKLOG.md`).
 > 15/11 08:35 : **en PR** : code embarqué v1080 (étape 4b, #1004), 51 correctifs sans retouche ; à finir : build simulateur, captures d'Objectifs regardées, merge.
+
+- [ ] **IOS-CAPTURES-1 — Première capture en double sur iPhone 17 Pro** (vu le 15/11 sur `captures/pr-1011`) :
+  `iphone-17-pro-vierge-onboarding.png` est identique à `-vierge-onboarding-objectifs.png` ; sur iPhone 16e la
+  première capture montre bien la carte d'ouverture. Chercher dans l'outil (ordre signal, capture, accusé), pas dans
+  l'app.
 
 - [x] **I0 — Mise en place** (27/10, session de configuration avec le propriétaire) : dépôt `HealthTrack-iOS`
   public, charte, parité de départ, `upstream.json` + `scripts/upstream.sh` (testé : récupère Android v514, applique
