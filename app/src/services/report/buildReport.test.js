@@ -190,5 +190,8 @@ describe('rapport : essais d’Agir (ORG-8)', () => {
     const rows = reportTrials([{ type: 'trial', at: payload.startedAt, payload }], new Date(2026, 10, 3, 10))
     expect(rows).toEqual([expect.objectContaining({ label: 'Sommeil', instruction: 'Dormir au moins 7 h 30', state: 'en cours', outcome: 'bien-être' })])
     expect(reportTrials([], new Date())).toEqual([])
+    // REFONTE-6c-2 : un essai fini se dit avec les mots du bilan
+    const ended = reportTrials([{ type: 'trial', at: payload.startedAt, payload: { ...payload, kept: true } }], new Date(2027, 0, 3, 10))
+    expect(ended[0].state).toBe('trop peu de jours pour conclure, gardé comme habitude')
   })
 })

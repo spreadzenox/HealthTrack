@@ -365,3 +365,14 @@ button.act-card-action {
 .trial-legend-dot.is-with {
   background: var(--tone-label, var(--text-muted));
 }
+
+/* REFONTE-6c-2 : la réserve du bilan (« À confirmer sur plus de jours »), sous le titre */
+.trial-bilan-note {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.trial-kept {
+  margin-top: 6px;
+}

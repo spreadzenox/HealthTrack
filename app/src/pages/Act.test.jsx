@@ -15,8 +15,8 @@ describe('Agir (ORG-1, ORG-1b)', () => {
     expect(screen.getByRole('link', { name: 'rapport médecin' })).toHaveAttribute('href', '/data#rapport-medecin')
     expect(screen.queryByRole('button')).toBeNull()
     // POLISH-SIM-5 : ce qui remplira l'écran, ce qu'est un essai, et où voir l'avancement
-    // POLISH-SIM-43 : une seule durée, vraie pour les deux sortes d'essais (réintroduction 3 jours, piste 14 jours)
-    expect(screen.getByText(/l’essayer ici, de quelques jours à deux semaines selon la piste,/)).toBeInTheDocument()
+    // POLISH-SIM-43 : une seule durée, vraie pour les deux sortes d'essais (réintroduction 3 jours, piste 10 jours depuis REFONTE-6c-2)
+    expect(screen.getByText(/l’essayer ici, de 3 à 10 jours selon la piste,/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Où en sont vos analyses' })).toHaveAttribute('href', '/recommendations')
   })
 
@@ -84,7 +84,7 @@ describe('Agir (ORG-1, ORG-1b)', () => {
     const section = await screen.findByRole('region', { name: 'Proposés par vos analyses' })
     // POLISH-AGIR-PROPOSE (maquette validée) : la consigne concrète et l'effet chiffré, pas « Tester : sommeil, court terme »
     expect(section).toHaveTextContent('Dormir au moins 7 h 30')
-    expect(section).toHaveTextContent('Lien repéré : +0,4 point de bien-être pour 30 min de sommeil de plus. 14 jours, un jour sur deux tiré au sort.')
+    expect(section).toHaveTextContent('Lien repéré : +0,4 point de bien-être pour 30 min de sommeil de plus. 5 jours avec, 5 jours sans, tirés au sort.')
     expect(section).not.toHaveTextContent(/Tester : sommeil|court terme/i)
     expect(screen.getByRole('button', { name: 'Commencer' })).toBeInTheDocument()
     unmount()
@@ -109,9 +109,11 @@ describe('Agir (ORG-1, ORG-1b)', () => {
     const current = await screen.findByRole('region', { name: 'En cours' })
     const link = screen.getByRole('link', { name: /Dormir au moins 7 h 30/ })
     expect(current).toContainElement(link)
-    expect(link).toHaveTextContent(/Jour 8 sur 14\. Aujourd’hui, jour (avec|sans)/)
+    expect(link).toHaveTextContent(/Jour 8 sur 10\. Aujourd’hui, jour (avec|sans)/)
     expect(current).not.toHaveTextContent(/^Sommeil/)
     const done = screen.getByRole('region', { name: 'Terminés' })
     expect(done).toHaveTextContent('Un peu moins d’alcool que d’habitude')
+    // REFONTE-6c-2 : le bilan en mots, plus de « Vérifié par votre essai » ni de « Pas d’effet net »
+    expect(done).toHaveTextContent('Trop peu de jours pour conclure')
   })
 })

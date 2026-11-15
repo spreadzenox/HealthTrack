@@ -1,15 +1,18 @@
 import { describe, it, expect } from 'vitest'
-import { createTrial, instruction, trialStatus, habitStatus, TRIAL_DAYS } from './trials'
+import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS } from './trials'
 
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30, unit: 'min', text: '30 min de sommeil de plus' } }
 const START = new Date(2026, 10, 1, 9)
 const seq = (vals) => { let i = 0; return () => vals[i++ % vals.length] }
 
 describe('Essais (ORG-8)', () => {
-  it('14 jours tirés au sort, 7 avec et 7 sans ; la consigne d’après la piste', () => {
+  it('REFONTE-6c-2 : 10 jours tirés au sort, 5 avec et 5 sans ; la consigne d’après la piste', () => {
     const t = createTrial(sleep, { now: START, rng: seq([0.3, 0.7, 0.1, 0.9]) })
-    expect(t.schedule).toHaveLength(TRIAL_DAYS)
-    expect(t.schedule.filter((d) => d.with)).toHaveLength(7)
+    expect(TRIAL_DAYS).toBe(10)
+    expect(t.schedule).toHaveLength(10)
+    expect(t.schedule.filter((d) => d.with)).toHaveLength(5)
+    expect(t.schedule[9].date).toBe('2026-11-10')
+    expect(proposal(sleep).detail).toBe('Lien repéré : +0,4 point de bien-être pour 30 min de sommeil de plus. 5 jours avec, 5 jours sans, tirés au sort.')
     expect(t.schedule[0].date).toBe('2026-11-01')
     expect(instruction(t)).toBe('Dormir au moins 7 h 30')
     expect(instruction(t, false)).toBe('Comme d’habitude')
@@ -37,9 +40,62 @@ describe('Essais (ORG-8)', () => {
     const end = trialStatus(t, { outcome, now: new Date(2026, 10, 17, 10) })
     expect(end.done).toBe(true)
     expect(end.result.diff).toBeGreaterThan(1)
-    expect(end.verdict).toBe('verified')
+    expect(end.bilan).toBe('yes')
     const flat = new Map([...outcome].map(([k]) => [k, 3]))
-    expect(trialStatus(t, { outcome: flat, now: new Date(2026, 10, 17, 10) }).verdict).toBe('no_effect')
+    expect(trialStatus(t, { outcome: flat, now: new Date(2026, 10, 17, 10) }).bilan).toBe('none')
+  })
+
+  describe('REFONTE-6c-2 : le défi doux et son bilan en mots', () => {
+    const ten = { ...createTrial(sleep, { now: START }), schedule: [...Array(10)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 })) }
+    const END = new Date(2026, 10, 12, 10)
+    const series = (withV, withoutV) => {
+      const m = new Map()
+      for (let d = 2; d <= 11; d += 1) m.set(`2026-11-${String(d).padStart(2, '0')}`, (d % 2 === 0 ? withV : withoutV) + (d % 4) * 0.05)
+      return m
+    }
+
+    it('en cours : le jour sur 10, les jours avec tenus sur 5 ; un jour manqué ne retire rien', () => {
+      const summaries = new Map([['2026-11-01', { sleepMinutes: 460 }], ['2026-11-03', { sleepMinutes: 380 }], ['2026-11-05', { sleepMinutes: 455 }]])
+      const s = trialStatus(ten, { summaries, now: new Date(2026, 10, 6, 10) })
+      expect(s).toMatchObject({ dayIndex: 6, total: 10, goal: 5, kept: 2, missed: 1, done: false, bilan: null })
+      // un ancien essai de 14 jours garde son calendrier
+      const old = { ...ten, schedule: [...Array(14)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 })) }
+      expect(trialStatus(old, { now: new Date(2026, 10, 6, 10) })).toMatchObject({ total: 14, goal: 7 })
+    })
+
+    it('fini, mieux les lendemains des jours avec : « Plutôt oui », à confirmer', () => {
+      const s = trialStatus(ten, { outcome: series(4, 2.5), now: END })
+      expect(s).toMatchObject({ done: true, bilan: 'yes', confirm: true })
+      expect(bilanWords(s)).toEqual({ title: 'Plutôt oui', note: 'À confirmer sur plus de jours : 5 jours avec, c’est encore peu.' })
+    })
+
+    it('fini, moins bien les lendemains des jours avec : « Plutôt non », jamais « vérifié »', () => {
+      const s = trialStatus(ten, { outcome: series(2.5, 4), now: END })
+      expect(s.bilan).toBe('no')
+      expect(bilanWords(s).title).toBe('Plutôt non')
+    })
+
+    it('fini, fourchette à cheval sur zéro : « Pas de différence nette »', () => {
+      const s = trialStatus(ten, { outcome: series(3, 3), now: END })
+      expect(s.bilan).toBe('none')
+      expect(bilanWords(s).title).toBe('Pas de différence nette')
+    })
+
+    it('fini avec moins de 3 lendemains d’une sorte : « Trop peu de jours pour conclure », sans « à confirmer »', () => {
+      const outcome = new Map([['2026-11-02', 4], ['2026-11-03', 3], ['2026-11-04', 4]])
+      const s = trialStatus({ ...ten, endedAt: new Date(2026, 10, 5).toISOString() }, { outcome, now: new Date(2026, 10, 6, 10) })
+      expect(s).toMatchObject({ done: true, bilan: 'too_few', confirm: false })
+      expect(bilanWords(s)).toEqual({ title: 'Trop peu de jours pour conclure', note: 'Vous pouvez réessayer quand vous voulez.' })
+    })
+
+    it('dix jours avec ou plus : plus de « à confirmer »', () => {
+      const long = { ...ten, schedule: [...Array(20)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 })) }
+      const m = new Map()
+      for (let d = 2; d <= 21; d += 1) m.set(`2026-11-${String(d).padStart(2, '0')}`, (d % 2 === 0 ? 4 : 2.5) + (d % 4) * 0.05)
+      const s = trialStatus(long, { outcome: m, now: new Date(2026, 10, 23, 10) })
+      expect(s).toMatchObject({ bilan: 'yes', confirm: false })
+      expect(bilanWords(s).note).toBeNull()
+    })
   })
 
   it('habitude : « vous vous éloignez » à 9 jours sur 14 non tenus, au plus une fois par mois', () => {

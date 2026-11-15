@@ -14,7 +14,7 @@ import { readPistesSummary } from '../services/pistesSummary'
 import { actSections } from '../services/act'
 import { getAnalysis } from '../services/analysisRunner'
 import { resultsView, THEME_TONE } from '../services/resultsView'
-import { createTrial, habitStatus, instruction, proposal, trialStatus, TRIAL_DAYS } from '../services/trials'
+import { bilanWords, createTrial, habitStatus, instruction, proposal, trialStatus } from '../services/trials'
 import { readTrialsData, saveNewTrial, saveTrial } from '../services/trialsData'
 import LineIcon from '../components/LineIcon'
 import TrialDots from '../components/TrialDots'
@@ -112,8 +112,8 @@ export default function Act({ read = readAct, now }) {
         // POLISH-AGIR-TITRES (maquette validée) : le titre est la consigne des jours « avec », comme la page de l'essai
         title: instruction(e.payload, true),
         detail: s.todayDay?.with
-          ? `Jour ${s.dayIndex} sur ${TRIAL_DAYS}. Aujourd’hui, jour avec.`
-          : `Jour ${s.dayIndex} sur ${TRIAL_DAYS}. Aujourd’hui, jour sans : comme d’habitude.`,
+          ? `Jour ${s.dayIndex} sur ${s.total}. Aujourd’hui, jour avec.`
+          : `Jour ${s.dayIndex} sur ${s.total}. Aujourd’hui, jour sans : comme d’habitude.`,
         dots: s.calendar,
       }
     }),
@@ -132,7 +132,7 @@ export default function Act({ read = readAct, now }) {
       return {
         id: `trial-${e.id}`, to: `/agir/essai/${e.id}`, tone: THEME_TONE[e.payload.factor.theme] ?? 'stone',
         title: instruction(e.payload, true),
-        detail: s.verdict === 'verified' ? 'Vérifié par votre essai' : 'Pas d’effet net',
+        detail: bilanWords(s)?.title ?? '',
       }
     }),
     ...fodmap.done,
@@ -154,7 +154,7 @@ export default function Act({ read = readAct, now }) {
       {empty ? (
         <div className="today-card act-empty">
           <p className="act-empty-title">Rien en cours pour l’instant</p>
-          <p className="act-empty-text">Quand vos analyses repèrent une piste, vous pourrez l’essayer ici, de quelques jours à deux semaines selon la piste, pour voir si elle compte pour vous.</p>
+          <p className="act-empty-text">Quand vos analyses repèrent une piste, vous pourrez l’essayer ici, de 3 à 10 jours selon la piste, pour voir si elle compte pour vous.</p>
           {!notedToday && <p className="act-empty-text">D’ici là, notez votre {gutFirst ? 'digestion' : 'bien-être'} chaque jour.</p>}
           <Link to={gutFirst ? '/recommendations/ventre' : '/recommendations'} className="act-empty-link">Où en sont vos analyses</Link>
         </div>
