@@ -71,12 +71,19 @@
 - TestFlight : état des builds chez Apple non relevé ; ni soumission bêta ni expiration à ce run.
 
 ## Fin du run
-- Voir la PR de ce run et la PR iPhone de suivi.
+- **PR #995 mergée à 03:19** (squash, d5d1ef8) : 12 checks verts (Tests, Build APK, quatre émulateurs, relais) sur la
+  branche remise à jour une fois (#994, journal du run de 01:35, mergée pendant les checks).
+- Après le merge : **release v734, APK 34,6 Mo** ; « Play — AAB » vert sur d5d1ef8 (v1072, lu par
+  `upstream.sh --latest`). Tests et émulateur de main non relus après le merge.
+- **iPhone : PR de suivi ouverte, pas mergée** : `upstream.json` de v1065 à v1072 (#990 POLISH-SIM-97 déjà embarqué,
+  #992, #995) ; correctif 59 et son test retirés (case « Mon cycle » disparue) ; 51 correctifs s'appliquent, 3932
+  tests verts sur le code embarqué (lancés ici, sous Linux). Build iOS sur simulateur et captures : pas attendues à ce
+  run (près d'une heure). **L'étape 1 n'est donc pas encore livrée sur iPhone.**
+- Le run a duré environ une heure (deux attentes de CI), au-delà des 50 minutes visées.
 
 ## Suite
-- **iPhone** : finir la PR de suivi du code embarqué (v1065 → version de ce merge) : correctifs à refaire si
-  `Onboarding.jsx`, `Settings.jsx` ou `More.jsx` ne s'appliquent plus (23, 45, 52, 55, 59, 26), build macOS, captures
-  des écrans touchés (Aujourd'hui, Réglages, accueil « Qu'est-ce qui vous amène ? »), ligne dans `PARITE.md`.
+- **iPhone** : finir la PR de suivi (v1072) : build macOS verte, captures `captures/pr-<N>` des écrans touchés
+  (Aujourd'hui, Réglages avec Sources, accueil « Qu'est-ce qui vous amène ? », Paramètres), puis merge.
 - **Étape 2 (Navigation)** : les 4 onglets du brief et les redirections ; préparer la table des routes.
 - Après l'Alpha de la nuit : soumettre la dernière build TestFlight traitée, puis expirer les anciennes.
 - P44-3 (rejouer le 2 décembre sur l'émulateur) ; P44-2b le 02/12 au matin.
