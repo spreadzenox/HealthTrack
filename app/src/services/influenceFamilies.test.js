@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { influenceFamilies, familyOf, LEVEL_WORDS } from './influenceFamilies'
+import { influenceFamilies, familyOf, familyDetail, LEVEL_WORDS } from './influenceFamilies'
 
 const f = (key, label, effect, { theme = 'sleep', actionable = true, net = true, outOfScale = false } = {}) => ({ key, label, theme, actionable, effect, net, outOfScale })
 const h = (id, status, factors = []) => ({ id, status, factors })
@@ -58,5 +58,41 @@ describe('familles de ce qui va avec un objectif (refonte « Compagnon », étap
   it('le corps et la météo, même nets, n’entrent dans aucune famille', () => {
     const rows = influenceFamilies(outcome([f('hrv_ms', 'Variabilité cardiaque', 0.8, { theme: 'body', actionable: false })]))
     expect(rows.every((r) => r.level === 0)).toBe(true)
+  })
+
+  it('REFONTE-6c : le détail d’une famille, ses facteurs par délai prêt et ses liens nets', () => {
+    const o = outcome(
+      [f('sleepMinutes', 'Sommeil', 0.3), f('screen_late_minutes', 'Écran tard le soir', -0.5, { theme: 'context' }), f('steps', 'Pas', 0.4, { theme: 'activity' })],
+      [f('sleepMinutes', 'Sommeil', 0.6), f('sleep_regularity', 'Régularité du coucher', 0.2, { net: false })],
+      { beatsPersistence: true },
+    )
+    const d = familyDetail(o, 'sleep')
+    expect([d.id, d.label, d.tone, d.bars]).toEqual(['sleep', 'Sommeil', 'night', true])
+    expect(d.horizons.map((x) => [x.id, x.factors.map((y) => y.key)])).toEqual([
+      ['short', ['sleepMinutes', 'screen_late_minutes']], ['medium', ['sleepMinutes', 'sleep_regularity']],
+    ])
+    // Un lien net par facteur, au délai où il est le plus fort, le plus fort d'abord
+    expect(d.pistes.map((x) => [x.key, x.effect])).toEqual([['sleepMinutes', 0.6], ['screen_late_minutes', -0.5]])
+    expect(d.count).toBe(3)
+  })
+
+  it('REFONTE-6c : un délai sans facteur de la famille n’apparaît pas ; pas de barres si la méthode ne prévoit pas mieux', () => {
+    const d = familyDetail(outcome([f('steps', 'Pas', 0.4, { theme: 'activity' })], [f('sleepMinutes', 'Sommeil', 0.2, { net: false })]), 'activity')
+    expect(d.horizons.map((x) => x.id)).toEqual(['short'])
+    expect(d.bars).toBe(false)
+    expect(d.pistes.map((x) => x.key)).toEqual(['steps'])
+  })
+
+  it('REFONTE-6c : rien pour une famille inconnue, avant les résultats, ou sans facteur comparé', () => {
+    expect(familyDetail(outcome([f('steps', 'Pas', 0.4, { theme: 'activity' })]), 'corps')).toBeNull()
+    expect(familyDetail({ status: 'locked', horizons: {} }, 'sleep')).toBeNull()
+    expect(familyDetail(null, 'sleep')).toBeNull()
+    expect(familyDetail(outcome([f('steps', 'Pas', 0.4, { theme: 'activity' })]), 'nutrition')).toBeNull()
+  })
+
+  it('REFONTE-6c : un effet hors échelle reste dans les barres, jamais dans les liens nets', () => {
+    const d = familyDetail(outcome([f('fiber_g', 'Fibres', 3, { theme: 'nutrition', outOfScale: true })]), 'nutrition')
+    expect(d.horizons[0].factors).toHaveLength(1)
+    expect(d.pistes).toEqual([])
   })
 })

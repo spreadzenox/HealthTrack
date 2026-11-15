@@ -57,7 +57,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     renderPage({}, readyResults)
     const block = await screen.findByRole('region', { name: 'Par famille' })
     const rows = within(block).getAllByRole('listitem')
-    expect(rows.map((li) => li.querySelector('.reco-family-name').firstChild.textContent)).toEqual(['Sommeil', 'Activité', 'Alimentation'])
+    expect(rows.map((li) => li.querySelector('.reco-family-label').textContent.replace(' ›', ''))).toEqual(['Sommeil', 'Activité', 'Alimentation'])
     expect(rows[0]).toHaveTextContent('Lien moyen')
     expect(rows[0].querySelectorAll('.reco-family-dot.is-on')).toHaveLength(2)
     expect(rows[1]).toHaveTextContent('Pas')
@@ -69,6 +69,62 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     // « Par famille » vient avant « Pistes à tester »
     const pistes = screen.getByRole('region', { name: 'Pistes à tester' })
     expect(block.compareDocumentPosition(pistes) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  const renderAt = (path, results, props = {}) => render(
+    <MemoryRouter initialEntries={[path]}>
+      <Routes>
+        <Route path="/recommendations/bien-etre" element={<Recommendations read={async () => results} {...props} />} />
+        <Route path="/recommendations/bien-etre/famille/:family" element={<Recommendations read={async () => results} {...props} />} />
+        <Route path="*" element={<Where />} />
+      </Routes>
+    </MemoryRouter>,
+  )
+
+  it('REFONTE-6c : une famille qui a des facteurs comparés ouvre son détail ; sans donnée, pas de lien', async () => {
+    renderAt('/recommendations/bien-etre', readyResults)
+    const block = await screen.findByRole('region', { name: 'Par famille' })
+    expect(within(block).getByRole('link', { name: /Sommeil/ })).toHaveAttribute('href', '/recommendations/bien-etre/famille/sleep')
+    expect(within(block).getByRole('link', { name: /Activité/ })).toHaveAttribute('href', '/recommendations/bien-etre/famille/activity')
+    expect(within(block).queryByRole('link', { name: /Alimentation/ })).toBeNull()
+  })
+
+  it('REFONTE-6c : le détail d’une famille : son lien net à tester, puis ses seuls facteurs, délai par délai', async () => {
+    const results = structuredClone(readyResults)
+    results.outcomes.wellbeing.horizons.medium.factors.push(f('screen_late_minutes', 'Écran tard le soir', -0.1, { theme: 'context', net: false, horizon: 'medium' }))
+    renderAt('/recommendations/bien-etre/famille/sleep', results)
+    expect(await screen.findByRole('heading', { level: 2, name: 'Sommeil' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '← Votre bien-être' })).toHaveAttribute('href', '/recommendations/bien-etre')
+    const piste = screen.getByRole('region', { name: 'Piste à tester' })
+    expect(within(piste).getAllByRole('listitem')).toHaveLength(1)
+    expect(piste).toHaveTextContent('+0,4 point sur 5 pour 50 min de sommeil de plus (court terme)')
+    expect(within(piste).getByRole('link', { name: 'Essayer dans Agir' })).toHaveAttribute('href', '/agir')
+    const bars = screen.getByRole('region', { name: 'Ce qui a été comparé' })
+    expect(bars).toHaveTextContent('Court terme')
+    expect(bars).toHaveTextContent('Moyen terme')
+    expect(bars).toHaveTextContent('Écran tard le soir')
+    expect(bars).toHaveTextContent('pt : points de votre note de bien-être, sur 5')
+    // Rien des autres familles, ni la vue d'ensemble de l'objectif
+    expect(document.body.textContent).not.toMatch(/Pas\b.*pt|VFC|Temps d’écran/)
+    expect(screen.queryByRole('region', { name: 'Par famille' })).toBeNull()
+    expect(screen.queryByRole('region', { name: 'À regarder, pas à changer' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Comment est calculé votre bien-être ?' })).toBeNull()
+  })
+
+  it('REFONTE-6c : une famille sans lien net le dit, sans carte de piste', async () => {
+    const results = structuredClone(readyResults)
+    results.outcomes.wellbeing.horizons.short.factors[0].net = false
+    renderAt('/recommendations/bien-etre/famille/sleep', results)
+    await screen.findByRole('heading', { level: 2, name: 'Sommeil' })
+    expect(screen.queryByRole('region', { name: 'Piste à tester' })).toBeNull()
+    expect(screen.getByTestId('reco-family-none')).toHaveTextContent('Aucun lien assez net pour l’instant dans cette famille.')
+    expect(screen.getByRole('region', { name: 'Ce qui a été comparé' })).toBeInTheDocument()
+  })
+
+  it('REFONTE-6c : famille inconnue, sans facteur comparé ou avant les résultats : retour au détail de l’objectif', async () => {
+    renderAt('/recommendations/bien-etre/famille/nutrition', readyResults)
+    expect(await screen.findByRole('region', { name: 'Par famille' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Votre bien-être' })).toBeInTheDocument()
   })
 
   it('REFONTE-6b : « Comment est calculé votre bien-être ? » replié, pour le bien-être seulement', async () => {

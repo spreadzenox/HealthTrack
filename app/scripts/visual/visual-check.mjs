@@ -186,6 +186,7 @@ const DEFAULT_ROUTES = [
   ['/connectors', 'connectors'],
   ['/recommendations', 'recommendations'],
   ['/recommendations/bien-etre', 'recommendations-bien-etre'],
+  ['/recommendations/bien-etre/famille/sleep', 'recommendations-famille-sommeil'],
   ['/recommendations/ventre', 'recommendations-ventre'],
   ['/settings', 'settings'],
   ['/plus', 'plus'],
