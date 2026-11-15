@@ -87,4 +87,6 @@
 - **Suivi iPhone de 5b en PR** (code v1085, aca48cc) : 51 correctifs appliqués, 23 et 55 refaits ; avec les
   correctifs, 4015 tests verts et lint sans erreur (lancés sur le même code avant le merge). Build macOS à finir par
   le run suivant ; captures `vierge-onboarding-*` à regarder.
-- Release et « Play — AAB » de aca48cc : voir le résumé (lignes ajoutées par la PR de suivi si connues à son envoi).
+- Sur main (aca48cc) : **release v740, APK de 34,6 Mo** ; « Play — AAB » vert (**v1085 en test interne**) ; Tests
+  verts ; émulateur encore en cours à 11:36. « iOS — TestFlight » vert sur le merge de #1008 (code v1083 parti vers
+  TestFlight, arrivée non vérifiée) ; build iOS sur simulateur de ce merge encore en cours.
