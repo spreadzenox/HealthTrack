@@ -72,3 +72,16 @@
 - Embarquer 5a sur iPhone (`upstream.sh --latest`), regarder Paramètres sur simulateur.
 - REFONTE-5b : les 4 temps de l'accueil (et REFONTE-5a-2, REFONTE-5c).
 - Relevé TestFlight et vérification de l'arrivée des builds.
+
+## Fin de run (vers 10:20)
+- **#1007 mergée** (8b547ca, vers 10:08) : 12 checks verts sur 06a026d, branche à jour sur main, `npm run visual`
+  complet (19 pages) sans erreur avant le merge. Le job « Protocole montre (Java) » avait échoué une fois : Maven
+  Central a répondu 429 au téléchargement de JUnit (rien du code, même panne qu'au run de 07:35) ; relancé une
+  fois, vert.
+- Sur main : **release v739, APK de 34,6 Mo** ; « Play — AAB » vert sur 8b547ca (**v1083 en test interne**).
+  Tests et émulateurs de main après le merge : non vérifiés.
+- **TestFlight**, relevé de 09:48 : « en test 1072.1073 ; refusées aucune ; en attente aucune ». Rien à soumettre
+  ni à expirer.
+- **Suivi iPhone de 5a ouvert en PR** : code embarqué v1083 (8b547ca), 51 correctifs sans retouche
+  (`upstream.sh --latest`) ; build macOS à finir par le run suivant, capture de Paramètres à regarder.
+- Ce run a dépassé les 50 minutes visées (attente des checks et de « Play — AAB »).
