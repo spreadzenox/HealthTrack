@@ -289,6 +289,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
+- [ ] **CI-UBUNTU-26** (15/11 23:30) : `ubuntu-latest` bascule vers Ubuntu 26.04, et Playwright 1.56.1 y refuse
+  Chromium (« Playwright does not support chromium on ubuntu26.04-x64 ») : « Budget de lectures (perf) » rouge sur
+  #1026 alors qu'il était vert sur main six minutes plus tôt. Fait : ce job épinglé sur `ubuntu-24.04`. Reste :
+  passer à une version de Playwright qui prend 26.04 en charge puis retirer l'épinglage ; surveiller les autres jobs
+  `ubuntu-latest` (émulateurs, apt, ffmpeg) au fil de la bascule.
 - [ ] **FUSION-5** : charte de `iphone/journal/README.md` relue (§ 2 « lecture seule », « DEMANDES ») et fondue dans
   la charte de `journal/README.md` ; captures de l'iPhone liées depuis ce dépôt (branches `captures/main`).
 
