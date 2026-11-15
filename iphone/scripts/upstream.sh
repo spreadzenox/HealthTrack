@@ -62,7 +62,10 @@ mkdir -p "$DEST"
 # Tout le dépôt à ce commit, comme le clone d'avant (des tests de app/ lisent relay/ et journal/), sauf iphone/
 if [ "$SHA" = "HEAD" ]; then
   COUNT="$(git -C "$REPO" rev-list --count HEAD)"
-  (cd "$REPO" && git ls-files -z -- . ':(exclude)iphone' | tar --null --ignore-failed-read -T - -cf -) | tar -xf - -C "$DEST"
+  # Fichiers suivis encore présents (un fichier supprimé sans commit est sauté) ; options communes à GNU tar et au
+  # tar de macOS, qui ne connaît pas --ignore-failed-read (15/11, première build macOS en mode HEAD)
+  (cd "$REPO" && git ls-files -z -- . ':(exclude)iphone' | perl -0 -ne 'chomp; print "$_\0" if -e $_ || -l $_' \
+    | tar --null -T - -cf -) | tar -xf - -C "$DEST"
 else
   git -C "$REPO" cat-file -e "$SHA^{commit}" 2>/dev/null || git -C "$REPO" fetch --quiet origin "$SHA"
   COUNT="$(git -C "$REPO" rev-list --count "$SHA")"
