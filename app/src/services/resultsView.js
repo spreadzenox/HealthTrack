@@ -16,7 +16,7 @@ const MAX_PISTES = 3
 const MAX_PER_HORIZON = 5
 
 /** Couleur du thème d'un facteur ou d'un résultat (DESIGN.md, leçon 12). */
-export const THEME_TONE = { wellbeing: 'mint', digestion: 'peach', nutrition: 'peach', activity: 'lilac', sleep: 'night', body: 'rose', context: 'stone' }
+export const THEME_TONE = { wellbeing: 'mint', digestion: 'peach', nutrition: 'peach', activity: 'lilac', sleep: 'night', body: 'rose', context: 'stone', habit: 'honey' }
 
 /**
  * @param {object | null} outcome  OutcomeResult du contrat

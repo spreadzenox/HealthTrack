@@ -394,6 +394,8 @@ export const ANALYSIS_LIMITS = {
     cigarette: 2000,
     // Lecture du visage : ≈ 50 rafales par jour, l'humeur estimée jour par jour (mood/faceMoodDays.js) en lit ~6 mois.
     face_burst: 10000,
+    // Habitudes : une réponse par habitude et par jour (5 habitudes sur un an et demi).
+    habit: 3000,
   },
   subtypes: {
     heart_rate: { '*': 1000 },

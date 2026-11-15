@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   CONTRACT_VERSION, DIGESTION_MIN_SYMPTOM_DAYS, FACTORS, factorKeysKnown, HORIZONS, OUTCOMES, UNLOCK_DAYS,
   computeAnalysisResults, contributionsByDay, dayContributions, outcomeSeries, SCALE_SPAN, boundToScale, sameUnitPerFactor,
+  buildAnalysisMatrix, habitFactors,
 } from './analysisResults'
 import { isEstimatorInput } from './mood/estimatorInputs'
 
@@ -313,5 +314,75 @@ describe('matrice (ORG-5b)', () => {
     const a = [...series.digestion.values()]
     const b = [...buildAnalysisMatrix(noWb, { today: dk(29) }).series.digestion.values()]
     expect(b).toEqual(a)
+  })
+})
+
+describe('habitudes dans les analyses (refonte « Compagnon », étape 4b)', () => {
+  /** Monde de base + une habitude tirée au sort chaque jour, qui déplace le bien-être de `effect` points. */
+  function habitWorld({ effect = 0, seed = 3, days = 70 } = {}) {
+    const w = world({ days, stepsEffect: 0, seed, gut: false })
+    const r = rng(seed + 100)
+    w.entries = w.entries.flatMap((e) => {
+      if (e.type !== 'wellbeing') return [e]
+      const done = r() < 0.5
+      const score = Math.min(5, Math.max(0, e.payload.score + (done ? effect : 0)))
+      const day = e.at.slice(0, 10)
+      return [
+        { ...e, payload: { score } },
+        { type: 'habit', source: 'app_habit', at: `${day}T12:01:00`, created_at: `${day}T21:05:00`, payload: { habit: 'meditation', label: 'Méditation', done } },
+      ]
+    })
+    return w
+  }
+  const habitIn = (res) => res.outcomes.wellbeing.horizons.short.factors.find((f) => f.key === 'habit_meditation')
+
+  it('une habitude est un facteur (thème miel, oui ou non), et un lien planté ressort net', () => {
+    const { entries, now } = habitWorld({ effect: 0.8 })
+    expect(habitFactors(entries).map((f) => f.key)).toEqual(['habit_meditation'])
+    const f = habitIn(computeAnalysisResults(entries, { now }))
+    expect(f).toMatchObject({ label: 'Méditation', theme: 'habit', actionable: true, net: true })
+    expect(f.effect).toBeGreaterThan(0.1)
+    expect(f.usualChange.text).toBe('un jour « oui »')
+  })
+
+  it('règle 6 : aucun sens imposé, une habitude peut aller avec de moins bons jours', () => {
+    const { entries, now } = habitWorld({ effect: -0.8 })
+    const f = habitIn(computeAnalysisResults(entries, { now }))
+    expect(f.net).toBe(true)
+    expect(f.effect).toBeLessThan(-0.1)
+  })
+
+  it('sans lien réel, aucune habitude n’est donnée pour nette (10 mondes)', () => {
+    let net = 0
+    for (let seed = 1; seed <= 10; seed += 1) {
+      const { entries, now } = habitWorld({ effect: 0, seed })
+      if (habitIn(computeAnalysisResults(entries, { now }))?.net) net += 1
+    }
+    expect(net).toBe(0)
+  })
+
+  it('règle 5 : une habitude n’est jamais une entrée de l’estimateur, et le résultat ne dépend pas d’elle', () => {
+    expect(isEstimatorInput('habit')).toBe(false)
+    expect(isEstimatorInput('habit_meditation')).toBe(false)
+    const { entries } = habitWorld({ effect: 0.8 })
+    const withHabits = buildAnalysisMatrix(entries).series.wellbeing
+    const without = buildAnalysisMatrix(entries.filter((e) => e.type !== 'habit')).series.wellbeing
+    expect([...withHabits]).toEqual([...without])
+  })
+
+  it('ordre temporel : un jour noté avant 20 h, une réponse donnée après la note reste inconnue', () => {
+    const day = '2026-07-10'
+    const habit = (id, created, done = true) => ({ type: 'habit', source: 'app_habit', at: `${day}T12:01:00`, created_at: new Date(`${day}T${created}:00`).toISOString(), payload: { habit: id, label: id, done } })
+    const entries = [
+      { type: 'wellbeing', at: new Date(`${day}T13:00:00`).toISOString(), payload: { score: 3 } },
+      habit('before', '12:50'), habit('together', '13:20', false), habit('after', '18:00'),
+    ]
+    const vals = buildAnalysisMatrix(entries).days.get(day)
+    expect(vals.habit_before).toBe(1)
+    expect(vals.habit_together).toBe(0)
+    expect(vals.habit_after).toBeNull()
+    // Noté à 21 h : la journée est finie, toutes les réponses comptent
+    const evening = [{ ...entries[0], at: new Date(`${day}T21:00:00`).toISOString() }, ...entries.slice(1)]
+    expect(buildAnalysisMatrix(evening).days.get(day).habit_after).toBe(1)
   })
 })

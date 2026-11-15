@@ -141,3 +141,11 @@ describe('POLISH-SIM-71 : note digestive du jour et seuil d’affichage', () => 
     expect(weighView([{ points: 0.39 }], null).note).toBeNull()
   })
 })
+
+describe('contributionText, habitudes (étape 4b)', () => {
+  it('dit une habitude sans chiffre : plus ou moins souvent que d’habitude', () => {
+    const c = { key: 'habit_meditation', label: 'Méditation', horizon: 'short', value: 1, usual: 0.4 }
+    expect(contributionText(c)).toBe('« Méditation » plus souvent que d’habitude')
+    expect(contributionText({ ...c, value: 0, horizon: 'medium' })).toBe('« Méditation » moins souvent que d’habitude ces derniers jours')
+  })
+})

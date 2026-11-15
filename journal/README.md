@@ -12,15 +12,16 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1075 en test interne (15/11 à 05:11, #999 : étape 2 de la refonte, les 4 onglets ; release v735 ; « Play — AAB » vert) ; **v1078 en test interne (15/11 à 07:03, #1003 : étape 4a de la refonte, les habitudes ; release v737 ; « Play — AAB » vert)** ; avant, v1077 (étape 3, #1001, 06:23, release v736) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1072.1073 (étape 1 de la refonte) chez les testeurs externes** : validée par Apple, relevés du 15/11 à 06:03 et à 07:02 (« en test 1072.1073 ; refusées aucune ; en attente aucune ») ; les 13 builds plus anciennes, dont 1030.1031, expirées le 15/11 à 06:05 ; la build du code v1075 (étape 2, les 4 onglets) est partie vers TestFlight au merge de #1000 à 06:00 (arrivée non vérifiée), pour les testeurs après l'Alpha de ce soir ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1075 en test interne (15/11 à 05:11, #999 : étape 2 de la refonte, les 4 onglets ; release v735 ; « Play — AAB » vert) ; **v1078 en test interne (15/11 à 07:03, #1003 : étape 4a de la refonte, les habitudes ; release v737 ; « Play — AAB » vert)** ; avant, v1077 (étape 3, #1001, 06:23, release v736) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1072.1073 (étape 1 de la refonte) chez les testeurs externes** : validée par Apple, relevés du 15/11 à 06:03 et à 07:02 (« en test 1072.1073 ; refusées aucune ; en attente aucune ») ; les 13 builds plus anciennes, dont 1030.1031, expirées le 15/11 à 06:05 ; la build du code v1075 (étape 2, les 4 onglets) est partie vers TestFlight au merge de #1000 à 06:00 (arrivée non vérifiée), pour les testeurs après l'Alpha de ce soir ; **le code v1078 (étapes 3 et 4a : checklist et habitudes) est parti vers TestFlight au merge de #1002 le 15/11 vers 08:05 (arrivée non vérifiée)** ; relevé de 07:43 : « en test 1072.1073 ; refusées aucune ; en attente aucune » ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **🧸 Refonte « Compagnon » (vos décisions des 13, 14 et 15/11) : étape 3 sur 15 faite sur Android le 15/11 à 05:35
-(la checklist de Ma journée, #1001 mergée à 06:23, release v736) ; son suivi iPhone est en PR (#1002, build macOS à finir au run suivant). Étapes 1 et 2 faites des deux côtés (l'étape 2
+(la checklist de Ma journée, #1001 mergée à 06:23, release v736) ; son suivi iPhone est fait (#1002 mergée le 15/11 vers 08:05, code v1078, avec l'étape 4a ; la build part seule sur TestFlight). Étapes 1 et 2 faites des deux côtés (l'étape 2
 est sur iPhone depuis le 15/11 à 06:00, #1000). Étape 4, première moitié (4a), faite sur Android le 15/11 à
-06:35 (#1003 mergée à 06:59, release v737) ; la PR iPhone #1002 embarque maintenant les étapes 3 et 4a (code v1078) : les habitudes se choisissent dans Réglages et se notent par oui ou non dans Ma journée. Reste 4b :
-les habitudes dans les analyses.** Les 15 étapes :
+06:35 (#1003 mergée à 06:59, release v737) ; sur iPhone avec #1002 (code v1078, captures de Ma journée et de Paramètres regardées sur simulateur) : les habitudes se choisissent dans Réglages et se notent par oui ou non dans Ma journée. **Étape 4, seconde moitié
+(4b), faite sur Android le 15/11 à 07:35 (#1004) : chaque habitude entre dans les analyses d'Objectifs ; l'étape 4
+est donc finie sur Android, son suivi iPhone reste à embarquer. Prochaine étape : 5, l'onboarding.** Les 15 étapes :
 [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le brief :
 [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -31,6 +32,22 @@ les habitudes dans les analyses.** Les 15 étapes :
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
 
+> 🧸 **Refonte « Compagnon », étape 4b : vos habitudes dans vos analyses (15/11 07:35, #1004)** : dans
+> **Objectifs**, chaque habitude à laquelle vous avez répondu devient une ligne **miel**, comme le sommeil ou les
+> pas : Halcya compare vos jours « oui » et vos jours « non »
+> ([capture d'Objectifs, avec un lien fabriqué pour la démonstration](runs/captures/2026-11-15-0735-refonte-4b-objectifs.png) ·
+> [la piste proposée dans Agir](runs/captures/2026-11-15-0735-refonte-4b-agir.png)). Rien n'est supposé : une
+> habitude peut aller avec de meilleurs jours comme avec de moins bons. Une habitude ne sert jamais à estimer votre
+> bien-être. **Un choix fait pour vous, à corriger si vous préférez autre chose** : un jour où vous notez votre
+> bien-être avant 20 h, une réponse donnée plus d'une heure après cette note ne compte pas ce jour-là (on ne sait pas
+> si l'habitude a précédé la note). **Limites** : sur des données simulées, l'effet d'une habitude ressort **environ
+> moitié plus petit** que l'effet réel (0,8 point simulé, 0,4 à 0,55 affiché) : la méthode lisse le bien-être d'un
+> jour à l'autre, et un oui ou non quotidien y perd plus qu'un facteur lent ; à mesurer au banc puis à corriger
+> (REFONTE-4b-2). Dans **Agir**, l'essai d'une habitude dit « Un peu plus de méditation que d'habitude » et repose
+> la question chaque jour au lieu de lire votre réponse de Ma journée (REFONTE-4b-3). Il faut au moins 14 jours de
+> bien-être et des réponses la moitié des jours pour qu'une habitude apparaisse. Aucune maquette de cette ligne dans
+> le kit ; **pas encore sur iPhone**.
+>
 > 🧸 **Refonte « Compagnon », étape 4a : vos habitudes (15/11 06:35, #1003, dans la version v1078 du test interne)** : dans **Réglages › Vos
 > habitudes**, vous cochez méditation, étirements, relaxation ou lecture, ou vous nommez la vôtre (une seule habitude
 > libre pour l'instant) ([capture](runs/captures/2026-11-15-0635-refonte-4-reglages.png)). **Ma journée** ajoute
@@ -988,6 +1005,7 @@ les habitudes dans les analyses.** Les 15 étapes :
 
 | Run | Type | Résultat |
 |---|---|---|
+| 15/11 07:35 — [Refonte « Compagnon », étape 4b : les habitudes dans les analyses](runs/2026-11-15-0735-refonte-4b-analyses.md) | 🔧 | Main vert au début. #1002 (suivi iPhone des étapes 3 et 4a) : 15 checks verts, captures iPhone regardées (Ma journée clair, sombre, vide ; Paramètres), mergée vers 08:05. Étape 4b sur Android (#1004) : chaque habitude est un facteur d'Objectifs, en miel ; règles 5 et 6 testées ; 3623 tests verts. Limite mesurée : effet d'une habitude sous-estimé d'environ moitié (REFONTE-4b-2). Marqueurs de conflit retirés du journal iPhone. 4b pas encore sur iPhone. |
 | 15/11 06:35 — [Refonte « Compagnon », étape 4a : les habitudes](runs/2026-11-15-0635-refonte-4-habitudes.md) | 🔧 | Main vert au début. #1002 (suivi iPhone de l'étape 3, ouverte à 06:27 par le run de 05:35) : build macOS en cours pendant tout le run, pas mergée. Étape 4a sur Android (#1003) : Réglages › Vos habitudes, ligne miel « Oui / Non » par habitude dans Ma journée, réponses en entrées ordinaires, liste suivie dans l'export, tokens miel (rail assombri pour le contraste). 3617 tests verts, lint et build propres, captures de cinq états regardées. Les analyses (4b) restent à faire. #1003 mergée à 06:59 (12 checks verts), release v737 (APK 34,6 Mo), « Play — AAB » vert. TestFlight relevé à 07:02 : 1072.1073 en test, rien en attente. #1002 mise à jour sur main, code embarqué avancé à v1078 (51 correctifs), build macOS relancée, pas mergée. |
 | 15/11 05:35 — [Refonte « Compagnon », étape 3 : la checklist de Ma journée](runs/2026-11-15-0535-refonte-3-ma-journee.md) | 🔧 | Main vert. #1000 (suivi iPhone de l'étape 2, ouverte par le run de 04:35) : 15 checks verts, captures iPhone regardées, mergée à 06:00. Étape 3 sur Android (#1001) : Ma journée s'ouvre sur la checklist (repas en trois cercles, bien-être, digestion le soir), lignes qui partent, « Plus rien à faire », « Déjà noté » ; « Mes repas du jour » retiré. 17 tests écrits d'abord, 3593 verts ; captures de six états regardées. TestFlight : 1072.1073 validée et chez les testeurs externes, 13 anciennes builds expirées (844.344 intacte). #1001 mergée à 06:23 (12 checks verts), release v736, APK 33,0 Mo. Suivi iPhone de l'étape 3 : PR ouverte, à finir. |
 | 15/11 04:35 — [Refonte « Compagnon », étape 2 : navigation en 4 onglets](runs/2026-11-15-0435-refonte-2-navigation.md) | 🔧 | Main vert, aucune PR de la routine ouverte. Étape 2 : Accueil · Ma journée · Objectifs · Données (#999) ; l'ancien Aujourd'hui rangé dans Accueil et Ma journée ; Réglages › Données devient « Sauvegarde ». #999 mergée à 05:06 (12 checks verts), release v735 (APK 34,6 Mo). TestFlight : build 1072.1073 ajoutée au groupe externe et soumise à l'examen bêta. PR de suivi iPhone ouverte (v1075, 51 correctifs, 3938 tests verts), pas mergée. |

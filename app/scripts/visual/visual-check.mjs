@@ -35,7 +35,8 @@
  *                                          faire » (refonte étape 3 ; un fuseau où il est tard) ; =partial : un repas
  *                                          et le bien-être notés, « Déjà noté (2) »
  *   npm run visual -- --routes=/ma-journee,/settings --habits  # trois habitudes suivies (Méditation, Lecture et une
- *                                          libre, refonte étape 4) ; avec --day-done, leurs réponses du jour aussi
+ *                                          libre, refonte étape 4) ; avec --day-done, leurs réponses du jour aussi ;
+ *                                          --habits=history : « Méditation » répondue chaque jour noté (Objectifs, 4b)
  *   npm run visual -- --empty --routes=/nutrition --first-meal  # un seul repas, noté aujourd'hui (POLISH-SIM-97)
  *   npm run visual -- --routes=/journal --cycle  # règles hier et avant-hier, symptômes : ligne « Règles » (CYCLE-1b)
  *   npm run visual -- --routes=/ --calibration  # notes de bien-être d'hier seulement : calibration de départ
@@ -1393,6 +1394,21 @@ async function main() {
       if (!partial) {
         entries.push(meal(t.m2, 'Salade de lentilles'), meal(t.m3, 'Soupe de légumes'),
           { type: 'gut', source: 'app_gut', at: t.g, payload: { level: 'calm', scope: 'day' } })
+      }
+    }
+    if (args.habits === 'history') {
+      // Étape 4b : une réponse « Méditation » par jour noté, « oui » les jours de meilleure note (lien fabriqué pour
+      // voir la ligne miel dans Objectifs), saisie le soir.
+      const notes = entries.filter((e) => e.type === 'wellbeing' && typeof e.payload?.score === 'number')
+      const median = notes.map((e) => e.payload.score).sort((a, b) => a - b)[Math.floor(notes.length / 2)]
+      const seen = new Set()
+      for (const e of notes) {
+        const d = new Date(e.at)
+        const day = d.toDateString()
+        if (seen.has(day)) continue
+        seen.add(day)
+        d.setHours(12, 1, 0, 0)
+        entries.push({ type: 'habit', source: 'app_habit', at: d.toISOString(), created_at: new Date(d.getTime() + 9 * 3600_000).toISOString(), payload: { habit: 'meditation', label: 'Méditation', done: e.payload.score >= median } })
       }
     }
     const seedResult = await page.evaluate(async (list) => {

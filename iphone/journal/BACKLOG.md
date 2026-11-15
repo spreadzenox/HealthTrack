@@ -14,10 +14,8 @@
 > (correctif 58 refait après CYCLE-3a-1, #948).
 > Suivi d'Android au 15/11 06:00 : code embarqué v1075 (étape 2 de la refonte, #1000). **En PR** : l'étape 3 (#1001, checklist de Ma journée, code v1077) ;
 > à finir : « Play — AAB » vert sur c0f316e, build simulateur, captures `ma-journee` regardées.
-<<<<<<< HEAD
-=======
 > 15/11 07:10 : l'étape 4a (#1003, habitudes) est embarquée dans la même PR #1002 (code v1078, 51 correctifs) ; build simulateur relancée, à finir.
->>>>>>> origin/main
+> 15/11 07:35 : l'étape 4b (#1004, habitudes dans les analyses) est du code partagé, sans rien de natif ; le correctif 32, seul à toucher un fichier modifié (`analysisEngine.js`), s'applique. À embarquer au run suivant (`upstream.sh --latest`), captures d'Objectifs à regarder.
 
 - [x] **I0 — Mise en place** (27/10, session de configuration avec le propriétaire) : dépôt `HealthTrack-iOS`
   public, charte, parité de départ, `upstream.json` + `scripts/upstream.sh` (testé : récupère Android v514, applique
