@@ -49,6 +49,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     commencer à noter ses règles à la main (le bouton « Règles » ne vient qu'avec l'ancien objectif ou une donnée de
     cycle) : à décider à l'étape 5 (« Ce que vous noterez chaque jour ») ou 7 ; la page Sources n'a pas de lien de
     retour vers Réglages (la roue y ramène) ; le Journal (qui disparaît) n'a pas été revu.
+  - **iPhone (15/11 03:35)** : code embarqué v1072 dans la PR de suivi ; correctif 59 retiré (la case « Mon cycle » de
+    Paramètres n'existe plus), 51 correctifs, 3932 tests verts ; build simulateur et captures à regarder avant le
+    merge. Une nouvelle installation iPhone ne peut plus demander le cycle à Santé (réservé à l'ancien objectif) : à
+    trancher avec la place du cycle, étape 5 ou 7.
 - [ ] **REFONTE-2 — Navigation** : les 4 onglets du brief § 4 (Accueil · Ma journée · Objectifs · Données) et l'icône
   Réglages ; routes actuelles redirigées (liens profonds, notifications, widget), aucune vers un écran vide ; le
   contenu existant est simplement rangé dans les nouveaux onglets. À préparer : table route actuelle → nouvel onglet
