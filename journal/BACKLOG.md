@@ -98,8 +98,22 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   journée au lieu de reposer la question (`trials.js`, `MEASURED`).
 - [ ] **REFONTE-4b-4 — Heure réelle d'une habitude** : la réponse ne dit pas quand l'habitude a eu lieu ; l'ordre
   temporel repose sur l'heure de saisie et une tolérance d'une heure. À revoir si la durée ou l'heure est demandée.
+- [ ] **REFONTE-4b-iOS — Voir les habitudes d'Objectifs sur iPhone** : les captures du simulateur montrent Objectifs
+  verrouillé (carte floutée « Débloquer ») et sans habitude ; ajouter une capture avec Gold et une habitude suivie
+  (`captureMode.js`). Code embarqué v1080 depuis #1005 (15/11).
 - [ ] **REFONTE-5 — Onboarding** : les 4 temps du brief § 3.4 et la migration des utilisateurs existants (objectifs
   déduits de leurs réglages, dont les anciens « cycle » et « sport », données intactes).
+  Préparée le 15/11 à 08:35 : [`ETAPE-5-ONBOARDING.md`](maquettes/compagnon-etapes/ETAPE-5-ONBOARDING.md)
+  (inventaire de l'accueil actuel, ce que chaque objectif change dans le code, table de migration, choix A à F à
+  trancher, correctifs iPhone touchés). Découpage proposé :
+  - [ ] **REFONTE-5a — Migration des objectifs** : `goals` réduit à `wellbeing` (toujours) et `gut` ; anciens
+    identifiants gardés (`goalsBefore`) ; le cycle reste affiché à qui avait « Mon cycle » ; `gutCardMode` sans
+    `used` ; Réglages ; tests d'import d'anciens fichiers.
+  - [ ] **REFONTE-5b — Les 4 temps** : écrans et textes de `specs/comprendre.SPEC.md` § 4 sans Pilou, habitudes
+    écrites par `setHabits`, `FLOW_VERSION` 3, captures (clair, sombre, 320 px, avec et sans montre ou digestion),
+    correctifs iPhone 23, 45, 52 et 55.
+  - [ ] **REFONTE-5c — Carte du tuto fausse depuis l'étape 2** : `TABS_EXPLAINED` (`Onboarding.jsx`) présente
+    « Agir » comme un onglet et oublie Accueil et Ma journée. À corriger avec 5b, ou seule si 5b tarde.
 - [ ] **REFONTE-6 — Objectifs** : score et tendance, ce qui l'influence (3 familles), le détail, la piste en défi
   doux ; puis les seuils 7 jours (bien-être) et 14 jours (digestion) dans `app/src/config/firstResults.js` ;
   `specs/comprendre.SPEC.md`.
