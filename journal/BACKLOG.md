@@ -59,7 +59,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   10) ; « Vos Analyses » reste écrit dans trois cartes de Sources (l'onglet s'appelle Objectifs) ; l'écran
   Réglages › Sauvegarde garde le titre « Vos données » ; services de notification natifs non lus (aucune route
   trouvée par recherche de texte) ; `/ma-journee` absente des captures de la fiche Play et du balayage natif.
-- [x] **REFONTE-3 — Ma journée** (15/11 05:35, Android : #1001 ; **iPhone : suivi du code embarqué à faire**) : la
+- [x] **REFONTE-3 — Ma journée** (15/11 05:35, Android : #1001 mergée à 06:23, v1077 ; **iPhone : PR de suivi ouverte, à finir**, 51 correctifs appliqués à blanc) : la
   checklist en tête de Ma journée (`DayChecklist.jsx`, `services/dayChecklist.js`) : Repas en trois cercles (Matin
   avant 11 h, Midi avant 16 h, Soir ; un cercle vide ouvre l'appareil photo), Bien-être (« Noter »), « Votre digestion
   ce soir » (objectif digestion seulement, à partir de 18 h : `GUT_EVENING_FROM_HOUR`) ; une ligne faite dit « Noté »
@@ -70,9 +70,22 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   (compte à rebours des analyses) reste dans Ma journée alors qu'il relève d'Objectifs (étape 6) ; 18 h au lieu des
   19 h de la spec, à confirmer par le propriétaire ; une journée à deux repas ne finit jamais (proposer « Pas de
   repas » sur un cercle ?) ; « Hier » et « Bon retour » (spec § 10) non faits ; ouverture depuis le widget (étape 13).
-- [ ] **REFONTE-4 — Habitudes** : modèle de données (migration IndexedDB rétrocompatible testée, export et import),
-  saisie, couleur miel (brief § 6, contrastes dans `tokens.test.js`), prise en compte dans les analyses comme entrées
-  (règle 5 : jamais dans l'estimateur du bien-être).
+- [x] **REFONTE-4a — Habitudes : modèle, saisie, miel** (15/11 06:35, Android : #1003 ; **iPhone : à embarquer avec
+  l'étape 3, PR #1002**) : `services/habits.js` (entrées ordinaires `type: 'habit'`, `source: 'app_habit'`,
+  `payload: { habit, label, done }`, une par habitude et par jour, rangée à midi avec une minute propre à chaque
+  habitude ; **aucune migration de schéma**, comme le cycle) ; `settings/habits.js` (liste suivie dans
+  `healthtrack_habits` : les 4 proposées et une habitude libre, jointe à l'export, relue à l'import, effacée par
+  « Supprimer toutes mes données ») ; Réglages › « Vos habitudes » (`HabitsSetting.jsx`) ; ligne miel « Oui / Non »
+  dans la checklist (`DayChecklist.jsx`), « Déjà noté » change la réponse ; tokens `--honey-*` (rail `#EECB6C` au
+  lieu du `#F2D27A` du brief, 1,33:1) ; `npm run visual -- --habits`. **Restes** : durée habituelle facultative
+  (brief § 3.3) ; plusieurs habitudes libres ; renommer l'habitude libre en fait une autre (identifiant tiré du
+  nom) ; réduire le bandeau d'ajout à « Autre chose » ; le choix des habitudes à l'onboarding (étape 5) ; la
+  méditation de Pilou et « Hier » (étapes 10 et 11).
+- [ ] **REFONTE-4b — Habitudes dans les analyses** : chaque habitude suivie devient une entrée X (oui / non du jour)
+  de `analysisEngine.js` ; règle 5 : test qui échoue si `habit` entre dans l'estimateur du bien-être ; règle 6 :
+  aucun sens imposé (une habitude peut aller avec de moins bons jours) ; comparaisons multiples et taille
+  d'échantillon minimale ; banc des nulles relancé ; `ANALYSIS_LIMITS` (type `habit`, 1000 par défaut : assez pour
+  5 habitudes sur 200 jours, à relever).
 - [ ] **REFONTE-5 — Onboarding** : les 4 temps du brief § 3.4 et la migration des utilisateurs existants (objectifs
   déduits de leurs réglages, dont les anciens « cycle » et « sport », données intactes).
 - [ ] **REFONTE-6 — Objectifs** : score et tendance, ce qui l'influence (3 familles), le détail, la piste en défi
