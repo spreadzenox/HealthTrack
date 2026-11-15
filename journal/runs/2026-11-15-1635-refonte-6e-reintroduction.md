@@ -56,5 +56,12 @@ testeurs externes)  ·  **Parité** : 70 % (33/47), inchangée
 - REFONTE-6d : le banc à n = 7 et 14 d'abord (run « idées » de 20 h), puis les seuils.
 - IOS-HEAD avant l'étape 7.
 
-## Fin de run
-Voir la note de fin ci-dessous, ajoutée par le dernier commit de la PR de ce run.
+## Fin de run (17:15)
+- **#1016 mergée à 17:12** (c8af00f) : « Build iOS (simulateur) et captures » verte à 17:08, 15 checks verts, à jour
+  sur main. Captures regardées sur `captures/pr-1016` (iPhone 17 Pro, clair, données de démo) : le bloc « Par
+  famille » (Sommeil, lien moyen), le détail de la famille Sommeil (piste et barres par délai), Agir (« 5 jours
+  avec, 5 jours sans, tirés au sort »). Non regardés : iPhone 16e, sombre, grand texte. Agir écrit encore « Tous vos
+  essais, vérifiés ou non » alors que le mot « vérifié » a quitté les bilans (à reprendre, REFONTE-6c-3).
+- La PR de ce run (#1020) : 12 checks verts sur son premier commit, puis main (c8af00f) repris et journal mis à
+  jour ; à merger une fois ses checks verts sur le nouveau commit. L'état après merge (release, « Play — AAB »,
+  « iOS — TestFlight » de #1016) est à lire sur main par le run suivant s'il n'est pas dit dans la PR.
