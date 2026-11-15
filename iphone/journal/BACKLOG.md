@@ -12,8 +12,9 @@
 > reprises (DEM-IOS-1 à 21).
 > Suivi d'Android au 14/11 07:35 : v1040 (POLISH-SIM-77, détail FODMAP d'un repas : repris tel quel, 52 correctifs appliqués) ; avec POLISH-SIM-72-iOS-b (correctifs 17, 30, 32, 56, 57 : « Variabilité cardiaque » tout court, reconnue par la clé `hrvSdnn`), PR ouverte, à finir au run suivant ; suite POLISH-SIM-72-iOS-c (`journal/BACKLOG.md`). Avant, 14/11 06:35 : inchangé, v1037 est le dernier commit dont « Play — AAB » est vert ; à suivre au prochain run : v1040 (POLISH-SIM-77, détail FODMAP d'un repas, aucun correctif concerné). Avant, 14/11 05:35 : v1037 (POLISH-SIM-72-iOS : correctifs 13, 17, 30, 32, 45, 56 et 57 refaits, « Variabilité cardiaque (SDNN) » ; suite POLISH-SIM-72-iOS-b, `journal/BACKLOG.md`). Avant, 14/11 04:35 : v1036 (52 correctifs sans retouche) ; 14/11 03:35 : v1035 (correctifs 06 et 12 : contexte de `Data.jsx` refait) ; 14/11 02:35 : v1034 ; 14/11 00:35 : v1032 ; 13/11 22:35 : v1030
 > (correctif 58 refait après CYCLE-3a-1, #948).
-> Suivi d'Android au 15/11 06:00 : code embarqué v1075 (étape 2 de la refonte, #1000). **À faire** : embarquer l'étape 3
-> (#1001, checklist de Ma journée) après son merge et « Play — AAB » vert ; regarder les captures `ma-journee`.
+> Suivi d'Android au 15/11 06:00 : code embarqué v1075 (étape 2 de la refonte, #1000). **En PR** : l'étape 3 (#1001, checklist de Ma journée, code v1077) ;
+> à finir : « Play — AAB » vert sur c0f316e, build simulateur, captures `ma-journee` regardées.
+> 15/11 06:35 : l'étape 4a (#1003, habitudes) suit ; à embarquer dans la même PR #1002 après son merge.
 
 - [x] **I0 — Mise en place** (27/10, session de configuration avec le propriétaire) : dépôt `HealthTrack-iOS`
   public, charte, parité de départ, `upstream.json` + `scripts/upstream.sh` (testé : récupère Android v514, applique

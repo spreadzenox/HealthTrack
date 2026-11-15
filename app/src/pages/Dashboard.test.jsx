@@ -8,6 +8,7 @@ vi.mock('../storage/localHealthStorage', () => ({
   countEntries: vi.fn(),
   deleteEntry: vi.fn(),
   updateEntry: vi.fn(),
+  createEntry: vi.fn(),
 }))
 
 const navigateMock = vi.fn()
@@ -128,6 +129,41 @@ describe('Dashboard', () => {
     fireEvent.click(within(list).getByRole('button', { name: 'Déjà noté (1)' }))
     fireEvent.click(within(list).getByRole('button', { name: /Bien-être · 4 sur 5/ }))
     expect(screen.getByText('Édition de l’entrée 7')).toBeInTheDocument()
+  })
+
+  it('Ma journée : une habitude suivie se note par oui ou non, et la réponse se retire (refonte étape 4)', async () => {
+    const { listEntries, createEntry, deleteEntry } = await import('../storage/localHealthStorage')
+    localStorage.setItem('healthtrack_habits', JSON.stringify([{ id: 'reading' }]))
+    const today = new Date()
+    today.setHours(12, 1, 0, 0)
+    const answered = { id: 9, type: 'habit', source: 'app_habit', at: today.toISOString(), payload: { habit: 'meditation', label: 'Méditation', done: true } }
+    listEntries.mockResolvedValue([])
+    createEntry.mockResolvedValue(1)
+    deleteEntry.mockResolvedValue()
+    try {
+      const { unmount } = renderDashboard('day')
+      const list = await screen.findByRole('region', { name: 'À noter aujourd’hui' })
+      expect(screen.queryByRole('link', { name: 'Suivre une habitude' })).toBeNull()
+      fireEvent.click(within(within(list).getByRole('group', { name: 'Lecture' })).getByRole('button', { name: 'Non' }))
+      await waitFor(() => expect(createEntry).toHaveBeenCalled())
+      expect(createEntry.mock.calls[0][0]).toMatchObject({ type: 'habit', source: 'app_habit', payload: { habit: 'reading', label: 'Lecture', done: false } })
+      unmount()
+
+      localStorage.setItem('healthtrack_habits', JSON.stringify([{ id: 'meditation' }]))
+      listEntries.mockResolvedValue([answered])
+      renderDashboard('day')
+      const again = await screen.findByRole('region', { name: 'À noter aujourd’hui' })
+      fireEvent.click(within(again).getByRole('button', { name: 'Déjà noté (1)' }))
+      fireEvent.click(within(again).getByRole('button', { name: 'Méditation · oui, changer la réponse' }))
+      await waitFor(() => expect(deleteEntry).toHaveBeenCalledWith(9))
+    } finally {
+      localStorage.removeItem('healthtrack_habits')
+    }
+  })
+
+  it('Ma journée : sans habitude suivie, un lien discret mène aux Réglages (refonte étape 4)', async () => {
+    renderDashboard('day')
+    expect(await screen.findByRole('link', { name: 'Suivre une habitude' })).toHaveAttribute('href', '/settings')
   })
 
   it('sans aucune donnée : pas de liens « … dans le Journal » (VC-26)', async () => {

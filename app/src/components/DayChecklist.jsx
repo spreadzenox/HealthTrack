@@ -3,7 +3,8 @@
  * seulement ce qui se note à la main. Repas (trois cercles Matin, Midi, Soir ; un cercle vide ouvre l'appareil
  * photo), bien-être (« Noter »), digestion le soir (seulement avec l'objectif digestion). Une ligne part quand
  * c'est fait ; tout fait : « Plus rien à faire ». « Déjà noté (n) » rouvre les saisies du jour pour les modifier.
- * Aucune calorie ici, aucun compteur de jours manqués (brief § 5). Pilou et les habitudes arrivent plus tard.
+ * Étape 4 : une ligne miel par habitude suivie, « Oui » et « Non » de même poids (on note, on ne juge pas).
+ * Aucune calorie ici, aucun compteur de jours manqués (brief § 5). Pilou arrive plus tard.
  */
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -24,6 +25,9 @@ const TASKS = {
   wellbeing: { title: 'Bien-être', tone: 'mint' },
   gut: { title: 'Votre digestion ce soir', tone: 'peach' },
 }
+
+/** Titre et couleur d'une tâche ; une habitude porte son nom et le miel (brief § 6). */
+const metaOf = (t) => (t.habit ? { title: t.habit.label, tone: 'honey' } : TASKS[t.id])
 
 const hhmm = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' })
 const remainingText = (n) => `Encore ${n} ${n > 1 ? 'choses' : 'chose'} aujourd’hui`
@@ -63,27 +67,43 @@ function NoteLine({ title, hint, onNote }) {
   )
 }
 
+function HabitLine({ habit, onAnswer }) {
+  return (
+    <div className="day-line-row">
+      <span className="day-line-title">{habit.label}</span>
+      <span className="day-habit-answers">
+        <button type="button" className="day-habit-btn" onClick={() => onAnswer(habit, true)}>Oui</button>
+        <button type="button" className="day-habit-btn" onClick={() => onAnswer(habit, false)}>Non</button>
+      </span>
+    </div>
+  )
+}
+
 /**
- * @param {{ entries: object[], askGut?: boolean, now?: Date, onWellbeing: (entry?: object) => void, onGut: () => void }} props
+ * @param {{ entries: object[], askGut?: boolean, habits?: { id: string, label: string }[], now?: Date,
+ *   onWellbeing: (entry?: object) => void, onGut: () => void,
+ *   onHabit?: (habit: object, done: boolean) => void, onHabitUndo?: (entry: object) => void }} props
  */
-export default function DayChecklist({ entries, askGut = false, now, onWellbeing, onGut }) {
-  const list = dayChecklist(entries, { now: now || new Date(), askGut })
+export default function DayChecklist({ entries, askGut = false, habits = [], now, onWellbeing, onGut, onHabit, onHabitUndo }) {
+  const list = dayChecklist(entries, { now: now || new Date(), askGut, habits })
   const [notedOpen, setNotedOpen] = useState(false)
   // Une ligne faite sous nos yeux reste le temps de dire « Noté », puis part (spec § 2).
   const pendingBefore = useRef(null)
   const [leaving, setLeaving] = useState([])
   const [said, setSaid] = useState('')
-  const pendingKey = list.tasks.filter((t) => !t.done).map((t) => t.id).join(',')
+  // « id, tabulation, titre » par ligne à faire : une ligne qui part garde son titre, habitude comprise
+  const pendingKey = list.tasks.filter((t) => !t.done).map((t) => `${t.id}\t${metaOf(t).title}`).join('\n')
   useEffect(() => {
     const before = pendingBefore.current
-    const pending = pendingKey ? pendingKey.split(',') : []
+    const pending = pendingKey ? pendingKey.split('\n').map((line) => line.split('\t')) : []
     pendingBefore.current = pending
     if (!before) return undefined
-    const gone = before.filter((id) => !pending.includes(id))
+    const gone = before.filter(([id]) => !pending.some(([p]) => p === id))
     if (!gone.length) return undefined
-    setLeaving((l) => [...new Set([...l, ...gone])])
-    setSaid(`${gone.map((id) => TASKS[id].title).join(', ')} : noté. ${pending.length ? `${remainingText(pending.length)}.` : 'Plus rien à faire.'}`)
-    const t = setTimeout(() => setLeaving((l) => l.filter((id) => !gone.includes(id))), LEAVE_MS)
+    const ids = gone.map(([id]) => id)
+    setLeaving((l) => [...new Set([...l, ...ids])])
+    setSaid(`${gone.map(([, title]) => title).join(', ')} : noté. ${pending.length ? `${remainingText(pending.length)}.` : 'Plus rien à faire.'}`)
+    const t = setTimeout(() => setLeaving((l) => l.filter((id) => !ids.includes(id))), LEAVE_MS)
     return () => clearTimeout(t)
   }, [pendingKey])
 
@@ -103,18 +123,20 @@ export default function DayChecklist({ entries, askGut = false, now, onWellbeing
       )}
       {shown.map((t) => {
         const gone = t.done
+        const meta = metaOf(t)
         return (
-          <div key={t.id} role="group" aria-label={TASKS[t.id].title} data-tone={TASKS[t.id].tone}
+          <div key={t.id} role="group" aria-label={meta.title} data-tone={meta.tone}
             className={`day-line${gone ? ' is-leaving' : ''}${t.id === 'gut' && !t.available && !gone ? ' is-waiting' : ''}`}>
             {gone ? (
               <div className="day-line-row">
-                <span className="day-line-title">{TASKS[t.id].title}</span>
+                <span className="day-line-title">{meta.title}</span>
                 <span className="day-line-done"><LineIcon name="check" size={18} /> Noté</span>
               </div>
             ) : (
               <>
                 {t.id === 'meals' && <MealsLine task={t} />}
                 {t.id === 'wellbeing' && <NoteLine title="Bien-être" onNote={() => onWellbeing()} />}
+                {t.habit && <HabitLine habit={t.habit} onAnswer={onHabit} />}
                 {t.id === 'gut' && (
                   <NoteLine title="Votre digestion ce soir" hint={`À partir de ${GUT_EVENING_FROM_HOUR} h`}
                     onNote={t.available ? onGut : undefined} />
@@ -139,13 +161,15 @@ export default function DayChecklist({ entries, askGut = false, now, onWellbeing
           </button>
           {notedOpen && (
             <ul className="day-noted-list">
-              {list.noted.map(({ kind, entry }) => {
+              {list.noted.map(({ kind, entry, habit }) => {
+                const answer = kind === 'habit' ? `${habit.label} · ${entry.payload?.done ? 'oui' : 'non'}` : null
                 const inner = (
                   <>
-                    <span className="day-noted-time mono">{hhmm(entry.at)}</span>
+                    {kind !== 'habit' && <span className="day-noted-time mono">{hhmm(entry.at)}</span>}
                     <span className="day-noted-name">
                       {kind === 'meal' && mealTitle(entry)}
                       {kind === 'wellbeing' && `Bien-être · ${scoreToChoice(entry.payload?.score)} sur 5`}
+                      {answer}
                       {kind === 'gut' && `Digestion du jour · ${gutLevelLabel(entry.payload?.level)}`}
                     </span>
                     <LineIcon name="chevron" size={18} />
@@ -156,6 +180,10 @@ export default function DayChecklist({ entries, askGut = false, now, onWellbeing
                     {kind === 'meal' && <Link to="/food" className="day-noted-item">{inner}</Link>}
                     {kind === 'wellbeing' && <button type="button" className="day-noted-item" onClick={() => onWellbeing(entry)}>{inner}</button>}
                     {kind === 'gut' && <button type="button" className="day-noted-item" onClick={onGut}>{inner}</button>}
+                    {kind === 'habit' && (
+                      <button type="button" className="day-noted-item" aria-label={`${answer}, changer la réponse`}
+                        onClick={() => onHabitUndo?.(entry)}>{inner}</button>
+                    )}
                   </li>
                 )
               })}

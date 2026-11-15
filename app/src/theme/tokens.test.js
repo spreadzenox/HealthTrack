@@ -34,21 +34,22 @@ const TEXT_ON = {
   'color-badge': ['color-on-badge'],
   'mint-bg': ['mint-text', 'mint-label', 'color-ink', 'color-ink-2'],
   'peach-bg': ['peach-text', 'peach-label', 'color-ink', 'color-ink-2'],
+  'honey-bg': ['honey-text', 'honey-label', 'color-ink', 'color-ink-2'],
   'lilac-bg': ['lilac-text', 'lilac-bar', 'color-ink', 'color-ink-2'],
   'night-bg': ['night-text', 'night-label', 'color-ink', 'color-ink-2'],
   'rose-bg': ['rose-text', 'rose-label', 'color-ink', 'color-ink-2'],
   'stone-bg': ['stone-text', 'stone-label', 'color-ink', 'color-ink-2'],
 }
 
-/** Les six thèmes de la leçon 12 (AUJ-8) : fond, texte, étiquette (ou barre) et rail. */
-const THEMES = { mint: 'label', peach: 'label', lilac: 'bar', night: 'label', rose: 'label', stone: 'label' }
+/** Les thèmes de la leçon 12 (AUJ-8), et le miel des habitudes (refonte étape 4) : fond, texte, étiquette (ou barre) et rail. */
+const THEMES = { mint: 'label', peach: 'label', honey: 'label', lilac: 'bar', night: 'label', rose: 'label', stone: 'label' }
 
 describe('tokens de design', () => {
   it('reprennent les couleurs validées par le propriétaire', () => {
     expect(LIGHT).toMatchObject({
       'color-bg': '#ffffff', 'color-surface': '#f4f6f5', 'color-border': '#e3e8e6',
       'color-ink': '#10231d', 'color-ink-2': '#4a5e57', 'color-brand': '#0b7a5e',
-      'mint-bg': '#e3f5ee', 'peach-bg': '#ffebdd', 'lilac-bg': '#ece9ff', 'color-badge': '#c2410c',
+      'mint-bg': '#e3f5ee', 'peach-bg': '#ffebdd', 'honey-bg': '#fff3d1', 'honey-text': '#5a4520', 'honey-label': '#7a5200', 'honey-track': '#eecb6c', 'lilac-bg': '#ece9ff', 'color-badge': '#c2410c',
       'accent-amber': '#ffb84d', 'accent-mint': '#5ee0b5',
     })
   })
