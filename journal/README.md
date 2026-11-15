@@ -8,6 +8,16 @@
 > Agir ; nouvel accueil et visite guidée avec données fictives ; livraison continue sur Alpha ; premières simulations de
 > personas ; Alpha 100918 en examen chez Google).
 
+**🎯 Version propre de la refonte pour le dimanche 22/11 au soir (votre objectif du 15/11) : ce qui sera prêt, ce qui ne le sera pas**
+- **Prêt, sauf surprise** (étapes 1 à 7, sans Pilou) : 4 onglets et Réglages ; Ma journée et les habitudes ; l'accueil
+  en 4 temps ; Objectifs (score, familles, défi de 10 jours, réintroduction) ; Données sur Tendances, avec le détail
+  du jour qui reprend tout ce que faisait le Journal (inventaire fait le 15/11 à 18:35 :
+  [`ETAPE-7-DONNEES.md`](maquettes/compagnon-etapes/ETAPE-7-DONNEES.md), 10 choses à reloger avant de le supprimer).
+  À chaque étape : une base d'avant la refonte et une ancienne sauvegarde ouvertes sans perte, visite guidée à jour.
+- **Probable** : seuils 7 et 14 jours (6d, après le banc de ce soir 20 h) ; Nunito.
+- **Pas prêt le 22/11** : Pilou en 3D et son île (étapes 8 à 13), le double numérique (14 et 15).
+- **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs.
+
 **Où en est Halcya (un seul dépôt, une seule routine depuis le 13/11)**
 
 | | Android (Google Play) | iPhone (App Store) |
@@ -36,9 +46,8 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
 > le détail du confort digestif affiche une ligne « Réintroduction guidée »
 > ([avec un test en cours](runs/captures/2026-11-15-1635-refonte-6e-confort-digestif.png)) et la page de la
 > réintroduction [y revient](runs/captures/2026-11-15-1635-refonte-6e-reintroduction.png) au lieu de revenir à
-> Agir. **Un choix fait pour vous** : la ligne n'apparaît que si un test est en cours ou terminé, ou si une analyse
-> repère un groupe à tester (votre règle « une fonction n'apparaît que quand elle sert ») ; dites « toujours
-> visible » si vous la voulez en permanence. Agir liste encore les mêmes tests. iPhone : à embarquer.
+> Agir. La ligne n'apparaît que si un test est en cours ou terminé, ou si une analyse repère un groupe à tester
+> (vous l'avez validé le 15/11). Agir liste encore les mêmes tests. iPhone : à embarquer.
 >
 > 🧸 **Refonte « Compagnon », étape 6c, seconde moitié : la piste en défi doux (15/11 15:35)** : essayer une piste
 > dure maintenant **10 jours au lieu de 14** : 5 jours « avec », 5 jours « sans », toujours tirés au sort
@@ -46,9 +55,7 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
 > rien. À la fin, un bilan en mots ([exemple](runs/captures/2026-11-15-1535-refonte-6c2-bilan.png)) : « Plutôt
 > oui », « Plutôt non », « Pas de différence nette » ou « Trop peu de jours pour conclure », avec « À confirmer sur
 > plus de jours » tant qu'il y a moins de 10 jours « avec ». Un essai déjà commencé garde ses 14 jours.
-> **Votre question de 14:35 est restée sans réponse, j'ai donc gardé le tirage au sort** : ce n'est pas le défi de
-> la maquette (5 soirs choisis librement, comparés à vos 14 nuits habituelles), c'est plus solide et moins libre.
-> Dites « défi libre » si vous préférez celui de la maquette. **Un défaut corrigé** : l'ancien écran annonçait
+> Le tirage au sort est gardé (validé le 15/11). **Un défaut corrigé** : l'ancien écran annonçait
 > « Vérifié par votre essai » même quand les jours « avec » allaient nettement moins bien ; il dit maintenant
 > « Plutôt non ». À savoir : avec 5 jours de chaque sorte, « Plutôt oui » peut sortir un peu trop facilement ; la
 > réserve « À confirmer » l'accompagne toujours. Les lanternes et le rituel du soir viendront avec Pilou.
@@ -1136,6 +1143,7 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
 
 | Run | Type | Résultat |
 |---|---|---|
+| 15/11 18:35 — [Préparation de l'étape 7 (Données, fin du Journal)](runs/2026-11-15-1835-refonte-7-preparation.md) | 📝 | Main vert au début (v1094 en test interne). #1022 (IOS-HEAD) remise à jour sur main à 18:32 : build iOS relancée, à merger par le run de 19:35. Pendant la build, inventaire de l'étape 7 : 10 choses qu'on ne fait que dans le Journal et leur nouvelle maison, découpage 7a à 7d. Résumé : bloc « prêt le 22/11 », réponses du propriétaire du 15/11 retirées des questions. Rien mergé (pour ne pas remettre #1022 en retard). |
 | 15/11 16:35 — [Refonte « Compagnon », étape 6e : la réintroduction sous Confort digestif](runs/2026-11-15-1635-refonte-6e-reintroduction.md) | 🔧 | Main vert au début ; #1016 (iPhone, code v1092) en build macOS. Étape 6e sur Android pendant la build : ligne « Réintroduction guidée » dans le détail du confort digestif (seulement si un test existe ou si une analyse cite un groupe), retour de la réintroduction vers le confort digestif. 3704 tests verts. **#1016 mergée à 17:09** (build iOS verte, « Par famille », famille Sommeil et Agir regardés sur iPhone 17 Pro) ; puis la PR de 6e (#1020) remise à jour sur main. |
 | 15/11 15:35 — [Refonte « Compagnon », étape 6c-2 : la piste en défi doux](runs/2026-11-15-1535-refonte-6c2-defi.md) | 🔧 | Main vert au début ; #1016 (6b sur iPhone) en build macOS et en retard sur main, #1018 (journal de 13:35) en conflit. #1018 reprise dans la PR de ce run. #1016 complétée : à jour sur main, code v1091 (6b et 6c-1), seconde capture d'abonné, build relancée à 15:50. Étape 6c-2 sur Android : essai de 10 jours (5 avec, 5 sans, tirés au sort), bilan en mots, « Plutôt non » quand l'effet est à l'envers (avant : « Vérifié »). Tests vus rouges d'abord ; 3696 verts, lint, build, `npm run visual` (21 pages) ; 3 captures regardées. **#1019 mergée à 16:04** (v1092 en test interne, release v744, APK 34,6 Mo) ; #1018 fermée sans merge ; #1016 portée à v1092 à 16:15 (6b, 6c-1 et 6c-2), build macOS relancée : à merger en premier au run suivant. |
 | 15/11 14:35 — [Refonte « Compagnon », étape 6c-1 : le détail d'une famille](runs/2026-11-15-1435-refonte-6c-famille.md) | 🔧 | Main vert au début. #1015 (6b, Android) trouvée ouverte, 12 checks verts, à jour : **mergée à 14:31** (v1090). Étape 6c, première moitié, sur Android : une famille s'ouvre sur sa piste et ses facteurs comparés (`familyDetail`, routes `…/famille/:family`). Suivi iPhone de 6b ouvert (#1016, code v1090, capture « abonné »). 3687 tests verts. |

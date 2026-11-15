@@ -213,7 +213,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   `upstream.json` à `HEAD`, filtres de `ios-build.yml`, job « les correctifs s'appliquent ». Aujourd'hui chaque
   merge Android remet la PR iPhone en retard sur main et relance une heure de build (15/11 : #1016 est restée
   ouverte deux runs). À faire avant REFONTE-7. D'ici là : merger la PR iPhone avant toute PR Android.
-- [ ] **REFONTE-7 — Données et suppression du Journal** : Données s'ouvre sur Tendances, Nutrition en second onglet ;
+- [ ] **REFONTE-7 — Données et suppression du Journal** (**préparée le 15/11 18:35** :
+  [`ETAPE-7-DONNEES.md`](maquettes/compagnon-etapes/ETAPE-7-DONNEES.md) ; inventaire de 10 choses propres au Journal,
+  découpage 7a « Vos saisies » dans le détail du jour de Tendances, 7b Données sur 2 onglets et visite guidée, 7c code
+  mort et « Hier », 7d Nunito) : Données s'ouvre sur Tendances, Nutrition en second onglet ;
   **inventaire d'abord** de ce qui n'est accessible que par le Journal (modifier ou supprimer une saisie passée, la
   ligne « Règles · 2e jour », les ajouts rapides…) et une autre maison pour chaque chose ; puis suppression de
   l'écran, de ses routes (redirigées vers Tendances) et du code mort, tests compris. Nunito et les tokens
