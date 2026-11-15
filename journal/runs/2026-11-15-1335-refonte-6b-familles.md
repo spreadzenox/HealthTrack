@@ -30,8 +30,8 @@
      au-dessus de « Comment c'est calculé » : « Deux sources, réunies chaque jour : votre note et la lecture du
      visage, si vous l'utilisez. Un jour sans note ni lecture, Halcya l'estime d'après les jours voisins. »
    - note de Nouveautés `2026-11-15-1335-objectifs-familles.json` (les deux magasins).
-2. Journal : résumé, `BACKLOG.md`, `PRODUIT.md`. La ligne du tableau des runs, `PARITE.md` et le `BACKLOG.md` de
-   l'iPhone attendent le merge de #1014, qui modifie les lignes voisines (voir « Fin de run »).
+2. Journal : résumé, les deux `BACKLOG.md`, `PRODUIT.md`, `PARITE.md` (la ligne du tableau des runs et les deux
+   fichiers de l'iPhone ajoutés après le merge de #1014, qui modifiait les lignes voisines).
 
 ## Vérifs
 - `app/` : `npm run test` 3677 verts, 44 ignorés ; `npm run lint` sans erreur ; `npm run build` ; `npm run visual`
@@ -70,10 +70,26 @@
 - iPhone : rien d'embarqué à ce run pour 6b.
 - Non relus : la charte, `PRODUIT.md`, `DESIGN.md`, `INFRA.md`, les deux `BACKLOG.md`, `PARITE.md`,
   `iphone/README.md`, `iphone/journal/README.md`.
-- Pas de simulation de personas, pas de relevé TestFlight.
+- Pas de simulation de personas. Arrivée chez Apple des builds des codes v1075 à v1088 non vérifiée : le relevé ne
+  montre que le groupe externe.
 
 ## Suite
 - REFONTE-6b-iOS (embarquer, regarder le détail du bien-être sur simulateur), puis 6c (détail d'une famille et
   défi doux) ; 6d demande d'abord le banc à n = 7 et 14.
 
-## Fin de run
+## Fin de run (vers 14:25)
+- **TestFlight relevé à 13:43** (« TestFlight — examen bêta (relevé) », vert) : 1072.1073 en test chez les testeurs
+  externes ; les builds plus anciennes expirées ; rien de refusé ni en attente.
+- **#1015** (cette étape) : 12 checks verts sur 1accc23 à 14:03 (Tests, Build APK, 5 émulateurs, budget de
+  lectures). Gardée ouverte jusqu'au merge de #1014, pour ne pas mettre celle-ci en retard sur main et relancer sa
+  build macOS.
+- **#1014 mergée à 14:17** (3036290, suivi iPhone de 6a, code v1088) : 15 checks verts, build iOS sur simulateur
+  verte à 14:14. Captures regardées sur iPhone 17 Pro (`captures/pr-1014`) : Objectifs en clair (3,0 / 5, « Plutôt
+  en hausse cette semaine », confort digestif « Premier score dans 5 jours notés »), en sombre, sans donnée (« 0 sur
+  7 », « 0 sur 14 ») ; détail du bien-être : « ← Objectifs », pistes floutées et « Débloquer ». Non regardées :
+  iPhone 16e, grand texte, `/recommendations/ventre`.
+- Constat pour 6b sur iPhone : sans abonnement, le bloc « Par famille » sera masqué dans les captures actuelles.
+- Main fusionnée dans la branche de #1015 après ce merge (sans conflit) ; merge après les checks du nouveau commit
+  (état final : voir la PR).
+- Ce run a dépassé les 50 minutes visées : l'attente de la build macOS de #1014.
+
