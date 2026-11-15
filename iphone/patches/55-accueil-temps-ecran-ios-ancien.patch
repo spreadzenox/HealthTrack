@@ -1,16 +1,16 @@
 diff --git a/app/src/pages/Onboarding.jsx b/app/src/pages/Onboarding.jsx
-index eab36409..093babe8 100644
+index 667eb2c5..0e23f076 100644
 --- a/app/src/pages/Onboarding.jsx
 +++ b/app/src/pages/Onboarding.jsx
-@@ -44,6 +44,7 @@ import {
+@@ -47,6 +47,7 @@ import {
    getPhoneUsageSettings,
    isPhoneUsageAvailable,
    openPhoneUsageAccessSettings,
 +  checkPhoneUsageAccess,
  } from '../services/phoneUsageSync'
- import { choiceToScore } from '../services/mood/wellbeingScale'
  import { detectPhoneApps } from '../devices/phoneApps'
-@@ -367,6 +368,18 @@ function WeatherRow({ weather, onWeather }) {
+ import { GOLD_AI_DAILY } from '../config/premiumBenefits'
+@@ -316,6 +317,18 @@ function WeatherRow({ weather, onWeather }) {
  
  function ScreenTimeRow({ screen, onScreen }) {
    const on = screen === 'on' || (screen == null && getPhoneUsageSettings().enabled)

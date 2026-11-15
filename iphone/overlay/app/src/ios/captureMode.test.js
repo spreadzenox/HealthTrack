@@ -33,9 +33,9 @@ describe('mode captures iOS : parcours des pages piloté par l’app', () => {
   it('plan : installation vierge, puis chaque page en clair avec les données de démo, puis quelques-unes en sombre', () => {
     const plan = buildPlan(['/', '/journal'], ['/'], {})
     expect(plan.map((s) => s.name)).toEqual([
-      'vierge-onboarding', 'vierge-onboarding-tuto-2', 'demo-clair-accueil', 'demo-clair-journal', 'demo-sombre-accueil',
+      'vierge-onboarding', 'vierge-onboarding-objectifs', 'demo-clair-accueil', 'demo-clair-journal', 'demo-sombre-accueil',
     ])
-    expect(plan[1]).toMatchObject({ route: '/bienvenue', data: null, onboarding: { flow: 2, step: 0, card: 1 } })
+    expect(plan[1]).toMatchObject({ route: '/bienvenue', data: null, onboarding: { flow: 3, lastScreen: 'goal', goals: ['wellbeing', 'gut'] } })
     expect(plan[2]).toMatchObject({ route: '/', data: 'demo', theme: 'light' })
     expect(plan[4]).toMatchObject({ route: '/', data: 'demo', theme: 'dark' })
   })
@@ -49,21 +49,21 @@ describe('mode captures iOS : parcours des pages piloté par l’app', () => {
     expect(plan.map((s) => s.name)).toContain('demo-clair-recommendations-ventre')
   })
 
-  it('plan : les autres écrans du nouvel accueil sur iPhone, après la 2e carte du tuto (objectifs, sources, trouvé, visage, première note)', () => {
+  it('plan : les autres écrans de l’accueil en 4 temps sur iPhone, après les objectifs (montre oui et non, suivi, notes, visage)', () => {
     const plan = buildPlan(['/'], [], {}, {}, MORE_ONBOARDING)
     expect(plan.map((s) => s.name)).toEqual([
-      'vierge-onboarding', 'vierge-onboarding-tuto-2', 'vierge-onboarding-objectifs', 'vierge-onboarding-sources',
-      'vierge-onboarding-trouve', 'vierge-onboarding-visage', 'vierge-onboarding-premiere-note', 'demo-clair-accueil',
+      'vierge-onboarding', 'vierge-onboarding-objectifs', 'vierge-onboarding-montre', 'vierge-onboarding-montre-non',
+      'vierge-onboarding-suivi', 'vierge-onboarding-notes', 'vierge-onboarding-visage', 'demo-clair-accueil',
     ])
-    // Nouvel accueil d'Android (08/11) : chaque écran rouvert par `lastScreen`, au parcours de la version 2
-    expect(plan[3]).toMatchObject({ route: '/bienvenue', data: null, onboarding: { flow: 2, lastScreen: 'sources' } })
-    expect(plan.slice(2, 7).map((s) => s.onboarding.lastScreen)).toEqual(['goal', 'sources', 'found', 'face', 'first'])
+    // Refonte « Compagnon », étape 5b : chaque écran rouvert par `lastScreen`, au parcours de la version 3
+    expect(plan[2]).toMatchObject({ route: '/bienvenue', data: null, onboarding: { flow: 3, lastScreen: 'watch', watch: 'yes' } })
+    expect(plan.slice(1, 7).map((s) => s.onboarding.lastScreen)).toEqual(['goal', 'watch', 'watch', 'auto', 'notes', 'face'])
   })
 
   it('plan : états vides (onboarding fini, base vide), après l’onboarding et avant les données de démo', () => {
     const plan = buildPlan(['/'], [], {}, {}, [], ['/', '/journal'])
     expect(plan.map((s) => s.name)).toEqual([
-      'vierge-onboarding', 'vierge-onboarding-tuto-2', 'vide-accueil', 'vide-journal', 'demo-clair-accueil',
+      'vierge-onboarding', 'vierge-onboarding-objectifs', 'vide-accueil', 'vide-journal', 'demo-clair-accueil',
     ])
     expect(plan[3]).toMatchObject({ route: '/journal', data: 'empty', theme: 'light' })
     // par défaut : les pages qui ont un état vide à montrer
@@ -73,7 +73,7 @@ describe('mode captures iOS : parcours des pages piloté par l’app', () => {
 
   it('état vide défilé : Sources vierge montre aussi la carte du temps d’écran, sous le pli', () => {
     const plan = buildPlan([], [], {}, {}, [], ['/connectors'], { '/connectors': 1 })
-    expect(plan.map((s) => s.name)).toEqual(['vierge-onboarding', 'vierge-onboarding-tuto-2', 'vide-connectors', 'vide-connectors-2'])
+    expect(plan.map((s) => s.name)).toEqual(['vierge-onboarding', 'vierge-onboarding-objectifs', 'vide-connectors', 'vide-connectors-2'])
     expect(plan[3]).toMatchObject({ route: '/connectors', data: 'empty', theme: 'light', scroll: 1 })
     expect(EMPTY_SCROLLS).toEqual({ '/connectors': 1 })
   })
@@ -125,12 +125,12 @@ describe('mode captures iOS : parcours des pages piloté par l’app', () => {
     expect(order).toEqual(['reveal Ajouter une source', 'signal demo-clair-connectors-guides', 'signal fin'])
   })
 
-  it('2e carte du tuto : le nouvel accueil reprend à sa 2e carte', async () => {
+  it('temps 1 : l’accueil rouvre sur les objectifs, confort digestif coché', async () => {
     const plan = buildPlan(['/'], [], {})
     const local = memoryStorage()
     const d = deps(local)
     await runCaptureStep(plan, d) // vierge → 2e carte du tuto
-    expect(JSON.parse(local.data.healthtrack_onboarding)).toEqual({ flow: 2, step: 0, card: 1 })
+    expect(JSON.parse(local.data.healthtrack_onboarding)).toEqual({ flow: 3, lastScreen: 'goal', goals: ['wellbeing', 'gut'], goalsVersion: 2 })
     expect(d.storage.upsertEntries).not.toHaveBeenCalled()
     expect(d.go).toHaveBeenLastCalledWith('/bienvenue')
   })
@@ -152,7 +152,7 @@ describe('mode captures iOS : parcours des pages piloté par l’app', () => {
     const local = memoryStorage({ [STEP_KEY]: '1' })
     const d = deps(local)
     await runCaptureStep(plan, d) // choix de la montre → accueil
-    expect(d.log).toHaveBeenCalledWith('[capture] page vierge-onboarding-tuto-2')
+    expect(d.log).toHaveBeenCalledWith('[capture] page vierge-onboarding-objectifs')
     expect(d.storage.upsertEntries).toHaveBeenCalledTimes(1)
     expect(JSON.parse(local.data.healthtrack_onboarding)).toMatchObject({ done: true })
     expect(local.data['healthtrack-whats-new-last-seen']).toBe('x')
@@ -203,7 +203,7 @@ describe('mode captures iOS : parcours des pages piloté par l’app', () => {
       go: vi.fn((route) => order.push(`go ${route}`)),
     })
     await runCaptureStep(plan, d)
-    expect(order).toEqual(['signal vierge-onboarding-tuto-2', 'ack vierge-onboarding-tuto-2', 'go /'])
+    expect(order).toEqual(['signal vierge-onboarding-objectifs', 'ack vierge-onboarding-objectifs', 'go /'])
     await runCaptureStep(plan, d)
     expect(order.slice(3)).toEqual(['signal demo-clair-accueil', 'ack demo-clair-accueil', 'signal fin'])
   })

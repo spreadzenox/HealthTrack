@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { Capacitor } from '@capacitor/core'
 
-// Version iOS (HealthTrack-iOS) : nouvel accueil d'Android (ACC-1 à ACC-10, décision du propriétaire du 08/11) joué sur
+// Version iOS (HealthTrack-iOS) : accueil en 4 temps d'Android (refonte « Compagnon », étape 5b, 15/11) joué sur
 // iPhone. La carte principale dit « Santé » (healthStoreName, code d'Android), l'iPhone importe 6 mois (correctif 45),
 // le temps d'écran parle de l'iPhone (correctif 52), et la lecture du visage n'est proposée qu'à l'ouverture d'Halcya.
 vi.mock('../config/distribution', async (importOriginal) => {
@@ -67,8 +67,8 @@ describe('nouvel accueil sur iPhone (variante appstore)', () => {
     delete window.__healthtrackFakePhoneUsage
   })
 
-  it('« Branchez vos sources » : la carte dit Santé, l’iPhone et 6 mois ; jamais Health Connect ni Huawei', async () => {
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'sources' })
+  it('« Avez-vous une montre ? », à « Oui » : la carte dit Santé, l’iPhone et 6 mois ; jamais Health Connect ni Huawei', async () => {
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'watch', watch: 'yes' })
     renderAt()
     expect(await screen.findByRole('button', { name: 'Connecter Santé' })).toBeInTheDocument()
     expect(screen.getByText('votre iPhone et votre montre')).toBeInTheDocument()
@@ -81,7 +81,7 @@ describe('nouvel accueil sur iPhone (variante appstore)', () => {
   it('temps d’écran : l’iPhone demande l’accord, aucun réglage d’Android', async () => {
     window.__healthtrackFakePhoneUsage = true
     usage.access = { granted: false, supported: true }
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'sources' })
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'watch', watch: 'yes' })
     renderAt()
     expect(await screen.findByText(/L’iPhone demande votre accord \(Face ID ou code\)/)).toBeInTheDocument()
     expect(screen.queryByText(/Android/)).not.toBeInTheDocument()
@@ -101,7 +101,7 @@ describe('nouvel accueil sur iPhone (variante appstore)', () => {
   it('temps d’écran sous iOS 26.4 : pas de ligne à l’accueil', async () => {
     window.__healthtrackFakePhoneUsage = true
     usage.access = { granted: false, supported: false }
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'sources' })
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'watch', watch: 'yes' })
     renderAt()
     expect(await screen.findByRole('button', { name: 'Connecter Santé' })).toBeInTheDocument()
     await waitFor(() => expect(screen.queryByText('Temps d’écran')).not.toBeInTheDocument())
