@@ -28,7 +28,9 @@ if [ "$(git -C "$REPO" rev-parse --is-shallow-repository)" = "true" ]; then
   exit 1
 fi
 
-if [ "${1:-}" = "--latest" ]; then
+if [ "${1:-}" = "--latest" ] && [ "$(node -p "require('$ROOT/upstream.json').commit")" = "HEAD" ]; then
+  echo "upstream.json suit HEAD : le code embarqué est celui du dossier de travail, --latest n'a plus rien à avancer"
+elif [ "${1:-}" = "--latest" ]; then
   git -C "$REPO" fetch --quiet origin main
   API="repos/$SLUG/actions/workflows/play-bundle.yml/runs?branch=main&status=success&per_page=1"
   if command -v gh >/dev/null 2>&1 && gh api "$API" >/dev/null 2>&1; then
@@ -48,7 +50,7 @@ if [ "${1:-}" = "--latest" ]; then
 fi
 
 SHA="$(node -p "require('$ROOT/upstream.json').commit")"
-EXPECTED="$(node -p "require('$ROOT/upstream.json').versionCode")"
+EXPECTED="$(node -p "require('$ROOT/upstream.json').versionCode ?? ''")"
 
 # Dossier remis à neuf, sauf app/node_modules (long à réinstaller)
 if [ -d "$DEST" ]; then
@@ -60,7 +62,10 @@ mkdir -p "$DEST"
 # Tout le dépôt à ce commit, comme le clone d'avant (des tests de app/ lisent relay/ et journal/), sauf iphone/
 if [ "$SHA" = "HEAD" ]; then
   COUNT="$(git -C "$REPO" rev-list --count HEAD)"
-  (cd "$REPO" && git ls-files -z -- . ':(exclude)iphone' | tar --null --ignore-failed-read -T - -cf -) | tar -xf - -C "$DEST"
+  # Fichiers suivis encore présents (un fichier supprimé sans commit est sauté) ; options communes à GNU tar et au
+  # tar de macOS, qui ne connaît pas --ignore-failed-read (15/11, première build macOS en mode HEAD)
+  (cd "$REPO" && git ls-files -z -- . ':(exclude)iphone' | perl -0 -ne 'chomp; print "$_\0" if -e $_ || -l $_' \
+    | tar --null -T - -cf -) | tar -xf - -C "$DEST"
 else
   git -C "$REPO" cat-file -e "$SHA^{commit}" 2>/dev/null || git -C "$REPO" fetch --quiet origin "$SHA"
   COUNT="$(git -C "$REPO" rev-list --count "$SHA")"

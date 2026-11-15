@@ -248,8 +248,11 @@ priorité du propriétaire** : runs pleins (jusqu'à 50 min), étapes enchaîné
 
 ### 3. Comment la build iOS est faite
 
-1. `upstream.json` fixe le commit Android suivi et son numéro (`versionCode` = `git rev-list --count` de ce commit,
-   comme l'AAB play).
+1. **Depuis le 15/11 (IOS-HEAD)**, `upstream.json` dit `"commit": "HEAD"` : l'app iPhone embarque le code partagé du
+   commit construit, et son numéro est le nombre de commits de ce commit (`scripts/version.sh`, comme l'AAB play).
+   Une PR qui change `app/` ou `relay/` déclenche donc `ios-build.yml` (job Ubuntu : correctifs et tests ; job macOS :
+   build et captures) et, sur `main`, `ios-testflight.yml`. Il n'y a plus de PR de suivi ni de `--latest`.
+   Avant : `upstream.json` fixait le commit Android suivi et son `versionCode`.
 2. `scripts/upstream.sh` récupère ce commit dans `upstream/` (ignoré par git), applique `patches/*.patch` dans
    l'ordre de leurs noms, copie `overlay/` par-dessus, et copie `ios/` (le projet Xcode) dans `upstream/app/ios`
    (une copie, pas un lien : le `Package.swift` régénéré par `cap sync ios` pointe en relatif vers `app/node_modules`).
@@ -371,7 +374,8 @@ Règles des adaptations :
    `main` avec la PR du run.
    Un journal ne se merge **qu'après** la PR de suivi en cours (sinon celle-ci n'est plus à jour sur `main` et doit
    repasser toute sa CI), sauf décision du propriétaire à rendre visible tout de suite.
-2. **Ce qu'Android a livré** depuis le dernier run : `scripts/upstream.sh --latest` (nouveau commit suivi), puis dans
+2. **Ce qu'Android a livré** depuis le dernier run (depuis le 15/11, le code partagé arrive seul sur iPhone avec sa PR :
+   il reste à regarder les captures iPhone des écrans touchés et à tenir `PARITE.md`) : avant, `scripts/upstream.sh --latest` (nouveau commit suivi), puis dans
    HealthTrack, en lecture, `git log` entre l'ancien et le nouveau commit, nouveaux fichiers de
    `app/src/data/changelog/`, tête de `journal/README.md` et de `journal/PRODUIT.md`. Reporter dans `PARITE.md` §5.
    **Chaque nouvelle note de Nouveautés** sans `variants` s'affiche aussi sur iPhone (depuis le 29/10, l'iPhone montre

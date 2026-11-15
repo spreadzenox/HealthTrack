@@ -205,11 +205,20 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [x] **REFONTE-6e — La réintroduction sous Confort digestif** (15/11 16:35, Android) : ligne « Réintroduction
     guidée » dans le détail du confort digestif (`reintroLine`, `services/act.js` : test en cours, groupes cités par
     une analyse, ou groupes testés ; rien sinon, leçon 17), retour de `/reintroduction` vers `/recommendations/ventre`.
-  - [ ] **REFONTE-6e-iOS** : embarquer 6e (code partagé ; le correctif 50 s'applique).
+  - [ ] **REFONTE-6e-iOS** : embarquée par la PR IOS-HEAD du 15/11 17:35 (le code partagé du jour, 6e compris, part
+    sur iPhone à son merge) ; à cocher quand la PR est mergée et les captures `recommendations-ventre` et
+    `reintroduction` regardées sur simulateur.
   - [ ] **REFONTE-6e-2 — Restes de 6e** : capturer « À tester d'après vos analyses » (données de démo avec un lien
     net sur un groupe FODMAP), le sombre, 320 px, la version Play sans abonnement ; retirer les tests FODMAP d'Agir
     quand Agir rejoint l'Accueil (étape 10).
-- [ ] **IOS-HEAD — Une seule PR pour `app/` et `iphone/`** (étape 1 de « Sort des correctifs », `iphone/README.md`) :
+- [ ] **IOS-HEAD — Une seule PR pour `app/` et `iphone/`** — **en PR depuis le 15/11 17:35 (#1022)** (à merger par le run
+  suivant, build macOS verte et captures regardées) : `iphone/upstream.json` suit `HEAD` ; `ios-build.yml` suit
+  aussi `app/**` et `relay/**` (son job Ubuntu est le contrôle « les correctifs s'appliquent »), `ios-testflight.yml`
+  suit `app/**` ; `iphone/scripts/version.sh` donne le numéro (nombre de commits) ; `--latest` ne fait plus rien ;
+  charte mise à jour. **Après le merge, à vérifier une fois** : la build TestFlight porte un numéro `N.N` plus grand
+  que 1092.1093, et une PR de journal seul ne lance pas la build iOS. Suite : IOS-HEAD-2 (étape 2 de « Sort des
+  correctifs » : la variante `appstore` du correctif 01 en condition dans `app/src/`). Ce qui était demandé
+  (étape 1 de « Sort des correctifs », `iphone/README.md`) :
   `upstream.json` à `HEAD`, filtres de `ios-build.yml`, job « les correctifs s'appliquent ». Aujourd'hui chaque
   merge Android remet la PR iPhone en retard sur main et relance une heure de build (15/11 : #1016 est restée
   ouverte deux runs). À faire avant REFONTE-7. D'ici là : merger la PR iPhone avant toute PR Android.

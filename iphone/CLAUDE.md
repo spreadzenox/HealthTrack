@@ -6,7 +6,7 @@ Vite + Capacitor) vit dans `app/`, à la racine de ce dépôt ; ici se trouve to
 - Lisez d'abord `README.md` (ce qui a changé avec le dépôt unique), puis `journal/README.md` (charte : § 3 la build,
   § 4 les versions, § 8 les actions du propriétaire), `journal/PARITE.md` et `journal/BACKLOG.md`.
 - Toutes les commandes se lancent **depuis `iphone/`** : `scripts/upstream.sh` prépare `upstream/` (ignoré par git) à
-  partir de `app/` au commit de `upstream.json`, avec `patches/`, `overlay/` et `ios/`. Rien n'est téléchargé.
+  partir de `app/` tel qu'il est dans le dossier de travail (`upstream.json` suit `HEAD` depuis le 15/11), avec `patches/`, `overlay/` et `ios/`. Rien n'est téléchargé.
 - Une adaptation du code partagé reste, pour l'instant, un correctif dans `patches/` ou un fichier dans `overlay/`.
   Quand elle peut devenir du vrai code partagé dans `app/` (une condition sur la plateforme), c'est mieux : voir
   `README.md`, « Sort des correctifs ».
