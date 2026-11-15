@@ -28,7 +28,7 @@
  * de l'estimateur du bien-être (`isEstimatorInput`) ; aucun sens « bon » ou « mauvais » n'est supposé.
  */
 import { FIRST_RESULTS_DAY } from '../config/firstResults'
-import { buildDailyDataset, localDateKey, VARIABLE_META } from './analysisEngine'
+import { buildDailyDataset, localDateKey, ratingCutoffs, VARIABLE_META } from './analysisEngine'
 import { isWeekendKey, residualize } from './statistics'
 import { faceMoodDays } from './mood/faceMoodDays'
 import { FODMAP_SUBGROUPS } from './fodmapGroups'
@@ -38,6 +38,7 @@ import { estimateStates, observationsFromEntries } from './method/stateSpace'
 import { STABILITY_MIN, fitOutcomeModel } from './method/ridgeModel'
 import { detectChanges } from './method/changes'
 import { GUT_TYPE } from './today'
+import { HABIT_TYPE } from './habits'
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
 
@@ -47,8 +48,8 @@ export const CONTRACT_VERSION = 1
 /** @typedef {'short'|'medium'|'long'} HorizonId */
 /**
  * Thème = couleur de l'identité visuelle (DESIGN.md) : wellbeing vert, digestion et nutrition orange, activity lilas,
- * sleep bleu nuit, body rose framboise, context gris neutre.
- * @typedef {'wellbeing'|'digestion'|'nutrition'|'activity'|'sleep'|'body'|'context'} ThemeId
+ * sleep bleu nuit, body rose framboise, context gris neutre, habit miel (refonte « Compagnon »).
+ * @typedef {'wellbeing'|'digestion'|'nutrition'|'activity'|'sleep'|'body'|'context'|'habit'} ThemeId
  */
 
 /**
@@ -218,6 +219,33 @@ export const FACTORS = [
 
 const FACTOR_BY_KEY = Object.fromEntries(FACTORS.map((f) => [f.key, f]))
 
+export const HABIT_FACTOR_PREFIX = 'habit_'
+/**
+ * Une réponse donnée dans l'heure qui suit la note de bien-être du jour compte comme donnée avec elle (la checklist
+ * de Ma journée se remplit d'un trait). ponytail: seuil fixe ; à remplacer par l'heure réelle de l'habitude si on la
+ * demande un jour.
+ */
+export const HABIT_SAME_SESSION_MS = 3_600_000
+
+/**
+ * Refonte « Compagnon », étape 4b : un facteur par habitude qui a des réponses (oui = 1, non = 0, sans réponse =
+ * inconnu). Une habitude est un X comme les autres : aucun sens supposé (règle 6), jamais une entrée de l'estimateur
+ * du bien-être (règle 5), même correction de Holm que les autres facteurs. Libellé : celui de la dernière réponse.
+ */
+export function habitFactors(entries) {
+  const labels = new Map()
+  for (const e of entries || []) {
+    const id = e?.type === HABIT_TYPE ? e.payload?.habit : null
+    if (typeof id !== 'string' || !id || typeof e.payload.done !== 'boolean') continue
+    const prev = labels.get(id)
+    if (!prev || (e.at || '') >= prev.at) labels.set(id, { at: e.at || '', label: String(e.payload.label || id) })
+  }
+  return [...labels].sort(([a], [b]) => (a < b ? -1 : 1)).map(([id, { label }]) => ({
+    key: `${HABIT_FACTOR_PREFIX}${id}`, label, theme: 'habit', actionable: true, unit: 'jour', step: 1,
+    text: () => 'un jour « oui »',
+  }))
+}
+
 // ─── Jours ───────────────────────────────────────────────────────────────────
 
 const DAY_MS = 86_400_000
@@ -298,6 +326,20 @@ function factorDays(entries) {
     if (tags.includes('sick') || tags.includes('travel')) vals._disrupted = true
   }
   for (const [dk, on] of measuredTagsByDay(entries || []).get('travel') ?? []) if (on && out.has(dk)) out.get(dk)._disrupted = true
+  // Habitudes : oui = 1, non = 0. Ordre temporel (règle 5) : un jour noté avant 20 h, une réponse donnée après la
+  // note ne dit pas si l'habitude a précédé la mesure, elle reste inconnue. Dernière réponse saisie du jour gagne.
+  const cutoffs = ratingCutoffs(entries || [])
+  const answered = new Map()
+  for (const e of entries || []) {
+    if (e?.type !== HABIT_TYPE || !e.at || typeof e.payload?.habit !== 'string' || typeof e.payload.done !== 'boolean') continue
+    const dk = localDateKey(e.at)
+    const slot = `${dk}|${e.payload.habit}`
+    if (answered.has(slot) && (e.created_at || '') < answered.get(slot)) continue
+    answered.set(slot, e.created_at || '')
+    const late = cutoffs.has(dk) && !(Date.parse(e.created_at) <= cutoffs.get(dk) + HABIT_SAME_SESSION_MS)
+    if (!out.has(dk)) out.set(dk, { _meals: false, _disrupted: false })
+    out.get(dk)[`${HABIT_FACTOR_PREFIX}${e.payload.habit}`] = late ? null : Number(e.payload.done)
+  }
   // Nutrition : un jour sans repas noté est inconnu, pas un jour à jeun.
   for (const vals of out.values()) {
     if (vals._meals) continue
@@ -576,7 +618,7 @@ function fitModel(ys, days, fitted, weights, changeDates = []) {
  */
 export function computeAnalysisResults(entries, { now = new Date() } = {}) {
   const today = localDateKey(now.toISOString())
-  return analyzeMatrix(buildAnalysisMatrix(entries, { today }), { today })
+  return analyzeMatrix(buildAnalysisMatrix(entries, { today }), { today, factors: [...FACTORS, ...habitFactors(entries)] })
 }
 
 /**

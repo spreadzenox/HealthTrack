@@ -194,6 +194,10 @@ for (const [g, word] of Object.entries(FODMAP_WORD)) {
  * @param {{ key: string, label: string, horizon?: string, value?: number, usual?: number }} c  une contribution du jour
  */
 export function contributionText(c) {
+  // Habitude (oui ou non) : part des jours « oui » sur la fenêtre, dite sans chiffre
+  if (c?.key?.startsWith('habit_') && isNum(c.value) && isNum(c.usual) && c.value !== c.usual) {
+    return `« ${c.label} » ${c.value > c.usual ? 'plus' : 'moins'} souvent ${HABIT}${WHEN[c.horizon] ?? ''}`
+  }
   const p = PHRASES[c?.key]
   if (!p || !isNum(c.value) || !isNum(c.usual) || c.value === c.usual) return c?.label ?? ''
   const up = c.value > c.usual

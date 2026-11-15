@@ -10,7 +10,7 @@ import { APP_NAME } from '../config/brand'
 import { monoDigits } from '../utils/monoDigits'
 
 const pct = (p) => `${Math.round(p * 100)} %`
-const THEME_TONE = { wellbeing: 'mint', digestion: 'peach', nutrition: 'peach', activity: 'lilac', sleep: 'night', body: 'rose', context: 'stone' }
+const THEME_TONE = { wellbeing: 'mint', digestion: 'peach', nutrition: 'peach', activity: 'lilac', sleep: 'night', body: 'rose', context: 'stone', habit: 'honey' }
 
 /** Étoile à 8 branches : rayon ∝ √part (une part double ne paraît pas quatre fois plus grande). */
 export function ExpressionStar({ mix }) {

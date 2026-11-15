@@ -604,7 +604,7 @@ function entryEndMs(e) {
  * Heure de la dernière note de chaque jour noté avant DAY_OVER_HOUR (les autres jours n'ont pas de limite).
  * @returns {Map<string, number>} dateKey → ms
  */
-function ratingCutoffs(entries) {
+export function ratingCutoffs(entries) {
   const last = new Map()
   for (const e of entries) {
     if (e.type !== 'wellbeing' || !e.at) continue
