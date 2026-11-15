@@ -35,7 +35,8 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
 > 🧸 **Refonte « Compagnon », étape 6b : les liens par famille (15/11 13:35)** : en touchant la carte d'un
 > objectif, vous voyez d'abord trois familles, Sommeil, Alimentation, Activité
 > ([capture](runs/captures/2026-11-15-1335-refonte-6b-familles.png) ·
-> [sombre](runs/captures/2026-11-15-1335-refonte-6b-familles-sombre.png)) : chacune dit la force de son lien le plus
+> [sombre](runs/captures/2026-11-15-1335-refonte-6b-familles-sombre.png) ·
+> [avec une habitude](runs/captures/2026-11-15-1335-refonte-6b-familles-habitudes.png)) : chacune dit la force de son lien le plus
 > net, en trois points et en mots (« Lien fort », « Lien moyen », « Lien faible »), ou « Pas de lien net pour
 > l'instant ». Les pistes et le détail par délai restent en dessous. En bas du bien-être, un lien « Comment est
 > calculé votre bien-être ? » (votre note et la lecture du visage, réunies chaque jour). **Quatre choix faits pour
@@ -46,8 +47,8 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
 > maquette ; (3) fort à partir de 0,5 point sur 5 pour une variation habituelle, moyen à partir de 0,25, faible en
 > dessous : ce sont des repères que j'ai choisis, pas des tests ; (4) « Comment est calculé… » est un texte
 > replié, pas une feuille illustrée. **Limites** : les cartes des familles ne s'ouvrent pas encore (étape 6c) ; pas
-> de moyenne par famille (« 7 h 05 par nuit ») ; ni Pilou ni galets ; sur les données de démo, une seule famille a
-> un lien net, les trois niveaux côte à côte n'ont donc jamais été vus à l'écran ; captures regardées à 412 px
+> de moyenne par famille (« 7 h 05 par nuit ») ; ni Pilou ni galets ; le niveau « Lien moyen » et la ligne Écrans n'ont jamais été vus à l'écran (les données de démo ne les
+> produisent pas) ; captures regardées à 412 px
 > seulement ; **pas encore sur iPhone**.
 >
 > 🧸 **Refonte « Compagnon », étape 6a : Objectifs s'ouvre sur vos scores (15/11 12:35)** : une carte par objectif

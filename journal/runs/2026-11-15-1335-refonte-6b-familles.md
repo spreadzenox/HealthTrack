@@ -44,6 +44,8 @@
 - Captures regardées (Android, 412 px, données de démo) : détail du bien-être, haut de page, clair et sombre (une
   famille avec un lien faible, deux sans lien net) ; bas de page, clair et sombre (les deux liens « Comment… ») ;
   détail du confort digestif avant les résultats (inchangé, pas de familles).
+- Capture ajoutée après coup (`--habits=history`, clair) : une ligne Habitudes en miel, « Méditation », trois
+  points, « Lien fort », au-dessus de Sommeil « Lien faible » et de deux familles sans lien net.
 - iPhone : `git apply --check` du correctif 50 (seul à toucher `Recommendations.css`) passe.
 
 ## Écarts et choix (dits au propriétaire dans le résumé)
@@ -60,7 +62,7 @@
 - Les cartes des familles ne s'ouvrent pas (le détail d'une famille est l'étape 6c) ; sur les données de démo, la
   carte Sommeil et la piste Sommeil se suivent et disent presque la même chose.
 - « Comment est calculé votre bien-être ? » et « Comment c'est calculé » se suivent : deux libellés proches.
-- États jamais capturés : trois niveaux différents côte à côte, une ligne Habitudes ou Écrans, « Pas assez de
+- États jamais capturés : le niveau « Lien moyen », une ligne Écrans, « Pas assez de
   données », le confort digestif avec des résultats, le lien déplié. La version Play sans abonnement (bloc masqué)
   a un test (`Recommendations.play.test.jsx`), pas de capture.
 - Captures non regardées : 320 px, grand texte, les 19 autres pages du passage complet (lancé pour ses erreurs).
