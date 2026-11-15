@@ -76,3 +76,10 @@
 ## Suite
 - Finir #1016 (build simulateur, capture d'abonné regardée, merge), puis REFONTE-6c-1-iOS.
 - REFONTE-6c-2 (défi doux) selon la réponse du propriétaire ; 6d demande d'abord le banc à n = 7 et 14.
+
+## Fin de run (vers 14:55)
+- **Après #1015** (6d86ddf) : « Build & Release » vert, **release v742**, APK 34,6 Mo ; « Play — AAB » vert (v1090
+  en test interne).
+- **#1017** (cette étape) ouverte, checks en cours à l'écriture de ces lignes ; merge après les checks verts
+  (état final : voir la PR). Si elle est encore ouverte au run suivant : la finir.
+- **#1016** (6b sur iPhone) ouverte, build macOS en cours (près d'une heure) : à finir par le run suivant.
