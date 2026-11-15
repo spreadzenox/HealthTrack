@@ -36,7 +36,7 @@
 > des seuils de 14 et 28 jours, de Figtree et des couleurs par thème.
 > **Les 15 étapes (§ 10 du brief ; cases et détail : `BACKLOG.md`, REFONTE-1 à REFONTE-15), un run de code par étape,
 > parité iPhone dans le même run :** 1 Cohérence (**faite le 15/11**, Android 02:35, iPhone 04:20) · 2 Navigation (**faite le 15/11**, Android 04:35, iPhone 06:00)
-> · 3 Ma journée (**faite sur Android le 15/11 05:35**, #1001 ; iPhone en PR #1002) · 4 Habitudes (**4a en PR sur Android le 15/11 06:35**, #1003 : réglage, oui ou non dans Ma journée, miel, export ; 4b, les analyses, à faire) · 5 Onboarding · 6 Objectifs (seuils 7 et 14 jours) · 7 Données et suppression du
+> · 3 Ma journée (**faite sur Android le 15/11 05:35**, #1001 ; iPhone en PR #1002) · 4 Habitudes (**4a faite sur Android le 15/11 06:35**, #1003, iPhone en PR #1002 : réglage, oui ou non dans Ma journée, miel, export ; 4b, les analyses, à faire) · 5 Onboarding · 6 Objectifs (seuils 7 et 14 jours) · 7 Données et suppression du
 > Journal (Nunito et tokens ici ou en 8) · 8 Compagnon 1a, la scène · 9 Compagnon 1b, Pilou · 10 Compagnon 2, bulles
 > et jauge · 11 Compagnon 3, nourrir Pilou · 12 Compagnon 4, rencontre et jour 7 · 13 Compagnon 5, cycle du jour,
 > widget · 14 Double numérique a, Studio à la main · 15 Double numérique b, la photo (seule sortie nouvelle du
