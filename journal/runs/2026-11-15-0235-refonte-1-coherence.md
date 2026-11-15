@@ -8,7 +8,8 @@
 - Empreinte des instructions (`orchestration/routine/`) vérifiée : conforme (710f9e8b…). Premier run qui lit le bloc
   REFONTE « Compagnon » (décisions du propriétaire des 13, 14 et 15/11) ; brief lu en entier.
 - Main 88b298a vert (Tests, Build & Release, Play — AAB, émulateur). PR #992 (P44-3b, run de 01:35) ouverte, à jour
-  sur main, 12 checks verts.
+  sur main, 12 checks verts. Le run de 01:35 tournait encore (il a mergé #994, son journal final, à 02:5x) : ce run
+  n'a touché aucun de ses fichiers de code.
 - PR #51 (`cursor/*`) : non touchée.
 
 ## Fait
@@ -37,14 +38,20 @@
 ## Vérifs
 - `app/` : `npm run test` 3574 verts (44 ignorés) ; `npm run lint` sans erreur ; `npm run build` ; `npm run visual`
   (18 pages ok, données de démo) et `npm run visual -- --empty --routes=/,/settings`.
-- Captures regardées (thème clair seulement) : Aujourd'hui avec les données de démo
+- Captures regardées : Aujourd'hui avec les données de démo
   ([« Digestion » et bloc digestif présents](captures/2026-11-15-0235-refonte-1-aujourdhui-digestion.png)), Aujourd'hui
   sur une installation vide sans objectif
   ([ni « Digestion » ni bloc digestif](captures/2026-11-15-0235-refonte-1-aujourdhui-sans-objectif.png)),
-  [Réglages](captures/2026-11-15-0235-refonte-1-reglages.png) (Sources en premier, 4 onglets), Sources (roue active,
-  aucun onglet actif), [Paramètres](captures/2026-11-15-0235-refonte-1-parametres.png) (4 objectifs, nouvelle phrase).
-- Non regardé : thème sombre, écran « Qu'est-ce qui vous amène ? » de l'accueil (couvert par un test, pas par une
-  capture), émulateurs (sur la PR).
+  Réglages ([clair](captures/2026-11-15-0235-refonte-1-reglages.png) ·
+  [sombre](captures/2026-11-15-0235-refonte-1-reglages-sombre.png) : Sources en premier, 4 onglets), Sources (roue
+  active, aucun onglet actif), [Paramètres](captures/2026-11-15-0235-refonte-1-parametres.png) (4 objectifs, nouvelle
+  phrase), [« Qu'est-ce qui vous amène ? »](captures/2026-11-15-0235-refonte-1-accueil-objectifs.png) (4 cases).
+- Non regardé : Paramètres, Sources et l'accueil en thème sombre ; les émulateurs (sur la PR).
+- iPhone, à blanc : `scripts/upstream.sh` sur le commit de la branche, les 52 correctifs s'appliquent (après avoir
+  déplacé un import de `Settings.jsx` qui cassait le correctif 59) ; tests du code embarqué non lancés, rien poussé
+  dans `iphone/`.
+- Alpha : le dernier « Play — Alpha » planifié est celui du 14/11 à 03:41 ; celui de 23:45 n'était pas parti à
+  02:55. Pas de soumission bêta à faire à ce run.
 
 ## Limites
 - **TDD partiel** : faute de temps, les tests ont été écrits ou réécrits juste après le code, pas avant.
@@ -56,11 +63,12 @@
   qu'aucune donnée de cycle n'existe. À décider à l'étape 5 ou 7 (le cycle reste un contexte de la digestion).
 - La page Sources n'a pas de lien de retour vers Réglages (la roue y ramène). Le Journal, qui disparaît, n'a pas
   été revu ; la visite guidée n'a pas été rejouée.
+- Le correctif iPhone 59 (« Mon cycle » coché dans Paramètres → cycle demandé à Santé) s'applique encore mais ne
+  sert plus : la case n'existe plus. À retirer ou remplacer avec la décision sur le cycle (étape 5 ou 7).
 - Pas de maquette du kit pour cette étape (elle ne touche pas au compagnon) : captures jugées seules.
 - Charte, PRODUIT, BACKLOG et journal iPhone lus par sections (plus de 1 Mo) ; `DESIGN.md`, `INFRA.md`,
   `iphone/journal/` (README § 3, 4, 8, PARITE, BACKLOG) non relus à ce run.
-- TestFlight et Alpha : rien relevé à ce run (ni l'envoi Alpha de la nuit, ni l'état des builds chez Apple, ni
-  soumission bêta, ni expiration).
+- TestFlight : état des builds chez Apple non relevé ; ni soumission bêta ni expiration à ce run.
 
 ## Fin du run
 - Voir la PR de ce run et la PR iPhone de suivi.

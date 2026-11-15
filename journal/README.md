@@ -34,12 +34,12 @@
 > sans l'objectif « Ma digestion »** (avant, le bouton « Digestion » était toujours dans le bandeau d'Aujourd'hui :
 > [sans objectif](runs/captures/2026-11-15-0235-refonte-1-aujourdhui-sans-objectif.png) ·
 > [avec](runs/captures/2026-11-15-0235-refonte-1-aujourdhui-digestion.png)) ; **« Mon cycle » et « Mon sport et ma
-> récupération » ne sont plus proposés** à l'accueil ni dans
+> récupération » ne sont plus proposés** à [l'accueil](runs/captures/2026-11-15-0235-refonte-1-accueil-objectifs.png) ni dans
 > [Paramètres](runs/captures/2026-11-15-0235-refonte-1-parametres.png), réglages et données gardés. **Limites** : qui
 > avait coché « Mon cycle » garde le ventre (la migration des objectifs est l'étape 5) ; sans objectif, qui a noté son
 > ventre ces 7 derniers jours le garde aussi ; une nouvelle installation n'a plus de bouton « Règles » tant qu'aucune
-> donnée de cycle n'existe (à trancher à l'étape 5 ou 7) ; thème sombre non regardé ; **pas encore sur iPhone** (PR de
-> suivi ouverte, build macOS à finir au run suivant).
+> donnée de cycle n'existe (à trancher à l'étape 5 ou 7) ; en thème sombre, seuls Réglages et Aujourd'hui ont été
+> regardés ; **pas encore sur iPhone** (suivi du code embarqué à finir au run suivant, build macOS).
 
 > 🥇 **Gold prolongé : la nouvelle date s'affiche (15/11 01:35)** : suite de « P44 oui ». Jusqu'ici, rien ne disait
 > à un testeur inscrit que Gold continuait après le 2 décembre : la date changeait seulement dans Paramètres. Quand le
