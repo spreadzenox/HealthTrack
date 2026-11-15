@@ -55,8 +55,14 @@
 - `journal/PRODUIT.md` non modifié : ni jalon ni action du propriétaire ne change.
 
 ## Fin du run
-- Voir la PR de ce run : la build iOS sur simulateur dure de 30 à 60 minutes ; si elle n'est pas finie à la fin du
-  run, le run suivant regarde les captures `captures/pr-<N>` (Agir, Journal) et merge.
+- **PR #990** : les 15 checks verts à 01:29 (Tests, Build APK, cinq émulateurs, tests du code embarqué, modèles du
+  visage, build iOS sur simulateur en 48 minutes, build 1065.1068) ; main inchangé entre-temps. Captures
+  `captures/pr-990` regardées sur iPhone 16e, démo, clair : Agir (rien de cassé ; la phrase « D'ici là, notez… » y
+  figure, la démo n'a pas de note du jour : le cas « note faite » n'est pas vu sur iPhone) et Journal › Jours.
+  Mergée à 01:29 (3ec842a).
+- Après le merge : Build & Release vert, **release v731 publiée, APK de 34,6 Mo** ; Tests et Play — AAB verts ;
+  « iOS — TestFlight » vert en 5 minutes (envoi du code v1065, bilan non lu) ; build iOS sur simulateur et
+  émulateur A56 de main encore en cours à 01:38.
 
 ## Suite
 - Suivi iPhone de POLISH-SIM-97 (upstream v1065 → dernière).
