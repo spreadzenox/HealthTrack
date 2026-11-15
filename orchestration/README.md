@@ -154,7 +154,9 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
 - **Refonte « Compagnon »** (décisions du propriétaire des 13, 14 et 15/11, exception au mode polish) : le brief et
   son kit sont dans `journal/maquettes/compagnon/` (repris le 15/11 de la branche où une autre conversation du
   propriétaire les avait posés) ; les instructions y renvoient et citent ses mots. Étapes 1 à 7 lancées ; le double
-  numérique en dernier ; les déclarations Play et App Store, à préparer par la routine, restent son geste. À suivre
+  numérique en dernier ; les déclarations Play et App Store, à préparer par la routine, restent son geste. Objectif
+  du 15/11 : « une version propre de l'app refonte à la fin de la semaine, attention à la rétrocompatibilité des
+  données, du tutoriel de départ » (lu comme le dimanche 22/11 ; à lui faire confirmer). À suivre
   dans les bilans : l'étape en cours (tête du résumé), et à l'étape 15 l'envoi d'un selfie au relais, seule sortie
   nouvelle du téléphone, qui n'entre dans aucune version avant ses déclarations.
 - **Testeurs.** J = 08/11. Relance du septième jour vers le 15/11. Demande d'accès à la production (P30) au
