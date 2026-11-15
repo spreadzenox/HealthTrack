@@ -72,3 +72,13 @@
 ## Suite
 - REFONTE-6a-iOS, puis 6b (3 familles) ; 6d demande d'abord le banc à n = 7 et 14.
 - #1010 : doublon de #1011 (voir « Fin de run »).
+
+## Fin de run (vers 13:15)
+- **#1013** (cette étape) : 12 checks verts sur 67c4d00 (Tests, Build APK, 5 émulateurs, budget de lectures). Main
+  avait avancé (#1012, journal du run de 11:35) : main fusionnée dans la branche, conflits de journal seulement,
+  résolus en gardant les lignes des deux runs ; merge après les checks du nouveau commit (état final : voir la PR).
+- **#1010** fermée sans merge (doublon de #1011), avec un commentaire ; branche `claude/iphone-code-5b` laissée.
+- **Main 0d79999** (#1011) : « iOS — TestFlight » vert (le code v1085 est parti vers TestFlight ; arrivée chez Apple
+  non vérifiée).
+- Capture de l'écran sans aucune donnée regardée après coup : une carte Bien-être, « Premier score dans 7 jours
+  notés », « 0 sur 7 ».

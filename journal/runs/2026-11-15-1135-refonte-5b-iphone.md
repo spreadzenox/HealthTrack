@@ -49,3 +49,23 @@
 ## Suite
 - REFONTE-6 (Objectifs : score et tendance, 3 familles, piste en défi, seuils 7 et 14 jours).
 - REFONTE-5b-2, 5b-3, 5b-4 (restes de l'accueil).
+
+## Fin de run (vers 12:45)
+- **#1011 mergée** (0d79999, vers 12:40) : 15 checks verts sur ef1fa29, build iOS sur simulateur verte.
+- **Captures regardées** (branche `captures/pr-1011`, iPhone 17 Pro, clair) : temps 1 (Bien-être « Toujours
+  suivi », Confort digestif « Ajouté »), temps 2 à « Oui » (carte « Santé », « votre iPhone et votre montre »,
+  « vos 6 derniers mois », « Connecter Santé ») et à « Non » (« relier Santé dans Réglages › Sources »), temps 3
+  (9 tuiles), temps 4 (repas, bien-être, digestion, 4 habitudes, Méditation cochée) ; carte de restauration
+  au-dessus de l'ouverture (sombre) ; ouverture sur iPhone 16e. Non regardés : l'écran du visage, le grand texte,
+  les 4 temps en sombre et sur iPhone 16e.
+- **Défaut de l'outil de captures, pas de l'app** : sur iPhone 17 Pro, `vierge-onboarding.png` est le même fichier
+  que `vierge-onboarding-objectifs.png` (même empreinte git) ; sur iPhone 16e, la première capture montre bien la
+  carte d'ouverture. Cause non cherchée (IOS-CAPTURES-1 au backlog iPhone).
+- Sur simulateur, pas de ligne « Temps d'écran » au temps 2 (seule « Météo » sous « Sur ce téléphone ») alors que la
+  tuile « Temps d'écran » s'affiche au temps 3 : la limite notée plus haut se voit.
+- **Build macOS relancée deux fois par mes pushs de journal** (le filtre de chemins porte sur toute la PR) : merge
+  retardé d'environ 6 minutes, deux builds annulées. Noté dans `iphone/journal/BACKLOG.md`.
+- « Publier l'APK » rouge sur e0b70bf : run annulé par le push suivant, artefact absent ; dit une fois sur la PR.
+- TestFlight, relevé de 11:39 : « en test 1072.1073 ; refusées aucune ; en attente aucune ». Arrivée de la build du
+  code v1085 non vérifiée.
+- Ce run a dépassé les 50 minutes visées (attente de la build macOS).
