@@ -40,6 +40,8 @@ relevé de 08:40, « en test 1072.1073 ; refusées aucune ; en attente aucune »
 - iPhone, 4b : les lignes miel d'Objectifs n'ont pas été vues sur simulateur (écran verrouillé sans Gold, et les
   données de démo n'ont pas d'habitude) ; iPhone 16e et grand texte non regardés ; workflows de main après le merge
   non attendus.
+- #1005 mergée sans relire son diff : elle portait aussi des lignes de journal du run précédent (je la croyais
+  limitée à `upstream.json`), d'où un conflit dans le résumé, résolu dans cette PR.
 - Pas de simulation de personas à ce run (deux par jour demandées) : le temps est allé à l'étape 5.
 - Le relevé TestFlight ne liste que les builds soumises à l'examen bêta : l'arrivée chez Apple des builds des codes
   v1075 et v1078 n'est toujours pas vérifiée.
