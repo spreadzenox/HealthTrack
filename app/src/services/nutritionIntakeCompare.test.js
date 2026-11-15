@@ -109,6 +109,23 @@ describe('nutritionIntakeCompare', () => {
     expect(tiny.likelyIncomplete).toBe(true)
   })
 
+  it('seul le jour en cours est saisi : « journée en cours », pas « repas manquants » (POLISH-SIM-97)', () => {
+    const today = compareRecentIntake([meal(new Date(2026, 4, 21, 12).toISOString(), 50)], profile)
+    expect(today.likelyIncomplete).toBe(true)
+    expect(today.dayInProgress).toBe(true)
+    // Un autre jour saisi dans la fenêtre : l'avertissement habituel reste.
+    const yesterday = compareRecentIntake([meal(new Date(2026, 4, 20, 12).toISOString(), 50)], profile)
+    expect(yesterday.dayInProgress).toBe(false)
+    const both = compareRecentIntake([
+      meal(new Date(2026, 4, 20, 12).toISOString(), 50),
+      meal(new Date(2026, 4, 21, 12).toISOString(), 50),
+    ], profile)
+    expect(both.dayInProgress).toBe(false)
+    // Journée déjà complète : rien d'incertain, donc rien à nuancer.
+    const full = compareRecentIntake([meal(new Date(2026, 4, 21, 12).toISOString(), 2000)], profile)
+    expect(full.dayInProgress).toBe(false)
+  })
+
   it('jours incomplets : « bas », « proche » et « sous la limite » deviennent « incertain » (POL-PLAY-75, 97), atteint et dépassé restent', () => {
     const tiny = compareRecentIntake([meal(new Date(2026, 4, 20, 12).toISOString(), 50)], profile)
     for (const row of tiny.rows) {
