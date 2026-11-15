@@ -87,8 +87,8 @@ function TutoIllustration() {
 }
 
 const TABS_EXPLAINED = [
-  { tab: 'Journal', text: 'voir vos journées, vos repas, vos mesures' },
-  { tab: 'Analyses', text: `les liens que ${APP_NAME} trouve dans vos données` },
+  { tab: 'Données', text: 'voir vos journées, vos repas, vos mesures' },
+  { tab: 'Objectifs', text: `les liens que ${APP_NAME} trouve dans vos données` },
   { tab: 'Agir', text: 'vérifier une piste par un essai' },
 ]
 
@@ -912,7 +912,7 @@ export default function Onboarding() {
             <FirstStep goals={goals} first={state.first} choice={choice} onChoice={setChoice} />
             {saveError && (
               <p className="onb-note" role="alert">
-                L’enregistrement n’a pas abouti. Réessayez, ou notez-le plus tard depuis Aujourd’hui.
+                L’enregistrement n’a pas abouti. Réessayez, ou notez-le plus tard depuis Ma journée.
               </p>
             )}
           </>

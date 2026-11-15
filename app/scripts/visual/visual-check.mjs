@@ -168,6 +168,7 @@ const FIRST_MEAL_ITEMS = [
 
 const DEFAULT_ROUTES = [
   ['/', 'dashboard'],
+  ['/ma-journee', 'ma-journee'],
   ['/journal', 'journal'],
   ['/tendances', 'tendances'],
   ['/food', 'food'],

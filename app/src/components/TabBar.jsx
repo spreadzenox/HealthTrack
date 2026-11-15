@@ -3,45 +3,48 @@ import { goalsOf, wantsGut } from '../settings/onboarding'
 import './TabBar.css'
 
 const ICONS = {
-  today: (
+  home: (
     <>
-      <circle className="tabbar-dot" cx="12" cy="12" r="4" />
-      <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" />
+      <path d="M3.5 11 12 3.5 20.5 11" />
+      <path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5" />
+      <path d="M10 21v-6h4v6" />
     </>
   ),
-  journal: (
+  // Ma journée : une liste à cocher
+  day: (
     <>
-      <path d="M6 3h11a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6z" />
-      <path d="M6 3v18M10 8h5M10 12h5" />
+      <path d="m3.5 6.5 1.8 1.8 3-3.3M3.5 13l1.8 1.8 3-3.3" />
+      <path d="M12 7h8.5M12 13.5h8.5M12 19.5h8.5" />
+      <circle className="tabbar-dot" cx="5.5" cy="19.5" r="1.3" />
     </>
   ),
-  pistes: <path d="M3 3v18h18M7 15l4-4 3 3 6-7" />,
-  // Agir (ORG-1) : une cible
-  act: (
+  // Objectifs : une cible
+  goals: (
     <>
       <circle cx="12" cy="12" r="8.5" />
       <circle cx="12" cy="12" r="4.5" />
       <circle className="tabbar-dot" cx="12" cy="12" r="1.2" />
     </>
   ),
+  data: <path d="M3 3v18h18M7 15l4-4 3 3 6-7" />,
 }
 
 /**
- * Navigation en 4 onglets : Aujourd'hui, Journal, Analyses, Agir (jalon 2c, ORG-1 du 07/11, puis refonte « Compagnon »
- * étape 1 du 15/11 : Sources quitte la barre et se range dans Réglages). Les réglages (Sources, Données, Paramètres,
- * Nouveautés) passent par le bouton en haut à droite (SettingsButton) : aucun onglet n'y est actif.
- * `paths` : préfixes de pages rangées sous l'onglet (Repas et Nutrition sous Journal, Digestion et Tendances sous
- * Analyses, la réintroduction FODMAP sous Agir, historique du bien-être sous Aujourd'hui — POL-PLAY-82).
+ * Navigation en 4 onglets : Accueil, Ma journée, Objectifs, Données (refonte « Compagnon », étape 2 du 15/11 ; avant :
+ * Aujourd'hui, Journal, Analyses, Agir). Le contenu existant est rangé dans les nouveaux onglets, aucune adresse ne
+ * change. Les réglages passent par le bouton en haut à droite (SettingsButton) : aucun onglet n'y est actif.
+ * `exact` : pages de l'onglet à cette adresse précise (« Agir » sous Accueil, mais un essai sous Objectifs) ;
+ * `paths` : préfixes de pages rangées sous l'onglet.
  */
 const TABS = [
-  { to: '/', label: 'Aujourd’hui', icon: 'today', end: true },
-  { to: '/journal', label: 'Journal', icon: 'journal', paths: ['/journal', '/food', '/nutrition', '/tendances', '/bien-etre'] },
-  { to: '/recommendations', label: 'Analyses', icon: 'pistes', paths: ['/recommendations'] },
-  { to: '/agir', label: 'Agir', icon: 'act', paths: ['/agir', '/reintroduction'] },
+  { to: '/', label: 'Accueil', icon: 'home', exact: ['/', '/agir'] },
+  { to: '/ma-journee', label: 'Ma journée', icon: 'day', paths: ['/ma-journee'] },
+  { to: '/recommendations', label: 'Objectifs', icon: 'goals', paths: ['/recommendations', '/reintroduction', '/agir/essai'] },
+  { to: '/tendances', label: 'Données', icon: 'data', paths: ['/tendances', '/nutrition', '/food', '/journal', '/bien-etre'] },
 ]
 
 /**
- * Analyses s'ouvre sur Digestion pour qui a l'objectif digestion (POLISH-SIM-33) : l'onglet
+ * Objectifs s'ouvre sur Digestion pour qui a l'objectif digestion (POLISH-SIM-33) : l'onglet
  * Bien-être reste à un geste.
  */
 function tabTarget(tab) {
@@ -52,8 +55,7 @@ function tabTarget(tab) {
 export default function TabBar() {
   const { pathname } = useLocation()
   const isUnder = (p) => pathname === p || pathname.startsWith(p + '/')
-  const isActive = (tab) =>
-    (tab.end && pathname === tab.to) || (tab.paths || (tab.end ? [] : [tab.to])).some(isUnder)
+  const isActive = (tab) => (tab.exact || []).includes(pathname) || (tab.paths || []).some(isUnder)
 
   return (
     <nav className="tabbar" aria-label="Principal">

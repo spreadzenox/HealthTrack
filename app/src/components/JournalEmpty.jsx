@@ -15,7 +15,7 @@ export default function JournalEmpty() {
   const tiles = [
     { mealPhoto: true, theme: 'peach', icon: 'camera', label: 'Photographier un repas' },
     gut
-      ? { to: '/', state: { open: 'digestion' }, theme: 'peach', icon: 'pen', label: 'Noter ma digestion' }
+      ? { to: '/ma-journee', state: { open: 'digestion' }, theme: 'peach', icon: 'pen', label: 'Noter ma digestion' }
       : { onClick: () => setNoteOpen(true), theme: 'mint', icon: 'pen', label: 'Noter mon bien-être' },
     { to: '/connectors', theme: 'stone', icon: 'plus', label: 'Ajouter une source' },
   ]

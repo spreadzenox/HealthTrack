@@ -43,7 +43,9 @@ export default function App() {
             }
           />
           <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
+            <Route index element={<Dashboard key="home" />} />
+            {/* Refonte « Compagnon », étape 2 : Ma journée, ce qui se note à la main (même module que l'Accueil) */}
+            <Route path="ma-journee" element={<Dashboard key="day" view="day" />} />
             <Route path="journal" element={<Journal />} />
             <Route path="tendances" element={<Trends />} />
             <Route path="food" element={<Food />} />
@@ -57,7 +59,7 @@ export default function App() {
             <Route path="nouveautes" element={<WhatsNew />} />
             <Route path="montre" element={<WatchData />} />
             <Route path="premium" element={<Premium />} />
-            {/* ORG-3b : l'historique du bien-être est la vue Jour de Journal › Tendances */}
+            {/* ORG-3b : l'historique du bien-être est la vue Jour de Données › Tendances */}
             <Route path="bien-etre" element={<Navigate to="/tendances?vue=jour" replace />} />
             <Route path="reintroduction" element={<Reintroduction />} />
             <Route path="agir" element={<Act />} />

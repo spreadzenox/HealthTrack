@@ -63,3 +63,8 @@
   color: var(--text-muted);
   line-height: 1;
 }
+
+/* Accueil : le lien vers Agir (refonte « Compagnon », étape 2) */
+.home-act-link {
+  margin-top: 12px;
+}

@@ -51,7 +51,7 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
   it('commence par l’écran réel, « Passer la visite » visible ; « Exemple au jour 14 » montre l’exemple étiqueté', async () => {
     saveOnboarding({ done: true, goals: ['stress'], tour: 'pending' })
     renderTour()
-    expect(await screen.findByRole('heading', { name: 'Votre écran Aujourd’hui' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Votre Accueil' })).toBeInTheDocument()
     expect(btn('Passer la visite')).toBeInTheDocument()
     expect(isExampleMode()).toBe(false)
     fireEvent.click(btn('Exemple au jour 14'))
@@ -80,7 +80,7 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
   it('va jusqu’au bout, onglet par onglet (digestion au jour 28 avec « Ma digestion ») ; la fin rend les vraies données', async () => {
     saveOnboarding({ done: true, goals: ['gut'], tour: 'pending' })
     const onClose = renderTour()
-    await screen.findByRole('heading', { name: 'Votre écran Aujourd’hui' })
+    await screen.findByRole('heading', { name: 'Votre Accueil' })
     const seen = []
     for (let n = 0; n < 20; n++) {
       const title = screen.getByRole('dialog').querySelector('h2').textContent
@@ -141,9 +141,9 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
   })
 
   it('étape Analyses : avec la digestion, les deux échéances (14 et 28 jours), jamais seulement 14 (POLISH-SIM-15)', () => {
-    const analyses = (gut) => tourSteps({ hc: true, face: false, gut }).find((s) => s.title === 'Les analyses').text
-    expect(analyses(false)).toBe('Elles démarrent après 14 jours notés.')
-    expect(analyses(true)).toBe('Bien-être après 14 jours notés, digestion après 28.')
+    const analyses = (gut) => tourSteps({ hc: true, face: false, gut }).find((s) => s.title === 'Objectifs').text
+    expect(analyses(false)).toBe('Vos analyses démarrent après 14 jours notés.')
+    expect(analyses(true)).toBe('Vos analyses : bien-être après 14 jours notés, digestion après 28.')
   })
 })
 

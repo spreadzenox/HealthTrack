@@ -329,7 +329,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const v = results ? resultsView(results.outcomes?.[outcome]) : { state: 'loading' }
   // Version Play sans abonnement (hors période de lancement) : les pistes restent floues, comme avant
   const locked = FEATURES.billing && !ent.premium
-  const onNote = outcome === 'wellbeing' ? () => setNoteOpen(true) : () => navigate('/', { state: { open: 'digestion' } })
+  const onNote = outcome === 'wellbeing' ? () => setNoteOpen(true) : () => navigate('/ma-journee', { state: { open: 'digestion' } })
   // La note qui vient d'être enregistrée ici se lit dans la carte, même si la relecture des notes échoue
   const notedToday = outcome === 'digestion' ? gutToday : wbToday.length ? wbToday : noted != null ? [`${noted}/5`] : []
   const onReminder = outcome === 'wellbeing' && eveningNotePlugin() ? () => setNoteOpen('reminder') : null

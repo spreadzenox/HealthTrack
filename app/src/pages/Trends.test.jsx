@@ -38,9 +38,9 @@ const renderAt = (path) => render(
 )
 
 describe('Journal › Tendances (ORG-3)', () => {
-  it('sous les onglets du Journal, une carte avec les mesures, « + » et Jour / Semaine / Mois', async () => {
+  it('sous les onglets de Données, une carte avec les mesures, « + » et Jour / Semaine / Mois', async () => {
     renderAt('/tendances')
-    expect(screen.getByRole('navigation', { name: 'Journal' })).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'Données' })).toBeInTheDocument()
     const chips = await screen.findByRole('list', { name: 'Mesures affichées' })
     expect(within(chips).getByText('Bien-être').closest('li')).toHaveAttribute('data-tone', 'mint')
     expect(screen.getByRole('button', { name: 'Semaine' })).toHaveAttribute('aria-pressed', 'true')

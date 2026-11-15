@@ -8,7 +8,7 @@ import './More.css'
 const ITEMS = [
   // Refonte « Compagnon », étape 1 : Sources quitte la barre d'onglets
   { to: '/connectors', icon: 'watch', title: 'Sources', desc: 'Montres, apps de santé, météo, lecture du visage' },
-  { to: '/data', icon: 'folder', title: 'Données', desc: 'Sauvegarde et restauration de vos données' },
+  { to: '/data', icon: 'folder', title: 'Sauvegarde', desc: 'Exporter et restaurer vos données' },
   { to: '/settings', icon: 'gear', title: 'Paramètres', desc: FEATURES.cigaretteSetting
     ? 'Apparence, analyse des repas (IA), cigarettes, diagnostic'
     : 'Apparence, analyse des repas (IA), abonnement' },

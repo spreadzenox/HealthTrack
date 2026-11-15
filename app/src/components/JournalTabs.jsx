@@ -1,17 +1,20 @@
 import { Link, useLocation } from 'react-router-dom'
 
 const ITEMS = [
-  { to: '/journal', label: 'Jours' },
-  { to: '/food', label: 'Repas' },
-  { to: '/nutrition', label: 'Nutrition' },
   { to: '/tendances', label: 'Tendances' },
+  { to: '/nutrition', label: 'Nutrition' },
+  { to: '/food', label: 'Repas' },
+  { to: '/journal', label: 'Jours' },
 ]
 
-/** Sous-onglets de « Journal » : vos jours, vos repas, la nutrition et les tendances (de retour ici, ORG-3 du 07/11). */
+/**
+ * Sous-onglets de « Données » (refonte « Compagnon », étape 2) : Tendances d'abord, puis la nutrition, les repas et,
+ * en dernier, les jours (le Journal jour par jour, supprimé à l'étape 7).
+ */
 export default function JournalTabs() {
   const { pathname } = useLocation()
   return (
-    <nav className="journal-tabs" aria-label="Journal">
+    <nav className="journal-tabs" aria-label="Données">
       {ITEMS.map((item) => {
         const active = pathname === item.to || pathname.startsWith(item.to + '/')
         return (

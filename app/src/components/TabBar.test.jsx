@@ -14,15 +14,15 @@ function renderAt(path) {
 describe('TabBar', () => {
   beforeEach(() => localStorage.clear())
 
-  it('shows the four tabs, without Sources (refonte « Compagnon », étape 1)', () => {
+  it('shows the four tabs of the refonte « Compagnon » (étape 2)', () => {
     renderAt('/')
     const nav = screen.getByRole('navigation', { name: 'Principal' })
     const links = within(nav).getAllByRole('link')
     expect(links.map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
-      ['Aujourd’hui', '/'],
-      ['Journal', '/journal'],
-      ['Analyses', '/recommendations'],
-      ['Agir', '/agir'],
+      ['Accueil', '/'],
+      ['Ma journée', '/ma-journee'],
+      ['Objectifs', '/recommendations'],
+      ['Données', '/tendances'],
     ])
   })
 
@@ -31,29 +31,26 @@ describe('TabBar', () => {
     [['cycle', 'sport'], '/recommendations/ventre'],
     [['stress'], '/recommendations'],
     [['all'], '/recommendations'],
-  ])('opens Analyses on the tab of the goal %j (POLISH-SIM-33)', (goals, href) => {
+  ])('opens Objectifs on the tab of the goal %j (POLISH-SIM-33)', (goals, href) => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals }))
     renderAt('/')
-    expect(screen.getByRole('link', { name: 'Analyses' })).toHaveAttribute('href', href)
-  })
-
-  it('marks only the current tab as the current page', () => {
-    renderAt('/food')
-    expect(screen.getByRole('link', { name: 'Journal' })).toHaveAttribute('aria-current', 'page')
-    expect(screen.getByRole('link', { name: 'Aujourd’hui' })).not.toHaveAttribute('aria-current')
-  })
-
-  it.each(['/journal', '/nutrition'])('keeps « Journal » active on the sub-page %s', (path) => {
-    renderAt(path)
-    expect(screen.getByRole('link', { name: 'Journal' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('link', { name: 'Objectifs' })).toHaveAttribute('href', href)
   })
 
   it.each([
-    ['/reintroduction', 'Agir'],
-    ['/recommendations/ventre', 'Analyses'],
-    ['/tendances', 'Journal'],
-    ['/bien-etre', 'Journal'],
-  ])('keeps the parent tab active on the sub-page %s (POL-PLAY-82)', (path, tab) => {
+    ['/', 'Accueil'],
+    ['/agir', 'Accueil'],
+    ['/ma-journee', 'Ma journée'],
+    ['/recommendations', 'Objectifs'],
+    ['/recommendations/ventre', 'Objectifs'],
+    ['/reintroduction', 'Objectifs'],
+    ['/agir/essai/sleep', 'Objectifs'],
+    ['/tendances', 'Données'],
+    ['/nutrition', 'Données'],
+    ['/food', 'Données'],
+    ['/journal', 'Données'],
+    ['/bien-etre', 'Données'],
+  ])('marks only the tab of %s as the current page: %s', (path, tab) => {
     renderAt(path)
     expect(screen.getByRole('link', { name: tab })).toHaveAttribute('aria-current', 'page')
     const nav = screen.getByRole('navigation', { name: 'Principal' })

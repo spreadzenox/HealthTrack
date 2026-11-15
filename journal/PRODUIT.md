@@ -35,7 +35,7 @@
 > sur ce que ce fichier dit encore du Journal, des objectifs « sport » et « cycle », de l'onboarding en 8 à 12 écrans,
 > des seuils de 14 et 28 jours, de Figtree et des couleurs par thème.
 > **Les 15 étapes (§ 10 du brief ; cases et détail : `BACKLOG.md`, REFONTE-1 à REFONTE-15), un run de code par étape,
-> parité iPhone dans le même run :** 1 Cohérence (**faite sur Android le 15/11 02:35**, iPhone en cours) · 2 Navigation
+> parité iPhone dans le même run :** 1 Cohérence (**faite le 15/11**, Android 02:35, iPhone 04:20) · 2 Navigation (**faite sur Android le 15/11 04:35**, #999 ; iPhone à suivre)
 > · 3 Ma journée · 4 Habitudes · 5 Onboarding · 6 Objectifs (seuils 7 et 14 jours) · 7 Données et suppression du
 > Journal (Nunito et tokens ici ou en 8) · 8 Compagnon 1a, la scène · 9 Compagnon 1b, Pilou · 10 Compagnon 2, bulles
 > et jauge · 11 Compagnon 3, nourrir Pilou · 12 Compagnon 4, rencontre et jour 7 · 13 Compagnon 5, cycle du jour,

@@ -63,8 +63,8 @@ export default function DayStatusCard({
         {reminder || (
           <p className="day-status-from">
             {est
-              ? 'Pas encore de lecture du visage aujourd’hui. Notez votre bien-être en haut.'
-              : <>Notez votre bien-être en haut, ou laissez la caméra lire votre visage :{' '}
+              ? 'Pas encore de lecture du visage aujourd’hui. Notez votre bien-être dans Ma journée.'
+              : <>Notez votre bien-être dans Ma journée, ou laissez la caméra lire votre visage :{' '}
                 <Link to="/connectors">à activer dans Sources</Link>.</>}
           </p>
         )}

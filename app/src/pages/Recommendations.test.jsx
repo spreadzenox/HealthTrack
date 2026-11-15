@@ -171,7 +171,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(screen.getByText(/Une ligne par jour/)).toBeInTheDocument()
   })
 
-  it('Digestion : même structure ; les jours de gêne manquants sont dits ; « Noter maintenant » ouvre la fenêtre de l’Accueil', async () => {
+  it('Digestion : même structure ; les jours de gêne manquants sont dits ; « Noter maintenant » ouvre la fenêtre de Ma journée', async () => {
     renderPage({ view: 'gut' }, readyResults)
     const card = await screen.findByTestId('reco-countdown-digestion')
     expect(card).toHaveTextContent('Encore 25 jours notés avant vos premiers résultats')
@@ -182,7 +182,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(card).toHaveTextContent('Il faut aussi 5 jours avec une gêne ou une douleur notée : vous en avez 1.')
     expect(card).not.toHaveTextContent('de plus avec une gêne')
     fireEvent.click(within(card).getByRole('button', { name: 'Noter maintenant' }))
-    expect(screen.getByTestId('where')).toHaveTextContent('/ digestion')
+    expect(screen.getByTestId('where')).toHaveTextContent('/ma-journee digestion')
   })
   it('POLISH-SIM-53 et 54 : en digestion, l’unité dit le sens du « + » et la note de chaque niveau', async () => {
     const gut = structuredClone(readyResults.outcomes.wellbeing)

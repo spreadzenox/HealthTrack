@@ -14,7 +14,7 @@ function renderAt(path) {
 describe('JournalTabs (Jours | Repas | Nutrition | Tendances ; Tendances revient au Journal, ORG-3 du 07/11)', () => {
   it('links to the days, meals, nutrition and trends', () => {
     renderAt('/food')
-    const nav = screen.getByRole('navigation', { name: 'Journal' })
+    const nav = screen.getByRole('navigation', { name: 'Données' })
     expect(nav).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Jours' })).toHaveAttribute('href', '/journal')
     expect(screen.getByRole('link', { name: 'Repas' })).toHaveAttribute('href', '/food')
