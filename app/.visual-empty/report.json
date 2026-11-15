@@ -1,0 +1,20 @@
+{
+  "baseUrl": "http://127.0.0.1:5199",
+  "seeded": false,
+  "routes": [
+    {
+      "path": "/nutrition",
+      "name": "nutrition",
+      "console": [],
+      "pageErrors": [],
+      "screenshot": "/home/user/HealthTrack/app/.visual-empty/nutrition.png",
+      "tiles": [
+        "/home/user/HealthTrack/app/.visual-empty/tiles/nutrition-1.png"
+      ],
+      "overflowX": false
+    }
+  ],
+  "seed": {
+    "inserted": 0
+  }
+}
