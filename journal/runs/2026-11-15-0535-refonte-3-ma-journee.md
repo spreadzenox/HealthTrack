@@ -1,9 +1,9 @@
 # Run 15/11 05:35 — Refonte « Compagnon », étape 3 : la checklist de Ma journée
 
 **Type** : code (refonte « Compagnon », étape 3 du § 10 du brief)  ·  **Android** : main b4ce358 (#999, v1075) au début  ·
-**TestFlight** : état chez Apple non relevé à ce run ; d'après le run de 04:35, 1072.1073 en examen bêta depuis
-04:45 et 1030.1031 chez les testeurs externes ; « iOS — TestFlight » parti seul au merge de #1000 (en cours à 06:01) ;
-ni soumission ni expiration à ce run ; 844.344 intacte  ·  **Parité** : 70 % (33/47), inchangée
+**TestFlight** : **1072.1073 validée par Apple et chez les testeurs externes** (relevé de 06:03) ; 13 builds plus
+anciennes expirées à 06:05 ; « iOS — TestFlight » parti seul au merge de #1000 (code v1075, en cours à 06:01,
+arrivée non vérifiée) ; aucune soumission à ce run ; 844.344 intacte  ·  **Parité** : 70 % (33/47), inchangée
 
 ## Contexte
 - Empreinte des instructions vérifiée : conforme (710f9e8b…). Brief de la refonte lu en entier ;
@@ -28,7 +28,12 @@ ni soumission ni expiration à ce run ; 844.344 intacte  ·  **Parité** : 70 % 
      noté ».
    - `npm run visual -- --day-done[=partial]` ; icône `check` ; note de Nouveautés
      `2026-11-15-0535-ma-journee-checklist.json` (les deux magasins).
-3. Journal : résumé, `BACKLOG.md` (REFONTE-2 et 3), `PRODUIT.md`, `PARITE.md`, `iphone/journal/BACKLOG.md`.
+3. **TestFlight** : relevé (`ios-store-beta.yml`, lecture seule) : « en test 1072.1073, 1030.1031 ; refusées aucune ;
+   en attente aucune ». Expiration (`ios-store-beta-expire.yml`, sur main) : essai d'abord (plan : garder 844.344 et
+   1072.1073, expirer 13 builds), puis nettoyage réel : expirées 1065.1067, 1059.1063, 1054.1057, 1050.1051,
+   1047.1048, 1044.1045, 1040.1041, 1037.1038, 1036.1037, 1035.1036, 1034.1035, 1032.1033 et 1030.1031 ; relevé
+   d'après : « en test 1072.1073 ». La version de l'App Store n'a pas été touchée.
+4. Journal : résumé, `BACKLOG.md` (REFONTE-2 et 3), `PRODUIT.md`, `PARITE.md`, `iphone/journal/BACKLOG.md`.
 
 ## Vérifs
 - TDD : 9 tests du service et 7 du composant écrits avant leur code ; le test d'intégration de `Dashboard` écrit
@@ -57,4 +62,5 @@ ni soumission ni expiration à ce run ; 844.344 intacte  ·  **Parité** : 70 % 
 - Tests du code embarqué iPhone non lancés ; les 51 correctifs non rejoués (un seul vérifié).
 - `iphone/journal/README.md` § 3 et § 4 lus, § 8 non ; `PARITE.md`, les deux `BACKLOG.md`, `PRODUIT.md`, `DESIGN.md`,
   `INFRA.md` et la charte non relus en entier (plus de 1 Mo) : sections touchées seulement.
-- TestFlight : aucun relevé chez Apple, ni examen bêta ni expiration.
+- TestFlight : `ios-store-push.yml` (renommage de la version « Prête à soumettre », charte iPhone § 4) non lancé après
+  l'expiration ; la build du code v1075 non relevée.
