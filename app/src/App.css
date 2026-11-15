@@ -486,10 +486,13 @@
 .entry-card[data-type="cigarette"] { border-left-color: var(--text-muted); }
 .entry-card[data-type="wellbeing"] { border-left-color: var(--mint-label); background: var(--mint-bg); }
 .entry-card[data-type="gut"] { border-left-color: var(--peach-label); background: var(--peach-bg); }
+/* Miel = habitudes (refonte, brief § 6), dans « Vos saisies » du détail du jour (étape 7a) */
+.entry-card[data-type="habit"] { border-left-color: var(--honey-label); background: var(--honey-bg); }
 /* Sur un pastel, les chiffres de l'en-tête prennent la couleur d'étiquette du thème (contraste ≥ 4,5:1). */
 .entry-card[data-type="food"] .entry-kcal,
 .entry-card[data-type="gut"] .entry-kcal { color: var(--peach-label); }
 .entry-card[data-type="wellbeing"] .entry-kcal { color: var(--mint-label); }
+.entry-card[data-type="habit"] .entry-kcal { color: var(--honey-label); }
 
 .entry-card-header {
   display: flex;

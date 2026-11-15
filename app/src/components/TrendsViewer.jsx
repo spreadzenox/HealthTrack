@@ -11,6 +11,7 @@ import { appLocale } from '../i18n/locale.js'
 import { niceAxis } from '../services/niceAxis'
 import LineIcon from './LineIcon'
 import TrendsDayDetail from './TrendsDayDetail'
+import DayEntries from './DayEntries'
 import { monoDigits } from '../utils/monoDigits'
 
 const W = 340
@@ -196,7 +197,7 @@ function keyOfDate(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [], titled = true }) {
+function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [], titled = true, readEntries = undefined }) {
   const future = date > data.today
   const face = !future ? extra?.face ?? null : null
   return (
@@ -253,6 +254,9 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
         <TrendsDayDetail face={keys.includes('wellbeing') ? face : null} contributions={extra.contributions}
           outcome={extra.outcome ?? null} value={data.series[extra.outcome]?.find((q) => q.date === date)?.value ?? null} />
       )}
+      {/* Refonte, étape 7a : ce qui ne se faisait que dans le Journal (modifier ou supprimer une saisie passée, les
+          règles, les habitudes) vit ici, sous les mesures du jour */}
+      {!future && <DayEntries dateKey={date} read={readEntries} />}
     </div>
   )
 }
@@ -263,10 +267,11 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
  * `dayExtra(date, keys)` : ce qu'on sait d'un jour passé au-delà des courbes (visage, contributions), ou null.
  * `dayReadings(date)` : les lectures et la note du jour pour la vue Jour (dayReadingsView).
  * `initialDay` : jour ouvert par défaut en vue Jour (latestReadingDay).
+ * `readDayEntries` : lecture des saisies d'un jour pour « Vos saisies » (DayEntries ; par défaut le stockage).
  */
 export default function TrendsViewer({
   states, days, now, initialKeys = ['wellbeing'], period, onPeriod, dayReadings = null, dayExtra = null, changes = null,
-  initialDay = null,
+  initialDay = null, readDayEntries = undefined,
 }) {
   const [keys, setKeys] = useState(initialKeys)
   const [adding, setAdding] = useState(false)
@@ -414,7 +419,7 @@ export default function TrendsViewer({
             </button>
           </div>
           <DayChart date={day} view={dayReadings ? dayReadings(day) : { readings: [], note: null, nowHour: null }} />
-          <DayDetail data={data} keys={shown.length ? shown : ['wellbeing']} date={day} titled={false}
+          <DayDetail data={data} keys={shown.length ? shown : ['wellbeing']} date={day} titled={false} readEntries={readDayEntries}
             extra={dayExtra?.(day, shown.length ? shown : ['wellbeing']) ?? null} />
         </>
       ) : shown.length ? (
@@ -426,7 +431,7 @@ export default function TrendsViewer({
             </p>
           )}
           {sel
-            ? <DayDetail data={data} keys={shown} date={sel} onClose={() => setSelected(null)} extra={dayExtra?.(sel, shown) ?? null} marks={marks} />
+            ? <DayDetail data={data} keys={shown} date={sel} onClose={() => setSelected(null)} extra={dayExtra?.(sel, shown) ?? null} marks={marks} readEntries={readDayEntries} />
             : <p className="trends-hint">Touchez un jour pour son détail.</p>}
           {shown.some((k) => trendMeasure(k).gloss) && (
             // POLISH-SIM-6 : une abréviation dit son nom en toutes lettres une fois, ici

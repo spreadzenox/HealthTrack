@@ -215,13 +215,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [x] **REFONTE-6e — La réintroduction sous Confort digestif** (15/11 16:35, Android) : ligne « Réintroduction
     guidée » dans le détail du confort digestif (`reintroLine`, `services/act.js` : test en cours, groupes cités par
     une analyse, ou groupes testés ; rien sinon, leçon 17), retour de `/reintroduction` vers `/recommendations/ventre`.
-  - [ ] **REFONTE-6e-iOS** : embarquée par la PR IOS-HEAD du 15/11 17:35 (le code partagé du jour, 6e compris, part
+  - [x] **REFONTE-6e-iOS** (#1022 mergée le 15/11 à 19:39 ; captures regardées sur `captures/pr-1022`) : embarquée par la PR IOS-HEAD du 15/11 17:35 (le code partagé du jour, 6e compris, part
     sur iPhone à son merge) ; à cocher quand la PR est mergée et les captures `recommendations-ventre` et
     `reintroduction` regardées sur simulateur.
   - [ ] **REFONTE-6e-2 — Restes de 6e** : capturer « À tester d'après vos analyses » (données de démo avec un lien
     net sur un groupe FODMAP), le sombre, 320 px, la version Play sans abonnement ; retirer les tests FODMAP d'Agir
     quand Agir rejoint l'Accueil (étape 10).
-- [ ] **IOS-HEAD — Une seule PR pour `app/` et `iphone/`** — **en PR depuis le 15/11 17:35 (#1022)** (à merger par le run
+- [x] **IOS-HEAD — Une seule PR pour `app/` et `iphone/`** — **mergée le 15/11 à 19:39 (#1022) ; build TestFlight 1096.1096 envoyée à 19:40, plus grande que 1092.1093 (vérifié)** (à merger par le run
   suivant, build macOS verte et captures regardées) : `iphone/upstream.json` suit `HEAD` ; `ios-build.yml` suit
   aussi `app/**` et `relay/**` (son job Ubuntu est le contrôle « les correctifs s'appliquent »), `ios-testflight.yml`
   suit `app/**` ; `iphone/scripts/version.sh` donne le numéro (nombre de commits) ; `--latest` ne fait plus rien ;
@@ -240,6 +240,16 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   ligne « Règles · 2e jour », les ajouts rapides…) et une autre maison pour chaque chose ; puis suppression de
   l'écran, de ses routes (redirigées vers Tendances) et du code mort, tests compris. Nunito et les tokens
   (`tokens.css`, `DESIGN.md`) ici ou à l'étape 8.
+  - [ ] **REFONTE-7a — « Vos saisies » dans le détail du jour de Tendances** (15/11 19:35, Android et iPhone dans la
+    même PR) : `components/DayEntries.jsx` extrait du Journal (saisies, « … », Modifier, Refaire, Supprimer, règles et
+    jour du cycle) ; habitudes « Méditation  Oui » en miel, une réponse par jour, Oui / Non sur place ; placé à la fin
+    du détail d'un jour passé (Jour, Semaine, Mois). Inventaire couvert : lignes 1, 2, 3, 5, 6, 8. À cocher au merge
+    (build iOS verte, captures `tendances` regardées des deux côtés).
+  - [ ] **REFONTE-7b** : Données sur 2 onglets (Tendances · Nutrition), Repas depuis Nutrition, `/journal` redirigé
+    vers `/tendances?vue=jour`, visite guidée sur Tendances, `captureMode.js` iPhone et `visual-check` sans `/journal`.
+  - [ ] **REFONTE-7c** : retrait de `Journal.jsx`, `DailyJournal.jsx`, `JournalEmpty.jsx` et de leurs tests ; « Hier »
+    dans Ma journée si utile (inventaire, ligne 9).
+  - [ ] **REFONTE-7a-2 — Restes de 7a** : captures sur historique presque vide, grand texte, 320 px, version Play.
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.
