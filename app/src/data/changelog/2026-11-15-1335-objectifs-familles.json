@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-15",
+  "kind": "nouveau",
+  "title": "Objectifs : les liens par famille",
+  "items": [
+    "Le détail d’un objectif s’ouvre sur trois familles : sommeil, alimentation, activité.",
+    "Chaque famille dit la force de son lien le plus net, en trois points et en mots.",
+    "Sans lien net, la famille le dit. Les pistes et le détail par délai restent en dessous."
+  ]
+}

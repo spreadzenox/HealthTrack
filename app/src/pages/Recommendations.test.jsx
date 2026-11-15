@@ -53,6 +53,44 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(document.body.textContent).not.toMatch(/Sur quelques semaines|Autres liens repérés|Bientôt|Dans les heures|Benjamini/)
   })
 
+  it('REFONTE-6b : « Par famille » en tête des résultats, la force du lien en trois points et en mots', async () => {
+    renderPage({}, readyResults)
+    const block = await screen.findByRole('region', { name: 'Par famille' })
+    const rows = within(block).getAllByRole('listitem')
+    expect(rows.map((li) => li.querySelector('.reco-family-name').firstChild.textContent)).toEqual(['Sommeil', 'Activité', 'Alimentation'])
+    expect(rows[0]).toHaveTextContent('Lien moyen')
+    expect(rows[0].querySelectorAll('.reco-family-dot.is-on')).toHaveLength(2)
+    expect(rows[1]).toHaveTextContent('Pas')
+    expect(rows[1]).toHaveTextContent('Lien moyen')
+    expect(rows[2]).toHaveTextContent('Pas assez de données')
+    expect(rows[2].querySelector('.reco-family-dots')).toBeNull()
+    // Le temps d'écran, pas net, n'ajoute pas de ligne « Écrans »
+    expect(screen.queryByTestId('reco-family-screen')).toBeNull()
+    // « Par famille » vient avant « Pistes à tester »
+    const pistes = screen.getByRole('region', { name: 'Pistes à tester' })
+    expect(block.compareDocumentPosition(pistes) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('REFONTE-6b : « Comment est calculé votre bien-être ? » replié, pour le bien-être seulement', async () => {
+    renderPage({}, readyResults)
+    const link = await screen.findByRole('button', { name: 'Comment est calculé votre bien-être ?' })
+    expect(screen.queryByTestId('reco-how-wellbeing')).toBeNull()
+    fireEvent.click(link)
+    expect(screen.getByTestId('reco-how-wellbeing')).toHaveTextContent('votre note et la lecture du visage, si vous l’utilisez')
+  })
+
+  it('REFONTE-6b : la digestion n’a pas cette explication', async () => {
+    renderPage({ view: 'gut' }, readyResults)
+    await screen.findByTestId('reco-countdown-digestion')
+    expect(screen.queryByRole('button', { name: 'Comment est calculé votre bien-être ?' })).toBeNull()
+  })
+
+  it('REFONTE-6b : pas de familles avant les premiers résultats', async () => {
+    renderPage({}, { outcomes: { wellbeing: lockedOutcome(5), digestion: lockedOutcome(0) } })
+    await screen.findByTestId('reco-countdown-wellbeing')
+    expect(screen.queryByRole('region', { name: 'Par famille' })).toBeNull()
+  })
+
   it('résultats : pistes à tester vers Agir, ce qui pèse par horizon, à regarder à part, un seul compte à rebours suivant', async () => {
     renderPage({}, readyResults)
     const pistes = await screen.findByRole('region', { name: 'Pistes à tester' })

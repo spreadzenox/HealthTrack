@@ -852,3 +852,74 @@
   font-weight: 600;
   text-decoration: none;
 }
+
+/* REFONTE-6b : « Par famille ». Une ligne par famille, à la couleur de son thème ; trois points pour la force du
+   lien le plus net, les mots à côté (rien ne passe par les points seuls). Sans lien net : fond neutre, texte seul. */
+.reco-families {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.reco-family {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 2px;
+  margin: 0;
+  background: var(--tone-bg, var(--color-surface));
+  color: var(--tone-text, var(--text));
+}
+
+.reco-family.is-quiet {
+  background: var(--color-surface);
+  color: var(--text);
+}
+
+.reco-family-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-weight: 700;
+  font-size: 1.02rem;
+}
+
+.reco-family-lead {
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.reco-family-dots {
+  display: inline-flex;
+  gap: 4px;
+  justify-self: end;
+}
+
+.reco-family-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--tone-label, var(--accent));
+  box-sizing: border-box;
+}
+
+.reco-family-dot.is-on {
+  background: var(--tone-label, var(--accent));
+}
+
+.reco-family-word {
+  grid-column: 1 / -1;
+  font-size: 0.88rem;
+}
+
+.reco-family.is-quiet .reco-family-word {
+  color: var(--text-muted);
+}
+
+/* REFONTE-6b : deux liens « Comment… » à la suite se tiennent ensemble */
+.reco-how + .reco-how {
+  margin-top: 0;
+}

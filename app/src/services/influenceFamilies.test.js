@@ -1,0 +1,62 @@
+import { describe, it, expect } from 'vitest'
+import { influenceFamilies, familyOf, LEVEL_WORDS } from './influenceFamilies'
+
+const f = (key, label, effect, { theme = 'sleep', actionable = true, net = true, outOfScale = false } = {}) => ({ key, label, theme, actionable, effect, net, outOfScale })
+const h = (id, status, factors = []) => ({ id, status, factors })
+const outcome = (short = [], medium = [], extra = {}) => ({
+  status: 'partial',
+  horizons: { short: h('short', 'ready', short), medium: h('medium', 'ready', medium), long: h('long', 'locked', [f('sleepMinutes', 'Sommeil', 2)]) },
+  ...extra,
+})
+
+describe('familles de ce qui va avec un objectif (refonte « Compagnon », étape 6b)', () => {
+  it('range chaque facteur dans sa famille ; le corps et la météo n’en ont pas', () => {
+    expect(familyOf(f('sleepMinutes', 'Sommeil', 0))).toBe('sleep')
+    expect(familyOf(f('screen_late_minutes', 'Écran tard le soir', 0, { theme: 'context' }))).toBe('sleep')
+    expect(familyOf(f('fodmap_fructans', 'Fructanes', 0, { theme: 'nutrition' }))).toBe('nutrition')
+    expect(familyOf(f('steps', 'Pas', 0, { theme: 'activity' }))).toBe('activity')
+    expect(familyOf(f('habit_meditation', 'Méditation', 0, { theme: 'habit' }))).toBe('habit')
+    expect(familyOf(f('social_minutes', 'Réseaux sociaux', 0, { theme: 'context' }))).toBe('screen')
+    expect(familyOf(f('hrv_ms', 'Variabilité cardiaque', 0, { theme: 'body', actionable: false }))).toBeNull()
+    expect(familyOf(f('weather_sunshine_h', 'Soleil', 0, { theme: 'context', actionable: false }))).toBeNull()
+  })
+
+  it('rien avant les premiers résultats', () => {
+    expect(influenceFamilies(null)).toEqual([])
+    expect(influenceFamilies({ status: 'locked', horizons: { short: h('short', 'locked') } })).toEqual([])
+  })
+
+  it('trois niveaux d’après le lien net le plus fort de la famille, la plus forte en premier', () => {
+    const rows = influenceFamilies(outcome(
+      [f('steps', 'Pas', 0.1, { theme: 'activity' }), f('sleepMinutes', 'Sommeil', -0.6), f('fiber_g', 'Fibres', 0.3, { theme: 'nutrition' })],
+      [f('sleepMinutes', 'Sommeil', 0.2), f('kcal', 'Calories mangées', 0.26, { theme: 'nutrition' })],
+    ))
+    expect(rows.map((r) => [r.id, r.level, r.lead])).toEqual([['sleep', 3, 'Sommeil'], ['nutrition', 2, 'Fibres'], ['activity', 1, 'Pas']])
+    expect(rows.map((r) => r.word)).toEqual([LEVEL_WORDS[3], LEVEL_WORDS[2], LEVEL_WORDS[1]])
+    expect(rows[0].tone).toBe('night')
+  })
+
+  it('un lien pas net, hors échelle ou d’un délai pas encore prêt ne compte pas', () => {
+    const rows = influenceFamilies(outcome([
+      f('sleepMinutes', 'Sommeil', 0.9, { net: false }),
+      f('fiber_g', 'Fibres', 3, { theme: 'nutrition', outOfScale: true }),
+    ]))
+    expect(rows.map((r) => [r.id, r.level, r.state, r.lead])).toEqual([
+      ['sleep', 0, 'none', null], ['nutrition', 0, 'none', null], ['activity', 0, 'nodata', null],
+    ])
+    expect(rows[0].word).toBe('Pas de lien net pour l’instant')
+    expect(rows[2].word).toBe('Pas assez de données')
+  })
+
+  it('habitudes et écrans : seulement avec un lien net', () => {
+    const quiet = influenceFamilies(outcome([f('habit_a', 'Méditation', 0.4, { theme: 'habit', net: false }), f('screen_minutes', 'Temps d’écran', 0.1, { theme: 'context', net: false })]))
+    expect(quiet.map((r) => r.id)).toEqual(['sleep', 'nutrition', 'activity'])
+    const rows = influenceFamilies(outcome([f('habit_a', 'Méditation', 0.4, { theme: 'habit' }), f('screen_minutes', 'Temps d’écran', -0.55, { theme: 'context' })]))
+    expect(rows.map((r) => [r.id, r.level, r.tone])).toEqual([['screen', 3, 'stone'], ['habit', 2, 'honey'], ['sleep', 0, 'night'], ['nutrition', 0, 'peach'], ['activity', 0, 'lilac']])
+  })
+
+  it('le corps et la météo, même nets, n’entrent dans aucune famille', () => {
+    const rows = influenceFamilies(outcome([f('hrv_ms', 'Variabilité cardiaque', 0.8, { theme: 'body', actionable: false })]))
+    expect(rows.every((r) => r.level === 0)).toBe(true)
+  })
+})
