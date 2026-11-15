@@ -194,14 +194,24 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     comparaison aux 14 nuits ; grille sur la fourchette, pas en minutes ; ni lanternes ni rituel (étapes 10 à 12).
     Si le propriétaire dit « défi libre » : refaire d'après la SPEC.
   - [x] **REFONTE-6c-2-iOS** : fait dans #1016 (code **v1092**, 51 correctifs sans retouche), mergée le 15/11 à 17:09 ; Agir dit « 5 jours avec, 5 jours sans » sur iPhone.
-  - [ ] **REFONTE-6c-3 — Restes de 6c-1 et 6c-2** : (6c-2) rejouer sur le banc un essai de 5 et 5 (taux de
-    « Plutôt oui » à tort avec ± 2 erreurs types ; passer au seuil de Student si plus de 5 %) ; Agir allume
+  - [ ] **REFONTE-6c-3 — Restes de 6c-1 et 6c-2** : (6c-2) ~~rejouer sur le banc un essai de 5 et 5~~ **fait le 15/11
+    à 20:35** : « Plutôt oui » à tort 3,9 % (tous les jours notés), 4,4 % (un jour sur cinq manquant), 4,1 % (résultat
+    très autocorrélé) ; sous 5 %, la règle ± 2 erreurs types reste (Student : 1,6 à 2,2 %, mais puissance de 41 à
+    28 % pour un effet d'un écart type) ; Agir allume
     l'onglet Accueil et l'écran d'un essai l'onglet Objectifs ; une piste finie est reproposée aussitôt ; captures
     en sombre, à 320 px, « Plutôt oui », « Plutôt non », « Trop peu de jours ». (6c-1) un effet non net plus grand que 2 points (« Méditation −3,3 pt » à long
     terme sur les données de démo) ne devrait pas s'afficher en chiffre (voir `outOfScale`, POLISH-SIM-16) ; le
     détail de l'objectif répète ce que la famille montre (alléger « Ce qui va avec » quand 6c-2 sera là) ; captures
     à 320 px, en grand texte, confort digestif avec résultats ; moyenne de la famille (« 7 h 05 par nuit »).
-  - [ ] **REFONTE-6d** (seuils 7 et 14 : banc d'abord) : voir la préparation.
+  - [ ] **REFONTE-6d** (seuils 7 et 14) — **banc fait le 15/11 à 20:35**
+    ([`ETAPE-6D-BANC.md`](maquettes/compagnon-etapes/ETAPE-6D-BANC.md)) : **lecture A retenue**. Le run de code :
+    (1) `FIRST_RESULTS_DAY` reste à 14 / 28 (pistes), `FIRST_SCORE_DAY` 7 / 14 (score, déjà livré en 6a) ;
+    (2) `UNLOCK_DAYS.wellbeing.medium` de 21 à 35 (à 21 j, 6 à 7 % de jeux avec un faux lien quand un vrai effet
+    existe, presque tous sur l'horizon moyen ; à 35 j, 3,8 à 4 % ; la puissance du court terme monte de 8 à 14 % à
+    21 j) ; ORG-6 et tout texte qui dit « 21 jours » à aligner ; (3) un cas de non-régression au banc
+    (`bench.test.js` : effet fort, 21 et 28 jours, ≤ 5 %) ; (4) textes : la visite guidée, Premium et « Voir un
+    exemple » distinguent « premier score au 7e jour » et « premières pistes vers le 14e » (digestion : 14 et 28) ;
+    le test des délais couvre les deux. Le banc lui-même : `maquettes/compagnon-etapes/banc-6d/`.
   - [x] **REFONTE-6e — La réintroduction sous Confort digestif** (15/11 16:35, Android) : ligne « Réintroduction
     guidée » dans le détail du confort digestif (`reintroLine`, `services/act.js` : test en cours, groupes cités par
     une analyse, ou groupes testés ; rien sinon, leçon 17), retour de `/reintroduction` vers `/recommendations/ventre`.
