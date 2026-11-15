@@ -18,7 +18,9 @@
 
 **🧸 Refonte « Compagnon » (vos décisions des 13, 14 et 15/11) : étape 3 sur 15 faite sur Android le 15/11 à 05:35
 (la checklist de Ma journée, #1001 mergée à 06:23, release v736) ; son suivi iPhone est en PR (build macOS à finir au run suivant). Étapes 1 et 2 faites des deux côtés (l'étape 2
-est sur iPhone depuis le 15/11 à 06:00, #1000). Prochaine : étape 4, les habitudes.** Les 15 étapes :
+est sur iPhone depuis le 15/11 à 06:00, #1000). Étape 4, première moitié (4a), en PR sur Android le 15/11 à
+06:35 (#1003) : les habitudes se choisissent dans Réglages et se notent par oui ou non dans Ma journée. Reste 4b :
+les habitudes dans les analyses.** Les 15 étapes :
 [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le brief :
 [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -29,6 +31,22 @@ est sur iPhone depuis le 15/11 à 06:00, #1000). Prochaine : étape 4, les habit
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
 
+> 🧸 **Refonte « Compagnon », étape 4a : vos habitudes (15/11 06:35, #1003)** : dans **Réglages › Vos
+> habitudes**, vous cochez méditation, étirements, relaxation ou lecture, ou vous nommez la vôtre (une seule habitude
+> libre pour l'instant) ([capture](runs/captures/2026-11-15-0635-refonte-4-reglages.png)). **Ma journée** ajoute
+> alors une ligne **miel** par habitude, avec « Oui » et « Non » de même poids : « non » est une réponse gardée comme
+> « oui », et la ligne part de la même façon ([capture](runs/captures/2026-11-15-0635-refonte-4-ma-journee.png) ·
+> [sombre](runs/captures/2026-11-15-0635-refonte-4-sombre.png) ·
+> [« Déjà noté » ouvert](runs/captures/2026-11-15-0635-refonte-4-deja-note.png) ·
+> [sans habitude](runs/captures/2026-11-15-0635-refonte-4-vide.png)). Les réponses restent sur le téléphone et partent
+> dans l'export. **Un écart avec le brief** : le rail miel proposé (`#F2D27A`) ne fait que 1,33:1 sur le fond miel
+> pour 1,4 exigé ; il est assombri à `#EECB6C`. **Limites** : les habitudes n'entrent **pas encore dans les
+> analyses** (étape 4b) ; pas de durée habituelle ; pas de Pilou qui médite, de bouton « Annuler » ni de « Hier »
+> (étapes 8 à 11) ; changer une réponse depuis « Déjà noté » l'efface et repose la question ; en sombre, le miel
+> et le pêche sont proches ; aucune maquette de ces lignes en miel dans le kit (la maquette les montre en lilas et
+> bleu nuit, avant votre décision du 14/11) ; **pas encore sur iPhone**. **iPhone, étape 3** : la PR de suivi #1002
+> (ouverte à 06:27) attend sa build macOS ; elle embarquera aussi l'étape 4a.
+>
 > 🧸 **Refonte « Compagnon », étape 3 : Ma journée devient une liste à cocher (15/11 05:35)** : l'onglet s'ouvre
 > sur ce qu'il reste à noter aujourd'hui. **Repas** : trois cercles Matin, Midi, Soir ; toucher un cercle vide ouvre
 > l'appareil photo, le repas noté le remplit. **Bien-être** : « Noter ». **Votre digestion ce soir** : seulement avec
@@ -969,6 +987,7 @@ est sur iPhone depuis le 15/11 à 06:00, #1000). Prochaine : étape 4, les habit
 
 | Run | Type | Résultat |
 |---|---|---|
+| 15/11 06:35 — [Refonte « Compagnon », étape 4a : les habitudes](runs/2026-11-15-0635-refonte-4-habitudes.md) | 🔧 | Main vert au début. #1002 (suivi iPhone de l'étape 3, ouverte à 06:27 par le run de 05:35) : build macOS en cours pendant tout le run, pas mergée. Étape 4a sur Android (#1003) : Réglages › Vos habitudes, ligne miel « Oui / Non » par habitude dans Ma journée, réponses en entrées ordinaires, liste suivie dans l'export, tokens miel (rail assombri pour le contraste). 3617 tests verts, lint et build propres, captures de cinq états regardées. Les analyses (4b) restent à faire. TestFlight : non relevé à ce run. |
 | 15/11 05:35 — [Refonte « Compagnon », étape 3 : la checklist de Ma journée](runs/2026-11-15-0535-refonte-3-ma-journee.md) | 🔧 | Main vert. #1000 (suivi iPhone de l'étape 2, ouverte par le run de 04:35) : 15 checks verts, captures iPhone regardées, mergée à 06:00. Étape 3 sur Android (#1001) : Ma journée s'ouvre sur la checklist (repas en trois cercles, bien-être, digestion le soir), lignes qui partent, « Plus rien à faire », « Déjà noté » ; « Mes repas du jour » retiré. 17 tests écrits d'abord, 3593 verts ; captures de six états regardées. TestFlight : 1072.1073 validée et chez les testeurs externes, 13 anciennes builds expirées (844.344 intacte). #1001 mergée à 06:23 (12 checks verts), release v736, APK 33,0 Mo. Suivi iPhone de l'étape 3 : PR ouverte, à finir. |
 | 15/11 04:35 — [Refonte « Compagnon », étape 2 : navigation en 4 onglets](runs/2026-11-15-0435-refonte-2-navigation.md) | 🔧 | Main vert, aucune PR de la routine ouverte. Étape 2 : Accueil · Ma journée · Objectifs · Données (#999) ; l'ancien Aujourd'hui rangé dans Accueil et Ma journée ; Réglages › Données devient « Sauvegarde ». #999 mergée à 05:06 (12 checks verts), release v735 (APK 34,6 Mo). TestFlight : build 1072.1073 ajoutée au groupe externe et soumise à l'examen bêta. PR de suivi iPhone ouverte (v1075, 51 correctifs, 3938 tests verts), pas mergée. |
 | 15/11 03:35 — [Refonte, étape 1 sur iPhone ; préparation de l'étape 2](runs/2026-11-15-0335-refonte-1-iphone.md) | 🔧 | Main vert. #996 (suivi iPhone de l'étape 1, ouverte par le run de 02:35) : 15 checks verts, captures iPhone regardées (Aujourd'hui, Réglages, Paramètres, accueil), mergée à 04:20. Doublon #997 ouvert par erreur puis fermé, ses builds annulées. Table des routes de l'étape 2 écrite. Pas de code produit ; TestFlight et soumission bêta non relevés. |

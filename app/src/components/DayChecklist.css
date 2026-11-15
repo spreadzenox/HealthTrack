@@ -1,5 +1,5 @@
 /* La checklist de Ma journée (refonte « Compagnon », étape 3). Une couleur par thème : pêche = repas et digestion,
-   menthe = bien-être. Courbes de specs/journee.SPEC.md § 0. */
+   menthe = bien-être, miel = habitudes (étape 4). Courbes de specs/journee.SPEC.md § 0. */
 .day-checklist {
   --ease-sortie: cubic-bezier(.5, 0, .75, 0);
   --ease-io: cubic-bezier(.65, 0, .35, 1);
@@ -81,6 +81,25 @@
   border-radius: var(--radius-pill);
   background: var(--color-brand);
   color: var(--color-on-brand);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.day-habit-answers {
+  display: inline-flex;
+  gap: 8px;
+}
+
+/* « Oui » et « Non » ont le même poids : on note, on ne juge pas (brief § 5). */
+.day-habit-btn {
+  min-width: 64px;
+  min-height: var(--tap-min);
+  padding: 0 18px;
+  border: 2px solid var(--tone-label);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--tone-text);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -258,4 +277,15 @@
   .day-finished {
     animation: none;
   }
+}
+
+/* Sans habitude suivie : le chemin vers Réglages › Vos habitudes, discret, sous la liste. */
+.day-habits-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  margin: -6px 0 12px;
+  color: var(--color-brand);
+  font-weight: 700;
+  text-decoration: none;
 }

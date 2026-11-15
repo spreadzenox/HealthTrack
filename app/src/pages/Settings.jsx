@@ -21,6 +21,7 @@ import '../Food.css'
 import { useEntitlement } from '../hooks/useEntitlement'
 import LineIcon from '../components/LineIcon'
 import FaceUnlockSetting from '../components/FaceUnlockSetting'
+import HabitsSetting from '../components/HabitsSetting'
 import LanguageSetting from '../components/LanguageSetting'
 import { I18N_EN } from '../i18n/locale.js'
 import { installFingerprint, sendFeedback, FEEDBACK_MAX_LENGTH } from '../services/aiRelay'
@@ -221,6 +222,9 @@ export default function Settings() {
         </p>
         {gutCardMode({ ...loadOnboarding(), goals }) === 'show' && <GutEveningReminder variant="setting" />}
       </div>
+
+      {/* Refonte étape 4 : ce que la personne note par oui ou non dans Ma journée. */}
+      <HabitsSetting />
 
       {FEATURES.billing && <SubscriptionBlock />}
 

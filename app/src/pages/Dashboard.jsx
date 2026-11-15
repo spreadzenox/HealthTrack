@@ -23,7 +23,9 @@ import { gutAsked, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder 
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
 import AddStrip from '../components/AddStrip'
 import PeriodSheet from '../components/PeriodSheet'
-import { listEntries } from '../storage/localHealthStorage'
+import { listEntries, createEntry, deleteEntry } from '../storage/localHealthStorage'
+import { habitEntry } from '../services/habits'
+import { getHabits } from '../settings/habits'
 import { CYCLE_TYPE, cycleVisible } from '../services/cycle'
 import { goalsOf } from '../settings/onboarding'
 
@@ -122,6 +124,25 @@ export default function Dashboard({ view = 'home' }) {
   const tiles = useMemo(() => measureTiles(todaySummary, entries, new Date(), yesterdaySummary),
     [todaySummary, yesterdaySummary, entries])
 
+  // Refonte étape 4 : les habitudes suivies (Réglages), une ligne oui ou non chacune dans la checklist
+  const [habits] = useState(() => getHabits())
+  const answerHabit = useCallback(async (habit, done) => {
+    try {
+      await createEntry(habitEntry(habit, localDateKey(new Date().toISOString()), done))
+      window.dispatchEvent(new CustomEvent('health-entries-updated'))
+    } catch (e) {
+      setError(e.message)
+    }
+  }, [])
+  const undoHabit = useCallback(async (entry) => {
+    try {
+      await deleteEntry(entry.id)
+      window.dispatchEvent(new CustomEvent('health-entries-updated'))
+    } catch (e) {
+      setError(e.message)
+    }
+  }, [])
+
   const head = headerLine()
   // Refonte étape 1 : sans l'objectif digestion, on ne demande pas le ventre (sauf à qui le note déjà)
   const askGut = gutAsked(gutMode, entries)
@@ -133,9 +154,12 @@ export default function Dashboard({ view = 'home' }) {
       </header>
       {/* Refonte étape 3 : la checklist du jour, ce qu'il reste à noter et ce qui l'est déjà. */}
       {day && !loading && !error && (
-        <DayChecklist entries={entries} askGut={askGut}
+        <DayChecklist entries={entries} askGut={askGut} habits={habits}
           onWellbeing={(entry) => { setWellbeingEntry(entry); setWellbeingOpen(true) }}
-          onGut={() => setAddOpen('digestion')} />
+          onGut={() => setAddOpen('digestion')} onHabit={answerHabit} onHabitUndo={undoHabit} />
+      )}
+      {day && !loading && !error && habits.length === 0 && (
+        <Link to="/settings" className="day-habits-link">Suivre une habitude</Link>
       )}
       {/* Le seul vrai endroit pour ajouter le reste (AUJ-1), sous la checklist. */}
       {day && (
