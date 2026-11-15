@@ -1,13 +1,15 @@
 /**
  * Un essai d'Agir (ORG-8, maquette validée du 07/11) : la consigne du jour, le calendrier de pastilles tirées au sort,
  * la question seulement si les données manquent, « Résultat en cours » (le lendemain des jours avec / sans, moyennes,
- * écart et fourchette dès 3 lendemains de chaque sorte), et à la fin « Vérifié par votre essai » ou « pas d'effet
- * net », avec « Garder cette habitude ». Des liens vérifiés chez vous, jamais une cause générale.
+ * écart et fourchette dès 3 lendemains de chaque sorte), et à la fin un bilan en mots (« Plutôt oui », « Pas de
+ * différence nette »…, REFONTE-6c-2) avec sa réserve et « Garder cette habitude ». En cours : le jour sur le total
+ * du calendrier et les jours « avec » tenus ; un jour manqué est dit sans reproche (brief § 5 : rien ne s'éteint).
+ * Des liens vérifiés chez vous, jamais une cause générale.
  */
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { readTrialsData, saveTrial } from '../services/trialsData'
-import { instruction, trialStatus, RESULT_MIN_EACH, TRIAL_DAYS } from '../services/trials'
+import { bilanWords, instruction, trialStatus, RESULT_MIN_EACH } from '../services/trials'
 import { THEME_TONE } from '../services/resultsView'
 import { toDisplay } from '../services/mood/wellbeingScale'
 import { appLocale } from '../i18n/locale.js'
@@ -143,16 +145,21 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
   const answer = (held) => saveTrial(entry.id, { ...t, answers: { ...t.answers, [s.ask.date]: held } })
   const keep = () => saveTrial(entry.id, { ...t, kept: true, endedAt: t.endedAt ?? at.toISOString() })
   const stop = () => saveTrial(entry.id, { ...t, endedAt: at.toISOString() })
+  const bilan = bilanWords(s)
   return (
     <section className="act-page trial-page" data-tone={THEME_TONE[t.factor.theme] ?? 'stone'}>
       <p className="act-back"><Link to="/agir">← Agir</Link></p>
       <h1 className="page-title">{instruction(t, true)}</h1>
       {!s.done && (
         <article className="today-card trial-today">
-          <p className="trial-day">Jour <span className="mono">{s.dayIndex}</span> sur <span className="mono">{TRIAL_DAYS}</span></p>
+          <p className="trial-day">Jour <span className="mono">{s.dayIndex}</span> sur <span className="mono">{s.total}</span></p>
           <p className="trial-instruction">
             {s.todayDay?.with ? 'Aujourd’hui, jour avec.' : 'Aujourd’hui, jour sans : comme d’habitude.'}
           </p>
+          <p className="act-card-detail trial-kept">
+            <span className="mono">{s.kept}</span> {s.kept > 1 ? 'jours avec tenus' : 'jour avec tenu'} sur <span className="mono">{s.goal}</span>
+          </p>
+          {s.missed > 0 && <p className="act-card-detail">Un jour manqué n’annule rien : l’essai continue.</p>}
         </article>
       )}
       {s.ask && !s.done && (
@@ -167,8 +174,9 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
       )}
       <article className="today-card trial-result" aria-label="Résultat">
         <h2 className="act-section-title">
-          {s.done ? (s.verdict === 'verified' ? 'Vérifié par votre essai' : 'Pas d’effet net') : 'Résultat en cours'}
+          {bilan ? bilan.title : 'Résultat en cours'}
         </h2>
+        {bilan?.note && <p className="trial-bilan-note">{bilan.note}</p>}
         {/* POLISH-ESSAI-VIDE : axes Avec / Sans et piste Écart dès le premier jour, comme la maquette */}
         <ResultChart result={s.result} scale={scale} scaleDelta={scaleDelta} />
         {s.result.diff != null && <p className="act-card-detail trial-diff-text">{diffSentence(s.result, scaleDelta)}</p>}

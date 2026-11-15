@@ -26,7 +26,7 @@ import { nightlySleep } from '../radar'
 import { computeSleepRegularity } from '../sleepRegularity'
 import { STOOL_TYPE, stoolCounts } from '../stool'
 import { GUT_LEVELS, GUT_TYPE, SOURCE_LABELS, WHEN_TO_SEE_DOCTOR, entrySourceLabel } from '../today'
-import { TRIAL_TYPE, instruction, trialStatus } from '../trials'
+import { TRIAL_TYPE, bilanWords, instruction, trialStatus } from '../trials'
 import { buildDailyJournal } from '../dailyJournal'
 import { outcomeSeries } from '../analysisResults'
 
@@ -42,7 +42,7 @@ export function reportTrials(list, now = new Date()) {
   return trials.map((e) => {
     const t = e.payload
     const s = trialStatus(t, { summaries, outcome: series[t.factor.outcome === 'digestion' ? 'digestion' : 'wellbeing'], now })
-    const state = !s.done ? 'en cours' : s.verdict === 'verified' ? 'vérifié par l’essai' : 'pas d’effet net'
+    const state = !s.done ? 'en cours' : bilanWords(s).title.toLowerCase()
     return {
       label: t.factor.label,
       outcome: t.factor.outcome === 'digestion' ? 'confort digestif' : 'bien-être',

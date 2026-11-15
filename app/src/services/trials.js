@@ -1,11 +1,16 @@
 /**
  * Essais d'Agir (ORG-8, revue design du 07/11, maquette validée) : vérifier une piste d'Analyses par soi-même.
  * Fonction pure, sans React ni stockage.
- * - 14 jours tirés au sort, 7 « avec » et 7 « sans » (tirage équilibré : le hasard, pas l'envie du jour, décide) ;
+ * - 10 jours tirés au sort, 5 « avec » et 5 « sans » (tirage équilibré : le hasard, pas l'envie du jour, décide).
+ *   REFONTE-6c-2 (brief § 4 et § 5, « défi doux ») : 5 jours avec au lieu de 7, le tirage d'ORG-8 gardé ; un essai
+ *   déjà commencé garde son calendrier de 14 jours ;
  * - la tenue de la consigne vient des données (montre, téléphone) ; la question n'est posée que si elles manquent ;
  * - « Résultat en cours » : le résultat du lendemain des jours avec / sans, leurs moyennes et l'écart, avec une
  *   fourchette dès 3 lendemains de chaque sorte ;
- * - à la fin, « Vérifié par votre essai » si la fourchette exclut zéro dans le sens attendu, sinon « pas d'effet net » ;
+ * - à la fin, un bilan en mots (grille de `specs/comprendre.SPEC.md` § 7, sur la fourchette au lieu de minutes) :
+ *   « Plutôt oui » si la fourchette exclut zéro dans le sens attendu, « Plutôt non » dans l'autre sens, « Pas de
+ *   différence nette » sinon, « Trop peu de jours pour conclure » sous 3 lendemains d'une sorte ; sous 10 jours avec,
+ *   toujours « À confirmer sur plus de jours » ;
  * - une habitude gardée : les 14 dernières pastilles de tenue ; « Vous vous éloignez de cette habitude » quand 9 jours
  *   sur 14 ne sont pas tenus, au plus une fois par mois et par habitude, effacé dès qu'elle reprend.
  * Des liens vérifiés chez vous, jamais une cause générale ni un traitement.
@@ -15,7 +20,9 @@ import { appLocale } from '../i18n/locale.js'
 
 export const TRIAL_TYPE = 'trial'
 export const TRIAL_SOURCE = 'app_trial'
-export const TRIAL_DAYS = 14
+export const TRIAL_DAYS = 10
+/** Jours « avec » suivis d'un résultat en dessous desquels un bilan reste « à confirmer ». */
+export const CONFIRM_BELOW = 10
 /** Lendemains de chaque sorte avant de dessiner l'écart et sa fourchette. */
 export const RESULT_MIN_EACH = 3
 /** Habitude : jours non tenus sur les 14 derniers avant de le dire. */
@@ -96,7 +103,7 @@ export function proposal(factor, outcome = factor.outcome) {
   const effect = isNum(factor.effect) && what ? ` : ${pts(factor.effect)} point ${OUTCOME_WORDS[outcome] ?? 'de bien-être'} pour ${what}` : ''
   return {
     title: instruction(draft, true),
-    detail: `Lien repéré${effect}. ${TRIAL_DAYS} jours, un jour sur deux tiré au sort.`,
+    detail: `Lien repéré${effect}. ${TRIAL_DAYS / 2} jours avec, ${TRIAL_DAYS / 2} jours sans, tirés au sort.`,
   }
 }
 
@@ -152,10 +159,31 @@ export function trialStatus(trial, { summaries = new Map(), outcome = new Map(),
   }
   const last = trial.schedule[trial.schedule.length - 1].date
   const done = Boolean(trial.endedAt) || today > addDays(last, 1)
-  let verdict = null
-  if (done) verdict = result.diff != null && (result.low > 0 || result.high < 0) ? 'verified' : 'no_effect'
-  const dayIndex = Math.min(TRIAL_DAYS, Math.max(1, calendar.findIndex((d) => d.today) + 1 || TRIAL_DAYS))
-  return { calendar, todayDay, ask, result, done, verdict, dayIndex }
+  // Les jours « avec » vont avec un meilleur résultat d'après la piste : le sens attendu de l'écart est positif
+  let bilan = null
+  if (done) bilan = result.diff == null ? 'too_few' : result.low > 0 ? 'yes' : result.high < 0 ? 'no' : 'none'
+  const confirm = done && bilan !== 'too_few' && withV.length < CONFIRM_BELOW
+  const total = trial.schedule.length
+  const dayIndex = Math.min(total, Math.max(1, calendar.findIndex((d) => d.today) + 1 || total))
+  const withDays = calendar.filter((d) => d.with)
+  return {
+    calendar, todayDay, ask, result, done, bilan, confirm, dayIndex, total,
+    goal: withDays.length,
+    kept: withDays.filter((d) => d.held === true).length,
+    missed: withDays.filter((d) => d.held === false).length,
+  }
+}
+
+const BILAN_TITLES = { yes: 'Plutôt oui', no: 'Plutôt non', none: 'Pas de différence nette', too_few: 'Trop peu de jours pour conclure' }
+
+/** Le bilan d'un essai fini, en mots : un titre, et la réserve qui va avec (ou null). */
+export function bilanWords(status) {
+  if (!status?.bilan) return null
+  const n = status.result.with.length
+  const note = status.bilan === 'too_few'
+    ? 'Vous pouvez réessayer quand vous voulez.'
+    : status.confirm ? `À confirmer sur plus de jours : ${n} jours avec, c’est encore peu.` : null
+  return { title: BILAN_TITLES[status.bilan], note }
 }
 
 /** Habitude gardée : les 14 derniers jours (tenu / pas tenu / inconnu) et s'il faut dire qu'on s'en éloigne. */

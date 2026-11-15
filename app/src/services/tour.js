@@ -59,7 +59,7 @@ export function tourSteps({ hc, face, gut }) {
   }
   steps.push(
     { route: '/agir', title: 'Agir', text: 'Ici, vous vérifierez une piste par vous-même.', button: `Exemple au jour ${W}` },
-    { route: '/agir', days: W, reveal: true, anchor: '.act-card', title: 'Vérifier par un essai', text: `${APP_NAME} vous propose deux semaines d’essai, puis compare avant et après.`, button: 'Revenir à mes données' },
+    { route: '/agir', days: W, reveal: true, anchor: '.act-card', title: 'Vérifier par un essai', text: `${APP_NAME} vous propose dix jours d’essai, puis compare les jours avec et les jours sans.`, button: 'Revenir à mes données' },
     { route: '/', anchor: '.tabbar', title: 'À vous', text: 'Pour revoir cette visite : « Voir un exemple », en bas des écrans encore vides.', button: 'Terminer', last: true },
   )
   return steps

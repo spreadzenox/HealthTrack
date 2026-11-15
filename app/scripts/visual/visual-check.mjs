@@ -1265,11 +1265,12 @@ async function main() {
       entries = entries.filter((e) => e.type !== 'wellbeing' || new Date(e.at) < from || new Date(e.at) >= to)
     }
     if (args.trial) {
-      // Essai du sommeil commencé il y a N − 1 jours (jour N sur 14), tirage fixe 7 avec / 7 sans (POLISH-ESSAI-AXES)
-      const n = Math.min(14, Math.max(1, Number(args.trial) || 8))
+      // Essai du sommeil commencé il y a N − 1 jours (jour N sur 10), tirage fixe 5 avec / 5 sans (REFONTE-6c-2) ;
+      // --trial=12 : l'essai est fini, la page montre son bilan
+      const n = Math.min(12, Math.max(1, Number(args.trial) || 8))
       const start = new Date(); start.setHours(9, 0, 0, 0); start.setDate(start.getDate() - (n - 1))
       const key = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-      const flags = [true, false, false, true, true, false, true, false, true, false, false, true, true, false]
+      const flags = [true, false, false, true, true, false, true, false, true, false]
       const schedule = flags.map((w, i) => { const d = new Date(start); d.setDate(d.getDate() + i); return { date: key(d), with: w } })
       // --trial-factor=alcohol : un facteur sans mesure, chaque lendemain compte (fourchette visible)
       const alcohol = args['trial-factor'] === 'alcohol'

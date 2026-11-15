@@ -166,7 +166,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     sont floutées. « Comment est calculé votre bien-être ? » en lien replié. Écarts avec la SPEC : « Par famille »
     et « Lien fort » au lieu de « Ce qui influence » et « Influence forte » (règle 5) ; pas de moyenne par famille ;
     pas de feuille du bas.
-  - [ ] **REFONTE-6b-iOS** (15/11 14:45 : **en PR, #1016**, branche `claude/iphone-code-6b`) : code v1090, 51
+  - [ ] **REFONTE-6b-iOS et 6c-1-iOS** (15/11 15:50 : **#1016 complétée**, à jour sur main, code **v1091**, deux
+    captures d'abonné : détail du bien-être et famille Sommeil ; build macOS relancée). **À merger avant toute PR
+    Android**, une fois la build verte et les deux captures regardées. Note d'avant (14:45) : code v1090, 51
     correctifs sans retouche ; capture `demo-clair-recommendations-bien-etre-abonne` ajoutée (droits de
     démonstration pour cette seule page, `SUBSCRIBED_ROUTES`), car sans abonnement le bloc est masqué. **À finir** :
     build simulateur verte, cette capture regardée (bloc « Par famille » visible), puis merge.
@@ -182,17 +184,30 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     (« Piste à tester », « Ce qui a été comparé », retour « ← Votre bien-être »). Famille inconnue, sans facteur,
     avant les résultats ou pistes floutées : retour au détail de l'objectif. Écart avec la SPEC § 6.5 : pas
     d'histoire propre au sommeil (14 nuits, deux moyennes).
-  - [ ] **REFONTE-6c-1-iOS** : embarquer 6c-1 ; ajouter `/recommendations/bien-etre/famille/sleep` aux captures
-    d'abonné (`SUBSCRIBED_ROUTES`, après #1016).
-  - [ ] **REFONTE-6c-2 — La piste en défi doux** (5 soirs, bilan par la grille de mots de la SPEC § 7). Question
-    posée au propriétaire le 15/11 14:35 (résumé) : garder le tirage au sort d'ORG-8 sous la surface, ou comparer
-    aux 14 nuits habituelles comme la maquette. Sans réponse : garder le tirage, ne changer que les mots et la durée.
-  - [ ] **REFONTE-6c-3 — Restes de 6c-1** : un effet non net plus grand que 2 points (« Méditation −3,3 pt » à long
+  - [ ] **REFONTE-6c-1-iOS** : fait dans #1016 (voir REFONTE-6b-iOS), à merger.
+  - [x] **REFONTE-6c-2 — La piste en défi doux** (15/11 15:35, Android) : sans réponse du propriétaire, le tirage
+    d'ORG-8 est gardé. Un nouvel essai dure 10 jours, 5 « avec » et 5 « sans » (`TRIAL_DAYS`, `services/trials.js`) ;
+    un essai commencé garde ses 14 jours ; `trialStatus` rend `total`, `goal`, `kept`, `missed`, `bilan`
+    (`yes`, `no`, `none`, `too_few`) et `confirm` (moins de 10 jours « avec » suivis d'un résultat) ; `bilanWords()`
+    pour `Trial.jsx`, `Act.jsx` et le rapport. « Vérifié par votre essai » et « Pas d'effet net » sont retirés
+    (l'ancien verdict disait « vérifié » dans les deux sens). Écarts avec la SPEC § 7 : pas de soirs libres ni de
+    comparaison aux 14 nuits ; grille sur la fourchette, pas en minutes ; ni lanternes ni rituel (étapes 10 à 12).
+    Si le propriétaire dit « défi libre » : refaire d'après la SPEC.
+  - [ ] **REFONTE-6c-2-iOS** : embarquer 6c-2 (code partagé, rien de natif ; aucun correctif ne touche `trials.js`,
+    `Trial.jsx`, `Act.jsx`, `tour.js` : à vérifier par `upstream.sh`).
+  - [ ] **REFONTE-6c-3 — Restes de 6c-1 et 6c-2** : (6c-2) rejouer sur le banc un essai de 5 et 5 (taux de
+    « Plutôt oui » à tort avec ± 2 erreurs types ; passer au seuil de Student si plus de 5 %) ; Agir allume
+    l'onglet Accueil et l'écran d'un essai l'onglet Objectifs ; une piste finie est reproposée aussitôt ; captures
+    en sombre, à 320 px, « Plutôt oui », « Plutôt non », « Trop peu de jours ». (6c-1) un effet non net plus grand que 2 points (« Méditation −3,3 pt » à long
     terme sur les données de démo) ne devrait pas s'afficher en chiffre (voir `outOfScale`, POLISH-SIM-16) ; le
     détail de l'objectif répète ce que la famille montre (alléger « Ce qui va avec » quand 6c-2 sera là) ; captures
     à 320 px, en grand texte, confort digestif avec résultats ; moyenne de la famille (« 7 h 05 par nuit »).
   - [ ] **REFONTE-6d** (seuils 7 et 14 : banc d'abord), **6e** (réintroduction sous Confort digestif) : voir la
     préparation.
+- [ ] **IOS-HEAD — Une seule PR pour `app/` et `iphone/`** (étape 1 de « Sort des correctifs », `iphone/README.md`) :
+  `upstream.json` à `HEAD`, filtres de `ios-build.yml`, job « les correctifs s'appliquent ». Aujourd'hui chaque
+  merge Android remet la PR iPhone en retard sur main et relance une heure de build (15/11 : #1016 est restée
+  ouverte deux runs). À faire avant REFONTE-7. D'ici là : merger la PR iPhone avant toute PR Android.
 - [ ] **REFONTE-7 — Données et suppression du Journal** : Données s'ouvre sur Tendances, Nutrition en second onglet ;
   **inventaire d'abord** de ce qui n'est accessible que par le Journal (modifier ou supprimer une saisie passée, la
   ligne « Règles · 2e jour », les ajouts rapides…) et une autre maison pour chaque chose ; puis suppression de

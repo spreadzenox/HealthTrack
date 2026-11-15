@@ -10,6 +10,8 @@ import { saveTrial } from '../services/trialsData'
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30 } }
 const payload = { ...createTrial(sleep, { now: new Date(2026, 10, 1, 9) }), schedule: [...Array(14)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 })) }
 
+const line = (text) => (_, el) => el.tagName === 'P' && el.textContent.trim().replace(/\s+/g, ' ') === text
+
 const renderTrial = (now, extra = {}, changes = null, wellbeing = new Map([['2026-11-02', 3.5], ['2026-11-03', 2]])) => render(
   <MemoryRouter initialEntries={['/agir/essai/7']}>
     <Routes>
@@ -101,9 +103,35 @@ describe('Un essai (ORG-8)', () => {
     expect(screen.getByText(/^Après 6 lendemains : \+0,\d points?, entre [−+]?\d,\d et [−+]?\d,\d\.$/)).toBeInTheDocument()
   })
 
-  it('à la fin : le verdict et « Garder cette habitude »', async () => {
+  it('REFONTE-6c-2 : un essai de 10 jours dit son jour sur 10 et ses jours avec tenus sur 5', async () => {
+    const ten = { schedule: payload.schedule.slice(0, 10) }
+    renderTrial(new Date(2026, 10, 3, 10), ten)
+    expect(await screen.findByText(line('Jour 3 sur 10'))).toBeInTheDocument()
+    expect(screen.getByText(line('1 jour avec tenu sur 5'))).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Les 10 jours' })).toBeInTheDocument()
+    expect(screen.queryByText(/n’annule rien/)).toBeNull()
+  })
+
+  it('REFONTE-6c-2 : un jour avec manqué est dit sans reproche', async () => {
+    renderTrial(new Date(2026, 10, 5, 10), { schedule: payload.schedule.slice(0, 10), answers: { '2026-11-03': false } })
+    expect(await screen.findByText(line('1 jour avec tenu sur 5'))).toBeInTheDocument()
+    expect(screen.getByText('Un jour manqué n’annule rien : l’essai continue.')).toBeInTheDocument()
+  })
+
+  it('REFONTE-6c-2 : à la fin, le bilan en mots et sa réserve', async () => {
+    const wellbeing = new Map()
+    for (let d = 2; d <= 11; d += 1) wellbeing.set(`2026-11-${String(d).padStart(2, '0')}`, (d % 2 === 0 ? 4 : 2.5) + (d % 4) * 0.05)
+    renderTrial(new Date(2026, 10, 12, 10), { schedule: payload.schedule.slice(0, 10) }, null, wellbeing)
+    expect(await screen.findByRole('heading', { name: 'Plutôt oui' })).toBeInTheDocument()
+    expect(screen.getByText('À confirmer sur plus de jours : 5 jours avec, c’est encore peu.')).toBeInTheDocument()
+    expect(screen.queryByText(/Vérifié/)).toBeNull()
+    expect(screen.queryByText(/^Jour \d+ sur/)).toBeNull()
+  })
+
+  it('à la fin : le bilan et « Garder cette habitude »', async () => {
     renderTrial(new Date(2026, 10, 20, 10))
-    expect(await screen.findByRole('heading', { name: 'Pas d’effet net' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Trop peu de jours pour conclure' })).toBeInTheDocument()
+    expect(screen.getByText('Vous pouvez réessayer quand vous voulez.')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Garder cette habitude' }))
     expect(saveTrial).toHaveBeenCalledWith(7, expect.objectContaining({ kept: true }))
   })
