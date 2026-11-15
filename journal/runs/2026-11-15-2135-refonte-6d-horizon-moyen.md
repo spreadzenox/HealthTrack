@@ -32,8 +32,9 @@ inchangée
 3. `BACKLOG.md` (6d coché, 6d-2 ouvert), `PRODUIT.md`, résumé (ligne « Probable », tableau).
 
 ## Vérifs
-- Tests ciblés : banc, `analysisResults`, `firstResults`, `GuidedTour`, `Premium` verts. Suite complète, lint, build
-  et `npm run visual` : voir la PR (résultats recopiés à la fin du run).
+- `npm run test` : 3708 verts (44 ignorés), lint sans erreur, build OK, `npm run visual` complet sans erreur JS.
+  Capture `recommendations-bien-etre-1` regardée (données de démo, 75 jours : familles, pistes et court terme
+  inchangés, comme attendu). PR **#1026**.
 - iPhone : aucun correctif de `iphone/patches/` ne touche `tour.js`, `Premium.jsx`, `analysisResults.js` ni
   `firstResults.js` (grep). `scripts/upstream.sh` ne tourne pas ici (clone sans historique) : le job « les
   correctifs s'appliquent » et la build simulateur de la PR le vérifient.
