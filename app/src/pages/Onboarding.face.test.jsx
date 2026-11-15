@@ -60,11 +60,11 @@ describe('Nouvel accueil (ACC-6) : lecture du visage facultative', () => {
     trial.runFaceTrial.mockResolvedValue({ outcome: 'read', estimate: { label: 'plutôt bien', note: 3.4, low: 2.9, hi: 3.9 } })
   })
 
-  it('après « ce qui a été trouvé », avant la première note ; divulgation en cinq lignes ; compteur 05/06', () => {
+  it('après les 4 temps, hors du compteur ; divulgation en cinq lignes', () => {
     atFace()
     renderAt()
     expect(heading()).toBeInTheDocument()
-    expect(screen.getByText('05/06')).toBeInTheDocument()
+    expect(screen.queryByRole('progressbar', { name: 'Avancement' })).not.toBeInTheDocument()
     for (const t of ['Ce qui est lu', 'Ce qui est gardé', 'Où', 'Ce que c’est', 'Comment l’arrêter']) expect(screen.getByText(t)).toBeInTheDocument()
     expect(screen.getByText(/pas un avis médical/)).toBeInTheDocument()
     expect(screen.getByText('À chaque déverrouillage')).toBeInTheDocument()
@@ -73,21 +73,22 @@ describe('Nouvel accueil (ACC-6) : lecture du visage facultative', () => {
     expect(screen.queryByRole('button', { name: 'Continuer' })).not.toBeInTheDocument()
   })
 
-  it('absente quand le téléphone ne sait pas lire le visage (compteur 05/05)', () => {
+  it('absente quand le téléphone ne sait pas lire le visage : le temps 4 termine l’accueil', async () => {
     face.available = false
-    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'first' })
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'notes' })
     renderAt()
-    expect(screen.getByRole('heading', { name: 'Comment vous sentez-vous maintenant ?' })).toBeInTheDocument()
-    expect(screen.getByText('05/05')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'C’est parti !' }))
+    expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
   })
 
-  it('« Plus tard » passe à la suite sans rien demander', () => {
+  it('« Plus tard » passe à la suite sans rien demander (ici la fin : pas de Gold en sideload)', async () => {
     atFace()
     renderAt()
     fireEvent.click(screen.getByRole('button', { name: 'Plus tard' }))
     expect(trial.runFaceTrial).not.toHaveBeenCalled()
     expect(loadOnboarding()).toMatchObject({ face: 'later', unlockLater: true })
-    expect(screen.getByRole('heading', { name: 'Comment vous sentez-vous maintenant ?' })).toBeInTheDocument()
+    expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
+    expect(loadOnboarding().done).toBe(true)
   })
 
   it('« Activer » lance la lecture d’un geste (la divulgation est sur l’écran) ; puis « Continuer »', async () => {
@@ -173,7 +174,6 @@ describe('Nouvel accueil (ACC-9) : Gold pendant le test, abonnement sinon', () =
     localStorage.setItem('halcya_entitlement', JSON.stringify({ premium: true, source: 'launch', launchUntil: '2026-12-02T23:00:00Z' }))
     saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'premium' })
     renderAt()
-    expect(screen.getByText('06/06')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Gold est offert pendant le test' })).toBeInTheDocument()
     expect(screen.getByText(/jusqu’au .*déc.* inclus\. Aucune carte bancaire n’est demandée\./)).toBeInTheDocument()
     // POLISH-SIM-18 : une persona peu technique ne savait pas ce qu'est « Gold » ni de quel « test » on parle.

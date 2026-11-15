@@ -31,8 +31,8 @@ export const RETIRED_GOALS = ['cycle', 'sport']
  * jusqu'à l'étape 5b.
  */
 export const OBJECTIVES = [
-  { id: 'wellbeing', label: 'Bien-être', locked: true },
-  { id: 'gut', label: 'Confort digestif' },
+  { id: 'wellbeing', label: 'Bien-être', hint: 'Comprendre ce qui influence comment vous vous sentez.', locked: true },
+  { id: 'gut', label: 'Confort digestif', hint: 'Pour une digestion sensible : repérer ce qui la soulage.' },
 ]
 /** Forme des objectifs enregistrés : 2 = `goals` ne contient plus que wellbeing, gut et l'ancien marqueur cycle. */
 export const GOALS_VERSION = 2
@@ -74,6 +74,18 @@ export function migrateGoals(s, gutRecent = false) {
   const gut = wantsGut(before) || (!before.length && gutRecent)
   const goals = ['wellbeing', gut && 'gut', before.includes('cycle') && 'cycle'].filter(Boolean)
   return { ...s, goals, goalsBefore: before, goalsVersion: GOALS_VERSION }
+}
+
+/**
+ * Temps 1 de l'accueil (étape 5b) : le bien-être toujours, le confort digestif coché ou non. Les choix d'un ancien
+ * accueil commencé sont gardés une fois dans `goalsBefore`, comme à la migration.
+ * @param {object} s réglages de l'accueil
+ * @param {boolean} gut confort digestif coché
+ */
+export function chooseObjectives(s, gut) {
+  const m = migrateGoals(s)
+  const goals = ['wellbeing', gut && 'gut', m.goals.includes('cycle') && 'cycle'].filter(Boolean)
+  return { goals, goalsBefore: m.goalsBefore, goalsVersion: GOALS_VERSION }
 }
 
 /**
@@ -119,8 +131,11 @@ export function handNotes(goals = []) {
   ].filter(Boolean)
 }
 
-/** Version du parcours : 2 = nouvel accueil du 08/11 (tuto, objectifs, sources, trouvé, visage, première note, Gold). */
-export const FLOW_VERSION = 2
+/**
+ * Version du parcours : 3 = accueil en 4 temps de la refonte « Compagnon » (étape 5b : ouverture, objectifs, montre,
+ * ce qui est suivi seul, ce qu'on note ; puis visage et Gold). 2 = accueil du 08/11.
+ */
+export const FLOW_VERSION = 3
 
 const EMPTY = { done: false, goal: null, goals: null, tracks: null, watch: null, step: 0, maxStep: 0 }
 

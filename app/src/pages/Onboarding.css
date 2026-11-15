@@ -13,8 +13,7 @@
   min-height: 56px;
 }
 
-.onb-back,
-.onb-skip {
+.onb-back {
   min-width: var(--tap-min);
   min-height: var(--tap-min);
   background: none;
@@ -27,11 +26,6 @@
 
 .onb-back-spacer {
   width: 0;
-}
-
-.onb-skip {
-  font-size: 0.9rem;
-  text-decoration: underline;
 }
 
 .onb-progress {
@@ -374,14 +368,6 @@
   cursor: pointer;
 }
 
-/* Nouvel accueil (ACC-1 à ACC-9, 08/11) */
-.onb-tuto {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  flex: 1;
-}
-
 .onb-tuto-ill {
   display: grid;
   gap: 12px;
@@ -414,7 +400,6 @@
   height: 64px;
 }
 
-.onb-tabs-list,
 .onb-leaves,
 .onb-devices {
   list-style: none;
@@ -424,7 +409,6 @@
   gap: 8px;
 }
 
-.onb-tabs-list li,
 .onb-leaves li,
 .onb-device {
   display: grid;
@@ -434,14 +418,12 @@
   background: var(--surface);
 }
 
-.onb-tabs-name,
 .onb-leaves-title,
 .onb-device-name {
   font-weight: 700;
   color: var(--text);
 }
 
-.onb-tabs-text,
 .onb-leaves-detail,
 .onb-device-detail {
   color: var(--text-muted);
@@ -460,38 +442,6 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-muted);
-}
-
-.onb-dots {
-  display: flex;
-  justify-content: center;
-  margin-top: auto;
-}
-
-/* Cible de 44 px, point dessiné au centre */
-.onb-dot {
-  width: var(--tap-min);
-  height: var(--tap-min);
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.onb-dot::before {
-  content: '';
-  width: 10px;
-  height: 10px;
-  border-radius: var(--radius-pill);
-  background: var(--border);
-}
-
-.onb-dot.is-current::before {
-  width: 22px;
-  background: var(--color-brand);
 }
 
 .onb-card {
@@ -659,48 +609,6 @@
   margin: 0;
 }
 
-.onb-feelings {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
-}
-
-.onb-feeling {
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  padding: 10px 2px;
-  min-height: var(--tap-min);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-choice);
-  background: none;
-  color: var(--text);
-  font: inherit;
-  cursor: pointer;
-}
-
-.onb-feeling.is-selected {
-  border-color: var(--mint-label);
-  background: var(--mint-bg);
-}
-
-.onb-feeling-face circle:first-child,
-.onb-feeling-face path {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-
-.onb-feeling-face .onb-face-eye {
-  fill: currentColor;
-}
-
-.onb-feeling-label {
-  font-size: 0.78rem;
-  text-align: center;
-}
-
 .onb-gold {
   border: 2px solid var(--peach-label);
   position: relative;
@@ -780,4 +688,135 @@
 
 .onb-measure.is-not_shared .onb-measure-name {
   color: var(--text-muted);
+}
+
+/* Accueil en 4 temps (refonte « Compagnon », étape 5b) */
+.onb-progress--segments {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  background: none;
+  overflow: visible;
+}
+
+.onb-progress--segments span {
+  background: var(--surface);
+}
+
+.onb-progress--segments span.is-done {
+  background: var(--color-brand);
+}
+
+.onb-choice.is-locked {
+  cursor: default;
+}
+
+.onb-choice-badge {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--mint-bg);
+  color: var(--mint-label);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.onb-auto {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: 8px;
+}
+
+.onb-auto li {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+  padding: 10px 12px;
+  border-radius: var(--radius-choice);
+  background: var(--tone-bg, var(--surface));
+  color: var(--tone-text, var(--text));
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.onb-notes {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.onb-notes li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius-choice);
+  background: var(--tone-bg, var(--surface));
+  color: var(--tone-text, var(--text));
+}
+
+.onb-notes-label {
+  font-weight: 700;
+}
+
+.onb-notes-detail {
+  font-size: 0.85rem;
+}
+
+.onb-habits .onb-choice.is-selected {
+  border-color: var(--honey-label);
+  background: var(--honey-bg);
+  color: var(--honey-text);
+}
+
+.onb-habits .onb-choice input {
+  accent-color: var(--honey-label);
+}
+
+.onb-habit-add {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.onb-habit-input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap-min);
+  padding: 0 14px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-choice);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.onb-summary {
+  margin: 16px 0 4px;
+  font-weight: 700;
+}
+
+.onb-motto {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.onb-habits legend {
+  margin-bottom: 8px;
+}
+
+.onb-habit-add .btn {
+  flex: 0 0 auto;
+  width: auto;
+  padding: 0 20px;
 }

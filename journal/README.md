@@ -21,7 +21,7 @@
 est sur iPhone depuis le 15/11 à 06:00, #1000). Étape 4, première moitié (4a), faite sur Android le 15/11 à
 06:35 (#1003 mergée à 06:59, release v737) ; sur iPhone avec #1002 (code v1078, captures de Ma journée et de Paramètres regardées sur simulateur) : les habitudes se choisissent dans Réglages et se notent par oui ou non dans Ma journée. **Étape 4, seconde moitié
 (4b), faite sur Android le 15/11 à 07:35 (#1004) : chaque habitude entre dans les analyses d'Objectifs ; l'étape 4
-est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 vers 09:25, code v1080 ; la build part seule sur TestFlight) : l'étape 4 est finie des deux côtés. Étape 5 (onboarding), première partie (5a), faite sur Android le 15/11 à 09:35 : vos objectifs deviennent « bien-être toujours, confort digestif en option » ; reste 5b, les 4 écrans de l'accueil ([`ETAPE-5-ONBOARDING.md`](maquettes/compagnon-etapes/ETAPE-5-ONBOARDING.md)), et le suivi iPhone de 5a (en PR, code v1083, build macOS à finir au run suivant).** Les 15 étapes :
+est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 vers 09:25, code v1080 ; la build part seule sur TestFlight) : l'étape 4 est finie des deux côtés. Étape 5 (onboarding), première partie (5a), faite sur Android le 15/11 à 09:35 : vos objectifs deviennent « bien-être toujours, confort digestif en option » ; son suivi iPhone est fait (#1008 mergée le 15/11 vers 11:12, code v1083). Seconde partie (5b), faite sur Android le 15/11 à 10:35 (#1009) : l'accueil d'une nouvelle installation tient en 4 écrans ; l'étape 5 est donc finie sur Android, reste son suivi iPhone (deux correctifs refaits, build à faire).** Les 15 étapes :
 [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le brief :
 [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -32,6 +32,27 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
   s'arrête deux fois : avant « Save » de la déclaration « dispositif médical » (réponse préparée : « No »), puis
   avant « Submit for Review ». Rien d'autre aujourd'hui ; pas de date imposée.
 
+> 🧸 **Refonte « Compagnon », étape 5b : l'accueil en 4 écrans (15/11 10:35, #1009)** : une nouvelle installation
+> voit une carte d'ouverture ([capture](runs/captures/2026-11-15-1035-refonte-5b-ouverture.png)), puis
+> [« Qu'est-ce qui vous amène ? »](runs/captures/2026-11-15-1035-refonte-5b-temps-1.png),
+> [« Avez-vous une montre ou un bracelet ? »](runs/captures/2026-11-15-1035-refonte-5b-temps-2.png),
+> [« Ce que Halcya suit pour vous, sans rien faire »](runs/captures/2026-11-15-1035-refonte-5b-temps-3.png) et
+> [« Ce que vous noterez chaque jour »](runs/captures/2026-11-15-1035-refonte-5b-temps-4.png)
+> ([sombre](runs/captures/2026-11-15-1035-refonte-5b-temps-4-sombre.png)). Les trois choix annoncés au run de 08:35
+> sont faits : une seule carte d'ouverture, l'écran du visage gardé après les 4 temps, la première note retirée.
+> **Vous ne le verrez pas sur votre téléphone** : qui a fini l'accueil ne le revoit pas (il faut une installation
+> neuve, ou les captures). **Quatre choix faits pour vous, à corriger si vous préférez autre chose** : (1) la
+> maquette écrit « ventre » deux fois ; l’app écrit « digestion » (votre règle « digestif, jamais ventre ») ; (2) au dernier écran,
+> seules les habitudes se décochent : repas et bien-être sont des lignes fixes, puisque rien dans l'app ne permet de
+> ne pas les suivre ; (3) à « Non, pas pour l'instant », l'écran suivant ne montre que le temps d'écran et la
+> météo, et annonce le reste « avec une montre ou un bracelet », au lieu de promettre 9 mesures ; (4) à la fin,
+> l'app s'ouvre sur l'Accueil et sa visite guidée, pas sur Ma journée comme annoncé à 08:35. **Limites** : sans
+> Pilou ni animation (étape 12) ; sans montre, aucune séance de sport à noter à la main (la maquette le prévoit,
+> Ma journée ne le sait pas) ; quand l'accès aux données est donné, le troisième écran est long (les mesures
+> trouvées répètent en partie les tuiles) ; captures regardées à 412 px seulement, sans 320 px ni grand texte, et
+> pas dans la variante Play avec visage et Gold ; tests écrits après le code pour cette étape ; **pas encore sur
+> iPhone** (deux correctifs à refaire).
+>
 > 🧸 **Refonte « Compagnon », étape 5a : deux objectifs (15/11 09:35, #1007)** : dans **Réglages › Vos objectifs**, le
 > **Bien-être** est « Toujours suivi » et le **Confort digestif** se coche en plus
 > ([capture](runs/captures/2026-11-15-0935-refonte-5a-reglages.png) ·
@@ -1031,6 +1052,7 @@ est donc finie sur Android, son suivi iPhone est fait (#1005 mergée le 15/11 ve
 
 | Run | Type | Résultat |
 |---|---|---|
+| 15/11 10:35 — [Refonte « Compagnon », étape 5b : l'accueil en 4 temps](runs/2026-11-15-1035-refonte-5b-accueil.md) | 🔧 | Main vert au début. #1008 (suivi iPhone de 5a) : 15 checks verts, capture de Paramètres regardée sur iPhone 17 Pro, mergée vers 11:12 (code v1083 ; la build part seule sur TestFlight). Étape 5b sur Android (#1009) : une carte d'ouverture, puis objectifs, montre, ce que Halcya suit seule, ce qu'on note ; première note et carte des onglets retirées. 3657 tests verts, lint, build et `npm run visual` complet ; captures des 4 temps regardées (412 px). Tests écrits après le code. TestFlight relevé à 10:48 : 1072.1073 en test, rien en attente. Suivi iPhone de 5b préparé (correctifs 23 et 55 refaits), pas encore construit. |
 | 15/11 09:35 — [Refonte « Compagnon », étape 5a : migration des objectifs](runs/2026-11-15-0935-refonte-5a-objectifs.md) | 🔧 | Main vert au début ; #1006 (run « idées » de 08:35) mergée par ce run-là. Étape 5a sur Android (#1007) : objectifs convertis une fois au démarrage (bien-être toujours, confort digestif facultatif), anciens choix gardés, Réglages › Vos objectifs. Tests de migration écrits d'abord, 3647 verts ; captures de Réglages regardées (clair, sombre). #1007 mergée vers 10:08 (12 checks verts après une relance du job Java : 429 de Maven Central), release v739 (APK 34,6 Mo), « Play — AAB » vert (v1083). TestFlight relevé à 09:48 : 1072.1073 en test, rien en attente. Suivi iPhone de 5a : PR ouverte (code v1083, 51 correctifs), à finir. |
 | 15/11 08:35 — [Idées : préparation de l'étape 5 (onboarding)](runs/2026-11-15-0835-idees-refonte-5-preparation.md) | 🔭 | Main vert. #1005 (suivi iPhone de 4b) : build iOS échouée en 35 s sur un plantage de l'outil de build Swift, relancée, verte ; 15 checks verts, captures d'Objectifs regardées (iPhone 17 Pro, clair et sombre), mergée vers 09:25. Préparation de l'étape 5 : inventaire de l'accueil, effet réel de chaque objectif dans le code, table de migration, 6 choix à trancher, découpage 5a, 5b, 5c. Relevé TestFlight : 1072.1073 en test, rien de refusé ni en attente. Pas de simulation de personas. |
 | 15/11 07:35 — [Refonte « Compagnon », étape 4b : les habitudes dans les analyses](runs/2026-11-15-0735-refonte-4b-analyses.md) | 🔧 | Main vert au début. #1002 (suivi iPhone des étapes 3 et 4a) : 15 checks verts, captures iPhone regardées (Ma journée clair, sombre, vide ; Paramètres), mergée vers 08:05. Étape 4b sur Android (#1004) : chaque habitude est un facteur d'Objectifs, en miel ; règles 5 et 6 testées ; 3623 tests verts. Limite mesurée : effet d'une habitude sous-estimé d'environ moitié (REFONTE-4b-2). Marqueurs de conflit retirés du journal iPhone. 4b pas encore sur iPhone. |

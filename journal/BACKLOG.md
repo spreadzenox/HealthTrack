@@ -101,7 +101,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] **REFONTE-4b-iOS — Voir les habitudes d'Objectifs sur iPhone** : les captures du simulateur montrent Objectifs
   verrouillé (carte floutée « Débloquer ») et sans habitude ; ajouter une capture avec Gold et une habitude suivie
   (`captureMode.js`). Code embarqué v1080 depuis #1005 (15/11).
-- [ ] **REFONTE-5 — Onboarding** : les 4 temps du brief § 3.4 et la migration des utilisateurs existants (objectifs
+- [ ] **REFONTE-5 — Onboarding** (Android fait le 15/11 : 5a #1007, 5b #1009 ; reste l'iPhone de 5b) : les 4 temps du brief § 3.4 et la migration des utilisateurs existants (objectifs
   déduits de leurs réglages, dont les anciens « cycle » et « sport », données intactes).
   Préparée le 15/11 à 08:35 : [`ETAPE-5-ONBOARDING.md`](maquettes/compagnon-etapes/ETAPE-5-ONBOARDING.md)
   (inventaire de l'accueil actuel, ce que chaque objectif change dans le code, table de migration, choix A à F à
@@ -113,14 +113,28 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     iPhone 58 le lit) ; Réglages › Vos objectifs (Bien-être verrouillé, Confort digestif). Écart avec la préparation :
     `used` reste le repli tant que la migration n'a pas pu lire la base. Les réglages de l'accueil ne sont pas dans
     l'export : aucun test d'import à écrire. iPhone : à embarquer (`upstream.sh --latest`).
-  - [ ] **REFONTE-5a-2 — « ventre » dans la SPEC** : le sous-titre de Confort digestif de la SPEC (« Pour un ventre
-    sensible… ») contredit la règle AUJ-7 (`digestifWording.test.js` : aucun texte visible ne dit « ventre »). À
-    trancher à l'étape 5b : autre formulation, ou exception dans le test.
-  - [ ] **REFONTE-5b — Les 4 temps** : écrans et textes de `specs/comprendre.SPEC.md` § 4 sans Pilou, habitudes
-    écrites par `setHabits`, `FLOW_VERSION` 3, captures (clair, sombre, 320 px, avec et sans montre ou digestion),
-    correctifs iPhone 23, 45, 52 et 55.
-  - [ ] **REFONTE-5c — Carte du tuto fausse depuis l'étape 2** : `TABS_EXPLAINED` (`Onboarding.jsx`) présente
-    « Agir » comme un onglet et oublie Accueil et Ma journée. À corriger avec 5b, ou seule si 5b tarde.
+  - [x] **REFONTE-5a-2 — « ventre » dans la SPEC** (15/11 10:35, avec 5b) : tranché sans exception au test. Le
+    sous-titre devient « Pour une digestion sensible : repérer ce qui la soulage. » et la ligne du temps 4
+    « Digestion · le soir » (règle AUJ-7 gardée). Choix de la routine, à corriger si le propriétaire préfère le mot
+    de la maquette.
+  - [x] **REFONTE-5b — Les 4 temps** (15/11 10:35, #1009, Android) : ouverture en une carte, puis objectifs, montre,
+    ce que Halcya suit seule, ce qu'on note ; visage et Gold après, hors du compteur « 1 sur 4 » ; première note
+    retirée de l'accueil ; habitudes écrites par `setHabits` ; `FLOW_VERSION` 3 ; outil de captures
+    (`--onboarding=goal`, `watch-yes`, `auto`, `notes-gut`…). Écarts avec la SPEC et limites : compte rendu du run.
+  - [x] **REFONTE-5c — Carte du tuto fausse depuis l'étape 2** (15/11 10:35, avec 5b) : la carte des onglets est
+    retirée ; il reste une carte d'ouverture.
+  - [ ] **REFONTE-5b-iOS — L'accueil en 4 temps sur iPhone** : `upstream.sh --latest` après le merge de #1009 ; les
+    correctifs 45 et 52 s'appliquent encore, **23 et 55 sont à refaire** (23 : la ligne `SnapshotWelcome` s'ancrait
+    sur `{step === 'tuto' …}`, devenu `{step === 'intro' …}` ; 55 : l'import de `checkPhoneUsageAccess` s'ancrait
+    sur une ligne d'import retirée). Captures iPhone des 4 temps à regarder (« Santé » au temps 2).
+  - [ ] **REFONTE-5b-2 — Temps 3 trop long quand l'accès est donné** : les mesures par thème de l'ancien écran
+    « Voici ce que Halcya recevra » s'affichent sous les 9 tuiles et les répètent en partie. À fondre : une tuile
+    dit « reçu » ou « pas partagée » (proposition de la préparation), la liste par thème disparaît.
+  - [ ] **REFONTE-5b-3 — Captures manquantes de 5b** : 320 px, grand texte, variante play avec visage et Gold,
+    carte Huawei, temps 1 en sombre regardé ; `npm run visual` complet.
+  - [ ] **REFONTE-5b-4 — Sans montre, l'activité à la main** : la SPEC fait passer « Séances de sport » dans ce qu'on
+    note ; aucune saisie d'activité n'existe dans la checklist de Ma journée. À faire avec une étape de Ma journée,
+    ou à laisser tomber sur décision du propriétaire.
 - [ ] **REFONTE-6 — Objectifs** : score et tendance, ce qui l'influence (3 familles), le détail, la piste en défi
   doux ; puis les seuils 7 jours (bien-être) et 14 jours (digestion) dans `app/src/config/firstResults.js` ;
   `specs/comprendre.SPEC.md`.
