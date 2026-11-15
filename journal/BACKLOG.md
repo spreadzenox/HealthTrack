@@ -30,7 +30,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 > peuvent partir tout de suite » ; le double numérique vient en dernier (14 et 15). Plus aucun polish sur ce qui
 > disparaît (Journal jour par jour, objectifs « sport » et « cycle »). Les runs « idées » préparent l'étape suivante.
 
-- [x] **REFONTE-1 — Cohérence** (15/11 02:35, Android : #995, v1072 ; **iPhone : PR de suivi ouverte, à finir**,
+- [x] **REFONTE-1 — Cohérence** (15/11 02:35, Android : #995, v1072 ; **iPhone : #996 mergée le 15/11 à 04:20, build simulateur verte, captures regardées**,
   code embarqué v1072, correctif 59 retiré) :
   - le ventre n'est plus demandé sans l'objectif digestion : `gutCardMode` rend `'used'` pour toute installation
     sans objectif (avant : `'show'` après un accueil passé sans choisir) et `gutAsked(mode, entries)` décide sur

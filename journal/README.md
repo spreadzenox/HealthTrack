@@ -17,7 +17,7 @@
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **🧸 Refonte « Compagnon » (vos décisions des 13, 14 et 15/11) : étape 1 sur 15 faite sur Android le 15/11 à 02:35
-(cohérence), iPhone en cours ; prochaine : étape 2, la navigation en 4 onglets.** Les 15 étapes :
+(cohérence), et sur iPhone le 15/11 à 04:20 (#996, captures regardées) ; prochaine : étape 2, la navigation en 4 onglets ([préparation](maquettes/compagnon-etapes/ETAPE-2-NAVIGATION.md)).** Les 15 étapes :
 [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le brief :
 [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -39,7 +39,7 @@
 > avait coché « Mon cycle » garde le ventre (la migration des objectifs est l'étape 5) ; sans objectif, qui a noté son
 > ventre ces 7 derniers jours le garde aussi ; une nouvelle installation n'a plus de bouton « Règles » tant qu'aucune
 > donnée de cycle n'existe (à trancher à l'étape 5 ou 7) ; en thème sombre, seuls Réglages et Aujourd'hui ont été
-> regardés ; **pas encore sur iPhone** (suivi du code embarqué à finir au run suivant, build macOS).
+> regardés ; **sur iPhone depuis le 15/11 à 04:20** (#996 : mêmes écrans vus sur simulateur, la build part seule sur TestFlight) ; sur iPhone, une nouvelle installation ne peut plus demander le cycle à l'app Santé (réservé à qui avait « Mon cycle »), à trancher à l'étape 5 ou 7.
 
 > 🥇 **Gold prolongé : la nouvelle date s'affiche (15/11 01:35)** : suite de « P44 oui ». Jusqu'ici, rien ne disait
 > à un testeur inscrit que Gold continuait après le 2 décembre : la date changeait seulement dans Paramètres. Quand le
@@ -929,6 +929,7 @@
 
 | Run | Type | Résultat |
 |---|---|---|
+| 15/11 03:35 — [Refonte, étape 1 sur iPhone ; préparation de l'étape 2](runs/2026-11-15-0335-refonte-1-iphone.md) | 🔧 | Main vert. #996 (suivi iPhone de l'étape 1, ouverte par le run de 02:35) : 15 checks verts, captures iPhone regardées (Aujourd'hui, Réglages, Paramètres, accueil), mergée à 04:20. Doublon #997 ouvert par erreur puis fermé, ses builds annulées. Table des routes de l'étape 2 écrite. Pas de code produit ; TestFlight et soumission bêta non relevés. |
 | 15/11 02:35 — [Refonte « Compagnon », étape 1 : cohérence](runs/2026-11-15-0235-refonte-1-coherence.md) | 🔧 | Main vert. #992 (P44-3b, run de 01:35) mergée en début de run, checks verts. Premier run de la refonte : 15 étapes inscrites au BACKLOG et dans PRODUIT.md. Étape 1 sur Android : le ventre n'est plus demandé sans l'objectif digestion, « Mon cycle » et « Mon sport » retirés du choix, Sources passe de la barre d'onglets à Réglages. #995 mergée à 03:19, release v734 (APK 34,6 Mo). iPhone : PR de suivi ouverte (code embarqué v1072, correctif 59 retiré, 3932 tests verts), build macOS à finir au run suivant. Alpha de 23:45 pas encore partie à 02:55, pas de soumission bêta ; TestFlight non relevé. |
 | 15/11 01:35 — [Gold prolongé : la nouvelle date s'affiche (P44-3b)](runs/2026-11-15-0135-gold-prolonge.md) | 🔧 | Main : #990 mergée à 01:29, workflows en cours au début. P44-3b : quand le relais recule la fin de Gold offert, Aujourd'hui affiche une fois la nouvelle date ; « Le test est terminé » attend la vérification des droits. 9 tests écrits d'abord, 3568 verts. Suivi iPhone (v1067) dans une PR à part, après le merge. Alpha de 23:45 pas encore partie, pas de soumission bêta. |
 | 15/11 00:35 — [Nutrition au premier repas : « journée en cours » ; iPhone v1065](runs/2026-11-15-0035-nutrition-journee-en-cours.md) | 🔧 | Main vert, #989 mergée par son run. Suivi iPhone : `upstream.json` de v1059 à v1065, 52 correctifs sans retouche, 3915 tests verts sur le code embarqué. POLISH-SIM-97 : Nutrition n'écrit plus « des repas manquent sans doute » quand seul le jour en cours est saisi. Envoi TestFlight du code v1059 vérifié (parti à 23:30). Alpha de 23:45 pas encore partie, pas de soumission bêta. |
