@@ -152,7 +152,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     « ← Objectifs » ; l'onglet n'ouvre plus Digestion d'office (POLISH-SIM-33 retiré). Écarts avec la SPEC : « Des
     estimations, pas un diagnostic. » non affichée (SLOP-1 : jamais en refrain) ; « ventre » remplacé par
     « digestion » ; ni en-tête « Vos 7 derniers jours » avec Pilou ni phrase « Plutôt une bonne semaine. ».
-  - [x] **REFONTE-6a-iOS** (15/11 14:17 : **#1014 mergée**, code v1088, 51 correctifs sans retouche, 15 checks
+  - [x] **REFONTE-6a-iOS** (15/11 14:15 : **#1014 mergée**, code v1088, 51 correctifs sans retouche, 15 checks
     verts, build sur simulateur verte) : Objectifs regardé sur iPhone 17 Pro (clair, sombre, sans donnée) et le
     détail du bien-être (pistes floutées et « Débloquer » : la période de lancement est finie sur iPhone).
   - [ ] **REFONTE-6a-2 — Restes de 6a** : la visite guidée ne montre pas la vue d'ensemble (ses 3 étapes d'Objectifs

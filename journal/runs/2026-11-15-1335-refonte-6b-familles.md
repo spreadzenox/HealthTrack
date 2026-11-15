@@ -83,7 +83,7 @@
 - **#1015** (cette étape) : 12 checks verts sur 1accc23 à 14:03 (Tests, Build APK, 5 émulateurs, budget de
   lectures). Gardée ouverte jusqu'au merge de #1014, pour ne pas mettre celle-ci en retard sur main et relancer sa
   build macOS.
-- **#1014 mergée à 14:17** (3036290, suivi iPhone de 6a, code v1088) : 15 checks verts, build iOS sur simulateur
+- **#1014 mergée à 14:15** (3036290, suivi iPhone de 6a, code v1088) : 15 checks verts, build iOS sur simulateur
   verte à 14:14. Captures regardées sur iPhone 17 Pro (`captures/pr-1014`) : Objectifs en clair (3,0 / 5, « Plutôt
   en hausse cette semaine », confort digestif « Premier score dans 5 jours notés »), en sombre, sans donnée (« 0 sur
   7 », « 0 sur 14 ») ; détail du bien-être : « ← Objectifs », pistes floutées et « Débloquer ». Non regardées :
