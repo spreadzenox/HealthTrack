@@ -62,7 +62,9 @@ export default function App() {
             {/* REFONTE-6a : Objectifs s'ouvre sur les cartes des objectifs ; chaque carte mène à son détail */}
             <Route path="recommendations" element={<Objectives />} />
             <Route path="recommendations/bien-etre" element={<Recommendations />} />
+            <Route path="recommendations/bien-etre/famille/:family" element={<Recommendations />} />
             <Route path="recommendations/ventre" element={<Recommendations key="gut" view="gut" />} />
+            <Route path="recommendations/ventre/famille/:family" element={<Recommendations key="gut" view="gut" />} />
             <Route path="plus" element={<More />} />
             <Route path="nouveautes" element={<WhatsNew />} />
             <Route path="montre" element={<WatchData />} />

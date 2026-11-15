@@ -166,14 +166,33 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     sont floutées. « Comment est calculé votre bien-être ? » en lien replié. Écarts avec la SPEC : « Par famille »
     et « Lien fort » au lieu de « Ce qui influence » et « Influence forte » (règle 5) ; pas de moyenne par famille ;
     pas de feuille du bas.
-  - [ ] **REFONTE-6b-iOS** : embarquer 6b (`upstream.sh --latest`), regarder le détail du bien-être sur simulateur.
+  - [ ] **REFONTE-6b-iOS** (15/11 14:45 : **en PR, #1016**, branche `claude/iphone-code-6b`) : code v1090, 51
+    correctifs sans retouche ; capture `demo-clair-recommendations-bien-etre-abonne` ajoutée (droits de
+    démonstration pour cette seule page, `SUBSCRIBED_ROUTES`), car sans abonnement le bloc est masqué. **À finir** :
+    build simulateur verte, cette capture regardée (bloc « Par famille » visible), puis merge.
   - [ ] **REFONTE-6b-2 — Restes de 6b** : capture de la version Play sans abonnement (bloc masqué, testé) ;
     captures du niveau « Lien moyen », d'une ligne Écrans, du confort digestif avec résultats, à
     320 px et en grand texte ; moyenne par famille (« 7 h 05 par nuit ») ; « Comment est calculé votre
     bien-être ? » et « Comment c'est calculé » se suivent avec deux libellés proches ; les seuils 0,25 et 0,5 à
     confronter au banc de 6d.
-  - [ ] **REFONTE-6c** (détail d'une famille et défi doux), **6d** (seuils 7 et 14 : banc d'abord), **6e**
-    (réintroduction sous Confort digestif) : voir la préparation.
+  - [x] **REFONTE-6c-1 — Le détail d'une famille** (15/11 14:35, Android) : une famille qui a des facteurs comparés
+    est un lien (`/recommendations/bien-etre/famille/:family`, `/recommendations/ventre/famille/:family`) ;
+    `familyDetail()` dans `services/influenceFamilies.js` (ses liens nets, un par facteur ; ses facteurs par délai
+    prêt ; barres seulement si la méthode prévoit mieux que la persistance) ; écran dans `Recommendations.jsx`
+    (« Piste à tester », « Ce qui a été comparé », retour « ← Votre bien-être »). Famille inconnue, sans facteur,
+    avant les résultats ou pistes floutées : retour au détail de l'objectif. Écart avec la SPEC § 6.5 : pas
+    d'histoire propre au sommeil (14 nuits, deux moyennes).
+  - [ ] **REFONTE-6c-1-iOS** : embarquer 6c-1 ; ajouter `/recommendations/bien-etre/famille/sleep` aux captures
+    d'abonné (`SUBSCRIBED_ROUTES`, après #1016).
+  - [ ] **REFONTE-6c-2 — La piste en défi doux** (5 soirs, bilan par la grille de mots de la SPEC § 7). Question
+    posée au propriétaire le 15/11 14:35 (résumé) : garder le tirage au sort d'ORG-8 sous la surface, ou comparer
+    aux 14 nuits habituelles comme la maquette. Sans réponse : garder le tirage, ne changer que les mots et la durée.
+  - [ ] **REFONTE-6c-3 — Restes de 6c-1** : un effet non net plus grand que 2 points (« Méditation −3,3 pt » à long
+    terme sur les données de démo) ne devrait pas s'afficher en chiffre (voir `outOfScale`, POLISH-SIM-16) ; le
+    détail de l'objectif répète ce que la famille montre (alléger « Ce qui va avec » quand 6c-2 sera là) ; captures
+    à 320 px, en grand texte, confort digestif avec résultats ; moyenne de la famille (« 7 h 05 par nuit »).
+  - [ ] **REFONTE-6d** (seuils 7 et 14 : banc d'abord), **6e** (réintroduction sous Confort digestif) : voir la
+    préparation.
 - [ ] **REFONTE-7 — Données et suppression du Journal** : Données s'ouvre sur Tendances, Nutrition en second onglet ;
   **inventaire d'abord** de ce qui n'est accessible que par le Journal (modifier ou supprimer une saisie passée, la
   ligne « Règles · 2e jour », les ajouts rapides…) et une autre maison pour chaque chose ; puis suppression de

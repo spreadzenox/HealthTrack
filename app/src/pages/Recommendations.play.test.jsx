@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Routes, Route } from 'react-router-dom'
 
 vi.mock('../config/distribution', async (importOriginal) => {
   const actual = await importOriginal()
@@ -33,5 +33,19 @@ describe('Détail d’un objectif, variante play sans abonnement (REFONTE-6b)', 
     expect(await screen.findByRole('link', { name: 'Débloquer' })).toHaveAttribute('href', '/premium')
     expect(screen.queryByRole('region', { name: 'Par famille' })).toBeNull()
     expect(document.body.textContent).not.toMatch(/Lien fort/)
+  })
+
+  it('REFONTE-6c : le détail d’une famille ne s’ouvre pas tant que les pistes sont floutées', async () => {
+    render(
+      <MemoryRouter initialEntries={['/recommendations/bien-etre/famille/sleep']}>
+        <Routes>
+          <Route path="/recommendations/bien-etre" element={<Recommendations read={async () => results} />} />
+          <Route path="/recommendations/bien-etre/famille/:family" element={<Recommendations read={async () => results} />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    expect(await screen.findByRole('link', { name: 'Débloquer' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Votre bien-être' })).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/point sur 5/)
   })
 })

@@ -12,12 +12,15 @@
  * REFONTE-6b : en tête des résultats, « Par famille » : Sommeil, Alimentation, Activité (et Habitudes ou Écrans s'ils
  * ont un lien net), chacune avec la force de son lien le plus net en trois points et en mots
  * (services/influenceFamilies.js). Le titre de la SPEC, « Ce qui influence », n'est pas repris : ce sont des liens.
+ * REFONTE-6c : une famille qui a des facteurs comparés ouvre son détail (`…/famille/:family`) : son lien net « à
+ * tester », puis ses seuls facteurs, délai par délai. Sans abonnement (pistes floutées) ou sans facteur, on revient
+ * au détail de l'objectif.
  * Retirés : l'historique, « Sur quelques semaines », « Autres liens repérés », « Bientôt » et l'analyse « dans les
  * heures ». Des liens statistiques, jamais une cause ni un diagnostic.
  */
 import SeeExample from '../components/SeeExample'
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import DoctorReportCard from '../components/DoctorReportCard'
 import WellbeingPrompt from '../components/WellbeingPrompt'
 import GutEveningReminder from '../components/GutEveningReminder'
@@ -25,7 +28,7 @@ import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
 import { isExampleMode } from '../storage/exampleMode'
 import { THEME_TONE, pistesTitles, resultsView } from '../services/resultsView'
-import { influenceFamilies } from '../services/influenceFamilies'
+import { influenceFamilies, familyDetail } from '../services/influenceFamilies'
 import { readGutNotes } from '../services/gutNotes'
 import { listEntries } from '../storage/localHealthStorage'
 import { scoreToChoice } from '../services/mood/wellbeingScale'
@@ -170,31 +173,99 @@ function Unit({ w }) {
 }
 
 /** REFONTE-6b : la force du lien le plus net de chaque famille, en trois points et en mots. */
-function Families({ outcome, families }) {
+function Families({ outcome, families, base }) {
   return (
     <section className="reco-block" aria-labelledby={`reco-families-${outcome}`}>
       <h3 id={`reco-families-${outcome}`} className="reco-section-title">Par famille</h3>
       <ul className="reco-families">
-        {families.map((fam) => (
-          <li key={fam.id} className={`today-card reco-family${fam.level ? '' : ' is-quiet'}`} data-tone={fam.tone} data-testid={`reco-family-${fam.id}`}>
-            <span className="reco-family-name">
-              {fam.label}
-              {fam.lead && fam.lead !== fam.label && <span className="reco-family-lead">{fam.lead}</span>}
-            </span>
-            {fam.level > 0 && (
-              <span className="reco-family-dots" aria-hidden="true">
-                {[1, 2, 3].map((i) => <span key={i} className={`reco-family-dot${i <= fam.level ? ' is-on' : ''}`} />)}
+        {families.map((fam) => {
+          // REFONTE-6c : une famille qui a des facteurs comparés ouvre son détail ; la carte entière est le lien
+          const open = fam.state !== 'nodata'
+          const body = (
+            <>
+              <span className="reco-family-name">
+                <span className="reco-family-label">{fam.label}{open && <span aria-hidden="true"> ›</span>}</span>
+                {fam.lead && fam.lead !== fam.label && <span className="reco-family-lead">{fam.lead}</span>}
               </span>
-            )}
-            <span className="reco-family-word">{fam.word}</span>
-          </li>
-        ))}
+              {fam.level > 0 && (
+                <span className="reco-family-dots" aria-hidden="true">
+                  {[1, 2, 3].map((i) => <span key={i} className={`reco-family-dot${i <= fam.level ? ' is-on' : ''}`} />)}
+                </span>
+              )}
+              <span className="reco-family-word">{fam.word}</span>
+            </>
+          )
+          return (
+            <li key={fam.id} className={`today-card reco-family${fam.level ? '' : ' is-quiet'}${open ? ' is-link' : ''}`} data-tone={fam.tone} data-testid={`reco-family-${fam.id}`}>
+              {open ? <Link to={`${base}/famille/${fam.id}`} className="reco-family-link">{body}</Link> : body}
+            </li>
+          )
+        })}
       </ul>
     </section>
   )
 }
 
-function Results({ outcome, view, locked, families = [] }) {
+/** Une piste : le lien net, son chiffre, et le chemin vers l'essai (ou vers l'abonnement tant que c'est flouté). */
+function PisteCard({ f, locked = false }) {
+  return (
+    <li className="today-card reco-piste" data-tone={THEME_TONE[f.theme] ?? 'stone'}>
+      <span className={`reco-piste-title${locked ? ' is-locked' : ''}`}>
+        {locked ? <span className="pistes-first-blur" aria-hidden="true" /> : f.label}
+      </span>
+      {!locked && (
+        <span className="reco-piste-text">
+          {monoDigits(pts(f.effect))} point sur 5 pour {f.usualChange?.text} ({f.horizonLabel.toLowerCase()})
+        </span>
+      )}
+      {locked
+        ? <Link to="/premium" className="reco-piste-try">Débloquer</Link>
+        : <Link to="/agir" className="reco-piste-try">Essayer dans Agir</Link>}
+    </li>
+  )
+}
+
+/** REFONTE-6c : le détail d'une famille. Ses liens nets d'abord, puis tout ce qui a été comparé dans la famille. */
+function FamilyDetail({ outcome, detail }) {
+  const w = WORDS[outcome]
+  const many = detail.pistes.length > 1
+  return (
+    <>
+      {detail.pistes.length > 0 ? (
+        <section className="reco-block" aria-labelledby="reco-family-pistes">
+          <h3 id="reco-family-pistes" className="reco-section-title">{many ? 'Pistes à tester' : 'Piste à tester'}</h3>
+          <ul className="reco-pistes">{detail.pistes.map((f) => <PisteCard key={f.key} f={f} />)}</ul>
+        </section>
+      ) : (
+        <section className="reco-block">
+          <p className="today-card-text" data-testid="reco-family-none">Aucun lien assez net pour l’instant dans cette famille.</p>
+        </section>
+      )}
+      {detail.bars && (
+        <section className="reco-block" aria-labelledby="reco-family-bars">
+          <h3 id="reco-family-bars" className="reco-section-title">Ce qui a été comparé</h3>
+          <Unit w={w} />
+          {detail.horizons.map((h) => (
+            <div key={h.id} className="reco-horizon">
+              <p className="reco-horizon-title">{h.label} <span className="reco-horizon-window">{h.window}</span></p>
+              <EffectList factors={h.factors} />
+            </div>
+          ))}
+          {detail.horizons.some((h) => h.factors.some((f) => !f.net)) && (
+            <p className="reco-legend"><span className="reco-legend-unsure" aria-hidden="true" /> hachuré, chiffre en gris : pas assez net</p>
+          )}
+        </section>
+      )}
+      {!detail.bars && (
+        <p className="reco-next" data-testid="reco-family-compared">
+          <span className="mono">{detail.count}</span> facteur{detail.count > 1 ? 's comparés' : ' comparé'} à {w.what} dans cette famille.
+        </p>
+      )}
+    </>
+  )
+}
+
+function Results({ outcome, view, locked, families = [], base }) {
   const w = WORDS[outcome]
   const showWeigh = !locked && view.weigh && view.weigh.length > 0
   // POLISH-SIM-69 : rien de net, les barres hachurées étaient lues comme un résultat. Elles se replient, et le
@@ -210,26 +281,12 @@ function Results({ outcome, view, locked, families = [] }) {
   )
   return (
     <>
-      {!locked && families.length > 0 && <Families outcome={outcome} families={families} />}
+      {!locked && families.length > 0 && <Families outcome={outcome} families={families} base={base} />}
       <section className="reco-block" aria-labelledby={`reco-pistes-${outcome}`}>
         <h3 id={`reco-pistes-${outcome}`} className="reco-section-title">Pistes à tester</h3>
         {view.pistes.length ? (
           <ul className="reco-pistes">
-            {view.pistes.map((f) => (
-              <li key={f.key} className="today-card reco-piste" data-tone={THEME_TONE[f.theme] ?? 'stone'}>
-                <span className={`reco-piste-title${locked ? ' is-locked' : ''}`}>
-                  {locked ? <span className="pistes-first-blur" aria-hidden="true" /> : f.label}
-                </span>
-                {!locked && (
-                  <span className="reco-piste-text">
-                    {monoDigits(pts(f.effect))} point sur 5 pour {f.usualChange?.text} ({f.horizonLabel.toLowerCase()})
-                  </span>
-                )}
-                {locked
-                  ? <Link to="/premium" className="reco-piste-try">Débloquer</Link>
-                  : <Link to="/agir" className="reco-piste-try">Essayer dans Agir</Link>}
-              </li>
-            ))}
+            {view.pistes.map((f) => <PisteCard key={f.key} f={f} locked={locked} />)}
           </ul>
         ) : (
           <p className="today-card-text">Aucun lien assez net pour l’instant sur ce que vous pouvez changer.</p>
@@ -342,6 +399,8 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const [showGut] = useState(() => gutCardMode() !== 'hide')
   const [gutToday, setGutToday] = useState([])
   const [wbToday, setWbToday] = useState([])
+  const { family } = useParams()
+  const base = outcome === 'digestion' ? '/recommendations/ventre' : '/recommendations/bien-etre'
 
   useEffect(() => {
     const onUpdate = () => setRevision((r) => r + 1)
@@ -377,16 +436,31 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const v = results ? resultsView(results.outcomes?.[outcome]) : { state: 'loading' }
   // Version Play sans abonnement (hors période de lancement) : les pistes restent floues, comme avant
   const locked = FEATURES.billing && !ent.premium
+  // REFONTE-6c : le détail d'une famille, seulement quand il a quelque chose à montrer
+  const detail = family && v.state === 'results' && !locked ? familyDetail(results.outcomes?.[outcome], family) : null
+  const objectiveTitle = outcome === 'digestion' ? 'Votre confort digestif' : 'Votre bien-être'
   const onNote = outcome === 'wellbeing' ? () => setNoteOpen(true) : () => navigate('/ma-journee', { state: { open: 'digestion' } })
   // La note qui vient d'être enregistrée ici se lit dans la carte, même si la relecture des notes échoue
   const notedToday = outcome === 'digestion' ? gutToday : wbToday.length ? wbToday : noted != null ? [`${noted}/5`] : []
   const onReminder = outcome === 'wellbeing' && eveningNotePlugin() ? () => setNoteOpen('reminder') : null
 
+  if (family && !detail && (v.state !== 'loading' || error)) return <Navigate to={base} replace />
+  if (detail) {
+    return (
+      <section className="reco-page" data-tone={detail.tone}>
+        <p className="reco-back"><Link to={base}>← {objectiveTitle}</Link></p>
+        <h2 className="page-title">{detail.label}</h2>
+        <FamilyDetail outcome={outcome} detail={detail} />
+        <HowItWorks />
+      </section>
+    )
+  }
+
   return (
     <section className="reco-page" data-tone={outcome === 'digestion' ? 'peach' : 'mint'}>
       {/* REFONTE-6a : le détail d'un objectif s'ouvre depuis sa carte d'Objectifs */}
       <p className="reco-back"><Link to="/recommendations">← Objectifs</Link></p>
-      <h2 className="page-title">{outcome === 'digestion' ? 'Votre confort digestif' : 'Votre bien-être'}</h2>
+      <h2 className="page-title">{objectiveTitle}</h2>
       {/* Pendant l'exemple (« Voir un exemple »), la digestion fictive s'affiche : pas de bandeau « masqué » (POLISH-SIM-37b) */}
       {outcome === 'digestion' && !showGut && !isExampleMode() && (
         <p className="reco-intro" data-testid="gut-off">
@@ -399,7 +473,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul des analyses…</p></div>
       )}
       {v.state === 'locked' && <Countdown outcome={outcome} view={v} onNote={onNote} onReminder={onReminder} notedToday={notedToday} />}
-      {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} families={influenceFamilies(results.outcomes?.[outcome])} />}
+      {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} families={influenceFamilies(results.outcomes?.[outcome])} base={base} />}
       {outcome === 'digestion' && v.state === 'results' && <DoctorReportCard />}
       {outcome === 'wellbeing' && <HowWellbeing />}
       <HowItWorks />
