@@ -1,8 +1,8 @@
 # Run 15/11 04:35 — Refonte « Compagnon », étape 2 : navigation en 4 onglets
 
 **Type** : code (refonte « Compagnon », étape 2 du § 10 du brief)  ·  **Android** : main 9a99673 (#998, v1074) au début  ·
-**TestFlight** : « iOS — TestFlight » vert sur 7fdb159 (code v1072, 04:22) ; soumission bêta lancée à ce run (résultat
-en fin de compte rendu) ; 844.344 intacte  ·  **Parité** : 70 % (33/47), inchangée
+**TestFlight** : « iOS — TestFlight » vert sur 7fdb159 (code v1072, 04:22) ; **build 1072.1073 ajoutée au groupe externe et soumise à l'examen bêta à 04:45** ;
+aucune expiration à ce run ; 844.344 intacte  ·  **Parité** : 70 % (33/47), inchangée
 
 ## Contexte
 - Empreinte des instructions vérifiée : conforme (710f9e8b…). Brief de la refonte et note de préparation de l'étape 2
@@ -49,3 +49,29 @@ en fin de compte rendu) ; 844.344 intacte  ·  **Parité** : 70 % (33/47), incha
 - Services de notification natifs non lus (point laissé ouvert par la note de préparation).
 - Charte, PRODUIT, BACKLOG, DESIGN, INFRA et journal iPhone non relus en entier (plus de 1 Mo) : sections touchées
   seulement ; `iphone/journal/README.md` § 3, 4, 8 non relus.
+- Captures de la fiche Play (`app/scripts/store/screenshots.mjs`, « 01-aujourdhui », « 07-jours ») et balayage natif
+  des émulateurs (`.github/scripts/native-sweep/check.mjs`) : listes de routes non mises à jour (`/ma-journee` absente).
+
+## Fin du run
+- **PR #999 mergée à 05:06** (squash, b4ce358) : 12 checks verts (Vitest, Build APK, quatre émulateurs, WebView
+  ancienne, relais, perf), branche à jour sur main. L'échec « Publier l'APK » signalé à 04:46 portait sur le premier
+  commit de la PR, dont la build a été annulée par le second push ; vert sur la tête.
+- Après le merge : **release v735, APK 34,6 Mo** (05:09). « Play — AAB » sur b4ce358 (v1075) encore en cours à 05:12 :
+  à relire au run suivant, comme Tests et l'émulateur de main.
+- **TestFlight** : « TestFlight — examen bêta (soumission) » lancé sur main à 04:45, vert : build **1072.1073** (code
+  de l'étape 1) traitée par Apple, « À tester » complété, ajoutée à « Testeurs Halcya », soumise à l'examen bêta ;
+  la version de l'App Store n'a pas été touchée. Anciennes builds non expirées : à faire quand 1072.1073 sera chez
+  les testeurs.
+- **iPhone : PR de suivi ouverte, pas mergée** (branche `claude/iphone-refonte-2`) : `upstream.json` de v1072 à v1075
+  (b4ce358, écrit à la main : `--latest` attend la fin de « Play — AAB ») ; `/ma-journee` ajoutée aux routes de
+  capture (démo, sombre, vide, grand texte) ; 51 correctifs sans retouche, 3938 tests verts sur le code embarqué
+  (lancés ici, sous Linux). Build iOS sur simulateur et captures : pas attendues à ce run.
+
+## Suite
+- **Finir la PR de suivi iPhone** : checks verts, captures `captures/pr-<N>` de l'Accueil, de Ma journée et de
+  Données regardées (clair, sombre, vide), puis merge ; vérifier avant que « Play — AAB » est vert sur b4ce358.
+- **Étape 3 (Ma journée)** : la checklist, `specs/journee.SPEC.md`.
+- Relever l'examen bêta de 1072.1073 ; quand elle est chez les testeurs, expirer les anciennes.
+- Restes de l'étape 2 (BACKLOG, REFONTE-2) : visite guidée par Ma journée, routes de la fiche Play et du balayage
+  natif, « Vos Analyses » dans Sources.
+- Le bouton « + 1 cigarette » sur iPhone (relevé par le run de 03:35) : non regardé à ce run.

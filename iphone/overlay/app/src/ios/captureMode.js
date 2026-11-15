@@ -14,12 +14,12 @@ const SEEDED_KEY = 'halcya_ios_capture_seeded'
 
 // Les mêmes pages que `npm run visual` d'Android (scripts/visual/visual-check.mjs, DEFAULT_ROUTES), sauf /bienvenue et
 // /montre (montre Huawei en direct : aucun lien vers cette page sur iPhone)
-export const ROUTES = ['/', '/journal', '/tendances', '/food', '/nutrition', '/data', '/connectors', '/recommendations',
+export const ROUTES = ['/', '/ma-journee', '/journal', '/tendances', '/food', '/nutrition', '/data', '/connectors', '/recommendations',
   '/recommendations/ventre', '/agir', '/settings', '/plus', '/nouveautes', '/premium', '/bien-etre', '/reintroduction', '/licences']
-export const DARK_ROUTES = ['/', '/journal', '/recommendations']
+export const DARK_ROUTES = ['/', '/ma-journee', '/journal', '/recommendations']
 // États vides : onboarding fini, base vide (installation neuve sans source branchée ; `npm run visual -- --empty`
 // d'Android), pour voir sur iPhone ce que chaque page dit avant la première donnée
-export const EMPTY_ROUTES = ['/', '/journal', '/tendances', '/food', '/nutrition', '/recommendations', '/bien-etre',
+export const EMPTY_ROUTES = ['/', '/ma-journee', '/journal', '/tendances', '/food', '/nutrition', '/recommendations', '/bien-etre',
   '/connectors']
 // Pages longues : écrans suivants, défilés d'environ 80 % de l'écran chacun (`-2`, `-3`…)
 // (I6) Écran d'abonnement défilé : formules, prix, bouton, renouvellement et liens, sous le pli (capture pour Apple)
@@ -114,7 +114,7 @@ export function buildPlan(routes = ROUTES, darkRoutes = DARK_ROUTES, scrolls = S
 
 // Taille du texte d'iOS agrandie (3e passage de scripts/ios-captures.sh, `simctl ui content_size`) : le natif agrandit
 // la police de <html> avant le premier rendu (TextSize.swift) ; l'accueil vierge puis quelques pages de démo, sans sondes
-export const LARGE_TEXT_ROUTES = ['/', '/journal', '/tendances', '/recommendations', '/agir', '/connectors', '/settings']
+export const LARGE_TEXT_ROUTES = ['/', '/ma-journee', '/journal', '/tendances', '/recommendations', '/agir', '/connectors', '/settings']
 
 export function textSizeAdjusted(doc = document) {
   const style = doc?.documentElement?.style

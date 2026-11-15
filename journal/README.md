@@ -12,12 +12,12 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | v1072 en test interne (15/11 à 03:19, #995 : étape 1 de la refonte ; « Play — AAB » vert) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, puis celle du code v1059 le 14/11 à 23:30 (état chez Apple non relevé depuis le 14/11 à 18:35), pour les testeurs après l'Alpha de la nuit ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | v1075 (15/11 à 05:06, #999 : étape 2 de la refonte, les 4 onglets ; release v735 ; « Play — AAB » en cours à 05:12, v1072 en test interne d'ici là) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (celle du 13/11 est partie le 14/11 à 03:41, le cron de GitHub part souvent avec 3 à 4 h de retard) | **build 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33** ; **1072.1073 (étape 1 de la refonte) soumise à l'examen bêta le 15/11 à 04:45** (code de la v1030) ; builds du code des v1032 (1032.1033, 01:41), v1034 (03:32), v1035 (04:23) v1036 (05:46) et v1037 (« variabilité cardiaque », 06:19) envoyées sur TestFlight, puis celle du code v1059 le 14/11 à 23:30 (état chez Apple non relevé depuis le 14/11 à 18:35), pour les testeurs après l'Alpha de la nuit ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **🧸 Refonte « Compagnon » (vos décisions des 13, 14 et 15/11) : étape 2 sur 15 faite sur Android le 15/11 à 04:35
-(navigation en 4 onglets, #999) ; son suivi iPhone est à ouvrir après le merge. Étape 1 faite des deux côtés.
+(navigation en 4 onglets, #999 mergée à 05:06, release v735) ; son suivi iPhone est en PR (build macOS à finir au run suivant). Étape 1 faite des deux côtés.
 Prochaine : étape 3, la checklist de Ma journée.** Les 15 étapes :
 [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le brief :
 [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
@@ -43,7 +43,7 @@ Prochaine : étape 3, la checklist de Ma journée.** Les 15 étapes :
 > ([capture](runs/captures/2026-11-15-0435-refonte-2-reglages.png)), pour ne pas avoir deux « Données ». **Limites** :
 > rien de nouveau dans les écrans, seulement leur rangement ; Ma journée n'est pas encore la checklist (étape 3) ;
 > l'Accueil d'une installation vide est court ; la visite guidée ne passe pas par Ma journée ; pas de maquette du kit
-> pour cette étape, captures jugées seules ; **pas encore sur iPhone**.
+> pour cette étape, captures jugées seules ; **pas encore sur iPhone** (PR de suivi ouverte, à finir au run suivant).
 
 > 🧸 **Refonte « Compagnon », étape 1 : cohérence (15/11 02:35)** : première des 15 étapes. Ce que vous verrez sur
 > Android : la barre du bas n'a plus que 4 onglets, **Sources est la première ligne de Réglages**
@@ -946,7 +946,7 @@ Prochaine : étape 3, la checklist de Ma journée.** Les 15 étapes :
 
 | Run | Type | Résultat |
 |---|---|---|
-| 15/11 04:35 — [Refonte « Compagnon », étape 2 : navigation en 4 onglets](runs/2026-11-15-0435-refonte-2-navigation.md) | 🔧 | Main vert, aucune PR de la routine ouverte. Étape 2 : Accueil · Ma journée · Objectifs · Données (#999) ; l'ancien Aujourd'hui rangé dans Accueil et Ma journée ; Réglages › Données devient « Sauvegarde ». Soumission bêta TestFlight lancée. Suivi iPhone après le merge. |
+| 15/11 04:35 — [Refonte « Compagnon », étape 2 : navigation en 4 onglets](runs/2026-11-15-0435-refonte-2-navigation.md) | 🔧 | Main vert, aucune PR de la routine ouverte. Étape 2 : Accueil · Ma journée · Objectifs · Données (#999) ; l'ancien Aujourd'hui rangé dans Accueil et Ma journée ; Réglages › Données devient « Sauvegarde ». #999 mergée à 05:06 (12 checks verts), release v735 (APK 34,6 Mo). TestFlight : build 1072.1073 ajoutée au groupe externe et soumise à l'examen bêta. PR de suivi iPhone ouverte (v1075, 51 correctifs, 3938 tests verts), pas mergée. |
 | 15/11 03:35 — [Refonte, étape 1 sur iPhone ; préparation de l'étape 2](runs/2026-11-15-0335-refonte-1-iphone.md) | 🔧 | Main vert. #996 (suivi iPhone de l'étape 1, ouverte par le run de 02:35) : 15 checks verts, captures iPhone regardées (Aujourd'hui, Réglages, Paramètres, accueil), mergée à 04:20. Doublon #997 ouvert par erreur puis fermé, ses builds annulées. Table des routes de l'étape 2 écrite. Pas de code produit ; TestFlight et soumission bêta non relevés. |
 | 15/11 02:35 — [Refonte « Compagnon », étape 1 : cohérence](runs/2026-11-15-0235-refonte-1-coherence.md) | 🔧 | Main vert. #992 (P44-3b, run de 01:35) mergée en début de run, checks verts. Premier run de la refonte : 15 étapes inscrites au BACKLOG et dans PRODUIT.md. Étape 1 sur Android : le ventre n'est plus demandé sans l'objectif digestion, « Mon cycle » et « Mon sport » retirés du choix, Sources passe de la barre d'onglets à Réglages. #995 mergée à 03:19, release v734 (APK 34,6 Mo). iPhone : PR de suivi ouverte (code embarqué v1072, correctif 59 retiré, 3932 tests verts), build macOS à finir au run suivant. Alpha de 23:45 pas encore partie à 02:55, pas de soumission bêta ; TestFlight non relevé. |
 | 15/11 01:35 — [Gold prolongé : la nouvelle date s'affiche (P44-3b)](runs/2026-11-15-0135-gold-prolonge.md) | 🔧 | Main : #990 mergée à 01:29, workflows en cours au début. P44-3b : quand le relais recule la fin de Gold offert, Aujourd'hui affiche une fois la nouvelle date ; « Le test est terminé » attend la vérification des droits. 9 tests écrits d'abord, 3568 verts. Suivi iPhone (v1067) dans une PR à part, après le merge. Alpha de 23:45 pas encore partie, pas de soumission bêta. |
