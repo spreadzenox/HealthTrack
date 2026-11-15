@@ -24,7 +24,7 @@ export const EMPTY_ROUTES = ['/', '/ma-journee', '/journal', '/tendances', '/foo
 // (REFONTE-6b) Pages recapturées comme les voit un abonné (`-abonne`) : sans abonnement, le détail d'un objectif
 // floute ses pistes et masque « Par famille », et depuis la fin de la période de lancement sur iPhone (06/11) le
 // relais ne rend plus Gold au simulateur
-export const SUBSCRIBED_ROUTES = ['/recommendations/bien-etre']
+export const SUBSCRIBED_ROUTES = ['/recommendations/bien-etre', '/recommendations/bien-etre/famille/sleep']
 // Pages longues : écrans suivants, défilés d'environ 80 % de l'écran chacun (`-2`, `-3`…)
 // (I6) Écran d'abonnement défilé : formules, prix, bouton, renouvellement et liens, sous le pli (capture pour Apple)
 export const SCROLLS = { '/connectors': 2, '/data': 1, '/settings': 1, '/premium': 1 }
