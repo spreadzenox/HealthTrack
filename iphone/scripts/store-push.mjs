@@ -63,9 +63,11 @@ export function testflightVersion(path = TESTFLIGHT_VERSION_JSON) {
  * la version « Prête à soumettre » le reprend.
  */
 export function versionString(json = JSON.parse(readFileSync(UPSTREAM_JSON, 'utf8')), fixed = testflightVersion()) {
+  // Numéro fixe du cycle d'abord : upstream.json ne porte plus de versionCode quand il suit HEAD (15/11)
+  if (fixed != null) return String(fixed)
   const n = json?.versionCode
   if (!Number.isInteger(n) || n <= 0) throw new Error('upstream.json : versionCode absent ou invalide')
-  return String(fixed ?? n)
+  return String(n)
 }
 
 /**

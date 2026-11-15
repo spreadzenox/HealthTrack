@@ -1,4 +1,6 @@
-# Version iOS de Halcya : code Android suivi (upstream.json) + adaptations iOS, build pour le simulateur sans signature,
+# Version iOS de Halcya : code partagé du dépôt (upstream.json suit HEAD depuis le 15/11) + adaptations iOS, build pour
+# le simulateur sans signature. Une PR qui change app/ ou relay/ passe donc ici aussi : le job Ubuntu dit en quelques
+# minutes si les correctifs de iphone/patches/ s'appliquent encore et si les tests passent avec eux,
 # captures sur deux iPhone simulés (taille de l'iPhone 12 de test, et un récent), en clair et en sombre.
 # Le dépôt est public : les minutes macOS sont gratuites, mais on évite les builds inutiles (journal et fiche App Store
 # seuls ignorés : la fiche a son propre contrôle, store-check.yml, et le workflow des modèles du visage le sien ;
@@ -8,10 +10,10 @@ name: iOS — build simulateur
 on:
   pull_request:
     branches: [main]
-    paths: ["iphone/**", ".github/workflows/ios-build.yml", "!iphone/journal/**", "!iphone/**.md", "!iphone/store/**", "!iphone/site/**", "!iphone/scripts/site.mjs", "!iphone/scripts/store-*.mjs", "!iphone/fusion/**"]
+    paths: ["iphone/**", "app/**", "relay/**", ".github/workflows/ios-build.yml", "!app/android/**", "!app/store/**", "!app/**.md", "!iphone/journal/**", "!iphone/**.md", "!iphone/store/**", "!iphone/site/**", "!iphone/scripts/site.mjs", "!iphone/scripts/store-*.mjs", "!iphone/fusion/**"]
   push:
     branches: [main]
-    paths: ["iphone/**", ".github/workflows/ios-build.yml", "!iphone/journal/**", "!iphone/**.md", "!iphone/store/**", "!iphone/site/**", "!iphone/scripts/site.mjs", "!iphone/scripts/store-*.mjs", "!iphone/fusion/**"]
+    paths: ["iphone/**", "app/**", "relay/**", ".github/workflows/ios-build.yml", "!app/android/**", "!app/store/**", "!app/**.md", "!iphone/journal/**", "!iphone/**.md", "!iphone/store/**", "!iphone/site/**", "!iphone/scripts/site.mjs", "!iphone/scripts/store-*.mjs", "!iphone/fusion/**"]
   workflow_dispatch:
     inputs:
       devices:
@@ -87,11 +89,11 @@ jobs:
         run: swift test --package-path ios/HalcyaFace
       - name: Numéros de version
         run: |
-          ANDROID="$(node -p "require('./upstream.json').versionCode")"
+          ANDROID="$(scripts/version.sh)"
           echo "ANDROID_VERSION=$ANDROID" >> "$GITHUB_ENV"
           # Numéro de version fixe des builds de test pendant un cycle (testflight-version.json, décision du propriétaire
           # du 07/11 vers 19:35) ; à défaut, celui d'Android. Le numéro de build et la version affichée suivent Android.
-          MARKETING="$(node -p "require('fs').existsSync('testflight-version.json') ? require('./testflight-version.json').version : require('./upstream.json').versionCode")"
+          MARKETING="$(node -p "require('fs').existsSync('testflight-version.json') ? require('./testflight-version.json').version : $ANDROID")"
           echo "MARKETING_VERSION_IOS=$MARKETING" >> "$GITHUB_ENV"
           echo "IOS_BUILD=$ANDROID.$(git rev-list --count HEAD)" >> "$GITHUB_ENV"
           xcodebuild -version

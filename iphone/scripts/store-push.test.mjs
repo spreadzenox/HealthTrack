@@ -72,6 +72,7 @@ test('versionString : numéro des builds envoyées, fixe pendant un cycle (déci
   assert.equal(versionString(), String(fixed))
   assert.equal(versionString({ versionCode: 900 }, 893), '893')
   assert.equal(versionString({ versionCode: 648 }, null), '648')
+  assert.equal(versionString({ commit: 'HEAD' }, 893), '893')
   assert.equal(testflightVersion('/nulle/part/testflight-version.json'), null)
   assert.throws(() => versionString({}, null), /versionCode/)
   assert.throws(() => versionString({ versionCode: '1.0' }, null), /versionCode/)
