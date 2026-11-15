@@ -50,8 +50,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     commencer à noter ses règles à la main (le bouton « Règles » ne vient qu'avec l'ancien objectif ou une donnée de
     cycle) : à décider à l'étape 5 (« Ce que vous noterez chaque jour ») ou 7 ; la page Sources n'a pas de lien de
     retour vers Réglages (la roue y ramène) ; le Journal (qui disparaît) n'a pas été revu.
-- [x] **REFONTE-2 — Navigation** (15/11 04:35, Android : #999 mergée à 05:06, v1075 ; **iPhone : PR de suivi ouverte, à finir**,
-  51 correctifs, 3938 tests verts) : barre Accueil · Ma journée · Objectifs · Données, aucune adresse changée ;
+- [x] **REFONTE-2 — Navigation** (15/11 04:35, Android : #999 mergée à 05:06, v1075 ; **iPhone : #1000 mergée le 15/11 à 06:00**,
+  51 correctifs, 3938 tests verts, captures simulateur regardées) : barre Accueil · Ma journée · Objectifs · Données, aucune adresse changée ;
   l'ancien Aujourd'hui rangé dans Accueil (bien-être du jour, mesures, lien Agir) et Ma journée (`/ma-journee` :
   bandeau d'ajout, bloc digestif, repas) ; Données s'ouvre sur Tendances (sous-onglets Tendances, Nutrition, Repas,
   Jours) ; Réglages › Données devient « Sauvegarde ». **Restes** : la visite guidée ne passe pas par Ma journée ;
@@ -59,8 +59,17 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   10) ; « Vos Analyses » reste écrit dans trois cartes de Sources (l'onglet s'appelle Objectifs) ; l'écran
   Réglages › Sauvegarde garde le titre « Vos données » ; services de notification natifs non lus (aucune route
   trouvée par recherche de texte) ; `/ma-journee` absente des captures de la fiche Play et du balayage natif.
-- [ ] **REFONTE-3 — Ma journée** : la checklist (3 cercles des repas, oui ou non, lignes qui partent, « Plus rien à
-  faire ») ; `specs/journee.SPEC.md`.
+- [x] **REFONTE-3 — Ma journée** (15/11 05:35, Android : #1001 ; **iPhone : suivi du code embarqué à faire**) : la
+  checklist en tête de Ma journée (`DayChecklist.jsx`, `services/dayChecklist.js`) : Repas en trois cercles (Matin
+  avant 11 h, Midi avant 16 h, Soir ; un cercle vide ouvre l'appareil photo), Bien-être (« Noter »), « Votre digestion
+  ce soir » (objectif digestion seulement, à partir de 18 h : `GUT_EVENING_FROM_HOUR`) ; une ligne faite dit « Noté »
+  puis part (fondu en mouvements réduits) ; « Plus rien à faire » ; « Déjà noté (n) » rouvre les saisies du jour ;
+  « Mes repas du jour » (`TodayMeals`) retiré ; `--day-done` dans `npm run visual`. **Restes** (étapes 8 à 11 pour
+  ce qui touche Pilou) : bannière de Pilou, bulle, toast « Annuler », haptique ; le bandeau d'ajout double Repas,
+  Bien-être et Digestion (à réduire à « Autre chose » quand les habitudes arrivent, étape 4) ; le bloc digestif
+  (compte à rebours des analyses) reste dans Ma journée alors qu'il relève d'Objectifs (étape 6) ; 18 h au lieu des
+  19 h de la spec, à confirmer par le propriétaire ; une journée à deux repas ne finit jamais (proposer « Pas de
+  repas » sur un cercle ?) ; « Hier » et « Bon retour » (spec § 10) non faits ; ouverture depuis le widget (étape 13).
 - [ ] **REFONTE-4 — Habitudes** : modèle de données (migration IndexedDB rétrocompatible testée, export et import),
   saisie, couleur miel (brief § 6, contrastes dans `tokens.test.js`), prise en compte dans les analyses comme entrées
   (règle 5 : jamais dans l'estimateur du bien-être).

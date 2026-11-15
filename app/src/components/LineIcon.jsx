@@ -12,6 +12,8 @@ const PATHS = {
       <path d="M9 6V3h6v3M9 18v3h6v-3M12 10v2l1.5 1" />
     </>
   ),
+  // Ma journée (refonte étape 3) : ce qui est noté
+  check: <path d="M5 12.5l4.5 4.5L19 7.5" />,
   folder: <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />,
   gear: (
     <>

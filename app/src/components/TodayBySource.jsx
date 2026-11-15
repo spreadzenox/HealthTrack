@@ -68,7 +68,7 @@ export default function TodayBySource({
     return () => window.removeEventListener('health-entries-updated', refresh)
   }, [refresh])
 
-  // Les repas ont leur bloc, « Mes repas du jour » (AUJ-5), et le bien-être sa carte juste au-dessus (POLISH-SIM-40) :
+  // Les repas ont leur ligne dans Ma journée (refonte étape 3), et le bien-être sa carte juste au-dessus (POLISH-SIM-40) :
   // leçon 16, une information n'a qu'une maison
   const groups = todayBySource({ tiles, summary, entries, now: now || new Date(), showGut })
     .map((g) => ({ ...g, items: g.items.filter((i) => !HOMED_ELSEWHERE.has(i.key)) }))

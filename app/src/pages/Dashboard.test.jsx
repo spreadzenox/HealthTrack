@@ -109,6 +109,27 @@ describe('Dashboard', () => {
     expect(screen.getByRole('dialog', { name: 'wellbeing-prompt-stub' })).toBeInTheDocument()
   })
 
+  it('Ma journée : la checklist du jour avant le bandeau ; « Déjà noté » rouvre la note de bien-être (refonte étape 3)', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const now = new Date()
+    listEntries.mockResolvedValue([
+      { id: 7, type: 'wellbeing', source: 'app_wellbeing', at: now.toISOString(), payload: { score: 3.75 } },
+    ])
+    renderDashboard('day')
+    const list = await screen.findByRole('region', { name: 'À noter aujourd’hui' })
+    const strip = screen.getByRole('region', { name: 'Ajouter' })
+    expect(list.compareDocumentPosition(strip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    // Sans l'objectif digestion : les repas seulement, le bien-être est déjà noté, le ventre n'est pas demandé
+    expect(within(list).getByText('Encore 1 chose aujourd’hui')).toBeInTheDocument()
+    expect(within(list).getByRole('group', { name: 'Repas' })).toBeInTheDocument()
+    expect(within(list).queryByRole('group', { name: 'Bien-être' })).toBeNull()
+    expect(within(list).queryByRole('group', { name: /digestion/ })).toBeNull()
+    expect(screen.queryByText('Mes repas du jour')).toBeNull()
+    fireEvent.click(within(list).getByRole('button', { name: 'Déjà noté (1)' }))
+    fireEvent.click(within(list).getByRole('button', { name: /Bien-être · 4 sur 5/ }))
+    expect(screen.getByText('Édition de l’entrée 7')).toBeInTheDocument()
+  })
+
   it('sans aucune donnée : pas de liens « … dans le Journal » (VC-26)', async () => {
     renderDashboard()
     await screen.findByRole('heading', { level: 2, name: 'Bien-être aujourd’hui' })

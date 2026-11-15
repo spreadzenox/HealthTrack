@@ -12,7 +12,7 @@ import LineIcon from './LineIcon'
  */
 const HINT_MS = 8000
 
-export default function MealPhotoButton({ className, children, theme }) {
+export default function MealPhotoButton({ className, children, theme, ariaLabel }) {
   const id = `meal-photo-${useId().replace(/:/g, '')}`
   const navigate = useNavigate()
   const inputRef = useRef(null)
@@ -48,7 +48,7 @@ export default function MealPhotoButton({ className, children, theme }) {
     <>
       <input ref={inputRef} id={id} type="file" accept="image/*" capture="environment" onChange={onChange}
         className="visually-hidden-input" data-testid="meal-photo-input" />
-      <label htmlFor={id} className={className} data-theme={theme} role="button" tabIndex={0} onKeyDown={onKeyDown}>{children}</label>
+      <label htmlFor={id} className={className} data-theme={theme} role="button" tabIndex={0} aria-label={ariaLabel} onKeyDown={onKeyDown}>{children}</label>
       {missed && (
         <div className="meal-photo-missed" role="status">
           <span>Aucune photo prise.</span>

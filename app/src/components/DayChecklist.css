@@ -1,0 +1,261 @@
+/* La checklist de Ma journée (refonte « Compagnon », étape 3). Une couleur par thème : pêche = repas et digestion,
+   menthe = bien-être. Courbes de specs/journee.SPEC.md § 0. */
+.day-checklist {
+  --ease-sortie: cubic-bezier(.5, 0, .75, 0);
+  --ease-io: cubic-bezier(.65, 0, .35, 1);
+  margin: 0 0 16px;
+}
+
+.day-checklist .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.day-remaining {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+  color: var(--color-ink-2);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.day-dots {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.day-dot {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-brand);
+  border-radius: 50%;
+}
+
+.day-dot.is-todo {
+  background: var(--color-brand);
+}
+
+.day-line {
+  margin: 0 0 10px;
+  padding: 14px 18px;
+  border-radius: var(--radius-card);
+  background: var(--tone-bg);
+  color: var(--tone-text);
+  overflow: hidden;
+}
+
+.day-line.is-waiting {
+  opacity: 0.85;
+}
+
+.day-line-row,
+.day-line-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: var(--tap-min);
+}
+
+.day-line-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.day-line-count,
+.day-line-hint {
+  font-size: 0.9rem;
+}
+
+.day-line-btn {
+  min-height: var(--tap-min);
+  padding: 0 22px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.day-line-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tone-label);
+  font-weight: 700;
+}
+
+.day-meal-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.day-meal-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  color: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.day-meal-circle {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border: 2px dashed var(--tone-track);
+  border-radius: 50%;
+  color: var(--tone-label);
+}
+
+.day-meal-slot.is-filled .day-meal-circle {
+  border: 2px solid var(--tone-label);
+  background: var(--tone-label);
+  color: var(--tone-bg);
+}
+
+.day-finished {
+  margin: 0 0 10px;
+  padding: 22px 18px;
+  border-radius: var(--radius-card);
+  background: var(--tone-bg);
+  color: var(--tone-text);
+  text-align: center;
+}
+
+.day-finished-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--tone-label);
+  color: var(--tone-bg);
+}
+
+.day-finished-title {
+  margin: 10px 0 4px;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.day-finished-text {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.day-noted-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--tap-min);
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--color-ink-2);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.day-noted-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+.day-noted-item .line-icon {
+  transform: rotate(-90deg);
+  color: var(--color-ink-2);
+}
+
+.day-noted-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px;
+}
+
+.day-noted-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: var(--tap-min);
+  padding: 6px 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  background: none;
+  color: var(--color-ink);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.day-noted-list li:last-child .day-noted-item {
+  border-bottom: 0;
+}
+
+.day-noted-time {
+  color: var(--color-ink-2);
+  font-size: 0.85rem;
+}
+
+.day-noted-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Une ligne qui part : pose, puis glissé vers la droite (400 ms, courbe « sortie »), opacité sur la fin. */
+@keyframes day-line-leave {
+  0%, 40% { transform: none; opacity: 1; }
+  52% { transform: translateX(-8px); opacity: 1; }
+  100% { transform: translateX(110%) rotate(3deg); opacity: 0; }
+}
+
+@keyframes day-fade-out {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes day-finished-in {
+  from { transform: scale(0.94); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+.day-line.is-leaving {
+  animation: day-line-leave 700ms var(--ease-sortie) forwards;
+}
+
+.day-finished {
+  animation: day-finished-in 400ms cubic-bezier(.34, 1.56, .64, 1);
+}
+
+/* Mouvements réduits (spec § 0) : aucun déplacement, un fondu de 200 ms au plus. */
+@media (prefers-reduced-motion: reduce) {
+  .day-line.is-leaving {
+    animation: day-fade-out 700ms var(--ease-io) forwards;
+  }
+
+  .day-finished {
+    animation: none;
+  }
+}
