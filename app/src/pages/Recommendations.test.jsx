@@ -3,6 +3,7 @@ import { render, screen, within, fireEvent, act } from '@testing-library/react'
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Recommendations from './Recommendations'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
+import { startChallenge, defaultPlan } from '../services/fodmapChallenge'
 
 const f = (key, label, effect, { theme = 'sleep', actionable = true, net = true, horizon = 'short' } = {}) => ({
   key, label, theme, actionable, outcome: 'wellbeing', horizon, effect, low: effect - 0.15, high: effect + 0.15, net,
@@ -304,3 +305,42 @@ describe('Exemple digestion sans l’objectif ventre (POLISH-SIM-37b)', () => {
     expect(await screen.findByTestId('gut-off')).toBeInTheDocument()
   })
 })
+
+describe('REFONTE-6e : la réintroduction guidée sous Confort digestif', () => {
+  beforeEach(() => localStorage.clear())
+  const gutPage = (readReintro, results = readyResults) => renderPage({ view: 'gut', readReintro }, results)
+
+  it('sans test ni groupe cité par une analyse : aucune ligne (leçon 17)', async () => {
+    gutPage(async () => ({ challenges: [], gut: [] }))
+    await screen.findByTestId('reco-countdown-digestion')
+    expect(screen.queryByTestId('reco-reintro')).toBeNull()
+  })
+
+  it('un groupe cité par une piste digestive : la ligne mène à la réintroduction', async () => {
+    const gut = JSON.parse(JSON.stringify(readyResults.outcomes.wellbeing))
+    gut.horizons.short.factors = [{ ...f('fodmap_lactose', 'Lactose', -0.4, { theme: 'nutrition' }), outcome: 'digestion' }]
+    gut.horizons.medium.factors = []
+    gutPage(async () => ({ challenges: [], gut: [] }), { outcomes: { wellbeing: readyResults.outcomes.wellbeing, digestion: gut } })
+    const link = await screen.findByTestId('reco-reintro')
+    expect(link).toHaveAttribute('href', '/reintroduction')
+    expect(link).toHaveTextContent('Réintroduction guidée')
+    expect(link).toHaveTextContent('À tester d’après vos analyses : le lactose')
+  })
+
+  it('un test en cours se retrouve ici même avant les premiers résultats', async () => {
+    const payload = startChallenge({ group: 'lactose', food: 'milk', plan: defaultPlan('lactose', 'milk') }, new Date(Date.now() - 86_400_000))
+    const challenges = [{ id: 1, type: 'fodmap_challenge', at: payload.startedAt, payload }]
+    gutPage(async () => ({ challenges, gut: [] }))
+    expect(await screen.findByTestId('reco-reintro')).toHaveTextContent('Test en cours : le lactose')
+  })
+
+  it('le bien-être n’a pas cette ligne, et une lecture en échec ne casse rien', async () => {
+    renderPage({ readReintro: async () => { throw new Error('x') } }, readyResults)
+    await screen.findByText('Par famille')
+    expect(screen.queryByTestId('reco-reintro')).toBeNull()
+    gutPage(async () => { throw new Error('x') })
+    await screen.findByTestId('reco-countdown-digestion')
+    expect(screen.queryByTestId('reco-reintro')).toBeNull()
+  })
+})
+

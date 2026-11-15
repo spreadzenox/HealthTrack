@@ -202,8 +202,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     terme sur les données de démo) ne devrait pas s'afficher en chiffre (voir `outOfScale`, POLISH-SIM-16) ; le
     détail de l'objectif répète ce que la famille montre (alléger « Ce qui va avec » quand 6c-2 sera là) ; captures
     à 320 px, en grand texte, confort digestif avec résultats ; moyenne de la famille (« 7 h 05 par nuit »).
-  - [ ] **REFONTE-6d** (seuils 7 et 14 : banc d'abord), **6e** (réintroduction sous Confort digestif) : voir la
-    préparation.
+  - [ ] **REFONTE-6d** (seuils 7 et 14 : banc d'abord) : voir la préparation.
+  - [x] **REFONTE-6e — La réintroduction sous Confort digestif** (15/11 16:35, Android) : ligne « Réintroduction
+    guidée » dans le détail du confort digestif (`reintroLine`, `services/act.js` : test en cours, groupes cités par
+    une analyse, ou groupes testés ; rien sinon, leçon 17), retour de `/reintroduction` vers `/recommendations/ventre`.
+  - [ ] **REFONTE-6e-iOS** : embarquer 6e (code partagé ; le correctif 50 s'applique).
+  - [ ] **REFONTE-6e-2 — Restes de 6e** : capturer « À tester d'après vos analyses » (données de démo avec un lien
+    net sur un groupe FODMAP), le sombre, 320 px, la version Play sans abonnement ; retirer les tests FODMAP d'Agir
+    quand Agir rejoint l'Accueil (étape 10).
 - [ ] **IOS-HEAD — Une seule PR pour `app/` et `iphone/`** (étape 1 de « Sort des correctifs », `iphone/README.md`) :
   `upstream.json` à `HEAD`, filtres de `ios-build.yml`, job « les correctifs s'appliquent ». Aujourd'hui chaque
   merge Android remet la PR iPhone en retard sur main et relance une heure de build (15/11 : #1016 est restée

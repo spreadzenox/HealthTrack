@@ -946,3 +946,8 @@
 .reco-how + .reco-how {
   margin-top: 0;
 }
+
+/* REFONTE-6e : la ligne « Réintroduction guidée » du confort digestif (même carte qu'un élément d'Agir) */
+.reco-reintro {
+  margin-top: 14px;
+}

@@ -15,6 +15,8 @@
  * REFONTE-6c : une famille qui a des facteurs comparés ouvre son détail (`…/famille/:family`) : son lien net « à
  * tester », puis ses seuls facteurs, délai par délai. Sans abonnement (pistes floutées) ou sans facteur, on revient
  * au détail de l'objectif.
+ * REFONTE-6e : sous Confort digestif, une ligne « Réintroduction guidée » quand un test existe ou qu'une analyse
+ * digestive cite un groupe FODMAP (services/act.js) ; la page de la réintroduction revient ici.
  * Retirés : l'historique, « Sur quelques semaines », « Autres liens repérés », « Bientôt » et l'analyse « dans les
  * heures ». Des liens statistiques, jamais une cause ni un diagnostic.
  */
@@ -30,6 +32,9 @@ import { isExampleMode } from '../storage/exampleMode'
 import { THEME_TONE, pistesTitles, resultsView } from '../services/resultsView'
 import { influenceFamilies, familyDetail } from '../services/influenceFamilies'
 import { readGutNotes } from '../services/gutNotes'
+import { actSections, reintroLine } from '../services/act'
+import { FODMAP_CHALLENGE_TYPE } from '../services/fodmapChallenge'
+import LineIcon from '../components/LineIcon'
 import { listEntries } from '../storage/localHealthStorage'
 import { scoreToChoice } from '../services/mood/wellbeingScale'
 import { GUT_LEVELS, GUT_TYPE } from '../services/today'
@@ -84,6 +89,31 @@ const readWellbeingToday = () => {
   const since = new Date()
   since.setHours(0, 0, 0, 0)
   return listEntries({ type: 'wellbeing', since: since.toISOString(), limit: 50 })
+}
+
+/** Tests de réintroduction et notes digestives assez loin pour couvrir un test, sa pause et un redémarrage (comme Agir). */
+const REINTRO_WINDOW_DAYS = 120
+const readReintroData = async () => {
+  const since = new Date(Date.now() - REINTRO_WINDOW_DAYS * 86_400_000).toISOString()
+  const [challenges, gut] = await Promise.all([
+    listEntries({ type: FODMAP_CHALLENGE_TYPE, limit: Infinity }),
+    listEntries({ type: GUT_TYPE, since, limit: Infinity }),
+  ])
+  return { challenges, gut }
+}
+
+/** REFONTE-6e : la réintroduction guidée vit sous Confort digestif ; la ligne n'apparaît que si elle a quelque chose à dire. */
+function ReintroLink({ line }) {
+  if (!line) return null
+  return (
+    <Link to="/reintroduction" className="today-card act-card reco-reintro" data-tone="peach" data-testid="reco-reintro">
+      <span className="act-card-body">
+        <span className="act-card-title">Réintroduction guidée</span>
+        <span className="act-card-detail">{line}</span>
+      </span>
+      <LineIcon name="chevron" size={20} className="act-chevron" />
+    </Link>
+  )
 }
 
 function Countdown({ outcome, view, onNote, onReminder, notedToday = [] }) {
@@ -387,7 +417,7 @@ function HowItWorks() {
   )
 }
 
-export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults'), readGut = readGutNotes, readWellbeing = readWellbeingToday }) {
+export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults'), readGut = readGutNotes, readWellbeing = readWellbeingToday, readReintro = readReintroData }) {
   const outcome = view === 'gut' ? 'digestion' : 'wellbeing'
   const [results, setResults] = useState(() => peekAnalysis('analysisResults').result ?? null)
   const [error, setError] = useState(null)
@@ -399,6 +429,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const [showGut] = useState(() => gutCardMode() !== 'hide')
   const [gutToday, setGutToday] = useState([])
   const [wbToday, setWbToday] = useState([])
+  const [reintro, setReintro] = useState(null)
   const { family } = useParams()
   const base = outcome === 'digestion' ? '/recommendations/ventre' : '/recommendations/bien-etre'
 
@@ -433,11 +464,27 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
     }
   }, [outcome, readGut, readWellbeing, revision])
 
+  // REFONTE-6e : tests de réintroduction, pour la ligne du confort digestif (une lecture en échec ne montre rien)
+  useEffect(() => {
+    if (outcome !== 'digestion') return undefined
+    let alive = true
+    Promise.resolve()
+      .then(readReintro)
+      .then((d) => alive && setReintro(d))
+      .catch(() => alive && setReintro(null))
+    return () => {
+      alive = false
+    }
+  }, [outcome, readReintro, revision])
+
   const v = results ? resultsView(results.outcomes?.[outcome]) : { state: 'loading' }
   // Version Play sans abonnement (hors période de lancement) : les pistes restent floues, comme avant
   const locked = FEATURES.billing && !ent.premium
   // REFONTE-6c : le détail d'une famille, seulement quand il a quelque chose à montrer
   const detail = family && v.state === 'results' && !locked ? familyDetail(results.outcomes?.[outcome], family) : null
+  const reintroText = outcome === 'digestion' && reintro && !isExampleMode()
+    ? reintroLine(actSections({ ...reintro, pistes: results && !locked ? pistesTitles(results) : null }))
+    : null
   const objectiveTitle = outcome === 'digestion' ? 'Votre confort digestif' : 'Votre bien-être'
   const onNote = outcome === 'wellbeing' ? () => setNoteOpen(true) : () => navigate('/ma-journee', { state: { open: 'digestion' } })
   // La note qui vient d'être enregistrée ici se lit dans la carte, même si la relecture des notes échoue
@@ -474,6 +521,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       )}
       {v.state === 'locked' && <Countdown outcome={outcome} view={v} onNote={onNote} onReminder={onReminder} notedToday={notedToday} />}
       {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} families={influenceFamilies(results.outcomes?.[outcome])} base={base} />}
+      {v.state !== 'loading' && <ReintroLink line={reintroText} />}
       {outcome === 'digestion' && v.state === 'results' && <DoctorReportCard />}
       {outcome === 'wellbeing' && <HowWellbeing />}
       <HowItWorks />

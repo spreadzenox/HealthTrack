@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-15",
+  "kind": "amélioration",
+  "title": "La réintroduction guidée se range sous Confort digestif",
+  "items": [
+    "Dans Objectifs, le détail du confort digestif affiche une ligne « Réintroduction guidée » dès qu’un test est en cours ou terminé, ou qu’une analyse repère un groupe à tester.",
+    "La page de la réintroduction revient vers le confort digestif."
+  ]
+}
