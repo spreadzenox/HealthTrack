@@ -140,10 +140,12 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
     ])
   })
 
-  it('étape Analyses : avec la digestion, les deux échéances (14 et 28 jours), jamais seulement 14 (POLISH-SIM-15)', () => {
+  it('étape Objectifs : le score et les pistes, chacun à son jour, pour chaque objectif (POLISH-SIM-15, REFONTE-6d)', () => {
     const analyses = (gut) => tourSteps({ hc: true, face: false, gut }).find((s) => s.title === 'Objectifs').text
-    expect(analyses(false)).toBe('Vos analyses démarrent après 14 jours notés.')
-    expect(analyses(true)).toBe('Vos analyses : bien-être après 14 jours notés, digestion après 28.')
+    expect(analyses(false)).toBe('Un premier score après 7 jours notés, vos pistes après 14.')
+    expect(analyses(true)).toBe('Bien-être : un score après 7 jours notés, des pistes après 14. Digestion : 14 et 28.')
+    const gut = tourSteps({ hc: true, face: false, gut: true }).find((s) => s.title === 'Votre digestion').text
+    expect(gut).toBe('Son score après 14 jours notés, ses pistes après 28, dont 5 avec une gêne.')
   })
 })
 

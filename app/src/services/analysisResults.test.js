@@ -67,8 +67,15 @@ describe('contrat des résultats d’Analyses', () => {
     expect(wb.horizons.short.factors).toEqual([])
   })
 
-  it('débloque horizon par horizon (bien-être 14 / 21 / 42 jours)', () => {
+  it('débloque horizon par horizon (bien-être 14 / 35 / 42 jours)', () => {
     const { entries, now } = world({ days: 30 })
+    const early = computeAnalysisResults(entries, { now }).outcomes.wellbeing
+    expect(early.horizons.short.status).toBe('ready')
+    expect(early.horizons.medium.status).toBe('locked')
+  })
+
+  it('ouvre le moyen terme du bien-être à 35 jours notés', () => {
+    const { entries, now } = world({ days: 37 })
     const wb = computeAnalysisResults(entries, { now }).outcomes.wellbeing
     expect(wb.status).toBe('partial')
     expect(wb.horizons.short.status).toBe('ready')

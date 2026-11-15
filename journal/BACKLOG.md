@@ -203,7 +203,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     terme sur les données de démo) ne devrait pas s'afficher en chiffre (voir `outOfScale`, POLISH-SIM-16) ; le
     détail de l'objectif répète ce que la famille montre (alléger « Ce qui va avec » quand 6c-2 sera là) ; captures
     à 320 px, en grand texte, confort digestif avec résultats ; moyenne de la famille (« 7 h 05 par nuit »).
-  - [ ] **REFONTE-6d** (seuils 7 et 14) — **banc fait le 15/11 à 20:35**
+  - [x] **REFONTE-6d** (seuils 7 et 14) — **code fait le 15/11 à 21:35 (en PR, Android ; iPhone dans la même PR, IOS-HEAD)** : `UNLOCK_DAYS.wellbeing.medium` 21 → 35, deux cas au banc (`bench.test.js`, effet fort à 21 et 28 jours, 400 jeux : 7,25 % et 6 % avant, ≤ 5 % après), visite guidée (« Un premier score après 7 jours notés, vos pistes après 14. » ; digestion « 14 et 28 ») et Premium à l'accueil (« Votre premier score arrive au 7e jour noté, vos pistes vers le 14e. ») ; « Voir un exemple » n'a pas de délai écrit, inchangé. Reste **REFONTE-6d-2** : capture de la visite guidée et du paywall d'accueil (le banc visuel ne sait pas les ouvrir), suivi iPhone vérifié par la build de la PR. — **banc fait le 15/11 à 20:35**
     ([`ETAPE-6D-BANC.md`](maquettes/compagnon-etapes/ETAPE-6D-BANC.md)) : **lecture A retenue**. Le run de code :
     (1) `FIRST_RESULTS_DAY` reste à 14 / 28 (pistes), `FIRST_SCORE_DAY` 7 / 14 (score, déjà livré en 6a) ;
     (2) `UNLOCK_DAYS.wellbeing.medium` de 21 à 35 (à 21 j, 6 à 7 % de jeux avec un faux lien quand un vrai effet
@@ -240,16 +240,18 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   ligne « Règles · 2e jour », les ajouts rapides…) et une autre maison pour chaque chose ; puis suppression de
   l'écran, de ses routes (redirigées vers Tendances) et du code mort, tests compris. Nunito et les tokens
   (`tokens.css`, `DESIGN.md`) ici ou à l'étape 8.
-  - [ ] **REFONTE-7a — « Vos saisies » dans le détail du jour de Tendances** (15/11 19:35, Android et iPhone dans la
+  - [x] **REFONTE-7a — « Vos saisies » dans le détail du jour de Tendances** (15/11 19:35, Android et iPhone dans la
     même PR) : `components/DayEntries.jsx` extrait du Journal (saisies, « … », Modifier, Refaire, Supprimer, règles et
     jour du cycle) ; habitudes « Méditation  Oui » en miel, une réponse par jour, Oui / Non sur place ; placé à la fin
-    du détail d'un jour passé (Jour, Semaine, Mois). Inventaire couvert : lignes 1, 2, 3, 5, 6, 8. À cocher au merge
-    (build iOS verte, captures `tendances` regardées des deux côtés).
+    du détail d'un jour passé (Jour, Semaine, Mois). Inventaire couvert : lignes 1, 2, 3, 5, 6, 8. **Mergée le 15/11
+    vers 22:40 (#1024, 216c8b9)**, build iOS verte, captures `tendances` regardées des deux côtés.
   - [ ] **REFONTE-7b** : Données sur 2 onglets (Tendances · Nutrition), Repas depuis Nutrition, `/journal` redirigé
     vers `/tendances?vue=jour`, visite guidée sur Tendances, `captureMode.js` iPhone et `visual-check` sans `/journal`.
   - [ ] **REFONTE-7c** : retrait de `Journal.jsx`, `DailyJournal.jsx`, `JournalEmpty.jsx` et de leurs tests ; « Hier »
     dans Ma journée si utile (inventaire, ligne 9).
   - [ ] **REFONTE-7a-2 — Restes de 7a** : captures sur historique presque vide, grand texte, 320 px, version Play.
+    Le plan de captures iPhone ne touche aucun jour de Tendances : « Vos saisies » n'y est jamais vu (ajouter une
+    capture « Tendances › Jour › veille » à `captureMode.js`, comme `--click="Jour > Jour précédent"` côté Android).
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.

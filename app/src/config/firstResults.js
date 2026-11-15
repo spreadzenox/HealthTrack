@@ -8,6 +8,7 @@ export const FIRST_RESULTS_DAY = Object.freeze({ wellbeing: 14, digestion: 28 })
 /**
  * Premier score d'un objectif dans l'onglet Objectifs (refonte « Compagnon », brief § 3.5, étape 6a) : 7 jours notés
  * pour le bien-être, 14 pour le confort digestif. Seuls le score et sa tendance s'ouvrent à ces seuils ; les liens
- * (« ce qui l'influence ») gardent FIRST_RESULTS_DAY tant que le banc n'a pas été rejoué à 7 et 14 jours (étape 6d).
+ * (« ce qui l'influence ») gardent FIRST_RESULTS_DAY : au banc de l'étape 6d (15/11), avant 8 jours le moteur ne compare
+ * rien et à 8-10 jours il ne retrouve pas même un effet très fort.
  */
 export const FIRST_SCORE_DAY = Object.freeze({ wellbeing: 7, digestion: 14 })
