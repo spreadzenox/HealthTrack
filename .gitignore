@@ -21,6 +21,8 @@ samples/
 !journal/maquettes/**/*.png
 # Captures citées par les rapports de simulation de personas
 !journal/simulations/captures/**/*.png
+# Images du kit de la refonte « Compagnon » (maquettes de référence, pas des données)
+!journal/maquettes/compagnon/**/*.jpg
 
 # IDE
 .idea/

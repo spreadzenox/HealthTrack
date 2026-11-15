@@ -100,7 +100,9 @@ Ce qui a été constaté le 13/11, à savoir avant de recommencer :
    relais ne le fait pas sur sa seule demande. Vérifier au créneau suivant qu'un run est parti et a passé le contrôle
    d'empreinte ; à défaut, lancer soi-même le run du créneau avec le nouveau lanceur, comme le 13/11 au soir.
 
-Ces fichiers reprennent un prompt qui a grossi pendant un mois ; depuis le 13/11, un bloc en tête du premier dit que
+Le premier fichier est au plafond de 23 000 caractères : chaque ajout oblige à retirer ou raccourcir ce qui est livré,
+en vérifiant d'abord dans `journal/BACKLOG.md` que c'est bien livré. Ces fichiers reprennent un prompt qui a grossi
+pendant un mois ; depuis le 13/11, un bloc en tête du premier dit que
 la routine est unique et prime sur ce que la suite dit encore de « la routine iOS ». Étape 5 du plan (§ 6) : tout
 réécrire beaucoup plus court, en renvoyant à `journal/PRODUIT.md` et à la charte pour ce qui y est déjà.
 
@@ -131,7 +133,7 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
 - Sur une machine du propriétaire : lecture seule d'abord, rien installé ni modifié sans son accord explicite, ne
   jamais ouvrir un fichier de secrets (`.env`, clés, jetons, `~/.ssh`).
 
-## 5. Demandes en cours et rappels (au 14/11/2026)
+## 5. Demandes en cours et rappels (au 15/11/2026)
 
 - **P48, déclaration Health Connect « Règles ».** Quand la routine écrit « P48 maintenant » en tête du résumé :
   notification sur le téléphone du propriétaire, avec la mission `journal/missions/P48.md`. Le lui rappeler à chaque
@@ -149,6 +151,12 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
   répétées, 12 testeurs pendant 14 jours par application, avis dilués). À la place : fiches de magasin personnalisées
   par persona, page d'accueil et campagne par persona, onboarding adaptatif. Proposé : préparer la fiche Play
   personnalisée du persona SII ; en attente de son accord.
+- **Refonte « Compagnon »** (décisions du propriétaire des 13, 14 et 15/11, exception au mode polish) : le brief et
+  son kit sont dans `journal/maquettes/compagnon/` (repris le 15/11 de la branche où une autre conversation du
+  propriétaire les avait posés) ; les instructions y renvoient et citent ses mots. Étapes 1 à 7 lancées ; le double
+  numérique en dernier ; les déclarations Play et App Store, à préparer par la routine, restent son geste. À suivre
+  dans les bilans : l'étape en cours (tête du résumé), et à l'étape 15 l'envoi d'un selfie au relais, seule sortie
+  nouvelle du téléphone, qui n'entre dans aucune version avant ses déclarations.
 - **Testeurs.** J = 08/11. Relance du septième jour vers le 15/11. Demande d'accès à la production (P30) au
   quatorzième jour.
 - **Maquettes PROP-SIM** (propositions issues des simulations) : les montrer au propriétaire quand la routine en
