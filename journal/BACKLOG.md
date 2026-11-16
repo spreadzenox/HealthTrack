@@ -319,7 +319,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     habitude. 3 tests dans `personaData.test.mjs`. Premier coup d'œil (J45, montre, `sport,cycle`) : l'essai est
     intact dans Agir (« Jour 4 sur 10. Aujourd'hui, jour avec. »), « Règles » reste dans le bandeau d'ajout, Objectifs
     montre Bien-être et Confort digestif, aucune erreur.
-  - [x] **UPG-1 — Essai en cours sur l'Accueil** (16/11 17:30, #1044) : la carte « Agir » dit la consigne de l'essai
+  - [x] **UPG-1 — Essai en cours sur l'Accueil** (16/11 17:30, #1044, mergée 16/11 18:00) : la carte « Agir » dit la consigne de l'essai
     (« Dormir au moins 7 h 30 ») et « Essai · jour 4 sur 10 · aujourd’hui, jour avec / jour sans » (mots d'Agir) ;
     deux essais : « 2 essais en cours · … », lien vers Agir. Un jour « avec », elle remonte sous « Bien-être
     aujourd’hui ». `homeTrial()` (trials.js) ne lit que les entrées `trial`. Code partagé sans correctif iPhone.

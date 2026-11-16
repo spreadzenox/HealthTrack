@@ -16,8 +16,8 @@
   sauvegarde ouvertes sans perte, visite guidée à jour. La police Nunito et le fond crème (7d, mergée le 16/11 vers 12:50).
 - **Pas prêt le 22/11** : Pilou en 3D et son île (étapes 8 à 13), le double numérique (14 et 15).
 - **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs
-  (outil du parcours « mise à jour » prêt le 16/11 ; à corriger d'abord : l'essai en cours visible depuis l'Accueil et
-  le bandeau Nouveautés qui doit annoncer la nouvelle navigation, UPG-1 et UPG-2).
+  (outil du parcours « mise à jour » prêt le 16/11 ; l'essai en cours visible depuis l'Accueil, UPG-1, mergé le 16/11 à
+  18:00 ; le bandeau Nouveautés qui annonce la nouvelle navigation, UPG-2, en PR #1043 ; ensuite le passage, UPG-3).
 
 **Où en est Halcya**
 
@@ -28,7 +28,7 @@
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **🧸 Refonte « Compagnon »** : étapes 1 à 6 et 7a faites sur Android et sur iPhone (6d mergée le 16/11 à 00:41 :
-score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b mergée le 16/11 à 03:32 (Données sur Tendances et Nutrition), 7c (retrait du code du Journal) mergée le 16/11 vers 05:35, 7c soldée (« Hier » dans Ma journée mergé vers 09:35), restes de captures 7a-2 et 7b-2 mergés vers 11:45 (#1037), **7d (police Nunito, fond crème) mergée** (16/11 12:50, #1038), 7d-2 (flèches des listes) mergée (16/11 13:45, #1039), images de la fiche Play refaites en Nunito (7d-3, mergée, #1040), derniers chevrons texte (7d-4, mergée, #1041), passage des personas commencé (outil « mise à jour » mergé, #1042 ; l'essai en cours revient sur l'Accueil, UPG-1, en PR #1044 ; bandeau Nouveautés, UPG-2, en PR #1043), puis le passage complet des personas, puis
+score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b mergée le 16/11 à 03:32 (Données sur Tendances et Nutrition), 7c (retrait du code du Journal) mergée le 16/11 vers 05:35, 7c soldée (« Hier » dans Ma journée mergé vers 09:35), restes de captures 7a-2 et 7b-2 mergés vers 11:45 (#1037), **7d (police Nunito, fond crème) mergée** (16/11 12:50, #1038), 7d-2 (flèches des listes) mergée (16/11 13:45, #1039), images de la fiche Play refaites en Nunito (7d-3, mergée, #1040), derniers chevrons texte (7d-4, mergée, #1041), passage des personas commencé (outil « mise à jour » mergé, #1042 ; l'essai en cours revient sur l'Accueil, UPG-1, mergé, #1044 ; bandeau Nouveautés, UPG-2, en PR #1043), puis le passage complet des personas, puis
 Pilou (8 à 13) et le double numérique (14 et 15). Les 15 étapes : [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le
 brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -62,6 +62,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 16/11 18:30 — [#1044 mergée, #1043 remise à jour](runs/2026-11-16-1830-merge-1044-upg-1.md) | 🛠️ | **#1044 mergée** : un essai en cours se voit de nouveau depuis l'Accueil (consigne et jour de l'essai, carte remontée sous le bien-être les jours « avec »), Android et iPhone, après 14 checks verts et les captures iPhone de l'Accueil (clair et sombre). #1043 (bandeau des Nouveautés qui annonce d'abord la nouvelle navigation) remise à jour sur main ; sa build iOS repart, à merger au run suivant. Rien à faire de votre côté |
 | 16/11 17:30 — [UPG-1 : l'essai en cours sur l'Accueil](runs/2026-11-16-1730-upg-1-essai-accueil.md) | 🛠️ | Un essai en cours se voit de nouveau depuis l'Accueil : la carte du bas dit sa consigne et le jour (« Dormir au moins 7 h 30 · jour 4 sur 10 · aujourd’hui, jour avec ») et remonte sous votre bien-être les jours « avec ». Android et iPhone dans la même PR (#1044), à merger après sa build iOS. #1042 (outil « mise à jour » des personas) mergée. Rien à faire de votre côté |
 | 16/11 16:30 — [#1041 mergée, Nouveautés d'abord la navigation](runs/2026-11-16-1630-upg-2-nouveautes.md) | 🛠️ | **#1041 mergée** (derniers chevrons en icône) après sa build iOS relancée verte, release **v759** (34,7 Mo), captures iPhone d'Objectifs regardées. **UPG-2 en PR** : un testeur qui arrive d'avant la refonte voit d'abord, dans le bandeau des Nouveautés, la note « Nouveaux onglets » au lieu de « Nouvelle police » ; cette note dit maintenant que Données regroupe Tendances et Nutrition. #1042 remise à jour, à merger au run suivant. Rien à faire de votre côté |
 | 16/11 15:30 — [Personas : parcours « mise à jour »](runs/2026-11-16-1530-personas-mise-a-jour.md) | 🛠️ | L'outil de simulation rejoue maintenant un testeur qui avait la version d'avant la refonte (anciens objectifs « sport » et « cycle », essai en cours, aucune habitude). Premier passage : rien de perdu, l'essai est intact. Deux défauts notés : l'essai en cours ne se voit plus depuis l'Accueil, et le bandeau Nouveautés met en avant la police plutôt que la nouvelle navigation. #1041 : la build iPhone a échoué sur un test d'achat sans rapport avec la PR (panne connue de l'environnement de test d'Apple), relancée. Rien à faire de votre côté |
