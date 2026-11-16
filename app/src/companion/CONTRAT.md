@@ -113,7 +113,7 @@ sans donnée de santé brute au-delà de ce qui est écrit ici, sans contenu de 
 | `flowers:set` | BULLES | `{ flowers: [{ id, theme, angleDeg, radius, scale }] }` | état complet (ouverture, changement de jour) ; sans animation |
 | `mood:changed` | BULLES | `{ value, word, done, planned }` | humeur 0…1 (ne redescend jamais dans la journée), mot (« Tranquille »…) |
 | `gift:opened` | BULLES | `{ day, item }` | Pilou Surpris ; la scène joue la cérémonie (SPEC île § 7) |
-| `gift:placed` | BULLES | `{ day, item, items }` | l'accessoire est à sa place ; `items` = tous les cadeaux reçus (rejouable à l'ouverture) |
+| `gift:placed` | BULLES | `{ day, item, items, at }` | l'accessoire est à sa place ; `items` = tous les cadeaux reçus (rejouable à l'ouverture) ; la scène anime `item` si `at` a moins de 5 s, sinon pose tout d'un coup |
 | `meal:logged` | VIE / Ma journée | `{ slot, count, total }` | `slot` ∈ `breakfast`, `lunch`, `dinner`, `snack` ; jamais le contenu de l'assiette ; Pilou mâchouille puis Rassasié |
 | `wellbeing:noted` | VIE / Ma journée | `{ level, difficult, source }` | `level` 1…5, `difficult` = level ≤ 2 → Réconfortant ; `source` ∈ `note`, `face` |
 | `habit:noted` | VIE / Ma journée | `{ habitId, answer }` | `answer` ∈ `yes`, `no` : même récompense |
@@ -184,3 +184,5 @@ Chaque lot qui garde quelque chose le met dans l'export JSON et accepte les anci
 - 16/11 20:45 — première version (SCÈNE).
 - 16/11 21:00 — `<CompanionScene name>` ; `side` de `jump` = côté de l'écran ; `app/src/companion/mood.js`
   (`moodWord(m)` : « tranquille » < 0,2 ≤ « content » < 0,9 ≤ « rayonnant », `moodExpression(m)`) utilisable par tous.
+- 16/11 22:00 — `gift:placed` porte `at` (animation seulement si récent) ; la scène pose les 7 cadeaux en 3D
+  (`scene/gifts.js`) et met l'écharpe à Pilou (`setAccessory('echarpe', true)`).

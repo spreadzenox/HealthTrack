@@ -136,3 +136,44 @@ describe('le Pilou simple (même API que le lot PILOU, CONTRAT § 3)', () => {
     expect(closed).toBe(true)
   })
 })
+
+describe('les cadeaux de la première semaine (SPEC île § 7)', async () => {
+  const { createGifts, giftArrival, GIFT_ITEMS } = await import('./gifts')
+  it('pose chaque cadeau une fois, l’écharpe sur Pilou', () => {
+    const p = createPlaceholderPilou(THREE, { quality: 'moyen' })
+    const g = createGifts({ pilou: () => p })
+    g.setItems(['arbuste', 'lanterne'])
+    g.place('echarpe', 0)
+    g.place('echarpe', 10)
+    expect(g.items).toEqual(['arbuste', 'lanterne', 'echarpe'])
+    expect(g.group.getObjectByName('arbuste')).toBeTruthy()
+    let scarfVisible = false
+    p.object3d.traverse((o) => { if (o.isGroup && o.visible && o.children.length === 4 && o.children[3].geometry?.type === 'BoxGeometry') scarfVisible = true })
+    expect(scarfVisible).toBe(true)
+    for (const it of GIFT_ITEMS) g.place(it, 0)
+    expect(g.items).toHaveLength(7)
+    expect(g.update(100)).toBe(true)
+    expect(g.update(10000)).toBe(false)
+  })
+
+  it('arrivées : fonctions du temps, entières à la fin, fondu en mouvements réduits', () => {
+    for (const it of GIFT_ITEMS) {
+      expect(giftArrival(it, 5000).k).toBe(1)
+      expect(giftArrival(it, null).opacity).toBe(1)
+    }
+    expect(giftArrival('lanterne', 0).y).toBeGreaterThan(1)
+    expect(giftArrival('arbuste', 0).k).toBe(0)
+    expect(giftArrival('arbuste', 100, { reducedMotion: true })).toEqual({ k: 1, y: 0, opacity: 0.5 })
+  })
+
+  it('la lanterne s’allume le soir', () => {
+    const g = createGifts()
+    g.setItems(['lanterne'])
+    g.update(0)
+    const mat = g.group.getObjectByName('lanterne').userData.lightMat
+    const day = mat.emissiveIntensity
+    g.setEvening(1)
+    g.update(0)
+    expect(mat.emissiveIntensity).toBeGreaterThan(day + 1)
+  })
+})

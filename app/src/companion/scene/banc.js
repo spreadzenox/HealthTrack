@@ -12,6 +12,11 @@ if (Q.get('flowers') === '1') {
   const themes = ['peche', 'menthe', 'miel', 'lilas', 'rose', 'nuit']
   stage.flowers.set(angles.map((a, i) => ({ id: i, theme: themes[i], angleDeg: a, radius: 0.9 })))
 }
+if (Q.get('gifts') === '1') stage.gifts.setItems(['arbuste', 'lanterne', 'echarpe', 'galets', 'papillon', 'nuage', ...(Q.get('j7') === '1' ? [] : ['arc-en-ciel'])])
+if (Q.get('j7') === '1') stage.gifts.place('arc-en-ciel', 0)
+if (Q.get('soir') === '1') stage.applyLight({ phase: 'soir', sun: { color: '#FF9F72', intensity: 2.2 } })
+if (Q.get('pluie') === '1') stage.setWeather({ effect: 'pluie', particles: { kind: 'pluie', count: 40 } })
+if (Q.get('neige') === '1') stage.setWeather({ effect: 'neige', particles: { kind: 'neige', count: 30 }, accessory: 'echarpe' })
 window.seek = (t) => { stage.render(t); return stage.stats() }
 window.bench = (n = 60) => {
   const times = []
