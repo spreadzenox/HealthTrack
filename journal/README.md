@@ -10,7 +10,7 @@
 
 **🚀 Sprint de la refonte, ce soir jusqu'à 03:00 (votre ordre du 16/11 vers 20:15)** — relevé de 23:30 : sept équipiers
 codent Pilou et son monde en parallèle (étapes 8 à 15). **Sur main : #1047 (relais de la photo, éteint), #1048 (Monde)
-et #1053 (Scène, 22:02 : Pilou sur son île en tête de l'Accueil, v767, APK 35,0 Mo), puis #1062 (Scène 2, vers 23:45 : les
+et #1053 (Scène, 22:02 : Pilou sur son île en tête de l'Accueil, v767, APK 35,0 Mo), puis #1062 (Scène 2, 23:31 : les
 7 cadeaux en 3D, la météo sur l'île, Réglages › Mouvements de Pilou).** 6 PR ouvertes attendent leur build iPhone (près d'une heure chacune ; deux redémarrages du conteneur de VIE ont coûté
 ≈ 1 h). **Nouveau à 22:40 : l'assemblage** — le lot Scène a fusionné en local main et les 7 PR ouvertes : 3 980 tests
 verts, 1 rouge (corrigé d'une ligne), et l'Accueil complet tient (vrai Pilou, bulles, Humeur du jour, ciel jour, soir et
