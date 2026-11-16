@@ -72,6 +72,12 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Bran
   `iphone/overlay/app/public/companion/pilou_pose_*.jpg`, 12 Ko) aux deux notifications du soir. Pas de nouveau
   fichier Swift, donc pas de modification du projet Xcode.
 - Nouveautés : `2026-11-16-2115-pilou-notifications.json` (toutes les variantes).
+- **Lumière à l'échelle de la scène** : SCÈNE a réglé son heure dorée (`GOLDEN` de `scene/light.js` : soleil 2,6,
+  appoint 1,35, hémisphère `#FFF1E4`/`#9DB87A` à 0,8, ambre 0,55). `lightAt` à 15 h 30 rend désormais exactement
+  `GOLDEN` (testé sur une copie) et les autres heures à la même échelle (`SCENE_SCALE`). Clé d'avant l'aube à 6 h 05
+  (violet → rose) : le passage nuit → aube ne passe plus par un gris terne. Planche :
+  `journal/runs/captures/2026-11-16-sprint-monde-cycle-du-jour.png`. Si SCÈNE retouche `GOLDEN`, recopier ses valeurs
+  dans la clé `apres-midi` de `world/daylight.js` et dans le test.
 
 ## Parité iPhone (pour PARITE.md)
 - Notifications du soir avec Pilou : ✅ des deux côtés (PR 3).

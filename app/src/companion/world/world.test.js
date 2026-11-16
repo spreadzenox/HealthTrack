@@ -37,13 +37,20 @@ describe('courbes', () => {
 })
 
 describe('cycle du jour', () => {
-  it("garde exactement la lumière du kit l'après-midi (contre-jour doré)", () => {
-    const l = lightAt(at(15, 30))
-    expect(l.sun).toEqual({ color: '#FFCFA0', intensity: 3.6, elevationDeg: 15, azimuthDeg: -150 })
-    expect(l.fill).toEqual({ color: '#FFE4D2', intensity: 1.15 })
-    expect(l.env).toBe(0.62)
-    expect(l.phase).toBe('midi')
-    expect(l.haze).toBe('#FFC9A6')
+  it("rend à 15 h 30 exactement l'heure dorée réglée par la scène (GOLDEN de scene/light.js)", () => {
+    // copie de GOLDEN (lot SCÈNE, 16/11) : le contre-jour doré du kit, à l'échelle de la scène de l'app
+    const GOLDEN = {
+      phase: 'midi',
+      sky: { top: '#FFD7BA', bottom: '#FFF3E6' },
+      sun: { color: '#FFCFA0', intensity: 2.6, elevationDeg: 15, azimuthDeg: -150 },
+      fill: { color: '#FFE4D2', intensity: 1.35 },
+      hemi: { sky: '#FFF1E4', ground: '#9DB87A', intensity: 0.8 },
+      haze: '#FFC9A6',
+      ambreGlow: 0.55,
+      stars: 0,
+    }
+    expect(lightAt(at(15, 30))).toMatchObject(GOLDEN)
+    expect(lightAt(at(15, 30)).env).toBe(0.62) // unités du kit
   })
 
   it('reprend les ciels de la SPEC aux heures clés', () => {
