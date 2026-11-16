@@ -20,6 +20,7 @@ import { GOLDEN } from './scene/light'
 import { weatherNow } from './scene/weatherNow'
 import { getWeatherSettings } from '../services/weatherSync'
 import fallbackUrl from './scene/fallback.webp'
+import fallbackNightUrl from './scene/fallback-nuit.webp'
 import './CompanionScene.css'
 
 const pilouModules = import.meta.glob('./pilou/index.js')
@@ -315,7 +316,9 @@ export default function CompanionScene({
           bus.on(EVENTS.WEATHER_CHANGED, (p) => { live.setWeather(p?.decor ?? null); poke() }, { replay: true }),
           bus.on(EVENTS.TIME_PHASE, (p) => {
             if (p?.light) live.applyLight(p.light)
-            if (p?.phase === 'nuit') P().setExpression?.('endormi')
+            const asleep = p?.light?.asleep ?? p?.phase === 'nuit'
+            if (asleep) P().setExpression?.('endormi')
+            else if (P().expression === 'endormi') P().setExpression?.(moodExpression(bus.last(EVENTS.MOOD_CHANGED)?.value ?? 0))
           }, { replay: true }),
         ]
 
@@ -399,7 +402,7 @@ export default function CompanionScene({
     >
       <div className="companion-scene__frame" style={{ maxWidth: MAX_WIDTH, height }}>
         {showFallback && (
-          <img className="companion-scene__still" src={fallbackUrl} alt="" aria-hidden="true" draggable="false" />
+          <img className="companion-scene__still" src={light.night || light.phase === 'nuit' ? fallbackNightUrl : fallbackUrl} alt="" aria-hidden="true" draggable="false" />
         )}
         {tier !== 'bas' && (
           <canvas

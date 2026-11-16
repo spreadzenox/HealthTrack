@@ -119,3 +119,14 @@ describe('Réglages › Mouvements de Pilou', async () => {
     expect(container.innerHTML).toBe('')
   })
 })
+
+describe('cycle du jour (lot MONDE) et image fixe', () => {
+  it('la nuit, l’image fixe est celle de la nuit ; le jour, celle de l’heure dorée', async () => {
+    const night = render(<CompanionScene now={() => new Date(2026, 10, 16, 23, 30)} />)
+    await vi.waitFor(() => expect(night.container.querySelector('img').getAttribute('src')).toMatch(/nuit/))
+    cleanup()
+    const day = render(<CompanionScene now={() => new Date(2026, 10, 16, 13, 0)} />)
+    await vi.waitFor(() => expect(day.container.querySelector('section').style.getPropertyValue('--cs-sky-top')).not.toBe(''))
+    expect(day.container.querySelector('img').getAttribute('src')).not.toMatch(/nuit/)
+  })
+})

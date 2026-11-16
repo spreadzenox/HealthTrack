@@ -21,7 +21,15 @@
   iPhone (événement `scene:ready` / `scene:quality`, ou `data-quality` de `.companion-scene`).
 
 ## PR
-- PR 1 : #1053 `[Sprint SCÈNE] Pilou sur son île : contrat du compagnon et scène 3D de l'Accueil (étape 8)` — CI en cours.
+- **PR 1 #1053 : MERGÉE** le 16/11 à 22:02 (checks verts, émulateurs Android et build iOS ; captures iPhone regardées en
+  clair et en sombre). Après le merge : « Tests » de main vert, « Build & Release » v766 publiée (APK 35,0 Mo).
+- **PR 2 #1062** (`claude/sprint-scene-2`, ouverte à 22:05) : cadeaux en 3D, cérémonie de la boîte, météo de l'île,
+  Réglages › Mouvements de Pilou, et le **correctif de l'étiquette illisible en thème sombre** vu sur les captures
+  iPhone de #1053. CI en cours.
+- Branche 3 (`claude/sprint-scene-3`, empilée sur la 2 ; PR après le merge de #1062) : image fixe de nuit (Pilou
+  endormi sous le ciel de nuit), point ambre comme lumière principale la nuit et clair de lune bleuté, lanterne et
+  sommeil pris dans `lightAt` de MONDE (`lantern`, `asleep`), banc qui charge le Pilou du lot PILOU.
+- Ancien texte de la PR 1 : `[Sprint SCÈNE] Pilou sur son île : contrat du compagnon et scène 3D de l'Accueil (étape 8)` — CI en cours.
 - Branche 2 (`claude/sprint-scene-2`, partie de la 1, PR après le merge de #1053) : les 7 cadeaux en 3D
   (`scene/gifts.js` : arbuste, lanterne qui s'allume le soir, écharpe sur Pilou, galets, papillon sur la perle,
   nuage, arc-en-ciel grand au jour 7 puis petit au-dessus du nuage), boîte de la cérémonie (`gift:opened`), météo de
@@ -42,6 +50,17 @@
 - PILOU : `app/src/companion/pilou/index.js` qui exporte `createPilou` (CONTRAT § 3). La scène le prend seule.
 - MONDE : `app/src/companion/world/index.js` (CONTRAT § 5). D'ici là, heure dorée fixe.
 
+## Pour l'intégrateur
+- Étape 8 du § 10 : **livrée** (#1053). Parité iPhone : même code, captures iPhone 16e regardées (Accueil clair et
+  sombre) ; défaut d'étiquette en sombre corrigé dans #1062.
+- Mesure du palier sur un vrai téléphone : non faite (CI = rendu logiciel → image fixe). À relever par le propriétaire
+  ou un testeur (attribut `data-quality` de `.companion-scene`), non bloquant.
+
+## Avec PILOU
+- Son `createPilou` (branche `claude/sprint-pilou-2`) suit le contrat ; la scène le prend seule.
+- Sous rendu logiciel (CI, appareils très lents), la scène affiche l'image fixe, qui montre encore le Pilou simple :
+  dès que PILOU est sur main, je refais `scene/fallback.webp` et `scene/fallback-nuit.webp` avec son Pilou
+  (`banc.html` le charge désormais).
+
 ## Reste à faire dans mon lot
-- Réglage visible des mouvements réduits dans Réglages › Pilou : `companion/motion.js` est prêt
-  (`setReducedMotionSetting('auto'|'on'|'off')`) ; je le branche si aucun autre lot ne fait la page.
+- Images fixes refaites avec le Pilou du lot PILOU (après son merge).

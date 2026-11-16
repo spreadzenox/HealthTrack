@@ -6,7 +6,10 @@ const canvas = document.getElementById('c')
 const w = +(Q.get('w') || 360), h = +(Q.get('h') || 320)
 canvas.style.width = `${w}px`
 canvas.style.height = `${h}px`
-const stage = createStage(canvas, { width: w, height: h, tier: Q.get('q') || 'haut', reducedMotion: Q.get('rm') === '1' })
+// le Pilou du lot PILOU s'il est là (comme la vraie scène), sinon le Pilou simple
+const pilouMods = import.meta.glob('../pilou/index.js')
+const pilouMod = Q.get('simple') === '1' ? null : await pilouMods['../pilou/index.js']?.().catch(() => null)
+const stage = createStage(canvas, { width: w, height: h, tier: Q.get('q') || 'haut', reducedMotion: Q.get('rm') === '1', createPilou: pilouMod?.createPilou })
 if (Q.get('flowers') === '1') {
   const angles = [-74, -44, -14, 30, 58, 84]
   const themes = ['peche', 'menthe', 'miel', 'lilas', 'rose', 'nuit']
@@ -18,6 +21,14 @@ if (Q.get('soir') === '1') stage.applyLight({ phase: 'soir', sun: { color: '#FF9
 if (Q.get('pluie') === '1') stage.setWeather({ effect: 'pluie', particles: { kind: 'pluie', count: 40 } })
 if (Q.get('neige') === '1') stage.setWeather({ effect: 'neige', particles: { kind: 'neige', count: 30 }, accessory: 'echarpe' })
 if (Q.get('box')) stage.gifts.openBox(0)
+if (Q.get('heure')) {
+  const { lightAt } = await import('../world/index.js')
+  const [hh, mm] = Q.get('heure').split(':').map(Number)
+  const l = lightAt(hh * 60 + (mm || 0))
+  stage.applyLight(l)
+  if (l.asleep) stage.pilou.setExpression('endormi')
+  document.body.style.background = Q.get('fond') === '1' ? `linear-gradient(${l.sky.top}, ${l.sky.bottom})` : 'transparent'
+}
 window.seek = (t) => { stage.render(t); return stage.stats() }
 window.bench = (n = 60) => {
   const times = []
