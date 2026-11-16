@@ -1,5 +1,10 @@
 # Lot VIE — étapes 11 et 12 du brief (Compagnon 3 et 4)
 
+> **État (17/11 00:50)** — **Sur main** : étapes 11 et 12 entières (#1060). **En PR** : #1067, complément (cairn des
+> galets dans « Par famille », graine des captures iPhone) ; elle passe après PILOU, STUDIO et MONDE et reste en PR
+> propre si elle demande une résolution de conflit après 02:15. **Reste à faire** : rituel du soir et lanternes du
+> défi (SPEC journée § 7) ; le nom choisi dans l'étiquette de l'île (point 3 ci-dessous, pour l'assemblage).
+
 Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branches `claude/sprint-vie-<n>`.
 
 ## Où j'en suis
@@ -58,6 +63,23 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branc
   les captures d'accueil vierge passent avant et créent la clé `halcya_companion` (montre) sans rencontre, et la graine
   ne regardait que l'existence de la clé. Corrigé (on regarde `metAt`), avec un test, dans la PR de `claude/sprint-vie-5`
   (cairn des galets + ce correctif), ouverte après la fusion.
+- 17/11 00:50 : **parcours d'un utilisateur d'avant la refonte, relu sur main 42072c6d** (captures/main date d'avant
+  #1060 : rejoué en local avec `npm run visual -- --routes=/,/ma-journee --meet`, données de démo, accueil fini, aucune
+  clé `halcya_companion`), pour l'assemblage du lot SCÈNE :
+  1. À la première ouverture, quelle que soit la page (Accueil ou Ma journée), la rencontre recouvre l'écran :
+     éclosion et « Passer », puis « Comment voulez-vous l'appeler ? » (« Pilou » proposé). Une seule fois ;
+     l'onboarding n'est pas refait. Pilou y est en 2D (SVG) tant que `companion/pilou/sprites.js` (#1058) n'est pas
+     sur main ; il prend les images de PILOU tout seul dès qu'elles y sont.
+  2. Après « Valider » puis « Continuer » : l'Accueil normal (île 3D, bulles Repas et Bien-être, « Pilou est
+     tranquille · 2 bulles à faire »). Aucune erreur JS.
+  3. **Pour l'assemblage** : `src/pages/Dashboard.jsx` monte `<CompanionHome …>` sans `name` : l'étiquette de l'île
+     dit toujours « Pilou », même renommé. Fichier partagé, je n'y touche pas. Correctif d'une ligne :
+     `name={companionName}` avec `const companionName = useCompanionName()` (hook de
+     `companion/life/useCompanionName.js`, qui suit un renommage fait dans Réglages), ou `pilouName()` de
+     `companion/life/companionState.js`.
+  4. Une capture iPhone d'une autre PR peut encore montrer la rencontre en démo tant que #1067 n'est pas fusionnée
+     (défaut du seul mode captures, corrigé dans #1067) : ce n'est pas un bug de l'app.
+  Message direct à l'orchestrateur refusé par la plateforme (appareil non vérifié) : tout est donc écrit ici.
 
 ## Ce qui reste (hors de ce sprint si le temps manque)
 - Les chorégraphies fines de la SPEC (vol de l'assiette, mastication, ondes lilas de la méditation, bouillotte du
