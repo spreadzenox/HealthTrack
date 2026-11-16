@@ -184,3 +184,6 @@ function notify() {
     // pas de fenêtre (tests node)
   }
 }
+
+/** Nom du compagnon pour les autres lots (CONTRAT.md § 4, `pilou:named` : « lu ensuite par `pilouName()` du lot VIE »). */
+export const pilouName = () => companionName()
