@@ -1,6 +1,6 @@
 # Lot BULLES — étape 10 du brief (Compagnon 2)
 
-Mis à jour : 16/11 21:05 (heure de Paris, horloge de la session). PR 1 : #1056 (CI en cours). Branche suivante : `claude/sprint-bulles-2`.
+Mis à jour : 16/11 22:40 (heure de Paris). PR 1 : #1056, conflit avec #1053 résolu (CompanionHome seule), build iOS relancée. Branche suivante : `claude/sprint-bulles-2` (PR à l'ouverture après #1056).
 
 ## Où j'en suis
 - **PR 1 (`claude/sprint-bulles-1`)** : l'Accueil a ses bulles, sa jauge et sa première semaine, avec ou sans 3D.
@@ -45,6 +45,15 @@ Mis à jour : 16/11 21:05 (heure de Paris, horloge de la session). PR 1 : #1056 
 - Le check « Budget de lectures (perf) » a échoué : l'Accueil lançait le calcul des états du jour (16 206 lectures,
   budget 1 500). Corrigé : relecture du cache, sinon compte léger sur 45 jours (598 lectures en local, budget
   respecté). **Pour tous les lots : ne lancez pas `getAnalysis(...)` depuis l'Accueil.**
+
+## Captures iPhone de #1056 (branche captures/pr-1056, avant le merge de main)
+- Accueil en clair, en sombre et vide sur iPhone 16e et 17 Pro : bulles, jauge et barre de la semaine conformes.
+- En « grand texte », un mot débordait (« Digestio ») et « Bien-être » se coupait au trait d'union : corrigé dans le
+  dernier commit (taille du mot en unités de la bulle, mots jamais coupés).
+
+## Pour le lot SCÈNE (constat, rien de bloquant)
+- `webglAvailable()` (`companion/mood.js`) ouvre un contexte WebGL de sonde à chaque montage de la scène, sans le
+  libérer (`WEBGL_lose_context`) : une fois, une capture locale a montré « Too many active WebGL contexts ».
 
 ## Non fait, pour l'intégrateur
 - Retour haptique de la SPEC (appui, éclatement, cadeau) : l'app n'a pas `@capacitor/haptics` ; l'ajouter touche les
