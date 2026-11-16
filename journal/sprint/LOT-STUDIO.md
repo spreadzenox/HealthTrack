@@ -17,6 +17,11 @@
   relançait de toute façon le build. Suite locale : 3 815 tests verts, lint propre, build OK, captures regardées.
   Reste : `claude/sprint-studio-3` (`equiperPilou`) après PILOU #1058, et les deux gestes dans le dossier PILOU.
 
+- 17/11 00:40 — #1052 : conflits successifs avec main résolus en gardant les deux apports (Réglages et sauvegarde
+  avec VIE ; App.jsx et pageStyles.js avec PHOTO et VIE) ; le Studio lit le nom choisi (`companionName` de VIE).
+  Builds iOS verts sur b546c729 et 8821608c ; dernier push 00:40, je ne touche plus à la branche avant le merge.
+  Suite : PR `claude/sprint-studio-3` (`equiperPilou`) dès que PILOU #1058 est sur main, avant 02:15.
+
 ## Plan
 1. **Fiche et traits, sans 3D** (`studio/traits.js`, `studio/fiche.js`) : schéma de PILOU-DOUBLE.md § 4, libellés,
    palettes curatées, `normaliser`, `tirer` (« Surprenez-moi »), `compter` ; fiche gardée sur le téléphone, dans

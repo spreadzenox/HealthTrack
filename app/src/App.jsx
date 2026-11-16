@@ -6,6 +6,7 @@ import './pageStyles'
 import { DebugProvider } from './contexts/DebugContext'
 import { loadNutritionTable } from './data/nutritionTable'
 import { ensureGoalsMigrated } from './settings/onboarding'
+import { PILOU_PHOTO } from './companion/photo/flag'
 
 // Perf D2 : seul l'Accueil est dans le fichier principal ; les autres pages arrivent à la demande
 // (fichiers séparés, chargés en quelques ms depuis l'APK). Celles qui calculent des nutriments
@@ -30,6 +31,8 @@ const Trial = lazy(() => import('./pages/Trial'))
 const Licences = lazy(() => import('./pages/Licences'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
 const Studio = lazy(() => import('./companion/studio/Studio'))
+// Double numérique par photo (étape 15) : route absente tant que l'interrupteur de build est éteint (défaut)
+const PilouPhotoPage = lazy(() => import('./companion/photo/PilouPhotoPage'))
 
 export default function App() {
   // Refonte étape 5a : objectifs d'avant la refonte convertis une fois (bien-être toujours, confort digestif facultatif)
@@ -77,6 +80,7 @@ export default function App() {
             <Route path="agir/essai/:id" element={<Trial />} />
             <Route path="licences" element={<Licences />} />
             <Route path="pilou/studio" element={<Studio />} />
+            {PILOU_PHOTO && <Route path="pilou/photo" element={<PilouPhotoPage />} />}
             <Route path="connectors/withings/callback" element={<WithingsCallback />} />
             {/* Adresse inconnue (ancienne notification, lien périmé) : l'Accueil plutôt qu'une page blanche. */}
             <Route path="*" element={<Navigate to="/" replace />} />
