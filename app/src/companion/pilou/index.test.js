@@ -94,7 +94,7 @@ describe('Pilou — module 3D (contrat § 3)', () => {
     p.object3d.updateMatrixWorld(true)
     expect(p.hitTest(0, -0.05, c)).toBe(true)
     expect(p.hitTest(0.95, 0.95, c)).toBe(false)
-    expect(['ventre', 'corps']).toContain(p.hitZone(0, -0.25, c))
+    expect(['belly', 'corps']).toContain(p.hitZone(0, -0.25, c))
   })
 
   it('porte la couleur des yeux de la fiche, et ses accessoires', () => {

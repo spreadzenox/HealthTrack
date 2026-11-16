@@ -11,7 +11,7 @@ export const SEUILS = {
   doublePx: 30,
   glisserPx: 60, // glissé horizontal
   chatouilleSens: 3, // changements de sens…
-  chatouilleMs: 900, // … en moins de 900 ms, sur le ventre
+  chatouilleMs: 900, // … en moins de 900 ms, sur le bedon
   chatouillePause: 2000, // pause avant un nouveau fou rire
 }
 
@@ -25,7 +25,7 @@ export const HAPTIQUE = {
 }
 
 export function createGestes(seuils = SEUILS) {
-  let down = null // { x, y, t, ventre }
+  let down = null // { x, y, t, belly }
   let lastTap = null // { x, y, t }
   let holding = false
   let swiped = false
@@ -36,9 +36,9 @@ export function createGestes(seuils = SEUILS) {
   function reset() { down = null; holding = false; swiped = false; tickle = null }
 
   return {
-    /** Doigt posé. ventre = le doigt est sur le ventre de Pilou. */
-    down(x, y, t, ventre = false) {
-      down = { x, y, t, ventre, lastX: x }
+    /** Doigt posé. belly = le doigt est sur le bedon de Pilou. */
+    down(x, y, t, belly = false) {
+      down = { x, y, t, belly, lastX: x }
       holding = false
       swiped = false
       tickle = { dirs: [], sens: 0 }
@@ -49,7 +49,7 @@ export function createGestes(seuils = SEUILS) {
       const out = []
       const dx = x - down.x
       // chatouillis : changements de sens horizontaux rapides sur le ventre
-      if (down.ventre) {
+      if (down.belly) {
         const step = x - down.lastX
         if (Math.abs(step) > 2) {
           const s = Math.sign(step)

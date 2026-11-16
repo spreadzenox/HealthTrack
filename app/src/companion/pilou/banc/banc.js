@@ -75,7 +75,7 @@ canvas.addEventListener('pointerdown', (ev) => {
   const z = zone(ev)
   if (!z) return
   canvas.setPointerCapture(ev.pointerId)
-  jouer(gestes.down(ev.clientX, ev.clientY, now(), z === 'ventre'))
+  jouer(gestes.down(ev.clientX, ev.clientY, now(), z === 'belly'))
 })
 canvas.addEventListener('pointermove', (ev) => jouer(gestes.move(ev.clientX, ev.clientY, now())))
 canvas.addEventListener('pointerup', (ev) => jouer(gestes.up(ev.clientX, ev.clientY, now())))

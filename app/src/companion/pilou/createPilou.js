@@ -83,7 +83,7 @@ export function createPilou(THREE, options = {}) {
   const faceTex = keep(new THREE.CanvasTexture(faceCv))
   faceTex.colorSpace = THREE.SRGBColorSpace
   const bodyU = {
-    uFace: { value: faceTex }, uBellyCol: { value: C(PAL.ventre) },
+    uFace: { value: faceTex }, uBellyCol: { value: C(PAL.belly) },
     uDark: { value: C('#5CC69F') }, uLight: { value: C('#8BE3C2') }, uThick: { value: 0.9 }, uBal: balU,
   }
   const bodyMat = M.patchMat(vinyl(PAL.menthe), {
@@ -553,7 +553,7 @@ export function createPilou(THREE, options = {}) {
   /* ---------- points d'attache pour la scène et les autres lots ---------- */
   const anchors = {
     head: Object.assign(new THREE.Object3D(), { name: 'pilou-tete' }),
-    belly: Object.assign(new THREE.Object3D(), { name: 'pilou-ventre' }),
+    belly: Object.assign(new THREE.Object3D(), { name: 'pilou-belly' }),
     handLeft: Object.assign(new THREE.Object3D(), { name: 'pilou-main-gauche' }),
     handRight: Object.assign(new THREE.Object3D(), { name: 'pilou-main-droite' }),
     antennaTip: Object.assign(new THREE.Object3D(), { name: 'pilou-point-ambre' }),
@@ -729,7 +729,7 @@ export function createPilou(THREE, options = {}) {
         default: return []
       }
     },
-    /** Le doigt touche-t-il Pilou ? 'ventre', 'corps' ou null (raycaster déjà réglé par la scène). */
+    /** Le doigt touche-t-il Pilou ? 'belly', 'corps' ou null (raycaster déjà réglé par la scène). */
     toucher(raycaster) {
       const r = raycaster || ray
       const hits = r.intersectObject(root, true).filter((h) => h.object.isMesh && h.object !== contact && !h.object.isSprite)
@@ -740,7 +740,7 @@ export function createPilou(THREE, options = {}) {
         bodyMesh.worldToLocal(tv)
         const ph = Math.atan2(tv.x, tv.z)
         const e = (ph / 0.9) ** 2 + ((tv.y - 0.34) / 0.25) ** 2
-        if (e < 1) return 'ventre'
+        if (e < 1) return 'belly'
       }
       return 'corps'
     },

@@ -118,7 +118,7 @@ export function createPilou(THREE, options = {}) {
       }
       return ndcX >= x0 - marge && ndcX <= x1 + marge && ndcY >= y0 - marge && ndcY <= y1 + marge
     },
-    /** 'ventre', 'corps' ou null : pour reconnaître le chatouillis (sur le ventre). */
+    /** 'belly', 'corps' ou null : pour reconnaître le chatouillis (sur le ventre). */
     hitZone(ndcX, ndcY, camera) {
       ndc.set(ndcX, ndcY)
       ray.setFromCamera(ndc, camera)

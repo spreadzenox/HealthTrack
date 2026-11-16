@@ -23,7 +23,7 @@ export const HAUTEUR_TOTALE = H + BY + 0.29 + 0.078
 /* ---------- palette (planche du chapitre 1, brief § 7.2) ---------- */
 export const PAL = {
   menthe: '#78D8B4',
-  ventre: '#FFF1DC',
+  belly: '#FFF1DC',
   pieds: '#4FC097',
   antenne: '#33B989',
   ambre: '#FFB84D',
