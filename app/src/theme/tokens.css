@@ -67,6 +67,8 @@
   --companion-sky-bottom: #fff3e6;
   --companion-haze: #ffc9a6;
   --companion-label-bg: rgba(255, 250, 244, 0.86);
+  /* encre fixe : l'étiquette est posée sur le ciel clair de la scène, aussi en thème sombre */
+  --companion-label-ink: #10231d;
   --companion-label-shadow: rgba(90, 60, 30, 0.12);
   --chart-ref: #6fa893;
 
