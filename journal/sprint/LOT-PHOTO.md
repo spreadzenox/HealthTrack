@@ -3,9 +3,24 @@
 Équipier du sprint du 16/11 (consignes : `journal/sprint/SPRINT.md` de la branche de l'orchestrateur). Branches
 `claude/sprint-photo-<n>`, PR « [Sprint PHOTO] … ».
 
-> **LOT FINI** dès le merge de #1050 (consigne de l'orchestrateur du 16/11 21:20 : relais et app livrés, missions
-> préparées ; pas de PR de plus pour ne pas relancer de build). Le branchement sur le Studio reste à l'intégrateur
-> (section « Pour l'intégrateur »).
+> **LOT FINI — 17/11 00:35.** Les deux PR sont sur main : #1047 (relais, 2749dca) et #1050 (app, dedb890) ;
+> « Tests » vert sur main après chacune.
+>
+> **Livré** : la route `POST /v1/pilou/style` du relais (schéma imposé, température 0, Flash-Lite UE, photo sans
+> métadonnées jamais gardée, plafond de 3 par mois) et le parcours photo de l'app (`app/src/companion/photo/` :
+> information puis consentement séparés, selfie 512 px en mémoire effacé à la réponse, traits « À vérifier »).
+> Missions **P49** (Google Play : Sécurité des données, politique de confidentialité, PLAY-CONFORMITE.md) et **PI3**
+> (App Store : étiquettes de confidentialité, notes de revue) prêtes dans `journal/missions/`, arrêtées avant l'envoi.
+>
+> **Éteint, et pourquoi** : les deux interrupteurs sont sur « off ». Côté app, `VITE_PILOU_PHOTO` n'est réglé dans
+> aucune variante : ni écran, ni autorisation caméra, ni appel réseau. Côté relais, la route répond `503 disabled` tant
+> que `PILOU_STYLE=on` n'est pas réglé. Décision du propriétaire : rien d'actif avant ses déclarations Google Play et
+> App Store, puisqu'une photo de visage part vers un service d'IA.
+>
+> **Pour l'allumer (propriétaire)** : 1) faire les missions P49 et PI3 (envoyer les déclarations, publier la
+> politique de confidentialité mise à jour) ; 2) régler `PILOU_STYLE=on` sur le service Cloud Run du relais ;
+> 3) construire l'app avec `VITE_PILOU_PHOTO=on` ; 4) avant cela, brancher le résultat sur le Studio (le parcours
+> renvoie pour l'instant vers les Réglages) : voir « Pour l'intégrateur » plus bas.
 
 ## Où j'en suis
 - 16/11 20:40 — lecture des règles, du brief, de PILOU-DOUBLE.md et de specs/double.SPEC.md. Branche
