@@ -13,7 +13,7 @@
   en 4 temps ; Objectifs (score, familles, défi de 10 jours, réintroduction, seuils de 6d) ; Données sur Tendances,
   avec le détail du jour qui reprend ce que faisait le Journal (7a faite le 15/11 ; 7b, deux onglets et la visite
   guidée, mergée le 16/11 ; 7c, le retrait du code du Journal, mergée le 16/11). À chaque étape : une base d'avant la refonte et une ancienne
-  sauvegarde ouvertes sans perte, visite guidée à jour. Puis la police Nunito.
+  sauvegarde ouvertes sans perte, visite guidée à jour. Puis la police Nunito (7d, en PR le 16/11).
 - **Pas prêt le 22/11** : Pilou en 3D et son île (étapes 8 à 13), le double numérique (14 et 15).
 - **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs.
 
@@ -21,12 +21,12 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v754** (APK 34,6 Mo, 16/11 06:45 UTC, merge de #1033) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | « iOS — TestFlight » vert sur le merge de #1030 (16/11 03:34 UTC) ; chez les testeurs externes : à relever ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | release **v755** (APK 34,6 Mo, 16/11 09:31 UTC, merge de #1036) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | **1107.1107 validée par Apple et chez « Testeurs Halcya »** (16/11 09:54 UTC) ; anciennes builds expirées ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **🧸 Refonte « Compagnon »** : étapes 1 à 6 et 7a faites sur Android et sur iPhone (6d mergée le 16/11 à 00:41 :
-score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b mergée le 16/11 à 03:32 (Données sur Tendances et Nutrition), 7c (retrait du code du Journal) mergée le 16/11 vers 05:35, 7c soldée (« Hier » dans Ma journée mergé vers 09:35), restes de captures 7a-2 et 7b-2 en PR à 10:30, puis Nunito, puis
+score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b mergée le 16/11 à 03:32 (Données sur Tendances et Nutrition), 7c (retrait du code du Journal) mergée le 16/11 vers 05:35, 7c soldée (« Hier » dans Ma journée mergé vers 09:35), restes de captures 7a-2 et 7b-2 mergés vers 11:45 (#1037), **7d (police Nunito, fond crème) en PR** (16/11 11:30), puis
 Pilou (8 à 13) et le double numérique (14 et 15). Les 15 étapes : [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le
 brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -60,6 +60,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 16/11 11:30 — [#1037 mergée, 7d en PR](runs/2026-11-16-1130-merge-1037-7d-pr.md) | 🛠️ | **#1037 mergée** après sa build iOS verte (captures iPhone de Tendances › Jour d'hier et de la visite guidée regardées : propres). Étapes 7a à 7c soldées. **Étape 7d en PR** : police Nunito et fond crème, Android et iPhone (le thème sombre ne change pas) ; à merger après sa build iOS. Rien à faire de votre côté |
 | 16/11 10:30 — [#1036 mergée, captures de Tendances](runs/2026-11-16-1030-7a-2-captures-tendances.md) | 🛠️ | **#1036 mergée** (Ma journée : carte « Hier » pour les habitudes restées sans réponse la veille), Android et iPhone. Restes 7a-2 et 7b-2 : les captures de l'iPhone montreront désormais un jour passé de Tendances et la visite guidée sur Tendances (PR ouverte, à merger après sa build iOS) ; côté Android, Tendances › Jour vérifié en grand texte, à 320 px et sur historique presque vide. Prochaine étape : la police Nunito et le fond crème. Rien à faire de votre côté |
 | 16/11 09:30 — [7c-2 : « Hier » dans Ma journée](runs/2026-11-16-0930-7c-2-hier.md) | 🛠️ | Ma journée repose en haut de l'écran les habitudes d'hier restées sans réponse (« Hier, dimanche », Oui / Non, « Passer »), une seule fois et seulement si vous répondiez encore la veille. Android et iPhone dans la même PR, à merger après la build iOS. Rien à faire de votre côté |
 | 16/11 08:30 — [« idées » : étape 7d préparée](runs/2026-11-16-0830-idees-7d-nunito.md) | 💡 | **#1034 mergée** (iPhone : la VFC de l'app Santé dans « Ce qui a pu peser ») après sa build iOS verte et la capture iPhone de Tendances. Étape **7d** (police Nunito et fond crème) préparée : mesures, contrastes, et captures avant/après de 4 écrans sur la vraie app ([fiche](maquettes/compagnon-etapes/ETAPE-7D-NUNITO.md)). iPhone : build **1107.1107** ajoutée aux testeurs externes et soumise à l'examen bêta d'Apple. Rien à faire de votre côté |

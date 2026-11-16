@@ -291,7 +291,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     absents que Figtree) ; fond `#fff8f0`, surface `#f8efe4`, bord `#eadfd1` (marque à 5,04:1) ; sombre inchangé ;
     PDF (TTF Nunito par `woff-to-ttf.mjs`), licences, fiche Play, pages légales iPhone, DESIGN.md § 3-4, Nouveautés.
     Un run de code, Android et iPhone ; aucune donnée touchée.
-    **Code fait le 16/11 à 10:30 (branche `auto/7d-nunito`, PR ouverte après le merge de #1037)** : paquets Nunito à
+    **Code fait le 16/11 à 10:30 (branche `auto/7d-nunito`), en PR le 16/11 à 11:30 après le merge de #1037** : paquets Nunito à
     la place de Figtree, `main.jsx`, `tokens.css` (fond, surface, bord, `--bg-rgb`) et `tokens.test.js` (rouge
     d'abord), TTF du rapport PDF régénérés (`nunito-400/700/800.ttf`, `OFL-Nunito.txt`), licences, visuels de la
     fiche, pages légales (Android et iPhone, empreintes des pages Android relues mises à jour), site, commentaires,
