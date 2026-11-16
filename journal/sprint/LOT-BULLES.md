@@ -1,6 +1,6 @@
 # Lot BULLES — étape 10 du brief (Compagnon 2)
 
-Mis à jour : 16/11 21:15 (heure de Paris). PR 1 : #1056.
+Mis à jour : 16/11 21:05 (heure de Paris, horloge de la session). PR 1 : #1056 (CI en cours). Branche suivante : `claude/sprint-bulles-2`.
 
 ## Où j'en suis
 - **PR 1 (`claude/sprint-bulles-1`)** : l'Accueil a ses bulles, sa jauge et sa première semaine, avec ou sans 3D.
@@ -20,6 +20,24 @@ Mis à jour : 16/11 21:15 (heure de Paris). PR 1 : #1056.
   - Captures : `journal/runs/captures/2026-11-16-sprint-bulles-accueil-{demo,vide,sombre}.png` (îlot dessiné, sans la
     scène) et `…-sprint-bulles-avec-scene-{demo,vide}.png` (intégration vérifiée en local avec `claude/sprint-scene-1`
     fusionnée et le conflit résolu comme ci-dessous : bulles placées par la vraie caméra autour de Pilou).
+
+## Branche 2 (`claude/sprint-bulles-2`, PR après le merge de #1056)
+- La nuit : les bulles restantes deviennent des lucioles (cible de 44 px, toujours touchables), « Pilou dort. Le reste
+  peut attendre demain. » ; heure lue dans `time:phase` de la scène (`nuit`), sinon 22 h 30 à 5 h.
+- Jour 14 : grande fleur pêche (`flower:grow` scale 2,1), `milestone` `day14`, « Confort digestif : premier score
+  prêt », une seule fois et seulement pour qui a vu le délai courir.
+- Bandeau au défilement (ile.SPEC § 9, en partie) : quand l'îlot sort de l'écran, un bandeau en haut (humeur, pastilles,
+  « N bulles à faire ») ramène à l'îlot. L'îlot ne se réduit pas en remontant (version simple).
+- Nom : lu dans `life/companionState.js` du lot VIE dès qu'il est là (`import.meta.glob`), sinon « Pilou ».
+
+## Correctif de la PR 1 (budget de lectures)
+- Le check « Budget de lectures (perf) » a échoué : l'Accueil lançait le calcul des états du jour (16 206 lectures,
+  budget 1 500). Corrigé : relecture du cache, sinon compte léger sur 45 jours (598 lectures en local, budget
+  respecté). **Pour tous les lots : ne lancez pas `getAnalysis(...)` depuis l'Accueil.**
+
+## Non fait, pour l'intégrateur
+- Retour haptique de la SPEC (appui, éclatement, cadeau) : l'app n'a pas `@capacitor/haptics` ; l'ajouter touche les
+  builds natives Android et iPhone, à décider hors sprint.
 
 ## ⚠ ORDRE DES MERGES AVEC SCÈNE (à relayer, merci)
 La PR SCÈNE monte `<CompanionScene />` dans `Dashboard.jsx` juste après l'en-tête ; ma PR monte `<CompanionHome>` au
