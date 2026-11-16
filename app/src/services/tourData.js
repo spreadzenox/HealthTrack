@@ -98,23 +98,37 @@ function markLever(list, days, now) {
 }
 
 /**
+ * Ce qui tomberait plus tard aujourd'hui (repas du midi et du soir, note de 21 h 30) est ramené avant maintenant :
+ * l'écran d'aujourd'hui montre déjà sa note et ses repas. Dans leur ordre, à 15 min d'écart, le dernier 10 min avant
+ * maintenant, jamais avant minuit (REFONTE-7b-2 : vers 1 h 30, les deux repas tombaient à la même minute).
+ */
+function pullBeforeNow(list, now) {
+  const late = list.filter((e) => Date.parse(e.at) > now.getTime()).sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
+  if (!late.length) return
+  const midnight = new Date(now).setHours(0, 0, 0, 0)
+  const last = Math.max(midnight, now.getTime() - 10 * 60_000)
+  const step = Math.min(15 * 60_000, (last - midnight) / late.length)
+  late.forEach((e, i) => {
+    e.at = new Date(last - (late.length - 1 - i) * step).toISOString()
+  })
+}
+
+/**
  * @param {{ days: number, now?: Date, received?: Set<string>, face?: boolean, weather?: boolean, screen?: boolean, huawei?: boolean }} p
  * @returns {Array<object>} entrées fictives (sans id ; exampleMode leur en donne un)
  */
 export function buildTourEntries({ days, now = new Date(), received = new Set(), face = false, weather = false, screen = false, huawei = false }) {
-  // Ce qui tomberait plus tard aujourd'hui (note de 21 h 30, repas du soir) est ramené à tout à l'heure : l'écran
-  // d'aujourd'hui montre déjà sa note et ses repas
   const soon = new Date(now.getTime() - 10 * 60_000).toISOString()
-  const all = generateDemoEntries({ days, now }).map((e) => (Date.parse(e.at) > now.getTime() ? { ...e, at: soon } : e))
+  const all = generateDemoEntries({ days, now })
   // La démo laisse aujourd'hui vide (journée en cours) : la visite y recopie la note, les repas et la digestion d'hier
   const yesterday = new Date(now.getTime() - DAY_MS).toDateString()
   for (const e of all.filter((x) => ['wellbeing', 'food', 'gut'].includes(x.type) && dayKey(x.at) === yesterday)) {
-    const t = Date.parse(e.at) + DAY_MS
-    const copy = { ...e, at: t > now.getTime() ? soon : new Date(t).toISOString() }
+    const copy = { ...e, at: new Date(Date.parse(e.at) + DAY_MS).toISOString() }
     // Une journée d'exemple plutôt bonne (la note fictive d'aujourd'hui ne descend pas sous 4)
     if (e.type === 'wellbeing') copy.payload = { ...e.payload, score: Math.max(4, e.payload?.score ?? 4) }
     all.push(copy)
   }
+  pullBeforeNow(all, now)
   const kept = all
     .map((e) => ({ ...e, payload: e.payload && { ...e.payload } }))
     .filter((e) => {

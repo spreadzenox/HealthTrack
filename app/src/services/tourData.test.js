@@ -44,6 +44,24 @@ describe('données fictives de la visite (ACC-8)', () => {
     expect(list.some((e) => e.type === 'wellbeing' && new Date(e.at).toDateString() === NOW.toDateString())).toBe(true)
   })
 
+  it('tôt le matin, les saisies ramenées à aujourd’hui gardent leur ordre et des heures distinctes (REFONTE-7b-2)', () => {
+    for (const [h, m] of [[0, 20], [1, 30], [9, 30], [14, 30]]) {
+      const now = new Date(2026, 10, 16, h, m)
+      const start = new Date(2026, 10, 16).getTime()
+      const today = buildTourEntries({ days: 14, now }).filter((e) => new Date(e.at).toDateString() === now.toDateString())
+      const times = today.map((e) => Date.parse(e.at))
+      // deux repas d'hier recopiés : jamais à la même minute
+      const meals = today.filter((e) => e.type === 'food').map((e) => e.at)
+      expect(meals.length).toBeGreaterThanOrEqual(2)
+      expect(new Set(meals).size).toBe(meals.length)
+      expect(Math.max(...times)).toBeLessThanOrEqual(now.getTime())
+      expect(Math.min(...times)).toBeGreaterThanOrEqual(start)
+      // la note du soir reste la dernière saisie du jour
+      const note = today.find((e) => e.type === 'wellbeing')
+      expect(Date.parse(note.at)).toBe(Math.max(...times))
+    }
+  })
+
   it('aucune entrée n’a d’identifiant : elles ne visent jamais la base', () => {
     expect(buildTourEntries({ days: 14, now: NOW }).every((e) => e.id === undefined)).toBe(true)
   })

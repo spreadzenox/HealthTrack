@@ -253,10 +253,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     `/tendances?vue=jour`, projecteur sur le détail du jour (`.trends-detail`), texte « Touchez un jour pour revoir vos
     notes et vos repas. » (l'ancien promettait sommeil, pas et cœur, que le détail ne montre pas tous) ; capture
     « 07-jours » retirée de la fiche Play (6 captures) ; plan de captures iPhone sans `/journal`. Données : aucune
-    lecture ni écriture changée, rien à migrer. À merger quand la build iOS est verte.
-  - [ ] **REFONTE-7b-2 — Restes de 7b** : (1) la visite à « Une journée d'un coup d'œil » montre, vers 1 h 30 du
-    matin, deux repas fictifs identiques à l'heure présente (données de `tourData.js` pour aujourd'hui, à regarder :
-    repas futurs ramenés à « maintenant » ?) ; (2) l'exemple ne s'affiche qu'après le calcul d'Analyses sur le fil
+    lecture ni écriture changée, rien à migrer. **Mergée le 16/11 à 03:32 (#1029, 40bb25d)** après 14 checks verts, build iOS comprise ; captures iPhone `tendances` (clair, sombre, vide, grand texte), `nutrition` et `food` regardées.
+  - [ ] **REFONTE-7b-2 — Restes de 7b** : ~~(1) la visite à « Une journée d'un coup d'œil » montre, vers 1 h 30 du
+    matin, deux repas fictifs identiques à l'heure présente~~ **fait le 16/11 à 03:35** (`pullBeforeNow` dans
+    `tourData.js` : ce qui tomberait plus tard aujourd'hui, repas d'hier recopiés compris, est ramené avant maintenant
+    dans son ordre, à 15 min d'écart, jamais avant minuit ; test à 0 h 20, 1 h 30, 9 h 30 et 14 h 30) ; (2) l'exemple ne s'affiche qu'après le calcul d'Analyses sur le fil
     principal (≈ 3 à 6 s avec `--settle=6000`, « Vos courbes apparaîtront après 3 jours » avant) : montrer le
     chargement plutôt que l'état vide ; (3) capture iPhone de la visite sur Tendances (le plan ne l'ouvre pas).
   - [ ] **REFONTE-7c** : retrait de `Journal.jsx`, `DailyJournal.jsx`, `JournalEmpty.jsx` et de leurs tests ; « Hier »
