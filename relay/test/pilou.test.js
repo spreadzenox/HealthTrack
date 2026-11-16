@@ -193,8 +193,10 @@ test('route allumée : une analyse renvoie la fiche normalisée et le plafond re
     const res = await post(selfie)
     assert.equal(res.status, 200)
     const data = await res.json()
-    assert.deepEqual(data.style, LEA)
-    assert.equal(data.quota.remaining, 2)
+    assert.deepEqual(data.parsed, LEA)
+    assert.equal(data.month.remaining, 2)
+    // Le compteur des repas (`quota`) n'est pas touché côté app
+    assert.equal(data.quota, undefined)
     assert.equal(vertex.calls.length, 1)
     assert.equal(vertex.calls[0].temperature, 0)
     assert.equal(vertex.calls[0].schema, PILOU_STYLE_SCHEMA)

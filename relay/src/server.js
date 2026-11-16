@@ -22,7 +22,7 @@
  *   niveau a réellement répondu (`served`) pour que le banc écarte une mesure Gold servie par Flash-Lite.
  *
  * - POST /v1/pilou/style      → double numérique par photo (étape 15 de la refonte, src/pilou.js) : `{ image }` (selfie
- *   JPEG de 512 px), en-tête `X-Install-Id`. Réponse `{ style, quota: { remaining, resetAt } }`. Répond `503 disabled`
+ *   JPEG de 512 px), en-tête `X-Install-Id`. Réponse `{ parsed, month: { remaining, resetAt } }` (`parsed` = la fiche). Répond `503 disabled`
  *   tant que `PILOU_STYLE=on` n'est pas réglé ; 3 analyses par mois et par installation ; ni la photo, ni la fiche, ni
  *   le corps ne sont journalisés.
  *
@@ -609,7 +609,8 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         request.parts = null
         const style = normalizePilouStyle(generated.parsed)
         log({ event: 'pilou_style', model: generated.model, location: generated.location, eur: Number(generated.eur.toFixed(5)), unsure: style.incertains.length, status: 200, ms: now() - started })
-        send(res, 200, { style, quota: { remaining: month.remaining, resetAt: month.resetAt } }, origin)
+        // `parsed` comme les autres analyses (client commun de l'app) ; `month` et non `quota`, qui est celui des repas
+        send(res, 200, { parsed: style, month: { remaining: month.remaining, resetAt: month.resetAt } }, origin)
       } catch (err) {
         if (err instanceof HttpError) {
           log({ event: 'rejected', route: path, code: err.code, status: err.status })
