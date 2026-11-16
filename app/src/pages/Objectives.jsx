@@ -7,6 +7,7 @@
  */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import LineIcon from '../components/LineIcon'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { objectivesOverview, TREND_WORDS } from '../services/objectivesOverview'
 import { gutCardMode } from '../settings/onboarding'
@@ -75,7 +76,7 @@ function ObjectiveCard({ card }) {
             <span className="objective-note"><span className="mono">{card.weekNoted}</span> sur <span className="mono">7</span> jours notés cette semaine.</span>
           </>
         )}
-        <span className="objective-more">{c.more} <span aria-hidden="true">›</span></span>
+        <span className="objective-more">{c.more} <LineIcon name="chevron" size={16} className="objective-chevron" /></span>
       </Link>
     </li>
   )

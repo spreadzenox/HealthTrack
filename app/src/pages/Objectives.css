@@ -83,8 +83,17 @@
 }
 
 .objective-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   margin-top: 6px;
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--tone-label);
+}
+
+/* L'icône chevron pointe vers le bas : tournée vers la droite, comme dans Réglages (7d-4). */
+.objective-chevron {
+  flex: none;
+  transform: rotate(-90deg);
 }
