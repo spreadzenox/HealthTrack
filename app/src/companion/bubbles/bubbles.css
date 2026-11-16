@@ -73,6 +73,10 @@
   isolation: isolate;
 }
 
+.cmp-island.is-night {
+  background: linear-gradient(180deg, var(--cmp-night-top) 0%, var(--cmp-night-bottom) 100%);
+}
+
 .cmp-scene-slot {
   position: absolute;
   inset: 0;
@@ -644,6 +648,122 @@ label.cmp-bubble {
   }
   .cmp-sheet,
   .cmp-week-ready {
+    animation: cmp-fade 200ms linear both;
+  }
+}
+
+/* La nuit : les bulles restantes deviennent des lucioles (ile.SPEC § 5) ; cible de 44 px, lueur du thème mêlée d'or */
+.cmp-bubble.is-firefly {
+  border: 0;
+  background: radial-gradient(circle, var(--cmp-gold-light) 0%, var(--tone-track) 18%,
+    color-mix(in srgb, var(--cmp-gold) 40%, transparent) 30%, transparent 62%);
+  box-shadow: none;
+  animation: cmp-fade 1600ms cubic-bezier(.65, 0, .35, 1) both, cmp-glow 8s ease-in-out 1600ms infinite;
+}
+
+.cmp-bubble.is-firefly .cmp-bubble-face,
+.cmp-bubble.is-firefly .cmp-bubble-film,
+.cmp-bubble.is-firefly .cmp-bubble-fill,
+.cmp-bubble.is-firefly .cmp-bubble-moon,
+.cmp-bubble.is-firefly::after {
+  display: none;
+}
+
+@keyframes cmp-glow {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+
+.cmp-stage.is-reduced .cmp-bubble.is-firefly {
+  animation: cmp-fade 200ms linear both;
+}
+
+/* Jour 14 : la grande fleur pêche du premier score du confort digestif */
+.cmp-flower.is-big {
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+}
+
+/* Bandeau au défilement (ile.SPEC § 9) : il prend le relais quand l'îlot sort de l'écran */
+.cmp-banner {
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  top: calc(8px + env(safe-area-inset-top, 0px));
+  width: min(calc(100% - 24px), 520px);
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 8px 14px 8px 8px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: 0 6px 20px var(--shadow);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  animation: cmp-banner-in 300ms var(--ease-out, ease) both;
+}
+
+.cmp-banner-island {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--cmp-sky-top), var(--cmp-sky-bottom));
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.cmp-banner-island img {
+  width: 140%;
+  height: 140%;
+  object-fit: cover;
+}
+
+.cmp-banner-text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cmp-banner-title {
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.cmp-banner-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-ink-2);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.cmp-banner-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.cmp-banner-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--tone-track);
+}
+
+@keyframes cmp-banner-in {
+  from { opacity: 0; translate: -50% -12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmp-banner {
     animation: cmp-fade 200ms linear both;
   }
 }

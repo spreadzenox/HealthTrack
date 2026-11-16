@@ -12,13 +12,17 @@ import { Link, useNavigate } from 'react-router-dom'
 import MealPhotoButton from '../../components/MealPhotoButton'
 import LineIcon from '../../components/LineIcon'
 import BubbleIcon from './BubbleIcon'
+import ScrollBanner from './ScrollBanner'
 import { homeBubbles, habitQuestion, poppedMessage, bubblesLeftText, orbitWorld, stillProject, BUBBLE_RADIUS } from './bubbles'
 import { dayMood, MOOD_TOP } from './mood'
 import { islandFlowers, flowerForBus, flowersForBus } from './flowers'
-import { firstWeek, openGift, markReadySeen, giftText, digestionCountdown, GIFTS, WEEK_DAYS } from './firstWeek'
+import { firstWeek, openGift, markReadySeen, giftText, digestionCountdown, GIFTS, WEEK_DAYS, digestionMilestone,
+  digestionFlowerShown, DIGESTION_FLOWER, DIGESTION_READY_TEXT } from './firstWeek'
 import { GUT_EVENING_FROM_HOUR } from '../../services/today'
 import { bus, EVENTS } from '../bus'
 import { useReducedMotion } from './useReducedMotion'
+import { isNight, fireflyAt, NIGHT_LABEL } from './night'
+import { useCompanionNameSafe } from './name'
 import './bubbles.css'
 
 /** Durée de l'éclatement (ile.SPEC § 3) ; en mouvements réduits, un fondu de 200 ms. */
@@ -31,6 +35,7 @@ const MESSAGE_MS = 2000
 const ORBIT_PERIOD_MS = 60_000
 const RESUME_MS = 900
 const MIN_BUBBLE_PX = 64
+const FIREFLY_PX = 44
 
 const MOOD_PHRASES = ['est tranquille', 'est de bonne humeur', 'est content', 'est ravi', 'est rayonnant']
 
@@ -108,8 +113,10 @@ function useStillStage(boxRef, reducedMotion) {
 }
 
 /** Les bulles, posées sur la scène (couche 4 du contrat) : l'orbite tourne avec les images de la scène. */
-function BubblesLayer({ stage, bubbles, heldRef, reduced, onPress, popping, positionsRef }) {
+function BubblesLayer({ stage, bubbles, heldRef, reduced, night, onPress, popping, positionsRef }) {
   const [phase, setPhase] = useState(0)
+  // La nuit, les lucioles suivent leur propre trajet (fonction du temps de la scène)
+  const [clock, setClock] = useState(0)
   const resumeAt = useRef(0)
   const wasHeld = useRef(false)
   useEffect(() => {
@@ -124,19 +131,22 @@ function BubblesLayer({ stage, bubbles, heldRef, reduced, onPress, popping, posi
         resumeAt.current = t + RESUME_MS
       }
       if (t < resumeAt.current) return
-      setPhase((p) => (p + (2 * Math.PI * dt) / ORBIT_PERIOD_MS) % (2 * Math.PI))
+      if (night) setClock(t)
+      else setPhase((p) => (p + (2 * Math.PI * dt) / ORBIT_PERIOD_MS) % (2 * Math.PI))
     })
-  }, [stage, reduced, bubbles.length, heldRef])
+  }, [stage, reduced, night, bubbles.length, heldRef])
   const o = stage.project(0, 0, 0)
   const unit = Math.abs(stage.project(1, 0, 0).x - o.x) || 0
-  const world = orbitWorld(bubbles.length, reduced ? 0 : phase)
+  const orbit = orbitWorld(bubbles.length, reduced ? 0 : phase)
+  const world = night && !reduced ? bubbles.map((_, i) => ({ ...fireflyAt(i, bubbles.length, clock), size: 1 })) : orbit
   const W = stage.width || 0
   const H = stage.height || 0
   // Une bulle reste entière dans le cadre de la scène (4 px de marge)
   const clamp = (v, half, max) => (max > 2 * half + 8 ? Math.min(max - half - 4, Math.max(half + 4, v)) : v)
   const placed = world.map((w) => {
     const p = stage.project(w.x, w.y, w.z)
-    const d = Math.max(MIN_BUBBLE_PX, 2 * BUBBLE_RADIUS * unit * p.scale * w.size)
+    // Une luciole garde une cible de 44 px
+    const d = night ? FIREFLY_PX : Math.max(MIN_BUBBLE_PX, 2 * BUBBLE_RADIUS * unit * p.scale * w.size)
     return { x: clamp(p.x, d / 2, W), y: clamp(p.y, d / 2, H), d, scale: p.scale, behind: p.behind }
   })
   // Dernière place connue de chaque bulle : une bulle qui part éclate là où elle était
@@ -149,7 +159,7 @@ function BubblesLayer({ stage, bubbles, heldRef, reduced, onPress, popping, posi
         {bubbles.map((b, i) => {
           const p = placed[i]
           const style = { width: `${p.d}px`, height: `${p.d}px`, transform: `translate(${p.x}px, ${p.y}px) translate(-50%, -50%)` }
-          const cls = `cmp-bubble${b.waiting ? ' is-waiting' : ''}`
+          const cls = `cmp-bubble${b.waiting ? ' is-waiting' : ''}${night ? ' is-firefly' : ''}`
           return (
             <li key={b.id} className="cmp-bubble-slot" style={style} data-back={p.behind ? '1' : undefined}>
               {b.kind === 'meal' ? (
@@ -180,7 +190,7 @@ function BubblesLayer({ stage, bubbles, heldRef, reduced, onPress, popping, posi
 function BubbleFace({ b }) {
   return (
     <>
-      {b.kind === 'meals' && (
+      {b.kind === 'meal' && (
         <span className="cmp-bubble-fill" aria-hidden="true" style={{ '--fill': `${(b.fill / b.total) * 100}%` }} />
       )}
       <span className="cmp-bubble-film" aria-hidden="true" />
@@ -228,14 +238,14 @@ function ActionSheet({ sheet, onClose, onAnswer }) {
   )
 }
 
-function Flower({ f, small }) {
+function Flower({ f, small, big }) {
   // Repère de l'îlot projeté sur le plateau dessiné : angle 0 vers l'écran
   const a = (f.angle * Math.PI) / 180
   // plateau dessiné : centre à 50 % / 65 %, demi-largeur 28 %, demi-hauteur 9 %
   const x = 50 + Math.sin(a) * f.r * 25
   const y = 65 + Math.cos(a) * f.r * 7.5
   return (
-    <span className={`cmp-flower${small ? ' is-meadow' : ''}`} data-tone={f.tone} aria-hidden="true"
+    <span className={`cmp-flower${small ? ' is-meadow' : ''}${big ? ' is-big' : ''}`} data-tone={f.tone} aria-hidden="true"
       style={{ left: `${x}%`, top: `${y}%` }}>
       <span className="cmp-flower-head" />
     </span>
@@ -293,8 +303,10 @@ function FirstWeekCard({ week, gut, name, onOpenGift }) {
  *   `scene` : false force l'îlot dessiné (tests, captures) ; sinon la scène 3D si elle est là et allumée.
  */
 export default function CompanionHome({ entries, askGut = false, habits = [], wellbeing = null, gut = null,
-  name = 'Pilou', scene, now, onWellbeing, onHabit }) {
+  name: nameProp, scene, now, onWellbeing, onHabit }) {
   const navigate = useNavigate()
+  const autoName = useCompanionNameSafe()
+  const name = nameProp ?? autoName
   const reduced = useReducedMotion()
   const at = now || new Date()
   const list = homeBubbles(entries, { now: at, askGut, habits })
@@ -305,8 +317,13 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
   const [weekTick, setWeekTick] = useState(0)
   const week = wellbeing ? firstWeek(wellbeing, { now: at, tick: weekTick }) : null
   const use3d = scene !== false && sceneEnabled()
+  // L'heure du jour vient de la scène (cycle du lot MONDE) ; sans elle, l'horloge
+  const [dayPhase, setDayPhase] = useState(null)
+  useEffect(() => bus.on(EVENTS.TIME_PHASE, (p) => setDayPhase(p?.phase ?? null), { replay: true }), [])
+  const night = isNight(at, use3d ? dayPhase : null)
 
   const boxRef = useRef(null)
+  const stageRef = useRef(null)
   const stillStage = useStillStage(boxRef, reduced)
   const heldRef = useRef(false)
   const hold = useCallback(() => { heldRef.current = true }, [])
@@ -358,7 +375,7 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
     const before = flowerIds.current
     flowerIds.current = new Set(flowers.today.map((f) => f.id))
     if (!before) {
-      bus.emit(EVENTS.FLOWERS_SET, { flowers: flowersForBus(flowers) })
+      bus.emit(EVENTS.FLOWERS_SET, { flowers: [...flowersForBus(flowers), ...(digestionFlowerShown() ? [DIGESTION_FLOWER] : [])] })
       return undefined
     }
     const fresh = flowers.today.filter((f) => !before.has(f.id))
@@ -393,6 +410,19 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
     }
   }
 
+  // Jour 14 : le premier score du confort digestif, une grande fleur pêche et son étiquette, une seule fois
+  const gutDaysLeft = askGut ? gut?.daysLeft : undefined
+  useEffect(() => {
+    if (gutDaysLeft == null) return undefined
+    if (!digestionMilestone(gutDaysLeft).celebrate) return undefined
+    const t = setTimeout(() => {
+      bus.emit(EVENTS.FLOWER_GROW, { ...DIGESTION_FLOWER, at: Date.now() })
+      bus.emit(EVENTS.MILESTONE, { kind: 'day14' })
+      setMessage(DIGESTION_READY_TEXT)
+    }, reduced ? 0 : FLOWER_DELAY_MS)
+    return () => clearTimeout(t)
+  }, [gutDaysLeft]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const giftTimer = useRef(null)
   useEffect(() => () => clearTimeout(giftTimer.current), [])
   const giveGift = (g) => {
@@ -416,10 +446,11 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
     bus.emit(EVENTS.MILESTONE, { kind: 'day7' })
   }, [week?.state]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const label = message || `${name} ${MOOD_PHRASES[mood.level]} · ${bubblesLeftText(list.bubbles.length)}`
+  const label = message || (night ? NIGHT_LABEL(name)
+    : `${name} ${MOOD_PHRASES[mood.level]} · ${bubblesLeftText(list.bubbles.length)}`)
   const overlay = (stage) => (
     <BubblesLayer stage={stage} bubbles={list.bubbles} heldRef={heldRef} reduced={reduced || Boolean(stage?.reducedMotion)}
-      onPress={press} popping={popping} positionsRef={positionsRef} />
+      night={night} onPress={press} popping={popping} positionsRef={positionsRef} />
   )
   const giftBubble = week?.state === 'week' && week.todayGift && (
     <button type="button" className="cmp-gift-bubble" onClick={openTodayGift}
@@ -428,12 +459,15 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
     </button>
   )
   const still = (
-    <div className="cmp-island" ref={boxRef}>
+    <div className={`cmp-island${night ? ' is-night' : ''}`} ref={boxRef}>
       <div className="cmp-island-still" aria-hidden="true">
         <span className="cmp-island-top" />
         <span className="cmp-island-soil" />
         {flowers.meadow.map((f) => <Flower key={`m-${f.id}`} f={f} small />)}
         {flowers.today.map((f) => <Flower key={`t-${f.id}`} f={f} />)}
+        {digestionFlowerShown() && (
+          <Flower f={{ id: DIGESTION_FLOWER.id, tone: 'peach', angle: DIGESTION_FLOWER.angleDeg, r: DIGESTION_FLOWER.radius }} big />
+        )}
       </div>
       {overlay(stillStage)}
       {giftBubble}
@@ -451,7 +485,7 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
         </div>
       </div>
 
-      <div className={`cmp-stage${reduced ? ' is-reduced' : ''}`}
+      <div className={`cmp-stage${reduced ? ' is-reduced' : ''}`} ref={stageRef}
         onPointerDown={hold} onPointerUp={release} onPointerCancel={release} onPointerLeave={release}>
         {use3d ? (
           <Suspense fallback={still}>
@@ -461,6 +495,9 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
         ) : still}
       </div>
       {!use3d && <p className="cmp-island-label">{label}</p>}
+      <ScrollBanner targetRef={stageRef} reduced={reduced}
+        title={night ? NIGHT_LABEL(name) : `${name} ${MOOD_PHRASES[mood.level]}`}
+        sub={bubblesLeftText(list.bubbles.length)} dots={list.bubbles} />
       <p className="visually-hidden" role="status">{message}</p>
 
       {week && <FirstWeekCard week={week} gut={askGut ? gut : null} name={name} onOpenGift={openTodayGift} />}
