@@ -89,3 +89,17 @@ describe('brancherTraits (pour le Pilou du lot PILOU)', async () => {
     expect(body.children).toHaveLength(0)
   })
 })
+
+describe('sans toile 2D (certains Android)', () => {
+  it('les pièces se construisent en couleurs unies', () => {
+    const avant = HTMLCanvasElement.prototype.getContext
+    HTMLCanvasElement.prototype.getContext = () => null
+    try {
+      const f = normaliser({ cheveux: { longueur: 'courts' }, lunettes: { type: 'rondes', couleur: 'ecaille' }, couvre_chef: 'foulard' }).fiche
+      const { p } = monter(f)
+      expect(Object.keys(p.stats())).toEqual(expect.arrayContaining(['lunettes', 'couvre']))
+    } finally {
+      HTMLCanvasElement.prototype.getContext = avant
+    }
+  })
+})

@@ -22,6 +22,14 @@
   Builds iOS verts sur b546c729 et 8821608c ; dernier push 00:40, je ne touche plus à la branche avant le merge.
   Suite : PR `claude/sprint-studio-3` (`equiperPilou`) dès que PILOU #1058 est sur main, avant 02:15.
 
+- 17/11 01:00 — branche `claude/sprint-studio-4` (= studio-1 + `claude/sprint-pilou-1` c30faa30) : `equiperPilou`
+  appelé par `pilou/index.js` (figurine seulement ; le repli simple n'est pas touché), crochet facultatif `T` dans
+  `drawVisage` et `setPeintre` dans `createPilou.js` (branchement minimal dans le dossier PILOU) : les traits peints
+  (sourcils, moustache, barbe courte, taches, grain de beauté, piercing) et les pièces 3D sont sur le vrai Pilou.
+  Robuste sans toile 2D (Android 12L) : couleurs unies, et `equiperPilou` ne casse jamais Pilou. 281 tests du
+  compagnon verts ; capture `journal/runs/captures/2026-11-16-sprint-studio-pilou-traits-peints.png`.
+  PR dès que PILOU #1058 est sur main (avant 02:15).
+
 ## Plan
 1. **Fiche et traits, sans 3D** (`studio/traits.js`, `studio/fiche.js`) : schéma de PILOU-DOUBLE.md § 4, libellés,
    palettes curatées, `normaliser`, `tirer` (« Surprenez-moi »), `compter` ; fiche gardée sur le téléphone, dans
