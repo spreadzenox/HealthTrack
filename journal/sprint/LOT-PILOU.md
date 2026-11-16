@@ -55,10 +55,13 @@
 - `setLight(dir)` facultatif : sans lui, Pilou prend la plus forte lumière directionnelle de la scène (le soleil).
 - La partie des yeux qui dépend de la caméra se fait au rendu (`onBeforeRender`) : la scène n'a rien à passer.
 
+- 16/11 21:10 — **2e branche `claude/sprint-pilou-2`** (partie de la 1re) : les petits effets dessinés des
+  expressions (étincelles de Rayonnant, anneaux lilas de Concentré, « z » d'Endormi, cœurs de Réconfortant et du
+  câlin, trois traits de Surpris ; supprimés en mouvements réduits, sauf un cœur fixe pendant un câlin), et les yeux
+  fermés lus comme le trait « ‿ » de la planche (l'œil 3D s'enfonce sous la paupière, le trait est peint). PR ouverte
+  quand la 1re est mergée (une PR à la fois sur les mêmes fichiers).
+
 ## Ce qui reste
-- Les petits effets « dessinés » des expressions (étincelles de Rayonnant, anneaux de Concentré, « z » d'Endormi,
-  cœurs de Réconfortant, trois traits de Surpris) : pas encore faits (2e PR).
-- Yeux fermés : la paupière ronde se lit encore un peu « lunettes de plongée » en petit ; à affiner.
 - Captures Android et iPhone de l'Accueil avec Pilou : à regarder sur les artefacts de la CI de la PR.
 
 ## Ce que j'attends des autres lots

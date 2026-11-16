@@ -194,3 +194,27 @@ describe('Pilou — gestes', () => {
     expect(xs.flatMap((x, i) => g.move(x, 200, 1100 + i * 100))).toEqual([])
   })
 })
+
+describe('Pilou — petits effets des expressions', () => {
+  it('chaque expression a son effet, et seulement elle', () => {
+    const a = createAnimateur()
+    a.setExpression('endormi', 0)
+    expect(Object.keys(a.effets(1000))).toEqual(['z'])
+    a.setExpression('concentre', 2000)
+    expect(Object.keys(a.effets(3000))).toEqual(['anneaux'])
+    a.setExpression('surpris', 4000)
+    expect(Object.keys(a.effets(4100))).toEqual(['traits'])
+    a.setExpression('tranquille', 6000)
+    expect(a.effets(7000)).toEqual({})
+  })
+  it('un câlin fait monter des cœurs ; en mouvements réduits, un seul cœur fixe', () => {
+    const a = createAnimateur()
+    a.tenir('appui', 0)
+    expect(a.effets(800).coeurs.w).toBeGreaterThan(0.5)
+    const r = createAnimateur({ reduit: true })
+    r.setExpression('endormi', 0)
+    expect(r.effets(1000)).toEqual({})
+    r.tenir('appui', 1000)
+    expect(r.effets(1800)).toEqual({ coeurs: { w: expect.any(Number), u: 0, fixe: true } })
+  })
+})
