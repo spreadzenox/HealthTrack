@@ -40,6 +40,7 @@ des cartes. Rien d'autre ne monte de second canevas WebGL : un seul canevas dans
 | `reducedMotion` | booléen ou `undefined` | réglage de l'app (§ 6) | forcer les mouvements réduits |
 | `onPilouTap` | `(gesture) => void` | — | facultatif ; le geste part aussi sur le bus (`pilou:touched`) |
 | `now` | `() => Date` | `() => new Date()` | horloge (tests, captures à heure fixe) |
+| `name` | chaîne | `'Pilou'` | le nom choisi (lot VIE), utilisé dans l'étiquette (« Nuage est content ») — ajout du 16/11 21:00 |
 
 **`stage`** (objet passé à `overlay`, stable pendant la vie de la scène) :
 - `project(x, y, z)` → `{ x, y, scale, behind }` : position en px CSS dans le conteneur de la scène d'un point du
@@ -79,7 +80,7 @@ Retour (l'**API de Pilou**) :
 | `setMood(m)` | 0…1 ; mélange Tranquille → Content → Rayonnant (SPEC personnage § 9) |
 | `lookAt(target)` | `'camera'`, `null` (regard libre) ou `{ x, y, z }` (monde) |
 | `react(gesture, detail)` | `gesture` ∈ `tap`, `longpress-start`, `longpress-end`, `doubletap`, `swipe`, `tickle` (SPEC personnage § 7) ; `detail` = `{ x, y }` px, `dir` pour `swipe` |
-| `jump({ height, side })` | petit saut d'éclatement de bulle ; `side` ∈ `left`/`right` (bras qui se lève) |
+| `jump({ height, side })` | petit saut d'éclatement de bulle ; `side` ∈ `left`/`right` : **côté de l'écran** où était la bulle (le bras de ce côté se lève) |
 | `setReducedMotion(bool)` | SPEC personnage § 10 |
 | `setTraits(fiche)` | fiche de traits (§ 5) ou `null` = Pilou d'origine |
 | `setAccessory(name, on)` | `echarpe`, `parapluie`, `eventail`, `livre`, `montre` (la montre est portée par défaut) |
@@ -181,3 +182,5 @@ Chaque lot qui garde quelque chose le met dans l'export JSON et accepte les anci
 ## 9. Historique du contrat
 
 - 16/11 20:45 — première version (SCÈNE).
+- 16/11 21:00 — `<CompanionScene name>` ; `side` de `jump` = côté de l'écran ; `app/src/companion/mood.js`
+  (`moodWord(m)` : « tranquille » < 0,2 ≤ « content » < 0,9 ≤ « rayonnant », `moodExpression(m)`) utilisable par tous.
