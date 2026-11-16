@@ -23,13 +23,15 @@ attendre plutôt que de vous montrer de faux suspects »).
 
 ## 3. Couleurs (thème clair, par défaut)
 
-Tous les couples texte / fond listés ont un contraste **≥ 4,5:1** (vérifié par `src/theme/tokens.test.js`).
+Tous les couples texte / fond listés ont un contraste **≥ 4,5:1** (vérifié par `src/theme/tokens.test.js`). Sur le
+fond crème (étape 7d de la refonte, 16/11), la marque reste à 5,04:1, tout le reste au-dessus de 6:1. Le thème sombre
+ne change pas.
 
 | Rôle | Valeur | Token CSS |
 |---|---|---|
-| Fond | `#FFFFFF` | `--color-bg` |
-| Surface neutre | `#F4F6F5` | `--color-surface` |
-| Bordure | `#E3E8E6` | `--color-border` |
+| Fond crème (refonte « Compagnon », décision du 14/11 ; avant : `#FFFFFF`) | `#FFF8F0` | `--color-bg` |
+| Surface neutre (crème plus soutenu ; avant : `#F4F6F5`) | `#F8EFE4` | `--color-surface` |
+| Bordure (avant : `#E3E8E6`) | `#EADFD1` | `--color-border` |
 | Texte encre | `#10231D` | `--color-ink` |
 | Texte secondaire (gris vert) | `#4A5E57` | `--color-ink-2` |
 | Action / marque émeraude (texte blanc dessus) | `#0B7A5E` | `--color-brand` |
@@ -53,11 +55,13 @@ ces tokens : fond encre, émeraude éclaircie, pastels assombris ; contrastes v�
 
 ## 4. Typographie
 
-- **Figtree** pour tous les mots : titres 800, titres de cartes 700, texte 400 à 600.
+- **Nunito** pour tous les mots (décision du 13/11, en place depuis l'étape 7d du 16/11 ; Figtree avant) : titres 800,
+  titres de cartes 700, texte 400 à 600. Comme Figtree, elle n'a ni « ᵉ » ni « ʳ » en exposant (`<Ordinal>`,
+  POL-PLAY-101) ; ses chiffres sont tabulaires.
 - **IBM Plex Mono** pour les chiffres et les données (mesures, sources, délais, statistiques, étiquettes, dates
   courtes) — **jamais pour des phrases**.
 - Licence **SIL OFL 1.1** pour les deux (usage commercial autorisé). Fichiers **embarqués dans l'app** (paquets
-  `@fontsource-variable/figtree` et `@fontsource/ibm-plex-mono`, sous-ensembles latins), **aucun chargement depuis
+  `@fontsource-variable/nunito` et `@fontsource/ibm-plex-mono` ; rapport PDF : TTF tirés de `@fontsource/nunito` par `scripts/fonts/woff-to-ttf.mjs`, sous-ensembles latins), **aucun chargement depuis
   Google Fonts** (hors ligne, vie privée).
 
 ## 5. Formes
@@ -99,7 +103,7 @@ fera adapter l'icône : ne pas l'anticiper.
 > Ce qui suit est l'historique du 20/10.
 
 - Petite ligne mono « mar. 20 oct. · Bonjour <prénom> » ; titre-résumé en phrase (« Plutôt une bonne journée »).
-- Carte **menthe** « Bien-être estimé » : grand chiffre « 3,4 / 5 » (Figtree 800), écart à la moyenne en mono,
+- Carte **menthe** « Bien-être estimé » : grand chiffre « 3,4 / 5 » (police des mots, 800), écart à la moyenne en mono,
   courbe des 14 derniers jours, « Un peu mieux que votre moyenne des 14 derniers jours. Une estimation, pas un
   diagnostic. » ; « détails » remplace la phrase par IC 95 %, n lectures, moyenne 14 j et modèles.
 - Trois tuiles de mesures (sommeil, VFC nuit, pas ; chiffres en mono ; source en mode détails).

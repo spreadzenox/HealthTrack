@@ -54,7 +54,7 @@ button {
   border-radius: var(--radius);
 }
 
-/* Les navigateurs donnent aux champs leur propre police système : ils reprennent Figtree (POL-PLAY-76). */
+/* Les navigateurs donnent aux champs leur propre police système : ils reprennent la police de l’app (POL-PLAY-76). */
 input,
 textarea,
 select {

@@ -291,6 +291,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     absents que Figtree) ; fond `#fff8f0`, surface `#f8efe4`, bord `#eadfd1` (marque à 5,04:1) ; sombre inchangé ;
     PDF (TTF Nunito par `woff-to-ttf.mjs`), licences, fiche Play, pages légales iPhone, DESIGN.md § 3-4, Nouveautés.
     Un run de code, Android et iPhone ; aucune donnée touchée.
+    **Code fait le 16/11 à 10:30 (branche `auto/7d-nunito`, PR ouverte après le merge de #1037)** : paquets Nunito à
+    la place de Figtree, `main.jsx`, `tokens.css` (fond, surface, bord, `--bg-rgb`) et `tokens.test.js` (rouge
+    d'abord), TTF du rapport PDF régénérés (`nunito-400/700/800.ttf`, `OFL-Nunito.txt`), licences, visuels de la
+    fiche, pages légales (Android et iPhone, empreintes des pages Android relues mises à jour), site, commentaires,
+    `DESIGN.md` § 3-4, Nouveautés. Suites Android (3 678) et iPhone (4 040) vertes, build OK, captures claires (35)
+    et sombres regardées. Reste (7d-2) : chevron « › » de la carte Agir plus petit (si Agir reste à l'Accueil) ;
+    regarder les captures iPhone de la PR ; visuels de la fiche Play régénérés par la CI.
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.

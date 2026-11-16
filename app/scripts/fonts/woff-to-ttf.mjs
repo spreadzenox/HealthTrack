@@ -2,7 +2,7 @@
  * Polices du rapport PDF (I175 étape 2) : convertit les WOFF de Fontsource en TTF, que `pdf-lib` + `fontkit`
  * savent découper en sous-ensemble (leur décodeur WOFF2 casse au découpage, et leur décodeur WOFF lit mal les
  * glyphes vides d'IBM Plex Mono). Une conversion WOFF 1.0 → sfnt n'est qu'une décompression zlib des tables :
- * aucun glyphe n'est modifié. Figtree et IBM Plex Mono : SIL OFL 1.1 (licences copiées à côté).
+ * aucun glyphe n'est modifié. Nunito et IBM Plex Mono : SIL OFL 1.1 (licences copiées à côté).
  *
  * Usage : node scripts/fonts/woff-to-ttf.mjs   (depuis app/, après npm ci)
  */
@@ -14,12 +14,12 @@ import { dirname, join } from 'node:path'
 const require = createRequire(import.meta.url)
 const OUT = new URL('../../src/assets/fonts/report/', import.meta.url).pathname
 const FONTS = {
-  'figtree-400.ttf': '@fontsource/figtree/files/figtree-latin-400-normal.woff',
-  'figtree-700.ttf': '@fontsource/figtree/files/figtree-latin-700-normal.woff',
-  'figtree-800.ttf': '@fontsource/figtree/files/figtree-latin-800-normal.woff',
+  'nunito-400.ttf': '@fontsource/nunito/files/nunito-latin-400-normal.woff',
+  'nunito-700.ttf': '@fontsource/nunito/files/nunito-latin-700-normal.woff',
+  'nunito-800.ttf': '@fontsource/nunito/files/nunito-latin-800-normal.woff',
   'ibm-plex-mono-400.ttf': '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff',
 }
-const LICENSES = { 'OFL-Figtree.txt': '@fontsource/figtree/LICENSE', 'OFL-IBM-Plex-Mono.txt': '@fontsource/ibm-plex-mono/LICENSE' }
+const LICENSES = { 'OFL-Nunito.txt': '@fontsource/nunito/LICENSE', 'OFL-IBM-Plex-Mono.txt': '@fontsource/ibm-plex-mono/LICENSE' }
 
 export function woffToSfnt(woff) {
   const b = Buffer.from(woff)

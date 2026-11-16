@@ -13,14 +13,15 @@
   color-scheme: light;
 
   /* Base */
-  --color-bg: #ffffff;
-  --color-surface: #f4f6f5;
-  --color-border: #e3e8e6;
+  /* Fond crème de la refonte « Compagnon » (14/11) : marque à 5,04:1, tout le reste au-dessus de 6:1 */
+  --color-bg: #fff8f0;
+  --color-surface: #f8efe4;
+  --color-border: #eadfd1;
   --color-ink: #10231d;
   --color-ink-2: #4a5e57;
   --color-brand: #0b7a5e;
   --color-on-brand: #ffffff;
-  --bg-rgb: 255, 255, 255;
+  --bg-rgb: 255, 248, 240;
   --ink-rgb: 16, 35, 29;
   --ink-2-rgb: 74, 94, 87;
   --brand-rgb: 11, 122, 94;
@@ -83,8 +84,8 @@
   --shadow: rgba(16, 35, 29, 0.12);
   --toggle-thumb: #ffffff;
 
-  /* Typographie : Figtree pour les mots, IBM Plex Mono pour les chiffres et les données */
-  --font-sans: 'Figtree Variable', 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Typographie : Nunito pour les mots (refonte « Compagnon », 13/11), IBM Plex Mono pour les chiffres et les données */
+  --font-sans: 'Nunito Variable', 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
   /* Formes */

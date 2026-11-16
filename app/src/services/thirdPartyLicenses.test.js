@@ -60,7 +60,7 @@ describe('licences des composants de tiers (LICENCES-TIERCES)', () => {
     const text = JSON.stringify(libs)
     expect(text).not.toMatch(/AndroidX|LiteRT|ONNX|Play Billing|Play Integrity/)
     expect(text).toMatch(/Capacitor/)
-    expect(text).toMatch(/Figtree/)
+    expect(text).toMatch(/Nunito/)
   })
 
   it('Android : la variante play garde ses bibliothèques Android avec le magasin par défaut', () => {

@@ -64,7 +64,7 @@ describe('Réintroduction guidée — écrans (jalon 7b)', () => {
     const note = screen.getByText(/Repère général, à adapter avec votre diététicienne/)
     // SLOP-1b-7 : « diététicienne » une seule fois sur l'écran de préparation
     expect(document.body.textContent.match(/diététicienne/g)).toHaveLength(1)
-    // Une phrase : en Figtree, jamais en mono (DESIGN.md, POL-PLAY-51)
+    // Une phrase : dans la police de l’app, jamais en mono (DESIGN.md, POL-PLAY-51)
     expect(note).not.toHaveClass('mono')
     // MONO-MOTS (leçon 11) : groupe, « Jour 1 »… en police du texte ; seuls les chiffres en mono
     const monoWithLetters = [...document.querySelectorAll('.mono')].map((e) => e.textContent).filter((t) => /\p{L}/u.test(t))

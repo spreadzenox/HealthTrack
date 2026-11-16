@@ -45,9 +45,9 @@ const TEXT_ON = {
 const THEMES = { mint: 'label', peach: 'label', honey: 'label', lilac: 'bar', night: 'label', rose: 'label', stone: 'label' }
 
 describe('tokens de design', () => {
-  it('reprennent les couleurs validées par le propriétaire', () => {
+  it('reprennent les couleurs validées par le propriétaire (fond crème de la refonte, 14/11)', () => {
     expect(LIGHT).toMatchObject({
-      'color-bg': '#ffffff', 'color-surface': '#f4f6f5', 'color-border': '#e3e8e6',
+      'color-bg': '#fff8f0', 'color-surface': '#f8efe4', 'color-border': '#eadfd1',
       'color-ink': '#10231d', 'color-ink-2': '#4a5e57', 'color-brand': '#0b7a5e',
       'mint-bg': '#e3f5ee', 'peach-bg': '#ffebdd', 'honey-bg': '#fff3d1', 'honey-text': '#5a4520', 'honey-label': '#7a5200', 'honey-track': '#eecb6c', 'lilac-bg': '#ece9ff', 'color-badge': '#c2410c',
       'accent-amber': '#ffb84d', 'accent-mint': '#5ee0b5',
