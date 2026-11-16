@@ -330,6 +330,36 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     changelog. Capture `npm run visual -- --whats-new --routes=/` : « Nouveau : Nouveaux onglets : Accueil, Ma
     journée, Objectifs, Données et 523 autres changements ». Code partagé sans correctif iPhone.
   - [ ] **UPG-3 — Passage complet des personas** sur les deux parcours (installation neuve ; `--legacy`), avant le 22/11.
+    - [x] **UPG-3a** (16/11 20:30, run « idées ») : 2 simulations, « Ventre et données » J1 neuve (Galaxy Watch) et
+      « Tout mesurer » J45 `--legacy` (`sport,cycle`, Pixel Watch) : [`J1`](simulations/2026-11-16-2030-ventre-et-donnees-J1.md),
+      [`J45`](simulations/2026-11-16-2030-tout-mesurer-maj-J45.md). Rien de perdu à la mise à jour ; constats en POLISH-SIM-99 à 108.
+      Écarté : « carbonara » à la place du repas décrit (analyse factice de l'outil, pas un défaut de l'app).
+    - [ ] **POLISH-SIM-99 — Visite guidée et Ma journée** (prioritaire pour le 22/11, point 2) : la visite ne montre pas
+      l'onglet « Ma journée » (là où l'on note) et dit « Essayer dans Agir » alors qu'Agir n'est plus un onglet ; le lien
+      retour de l'essai dit « ← Agir ». Ajouter l'étape Ma journée, dire « depuis l'Accueil ».
+    - [ ] **POLISH-SIM-100 — Objectifs migrés expliqués** (point 1) : après la conversion `sport,cycle`, Paramètres
+      montre « Confort digestif » coché sans que la personne l'ait choisi, et rien ne dit où sont passés Sport (famille
+      Activité) et Cycle (bouton « Règles »). Une note unique après la mise à jour ; vérifier que cocher Confort digestif
+      est voulu par la migration 5a (cycle = contexte de la digestion), sinon ne pas le cocher.
+    - [ ] **POLISH-SIM-101 — Page Nouveautés** : le bandeau met la note de la nouvelle navigation à la une (UPG-2), mais
+      la page la range par date, perdue dans une très longue liste. La mettre en tête de la page quand elle est non lue.
+    - [ ] **POLISH-SIM-102 — Deux décomptes de la digestion** : Ma journée « 9/28, encore 19 jours », Objectifs « 9 sur
+      14, premier score dans 5 jours ». Nommer les deux paliers (premier score à 14, pistes à 28) au même endroit.
+    - [ ] **POLISH-SIM-103 — Bien-être d'un jour** : Tendances › Jour affiche 4,0 en tête et 4,2 dans la saisie (moyenne
+      ou note ?) ; « Ce qui a pu peser » ne liste que des effets positifs.
+    - [ ] **POLISH-SIM-104 — Exemple de « Votre bien-être »** : famille Alimentation « Pas de lien net » au-dessus de
+      lignes GOS −1,1 pt et Lactose −0,9 pt.
+    - [ ] **POLISH-SIM-105 — Accueil « Ce que Halcya suit pour vous »** : liste VFC et température de la peau sans montre
+      qui les donne, et Météo non activée, juste après « Health Connect n'est pas sur ce téléphone » (vérifier sur
+      Android, la version web n'a pas Health Connect).
+    - [ ] **POLISH-SIM-106 — FODMAP de l'oignon cuit** : `fodmapMeasurements.json` n'a que l'oignon cru (fructanes) ;
+      l'oignon cuit n'est marqué que « fructose en excès ». Ajouter l'analogie documentée (confiance basse) pour
+      l'oignon cuit ou poêlé, comme pour l'ail.
+    - [ ] **POLISH-SIM-107 — Tendances** : en passant de Semaine à Jour, la mesure choisie (Sommeil) redevient
+      Bien-être ; le « + » ne propose pas FC, phases du sommeil, SpO2 ni digestion (à vérifier : données reçues ?).
+    - [ ] **POLISH-SIM-108 — Petits** : « Encore 4 choses aujourd'hui » ne baisse pas après un repas noté ; essai : les
+      jours « comme d'habitude » marqués « pas tenu » ; export CSV demandé (persona Tout mesurer : proposition, pas
+      une fonction à coder sans accord). « Gêne » qui ne reste pas cochée : traité par UPG-4 (#1045).
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.

@@ -17,7 +17,7 @@
 - **Pas prêt le 22/11** : Pilou en 3D et son île (étapes 8 à 13), le double numérique (14 et 15).
 - **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs
   (outil du parcours « mise à jour » prêt le 16/11 ; l'essai en cours visible depuis l'Accueil, UPG-1, mergé le 16/11 à
-  18:00 ; le bandeau Nouveautés qui annonce la nouvelle navigation, UPG-2, en PR #1043 ; ensuite le passage, UPG-3).
+  18:00 ; le bandeau Nouveautés qui annonce la nouvelle navigation, UPG-2, mergé, #1043 ; « Ma digestion » reste cochée, UPG-4, en PR #1045 ; passage UPG-3 commencé le 16/11 20:30 : 2 personas, rien de perdu, 10 constats, d'abord la visite guidée sans « Ma journée » et les anciens objectifs « sport » et « cycle » convertis sans un mot).
 
 **Où en est Halcya**
 
@@ -62,6 +62,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 16/11 20:30 — [« idées » : 2 personas, installation neuve et mise à jour](runs/2026-11-16-2030-idees-upg-3-personas.md) | 💡 | Passage des personas commencé (UPG-3) : une personne qui installe Halcya (jour 1) et un testeur de 45 jours qui reçoit la refonte. **Rien de perdu** à la mise à jour (essai, jours passés, export). 10 points à polir avant le 22/11, d'abord : la visite guidée ne présente pas « Ma journée » et parle encore d'« Agir » comme d'un onglet ; vos anciens objectifs « sport » et « cycle » sont convertis sans explication (et « Confort digestif » se retrouve coché) ; la page Nouveautés ne met pas la note de la nouvelle navigation en tête. Rien à faire de votre côté |
 | 16/11 18:30 — [#1044 mergée, #1043 remise à jour](runs/2026-11-16-1830-merge-1044-upg-1.md) | 🛠️ | **#1044 mergée** : un essai en cours se voit de nouveau depuis l'Accueil (consigne et jour de l'essai, carte remontée sous le bien-être les jours « avec »), Android et iPhone, après 14 checks verts et les captures iPhone de l'Accueil (clair et sombre) ; release **v761** (34,8 Mo). #1043 (bandeau des Nouveautés qui annonce d'abord la nouvelle navigation) remise à jour sur main ; sa build iOS repart, à merger au run suivant. Rien à faire de votre côté |
 | 16/11 17:30 — [UPG-1 : l'essai en cours sur l'Accueil](runs/2026-11-16-1730-upg-1-essai-accueil.md) | 🛠️ | Un essai en cours se voit de nouveau depuis l'Accueil : la carte du bas dit sa consigne et le jour (« Dormir au moins 7 h 30 · jour 4 sur 10 · aujourd’hui, jour avec ») et remonte sous votre bien-être les jours « avec ». Android et iPhone dans la même PR (#1044), à merger après sa build iOS. #1042 (outil « mise à jour » des personas) mergée. Rien à faire de votre côté |
 | 16/11 16:30 — [#1041 mergée, Nouveautés d'abord la navigation](runs/2026-11-16-1630-upg-2-nouveautes.md) | 🛠️ | **#1041 mergée** (derniers chevrons en icône) après sa build iOS relancée verte, release **v759** (34,7 Mo), captures iPhone d'Objectifs regardées. **UPG-2 en PR** : un testeur qui arrive d'avant la refonte voit d'abord, dans le bandeau des Nouveautés, la note « Nouveaux onglets » au lieu de « Nouvelle police » ; cette note dit maintenant que Données regroupe Tendances et Nutrition. #1042 remise à jour, à merger au run suivant. Rien à faire de votre côté |
