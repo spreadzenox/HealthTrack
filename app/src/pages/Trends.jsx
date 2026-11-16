@@ -5,7 +5,7 @@
  * historique du bien-être (WellbeingHistory) est retiré. « Votre forme », le radar et les comptes à rebours en texte sont
  * retirés de cette page (code gardé). `?mesure=digestion` et `?vue=jour` ouvrent la page réglée (AUJ-9).
  */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import JournalTabs from '../components/JournalTabs'
 import SeeExample from '../components/SeeExample'
@@ -15,6 +15,7 @@ import { readMeasureDays } from '../services/trendsMeasureDays'
 import { buildTrendSeries, defaultTrendsView } from '../services/trendsData'
 import { dayFaceDetail, dayReadingsView, latestReadingDay } from '../services/trendsDay'
 import { loadFaceMoodEntries } from '../services/mood/faceMoodData'
+import { exampleEntries, isExampleMode } from '../storage/exampleMode'
 
 const readStates = () => getAnalysis('dayStates').catch(() => null)
 // Détail d'un jour (ORG-3c) : lectures du visage et notes, contributions du modèle d'Analyses (ORG-5, contrat)
@@ -35,10 +36,18 @@ export default function Trends({
   const [wantContrib, setWantContrib] = useState(false)
   const [contributions, setContributions] = useState(null)
   const [changes, setChanges] = useState(null)
+  // REFONTE-7b-2 (2) : la visite entre dans l'exemple ou en sort → le chargement, jamais les données d'avant (l'exemple
+  // attend le calcul d'Analyses, 3 à 6 s : « Vos courbes apparaîtront… » restait affiché). Une saisie relit sans spinner.
+  const shownSource = useRef(undefined)
   useEffect(() => {
     let alive = true
-    const load = () => Promise.all([readDayStates(), readDays().catch(() => []), readFaceEntries()])
-      .then(([states, days, face]) => alive && setData({ states, days, face }))
+    const load = () => {
+      const source = isExampleMode() ? exampleEntries() : null
+      if (shownSource.current !== undefined && shownSource.current !== source) setData(null)
+      shownSource.current = source
+      return Promise.all([readDayStates(), readDays().catch(() => []), readFaceEntries()])
+        .then(([states, days, face]) => alive && shownSource.current === source && setData({ states, days, face }))
+    }
     load()
     window.addEventListener('health-entries-updated', load)
     return () => {

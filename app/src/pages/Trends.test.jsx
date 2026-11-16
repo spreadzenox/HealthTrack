@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, within, waitFor, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Trends from './Trends'
 import { readMeasureDays } from '../services/trendsMeasureDays'
+import { enterExampleMode, exitExampleMode, isExampleMode as isExample } from '../storage/exampleMode'
 
 
 const NOW = new Date(2026, 10, 7, 20)
@@ -397,5 +398,44 @@ describe('POLISH-SIM-81 : une mesure touchée en Jour garde sa courbe', () => {
     const menu = await open([...steps, ...weighIns])
     fireEvent.click(within(menu).getByRole('button', { name: /Pas/ }))
     expect(screen.queryByRole('button', { name: /, en Mois$/ })).toBeNull()
+  })
+})
+
+describe('REFONTE-7b-2 (2) : l’exemple de la visite se charge sans montrer l’état vide', () => {
+  it('à l’entrée et à la sortie du mode exemple : le chargement, jamais les données d’avant', async () => {
+    let release
+    const slow = () => (isExample() ? new Promise((r) => (release = () => r(states))) : Promise.resolve(null))
+    const { container } = render(
+      <MemoryRouter initialEntries={['/tendances?vue=jour']}>
+        <Trends now={NOW} readDays={async () => (isExample() ? days : [])} readDayStates={slow}
+          readFaceEntries={async () => (isExample() ? face : [])} readDayContributions={async () => null} readDayChanges={async () => null} />
+      </MemoryRouter>,
+    )
+    expect(await screen.findByText(/Vos courbes apparaîtront/)).toBeInTheDocument()
+    try {
+      act(() => enterExampleMode([]))
+      expect(screen.queryByText(/Vos courbes apparaîtront/)).toBeNull()
+      expect(container.querySelector('.loading .spinner')).not.toBeNull()
+      await waitFor(() => expect(release).toBeTypeOf('function'))
+      await act(async () => release())
+      expect(await screen.findByRole('list', { name: 'Mesures affichées' })).toBeInTheDocument()
+    } finally {
+      act(() => exitExampleMode())
+    }
+    expect(await screen.findByText(/Vos courbes apparaîtront/)).toBeInTheDocument()
+  })
+
+  it('une nouvelle saisie hors exemple relit la page sans repasser par le chargement', async () => {
+    let n = 0
+    const { container } = render(
+      <MemoryRouter initialEntries={['/tendances']}>
+        <Trends now={NOW} readDays={async () => days} readDayStates={() => (n++ ? new Promise(() => {}) : Promise.resolve(states))}
+          readFaceEntries={async () => face} readDayContributions={async () => null} readDayChanges={async () => null} />
+      </MemoryRouter>,
+    )
+    await screen.findByRole('img', { name: 'Courbe de Bien-être' })
+    act(() => { window.dispatchEvent(new CustomEvent('health-entries-updated')) })
+    expect(container.querySelector('.loading .spinner')).toBeNull()
+    expect(screen.getByRole('img', { name: 'Courbe de Bien-être' })).toBeInTheDocument()
   })
 })
