@@ -361,8 +361,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       jours « comme d'habitude » marqués « pas tenu » ; export CSV demandé (persona Tout mesurer : proposition, pas
       une fonction à coder sans accord). « Gêne » qui ne reste pas cochée : traité par UPG-4 (#1045).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
-  l'intégrateur le 16/11 à 22:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
-  #1048 (MONDE) et #1053 (SCÈNE) sur main, le reste en PR.
+  l'intégrateur le 16/11 à 23:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
+  #1048 (MONDE) et #1053 (SCÈNE) sur main, le reste en PR (aucun merge entre 22:30 et 23:30).
+  - ASSEMBLAGE (confié au lot SCÈNE par l'orchestrateur à 22:40, `claude/sprint-scene-3`) : fusion locale de main et
+    des 7 PR → lint propre, 3 980 tests verts, 1 rouge (`bundleGuard.test.js` : `companion/CompanionScene.css` à
+    importer dans `app/src/pageStyles.js`, une ligne, dans la PR d'assemblage ou #1056). Conflits connus et leur
+    résolution : VIE × STUDIO dans `localHealthStorage.js` (exporter `companion` et `pilou` ; à l'import
+    `restoreCompanion` puis `restorePilou`) et `Settings.jsx` (garder les deux réglages) ; copies de `CONTRAT.md` :
+    version de main. Images fixes `scene/fallback*.webp` refaites avec le Pilou de PILOU, après son merge.
   - SCÈNE (8) : **#1053 mergée** (0825540, 22:02 ; contrat `companion/CONTRAT.md` et `bus.js`, three.js r187 MIT,
     île, lumière, paliers, pause, image fixe de repli, interrupteur `halcya.companion.scene` ; v766, APK 35,0 Mo).
     #1062 : 7 cadeaux en 3D, cérémonie de la boîte, météo de l'île, Réglages › Mouvements de Pilou, étiquette lisible
@@ -371,12 +377,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - PILOU (9) : #1058 (corps verni, yeux de la créature, 12 expressions, ΔE menthe 2,8 moyen / 3,8 max dans la scène,
     9 050 triangles) ; petits Pilou pré-rendus (12 × 218×240 webp, `pilouSprite`) pour VIE et MONDE. Branche 2 : petits
     effets des expressions, yeux fermés en trait.
-  - BULLES (10) : #1056 (bulles-boutons, Humeur du jour à plancher, fleurs, « Jour N sur 7 », 7 cadeaux) ; branche 2 :
+  - BULLES (10) : #1056 (conflit avec #1053 résolu à 22:40, build iOS relancée ; bulles-boutons, Humeur du jour à plancher, fleurs, « Jour N sur 7 », 7 cadeaux) ; branche 2 :
     lucioles la nuit, jour 14, bandeau au défilement. Résolution convenue avec SCÈNE dans `Dashboard.jsx` : garder
     `<CompanionHome …>` seule (elle monte la scène).
   - VIE (11, 12) : **#1060** (réunit #1051 et #1054, fermées : Ma journée, rencontre et nom, cérémonie du jour 7, Pilou
     dans Objectifs et Données, assiette reniflée ; bloc `companion` dans l'export et l'import, testé sur base ancienne) ;
-    en conflit avec main depuis #1053. Branche 5 : cairn des galets dans « Par famille ».
+    remise à jour sur main à 23:10 (contrat pris de main ; test instable de Dashboard corrigé à la source ;
+    `pilouName()` ajouté pour l'étiquette de la scène). Branche 5 : cairn des galets dans « Par famille ».
   - MONDE (13) : **#1048 mergée** ; #1057 (réunit #1055, fermée : widget Android « Ma journée », Pilou dans les
     notifications du soir Android et iPhone, lumière à l'échelle de la scène).
   - STUDIO (14) : #1052 (fiche de traits locale, export et import, écran derrière l'interrupteur du compagnon, pièces 3D
