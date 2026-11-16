@@ -164,3 +164,39 @@ function cycleEntries({ from, now }) {
   }
   return out.filter((e) => new Date(e.at) <= now)
 }
+
+// --- Mise à jour depuis la version des testeurs d'avant la refonte (objectif du 22/11, parcours 2) ---
+
+/** Premier changement de la refonte « Compagnon » : les testeurs avaient la version d'avant. */
+export const REFONTE_FIRST_CHANGE = '2026-11-15-0435-refonte-navigation'
+
+/** Dernière note de Nouveautés vue par un testeur d'avant la refonte. */
+export function legacyLastSeen(ids) {
+  return [...ids].sort().filter((id) => id < REFONTE_FIRST_CHANGE).pop() ?? null
+}
+
+/** Accueil terminé dans l'ancienne version : objectifs d'alors (« sport », « cycle »…), aucune version d'objectifs. */
+export function legacyOnboarding({ goals, doneAt }) {
+  return { done: true, endedBy: 'completed', doneAt, step: 6, maxStep: 6, goals: [...goals] }
+}
+
+const keyOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+/**
+ * Un essai d'Agir en cours (« Dormir au moins 7 h 30 », 10 jours, 5 avec et 5 sans), commencé il y a 4 jours, au
+ * format de `createTrial` (src/services/trials.js). Tirage fixe : mêmes données d'un passage à l'autre.
+ */
+export function legacyTrial({ now = new Date() } = {}) {
+  const start = new Date(now); start.setHours(9, 0, 0, 0); start.setDate(start.getDate() - 3)
+  const flags = [true, false, false, true, true, false, true, false, false, true]
+  const schedule = flags.map((w, i) => { const d = new Date(start); d.setDate(d.getDate() + i); return { date: keyOf(d), with: w } })
+  const answers = Object.fromEntries(schedule.slice(0, 3).map((s, i) => [s.date, i !== 1]))
+  return {
+    type: 'trial', source: 'app_trial', at: start.toISOString(),
+    payload: {
+      factor: { key: 'sleepMinutes', label: 'Durée du sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.3, center: 420, change: 30 },
+      direction: 'more', threshold: 450, schedule, answers,
+      startedAt: start.toISOString(), endedAt: null, kept: false, removedAt: null, nudgedAt: null,
+    },
+  }
+}

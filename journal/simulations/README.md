@@ -26,6 +26,12 @@ il ne lit jamais le code. Consigne donnée aux agents : `brief.md`. Tirage : per
 prorata des poids, moment uniforme parmi 1, 14, 45 ; une configuration iPhone est jouée sur l'apparence Android
 (même code).
 
+**Mise à jour depuis la version des testeurs (`--legacy`, 16/11, REFONTE-UPG-0)** : pour un jour > 1, rejoue un
+testeur qui avait la version d'avant la refonte « Compagnon » : accueil fini dans l'ancienne version (objectifs de
+`--goals`, par exemple `sport,cycle`, sans version d'objectifs : l'app les convertit à l'ouverture comme chez lui),
+Nouveautés lues jusqu'au 14/11, un essai d'Agir en cours (jour 4 sur 10), aucune habitude. Exemple :
+`npm run persona -- --day=45 --equipment=watch --goals=sport,cycle --legacy --port=7811 --out=<dossier>`.
+
 **Objectif et saisie (POLISH-SIM-7 et 9, 09/11)** : `--goals=` coche les objectifs de l'accueil pour un jour > 1
 (`gut`, `cycle`, `stress`, `sport`, `care`, `all` ; au jour 1 l'agent les choisit lui-même). Correspondance :
 Ventre (1, 2) → `gut` ; Endométriose → `cycle,gut` ; Tout mesurer → `all` ; Sportif → `sport` ; Prendre soin de soi →

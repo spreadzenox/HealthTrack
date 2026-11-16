@@ -312,6 +312,20 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     à l'icône chevron, tournée vers la droite. Tests (Objectives, Recommendations) ; captures Objectifs et « Votre
     bien-être » regardées. Code partagé sans correctif iPhone : repris tel quel par la build iOS de la PR. Plus aucun
     « › » texte affiché comme flèche dans l'app (les « Réglages › Paramètres » des phrases restent : chemins écrits).
+- [ ] **REFONTE-UPG — Parcours « mise à jour depuis la version des testeurs »** (objectif du 22/11, point 4) :
+  - [x] **UPG-0 — Outil** (16/11 15:30) : `npm run persona -- … --legacy` (jour > 1) rejoue un testeur d'avant la
+    refonte : accueil d'alors (objectifs de `--goals`, ex. `sport,cycle`, sans `goalsVersion` : la migration 5a
+    tourne), Nouveautés vues jusqu'au 14/11 (`legacyLastSeen`), un essai d'Agir en cours (jour 4 sur 10), aucune
+    habitude. 3 tests dans `personaData.test.mjs`. Premier coup d'œil (J45, montre, `sport,cycle`) : l'essai est
+    intact dans Agir (« Jour 4 sur 10. Aujourd'hui, jour avec. »), « Règles » reste dans le bandeau d'ajout, Objectifs
+    montre Bien-être et Confort digestif, aucune erreur.
+  - [ ] **UPG-1 — Essai en cours invisible depuis l'Accueil** : la carte « Agir » du bas de l'Accueil dit « Vérifier
+    une piste par un essai » alors qu'un essai tourne ; avant la refonte, Agir était un onglet. Dire l'essai en cours
+    sur la carte (« Dormir au moins 7 h 30 · jour 4 sur 10 »), et la remonter les jours « avec ». Android et iPhone.
+  - [ ] **UPG-2 — Nouveautés d'un testeur qui arrive** : le bandeau titre « Nouvelle police et fond crème et 17
+    autres changements » ; la nouvelle que ce testeur doit lire est la navigation à 4 onglets et la fin du Journal.
+    Mettre en avant la note de la refonte (`2026-11-15-0435-refonte-navigation`) quand elle fait partie des non lues.
+  - [ ] **UPG-3 — Passage complet des personas** sur les deux parcours (installation neuve ; `--legacy`), avant le 22/11.
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.
