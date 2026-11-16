@@ -13,6 +13,16 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branc
   `activity:start/end`, `day:done`). `CONTRAT.md` et `bus.js` recopiés à l'identique depuis `claude/sprint-scene-1`.
   Expressions sous les noms du bus. Les correctifs iPhone s'appliquent tous (vérifié avec `git apply` sur l'archive).
   Captures : `journal/runs/captures/2026-11-16-sprint-vie-ma-journee-*.png`.
+- 16/11 21:40 : PR #1051 (étape 11) ouverte, CI en cours. Étape 12a codée sur `claude/sprint-vie-2` (partie de
+  vie-1) : la rencontre (éclosion, « Passer », « Comment voulez-vous l'appeler ? », « Pilou » proposé, un saut par
+  syllabe), étape `meet` de l'onboarding juste après l'ouverture ; Pilou en tête des 4 temps (digestion, montre
+  enfilée ou non, « Tout ça, je m'en occupe ») ; pour un utilisateur d'avant la refonte (accueil fini, aucun
+  compagnon) la rencontre arrive une seule fois en surimpression, sans refaire l'accueil (`LifeMoments`, monté dans
+  Layout) ; `app:opened` et `pilou:named` sur le bus ; Réglages › Pilou (son nom) ; bloc `companion` dans l'export
+  JSON, restauré à l'import (ancienne sauvegarde : rien ne change, la rencontre reste à faire une fois ; nouvelle :
+  rien n'est rejoué). Testé sur base d'avant la refonte et import d'ancienne sauvegarde (`localHealthStorage.test.js`,
+  `companionState.test.js`, `MeetPilou.test.jsx`).
+- Pour PARITE.md (intégrateur) : tout est dans le code partagé (WebView), même parcours sur iPhone ; aucun natif.
 
 ## Découpage prévu
 1. `claude/sprint-vie-1` (étape 11) : nom du compagnon (« Pilou » par défaut) et son état local ; la bannière de
