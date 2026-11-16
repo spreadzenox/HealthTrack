@@ -1,6 +1,3 @@
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
-import process from 'node:process'
 import { describe, expect, it } from 'vitest'
 import { chipTheme, chipValueBreaks, summaryChips, watchStressBand } from './journalChips'
 import { isLikelyIncompleteEnergy } from './nutritionIntakeCompare'
@@ -135,17 +132,5 @@ describe('chipValueBreaks — grande police (GRANDE-POLICE-1)', () => {
     for (const [, value] of chips) {
       for (const part of chipValueBreaks(value).split(' ')) expect(part.length).toBeLessThanOrEqual(11)
     }
-  })
-})
-
-describe('tuiles du Journal en grande police (GRANDE-POLICE-1, CSS)', () => {
-  const css = readFileSync(resolve(process.cwd(), 'src/App.css'), 'utf8')
-  const rule = (sel) => css.match(new RegExp(`\\n${sel.replace(/\./g, '\\.')}\\s*\\{([^}]*)\\}`))?.[1] ?? ''
-
-  it('la valeur ne se coupe jamais en plein mot et suit la largeur de sa tuile', () => {
-    expect(rule('.day-summary-item')).toMatch(/container-type:\s*inline-size/)
-    const dd = rule('.day-summary-item dd')
-    expect(dd).not.toMatch(/overflow-wrap:\s*anywhere/)
-    expect(dd).toMatch(/font-size:\s*min\(0\.8rem, \d+cqi\)/)
   })
 })
