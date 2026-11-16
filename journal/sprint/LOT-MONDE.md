@@ -2,7 +2,12 @@
 
 Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Branches `claude/sprint-monde-<n>`.
 
-## Où j'en suis (16/11, 21:25)
+## Où j'en suis (16/11, 21:40)
+
+**#1048 mergée** (21:38, tous les checks verts, build iOS compris). Le reste (anciennes branches 2 et 3) est réuni
+dans une seule PR depuis `claude/sprint-monde-3`, mise à jour sur main.
+
+## Avant (16/11, 21:25)
 
 **Consigne de l'orchestrateur de 21:20 appliquée** : #1055 et #1057 (empilées sur #1048) fermées, branches gardées,
 leurs builds iOS et émulateurs annulés. Seule #1048 reste ouverte. Après son merge, je rouvre **une seule** PR depuis

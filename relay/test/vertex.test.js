@@ -142,3 +142,16 @@ test('réflexion réglable (Gold : MEDIUM) et jetons de chaque appel facturé re
   })
   assert.equal(g.calls[0].body.generationConfig.thinkingConfig, undefined)
 })
+
+test('generateJson : température 0,2 par défaut, réglable par appel (double numérique : 0)', async () => {
+  const bodies = []
+  const fetchImpl = async (_url, init) => {
+    bodies.push(JSON.parse(init.body))
+    return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: '{"a":1}' }] } }] }), { status: 200 })
+  }
+  const client = createVertexClient({ project: 'p', locations: ['eu'], models: ['m'], getToken: async () => 't', fetchImpl })
+  await client.generateJson({ systemInstruction: 's', parts: [{ text: 'x' }] })
+  await client.generateJson({ systemInstruction: 's', parts: [{ text: 'x' }], temperature: 0 })
+  assert.equal(bodies[0].generationConfig.temperature, 0.2)
+  assert.equal(bodies[1].generationConfig.temperature, 0)
+})
