@@ -14,6 +14,7 @@
 import { getBodySettings, setBodySettings, sanitizeBodySettings } from '../settings/bodySettings'
 import { getHiddenLinks, setHiddenLinks, sanitizeHiddenLinks } from '../settings/hiddenLinks'
 import { getHabits, setHabits, sanitizeHabits } from '../settings/habits'
+import { companionBackup, restoreCompanion, sanitizeCompanionBackup } from '../companion/life/companionState'
 import { bumpDataRevision } from './dataRevision'
 import { exampleEntries, isExampleMode, readExample, waitForRealData } from './exampleMode'
 import { AGG_STORE, DENSE_SERIES, markDirty, readAggregatedEntries } from './dailyAggregates'
@@ -621,6 +622,9 @@ export async function exportToJson() {
   if (hiddenLinks.length > 0) backup.hiddenLinks = hiddenLinks
   const habits = getHabits()
   if (habits.length > 0) backup.habits = habits
+  // Lot VIE : le nom du compagnon et les moments déjà vécus (rencontre, jour 7), pour ne pas les rejouer
+  const companion = companionBackup()
+  if (companion) backup.companion = companion
   return JSON.stringify(backup, null, 2)
 }
 
@@ -703,7 +707,8 @@ export function parseBackup(json) {
   const profile = Object.keys(cleanProfile).length > 0 ? cleanProfile : null
   const hiddenLinks = Array.isArray(data) ? [] : sanitizeHiddenLinks(data.hiddenLinks)
   const habits = Array.isArray(data) ? [] : sanitizeHabits(data.habits)
-  return { entries, invalid: raw.length - entries.length, exportedAt, firstAt, lastAt, byType, profile, hiddenLinks, habits }
+  const companion = Array.isArray(data) ? null : sanitizeCompanionBackup(data.companion)
+  return { entries, invalid: raw.length - entries.length, exportedAt, firstAt, lastAt, byType, profile, hiddenLinks, habits, companion }
 }
 
 /**
@@ -735,7 +740,7 @@ function restoreProfile(profile, merge) {
  */
 export async function importFromJson(json, opts = {}) {
   await waitForRealData()
-  const { entries, invalid, profile, hiddenLinks, habits } = parseBackup(json)
+  const { entries, invalid, profile, hiddenLinks, habits, companion } = parseBackup(json)
   if (entries.length === 0) return { imported: 0, skipped: 0, invalid, profileRestored: false }
 
   const db = await openDB()
@@ -775,6 +780,8 @@ export async function importFromJson(json, opts = {}) {
       if (hiddenLinks.length > 0) setHiddenLinks(opts.merge ? [...getHiddenLinks(), ...hiddenLinks] : hiddenLinks)
       // Habitudes suivies (refonte étape 4), même règle ; l'habitude libre de l'appareil prime à l'ajout
       if (habits.length > 0) setHabits(opts.merge ? [...getHabits(), ...habits] : habits)
+      // Compagnon (lot VIE) : ce qui est vécu sur ce téléphone prime ; ancien fichier : rien ne change
+      restoreCompanion(companion)
       resolve({ imported, skipped, invalid, profileRestored: restoreProfile(profile, opts.merge) })
     }
     tx.onerror = () => reject(tx.error)
