@@ -1,5 +1,25 @@
 # Lot SCÈNE (étape 8 du brief : Compagnon 1a, et le socle commun)
 
+## ASSEMBLAGE (confié par l'orchestrateur à 22:40) — essai local du 16/11 23:10
+Fusion locale de main + scene-3 + PILOU #1058 + MONDE #1057 + VIE #1060 + BULLES #1056 + STUDIO #1052 + PHOTO #1050 :
+lint propre, **3 980 tests verts, 1 rouge à la rencontre**. Rendu de l'Accueil complet : vrai Pilou de PILOU, bulles,
+jauge « Humeur du jour », ciel de MONDE (jour, soir, nuit avec Pilou endormi), cadeaux ; thème sombre lisible.
+**À relayer aux lots (je n'ai pas pu écrire à l'orchestrateur depuis cette session) :**
+1. **BULLES × SCÈNE (rouge)** : CompanionHome monte la scène par `import.meta.glob`, donc `companion/CompanionScene.css`
+   n'est plus chargé d'emblée → `src/workers/bundleGuard.test.js` casse. Correctif d'une ligne dans
+   `app/src/pageStyles.js` : `import './companion/CompanionScene.css'`. Il sera dans ma PR d'assemblage ; BULLES peut
+   aussi l'ajouter dans #1056 pour que « Tests » de main ne soit pas rouge entre deux merges.
+2. **VIE × STUDIO (conflit)** dans `app/src/storage/localHealthStorage.js` (VIE ajoute `companion`, STUDIO `pilou` à
+   l'export/import) et `app/src/pages/Settings.jsx` (CompanionNameSetting / StudioSetting). Résolution vérifiée chez
+   moi : garder les deux — exporter `companion` et `pilou` ; `parseBackup` rend les deux ; à l'import
+   `restoreCompanion(companion)` puis `restorePilou(pilou, opts.merge).then(resolve)`.
+3. **Copies de CONTRAT.md** (VIE, STUDIO, BULLES) : au conflit, garder la version de main (le contrat ne fait que grandir).
+4. **Images fixes** (`scene/fallback.webp`, `fallback-nuit.webp`) refaites avec le Pilou de PILOU : elles partent dans
+   ma PR d'assemblage, après le merge de PILOU (sinon on afficherait son Pilou avant son code).
+Reste à vérifier quand tout est sur main : parcours de mise à jour depuis une version d'avant la refonte (rencontre
+une fois, pas d'onboarding, pas de fête des 7 jours), mouvements réduits, captures de CI des deux côtés, palier
+choisi sur le job Android 9 et le simulateur.
+
 ## Où j'en suis
 - 16/11 20:30 — **Contrat poussé** sur `claude/sprint-scene-1` : `app/src/companion/CONTRAT.md` et
   `app/src/companion/bus.js` (+ `bus.test.js`). Ajout du 21:00 : prop `name`, `side` de `jump` = côté de l'écran,
