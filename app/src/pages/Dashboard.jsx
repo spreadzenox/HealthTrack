@@ -15,6 +15,7 @@ import { localDateKey } from '../services/analysisEngine'
 import { GutCard } from '../components/TodayCards'
 import DigestBlock from '../components/DigestBlock'
 import DayChecklist from '../components/DayChecklist'
+import YesterdayHabits from '../components/YesterdayHabits'
 import StoolPhotoLine from '../components/StoolPhotoLine'
 import TodayBySource from '../components/TodayBySource'
 import { useDetailsMode } from '../hooks/useDetailsMode'
@@ -24,7 +25,7 @@ import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
 import AddStrip from '../components/AddStrip'
 import PeriodSheet from '../components/PeriodSheet'
 import { listEntries, createEntry, deleteEntry } from '../storage/localHealthStorage'
-import { habitEntry } from '../services/habits'
+import { habitEntry, yesterdayCatchUp, skipYesterday } from '../services/habits'
 import { getHabits } from '../settings/habits'
 import { CYCLE_TYPE, cycleVisible } from '../services/cycle'
 import { goalsOf } from '../settings/onboarding'
@@ -126,9 +127,10 @@ export default function Dashboard({ view = 'home' }) {
 
   // Refonte étape 4 : les habitudes suivies (Réglages), une ligne oui ou non chacune dans la checklist
   const [habits] = useState(() => getHabits())
-  const answerHabit = useCallback(async (habit, done) => {
+  // `dateKey` : la carte « Hier » répond pour la veille (REFONTE-7c-2), la checklist pour aujourd'hui
+  const answerHabit = useCallback(async (habit, done, dateKey) => {
     try {
-      await createEntry(habitEntry(habit, localDateKey(new Date().toISOString()), done))
+      await createEntry(habitEntry(habit, dateKey || localDateKey(new Date().toISOString()), done))
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
     } catch (e) {
       setError(e.message)
@@ -143,6 +145,10 @@ export default function Dashboard({ view = 'home' }) {
     }
   }, [])
 
+  const [, setSkipTick] = useState(0)
+  const catchUp = day && !loading ? yesterdayCatchUp(entries, habits) : null
+  const skipCatchUp = useCallback((dateKey) => { skipYesterday(dateKey); setSkipTick((t) => t + 1) }, [])
+
   const head = headerLine()
   // Refonte étape 1 : sans l'objectif digestion, on ne demande pas le ventre (sauf à qui le note déjà)
   const askGut = gutAsked(gutMode, entries)
@@ -152,6 +158,8 @@ export default function Dashboard({ view = 'home' }) {
       <header className="today-head">
         <h1 className="today-date">{day ? 'Ma journée' : head.date}</h1>
       </header>
+      {/* « Hier » : les habitudes de la veille restées sans réponse, en tête de liste (journee.SPEC § 10). */}
+      {day && !error && <YesterdayHabits catchUp={catchUp} onAnswer={answerHabit} onSkip={skipCatchUp} />}
       {/* Refonte étape 3 : la checklist du jour, ce qu'il reste à noter et ce qui l'est déjà. */}
       {day && !loading && !error && (
         <DayChecklist entries={entries} askGut={askGut} habits={habits}

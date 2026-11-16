@@ -161,6 +161,29 @@ describe('Dashboard', () => {
     }
   })
 
+  it('Ma journée : « Hier » repose les habitudes d’hier sans réponse et les note pour la veille (REFONTE-7c-2)', async () => {
+    const { listEntries, createEntry } = await import('../storage/localHealthStorage')
+    localStorage.setItem('healthtrack_habits', JSON.stringify([{ id: 'reading' }]))
+    const d = new Date()
+    const before = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 2, 12, 4)
+    listEntries.mockResolvedValue([{ id: 3, type: 'habit', source: 'app_habit', at: before.toISOString(), payload: { habit: 'reading', label: 'Lecture', done: true } }])
+    createEntry.mockResolvedValue(1)
+    try {
+      renderDashboard('day')
+      const card = await screen.findByRole('region', { name: /^Hier, / })
+      expect(within(card).getByText('Une question, si vous voulez.')).toBeInTheDocument()
+      fireEvent.click(within(card).getByRole('button', { name: 'Oui' }))
+      await waitFor(() => expect(createEntry).toHaveBeenCalled())
+      const y = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1)
+      const at = new Date(createEntry.mock.calls.at(-1)[0].at)
+      expect([at.getFullYear(), at.getMonth(), at.getDate()]).toEqual([y.getFullYear(), y.getMonth(), y.getDate()])
+      expect(createEntry.mock.calls.at(-1)[0].payload).toMatchObject({ habit: 'reading', done: true })
+    } finally {
+      localStorage.removeItem('healthtrack_habits')
+      localStorage.removeItem('healthtrack_yesterday_skipped')
+    }
+  })
+
   it('Ma journée : sans habitude suivie, un lien discret mène aux Réglages (refonte étape 4)', async () => {
     renderDashboard('day')
     expect(await screen.findByRole('link', { name: 'Suivre une habitude' })).toHaveAttribute('href', '/settings')

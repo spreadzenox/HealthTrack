@@ -289,3 +289,37 @@
   font-weight: 700;
   text-decoration: none;
 }
+
+/* « Hier » (REFONTE-7c-2) : rattrapage des habitudes de la veille, en tête de Ma journée. */
+.day-yesterday {
+  margin: 0 0 18px;
+}
+
+.day-yesterday-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.day-yesterday-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.day-yesterday-ask {
+  margin: 2px 0 10px;
+  color: var(--text-muted);
+}
+
+.day-yesterday-skip {
+  min-height: var(--tap-min);
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--color-brand);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}

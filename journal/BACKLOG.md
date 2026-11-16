@@ -276,8 +276,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     servent encore à Tendances et Nutrition) ; ~~(2) iPhone : vérifier que « Ce qui a pu peser ce jour-là »
     de Tendances › Jour lit la VFC de l'app Santé, sinon l'y brancher~~ **fait le 16/11 à 07:30 (en PR)** : elle ne la
     lisait pas (facteurs des Analyses sans la SDNN) ; correctif iPhone 64 (`analysisResults.js`, `trendsDay.js`), test
-    sur 70 jours synthétiques ; (3) « Hier » dans Ma journée si utile (inventaire, ligne 9 : une
-    ligne seulement s'il manque la note du soir de la veille).
+    sur 70 jours synthétiques ; ~~(3) « Hier » dans Ma journée~~ **fait le 16/11 à 09:30 (en PR)** :
+    carte « Hier, dimanche » en tête de Ma journée (journee.SPEC § 10) avec les habitudes suivies restées sans
+    réponse hier, Oui / Non pour la veille, « Passer » (gardé pour cette date seulement) ; rien après deux jours sans
+    aucune réponse, rien sans habitude suivie (`yesterdayCatchUp`, 4 tests, composant 3 tests, test d'intégration
+    dans `Dashboard.test.jsx`). Données : entrées `habit` ordinaires datées de la veille, rien à migrer. La note de
+    bien-être d'hier n'est pas reposée ici : elle se modifie depuis Tendances › Jour (7a).
   - [ ] **REFONTE-7a-2 — Restes de 7a** : captures sur historique presque vide, grand texte, 320 px, version Play.
     Le plan de captures iPhone ne touche aucun jour de Tendances : « Vos saisies » n'y est jamais vu (ajouter une
     capture « Tendances › Jour › veille » à `captureMode.js`, comme `--click="Jour > Jour précédent"` côté Android).
