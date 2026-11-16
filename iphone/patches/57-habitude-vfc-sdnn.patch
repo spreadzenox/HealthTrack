@@ -1,28 +1,3 @@
-diff --git a/app/src/components/DailyJournal.jsx b/app/src/components/DailyJournal.jsx
-index 5d28710..fd53c03 100644
---- a/app/src/components/DailyJournal.jsx
-+++ b/app/src/components/DailyJournal.jsx
-@@ -350,14 +350,16 @@ function DayCard({ day, onEdit, editingMealId, onEditMeal, onRedoMeal, normDays
-         <dl className="day-summary">
--          {chips.map(([label, value, note]) => {
-+          {chips.map(([label, value, note, measure]) => {
-             const key = chipKey(label)
--            const n = note ? null : norms[NORM_KEYS[key]]
-+            // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé a sa propre habitude, en SDNN (correctif 57)
-+            const n = note ? null : norms[measure ?? NORM_KEYS[key]]
-+            const trend = measure ?? TREND_KEYS[key] // et sa propre courbe (Android v974)
-             return (
-               <div key={label} className="day-summary-item" data-theme={chipTheme(label)}>
-                 <dt><LineIcon name={CHIP_ICONS[key] ?? 'dots'} size={14} />{label}</dt>
-                 <dd>
-                   {monoDigits(chipValueBreaks(value))}
--                  {TREND_KEYS[key] && (
--                    <Link to={`/tendances?mesure=${TREND_KEYS[key]}`} className="day-summary-link" aria-label={`${label} : ${value}. Voir la courbe`} />
-+                  {trend && (
-+                    <Link to={`/tendances?mesure=${trend}`} className="day-summary-link" aria-label={`${label} : ${value}. Voir la courbe`} />
-                   )}
-                 </dd>
-                 {note && <dd className="day-summary-usual">{note}</dd>}
 diff --git a/app/src/services/dayDeviations.js b/app/src/services/dayDeviations.js
 index 6a5842b..546466e 100644
 --- a/app/src/services/dayDeviations.js

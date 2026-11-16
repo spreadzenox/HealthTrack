@@ -260,8 +260,18 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     dans son ordre, à 15 min d'écart, jamais avant minuit ; test à 0 h 20, 1 h 30, 9 h 30 et 14 h 30) ; (2) l'exemple ne s'affiche qu'après le calcul d'Analyses sur le fil
     principal (≈ 3 à 6 s avec `--settle=6000`, « Vos courbes apparaîtront après 3 jours » avant) : montrer le
     chargement plutôt que l'état vide ; (3) capture iPhone de la visite sur Tendances (le plan ne l'ouvre pas).
-  - [ ] **REFONTE-7c** : retrait de `Journal.jsx`, `DailyJournal.jsx`, `JournalEmpty.jsx` et de leurs tests ; « Hier »
-    dans Ma journée si utile (inventaire, ligne 9).
+  - [x] **REFONTE-7c** : retrait de `Journal.jsx`, `DailyJournal.jsx`, `JournalEmpty.jsx` et de leurs tests —
+    **code fait le 16/11 à 04:30, en PR (Android et iPhone)** : plus aucun import de ces fichiers (seul le service
+    `dailyJournal.js`, partagé par Ma journée, Tendances, le rapport et les essais, reste) ; `/journal` renvoie toujours
+    vers Tendances › Jour (`AppRedirects`). iPhone : correctif 57 réduit à `dayDeviations.js` (son morceau du Journal
+    retiré), test du cycle de Santé porté sur le détail du jour (`DayEntries.cycle.ios.test.jsx`), test « Selles »
+    réduit au composant (`StoolPhotoLine.appstore.test.jsx`), `DailyJournal.ios.test.jsx` retiré. Données : rien de
+    lu ni d'écrit autrement, rien à migrer.
+  - [ ] **REFONTE-7c-2 — Restes de 7c** : (1) règles CSS du Journal devenues mortes (`App.css` : `.day-card*`,
+    `.journal-*`) à repérer et retirer, captures à l'appui ; (2) iPhone : la tuile « Variabilité cardiaque » du Journal
+    disait son « d'habitude » en SDNN (correctif 57) ; vérifier que « Ce qui a pu peser ce jour-là » de Tendances › Jour
+    lit la VFC de l'app Santé, sinon l'y brancher ; (3) « Hier » dans Ma journée si utile (inventaire, ligne 9 : une
+    ligne seulement s'il manque la note du soir de la veille).
   - [ ] **REFONTE-7a-2 — Restes de 7a** : captures sur historique presque vide, grand texte, 320 px, version Play.
     Le plan de captures iPhone ne touche aucun jour de Tendances : « Vos saisies » n'y est jamais vu (ajouter une
     capture « Tendances › Jour › veille » à `captureMode.js`, comme `--click="Jour > Jour précédent"` côté Android).
