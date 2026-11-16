@@ -362,7 +362,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       une fonction à coder sans accord). « Gêne » qui ne reste pas cochée : traité par UPG-4 (#1045).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 00:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
-  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), Tests de main verts après chacun (v771) ; le reste en PR : #1052, #1057, #1058, #1065, #1066, #1067.
+  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40), Tests de main verts après chacun (v771) ; le reste en PR : #1052, #1058, #1065, #1066, #1067.
   - ASSEMBLAGE (confié au lot SCÈNE par l'orchestrateur à 22:40, `claude/sprint-scene-3`) : fusion locale de main et
     des 7 PR → lint propre, 3 980 tests verts, 1 rouge (`bundleGuard.test.js` : `companion/CompanionScene.css` à
     importer dans `app/src/pageStyles.js`, une ligne, dans la PR d'assemblage ou #1056). Conflits connus et leur
@@ -384,7 +384,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     dans Objectifs et Données, assiette reniflée ; bloc `companion` dans l'export et l'import, testé sur base ancienne) ;
     remise à jour sur main à 23:10 (contrat pris de main ; test instable de Dashboard corrigé à la source ;
     `pilouName()` ajouté pour l'étiquette de la scène). #1067 (branche 5, en PR) : cairn des galets dans « Par famille », graine des captures iPhone.
-  - MONDE (13) : **#1048 mergée** ; #1057 (réunit #1055, fermée : widget Android « Ma journée », Pilou dans les
+  - MONDE (13) : **#1048 et #1057 mergées** (#1057 à 00:40, réunit #1055, fermée : widget Android « Ma journée », Pilou dans les
     notifications du soir Android et iPhone, lumière à l'échelle de la scène).
   - STUDIO (14) : #1052 (fiche de traits locale, export et import, écran derrière l'interrupteur du compagnon, pièces 3D
     et `brancherTraits` joints) ; branche 3 : `equiperPilou` après #1058.
