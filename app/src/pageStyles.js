@@ -41,3 +41,5 @@ import './components/SoonList.css'
 import './components/MealFodmapLine.css'
 // Licences des composants de tiers (LICENCES-TIERCES, 02/11)
 import './pages/Licences.css'
+// Studio Pilou (refonte « Compagnon », étape 14, lot STUDIO)
+import './companion/studio/Studio.css'

@@ -7,6 +7,11 @@
 - 16/11 20:45 — règles, brief, PILOU-DOUBLE.md, specs/double.SPEC.md et double/traits.js lus. Branche
   `claude/sprint-studio-1` ouverte depuis origin/main.
 
+- 16/11 21:20 — PR 1 prête (`claude/sprint-studio-1`) : traits et fiche sans 3D, export/import, écran Studio avec
+  aperçu peint en 2D, entrée dans Réglages derrière l'interrupteur du compagnon (`companionSceneEnabled()` du lot
+  SCÈNE, lu par `import.meta.glob` : tant que `flags.js` n'existe pas ou qu'il est éteint, l'entrée est cachée ; la
+  route `/pilou/studio` existe mais rien n'y mène). `CONTRAT.md` et `bus.js` recopiés à l'identique.
+
 ## Plan
 1. **Fiche et traits, sans 3D** (`studio/traits.js`, `studio/fiche.js`) : schéma de PILOU-DOUBLE.md § 4, libellés,
    palettes curatées, `normaliser`, `tirer` (« Surprenez-moi »), `compter` ; fiche gardée sur le téléphone, dans
@@ -19,8 +24,25 @@
    rendu figurine par le contrat (`createPilou` du lot PILOU, événement « fiche de traits changée »).
 
 ## Pour le lot PHOTO
-- La fiche : `app/src/companion/studio/fiche.js` (`saveFiche(fiche)`, `loadFiche()`), toujours passée par
-  `normaliser` ; la fiche reçue du relais garde son tableau `incertains`, que le Studio affiche « À vérifier ».
+- La fiche : `app/src/companion/studio/fiche.js` — `saveFiche(fiche)` (normalise, garde dans IndexedDB, émet
+  `traits:changed`), `loadFiche()`, `resetFiche()`. Schéma, valeurs et `normaliser()` : `studio/traits.js` (le même
+  que PILOU-DOUBLE.md § 4 ; tout champ hors schéma est retiré). La fiche reçue du relais garde son tableau
+  `incertains` : le Studio ouvre l'onglet du premier champ incertain et affiche « À vérifier : … ». Après l'analyse,
+  enregistrez la fiche puis ouvrez `/pilou/studio`.
+
+## Pour le lot PILOU (rebranchement des traits, brief § 9)
+- `setTraits(fiche)` du contrat reçoit la fiche (`traits:changed`, rejouée). Le visage peint : `studio/visage.js`
+  (`drawFace(ctx, S, F, T)`, repris du kit) avec le peintre `studio/peintre.js` (`creerPeintre()` →
+  `set(fiche)`, `peindre(ctx, X, Y, k, F, phase)`, `iris()`, `formeYeux(F)`) : appelez `T.peindre` aux phases `sous`,
+  `peau`, `sourcils`, `dessus` dans votre toile du visage, et prenez `T.iris()` pour la couleur de l'iris 3D
+  (`fonce`, `clair`, `anneau`). Le profil du corps (H, bodyR, rAtY) : `studio/profil.js`.
+- Pièces 3D (cheveux, montures, barbe longue, boucles, couvre-chefs) : PR 2 du lot STUDIO, `studio/pieces.js`,
+  `creerPieces({ THREE, toon, ol, body })` comme dans le kit ; je fournis une matière « vinyle satiné » par défaut.
+
+## Nouveautés
+- Pas de note tant que l'interrupteur du compagnon est éteint (rien de visible). Texte prêt pour le jour où il
+  s'allume : « Studio Pilou : dans Réglages, donnez à Pilou vos cheveux, vos yeux, vos lunettes. Tout se règle à la
+  main et reste sur ce téléphone. »
 
 ## PR
 - (aucune encore)

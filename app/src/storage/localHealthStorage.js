@@ -18,6 +18,8 @@ import { bumpDataRevision } from './dataRevision'
 import { exampleEntries, isExampleMode, readExample, waitForRealData } from './exampleMode'
 import { AGG_STORE, DENSE_SERIES, markDirty, readAggregatedEntries } from './dailyAggregates'
 import { APP_NAME } from '../config/brand'
+import { loadFiche, saveFiche } from '../companion/studio/fiche'
+import { sanitizeFiche } from '../companion/studio/traits'
 
 const DB_NAME = 'HealthTrack'
 const STORE_NAME = 'health_entries'
@@ -621,6 +623,9 @@ export async function exportToJson() {
   if (hiddenLinks.length > 0) backup.hiddenLinks = hiddenLinks
   const habits = getHabits()
   if (habits.length > 0) backup.habits = habits
+  // Fiche de style de Pilou (double numérique, étape 14) : absente pour le Pilou d'origine
+  const pilou = await loadFiche()
+  if (pilou) backup.pilou = pilou
   return JSON.stringify(backup, null, 2)
 }
 
@@ -703,7 +708,8 @@ export function parseBackup(json) {
   const profile = Object.keys(cleanProfile).length > 0 ? cleanProfile : null
   const hiddenLinks = Array.isArray(data) ? [] : sanitizeHiddenLinks(data.hiddenLinks)
   const habits = Array.isArray(data) ? [] : sanitizeHabits(data.habits)
-  return { entries, invalid: raw.length - entries.length, exportedAt, firstAt, lastAt, byType, profile, hiddenLinks, habits }
+  const pilou = Array.isArray(data) ? null : sanitizeFiche(data.pilou)
+  return { entries, invalid: raw.length - entries.length, exportedAt, firstAt, lastAt, byType, profile, hiddenLinks, habits, pilou }
 }
 
 /**
@@ -724,6 +730,15 @@ function restoreProfile(profile, merge) {
   }
 }
 
+/** Restaure la fiche de Pilou d'une sauvegarde ; un ancien fichier sans fiche ne change rien. */
+async function restorePilou(pilou, merge) {
+  if (!pilou) return
+  try {
+    if (merge && (await loadFiche())) return
+    await saveFiche(pilou)
+  } catch { /* la fiche n'empêche jamais l'import des saisies */ }
+}
+
 /**
  * Import entries from a previously exported JSON.
  * Le fichier est vérifié avant toute écriture : un mauvais fichier ou une sauvegarde vide
@@ -735,7 +750,7 @@ function restoreProfile(profile, merge) {
  */
 export async function importFromJson(json, opts = {}) {
   await waitForRealData()
-  const { entries, invalid, profile, hiddenLinks, habits } = parseBackup(json)
+  const { entries, invalid, profile, hiddenLinks, habits, pilou } = parseBackup(json)
   if (entries.length === 0) return { imported: 0, skipped: 0, invalid, profileRestored: false }
 
   const db = await openDB()
@@ -775,7 +790,9 @@ export async function importFromJson(json, opts = {}) {
       if (hiddenLinks.length > 0) setHiddenLinks(opts.merge ? [...getHiddenLinks(), ...hiddenLinks] : hiddenLinks)
       // Habitudes suivies (refonte étape 4), même règle ; l'habitude libre de l'appareil prime à l'ajout
       if (habits.length > 0) setHabits(opts.merge ? [...getHabits(), ...habits] : habits)
-      resolve({ imported, skipped, invalid, profileRestored: restoreProfile(profile, opts.merge) })
+      const profileRestored = restoreProfile(profile, opts.merge)
+      // Fiche de Pilou (étape 14), même règle : remplacer → celle du fichier ; ajouter → celle de l'appareil prime
+      restorePilou(pilou, opts.merge).then(() => resolve({ imported, skipped, invalid, profileRestored }))
     }
     tx.onerror = () => reject(tx.error)
   })

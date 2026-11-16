@@ -29,6 +29,7 @@ const Act = lazy(() => import('./pages/Act'))
 const Trial = lazy(() => import('./pages/Trial'))
 const Licences = lazy(() => import('./pages/Licences'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
+const Studio = lazy(() => import('./companion/studio/Studio'))
 
 export default function App() {
   // Refonte étape 5a : objectifs d'avant la refonte convertis une fois (bien-être toujours, confort digestif facultatif)
@@ -75,6 +76,7 @@ export default function App() {
             <Route path="agir" element={<Act />} />
             <Route path="agir/essai/:id" element={<Trial />} />
             <Route path="licences" element={<Licences />} />
+            <Route path="pilou/studio" element={<Studio />} />
             <Route path="connectors/withings/callback" element={<WithingsCallback />} />
             {/* Adresse inconnue (ancienne notification, lien périmé) : l'Accueil plutôt qu'une page blanche. */}
             <Route path="*" element={<Navigate to="/" replace />} />

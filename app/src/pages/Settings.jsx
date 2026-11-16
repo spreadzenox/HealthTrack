@@ -22,6 +22,7 @@ import { useEntitlement } from '../hooks/useEntitlement'
 import LineIcon from '../components/LineIcon'
 import FaceUnlockSetting from '../components/FaceUnlockSetting'
 import HabitsSetting from '../components/HabitsSetting'
+import StudioSetting from '../companion/studio/StudioSetting'
 import LanguageSetting from '../components/LanguageSetting'
 import { I18N_EN } from '../i18n/locale.js'
 import { installFingerprint, sendFeedback, FEEDBACK_MAX_LENGTH } from '../services/aiRelay'
@@ -199,6 +200,8 @@ export default function Settings() {
           ))}
         </div>
       </div>
+
+      <StudioSetting />
 
       {/* Jalon 9 : caché tant que l'anglais n'est pas complet (interrupteur de build VITE_I18N_EN) */}
       {I18N_EN && <LanguageSetting />}
