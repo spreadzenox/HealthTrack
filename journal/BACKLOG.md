@@ -281,6 +281,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [ ] **REFONTE-7a-2 — Restes de 7a** : captures sur historique presque vide, grand texte, 320 px, version Play.
     Le plan de captures iPhone ne touche aucun jour de Tendances : « Vos saisies » n'y est jamais vu (ajouter une
     capture « Tendances › Jour › veille » à `captureMode.js`, comme `--click="Jour > Jour précédent"` côté Android).
+  - [ ] **REFONTE-7d — Nunito et fond crème** (**préparée le 16/11 08:30** :
+    [`ETAPE-7D-NUNITO.md`](maquettes/compagnon-etapes/ETAPE-7D-NUNITO.md), captures avant/après de 4 écrans dans
+    `compagnon-etapes/7d/`) : Nunito variable (OFL, +19 Ko au premier lancement, chiffres tabulaires, mêmes glyphes
+    absents que Figtree) ; fond `#fff8f0`, surface `#f8efe4`, bord `#eadfd1` (marque à 5,04:1) ; sombre inchangé ;
+    PDF (TTF Nunito par `woff-to-ttf.mjs`), licences, fiche Play, pages légales iPhone, DESIGN.md § 3-4, Nouveautés.
+    Un run de code, Android et iPhone ; aucune donnée touchée.
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.
