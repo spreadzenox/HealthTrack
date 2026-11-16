@@ -40,12 +40,15 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branc
   cycle, **les étapes 11 et 12 partent ensemble** dans une seule PR depuis `claude/sprint-vie-4` (à jour sur main) ;
   #1051 et #1054 sont fermées en sa faveur. Suite complète locale verte sur la branche à jour (3 784 tests), lint,
   build, correctifs iPhone appliqués, tests de la variante iPhone des fichiers touchés verts.
+- 16/11 21:55 : PR #1060 (étapes 11 et 12, à jour sur main) : Vitest, APK, émulateurs en cours, build iOS en file
+  d'attente. `claude/sprint-vie-5` (partie de vie-4) : le cairn des galets à côté de Pilou dans « Par famille »
+  (SPEC comprendre § 6.3 ; capture `2026-11-16-sprint-vie-cairn-galets.png`) ; PR après le merge de #1060.
 
 ## Ce qui reste (hors de ce sprint si le temps manque)
 - Les chorégraphies fines de la SPEC (vol de l'assiette, mastication, ondes lilas de la méditation, bouillotte du
   soir, confettis) sont jouées par Pilou en 3D sur l'Accueil (lots SCÈNE et PILOU, via le bus) ; dans Ma journée,
   Pilou 2D en garde une version CSS simple.
-- Mini-Pilou de la fiche « Comment est calculé votre bien-être ? » (SPEC § 6.4), cairn des galets (§ 6.3), rituel du
+- Mini-Pilou de la fiche « Comment est calculé votre bien-être ? » (fait dans vie-4), cairn des galets (fait dans vie-5), rituel du
   soir et lanternes du défi (§ 7) : non faits.
 - Réglage visible des mouvements réduits dans Réglages › Pilou : `motion.js` du lot SCÈNE pas encore sur main ; mes
   styles lisent déjà `prefers-reduced-motion` et `:root[data-reduced-motion='on']`.
