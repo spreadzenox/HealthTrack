@@ -35,6 +35,11 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branc
   `2026-11-16-sprint-vie-objectifs-sprite-pilou.png`). Le dessin SVG reste le repli.
 - 16/11 21:10 : `claude/sprint-vie-4` (partie de vie-3) : Pilou renifle l'assiette pendant l'analyse d'une photo de
   repas (« Pilou regarde votre assiette… »), et attend à côté de la piste à tester (80 px, SPEC comprendre § 6.5).
+- 16/11 21:50 : #1051 tout vert (iOS compris, captures iPhone de Ma journée regardées : 17 Pro, 16e grand texte).
+  Main a reçu du code entre-temps (MONDE, PHOTO) : chaque mise à jour relance ≈ 1 h de CI. Pour ne passer qu'un
+  cycle, **les étapes 11 et 12 partent ensemble** dans une seule PR depuis `claude/sprint-vie-4` (à jour sur main) ;
+  #1051 et #1054 sont fermées en sa faveur. Suite complète locale verte sur la branche à jour (3 784 tests), lint,
+  build, correctifs iPhone appliqués, tests de la variante iPhone des fichiers touchés verts.
 
 ## Ce qui reste (hors de ce sprint si le temps manque)
 - Les chorégraphies fines de la SPEC (vol de l'assiette, mastication, ondes lilas de la méditation, bouillotte du
@@ -62,4 +67,4 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branc
 - SCÈNE : `bus.js` et `CONTRAT.md`, pour émettre « repas noté », « humeur », « expression demandée ».
 
 ## PR
-(aucune pour l'instant)
+- #1051 (étape 11) et #1054 (étape 12a) : fermées, remplacées par la PR unique de `claude/sprint-vie-4`.
