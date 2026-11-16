@@ -29,6 +29,17 @@ describe('paliers de qualité (brief § 7.9)', () => {
     expect(d2).toEqual({ tier: 'moyen', reason: 'mesure', frameMs: 36 })
   })
 
+  it('un appareil très lent passe tout de suite à l’image fixe ; au-delà du double du budget aussi', () => {
+    const m = createFrameMeter()
+    const out = [1, 2, 3, 4, 5].map(() => m.push(300, 'haut'))
+    expect(out.slice(0, 4)).toEqual([null, null, null, null])
+    expect(out[4]).toMatchObject({ tier: 'bas', reason: 'mesure' })
+    const m2 = createFrameMeter()
+    let d = null
+    for (let i = 0; i < 80 && !d; i++) d = m2.push(i % 2 ? 30 : 110, 'haut')
+    expect(d.tier).toBe('bas')
+  })
+
   it('ne bouge pas quand le temps d’image tient le budget, et ne mesure qu’une fois', () => {
     const m = createFrameMeter()
     for (let i = 0; i < 200; i++) expect(m.push(12, 'haut')).toBeNull()

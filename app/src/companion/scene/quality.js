@@ -3,7 +3,9 @@
  *
  * - `initialTier` : un premier choix d'après ce que l'appareil dit de lui (WebGL, économie de données, mémoire).
  * - `createFrameMeter` : mesure le temps d'image pendant les 2 premières secondes de rendu et descend d'un palier si
- *   la moyenne dépasse 33 ms ; à n'importe quel moment, 30 images de suite au-dessus de 40 ms → palier bas (image fixe).
+ *   la moyenne dépasse 33 ms (directement au palier bas si elle dépasse le double) ; à n'importe quel moment, 30 images
+ *   de suite au-dessus de 40 ms → palier bas (image fixe). Un appareil très lent (5 premières images à plus de 100 ms
+ *   en moyenne) passe tout de suite à l'image fixe, sans bloquer l'écran pendant la mesure.
  */
 export const TIERS = ['haut', 'moyen', 'bas']
 
@@ -33,7 +35,7 @@ export function initialTier({ webgl = true, saveData = false, deviceMemory, core
  * @param {{ windowMs?: number, budgetMs?: number, slowMs?: number, slowFrames?: number }} opts
  * `push(frameMs)` rend `null` ou une décision `{ tier, reason, frameMs }` quand il faut changer de palier.
  */
-export function createFrameMeter({ windowMs = 2000, budgetMs = 33, slowMs = 40, slowFrames = 30 } = {}) {
+export function createFrameMeter({ windowMs = 2000, budgetMs = 33, slowMs = 40, slowFrames = 30, quickFrames = 5, quickMs = 100 } = {}) {
   let elapsed = 0
   let sum = 0
   let n = 0
@@ -52,9 +54,15 @@ export function createFrameMeter({ windowMs = 2000, budgetMs = 33, slowMs = 40, 
       elapsed += frameMs
       sum += frameMs
       n += 1
+      if (n === quickFrames && sum / n > quickMs) {
+        measured = true
+        average = sum / n
+        return { tier: 'bas', reason: 'mesure', frameMs: average }
+      }
       if (elapsed < windowMs) return null
       measured = true
       average = sum / n
+      if (average > budgetMs * 2) return { tier: 'bas', reason: 'mesure', frameMs: average }
       if (average > budgetMs) return { tier: lowerTier(tier), reason: 'mesure', frameMs: average }
       return null
     },
