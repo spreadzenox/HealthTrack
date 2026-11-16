@@ -73,6 +73,7 @@ export function poseHumeur(m, u) {
 
 /* ---------- réactions (SPEC § 7) ---------- */
 export const REACTIONS = ['toucher', 'appui', 'saut', 'glisser', 'chatouille', 'sautille']
+const FENETRE = 390000
 const REACT_DUREE = { toucher: 1100, appui: 1400, saut: 1700, glisser: 2300, chatouille: 1700, sautille: 1100 }
 
 /**
@@ -218,6 +219,25 @@ export function createAnimateur({ seed = 7, reduit = false, nom = 'Pilou' } = {}
     _layers: () => layers.length,
   }
 
+  // Les regards, clignements et micro-gestes tirés au hasard sont précalculés sur 400 s (anim.js) : au-delà, on
+  // passe à une nouvelle fenêtre de 390 s avec une autre graine, en fondu de 600 ms (l'Accueil peut rester ouvert).
+  function fenetre(τ) {
+    const k = Math.max(0, Math.floor(τ / FENETRE))
+    return { k, u: τ - k * FENETRE }
+  }
+  const graine = (k) => seed + 7919 * k
+  function idle(P, τ, amp, kinOnly) {
+    const { k, u } = fenetre(τ)
+    if (k === 0 || u >= 600) { applyIdle(P, u, graine(k), amp, kinOnly); return }
+    const A = { ...P, f: { ...P.f } }
+    const B = { ...P, f: { ...P.f } }
+    applyIdle(A, u + FENETRE, graine(k - 1), amp, kinOnly)
+    applyIdle(B, u, graine(k), amp, kinOnly)
+    const M = mixPose(A, B, E.douce(u / 600))
+    for (const key in M) if (key !== 'f') P[key] = M[key]
+    Object.assign(P.f, M.f)
+  }
+
   function gazeVal(τ, delay, dur, curve) {
     const pts = gaze.pts
     const tt = τ - delay
@@ -235,10 +255,11 @@ export function createAnimateur({ seed = 7, reduit = false, nom = 'Pilou' } = {}
     const dw = gaze.on ? E.douce(seg(τ, gaze.t, gaze.t + 300)) : 1 - E.douce(seg(τ, gaze.t, gaze.t + 400))
     const free = P.gazeW
     P.gazeW = free * (1 - dw)
-    applyIdle(P, τ, seed, reduced ? 0 : 1, !withFace)
+    idle(P, τ, reduced ? 0 : 1, !withFace)
     if (reduced && withFace) {
       // les yeux restent vivants : le regard libre (yeux seulement) et une respiration très atténuée
-      const [gx, gy] = gazeAt(seed, τ, 90, 'sortie')
+      const { k, u } = fenetre(τ)
+      const [gx, gy] = gazeAt(graine(k), u, 90, 'sortie')
       P.f.lookX += free * (1 - dw) * gx
       P.f.lookY += free * (1 - dw) * gy
     }
@@ -284,7 +305,8 @@ export function createAnimateur({ seed = 7, reduit = false, nom = 'Pilou' } = {}
     P.pupil = 0.4 * (1 + 0.18 * dil) * (1 + 0.02 * breathWave(τ, 3600))
     if (!withFace) return P
     // clignement (pas sur des yeux en arc)
-    const b = blinkAt(seed, τ)
+    const { k, u } = fenetre(τ)
+    const b = Math.max(blinkAt(graine(k), u), u < 400 && k > 0 ? blinkAt(graine(k - 1), u + FENETRE) : 0)
     P.f.lidTop = Math.max(P.f.lidTop, b * (1 - sstep(0.6, 0.9, P.f.lidBot)))
     if (reduced) {
       reduce(P)

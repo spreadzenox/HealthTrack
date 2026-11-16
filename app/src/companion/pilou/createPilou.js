@@ -449,7 +449,7 @@ export function createPilou(THREE, options = {}) {
   let antKey = null
   const [aSeg, aRad] = Q.antenne
   function setAntenna(ax, az) {
-    const k = `${ax.toFixed(3)},${az.toFixed(3)}`
+    const k = `${Math.round(ax / 0.004)},${Math.round(az / 0.004)}` // on ne refait le tube que si elle a bougé
     if (k === antKey) return
     antKey = k
     const pts = ANT.map((p, i) => rot(p, ax * antLen[i], az * antLen[i]))

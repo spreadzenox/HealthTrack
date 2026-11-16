@@ -194,3 +194,15 @@ describe('Pilou — gestes', () => {
     expect(xs.flatMap((x, i) => g.move(x, 200, 1100 + i * 100))).toEqual([])
   })
 })
+
+describe('Pilou — longtemps ouvert', () => {
+  it('cligne et regarde encore après une heure, sans saut au changement de fenêtre', () => {
+    const a = createAnimateur({ seed: 6 })
+    const poses = film(a, 385000, 400000)
+    expect(maxStep(poses, (P) => P.leanZ)).toBeLessThan(0.02)
+    expect(maxStep(poses, (P) => P.twist)).toBeLessThan(0.04)
+    const tard = film(a, 3600000, 3615000)
+    expect(tard.some((P) => P.f.lidTop > 0.8)).toBe(true)
+    expect(new Set(tard.map((P) => P.f.lookX.toFixed(2))).size).toBeGreaterThan(3)
+  })
+})
