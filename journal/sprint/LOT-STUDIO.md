@@ -12,6 +12,11 @@
   SCÈNE, lu par `import.meta.glob` : tant que `flags.js` n'existe pas ou qu'il est éteint, l'entrée est cachée ; la
   route `/pilou/studio` existe mais rien n'y mène). `CONTRAT.md` et `bus.js` recopiés à l'identique.
 
+- 16/11 22:25 — SCÈNE (#1053) sur main : conflit de `CONTRAT.md` résolu une fois dans #1052 (version de main),
+  et la branche 2 (pièces 3D, `brancherTraits`, apparitions, note de Nouveautés) jointe à #1052, puisque ce push
+  relançait de toute façon le build. Suite locale : 3 815 tests verts, lint propre, build OK, captures regardées.
+  Reste : `claude/sprint-studio-3` (`equiperPilou`) après PILOU #1058, et les deux gestes dans le dossier PILOU.
+
 ## Plan
 1. **Fiche et traits, sans 3D** (`studio/traits.js`, `studio/fiche.js`) : schéma de PILOU-DOUBLE.md § 4, libellés,
    palettes curatées, `normaliser`, `tirer` (« Surprenez-moi »), `compter` ; fiche gardée sur le téléphone, dans
