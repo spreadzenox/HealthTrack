@@ -6,8 +6,8 @@
   border-radius: 28px;
   overflow: hidden;
   background:
-    radial-gradient(60% 55% at 32% 30%, color-mix(in srgb, var(--cs-haze, #ffc9a6) 70%, transparent), transparent 70%),
-    linear-gradient(180deg, var(--cs-sky-top, #ffd7ba) 0%, var(--cs-sky-bottom, #fff3e6) 100%);
+    radial-gradient(60% 55% at 32% 30%, color-mix(in srgb, var(--cs-haze, var(--companion-haze)) 70%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--cs-sky-top, var(--companion-sky-top)) 0%, var(--cs-sky-bottom, var(--companion-sky-bottom)) 100%);
   isolation: isolate;
 }
 .companion-scene__frame {
@@ -46,13 +46,13 @@
   margin: 0;
   padding: 5px 11px;
   border-radius: 999px;
-  background: rgba(255, 250, 244, 0.86);
-  color: var(--color-ink, #10231d);
+  background: var(--companion-label-bg);
+  color: var(--color-ink);
   font-size: 13px;
   font-weight: 700;
   line-height: 1.2;
   max-width: calc(100% - 28px);
-  box-shadow: 0 1px 3px rgba(90, 60, 30, 0.12);
+  box-shadow: 0 1px 3px var(--companion-label-shadow);
 }
 @media (prefers-reduced-motion: reduce) {
   .companion-scene__canvas { transition: none; }
