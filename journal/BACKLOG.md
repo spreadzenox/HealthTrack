@@ -257,9 +257,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [ ] **REFONTE-7b-2 — Restes de 7b** : ~~(1) la visite à « Une journée d'un coup d'œil » montre, vers 1 h 30 du
     matin, deux repas fictifs identiques à l'heure présente~~ **fait le 16/11 à 03:35** (`pullBeforeNow` dans
     `tourData.js` : ce qui tomberait plus tard aujourd'hui, repas d'hier recopiés compris, est ramené avant maintenant
-    dans son ordre, à 15 min d'écart, jamais avant minuit ; test à 0 h 20, 1 h 30, 9 h 30 et 14 h 30) ; (2) l'exemple ne s'affiche qu'après le calcul d'Analyses sur le fil
+    dans son ordre, à 15 min d'écart, jamais avant minuit ; test à 0 h 20, 1 h 30, 9 h 30 et 14 h 30) ; ~~(2) l'exemple ne s'affiche qu'après le calcul d'Analyses sur le fil
     principal (≈ 3 à 6 s avec `--settle=6000`, « Vos courbes apparaîtront après 3 jours » avant) : montrer le
-    chargement plutôt que l'état vide ; (3) capture iPhone de la visite sur Tendances (le plan ne l'ouvre pas).
+    chargement plutôt que l'état vide~~ **fait le 16/11 à 05:30** (`Trends.jsx` : à l'entrée ou à la sortie du mode
+    exemple, la page repasse par le chargement au lieu de garder les données d'avant ; une saisie ordinaire relit sans
+    spinner ; deux tests, capture de la visite juste après « Exemple au jour 14 » puis 7 s après) ; (3) capture iPhone de la visite sur Tendances (le plan ne l'ouvre pas).
   - [ ] **REFONTE-7c** : retrait de `Journal.jsx`, `DailyJournal.jsx`, `JournalEmpty.jsx` et de leurs tests ; « Hier »
     dans Ma journée si utile (inventaire, ligne 9).
   - [ ] **REFONTE-7a-2 — Restes de 7a** : captures sur historique presque vide, grand texte, 320 px, version Play.

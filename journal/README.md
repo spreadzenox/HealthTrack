@@ -12,7 +12,7 @@
 - **Prêt, sauf surprise** (étapes 1 à 7, sans Pilou) : 4 onglets et Réglages ; Ma journée et les habitudes ; l'accueil
   en 4 temps ; Objectifs (score, familles, défi de 10 jours, réintroduction, seuils de 6d) ; Données sur Tendances,
   avec le détail du jour qui reprend ce que faisait le Journal (7a faite le 15/11 ; 7b, deux onglets et la visite
-  guidée, en PR le 16/11 ; reste 7c, le retrait du code du Journal). À chaque étape : une base d'avant la refonte et une ancienne
+  guidée, mergée le 16/11 ; 7c, le retrait du code du Journal, en PR). À chaque étape : une base d'avant la refonte et une ancienne
   sauvegarde ouvertes sans perte, visite guidée à jour. Puis la police Nunito.
 - **Pas prêt le 22/11** : Pilou en 3D et son île (étapes 8 à 13), le double numérique (14 et 15).
 - **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs.
@@ -26,7 +26,7 @@
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **🧸 Refonte « Compagnon »** : étapes 1 à 6 et 7a faites sur Android et sur iPhone (6d mergée le 16/11 à 00:41 :
-score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b en PR le 16/11 (Données sur Tendances et Nutrition), reste 7c avant Nunito, puis
+score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b mergée le 16/11 à 03:32 (Données sur Tendances et Nutrition), 7c (retrait du code du Journal) en PR, petits restes de 7b en cours, puis Nunito, puis
 Pilou (8 à 13) et le double numérique (14 et 15). Les 15 étapes : [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le
 brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -60,6 +60,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 16/11 05:30 — [7b-2 : chargement de l'exemple](runs/2026-11-16-0530-7b-2-chargement-exemple.md) | 🛠️ | Pendant la visite, Tendances montre un chargement le temps de préparer l'exemple (3 à 6 s) au lieu de « Vos courbes apparaîtront après 3 jours ». PR ouverte, à merger après la build iOS. #1031 (7c) attend la sienne. Rien à faire de votre côté |
 | 16/11 02:30 — [7b : garde-fou de lectures](runs/2026-11-16-0230-7b-budget-perf.md) | 🛠️ | Check « Budget de lectures » de la PR de 7b rouge : la mesure ouvrait encore `/journal`, devenu un renvoi vers Tendances › Jour. Garde-fou corrigé (Tendances › Jour mesurée sous son nom, avec son budget) ; rien ne change dans l'app. PR à merger après la build iOS. Rien à faire de votre côté |
 | 16/11 01:30 — [Refonte 7b : Données sur 2 onglets](runs/2026-11-16-0130-refonte-7b-donnees-deux-onglets.md) | 🛠️ | Données n'a plus que **Tendances et Nutrition** ; « Tous vos repas » depuis Nutrition ; l'ancienne adresse du Journal mène à Tendances › Jour ; visite guidée à jour. Android et iPhone dans la même PR, à merger après la build iOS. Rien à faire de votre côté |
 | 16/11 03:35 — [7b mergée, exemple au petit matin](runs/2026-11-16-0335-merge-7b-exemple-matin.md) | 🔧 | **#1029 (7b) mergée** à 03:32 après 14 checks verts et les captures iPhone de Tendances et Nutrition : Données n'a plus que Tendances et Nutrition, l'ancien Journal ouvre Tendances › Jour. Release **v750** (34,6 Mo). Envoi Alpha de la nuit parti à 02:24 UTC (avec 6d). Correctif : l'exemple de la visite ouvert tôt le matin ne met plus deux repas à la même minute (PR ouverte) |

@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-16",
+  "kind": "correctif",
+  "title": "Exemple de la visite dans Tendances",
+  "items": [
+    "Pendant la visite, Tendances affiche un chargement le temps de préparer l’exemple, au lieu de « Vos courbes apparaîtront après 3 jours de mesures »."
+  ]
+}
