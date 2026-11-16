@@ -1,6 +1,6 @@
 # Lot BULLES — étape 10 du brief (Compagnon 2)
 
-Mis à jour : 16/11 20:55 (heure de Paris).
+Mis à jour : 16/11 21:15 (heure de Paris). PR 1 : #1056.
 
 ## Où j'en suis
 - **PR 1 (`claude/sprint-bulles-1`)** : l'Accueil a ses bulles, sa jauge et sa première semaine, avec ou sans 3D.
@@ -18,6 +18,13 @@ Mis à jour : 16/11 20:55 (heure de Paris).
     sombre), une note de Nouveautés.
   - Mouvements réduits : `prefers-reduced-motion` (fondus de 200 ms, orbite arrêtée, film figé, coche).
   - Captures : `journal/runs/captures/2026-11-16-sprint-bulles-accueil-{demo,vide,sombre}.png`.
+
+## ⚠ ORDRE DES MERGES AVEC SCÈNE (à relayer, merci)
+La PR SCÈNE monte `<CompanionScene />` dans `Dashboard.jsx` juste après l'en-tête ; ma PR monte `<CompanionHome>` au
+même endroit, et **CompanionHome monte lui-même la scène** (avec les bulles dans son `overlay`, le `label`, le `name`
+et le `mood`). Les deux insertions sont au même endroit exprès : le second merge aura un conflit. **Résolution : garder
+la ligne `<CompanionHome …>` seule et retirer `{home && companionSceneEnabled() && <CompanionScene />}`** (sinon deux
+îlots). Si SCÈNE merge avant moi, je fais cette résolution moi-même en remettant main dans ma branche.
 
 ## Pour le lot SCÈNE (à relayer, merci)
 - `CompanionHome` monte **lui-même** `<CompanionScene>` quand il existe et que `companionSceneEnabled()` est vrai :

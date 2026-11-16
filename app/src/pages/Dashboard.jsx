@@ -190,6 +190,12 @@ export default function Dashboard({ view = 'home' }) {
       <header className="today-head">
         <h1 className="today-date">{day ? 'Ma journée' : head.date}</h1>
       </header>
+      {/* Refonte « Compagnon », étapes 8 et 10 : l'îlot (la scène 3D, montée par CompanionHome) et ses bulles. */}
+      {home && !loading && !error && (
+        <CompanionHome entries={entries} askGut={askGut} habits={habits}
+          wellbeing={firstWeekInputs.wellbeing} gut={firstWeekInputs.gut}
+          onWellbeing={() => { setWellbeingEntry(undefined); setWellbeingOpen(true) }} onHabit={answerHabit} />
+      )}
       {/* « Hier » : les habitudes de la veille restées sans réponse, en tête de liste (journee.SPEC § 10). */}
       {day && !error && <YesterdayHabits catchUp={catchUp} onAnswer={answerHabit} onSkip={skipCatchUp} />}
       {/* Refonte étape 3 : la checklist du jour, ce qu'il reste à noter et ce qui l'est déjà. */}
@@ -214,11 +220,6 @@ export default function Dashboard({ view = 'home' }) {
           cigaretteInStrip={!loading && shouldShowCigaretteCounter(entries)}
           onCountCigarettes={() => { setCigaretteCounterPinned(true); setCigaretteTick((t) => t + 1) }}
         />
-      )}
-      {home && !loading && !error && (
-        <CompanionHome entries={entries} askGut={askGut} habits={habits}
-          wellbeing={firstWeekInputs.wellbeing} gut={firstWeekInputs.gut}
-          onWellbeing={() => { setWellbeingEntry(undefined); setWellbeingOpen(true) }} onHabit={answerHabit} />
       )}
       {home && <PaymentIssueCard />}
       {home && <LaunchEndCard />}
