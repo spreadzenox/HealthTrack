@@ -97,6 +97,41 @@ describe('Dashboard', () => {
     expect(screen.queryByText(/Pas et nuits/)).not.toBeInTheDocument()
   })
 
+  it('UPG-1 : l’essai en cours sur la carte Agir ; remontée sous le bien-être les jours « avec »', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const now = new Date()
+    const key = (offset) => {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset)
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    }
+    const trial = (todayWith) => ({
+      id: 9, type: 'trial', source: 'app_trial', at: now.toISOString(),
+      payload: {
+        factor: { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, change: 30 },
+        direction: 'more', threshold: 450, startedAt: now.toISOString(),
+        schedule: [...Array(10)].map((_, i) => ({ date: key(i - 3), with: i === 3 ? todayWith : i % 2 === 0 })),
+      },
+    })
+    const steps = { id: 2, type: 'steps', source: 'health_connect', at: now.toISOString(), payload: { value: 4200, period: 'day' } }
+    listEntries.mockImplementation(async ({ type } = {}) => (type === 'trial' ? [trial(true)] : type ? [] : [steps]))
+    const { unmount } = renderDashboard()
+    const link = await screen.findByRole('link', { name: /Dormir au moins 7 h 30/ })
+    expect(link).toHaveAttribute('href', '/agir/essai/9')
+    expect(link).toHaveTextContent('Essai · jour 4 sur 10 · aujourd’hui, jour avec')
+    const wb = screen.getByRole('heading', { level: 2, name: 'Bien-être aujourd’hui' })
+    const data = await screen.findByRole('heading', { name: 'Vos données du jour' })
+    expect(wb.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(link.compareDocumentPosition(data) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    unmount()
+    // Un jour « sans » : la carte reste en bas, sous les données du jour
+    listEntries.mockImplementation(async ({ type } = {}) => (type === 'trial' ? [trial(false)] : type ? [] : [steps]))
+    renderDashboard()
+    const quiet = await screen.findByRole('link', { name: /Dormir au moins 7 h 30/ })
+    expect(quiet).toHaveTextContent('aujourd’hui, jour sans')
+    const data2 = await screen.findByRole('heading', { name: 'Vos données du jour' })
+    expect(data2.compareDocumentPosition(quiet) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
   it('Ma journée : le titre, puis le bandeau d’ajout ; ni bien-être du jour ni mesures (refonte étape 2)', async () => {
     renderDashboard('day')
     const title = screen.getByRole('heading', { level: 1, name: 'Ma journée' })
