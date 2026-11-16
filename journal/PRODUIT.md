@@ -387,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **16/11 06:30** — **#1032 (7b-2, chargement de l'exemple dans Tendances) mergée** vers 06:40 après 14 checks verts et les captures iPhone de Tendances. REFONTE-7c-2 (1) en PR : 110 lignes de CSS de l'ancien Journal retirées, rien ne change à l'écran. Restent 7c-2 (2, 3), 7b-2 (3) et 7a-2, puis Nunito.
 - **16/11 05:30** — REFONTE-7b-2 (2) en PR : pendant la visite, Tendances affiche le chargement le temps que l'exemple se calcule (3 à 6 s), au lieu de « Vos courbes apparaîtront après 3 jours ». **#1031 (7c) mergée** vers 05:35 après sa build iOS verte. Restent 7b-2 (3), 7c-2 et 7a-2, puis Nunito.
 - **16/11 04:30** — **#1030 (7b-2, exemple au petit matin) mergée** à 04:35. **Refonte, étape 7c, en PR (Android et iPhone)** : le code de l'ancien Journal (`Journal.jsx`, `DailyJournal.jsx`, `JournalEmpty.jsx`) est retiré ; rien ne change à l'écran (`/journal` mène toujours à Tendances › Jour). Restes : 7c-2 (CSS morte, VFC de l'app Santé dans le détail du jour, « Hier ») et 7b-2 (2, 3), puis Nunito.
 - **16/11 03:35** — **#1029 (étape 7b) mergée** (Android et iPhone, 14 checks verts, captures iPhone regardées), release v750. REFONTE-7b-2 (1) en PR : l'exemple de la visite ouvert tôt le matin garde ses saisies du jour dans l'ordre, à des heures distinctes. Restent 7b-2 (2, 3) et 7c avant Nunito.

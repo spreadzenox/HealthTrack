@@ -26,7 +26,7 @@
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **🧸 Refonte « Compagnon »** : étapes 1 à 6 et 7a faites sur Android et sur iPhone (6d mergée le 16/11 à 00:41 :
-score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b mergée le 16/11 à 03:32 (Données sur Tendances et Nutrition), 7c (retrait du code du Journal) mergée le 16/11 vers 05:35, petits restes de 7b en cours, puis Nunito, puis
+score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b mergée le 16/11 à 03:32 (Données sur Tendances et Nutrition), 7c (retrait du code du Journal) mergée le 16/11 vers 05:35, restes de 7b et 7c en cours (7b-2 (2) mergée à 06:40), puis Nunito, puis
 Pilou (8 à 13) et le double numérique (14 et 15). Les 15 étapes : [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le
 brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -60,6 +60,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 16/11 06:30 — [#1032 mergée, CSS morte du Journal](runs/2026-11-16-0630-merge-7b-2-css-journal.md) | 🛠️ | **#1032 mergée** (Tendances montre un chargement pendant que l'exemple de la visite se prépare) après 14 checks verts et les captures iPhone. Étape **7c-2 (1)** en PR : 110 lignes de mise en forme de l'ancien Journal retirées ; rien ne change à l'écran. Rien à faire de votre côté |
 | 16/11 05:30 — [7b-2 : chargement de l'exemple](runs/2026-11-16-0530-7b-2-chargement-exemple.md) | 🛠️ | Pendant la visite, Tendances montre un chargement le temps de préparer l'exemple (3 à 6 s) au lieu de « Vos courbes apparaîtront après 3 jours ». **#1031 (7c) mergée** après sa build iOS verte (captures iPhone de Tendances regardées), release **v752** (34,6 Mo). PR #1032 ouverte, à merger après sa build iOS. Rien à faire de votre côté |
 | 16/11 02:30 — [7b : garde-fou de lectures](runs/2026-11-16-0230-7b-budget-perf.md) | 🛠️ | Check « Budget de lectures » de la PR de 7b rouge : la mesure ouvrait encore `/journal`, devenu un renvoi vers Tendances › Jour. Garde-fou corrigé (Tendances › Jour mesurée sous son nom, avec son budget) ; rien ne change dans l'app. PR à merger après la build iOS. Rien à faire de votre côté |
 | 16/11 01:30 — [Refonte 7b : Données sur 2 onglets](runs/2026-11-16-0130-refonte-7b-donnees-deux-onglets.md) | 🛠️ | Données n'a plus que **Tendances et Nutrition** ; « Tous vos repas » depuis Nutrition ; l'ancienne adresse du Journal mène à Tendances › Jour ; visite guidée à jour. Android et iPhone dans la même PR, à merger après la build iOS. Rien à faire de votre côté |
