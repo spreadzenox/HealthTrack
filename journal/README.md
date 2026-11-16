@@ -26,7 +26,7 @@
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **🧸 Refonte « Compagnon »** : étapes 1 à 6 et 7a faites sur Android et sur iPhone (6d mergée le 16/11 à 00:41 :
-score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b mergée le 16/11 à 03:32 (Données sur Tendances et Nutrition), 7c (retrait du code du Journal) mergée le 16/11 vers 05:35, restes de 7b et 7c en cours (7b-2 (2) mergée à 06:40, 7c-2 (3) « Hier » en PR à 09:30), puis Nunito, puis
+score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b mergée le 16/11 à 03:32 (Données sur Tendances et Nutrition), 7c (retrait du code du Journal) mergée le 16/11 vers 05:35, 7c soldée (« Hier » dans Ma journée mergé vers 09:35), restes de captures 7a-2 et 7b-2 en PR à 10:30, puis Nunito, puis
 Pilou (8 à 13) et le double numérique (14 et 15). Les 15 étapes : [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le
 brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -60,6 +60,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 16/11 10:30 — [#1036 mergée, captures de Tendances](runs/2026-11-16-1030-7a-2-captures-tendances.md) | 🛠️ | **#1036 mergée** (Ma journée : carte « Hier » pour les habitudes restées sans réponse la veille), Android et iPhone. Restes 7a-2 et 7b-2 : les captures de l'iPhone montreront désormais un jour passé de Tendances et la visite guidée sur Tendances (PR ouverte, à merger après sa build iOS) ; côté Android, Tendances › Jour vérifié en grand texte, à 320 px et sur historique presque vide. Prochaine étape : la police Nunito et le fond crème. Rien à faire de votre côté |
 | 16/11 09:30 — [7c-2 : « Hier » dans Ma journée](runs/2026-11-16-0930-7c-2-hier.md) | 🛠️ | Ma journée repose en haut de l'écran les habitudes d'hier restées sans réponse (« Hier, dimanche », Oui / Non, « Passer »), une seule fois et seulement si vous répondiez encore la veille. Android et iPhone dans la même PR, à merger après la build iOS. Rien à faire de votre côté |
 | 16/11 08:30 — [« idées » : étape 7d préparée](runs/2026-11-16-0830-idees-7d-nunito.md) | 💡 | **#1034 mergée** (iPhone : la VFC de l'app Santé dans « Ce qui a pu peser ») après sa build iOS verte et la capture iPhone de Tendances. Étape **7d** (police Nunito et fond crème) préparée : mesures, contrastes, et captures avant/après de 4 écrans sur la vraie app ([fiche](maquettes/compagnon-etapes/ETAPE-7D-NUNITO.md)). iPhone : build **1107.1107** ajoutée aux testeurs externes et soumise à l'examen bêta d'Apple. Rien à faire de votre côté |
 | 16/11 07:30 — [7c-2 : VFC de l'app Santé](runs/2026-11-16-0730-7c-2-vfc-sante.md) | 🛠️ | iPhone : « Ce qui a pu peser ce jour-là » (Tendances › Jour) tient compte de la variabilité cardiaque de l'app Santé, comme l'ancien Journal (elle n'y apparaissait jamais). PR ouverte, à merger après sa build iOS ; **#1033 (CSS morte du Journal) mergée** après sa build iOS verte (captures iPhone de Tendances et Nutrition regardées). Rien à faire de votre côté |

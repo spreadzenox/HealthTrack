@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { buildPlan, MORE_ONBOARDING, ROUTES, EMPTY_ROUTES, EMPTY_SCROLLS, iphoneDemoEntries, runCaptureStep, STEP_KEY, probeHealthKit, probeGutEvening, probeEveningNote, probePortionReminder, probeDataRoundtrip, probeBackup, probeVoice, probeFace, probeFileImport, IMPORT_TEST_FILE, probeShareExport, probeShareReport, probeSnapshotWelcome, probeDeleteAll, waitForAck, watchRejections, lastSeenChangelogId, androidWords, pageText, healthSampleWindow, fakePhoneUsage, installPhoneUsageFake } from './captureMode'
+import { buildPlan, REVEALS, EMPTY_REVEALS, findButton, clickInOrder, prepare, MORE_ONBOARDING, ROUTES, EMPTY_ROUTES, EMPTY_SCROLLS, iphoneDemoEntries, runCaptureStep, STEP_KEY, probeHealthKit, probeGutEvening, probeEveningNote, probePortionReminder, probeDataRoundtrip, probeBackup, probeVoice, probeFace, probeFileImport, IMPORT_TEST_FILE, probeShareExport, probeShareReport, probeSnapshotWelcome, probeDeleteAll, waitForAck, watchRejections, lastSeenChangelogId, androidWords, pageText, healthSampleWindow, fakePhoneUsage, installPhoneUsageFake } from './captureMode'
 import { phoneUsageEntriesFromSegments, summarizeSegmentsDay } from './phoneUsageIos'
 import { summarizeSegmentsApps } from './phoneAppsIos'
 
@@ -944,5 +944,59 @@ describe('temps d’écran de démonstration (faux plugin PhoneUsage, I8)', () =
     expect(typeof target.__healthtrackFakePhoneUsage.queryUsageSegments).toBe('function')
     expect(JSON.parse(store.get('healthtrack_phone_usage')).enabled).toBe(true)
     expect(doc.dispatchEvent).toHaveBeenCalledWith(expect.objectContaining({ type: 'visibilitychange' }))
+  })
+})
+
+describe('Tendances › Jour › veille et visite guidée sur Tendances (REFONTE-7a-2, 7b-2)', () => {
+  const doc = (html) => {
+    const d = document.implementation.createHTMLDocument('t')
+    d.body.innerHTML = html
+    return d
+  }
+
+  it('plan : la veille en données de démo, la visite sur la base vide juste après vide-tendances', () => {
+    const plan = buildPlan(['/tendances'], [], {}, REVEALS, [], ['/tendances', '/food'], {}, [], EMPTY_REVEALS)
+    const names = plan.map((s) => s.name)
+    expect(names).toEqual(expect.arrayContaining(['demo-clair-tendances-jour-veille', 'vide-tendances-visite']))
+    expect(names.indexOf('vide-tendances-visite')).toBe(names.indexOf('vide-tendances') + 1)
+    const visite = plan.find((s) => s.name === 'vide-tendances-visite')
+    expect(visite).toMatchObject({ route: '/tendances', data: 'empty', onboarding: { done: true, endedBy: 'completed', justNow: true } })
+    expect(visite.reveal.onboarding).toBeUndefined()
+    expect(plan.find((s) => s.name === 'demo-clair-tendances-jour-veille').reveal.click).toEqual(['Jour', 'Jour précédent'])
+  })
+
+  it('bouton trouvé par son texte, son libellé d’accessibilité ou un motif', () => {
+    const d = doc('<button><span>Jour</span></button><button aria-label="Jour précédent">‹</button><button>Exemple au jour 14</button>')
+    expect(findButton(d, 'Jour').textContent).toBe('Jour')
+    expect(findButton(d, 'Jour précédent').textContent).toBe('‹')
+    expect(findButton(d, /^Exemple au jour \d+$/).textContent).toBe('Exemple au jour 14')
+    expect(findButton(d, 'Mois')).toBeUndefined()
+  })
+
+  it('les boutons sont touchés dans l’ordre ; les manquants sont rendus', async () => {
+    const d = doc('<button id="a">Jour</button><button id="b" aria-label="Jour précédent">‹</button>')
+    const order = []
+    d.getElementById('a').addEventListener('click', () => order.push('jour'))
+    d.getElementById('b').addEventListener('click', () => order.push('veille'))
+    const sleep = vi.fn(async () => {})
+    expect(await clickInOrder(d, ['Jour', 'Jour précédent', 'Mois'], sleep)).toEqual(['Mois'])
+    expect(order).toEqual(['jour', 'veille'])
+    expect(sleep).toHaveBeenCalledTimes(3)
+    expect(await clickInOrder(d, 'Jour', sleep)).toEqual([])
+  })
+
+  it('la visite garde l’accueil demandé (fini à l’instant) au lieu de celui des captures', async () => {
+    const store = new Map()
+    const localStorage = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, v) }
+    const step = buildPlan([], [], {}, {}, [], ['/tendances'], {}, [], EMPTY_REVEALS).find((s) => s.name === 'vide-tendances-visite')
+    const now = Date.parse('2026-11-16T10:00:00Z')
+    await prepare(step, { localStorage, latestChangelogId: 'x', now })
+    const saved = JSON.parse(store.get('healthtrack_onboarding'))
+    expect(saved).toMatchObject({ done: true, endedBy: 'completed', doneAt: '2026-11-16T10:00:00.000Z' })
+    expect(saved.justNow).toBeUndefined()
+    expect(store.get('healthtrack-whats-new-last-seen')).toBe('x')
+    // une page vide ordinaire garde l'accueil des captures
+    await prepare({ name: 'vide-food', route: '/food', data: 'empty', theme: 'light' }, { localStorage, latestChangelogId: 'x', now })
+    expect(JSON.parse(store.get('healthtrack_onboarding')).endedBy).toBe('capture')
   })
 })

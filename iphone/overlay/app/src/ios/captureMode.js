@@ -32,8 +32,37 @@ export const SCROLLS = { '/connectors': 2, '/data': 1, '/settings': 1, '/premium
 export const EMPTY_SCROLLS = { '/connectors': 1 }
 // Volets repliés à ouvrir puis capturer : bouton touché (`click`, texte exact), `<details>` ouvert (`open`, id),
 // élément amené en haut de l'écran (`target`, id)
+// `click` peut être une suite de boutons (texte exact, libellé d'accessibilité ou motif), touchés l'un après l'autre
 export const REVEALS = {
   '/connectors': [{ name: 'guides', click: 'Ajouter une source', open: 'guide-garmin', target: 'watch-guides-title' }],
+  // REFONTE-7a-2 : « Vos saisies » d'un jour passé (Tendances › Jour › veille), comme `--click="Jour > Jour précédent"`
+  // d'Android
+  '/tendances': [{ name: 'jour-veille', click: ['Jour', 'Jour précédent'] }],
+}
+// REFONTE-7b-2 (3) : la visite guidée sur Tendances, base vide et accueil fini à l'instant : « Voir un exemple »
+// relance la visite depuis cet écran (« Vos journées »), puis « Exemple au jour N » remplit le jour ; l'exemple attend
+// le calcul d'Analyses (3 à 6 s), d'où l'attente plus longue
+export const EMPTY_REVEALS = {
+  '/tendances': [{ name: 'visite', click: ['Voir un exemple', /^Exemple au jour \d+$/], settleMs: 8000,
+    onboarding: { flow: 3, done: true, endedBy: 'completed', goals: ['wellbeing'], goalsVersion: 2, tour: 'done', justNow: true } }],
+}
+
+/** Bouton dont le texte ou le libellé d'accessibilité est `label` (texte exact, ou motif). */
+export function findButton(doc, label) {
+  const matches = (s) => (label instanceof RegExp ? label.test(s) : s === label)
+  return [...doc.querySelectorAll('button')].find((b) => matches(b.textContent.trim()) || matches(b.getAttribute('aria-label') ?? ''))
+}
+
+/** Touche les boutons de `click` l'un après l'autre, chacun après le rendu du précédent. Rend les libellés manquants. */
+export async function clickInOrder(doc, click, sleep, pause = 800) {
+  const missing = []
+  for (const label of [].concat(click ?? [])) {
+    const button = findButton(doc, label)
+    if (button) button.click()
+    else missing.push(String(label))
+    await sleep(pause)
+  }
+  return missing
 }
 
 // Données de démo d'Android ramenées à ce que l'iPhone reçoit aujourd'hui (captures et fiche App Store fidèles) :
@@ -96,7 +125,7 @@ export const MORE_ONBOARDING = [
 ]
 
 export function buildPlan(routes = ROUTES, darkRoutes = DARK_ROUTES, scrolls = SCROLLS, reveals = REVEALS, moreOnboarding = [],
-  emptyRoutes = [], emptyScrolls = {}, subscribedRoutes = []) {
+  emptyRoutes = [], emptyScrolls = {}, subscribedRoutes = [], emptyReveals = {}) {
   const light = (route) => {
     const base = { name: `demo-clair-${pageName(route)}`, route, data: 'demo', theme: 'light' }
     const more = Array.from({ length: scrolls[route] || 0 }, (_, k) => ({ ...base, name: `${base.name}-${k + 2}`, scroll: k + 1 }))
@@ -110,7 +139,9 @@ export function buildPlan(routes = ROUTES, darkRoutes = DARK_ROUTES, scrolls = S
     ...moreOnboarding.map(([name, onboarding]) => ({ name: `vierge-onboarding-${name}`, route: '/bienvenue', data: null, theme: null, onboarding })),
     ...emptyRoutes.flatMap((route) => {
       const base = { name: `vide-${pageName(route)}`, route, data: 'empty', theme: 'light' }
-      return [base, ...Array.from({ length: emptyScrolls[route] || 0 }, (_, k) => ({ ...base, name: `${base.name}-${k + 2}`, scroll: k + 1 }))]
+      const opened = (emptyReveals[route] || []).map(({ onboarding, ...reveal }) =>
+        ({ ...base, name: `${base.name}-${reveal.name}`, reveal, ...(onboarding ? { onboarding } : {}) }))
+      return [base, ...Array.from({ length: emptyScrolls[route] || 0 }, (_, k) => ({ ...base, name: `${base.name}-${k + 2}`, scroll: k + 1 })), ...opened]
     }),
     ...routes.flatMap(light),
     ...subscribedRoutes.map((route) => ({ name: `demo-clair-${pageName(route)}-abonne`, route, data: 'demo', theme: 'light', subscribed: true })),
@@ -135,11 +166,13 @@ export function largeTextPlan(routes = LARGE_TEXT_ROUTES) {
   ]
 }
 
-async function prepare(step, { storage, demoEntries, latestChangelogId, localStorage }) {
-  if (step.onboarding) localStorage.setItem('healthtrack_onboarding', JSON.stringify(step.onboarding))
-  // Comme au sortir de l'onboarding : fait, Nouveautés vues
+export async function prepare(step, { storage, demoEntries, latestChangelogId, localStorage, now = Date.now() }) {
+  // `justNow` : accueil fini à l'instant (« Voir un exemple » n'est montré que les premiers jours)
+  const { justNow, ...asked } = step.onboarding ?? {}
+  if (step.onboarding) localStorage.setItem('healthtrack_onboarding', JSON.stringify(justNow ? { ...asked, doneAt: new Date(now).toISOString() } : asked))
+  // Comme au sortir de l'onboarding : fait, Nouveautés vues (l'accueil demandé par l'étape est gardé)
   const onboarded = () => {
-    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'capture', goal: null }))
+    if (!step.onboarding) localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'capture', goal: null }))
     if (latestChangelogId) localStorage.setItem('healthtrack-whats-new-last-seen', latestChangelogId)
   }
   if (step.data === 'empty') onboarded()
@@ -165,7 +198,7 @@ export async function runCaptureStep(plan, deps, { settleMs = 5000 } = {}) {
   }
   if (step.reveal) {
     await deps.reveal(step.reveal)
-    await wait(800)
+    await wait(step.reveal.settleMs ?? 800)
   }
   if (deps.readText) {
     const words = androidWords(deps.readText())
@@ -400,7 +433,7 @@ export async function installCaptureMode() {
     const file = { directory: Directory.Documents, encoding: Encoding.UTF8 }
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
     const largeText = textSizeAdjusted()
-    const plan = largeText ? largeTextPlan() : buildPlan(ROUTES, DARK_ROUTES, SCROLLS, REVEALS, MORE_ONBOARDING, EMPTY_ROUTES, EMPTY_SCROLLS, SUBSCRIBED_ROUTES)
+    const plan = largeText ? largeTextPlan() : buildPlan(ROUTES, DARK_ROUTES, SCROLLS, REVEALS, MORE_ONBOARDING, EMPTY_ROUTES, EMPTY_SCROLLS, SUBSCRIBED_ROUTES, EMPTY_REVEALS)
     const step = plan[Number(window.localStorage.getItem(STEP_KEY) ?? 0)]
     if (step?.data === 'demo') installPhoneUsageFake()
     if (needsBillingFake(step)) installBillingFake()
@@ -415,9 +448,10 @@ export async function installCaptureMode() {
         window.location.assign(path)
       },
       scroll: (screens) => window.scrollTo({ top: screens * Math.round(window.innerHeight * 0.8), behavior: 'instant' }),
-      reveal: async ({ click, open, target }) => {
-        ;[...document.querySelectorAll('button')].find((b) => b.textContent.trim() === click)?.click()
-        await sleep(800) // le volet s'affiche au rendu suivant
+      reveal: async ({ name, click, open, target }) => {
+        // chaque volet s'affiche au rendu suivant
+        const missing = await clickInOrder(document, click, sleep)
+        if (missing.length) console.log(`[capture] ${name} : bouton introuvable ${missing.join(', ')}`)
         document.getElementById(open)?.setAttribute('open', '')
         document.getElementById(target)?.scrollIntoView({ block: 'start', behavior: 'instant' })
       },
