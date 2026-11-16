@@ -1,5 +1,18 @@
 # Lot SCÈNE (étape 8 du brief : Compagnon 1a, et le socle commun)
 
+## ASSEMBLAGE — état au 17/11 00:45
+- **PR d'assemblage ouverte** (`claude/sprint-scene-4`), **empilée sur #1065 (SCÈNE 3) et sur #1058 (PILOU)** : à
+  merger après elles deux. Elle porte : les images fixes refaites avec le Pilou de PILOU (jour et nuit) ; l'étiquette
+  de l'Accueil (BULLES) qui dit « Pilou dort. Le reste peut attendre demain. » quand MONDE dit qu'il dort.
+- Vérifié sur main (BULLES, VIE, PHOTO mergés) + SCÈNE 3 + PILOU : 3 933 tests verts, lint propre ; Accueil complet
+  (vrai Pilou, bulles, jauge, cadeau du jour, ciel jour / soir / nuit, thème sombre, historique vide) sans erreur JS —
+  `journal/runs/captures/2026-11-16-sprint-scene-assemblage-accueil.png`.
+- Rencontres déjà réglées par les lots eux-mêmes : CSS de la scène (BULLES l'importe statiquement), VIE × STUDIO
+  (STUDIO pas encore mergé : à lui de garder les deux à l'export/import, cf. ci-dessous).
+- Reste à vérifier quand STUDIO et MONDE 3 seront sur main : fiche du Studio appliquée sur Pilou dans la scène ;
+  parcours de mise à jour depuis une version d'avant la refonte ; captures de main des deux côtés ; palier choisi sur
+  le job Android 9 et le simulateur.
+
 ## ASSEMBLAGE (confié par l'orchestrateur à 22:40) — essai local du 16/11 22:45
 Fusion locale de main + scene-3 + PILOU #1058 + MONDE #1057 + VIE #1060 + BULLES #1056 + STUDIO #1052 + PHOTO #1050 :
 lint propre, **3 980 tests verts, 1 rouge à la rencontre**. Rendu de l'Accueil complet : vrai Pilou de PILOU, bulles,
