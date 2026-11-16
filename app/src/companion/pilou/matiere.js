@@ -79,7 +79,7 @@ export function makeMatiere(THREE, makeCanvas) {
       let f = sh.fragmentShader
       v = v.replace('#include <common>', '#include <common>\n' + (o.vDecl || ''))
       f = f.replace('#include <common>', '#include <common>\n' + NOISE + (o.sss ? SSS_DECL : '') + (o.fDecl || ''))
-      if (o.sss && physOk) f = f.replace('#include <lights_physical_pars_fragment>', PHYS)
+      if (false) f = f.replace('#include <lights_physical_pars_fragment>', PHYS)
       for (const [a, b] of o.vrep || []) v = v.replace(a, b)
       for (const [a, b] of o.frep || []) f = f.replace(a, b)
       sh.vertexShader = v
