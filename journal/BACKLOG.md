@@ -362,7 +362,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       une fonction à coder sans accord). « Gêne » qui ne reste pas cochée : traité par UPG-4 (#1045).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 16/11 à 23:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
-  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) ; le reste en PR.
+  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) et #1056 (BULLES, ed1fa08, 23:52) ; le reste en PR.
   - ASSEMBLAGE (confié au lot SCÈNE par l'orchestrateur à 22:40, `claude/sprint-scene-3`) : fusion locale de main et
     des 7 PR → lint propre, 3 980 tests verts, 1 rouge (`bundleGuard.test.js` : `companion/CompanionScene.css` à
     importer dans `app/src/pageStyles.js`, une ligne, dans la PR d'assemblage ou #1056). Conflits connus et leur
@@ -377,7 +377,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - PILOU (9) : #1058 (corps verni, yeux de la créature, 12 expressions, ΔE menthe 2,8 moyen / 3,8 max dans la scène,
     9 050 triangles) ; petits Pilou pré-rendus (12 × 218×240 webp, `pilouSprite`) pour VIE et MONDE. Branche 2 : petits
     effets des expressions, yeux fermés en trait.
-  - BULLES (10) : #1056 (conflit avec #1053 résolu à 22:40, build iOS relancée ; bulles-boutons, Humeur du jour à plancher, fleurs, « Jour N sur 7 », 7 cadeaux) ; branche 2 :
+  - BULLES (10) : **#1056 mergée** (23:52 ; la scène est importée directement, son CSS reste chargé d'emblée ; bulles-boutons, Humeur du jour à plancher, fleurs, « Jour N sur 7 », 7 cadeaux) ; branche 2 :
     lucioles la nuit, jour 14, bandeau au défilement. Résolution convenue avec SCÈNE dans `Dashboard.jsx` : garder
     `<CompanionHome …>` seule (elle monte la scène).
   - VIE (11, 12) : **#1060** (réunit #1051 et #1054, fermées : Ma journée, rencontre et nom, cérémonie du jour 7, Pilou
