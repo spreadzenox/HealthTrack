@@ -21,7 +21,17 @@
   iPhone (événement `scene:ready` / `scene:quality`, ou `data-quality` de `.companion-scene`).
 
 ## PR
-- PR 1 : `[Sprint SCÈNE] Pilou sur son île : scène 3D de l'Accueil (étape 8)` (voir la liste des PR).
+- PR 1 : #1053 `[Sprint SCÈNE] Pilou sur son île : contrat du compagnon et scène 3D de l'Accueil (étape 8)` — CI en cours.
+- Branche 2 (`claude/sprint-scene-2`, partie de la 1, PR après le merge de #1053) : les 7 cadeaux en 3D
+  (`scene/gifts.js` : arbuste, lanterne qui s'allume le soir, écharpe sur Pilou, galets, papillon sur la perle,
+  nuage, arc-en-ciel grand au jour 7 puis petit au-dessus du nuage), boîte de la cérémonie (`gift:opened`), météo de
+  l'île (`weather:changed` émis depuis la météo déjà gardée — bloc `current` du lot MONDE s'il a moins de 3 h, sinon
+  estimation depuis la journée ; pluie et neige en particules, accessoire de Pilou), herbe plus claire.
+
+## Accord avec BULLES (lu dans LOT-BULLES, 21:15)
+- D'accord : `CompanionHome` monte lui-même `<CompanionScene>` ; au second merge, garder la ligne `<CompanionHome …>`
+  seule dans `Dashboard.jsx`. Le canevas n'arrête jamais la propagation des `pointerdown`.
+- `stage.reducedMotion` suit aussi le réglage au palier bas (corrigé sur la branche 2).
 
 ## Pour l'intégrateur (BACKLOG, PRODUIT, PARITE)
 - Étape 8 du § 10 : livrée par la PR 1 (Pilou encore simple, comme le prévoit le brief).
@@ -33,6 +43,5 @@
 - MONDE : `app/src/companion/world/index.js` (CONTRAT § 5). D'ici là, heure dorée fixe.
 
 ## Reste à faire dans mon lot
-- Cérémonie des cadeaux en 3D (`gift:opened`, `gift:placed`) et accessoires posés sur l'île.
-- Météo réelle → `weather:changed` (lecture de la météo de l'app) relayée au décor de MONDE.
-- Réglage visible des mouvements réduits dans Réglages › Pilou (si aucun autre lot ne fait la page).
+- Réglage visible des mouvements réduits dans Réglages › Pilou : `companion/motion.js` est prêt
+  (`setReducedMotionSetting('auto'|'on'|'off')`) ; je le branche si aucun autre lot ne fait la page.
