@@ -15,7 +15,9 @@
   guidée, mergée le 16/11 ; 7c, le retrait du code du Journal, mergée le 16/11). À chaque étape : une base d'avant la refonte et une ancienne
   sauvegarde ouvertes sans perte, visite guidée à jour. La police Nunito et le fond crème (7d, mergée le 16/11 vers 12:50).
 - **Pas prêt le 22/11** : Pilou en 3D et son île (étapes 8 à 13), le double numérique (14 et 15).
-- **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs.
+- **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs
+  (outil du parcours « mise à jour » prêt le 16/11 ; à corriger d'abord : l'essai en cours visible depuis l'Accueil et
+  le bandeau Nouveautés qui doit annoncer la nouvelle navigation, UPG-1 et UPG-2).
 
 **Où en est Halcya**
 
@@ -60,6 +62,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 16/11 15:30 — [Personas : parcours « mise à jour »](runs/2026-11-16-1530-personas-mise-a-jour.md) | 🛠️ | L'outil de simulation rejoue maintenant un testeur qui avait la version d'avant la refonte (anciens objectifs « sport » et « cycle », essai en cours, aucune habitude). Premier passage : rien de perdu, l'essai est intact. Deux défauts notés : l'essai en cours ne se voit plus depuis l'Accueil, et le bandeau Nouveautés met en avant la police plutôt que la nouvelle navigation. #1041 attend toujours sa build iPhone. Rien à faire de votre côté |
 | 16/11 14:30 — [7d-4 : derniers chevrons en icône](runs/2026-11-16-1430-7d-4-chevrons.md) | 🛠️ | Dans Objectifs, « Ce qui va avec votre bien-être » et les familles (Sommeil, Alimentation…) finissent par une flèche nette au lieu d'un « › » rapetissé par Nunito. Android et iPhone dans la même PR, à merger après la build iOS. Main vert (v758). Rien à faire de votre côté |
 | 16/11 13:30 — [#1039 mergée, fiche Play en Nunito](runs/2026-11-16-1330-merge-1039-fiche-play.md) | 🛠️ | **#1039 mergée** (flèches des listes en icône) après 14 checks verts, captures iPhone Accueil et Réglages regardées en clair et en sombre. **7d-3** : les 6 captures et l'image de la fiche Play refaites (Nunito, fond crème, 4 onglets) ; elles partiront avec l'envoi du soir de la fiche. Release v756 publiée (34,8 Mo). |
 | 16/11 12:30 — [#1038 mergée : Nunito et fond crème](runs/2026-11-16-1230-merge-7d-chevron.md) | 🛠️ | **#1038 mergée** après 15 checks verts, build iOS comprise (captures iPhone regardées : Nunito et fond crème en clair, sombre inchangé). **Votre app passe à la police Nunito sur fond crème**, Android et iPhone. 7d-2 en PR : les flèches « › » des cartes Agir et Réglages, devenues minuscules avec Nunito, redeviennent nettes. Rien à faire de votre côté |

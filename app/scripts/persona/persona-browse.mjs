@@ -8,6 +8,9 @@
  *   node scripts/persona/persona-browse.mjs --day=14 --equipment=watch --port=7801 --out=/tmp/sim-1 [--dark] [--sideload]
  *     [--goals=care,stress]   objectifs cochés à l'accueil (jour > 1 ; au jour 1 l'agent les choisit lui-même) :
  *                             gut, cycle, stress, sport, care, all (POLISH-SIM-7)
+ *     [--legacy]              mise à jour depuis la version des testeurs d'avant la refonte (jour > 1) : accueil
+ *                             d'alors (objectifs de --goals, ex. sport,cycle, sans version d'objectifs), Nouveautés
+ *                             vues jusqu'au 14/11, un essai d'Agir en cours ; aucune habitude
  *     [--notes=few]           profil de saisie : full (défaut) ou few (persona pressée, presque rien de noté)
  *     [--source=Zepp]         app qui écrit dans Health Connect, selon le téléphone ou la montre tirés (Pixel : « Google Fit » ;
  *                             Amazfit : Zepp ; Xiaomi : Mi Fitness) ; défaut selon --equipment (Samsung Health, Fitbit…)
@@ -32,7 +35,7 @@ import { createRequire } from 'node:module'
 import { execSync } from 'node:child_process'
 import { generateDemoEntries } from '../visual/demoData.mjs'
 import { gotoRoute } from '../visual/navigate.mjs'
-import { personaEntries } from './personaData.mjs'
+import { personaEntries, legacyLastSeen, legacyOnboarding, legacyTrial } from './personaData.mjs'
 
 const APP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const args = Object.fromEntries(process.argv.slice(2).map((a) => {
@@ -41,6 +44,7 @@ const args = Object.fromEntries(process.argv.slice(2).map((a) => {
 }))
 const day = Number(args.day || 14)
 const equipment = String(args.equipment || 'phone')
+const legacy = Boolean(args.legacy)
 const goals = args.goals ? String(args.goals).split(',').filter(Boolean) : []
 const notes = String(args.notes || 'full')
 const port = Number(args.port || 7801)
@@ -89,7 +93,8 @@ await context.addInitScript(() => {
 })
 // --dark : le thème de l'app est un réglage (clair par défaut), pas le schéma du téléphone (POLISH-SIM-81b)
 if (args.dark) await context.addInitScript(() => { localStorage.setItem('healthtrack_theme', 'dark') })
-const latestId = readdirSync(join(APP_DIR, 'src/data/changelog')).filter((f) => f.endsWith('.json')).sort().pop().replace(/\.json$/, '')
+const changeIds = readdirSync(join(APP_DIR, 'src/data/changelog')).filter((f) => f.endsWith('.json')).map((f) => f.replace(/\.json$/, '')).sort()
+const latestId = legacy ? legacyLastSeen(changeIds) : changeIds.at(-1)
 // Jour 1 : premier lancement, l'onboarding s'ouvre ; sinon il a été fait le jour de l'installation.
 // Au jour 1, les 30 jours importés sont déjà dans la base : sans marque, l'app y verrait quelqu'un qui a déjà des
 // données (`needsOnboarding` → « existing ») et sauterait l'accueil (artefact des J1 du 08/11). On marque donc
@@ -102,22 +107,24 @@ if (day === 1) {
   })
 }
 if (day > 1) {
-  await context.addInitScript(({ doneAt, latestId, goals, mealConsent }) => {
+  await context.addInitScript(({ doneAt, latestId, goals, mealConsent, onboarding }) => {
     if (!localStorage.getItem('healthtrack_onboarding')) {
       // Une persona qui note ses repas depuis des jours a déjà accepté l'analyse par l'IA (POLISH-SIM-78)
       if (mealConsent) localStorage.setItem('halcya_ai_meal_consent', '1')
-      localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'completed', doneAt, step: 6, maxStep: 6, goals, flow: 2 }))
+      localStorage.setItem('healthtrack_onboarding', JSON.stringify(onboarding || { done: true, endedBy: 'completed', doneAt, step: 6, maxStep: 6, goals, flow: 2 }))
       // L'onboarding marque toutes les Nouveautés comme lues : pas de « 258 autres changements » (artefact du 08/11)
       localStorage.setItem('healthtrack-whats-new-last-seen', latestId)
       // Météo activée à l'accueil (personaData garde ses jours) : Sources la dit « activée » (POLISH-SIM-45)
       localStorage.setItem('healthtrack_weather', JSON.stringify({ enabled: true, location: { lat: 48.9, lon: 2.3, name: 'Paris' }, lastSyncAt: new Date().toISOString(), today: { date: new Date().toISOString().slice(0, 10), tempMaxC: 12, tempMinC: 5, precipMm: 0, sunshineH: 3, pressureHpa: 1016, pressureChangeHpa: null, aqi: 22, pollen: {}, pollenMax: 0 } }))
     }
-  }, { doneAt: new Date(Date.now() - (day - 1) * 86400000).toISOString(), latestId, goals, mealConsent: notes === 'full' })
+  }, { doneAt: new Date(Date.now() - (day - 1) * 86400000).toISOString(), latestId, goals, mealConsent: notes === 'full',
+    onboarding: legacy ? legacyOnboarding({ goals, doneAt: new Date(Date.now() - (day - 1) * 86400000).toISOString() }) : null })
 }
 const page = await context.newPage()
 await page.goto(base, { waitUntil: 'load' })
 const sourceName = args.source ? String(args.source) : undefined
 const entries = personaEntries(generateDemoEntries(), { day, equipment, notes, goals, sourceName })
+  .concat(legacy && day > 1 ? [legacyTrial()] : [])
 await page.evaluate(async (list) => {
   await new Promise((res) => { const q = indexedDB.deleteDatabase('HealthTrack'); q.onsuccess = q.onerror = q.onblocked = () => res() })
   if (list.length) await (await import('/src/storage/localHealthStorage.js')).upsertEntries(list)

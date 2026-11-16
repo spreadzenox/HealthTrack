@@ -182,3 +182,30 @@ describe('personaEntries', () => {
     expect(() => keepForEquipment({ type: 'sleep' }, 'tablette')).toThrow(/inconnu/)
   })
 })
+
+describe('legacy (mise à jour depuis la version des testeurs d\'avant la refonte)', () => {
+  it('un essai de 10 jours en cours, commencé il y a 4 jours, au format de l\'app', async () => {
+    const { legacyTrial } = await import('./personaData.mjs')
+    const t = legacyTrial({ now })
+    expect(t.type).toBe('trial')
+    expect(t.source).toBe('app_trial')
+    expect(t.payload.schedule).toHaveLength(10)
+    expect(t.payload.schedule.filter((d) => d.with)).toHaveLength(5)
+    expect(t.payload.schedule[0].date).toBe('2026-11-05')
+    expect(t.payload.endedAt).toBeNull()
+    expect(Object.keys(t.payload.answers).length).toBeGreaterThan(0)
+  })
+
+  it('les Nouveautés vues sont celles d\'avant la refonte (15/11 04:35)', async () => {
+    const { legacyLastSeen } = await import('./personaData.mjs')
+    expect(legacyLastSeen(['2026-11-14-2335-a', '2026-11-15-0435-refonte-navigation', '2026-11-16-1230-b'])).toBe('2026-11-14-2335-a')
+  })
+
+  it('l\'accueil d\'avant : objectifs « sport » et « cycle », sans version d\'objectifs', async () => {
+    const { legacyOnboarding } = await import('./personaData.mjs')
+    const s = legacyOnboarding({ goals: ['sport', 'cycle'], doneAt: '2026-11-01T10:00:00.000Z' })
+    expect(s.done).toBe(true)
+    expect(s.goals).toEqual(['sport', 'cycle'])
+    expect(s.goalsVersion).toBeUndefined()
+  })
+})
