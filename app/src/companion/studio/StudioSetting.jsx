@@ -3,12 +3,12 @@
  * compagnon n'est pas visible (`studioEnabled`).
  */
 import { Link } from 'react-router-dom'
-import { bus } from '../bus'
+import { nomDePilou } from './nom'
 import { studioEnabled } from './flag'
 
 export default function StudioSetting({ enabled = studioEnabled() }) {
   if (!enabled) return null
-  const nom = bus.last('pilou:named')?.name || 'Pilou'
+  const nom = nomDePilou()
   return (
     <div className="settings-block">
       <h3 className="section-title">Apparence de {nom}</h3>

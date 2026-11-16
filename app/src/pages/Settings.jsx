@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import CompanionNameSetting from '../companion/life/CompanionNameSetting'
 import { APP_NAME } from '../config/brand'
 import { Link } from 'react-router-dom'
 import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
@@ -202,6 +203,8 @@ export default function Settings() {
         </div>
       </div>
 
+      {/* Lot VIE (étape 12) : le nom du compagnon */}
+      <CompanionNameSetting />
       <StudioSetting />
 
       {/* Jalon 9 : caché tant que l'anglais n'est pas complet (interrupteur de build VITE_I18N_EN) */}

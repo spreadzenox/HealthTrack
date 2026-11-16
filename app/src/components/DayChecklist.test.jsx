@@ -68,8 +68,8 @@ describe('DayChecklist (refonte étape 3)', () => {
 
   it('tout est noté : « Plus rien à faire », sans liste de tâches', () => {
     show({ entries: [meal(8, 'Tartines'), meal(13, 'Salade'), meal(19, 'Soupe'), note, bilan], askGut: true, now: EVENING })
-    expect(screen.getByRole('heading', { name: 'Plus rien à faire' })).toBeInTheDocument()
-    expect(screen.getByText('Tout est noté pour aujourd’hui.')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Plus rien à faire, bravo !' })).toBeInTheDocument()
+    expect(screen.getByText('Tout est noté pour aujourd’hui. Pilou garde vos bulles jusqu’à demain.')).toBeInTheDocument()
     expect(screen.queryByText(/Encore/)).not.toBeInTheDocument()
     expect(screen.queryByRole('group', { name: 'Repas' })).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Déjà noté (5)' }))

@@ -1,0 +1,64 @@
+/* Bannière de Pilou dans Ma journée (lot VIE ; specs/journee.SPEC.md § 1). Hublot rond au ciel abricot, mauve-pêche
+   après 19 h ; la phrase en gras, deux lignes au plus. */
+.pilou-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 80px;
+  margin: 0 0 14px;
+  padding: 8px 16px 8px 8px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: 0 1px 0 var(--life-hairline);
+}
+
+.pilou-porthole {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 30%, var(--life-sky-1) 0%, var(--life-sky-2) 58%, var(--life-sky-haze) 100%);
+  overflow: hidden;
+}
+.pilou-banner.is-evening .pilou-porthole {
+  background: radial-gradient(circle at 50% 30%, var(--life-dusk-1) 0%, var(--life-dusk-2) 60%, var(--life-dusk-3) 100%);
+}
+.pilou-porthole .pilou-figure { margin-top: 10px; }
+
+.pilou-banner-text { min-width: 0; flex: 1; }
+
+.pilou-says {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.97rem;
+  font-weight: 800;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pilou-sub,
+.pilou-remaining {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.pilou-sub { animation: pilou-sub-in 320ms cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes pilou-sub-in { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .pilou-sub { animation: none; } }
+
+/* Fin de journée (SPEC § 8) : Pilou fête une fois, sobrement ; à partir de 21 h, il dort. */
+.day-finished-pilou { display: block; margin: 0 auto 6px; }
+.day-finished.is-night { background: linear-gradient(180deg, var(--life-night-top) 0%, var(--life-night-bottom) 100%); color: var(--life-night-ink); }
+.day-finished.is-night .day-finished-title,
+.day-finished.is-night .day-finished-text { color: var(--life-night-ink); }

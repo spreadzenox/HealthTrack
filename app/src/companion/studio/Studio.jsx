@@ -13,7 +13,7 @@ import {
 import { isReducedMotion } from '../motion'
 import { loadFiche, saveFiche, resetFiche } from './fiche'
 import { dessinerPilou } from './apercu2d'
-import { bus } from '../bus'
+import { nomDePilou } from './nom'
 
 const ONGLETS = [
   { id: 'cheveux', label: 'Cheveux', icone: '〰', champs: ['cheveux.longueur', 'cheveux.texture', 'cheveux.coiffure', 'cheveux.couleur', 'cheveux.meches', 'cheveux.volume'] },
@@ -95,7 +95,7 @@ function Apercu({ fiche, description, anim }) {
 }
 
 export default function Studio() {
-  const nom = bus.last('pilou:named')?.name || 'Pilou'
+  const nom = nomDePilou()
   const [pret, setPret] = useState(false)
   const [brouillon, setBrouillon] = useState(null)
   const [onglet, setOnglet] = useState('cheveux')

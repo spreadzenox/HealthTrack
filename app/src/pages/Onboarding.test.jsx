@@ -23,6 +23,7 @@ import { getHabits, setHabits } from '../settings/habits'
 import { stepsFor, TEMPS, AUTO_TILES, dailyNotes, dailySummary } from '../services/onboardingFlow'
 import { CHANGELOG } from '../data/changelog'
 import { getLastSeenId } from '../services/whatsNew'
+import { markMet, wearsWatch } from '../companion/life/companionState'
 
 function renderAt() {
   return render(
@@ -42,6 +43,12 @@ const heading = (name) => screen.getByRole('heading', { name })
 const at = (lastScreen, extra = {}) => saveOnboarding({ flow: FLOW_VERSION, lastScreen, ...extra })
 const check = (name) => screen.getByRole('checkbox', { name })
 const radio = (name) => screen.getByRole('radio', { name })
+/** La rencontre (lot VIE) : passer l'éclosion, garder « Pilou », continuer. */
+const meetPilou = () => {
+  fireEvent.click(btn('Passer'))
+  fireEvent.click(btn('Valider'))
+  fireEvent.click(btn('Continuer'))
+}
 
 describe('Accueil en 4 temps (refonte étape 5b) : le parcours', () => {
   beforeEach(() => {
@@ -51,7 +58,7 @@ describe('Accueil en 4 temps (refonte étape 5b) : le parcours', () => {
 
   it('écrans : ouverture, puis les 4 temps (sideload, sans visage ni Gold)', () => {
     expect(TEMPS).toEqual(['goal', 'watch', 'auto', 'notes'])
-    expect(stepsFor()).toEqual(['intro', 'goal', 'watch', 'auto', 'notes'])
+    expect(stepsFor()).toEqual(['intro', 'meet', 'goal', 'watch', 'auto', 'notes'])
   })
 
   it('une seule carte d’ouverture : bienvenue et ce qui quitte le téléphone ; ni compteur, ni retour, ni « Passer »', () => {
@@ -72,12 +79,16 @@ describe('Accueil en 4 temps (refonte étape 5b) : le parcours', () => {
     // la carte des onglets (« Agir » n'est plus un onglet) a disparu
     expect(onboardingSource).not.toContain('Trois usages')
     fireEvent.click(btn('Commencer'))
+    // Lot VIE : la rencontre de Pilou, puis le temps 1
+    expect(screen.getByText('Bonjour !')).toBeInTheDocument()
+    meetPilou()
     expect(heading('Qu’est-ce qui vous amène ?')).toBeInTheDocument()
   })
 
   it('parcours complet sans rien toucher : aucun écran ne bloque, aucune saisie créée, bien-être seul, méditation proposée', async () => {
     renderAt()
     fireEvent.click(btn('Commencer'))
+    meetPilou()
     expect(screen.getByText('1 sur 4')).toBeInTheDocument()
     fireEvent.click(btn('Continuer'))
     expect(heading('Avez-vous une montre ou un bracelet ?')).toBeInTheDocument()
@@ -110,7 +121,7 @@ describe('Accueil en 4 temps (refonte étape 5b) : le parcours', () => {
 
   it('note les écrans vus pour le diagnostic local (I156)', () => {
     renderAt()
-    expect(loadOnboarding()).toMatchObject({ seen: ['intro'], lastScreen: 'intro', screens: 5 })
+    expect(loadOnboarding()).toMatchObject({ seen: ['intro'], lastScreen: 'intro', screens: 6 })
   })
 
   it('installation neuve : l’historique des nouveautés est déjà « lu » (VC-5)', () => {
@@ -118,11 +129,30 @@ describe('Accueil en 4 temps (refonte étape 5b) : le parcours', () => {
     expect(getLastSeenId()).toBe(CHANGELOG[0].id)
   })
 
-  it('le retour du temps 1 ramène à l’ouverture', () => {
-    at('goal', { step: 1 })
+  it('le retour du temps 1 ramène à la rencontre, puis à l’ouverture', () => {
+    at('goal', { step: 2 })
     renderAt()
     fireEvent.click(btn('Retour'))
+    fireEvent.click(btn('Retour'))
     expect(heading('Bienvenue dans Halcya')).toBeInTheDocument()
+  })
+
+  it('Pilou déjà rencontré (accueil repris) : pas de seconde rencontre', () => {
+    markMet('onboarding', { name: 'Bulle' })
+    expect(stepsFor()).toEqual(['intro', 'goal', 'watch', 'auto', 'notes'])
+  })
+
+  it('Pilou suit les temps : le ventre, la montre', () => {
+    at('goal', { step: 2 })
+    renderAt()
+    fireEvent.click(check(/Confort digestif/))
+    expect(screen.getByText('La digestion aussi : c’est noté.')).toBeInTheDocument()
+    fireEvent.click(btn('Continuer'))
+    fireEvent.click(radio('Oui'))
+    expect(screen.getByText('Une montre ? Moi aussi !')).toBeInTheDocument()
+    expect(wearsWatch()).toBe(true)
+    fireEvent.click(radio('Non, pas pour l’instant'))
+    expect(wearsWatch()).toBe(false)
   })
 })
 

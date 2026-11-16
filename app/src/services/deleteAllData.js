@@ -39,6 +39,7 @@ export const KEPT_KEYS = [
   'healthtrack_huawei_secrets',
   'healthtrack_gemini_api_key',
   'halcya_install_id',
+  'halcya_companion',
   'halcya_entitlement',
   'halcya_purchase_token',
   'halcya_ai_credits',

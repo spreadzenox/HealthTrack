@@ -18,6 +18,7 @@ beforeEach(() => {
   globalThis.indexedDB = new IDBFactory()
   __resetFicheCacheForTests()
   bus.clear()
+  localStorage.clear()
 })
 
 describe('Studio Pilou', () => {
@@ -85,7 +86,8 @@ describe('Studio Pilou', () => {
   })
 
   it('prend le nom choisi pour Pilou', async () => {
-    bus.emit('pilou:named', { name: 'Galet' })
+    const { setCompanionName } = await import('../life/companionState')
+    setCompanionName('Galet')
     monter()
     expect(await screen.findByRole('heading', { name: 'Studio Galet' })).toBeInTheDocument()
   })
