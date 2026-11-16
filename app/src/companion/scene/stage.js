@@ -7,6 +7,8 @@ import * as THREE from 'three'
 import { CAMERA } from './camera'
 import { createIsland } from './island'
 import { createFlowerBed } from './flowers'
+import { createGifts } from './gifts'
+import { createWeatherFx } from './weatherFx'
 import { createPlaceholderPilou } from './placeholderPilou'
 import { GOLDEN, directionOf, normalizeLight } from './light'
 import { TIER_SETTINGS, pixelRatioFor } from './quality'
@@ -79,9 +81,11 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
   scene.add(sun, fill, hemi)
   fill.position.set(0.55, 0.5, 0.67).multiplyScalar(8)
 
+  let gifts = null
   let light = normalizeLight(initialLight || GOLDEN)
   function applyLight(next) {
     light = normalizeLight(next)
+    gifts?.setEvening(light.phase === 'soir' || light.phase === 'nuit' ? 1 : 0)
     sun.color.set(light.sun.color)
     sun.intensity = light.sun.intensity
     sun.position.set(...directionOf(light.sun.elevationDeg, light.sun.azimuthDeg)).multiplyScalar(8)
@@ -107,6 +111,12 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
   let pilou = make(THREE, { quality: tier, reducedMotion, seed: 3, envMap: scene.environment, traits: null, now: () => new Date() })
   world.add(pilou.object3d)
   pilou.object3d.position.z = 0.02
+  gifts = createGifts({ topY: island.topY, pilou: () => pilou, reducedMotion })
+  world.add(gifts.group)
+  const weather = createWeatherFx()
+  weather.setReducedMotion(reducedMotion)
+  scene.add(weather.group)
+  gifts.setEvening(light.phase === 'soir' || light.phase === 'nuit' ? 1 : 0)
 
   // poussières lentes dans la lumière (palier haut seulement)
   let dust = null
@@ -130,7 +140,7 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
     // le monde flotte de ±0,045 (6,9 s)
     world.position.y = rm ? 0 : 0.045 * Math.sin((t / 6900) * Math.PI * 2)
     pilou.update(t, 0)
-    const growing = flowers.update(t)
+    const growing = flowers.update(t) | gifts.update(t) | weather.update(t)
     if (dust && !rm) {
       dust.rotation.y = t / 90000
       dust.position.y = 0.05 * Math.sin(t / 5000)
@@ -156,16 +166,28 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
       pilou.dispose?.()
       pilou = next
       world.add(pilou.object3d)
+      pilou.object3d.position.z = 0.02
+      if (gifts.has('echarpe')) pilou.setAccessory?.('echarpe', true)
     },
     applyLight,
     get light() {
       return light
     },
     flowers,
+    gifts,
+    /** Décor météo (sortie de `weatherDecor`) : particules et accessoire de Pilou. */
+    setWeather(decor) {
+      weather.set(decor)
+      for (const acc of ['parapluie', 'eventail']) pilou.setAccessory?.(acc, decor?.accessory === acc)
+      if (decor?.accessory === 'echarpe') pilou.setAccessory?.('echarpe', true)
+      else if (!gifts.has('echarpe')) pilou.setAccessory?.('echarpe', false)
+    },
     setReducedMotion(value) {
       rm = Boolean(value)
       pilou.setReducedMotion?.(rm)
       flowers.setReducedMotion(rm)
+      gifts.setReducedMotion(rm)
+      weather.setReducedMotion(rm)
     },
     resize(w, h) {
       renderer.setSize(w, h, false)

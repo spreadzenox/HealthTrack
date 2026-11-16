@@ -17,6 +17,8 @@ import { moodWord, moodExpression, webglAvailable } from './mood'
 import { createLoop } from './scene/loop'
 import { createGestureRecognizer } from './scene/gestures'
 import { GOLDEN } from './scene/light'
+import { weatherNow } from './scene/weatherNow'
+import { getWeatherSettings } from '../services/weatherSync'
 import fallbackUrl from './scene/fallback.webp'
 import './CompanionScene.css'
 
@@ -46,6 +48,8 @@ export default function CompanionScene({
 }) {
   const systemReduced = useReducedMotion()
   const reducedMotion = reducedProp ?? systemReduced
+  const reducedRef = useRef(reducedMotion)
+  reducedRef.current = reducedMotion
   const wrapRef = useRef(null)
   const canvasRef = useRef(null)
   const stageRef = useRef(null)
@@ -99,7 +103,7 @@ export default function CompanionScene({
       width: { get: () => sizeRef.current.width, enumerable: true },
       height: { get: () => sizeRef.current.height, enumerable: true },
       quality: { get: () => stageRef.current?.tier ?? 'bas', enumerable: true },
-      reducedMotion: { get: () => Boolean(stageRef.current?.reducedMotion), enumerable: true },
+      reducedMotion: { get: () => Boolean(stageRef.current ? stageRef.current.reducedMotion : reducedRef.current), enumerable: true },
       paused: { get: () => loopRef.current?.paused ?? true, enumerable: true },
     })
     return api
@@ -129,6 +133,36 @@ export default function CompanionScene({
     return () => {
       alive = false
       if (timer) clearInterval(timer)
+    }
+  }, [])
+
+  // la météo réelle (déjà gardée par Halcya) → `weather:changed`, à l'ouverture puis toutes les 30 min
+  const [weatherLabel, setWeatherLabel] = useState(null)
+  useEffect(() => {
+    let alive = true
+    let decorOf = null
+    const tick = () => {
+      const weather = weatherNow(getWeatherSettings(), nowRef.current())
+      if (!weather) {
+        setWeatherLabel(null)
+        return
+      }
+      const decor = decorOf ? decorOf(weather) : null
+      setWeatherLabel(decor?.effect && decor?.label ? decor.label : null)
+      bus.emit(EVENTS.WEATHER_CHANGED, { weather, decor })
+    }
+    const load = worldModules['./world/index.js']
+    ;(load ? load().catch(() => null) : Promise.resolve(null)).then((world) => {
+      if (!alive) return
+      if (typeof world?.weatherDecor === 'function') decorOf = world.weatherDecor
+      tick()
+    })
+    const timer = setInterval(tick, 30 * 60 * 1000)
+    window.addEventListener('weather-settings-updated', tick)
+    return () => {
+      alive = false
+      clearInterval(timer)
+      window.removeEventListener('weather-settings-updated', tick)
     }
   }, [])
 
@@ -259,7 +293,18 @@ export default function CompanionScene({
             poke()
           }),
           bus.on(EVENTS.ACTIVITY_END, () => P().setExpression?.(moodExpression(bus.last(EVENTS.MOOD_CHANGED)?.value ?? 0))),
-          bus.on(EVENTS.GIFT_OPENED, () => { P().play?.('surpris'); poke() }),
+          bus.on(EVENTS.GIFT_OPENED, () => { P().play?.('surpris'); P().lookAt?.({ x: 0.05, y: 0.1, z: 0.62 }); live.gifts.openBox(loop.time); setTimeout(() => P().lookAt?.('camera'), 3400); poke() }),
+          bus.on(EVENTS.GIFT_PLACED, (p) => {
+            // à l'ouverture (événement ancien rejoué) : tout est posé d'un coup ; sinon le nouveau cadeau arrive
+            const fresh = p?.at == null || Date.now() - p.at < 5000
+            const items = Array.isArray(p?.items) ? p.items : []
+            live.gifts.setItems(fresh ? items.filter((it) => it !== p?.item) : items)
+            if (p?.item) {
+              if (fresh) live.gifts.place(p.item, loop.time)
+              else live.gifts.setItems([p.item])
+            }
+            poke()
+          }, { replay: true }),
           bus.on(EVENTS.MILESTONE, () => { P().play?.('fier'); poke() }),
           bus.on(EVENTS.DAY_DONE, () => { P().setExpression?.('rayonnant'); poke() }),
           bus.on(EVENTS.APP_OPENED, (p) => {
@@ -267,6 +312,7 @@ export default function CompanionScene({
             else { P().setExpression?.('salut'); backToMood(2500) }
             poke()
           }),
+          bus.on(EVENTS.WEATHER_CHANGED, (p) => { live.setWeather(p?.decor ?? null); poke() }, { replay: true }),
           bus.on(EVENTS.TIME_PHASE, (p) => {
             if (p?.light) live.applyLight(p.light)
             if (p?.phase === 'nuit') P().setExpression?.('endormi')
@@ -340,7 +386,7 @@ export default function CompanionScene({
     live.setReducedMotion(reducedMotion)
   }, [reducedMotion])
 
-  const text = label || `${name} est ${moodWord(mood)}`
+  const text = label || [`${name} est ${moodWord(mood)}`, weatherLabel].filter(Boolean).join(' · ')
   const showFallback = tier === 'bas' || !ready
 
   return (

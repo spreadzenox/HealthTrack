@@ -23,6 +23,7 @@ import LineIcon from '../components/LineIcon'
 import FaceUnlockSetting from '../components/FaceUnlockSetting'
 import HabitsSetting from '../components/HabitsSetting'
 import StudioSetting from '../companion/studio/StudioSetting'
+import MotionSetting from '../companion/MotionSetting'
 import LanguageSetting from '../components/LanguageSetting'
 import { I18N_EN } from '../i18n/locale.js'
 import { installFingerprint, sendFeedback, FEEDBACK_MAX_LENGTH } from '../services/aiRelay'
@@ -237,6 +238,9 @@ export default function Settings() {
 
       {/* Refonte étape 4 : ce que la personne note par oui ou non dans Ma journée. */}
       <HabitsSetting />
+
+      {/* Refonte étape 8 : les mouvements de Pilou (mouvements réduits, brief § 7.7). */}
+      <MotionSetting />
 
       {FEATURES.billing && <SubscriptionBlock />}
 
