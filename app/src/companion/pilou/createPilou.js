@@ -420,7 +420,7 @@ export function createPilou(THREE, options = {}) {
   antAnchor.add(antMesh)
   const beadU = { uGlow: { value: 0.5 }, uKeyV: { value: new THREE.Vector3(0, 0, 1) }, uAmb: { value: new THREE.Vector3(1, 0.48, 0.074) } }
   const beadMat = keep(new THREE.MeshPhysicalMaterial({ color: C('#C86A12'), roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.015, specularIntensity: 1, envMapIntensity: 1.2 }))
-  beadMat.onBeforeCompile = (sh) => {
+  if (0) beadMat.onBeforeCompile = (sh) => {
     Object.assign(sh.uniforms, beadU)
     sh.fragmentShader = sh.fragmentShader
       .replace('#include <common>', '#include <common>\nuniform float uGlow; uniform vec3 uKeyV; uniform vec3 uAmb;')
