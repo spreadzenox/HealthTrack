@@ -330,6 +330,33 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     changelog. Capture `npm run visual -- --whats-new --routes=/` : « Nouveau : Nouveaux onglets : Accueil, Ma
     journée, Objectifs, Données et 523 autres changements ». Code partagé sans correctif iPhone.
   - [ ] **UPG-3 — Passage complet des personas** sur les deux parcours (installation neuve ; `--legacy`), avant le 22/11.
+    Passage 1 (16/11 19:30, [synthèse](simulations/2026-11-16-1930-synthese.md)) : Ventre sans technique J1
+    (installation neuve, Android seul) et Ventre et données J45 `--legacy --goals=gut,cycle` (Samsung + Galaxy Watch).
+    Rien de perdu, essai et bandeau UPG-2 vus ; constats UPG-4 à UPG-9 ci-dessous. Reste : Tout mesurer, Prendre
+    soin de soi, Stressé et pressé, sur les deux parcours.
+  - [x] **UPG-4 — Ma digestion : le choix ne se voit pas** (16/11 19:30, PR ; `TodayCards.jsx` : après le bilan du
+    soir, sa rangée reste avec le choix coché, `aria-pressed` ; test rouge puis vert ; capture vérifiée) (2 personas sur 2, captures vérifiées) : dans la fenêtre
+    « Ma digestion », Calme / Gêne / Douleur ne prennent aucun état après le geste ; seule la ligne « Bilan du jour :
+    Gêne » le dit. Marquer le dernier choix du jour (rond plein, fond de la couleur digestion), sans empêcher une
+    seconde note dans la journée.
+  - [ ] **UPG-5 — Testeur qui arrive : « où sont passés vos onglets »** (J45 `--legacy`) : rien ne dit où est le
+    Journal (Tendances › toucher un jour), ni Analyses (Objectifs › Ce qui va avec…), ni Agir (carte de l'Accueil),
+    ni ce que devient « Mon cycle » (Règles dans Ma journée, contexte de la digestion). La note à la une
+    (`2026-11-15-0435-refonte-navigation`) le dit en partie : la compléter d'une ligne sur « Mon cycle », et, dans
+    la page Nouveautés, la placer en tête tant qu'elle n'est pas lue (comme le bandeau).
+  - [ ] **UPG-6 — Deux chiffres de bien-être le même jour** (J45) : Accueil « 3/5 » (aujourd'hui) et Objectifs
+    « 3,1 / 5 » (moyenne des 7 jours, non dite) ; Tendances › Jour du 12/11 : 2,8 en tête, « vous avez noté 3 », 2,6
+    dans les saisies. Dire « moyenne sur 7 jours » sous le chiffre d'Objectifs ; vérifier l'origine des trois
+    chiffres de Tendances › Jour (avec POLISH-SIM-80 et 88).
+  - [ ] **UPG-7 — Délais de la digestion** (J1) : Objectifs « Premier score dans 13 jours », Ma journée et Confort
+    digestif « Encore 27 jours » ; nommer les deux paliers sur la même carte (score au 14e jour, pistes au 28e).
+  - [ ] **UPG-8 — Repas décrit, aliments oubliés** (J1, à vérifier hors analyse factice de l'outil) : « pâtes
+    carbonara, un yaourt et une pomme » ne rend que la carbonara. Dans l'outil, l'analyse est factice : vérifier
+    d'abord sur l'analyse réelle (consigne du relais) avant tout code.
+  - [ ] **UPG-9 — Textes techniques pour « Ventre, sans technique »** (J1) : alertes FODMAP après un repas (4 lignes
+    rouges, grammes, références d'articles) et pistes « −2,7 pt pour 1 repas riche en fructanes » : une phrase
+    simple d'abord, chiffres et sources derrière « Détails ». Bandeau Gold au 1er jour : « Gold est prolongé » (le
+    relais de l'outil sert la période prolongée ; vérifier le texte réel de la période de lancement).
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.
