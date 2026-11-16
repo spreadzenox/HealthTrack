@@ -3,17 +3,17 @@
 Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branches `claude/sprint-vie-<n>`.
 
 ## Où j'en suis
-- 16/11 20:45 : lecture des règles, du brief, des SPEC journée et comprendre. Contrat de SCÈNE pas encore poussé :
+- 16/11 20:30 : lecture des règles, du brief, des SPEC journée et comprendre. Contrat de SCÈNE pas encore poussé :
   je commence par ce qui n'en dépend pas (état du compagnon, phrases de Pilou, Ma journée), en 2D avec un Pilou
   provisoire (SVG neutre) en attendant les images pré-rendues du lot PILOU.
 
-- 16/11 21:15 : étape 11 codée et testée (branche `claude/sprint-vie-1`) : bannière de Pilou dans Ma journée, ses
+- 16/11 20:40 : étape 11 codée et testée (branche `claude/sprint-vie-1`) : bannière de Pilou dans Ma journée, ses
   réponses aux saisies, miroir du bien-être dans la feuille de note, fin de journée et calme du soir, « Bon retour ».
   Émissions sur le bus du contrat (`meal:logged`, `wellbeing:noted`, `habit:noted`, `gut:noted`, `entry:undone`,
   `activity:start/end`, `day:done`). `CONTRAT.md` et `bus.js` recopiés à l'identique depuis `claude/sprint-scene-1`.
   Expressions sous les noms du bus. Les correctifs iPhone s'appliquent tous (vérifié avec `git apply` sur l'archive).
   Captures : `journal/runs/captures/2026-11-16-sprint-vie-ma-journee-*.png`.
-- 16/11 21:40 : PR #1051 (étape 11) ouverte, CI en cours. Étape 12a codée sur `claude/sprint-vie-2` (partie de
+- 16/11 20:50 : PR #1051 (étape 11) ouverte, CI en cours. Étape 12a codée sur `claude/sprint-vie-2` (partie de
   vie-1) : la rencontre (éclosion, « Passer », « Comment voulez-vous l'appeler ? », « Pilou » proposé, un saut par
   syllabe), étape `meet` de l'onboarding juste après l'ouverture ; Pilou en tête des 4 temps (digestion, montre
   enfilée ou non, « Tout ça, je m'en occupe ») ; pour un utilisateur d'avant la refonte (accueil fini, aucun
@@ -23,13 +23,16 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branc
   rien n'est rejoué). Testé sur base d'avant la refonte et import d'ancienne sauvegarde (`localHealthStorage.test.js`,
   `companionState.test.js`, `MeetPilou.test.jsx`).
 - Pour PARITE.md (intégrateur) : tout est dans le code partagé (WebView), même parcours sur iPhone ; aucun natif.
-- 16/11 22:15 : PR #1054 (étape 12a) ouverte. Graines des captures : Pilou déjà rencontré et jour 7 passé dans
+- 16/11 20:58 : PR #1054 (étape 12a) ouverte. Graines des captures : Pilou déjà rencontré et jour 7 passé dans
   `visual-check.mjs` (options `--meet` et `--ceremony`), `persona-browse.mjs` et le mode captures iPhone
   (`iphone/overlay/app/src/ios/captureMode.js`) : sinon la rencontre recouvrirait toutes les captures. **Pour les
   autres lots** : une capture faite sur une branche partie de main après #1054 sans ces graines montrerait la rencontre.
 - Étape 12b codée sur `claude/sprint-vie-3` : cérémonie du jour 7 (une fois ; « déjà passée » pour qui avait déjà son
   premier score à la rencontre ; jamais pendant l'exemple de la visite ; `milestone { kind: 'day7' }`), Pilou guide
   dans Objectifs (84 px, une phrase, aucun chiffre, jamais triste), petite tête dans Données (64 px, décorative).
+- 16/11 21:05 : `PilouFigure` prend les images pré-rendues du lot PILOU dès que `companion/pilou/sprites.js` est sur
+  main (`import.meta.glob`, rien ne casse s'il manque) ; essayé avec ses images (capture
+  `2026-11-16-sprint-vie-objectifs-sprite-pilou.png`). Le dessin SVG reste le repli.
 
 ## Découpage prévu
 1. `claude/sprint-vie-1` (étape 11) : nom du compagnon (« Pilou » par défaut) et son état local ; la bannière de

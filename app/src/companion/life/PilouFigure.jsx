@@ -1,6 +1,6 @@
 /**
- * Petit Pilou en 2D (lot VIE) : l'emplacement des images pré-rendues que fournira le lot PILOU (brief § 7.9 : les
- * petits Pilou sont des images, pas un second canevas). En attendant, un dessin vectoriel simple aux couleurs de la
+ * Petit Pilou en 2D (lot VIE) : les images pré-rendues du lot PILOU (brief § 7.9 : les petits Pilou sont des images,
+ * pas un second canevas), une par expression. Tant qu'elles manquent, un dessin vectoriel simple aux couleurs de la
  * planche (corps menthe, ventre crème, antenne et point ambre, joues, montre indigo), sans contour brun. Toujours
  * décoratif (aria-hidden) : ce qu'il exprime est aussi écrit à côté (brief § 8).
  *
@@ -8,6 +8,10 @@
  * garde alors son expression et ses clignements (PilouFigure.css).
  */
 import { wearsWatch } from './companionState'
+
+// Images pré-rendues du lot PILOU (CONTRAT § 3) : prises dès que pilou/sprites.js est là ; sinon, le dessin ci-dessous.
+const spriteModules = import.meta.glob('../pilou/sprites.js', { eager: true })
+const pilouSprite = Object.values(spriteModules)[0]?.pilouSprite ?? null
 import './life.tokens.css'
 import './PilouFigure.css'
 
@@ -54,8 +58,17 @@ function Mouth({ expr }) {
 /**
  * @param {{ size?: number, expr?: string, move?: string, watch?: boolean, className?: string }} props
  */
-export default function PilouFigure({ size = 66, expr = 'tranquille', move = 'none', watch, className = '' }) {
+export default function PilouFigure({ size = 66, expr = 'tranquille', move = 'none', watch, className = '', sprite = true }) {
   const withWatch = watch ?? wearsWatch()
+  const src = sprite && pilouSprite ? pilouSprite(expr) : null
+  if (src) {
+    return (
+      <span className={`pilou-figure pilou-move-${move} ${className}`.trim()} data-expr={expr} aria-hidden="true"
+        style={{ width: size, height: size }}>
+        <img className="pilou-body pilou-sprite" src={src} alt="" height={size} decoding="async" draggable="false" />
+      </span>
+    )
+  }
   return (
     <span className={`pilou-figure pilou-move-${move} ${className}`.trim()} data-expr={expr} aria-hidden="true"
       style={{ width: size, height: size }}>
