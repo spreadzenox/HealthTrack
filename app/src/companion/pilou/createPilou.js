@@ -36,7 +36,9 @@ export function createPilou(THREE, options = {}) {
     c.height = h
     return c
   }
-  const ctx2d = (c) => { try { return c.getContext('2d') } catch { return null } }
+  // toiles 2D dessinées par le processeur (willReadFrequently) : la toile accélérée par le GPU arrêtait l'émulateur
+  // Android 12L (rendu logiciel) ; ici on ne fait qu'y peindre puis l'envoyer comme texture
+  const ctx2d = (c) => { try { return c.getContext('2d', { willReadFrequently: true }) } catch { return null } }
   const M = makeMatiere(THREE, makeCanvas)
   const C = (h) => new THREE.Color(h)
   const V2 = (x, y) => new THREE.Vector2(x, y)
