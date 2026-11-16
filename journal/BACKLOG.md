@@ -302,6 +302,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     Réglages, réduit par Nunito, devient l'icône chevron de la carte Bien-être (`LineIcon`, tournée vers la droite,
     `--text-muted`) ; test rouge puis vert dans `More.test.jsx`. iPhone : le correctif 26 (`More.jsx`) s'applique
     toujours, suites Accueil et Réglages vertes dans `upstream/`. Captures Accueil et Réglages regardées.
+  - [x] **REFONTE-7d-3 — Images de la fiche Play** (16/11 13:30) : `node scripts/store/build-store-assets.mjs`
+    relancé après 7d ; les 6 captures (Accueil, Tendances, Objectifs, Agir, Nutrition, Réintroduction) et l'image
+    de présentation passent en Nunito sur fond crème, barre à 4 onglets. Envoi sur Play par « Play — fiche du Store »
+    au passage du soir (23:23). Reste repéré (7d-4) : le lien texte « Ce qui va avec votre bien-être › » de la carte
+    Objectifs garde le « › » texte, plus petit en Nunito ; à passer à l'icône chevron comme en 7d-2.
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.

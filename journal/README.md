@@ -21,12 +21,12 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v755** (APK 34,6 Mo, 16/11 09:31 UTC, merge de #1036) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | **1107.1107 validée par Apple et chez « Testeurs Halcya »** (16/11 09:54 UTC) ; anciennes builds expirées ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | release **v756** (APK 34,8 Mo, 16/11 11:49 UTC, merge de #1038 ; v757 de #1039 en cours) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | **1107.1107 validée par Apple et chez « Testeurs Halcya »** (16/11 09:54 UTC) ; anciennes builds expirées ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
 **🧸 Refonte « Compagnon »** : étapes 1 à 6 et 7a faites sur Android et sur iPhone (6d mergée le 16/11 à 00:41 :
-score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b mergée le 16/11 à 03:32 (Données sur Tendances et Nutrition), 7c (retrait du code du Journal) mergée le 16/11 vers 05:35, 7c soldée (« Hier » dans Ma journée mergé vers 09:35), restes de captures 7a-2 et 7b-2 mergés vers 11:45 (#1037), **7d (police Nunito, fond crème) mergée** (16/11 12:50, #1038), 7d-2 (flèches des listes) en PR, puis le passage des personas, puis
+score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours) ; 7b mergée le 16/11 à 03:32 (Données sur Tendances et Nutrition), 7c (retrait du code du Journal) mergée le 16/11 vers 05:35, 7c soldée (« Hier » dans Ma journée mergé vers 09:35), restes de captures 7a-2 et 7b-2 mergés vers 11:45 (#1037), **7d (police Nunito, fond crème) mergée** (16/11 12:50, #1038), 7d-2 (flèches des listes) mergée (16/11 13:45, #1039), images de la fiche Play refaites en Nunito (7d-3, en PR), puis le passage des personas, puis
 Pilou (8 à 13) et le double numérique (14 et 15). Les 15 étapes : [`BACKLOG.md`](BACKLOG.md) (REFONTE-1 à 15) ; le
 brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md).
 
@@ -60,6 +60,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 16/11 13:30 — [#1039 mergée, fiche Play en Nunito](runs/2026-11-16-1330-merge-1039-fiche-play.md) | 🛠️ | **#1039 mergée** (flèches des listes en icône) après 14 checks verts, captures iPhone Accueil et Réglages regardées en clair et en sombre. **7d-3** : les 6 captures et l'image de la fiche Play refaites (Nunito, fond crème, 4 onglets) ; elles partiront avec l'envoi du soir de la fiche. Release v756 publiée (34,8 Mo). |
 | 16/11 12:30 — [#1038 mergée : Nunito et fond crème](runs/2026-11-16-1230-merge-7d-chevron.md) | 🛠️ | **#1038 mergée** après 15 checks verts, build iOS comprise (captures iPhone regardées : Nunito et fond crème en clair, sombre inchangé). **Votre app passe à la police Nunito sur fond crème**, Android et iPhone. 7d-2 en PR : les flèches « › » des cartes Agir et Réglages, devenues minuscules avec Nunito, redeviennent nettes. Rien à faire de votre côté |
 | 16/11 11:30 — [#1037 mergée, 7d en PR](runs/2026-11-16-1130-merge-1037-7d-pr.md) | 🛠️ | **#1037 mergée** après sa build iOS verte (captures iPhone de Tendances › Jour d'hier et de la visite guidée regardées : propres). Étapes 7a à 7c soldées. **Étape 7d en PR** : police Nunito et fond crème, Android et iPhone (le thème sombre ne change pas) ; à merger après sa build iOS. Rien à faire de votre côté |
 | 16/11 10:30 — [#1036 mergée, captures de Tendances](runs/2026-11-16-1030-7a-2-captures-tendances.md) | 🛠️ | **#1036 mergée** (Ma journée : carte « Hier » pour les habitudes restées sans réponse la veille), Android et iPhone. Restes 7a-2 et 7b-2 : les captures de l'iPhone montreront désormais un jour passé de Tendances et la visite guidée sur Tendances (PR ouverte, à merger après sa build iOS) ; côté Android, Tendances › Jour vérifié en grand texte, à 320 px et sur historique presque vide. Prochaine étape : la police Nunito et le fond crème. Rien à faire de votre côté |
