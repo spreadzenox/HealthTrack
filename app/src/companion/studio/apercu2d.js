@@ -12,6 +12,8 @@ import { creerPeintre } from './peintre'
 import { couleursCheveux, PAL_MONTURE, PAL_COUVRE, PAL_DIVERS } from './traits'
 
 const OREILLE_Y = 0.83
+/** « rebond » : dépasse un peu puis se pose (0 → 1) */
+const rebond = (p) => (p <= 0 ? 0 : p >= 1 ? 1 : 1 + 2.56 * Math.pow(p - 1, 3) + 1.56 * Math.pow(p - 1, 2))
 
 /* ---------- forme des cheveux vue de face (zones du kit : front, cadre, oreille, côtés, dos) ---------- */
 const LONG = {
@@ -395,22 +397,34 @@ export function dessinerPilou(ctx, largeur, hauteur, fiche, opts = {}) {
   ctx.fillStyle = og; ctx.beginPath(); ctx.ellipse(X(0), Y(0), 0.7 * k, 0.12 * k, 0, 0, Math.PI * 2); ctx.fill()
 
   const f = fiche || null
+  // apparitions (SPEC § 8) : rv[famille] de 0 à 1 ; mouvements réduits : simple fondu
+  const rv = opts.rv || {}, reduit = !!opts.reduit
+  const a = (cle) => clamp(rv[cle] ?? 1)
+  const enFondu = (cle, dessin) => {
+    const v = a(cle)
+    if (v <= 0.001) return
+    ctx.save(); ctx.globalAlpha *= reduit ? v : Math.min(1, v * 2.5); dessin(v); ctx.restore()
+  }
   const foulard = f?.couvre_chef === 'foulard'
   const sh = f && !foulard ? formeCheveux2d(f) : null
   const cols = f ? couleursCheveux(f) : null
-  if (sh) dessinerCheveuxDerriere(ctx, X, Y, k, sh, cols)
+  // les cheveux poussent depuis l'antenne
+  const pousse = (v) => { if (!reduit) { ctx.translate(X(0), Y(H)); ctx.scale(1, Math.max(0.05, rebond(v))); ctx.translate(-X(0), -Y(H)) } }
+  if (sh) enFondu('cheveux', (v) => { pousse(v); dessinerCheveuxDerriere(ctx, X, Y, k, sh, cols) })
   dessinerCorps(ctx, X, Y, k)
   const peintre = creerPeintre()
-  peintre.set(f, {})
+  peintre.set(f, reduit ? {} : rv)
   const F = { ...FACE0, mU: 0.034, mL: 0.034, blush: 0.5, ...(opts.face || {}) }
   if (f) peintre.formeYeux(F)
   drawFaceAt(ctx, X, Y, k, F, f ? peintre : null)
   if (f) {
-    dessinerLunettes(ctx, X, Y, k, f)
-    if (sh) dessinerCheveuxDevant(ctx, X, Y, k, sh, cols)
-    dessinerBoucles(ctx, X, Y, k, f)
+    // les lunettes descendent de 0,55 et se posent
+    enFondu('lunettes', (v) => { if (!reduit) ctx.translate(0, -(1 - rebond(v)) * 0.55 * k); dessinerLunettes(ctx, X, Y, k, f) })
+    if (sh) enFondu('cheveux', (v) => { pousse(v); dessinerCheveuxDevant(ctx, X, Y, k, sh, cols) })
+    enFondu('boucles', () => dessinerBoucles(ctx, X, Y, k, f))
+    // le couvre-chef tombe de 0,5 et s'écrase un peu
+    enFondu('couvre', (v) => { if (!reduit) ctx.translate(0, -(1 - rebond(v)) * 0.5 * k); dessinerCouvreChef(ctx, X, Y, k, f, sh ? enveloppe(sh) : 0) })
   }
-  if (f) dessinerCouvreChef(ctx, X, Y, k, f, sh ? enveloppe(sh) : 0)
   dessinerAntenne(ctx, X, Y, k, t) // elle sort toujours entre les mèches (et par le trou des couvre-chefs)
   ctx.restore()
   return k
