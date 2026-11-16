@@ -341,42 +341,6 @@
   color: var(--color-danger);
 }
 
-/* Dashboard : journal des derniers jours (une carte par jour, résumé + saisies) */
-.day-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.day-card {
-  background: var(--surface);
-  border-radius: var(--radius-card);
-  padding: 14px 16px 6px;
-  margin-bottom: 14px;
-}
-
-.day-card-title {
-  margin: 0 0 10px;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.day-card-date {
-  margin-left: 6px;
-  font-weight: 400;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-.day-card-cycle {
-  margin-left: 6px;
-  font-weight: 400;
-  font-size: 0.85rem;
-  color: var(--rose-label);
-}
-.day-card-cycle::before { content: '· '; color: var(--text-muted); }
-
 /* CYCLE-1b : règles et symptômes du jour (rose framboise = corps) */
 .day-cycle {
   display: flex;
@@ -391,72 +355,6 @@
 .day-cycle-text { flex: 1; min-width: 0; }
 .day-cycle-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px; margin-top: -4px; }
 .day-cycle-edit { margin: 0 0 10px; }
-
-.day-summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
-  gap: 6px;
-  margin: 0 0 10px;
-}
-
-.day-summary-item {
-  background: var(--bg);
-  border-radius: var(--radius-tag);
-  padding: 6px 9px;
-  min-width: 0;
-  /* GRANDE-POLICE-1 : la valeur suit la largeur de sa tuile (cqi) */
-  container-type: inline-size;
-}
-
-/* POLISH-SIM-36 : la tuile entière ouvre sa courbe (lien étiré sur toute la tuile) */
-.day-summary-item:has(.day-summary-link) { position: relative; min-height: 44px; }
-.day-summary-link { position: absolute; inset: 0; border-radius: inherit; }
-.day-summary-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-.day-summary-item dt {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-/* AUJ-3b : l'écart net à votre norme, sous la valeur (sans couleur de jugement) */
-.day-summary-item dd.day-summary-usual {
-  font-family: var(--font-sans);
-  letter-spacing: 0;
-  font-size: 0.66rem;
-  color: var(--text-muted);
-}
-
-.day-summary-item dd {
-  margin: 0;
-  /* MONO-CHIFFRES (10/11) : seuls les nombres sont en mono (span .mono de monoDigits), unités et mots en Figtree. */
-  font-family: var(--font-sans);
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  /* GRANDE-POLICE-1 : coupure seulement entre deux morceaux (chipValueBreaks), jamais en plein mot (« kca / l ») ; le
-     plus long morceau (« 120/80 mmHg », 11 signes mono) tient dans la tuile, taille d'origine en plafond. */
-  font-size: min(0.8rem, 15cqi);
-  overflow-wrap: normal;
-}
-
-/* Une couleur par thème (leçon 12, AUJ-8 ; src/theme/themes.js) : menthe = bien-être, pêche = digestion, lilas =
-   activité, bleu nuit = sommeil, rose framboise = corps, gris = contexte. */
-.day-summary-item[data-theme="mint"] { background: var(--mint-bg); }
-.day-summary-item[data-theme="mint"] dt { color: var(--mint-label); }
-.day-summary-item[data-theme="peach"] { background: var(--peach-bg); }
-.day-summary-item[data-theme="peach"] dt { color: var(--peach-label); }
-.day-summary-item[data-theme="lilac"] { background: var(--lilac-bg); }
-.day-summary-item[data-theme="lilac"] dt { color: var(--lilac-bar); }
-.day-summary-item[data-theme="night"] { background: var(--night-bg); }
-.day-summary-item[data-theme="night"] dt { color: var(--night-label); }
-.day-summary-item[data-theme="rose"] { background: var(--rose-bg); }
-.day-summary-item[data-theme="rose"] dt { color: var(--rose-label); }
-.day-summary-item[data-theme="stone"] { background: var(--stone-bg); }
-.day-summary-item[data-theme="stone"] dt { color: var(--stone-label); }
 
 .day-more-btn {
   width: 100%;
@@ -984,13 +882,6 @@
   flex-basis: 100%;
 }
 
-/* Cartes du journal plus étroites : la question au-dessus, « Annuler / Confirmer » ensemble dessous */
-.day-card .entry-delete-question {
-  flex-basis: 100%;
-  padding-right: 8px;
-  text-align: right;
-}
-
 /* Divulgation avant une autorisation sensible (components/PermissionDisclosure.jsx, jalon 3b) */
 .disclosure-backdrop {
   position: fixed;
@@ -1058,7 +949,6 @@
 }
 
 /* POL-PLAY-46 / 48 : états vides en couleur (Journal, Tendances) : tuiles pastel de PastelTiles. */
-.journal-empty { margin-top: 8px; }
 .journal-empty-title { margin: 0; font-weight: 700; font-size: 1.05rem; color: var(--text); }
 .journal-empty-text { margin: 4px 0 14px; color: var(--text-muted); }
 .pastel-tiles { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
