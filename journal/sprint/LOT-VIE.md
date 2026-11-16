@@ -7,6 +7,13 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branc
   je commence par ce qui n'en dépend pas (état du compagnon, phrases de Pilou, Ma journée), en 2D avec un Pilou
   provisoire (SVG neutre) en attendant les images pré-rendues du lot PILOU.
 
+- 16/11 21:15 : étape 11 codée et testée (branche `claude/sprint-vie-1`) : bannière de Pilou dans Ma journée, ses
+  réponses aux saisies, miroir du bien-être dans la feuille de note, fin de journée et calme du soir, « Bon retour ».
+  Émissions sur le bus du contrat (`meal:logged`, `wellbeing:noted`, `habit:noted`, `gut:noted`, `entry:undone`,
+  `activity:start/end`, `day:done`). `CONTRAT.md` et `bus.js` recopiés à l'identique depuis `claude/sprint-scene-1`.
+  Expressions sous les noms du bus. Les correctifs iPhone s'appliquent tous (vérifié avec `git apply` sur l'archive).
+  Captures : `journal/runs/captures/2026-11-16-sprint-vie-ma-journee-*.png`.
+
 ## Découpage prévu
 1. `claude/sprint-vie-1` (étape 11) : nom du compagnon (« Pilou » par défaut) et son état local ; la bannière de
    Pilou dans Ma journée (hublot, phrase, « Encore N choses ») ; ses réponses aux saisies (repas → rassasié,
