@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fond crème du widget de Pilou (brief § 6). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#FFF8EE" />
+    <corners android:radius="22dp" />
+</shape>

@@ -23,20 +23,24 @@ export const LIGHT_FADE_MS = 600
 const m = (h, min = 0) => h * 60 + min
 
 /**
- * Clés de lumière, du minuit au minuit suivant. Couleurs du ciel : specs/ile.SPEC.md § 5. Soleil de l'après-midi :
- * exactement celui du kit (#FFCFA0, élévation 15°, intensité 3,6 ; appoint #FFE4D2 à 1,15 ; environnement 0,62 ;
- * brume #FFC9A6). `ambre` : intensité relative de la lueur du point ambre (1 = lumière principale de la nuit).
+ * Clés de lumière, du minuit au minuit suivant. Couleurs du ciel : specs/ile.SPEC.md § 5. Couleurs du soleil et de la
+ * brume de l'après-midi : celles du kit (#FFCFA0, élévation 15°, appoint #FFE4D2, brume #FFC9A6). Les intensités
+ * sont écrites dans les unités du kit (soleil 3,6, appoint 1,15, environnement 0,62 l'après-midi) puis ramenées à
+ * l'échelle de la scène de l'app (`GOLDEN` de scene/light.js : soleil 2,6, appoint 1,35, hémisphère 0,8), pour que
+ * 15 h 30 rende exactement l'heure dorée réglée par la scène. `ambre` : lueur du point ambre (1 = lumière principale
+ * de la nuit). `hemi` : ciel de la lumière d'hémisphère (le sol est l'herbe le jour, bleu nuit la nuit).
  */
 export const LIGHT_KEYS = Object.freeze([
-  { minute: m(0), name: 'nuit', skyTop: '#1C2452', skyBottom: '#4A4A8C', haze: '#2E3466', sun: '#CCD6FF', sunElevation: 20, sunIntensity: 0.55, fill: '#8C96D8', fillIntensity: 0.3, env: 0.2, ambre: 1, stars: 1 },
-  { minute: m(5, 30), name: 'nuit', skyTop: '#1C2452', skyBottom: '#4A4A8C', haze: '#2E3466', sun: '#CCD6FF', sunElevation: 20, sunIntensity: 0.55, fill: '#8C96D8', fillIntensity: 0.3, env: 0.2, ambre: 1, stars: 1 },
-  { minute: m(6, 48), name: 'aube', skyTop: '#F2B6A6', skyBottom: '#FFE6CF', haze: '#F6C7B4', sun: '#FFD7AE', sunElevation: 8, sunIntensity: 2.4, fill: '#FFE4D2', fillIntensity: 0.85, env: 0.48, ambre: 0.45, stars: 0 },
-  { minute: m(8, 12), name: 'matin', skyTop: '#FFCCAE', skyBottom: '#FFF1E2', haze: '#FFD9C2', sun: '#FFE6C4', sunElevation: 26, sunIntensity: 3.1, fill: '#FFF0E4', fillIntensity: 1.25, env: 0.68, ambre: 0.3, stars: 0 },
-  { minute: m(12, 30), name: 'midi', skyTop: '#FFD7BA', skyBottom: '#FFF3E6', haze: '#FFD4B8', sun: '#FFE0BC', sunElevation: 22, sunIntensity: 3.4, fill: '#FFEADC', fillIntensity: 1.2, env: 0.66, ambre: 0.3, stars: 0 },
-  { minute: m(15, 30), name: 'apres-midi', skyTop: '#FFC9A6', skyBottom: '#FFE9D6', haze: '#FFC9A6', sun: '#FFCFA0', sunElevation: 15, sunIntensity: 3.6, fill: '#FFE4D2', fillIntensity: 1.15, env: 0.62, ambre: 0.35, stars: 0 },
-  { minute: m(18, 40), name: 'soir', skyTop: '#C9A4E2', skyBottom: '#FFD9B0', haze: '#F0B8A8', sun: '#FF9F72', sunElevation: 6, sunIntensity: 2.6, fill: '#FFD2C0', fillIntensity: 0.9, env: 0.5, ambre: 0.6, stars: 0 },
-  { minute: m(21, 24), name: 'nuit', skyTop: '#1C2452', skyBottom: '#4A4A8C', haze: '#2E3466', sun: '#CCD6FF', sunElevation: 20, sunIntensity: 0.55, fill: '#8C96D8', fillIntensity: 0.3, env: 0.2, ambre: 1, stars: 1 },
-  { minute: m(24), name: 'nuit', skyTop: '#1C2452', skyBottom: '#4A4A8C', haze: '#2E3466', sun: '#CCD6FF', sunElevation: 20, sunIntensity: 0.55, fill: '#8C96D8', fillIntensity: 0.3, env: 0.2, ambre: 1, stars: 1 },
+  { minute: m(0), name: 'nuit', skyTop: '#1C2452', skyBottom: '#4A4A8C', haze: '#2E3466', sun: '#CCD6FF', sunElevation: 16, sunIntensity: 0.55, fill: '#8C96D8', fillIntensity: 0.3, env: 0.2, ambre: 1, hemi: '#3A3F78', stars: 1 },
+  { minute: m(5, 30), name: 'nuit', skyTop: '#1C2452', skyBottom: '#4A4A8C', haze: '#2E3466', sun: '#CCD6FF', sunElevation: 16, sunIntensity: 0.55, fill: '#8C96D8', fillIntensity: 0.3, env: 0.2, ambre: 1, hemi: '#3A3F78', stars: 1 },
+  { minute: m(6, 5), name: 'aube', skyTop: '#4E4A88', skyBottom: '#E2A6A4', haze: '#8E7A9E', sun: '#FFC2A0', sunElevation: 12, sunIntensity: 1.3, fill: '#D8B8C8', fillIntensity: 0.55, env: 0.32, ambre: 0.85, hemi: '#9C8AB0', stars: 0.3 },
+  { minute: m(6, 48), name: 'aube', skyTop: '#F2B6A6', skyBottom: '#FFE6CF', haze: '#F6C7B4', sun: '#FFD7AE', sunElevation: 8, sunIntensity: 2.4, fill: '#FFE4D2', fillIntensity: 0.85, env: 0.48, ambre: 0.6, hemi: '#FCE2D6', stars: 0 },
+  { minute: m(8, 12), name: 'matin', skyTop: '#FFCCAE', skyBottom: '#FFF1E2', haze: '#FFD9C2', sun: '#FFE6C4', sunElevation: 26, sunIntensity: 3.1, fill: '#FFF0E4', fillIntensity: 1.25, env: 0.68, ambre: 0.5, hemi: '#FFF4EA', stars: 0 },
+  { minute: m(12, 30), name: 'midi', skyTop: '#FFD7BA', skyBottom: '#FFF3E6', haze: '#FFD4B8', sun: '#FFE0BC', sunElevation: 22, sunIntensity: 3.4, fill: '#FFEADC', fillIntensity: 1.2, env: 0.66, ambre: 0.5, hemi: '#FFF3E8', stars: 0 },
+  { minute: m(15, 30), name: 'apres-midi', skyTop: '#FFD7BA', skyBottom: '#FFF3E6', haze: '#FFC9A6', sun: '#FFCFA0', sunElevation: 15, sunIntensity: 3.6, fill: '#FFE4D2', fillIntensity: 1.15, env: 0.62, ambre: 0.55, hemi: '#FFF1E4', stars: 0 },
+  { minute: m(18, 40), name: 'soir', skyTop: '#C9A4E2', skyBottom: '#FFD9B0', haze: '#F0B8A8', sun: '#FF9F72', sunElevation: 6, sunIntensity: 2.6, fill: '#FFD2C0', fillIntensity: 0.9, env: 0.5, ambre: 0.75, hemi: '#F2D6E4', stars: 0 },
+  { minute: m(21, 24), name: 'nuit', skyTop: '#1C2452', skyBottom: '#4A4A8C', haze: '#2E3466', sun: '#CCD6FF', sunElevation: 16, sunIntensity: 0.55, fill: '#8C96D8', fillIntensity: 0.3, env: 0.2, ambre: 1, hemi: '#3A3F78', stars: 1 },
+  { minute: m(24), name: 'nuit', skyTop: '#1C2452', skyBottom: '#4A4A8C', haze: '#2E3466', sun: '#CCD6FF', sunElevation: 16, sunIntensity: 0.55, fill: '#8C96D8', fillIntensity: 0.3, env: 0.2, ambre: 1, hemi: '#3A3F78', stars: 1 },
 ])
 
 /** Azimut du soleil (degrés, repère du kit) : toujours derrière Pilou, un peu sur le côté. */
@@ -75,8 +79,11 @@ export function dayPhase(minute, { wakeMinute = DEFAULT_WAKE_MINUTE, bedMinute =
   return 'matin'
 }
 
+/** Échelle de la scène de l'app (GOLDEN de scene/light.js) par rapport aux unités du kit. */
+export const SCENE_SCALE = Object.freeze({ sun: 2.6 / 3.6, fill: 1.35 / 1.15, hemi: 0.8 / 0.62 })
+
 /** Couleur du sol pour la lumière d'hémisphère : herbe le jour, bleu nuit la nuit. */
-const GROUND_DAY = '#7A8A45'
+const GROUND_DAY = '#9DB87A'
 const GROUND_NIGHT = '#20264A'
 
 /**
@@ -103,7 +110,7 @@ const toPhaseOptions = (o = {}) => ({
  * Lumière d'une date (ou d'une minute du jour), forme du contrat (CONTRAT.md § 5) :
  * `{ phase, sky: { top, bottom }, sun: { color, intensity, elevationDeg, azimuthDeg }, fill: { color, intensity },
  * hemi: { sky, ground, intensity }, haze, ambreGlow, stars }`, plus, en ajout : `minute`, `key` (clé la plus proche),
- * `pilouPhase` (matin, apres-midi, soir, nuit), `asleep`, `lantern`, `night`, `env` (intensité de l'environnement),
+ * `pilouPhase` (matin, apres-midi, soir, nuit), `asleep`, `lantern`, `night`, `env` (environnement, unités du kit),
  * `sunDirection` ([x, y, z] unitaire, repère du kit).
  * Couleurs et grandeurs interpolées entre les deux clés voisines avec la courbe `soft`.
  * `options` : `{ wake, bedtime }` en minutes depuis minuit (aussi `wakeMinute`, `bedMinute`).
@@ -118,7 +125,7 @@ export function lightAt(dateOrMinute, options = {}) {
   const span = b.minute - a.minute
   const t = EASE.soft(clamp01(span > 0 ? (minute - a.minute) / span : 0))
   const c = (f) => mixHex(a[f], b[f], t)
-  const n = (f) => Math.round(lerp(a[f], b[f], t) * 1000) / 1000
+  const n = (f, k = 1) => Math.round(lerp(a[f], b[f], t) * k * 1000) / 1000
   const stars = n('stars')
   const env = n('env')
   const pilouPhase = dayPhase(minute, phaseOptions)
@@ -126,12 +133,12 @@ export function lightAt(dateOrMinute, options = {}) {
   return {
     phase: lightPhase(minute, phaseOptions),
     sky: { top: c('skyTop'), bottom: c('skyBottom') },
-    sun: { color: c('sun'), intensity: n('sunIntensity'), elevationDeg: sunElevation, azimuthDeg: SUN_AZIMUTH },
-    fill: { color: c('fill'), intensity: n('fillIntensity') },
+    sun: { color: c('sun'), intensity: n('sunIntensity', SCENE_SCALE.sun), elevationDeg: sunElevation, azimuthDeg: SUN_AZIMUTH },
+    fill: { color: c('fill'), intensity: n('fillIntensity', SCENE_SCALE.fill) },
     hemi: {
-      sky: mixHex(c('skyTop'), c('skyBottom'), 0.5),
+      sky: c('hemi'),
       ground: mixHex(GROUND_DAY, GROUND_NIGHT, stars),
-      intensity: Math.round(env * 0.9 * 1000) / 1000,
+      intensity: n('env', SCENE_SCALE.hemi),
     },
     haze: c('haze'),
     ambreGlow: n('ambre'),
