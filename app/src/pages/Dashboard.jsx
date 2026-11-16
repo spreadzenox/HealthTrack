@@ -30,6 +30,7 @@ import { habitEntry, yesterdayCatchUp, skipYesterday } from '../services/habits'
 import { getHabits } from '../settings/habits'
 import { CYCLE_TYPE, cycleVisible } from '../services/cycle'
 import { goalsOf } from '../settings/onboarding'
+import { TRIAL_TYPE, homeTrial } from '../services/trials'
 
 /**
  * Refonte « Compagnon », étape 2 : l'ancien écran Aujourd'hui est rangé dans deux onglets. `view="home"` (Accueil) :
@@ -119,6 +120,31 @@ export default function Dashboard({ view = 'home' }) {
     }
   }, [])
 
+  // UPG-1 : l'essai en cours, dit sur la carte Agir (Agir n'a plus d'onglet depuis la refonte)
+  const [trial, setTrial] = useState(null)
+  useEffect(() => {
+    if (!home) return undefined
+    let cancelled = false
+    const load = () => listEntries({ type: TRIAL_TYPE, limit: Infinity })
+      .then((rows) => { if (!cancelled) setTrial(homeTrial(rows)) })
+      .catch(() => {})
+    load()
+    window.addEventListener('health-entries-updated', load)
+    return () => {
+      cancelled = true
+      window.removeEventListener('health-entries-updated', load)
+    }
+  }, [home])
+  const actLink = (
+    <Link to={trial?.to ?? '/agir'} className="more-item home-act-link">
+      <span className="more-text">
+        <span className="more-title">{trial?.title ?? 'Agir'}</span>
+        <span className="more-desc">{trial?.detail ?? 'Vérifier une piste par un essai'}</span>
+      </span>
+      <LineIcon name="chevron" size={20} className="more-chevron" />
+    </Link>
+  )
+
   const todayKey = localDateKey(new Date().toISOString())
   const todaySummary = days.find((d) => d.dateKey === todayKey)?.summary ?? null
   const yesterdayKey = localDateKey(new Date(Date.now() - 86_400_000).toISOString())
@@ -193,20 +219,14 @@ export default function Dashboard({ view = 'home' }) {
           unlockReminder={unlockReminder}
           onDismissReminder={closeUnlockReminder} />
       )}
+      {/* UPG-1 : un jour « avec » de l'essai, sa consigne remonte sous le bien-être du jour. */}
+      {home && !loading && trial?.withToday && actLink}
       {/* AUJ-3 : vos données du jour, un bloc, l'écart à votre norme sur chaque mesure. */}
       {home && !loading && !error && (
         <TodayBySource tiles={tiles} summary={todaySummary} entries={entries} />
       )}
-      {/* Agir n'a plus d'onglet : il se range sous l'Accueil (brief § 4), en attendant les défis d'Objectifs (étape 6). */}
-      {home && !loading && (
-        <Link to="/agir" className="more-item home-act-link">
-          <span className="more-text">
-            <span className="more-title">Agir</span>
-            <span className="more-desc">Vérifier une piste par un essai</span>
-          </span>
-          <LineIcon name="chevron" size={20} className="more-chevron" />
-        </Link>
-      )}
+      {/* Agir n'a plus d'onglet : il se range sous l'Accueil (brief § 4) ; un essai en cours y est dit (UPG-1). */}
+      {home && !loading && !trial?.withToday && actLink}
       {/* AUJ-4 : le bloc digestif ; les résultats des analyses n'ont qu'une maison (leçon 16). */}
       {day && !loading && askGut && <DigestBlock onNote={() => setAddOpen('digestion')}
         meals={entries.filter((e) => e.type === 'food' && e.at && localDateKey(e.at) === todayKey)} />}

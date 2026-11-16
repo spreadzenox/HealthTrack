@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS } from './trials'
+import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial } from './trials'
 
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30, unit: 'min', text: '30 min de sommeil de plus' } }
 const START = new Date(2026, 10, 1, 9)
@@ -107,5 +107,31 @@ describe('Essais (ORG-8)', () => {
     for (let d = 11; d <= 14; d += 1) summaries.set(`2026-11-${d}`, { sleepMinutes: 380 })
     expect(habitStatus(t, { summaries, now }).drifting).toBe(true)
     expect(habitStatus({ ...t, nudgedAt: new Date(2026, 10, 10).toISOString() }, { summaries, now }).drifting).toBe(false)
+  })
+})
+
+describe('UPG-1 : l’essai en cours sur la carte Agir de l’Accueil', () => {
+  const ten = { ...createTrial(sleep, { now: START }), schedule: [...Array(10)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 })) }
+  const row = (id, payload) => ({ id, type: 'trial', at: START.toISOString(), payload })
+
+  it('sans essai en cours : rien (la carte garde « Vérifier une piste par un essai »)', () => {
+    expect(homeTrial([], new Date(2026, 10, 4, 10))).toBeNull()
+    expect(homeTrial([row(1, ten)], new Date(2026, 10, 20, 10))).toBeNull()
+    expect(homeTrial([row(1, { ...ten, removedAt: '2026-11-03' })], new Date(2026, 10, 4, 10))).toBeNull()
+    expect(homeTrial([row(1, { ...ten, kept: true, endedAt: '2026-11-03' })], new Date(2026, 10, 4, 10))).toBeNull()
+    expect(homeTrial([{ id: 2, type: 'habit', payload: { habit: 'reading' } }], new Date(2026, 10, 4, 10))).toBeNull()
+  })
+
+  it('un jour « avec » : la consigne et le jour ; il ouvre la page de l’essai', () => {
+    expect(homeTrial([row(7, ten)], new Date(2026, 10, 3, 10))).toEqual({
+      to: '/agir/essai/7', title: 'Dormir au moins 7 h 30', detail: 'Essai · jour 3 sur 10 · aujourd’hui, jour avec', withToday: true,
+    })
+  })
+
+  it('un jour « sans » : comme d’habitude ; deux essais : le plus avancé, et Agir pour voir les deux', () => {
+    expect(homeTrial([row(7, ten)], new Date(2026, 10, 4, 10))).toMatchObject({ detail: 'Essai · jour 4 sur 10 · aujourd’hui, jour sans', withToday: false })
+    const later = { ...ten, startedAt: '2026-11-02T09:00:00.000Z', schedule: ten.schedule.map((d, i) => ({ date: `2026-11-${String(i + 2).padStart(2, '0')}`, with: !d.with })) }
+    const two = homeTrial([row(8, later), row(7, ten)], new Date(2026, 10, 3, 10))
+    expect(two).toMatchObject({ to: '/agir', title: 'Dormir au moins 7 h 30', detail: '2 essais en cours · jour 3 sur 10 · aujourd’hui, jour avec' })
   })
 })

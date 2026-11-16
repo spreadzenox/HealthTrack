@@ -319,9 +319,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     habitude. 3 tests dans `personaData.test.mjs`. Premier coup d'œil (J45, montre, `sport,cycle`) : l'essai est
     intact dans Agir (« Jour 4 sur 10. Aujourd'hui, jour avec. »), « Règles » reste dans le bandeau d'ajout, Objectifs
     montre Bien-être et Confort digestif, aucune erreur.
-  - [ ] **UPG-1 — Essai en cours invisible depuis l'Accueil** : la carte « Agir » du bas de l'Accueil dit « Vérifier
-    une piste par un essai » alors qu'un essai tourne ; avant la refonte, Agir était un onglet. Dire l'essai en cours
-    sur la carte (« Dormir au moins 7 h 30 · jour 4 sur 10 »), et la remonter les jours « avec ». Android et iPhone.
+  - [x] **UPG-1 — Essai en cours sur l'Accueil** (16/11 17:30, #1044) : la carte « Agir » dit la consigne de l'essai
+    (« Dormir au moins 7 h 30 ») et « Essai · jour 4 sur 10 · aujourd’hui, jour avec / jour sans » (mots d'Agir) ;
+    deux essais : « 2 essais en cours · … », lien vers Agir. Un jour « avec », elle remonte sous « Bien-être
+    aujourd’hui ». `homeTrial()` (trials.js) ne lit que les entrées `trial`. Code partagé sans correctif iPhone.
   - [ ] **UPG-2 — Nouveautés d'un testeur qui arrive** : le bandeau titre « Nouvelle police et fond crème et 17
     autres changements » ; la nouvelle que ce testeur doit lire est la navigation à 4 onglets et la fin du Journal.
     Mettre en avant la note de la refonte (`2026-11-15-0435-refonte-navigation`) quand elle fait partie des non lues.

@@ -174,6 +174,28 @@ export function trialStatus(trial, { summaries = new Map(), outcome = new Map(),
   }
 }
 
+/**
+ * UPG-1 : l'essai en cours, pour la carte Agir de l'Accueil (Agir n'a plus d'onglet depuis la refonte). `rows` : les
+ * entrées « trial » ; seule la date compte (la tenue n'y figure pas). Le plus avancé s'il y en a plusieurs ; null sinon.
+ */
+export function homeTrial(rows, now = new Date()) {
+  const live = (rows ?? [])
+    .filter((e) => e?.type === TRIAL_TYPE && Array.isArray(e.payload?.schedule) && e.payload.schedule.length && !e.payload.removedAt && !e.payload.kept)
+    .map((e) => ({ e, s: trialStatus(e.payload, { now }) }))
+    .filter(({ s }) => !s.done && s.todayDay)
+    .sort((a, b) => b.s.dayIndex - a.s.dayIndex)
+  if (!live.length) return null
+  const { e, s } = live[0]
+  const withToday = Boolean(s.todayDay.with)
+  const head = live.length > 1 ? `${live.length} essais en cours` : 'Essai'
+  return {
+    to: live.length > 1 ? '/agir' : `/agir/essai/${e.id}`,
+    title: instruction(e.payload, true),
+    detail: `${head} · jour ${s.dayIndex} sur ${s.total} · aujourd’hui, ${withToday ? 'jour avec' : 'jour sans'}`,
+    withToday,
+  }
+}
+
 const BILAN_TITLES = { yes: 'Plutôt oui', no: 'Plutôt non', none: 'Pas de différence nette', too_few: 'Trop peu de jours pour conclure' }
 
 /** Le bilan d'un essai fini, en mots : un titre, et la réserve qui va avec (ou null). */
