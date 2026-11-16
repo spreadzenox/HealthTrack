@@ -12,7 +12,8 @@
 codent Pilou et son monde en parallèle (étapes 8 à 15). **Sur main : #1047 (relais de la photo, éteint), #1048 (Monde)
 et #1053 (Scène, 22:02 : Pilou sur son île en tête de l'Accueil, v767, APK 35,0 Mo), puis #1062 (Scène 2, 23:31 : les
 7 cadeaux en 3D, la météo sur l'île, Réglages › Mouvements de Pilou) et #1056 (Bulles, 23:52 : ce qu'il reste à noter en bulles autour de Pilou, « Humeur du
-jour », fleurs, « Jour 3 sur 7 », 7 cadeaux).** 5 PR ouvertes attendent leur build iPhone (près d'une heure chacune ; deux redémarrages du conteneur de VIE ont coûté
+jour », fleurs, « Jour 3 sur 7 », 7 cadeaux) et #1060 (Vie, 00:16 : Pilou dans Ma journée, la rencontre et son nom, le jour 7).**
+Tests de main verts après chacun. 4 PR ouvertes attendent leur build iPhone (près d'une heure chacune ; deux redémarrages du conteneur de VIE ont coûté
 ≈ 1 h). **Nouveau à 22:40 : l'assemblage** — le lot Scène a fusionné en local main et les 7 PR ouvertes : 3 980 tests
 verts, 1 rouge (corrigé d'une ligne), et l'Accueil complet tient (vrai Pilou, bulles, Humeur du jour, ciel jour, soir et
 nuit avec Pilou endormi, cadeaux, thème sombre lisible). Les conflits entre lots sont identifiés et leur résolution
@@ -22,7 +23,7 @@ nuit avec Pilou endormi, cadeaux, thème sombre lisible). Les conflits entre lot
 - **Pilou (9)** #1058 : la figurine vernie, ses yeux, 12 expressions, sa montre à l'heure réelle.
 - **Bulles (10)** **#1056 mergée** (23:52) : bulles, « Humeur du jour »,
   fleurs, « Jour 3 sur 7 », 7 cadeaux.
-- **Vie (11 et 12)** #1060 remise à jour sur main à 23:10 (conflit résolu, un test instable corrigé à la source) : Pilou
+- **Vie (11 et 12)** **#1060 mergée** (17/11 00:16) : Pilou
   dans Ma journée, la rencontre et son nom (une seule fois pour vous, sans refaire l'accueil), le jour 7, Pilou dans
   Objectifs et Données. Ensuite : le cairn des galets dans « Par famille ».
 - **Monde (13)** : #1048 mergée ; #1057 (mise à jour sur main à 23:15) : le widget Android « Ma journée » avec Pilou,
@@ -87,7 +88,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
-| 16/11 23:30 — [Intégrateur du sprint](runs/2026-11-16-2330-integrateur-sprint.md) | 📝 | Main vert (v767). **#1062 (Scène 2 : cadeaux en 3D, météo de l'île) mergée** pendant le run, puis **#1056 (Bulles)** ; 5 PR du sprint attendent leur build iPhone. Assemblage local des 7 PR par le lot Scène : 3 980 tests verts, l'Accueil complet tient ; conflits entre lots identifiés et résolus sur le papier. Rien à faire de votre côté |
+| 16/11 23:30 — [Intégrateur du sprint](runs/2026-11-16-2330-integrateur-sprint.md) | 📝 | Main vert (v767). **#1062 (Scène 2 : cadeaux en 3D, météo de l'île) mergée** pendant le run, puis **#1056 (Bulles)** et **#1060 (Vie)**, Tests de main verts ; 4 PR du sprint attendent leur build iPhone. Assemblage local des 7 PR par le lot Scène : 3 980 tests verts, l'Accueil complet tient ; conflits entre lots identifiés et résolus sur le papier. Rien à faire de votre côté |
 | 16/11 22:30 — [Intégrateur du sprint](runs/2026-11-16-2230-integrateur-sprint.md) | 📝 | Main vert (v767). **Scène (#1053) mergée** : Pilou sur son île en tête de l'Accueil. 7 PR ouvertes (#1050, #1052, #1056, #1057, #1058, #1060, #1062) ; Vie réunie dans #1060. Widget de Pilou : Android seulement (noté dans PARITE). Rien à faire de votre côté |
 | 16/11 21:30 — [Intégrateur du sprint](runs/2026-11-16-2130-integrateur-sprint.md) | 📝 | Main vert. Sprint de la refonte en cours : #1047 (relais photo, éteint) et #1048 (Monde) mergées, 7 PR encore ouvertes (étapes 8 à 15) ; état par lot noté au BACKLOG, PRODUIT et PARITE. #1045 (« Ma digestion » reste cochée) verte, mergée après 03:00. Rien à faire de votre côté |
 | 16/11 20:30 — [« idées » : 2 personas, installation neuve et mise à jour](runs/2026-11-16-2030-idees-upg-3-personas.md) | 💡 | Passage des personas commencé (UPG-3) : une personne qui installe Halcya (jour 1) et un testeur de 45 jours qui reçoit la refonte. **Rien de perdu** à la mise à jour (essai, jours passés, export). 10 points à polir avant le 22/11, d'abord : la visite guidée ne présente pas « Ma journée » et parle encore d'« Agir » comme d'un onglet ; vos anciens objectifs « sport » et « cycle » sont convertis sans explication (et « Confort digestif » se retrouve coché) ; la page Nouveautés ne met pas la note de la nouvelle navigation en tête. Rien à faire de votre côté |
