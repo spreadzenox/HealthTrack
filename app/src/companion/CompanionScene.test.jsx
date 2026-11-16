@@ -102,3 +102,20 @@ describe('météo de l’île (SPEC île § 6)', () => {
     expect(seen.mock.calls[0][0].weather.precipMmH).toBe(0)
   })
 })
+
+describe('Réglages › Mouvements de Pilou', async () => {
+  const { default: MotionSetting } = await import('./MotionSetting')
+  const { fireEvent } = await import('@testing-library/react')
+  it('choisit Réduits et prévient le bus ; caché quand la scène est éteinte', () => {
+    const seen = vi.fn()
+    bus.on(EVENTS.REDUCED_MOTION_CHANGED, seen)
+    render(<MotionSetting />)
+    expect(screen.getByRole('radio', { name: 'Automatiques' }).checked).toBe(true)
+    fireEvent.click(screen.getByRole('radio', { name: 'Réduits' }))
+    expect(getReducedMotionSetting()).toBe('on')
+    expect(seen).toHaveBeenLastCalledWith({ value: true }, 'reduced-motion:changed')
+    cleanup()
+    const { container } = render(<MotionSetting enabled={false} />)
+    expect(container.innerHTML).toBe('')
+  })
+})
