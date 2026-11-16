@@ -47,3 +47,14 @@ export function islandFlowers(entries, now = new Date()) {
   }))
   return { today: todayList, meadow }
 }
+
+const THEME_OF = { peach: 'peche', mint: 'menthe', honey: 'miel' }
+
+/** Fleurs au format du bus (CONTRAT.md § 4, `flower:grow` et `flowers:set`) ; la prairie à × 0,58. */
+export function flowerForBus(f, meadow = false) {
+  return { id: f.id, theme: THEME_OF[f.tone] ?? 'menthe', angleDeg: f.angle, radius: f.r, scale: meadow ? 0.58 : 1 }
+}
+
+export function flowersForBus({ today, meadow }) {
+  return [...meadow.map((f) => flowerForBus(f, true)), ...today.map((f) => flowerForBus(f))]
+}

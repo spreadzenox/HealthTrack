@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { islandFlowers, DAY_SLOTS, MEADOW_MAX } from './flowers'
+import { islandFlowers, flowersForBus, DAY_SLOTS, MEADOW_MAX } from './flowers'
 import { habitEntry } from '../../services/habits'
 
 const NOW = new Date(2026, 10, 16, 20)
@@ -28,5 +28,15 @@ describe('fleurs de l’îlot', () => {
     expect(r.meadow.length).toBe(MEADOW_MAX)
     expect(r.meadow.every((f) => f.day >= '2026-11-09')).toBe(true)
     expect(r.meadow.every((f) => f.r >= 1 && f.r <= 1.13)).toBe(true)
+  })
+})
+
+describe('fleurs pour le bus', () => {
+  it('format du contrat, prairie plus petite', () => {
+    const r = islandFlowers([{ id: 1, type: 'food', at: at(16, 8) }, { id: 2, type: 'wellbeing', at: at(15, 8) }], NOW)
+    expect(flowersForBus(r)).toEqual([
+      { id: '2', theme: 'menthe', angleDeg: expect.any(Number), radius: expect.any(Number), scale: 0.58 },
+      { id: '1', theme: 'peche', angleDeg: -74, radius: 0.95, scale: 1 },
+    ])
   })
 })

@@ -31,6 +31,8 @@ import { getHabits } from '../settings/habits'
 import { CYCLE_TYPE, cycleVisible } from '../services/cycle'
 import { goalsOf } from '../settings/onboarding'
 import { TRIAL_TYPE, homeTrial } from '../services/trials'
+import CompanionHome from '../companion/bubbles/CompanionHome'
+import { useFirstWeekInputs } from '../companion/bubbles/useFirstWeekInputs'
 
 /**
  * Refonte « Compagnon », étape 2 : l'ancien écran Aujourd'hui est rangé dans deux onglets. `view="home"` (Accueil) :
@@ -176,6 +178,9 @@ export default function Dashboard({ view = 'home' }) {
   const catchUp = day && !loading ? yesterdayCatchUp(entries, habits) : null
   const skipCatchUp = useCallback((dateKey) => { skipYesterday(dateKey); setSkipTick((t) => t + 1) }, [])
 
+  // Refonte étape 10 : l'îlot et ses bulles, la jauge d'humeur et la première semaine (companion/bubbles)
+  const firstWeekInputs = useFirstWeekInputs()
+
   const head = headerLine()
   // Refonte étape 1 : sans l'objectif digestion, on ne demande pas le ventre (sauf à qui le note déjà)
   const askGut = gutAsked(gutMode, entries)
@@ -209,6 +214,11 @@ export default function Dashboard({ view = 'home' }) {
           cigaretteInStrip={!loading && shouldShowCigaretteCounter(entries)}
           onCountCigarettes={() => { setCigaretteCounterPinned(true); setCigaretteTick((t) => t + 1) }}
         />
+      )}
+      {home && !loading && !error && (
+        <CompanionHome entries={entries} askGut={askGut} habits={habits}
+          wellbeing={firstWeekInputs.wellbeing} gut={firstWeekInputs.gut}
+          onWellbeing={() => { setWellbeingEntry(undefined); setWellbeingOpen(true) }} onHabit={answerHabit} />
       )}
       {home && <PaymentIssueCard />}
       {home && <LaunchEndCard />}

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { firstWeek, openGift, markReadySeen, giftText, digestionCountdown, GIFTS, WEEK_DAYS } from './firstWeek'
+import { wellbeingDays, firstWeek, openGift, markReadySeen, giftText, digestionCountdown, GIFTS, WEEK_DAYS } from './firstWeek'
 
 const mem = () => {
   const m = new Map()
@@ -22,6 +22,8 @@ describe('première semaine', () => {
     const after = firstWeek({ noted: 1, todayNoted: true }, { now: D(16, 20), storage })
     expect(after.todayGift).toBeNull()
     expect(after.gifts[0].given).toBe(true)
+    expect(after.giftToday.id).toBe('shrub')
+    expect(firstWeek({ noted: 1 }, { now: D(17), storage }).giftToday).toBeNull()
   })
 
   it('un jour sans rien ne fait pas reculer la barre : elle attend', () => {
@@ -52,5 +54,18 @@ describe('première semaine', () => {
     expect(giftText(GIFTS[6])).toBe('Un arc-en-ciel pour l’îlot ! La semaine est complète.')
     expect(digestionCountdown(7)).toBe('Confort digestif : premier score dans 7 jours.')
     expect(digestionCountdown(1)).toBe('Confort digestif : premier score demain.')
+  })
+})
+
+describe('wellbeingDays', () => {
+  it('compte les jours notés passés, comme Objectifs', () => {
+    const states = { days: [
+      { date: '2026-11-14', future: false, observed: { wellbeing: true } },
+      { date: '2026-11-15', future: false, observed: { wellbeing: false } },
+      { date: '2026-11-16', future: false, observed: { wellbeing: true } },
+      { date: '2026-11-17', future: true, observed: { wellbeing: true } },
+    ] }
+    expect(wellbeingDays(states, D(16))).toEqual({ noted: 2, todayNoted: true })
+    expect(wellbeingDays(null)).toEqual({ noted: 0, todayNoted: false })
   })
 })

@@ -34,7 +34,7 @@ describe('homeBubbles', () => {
     expect(no.done).toBe(1)
   })
 
-  it('le ventre attend le soir, avec un texte pour le lecteur d’écran', () => {
+  it('la digestion attend le soir, avec un texte pour le lecteur d’écran', () => {
     const r = homeBubbles([], { now: NOW, askGut: true })
     const gut = r.bubbles.find((b) => b.id === 'gut')
     expect(gut.waiting).toBe(true)
@@ -47,7 +47,7 @@ describe('homeBubbles', () => {
     const r = homeBubbles([], { now: NOW, askGut: true, habits: [MED, READ, { id: 'custom:velo', label: 'Vélo' }] })
     for (const b of r.bubbles) {
       expect(b.label).toBeTruthy()
-      expect(b.ariaLabel).toContain(b.kind === 'meals' ? 'Repas' : b.label)
+      expect(b.ariaLabel).toContain(b.kind === 'meal' ? 'Repas' : b.label)
     }
   })
 })
@@ -78,14 +78,11 @@ describe('orbitLayout', () => {
           expect(p.y).toBeLessThan(0.8)
           expect(p.scale).toBeGreaterThanOrEqual(0.8 * (n > 6 ? 0.85 : 1) - 1e-9)
         }
-        if (n <= 6) {
-          for (let i = 0; i < n; i++) {
-            for (let j = i + 1; j < n; j++) {
-              // largeur d'une bulle ≈ 0,18 du cadre ; hauteur ×1/0,9
-              const dx = pts[i].x - pts[j].x
-              const dy = (pts[i].y - pts[j].y) * 0.9
-              expect(Math.hypot(dx, dy)).toBeGreaterThan(0.15)
-            }
+        // bulle = 21 % de la largeur × son échelle ; cadre 10/9 : jamais deux bulles qui se touchent
+        for (let i = 0; i < n; i++) {
+          for (let j = i + 1; j < n; j++) {
+            const d = Math.hypot(pts[i].x - pts[j].x, (pts[i].y - pts[j].y) * 0.9)
+            expect(d).toBeGreaterThan(0.105 * (pts[i].scale + pts[j].scale) * 1.1)
           }
         }
       }

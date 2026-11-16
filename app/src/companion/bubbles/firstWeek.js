@@ -12,13 +12,13 @@ import { localDateKey } from '../../services/analysisEngine'
 export const WEEK_DAYS = FIRST_SCORE_DAY.wellbeing
 
 export const GIFTS = [
-  { day: 1, id: 'shrub', name: 'Arbuste', text: 'Un arbuste pour l’îlot !' },
-  { day: 2, id: 'lantern', name: 'Lanterne', text: 'Une lanterne pour l’îlot !' },
-  { day: 3, id: 'scarf', name: 'Écharpe', text: 'Une écharpe pour {name} !' },
-  { day: 4, id: 'pebbles', name: 'Galets', text: 'Des galets pour l’îlot !' },
-  { day: 5, id: 'butterfly', name: 'Papillon', text: 'Un papillon pour {name} !' },
-  { day: 6, id: 'cloud', name: 'Nuage', text: 'Un petit nuage pour {name} !' },
-  { day: 7, id: 'rainbow', name: 'Arc-en-ciel', text: 'Un arc-en-ciel pour l’îlot !' },
+  { day: 1, id: 'shrub', item: 'arbuste', name: 'Arbuste', text: 'Un arbuste pour l’îlot !' },
+  { day: 2, id: 'lantern', item: 'lanterne', name: 'Lanterne', text: 'Une lanterne pour l’îlot !' },
+  { day: 3, id: 'scarf', item: 'echarpe', name: 'Écharpe', text: 'Une écharpe pour {name} !' },
+  { day: 4, id: 'pebbles', item: 'galets', name: 'Galets', text: 'Des galets pour l’îlot !' },
+  { day: 5, id: 'butterfly', item: 'papillon', name: 'Papillon', text: 'Un papillon pour {name} !' },
+  { day: 6, id: 'cloud', item: 'nuage', name: 'Nuage', text: 'Un petit nuage pour {name} !' },
+  { day: 7, id: 'rainbow', item: 'arc-en-ciel', name: 'Arc-en-ciel', text: 'Un arc-en-ciel pour l’îlot !' },
 ]
 
 const KEY = 'halcya.companion.firstWeek'
@@ -75,14 +75,17 @@ export function firstWeek({ noted = 0, todayNoted = false } = {}, { now = new Da
     if (!saved.readyOn) write(storage, { ...saved, readyOn: today })
     const readyOn = saved.readyOn ?? today
     const state = !saved.seen || readyOn === today ? 'ready' : 'done'
-    return { state, day: WEEK_DAYS, filled, gifts: GIFTS.map((g) => ({ ...g, given: true })), todayGift: null }
+    return { state, day: WEEK_DAYS, filled, gifts: GIFTS.map((g) => ({ ...g, given: true })), todayGift: null,
+      rainbowGiven: opened.has(WEEK_DAYS) }
   }
   // Le jour en cours : celui qui vient après les jours déjà notés (aujourd'hui compte dès qu'il est noté)
   const day = Math.min(WEEK_DAYS, todayNoted ? filled : filled + 1)
   // Les cadeaux des jours passés sont donnés ; celui d'aujourd'hui attend d'être ouvert
   const gifts = GIFTS.map((g) => ({ ...g, given: g.day < day || opened.has(g.day) }))
   const todayGift = opened.has(day) || saved.giftOn === today ? null : GIFTS[day - 1]
-  return { state: 'week', day, filled, gifts, todayGift }
+  // Le cadeau ouvert aujourd'hui : son texte reste affiché jusqu'au soir
+  const giftToday = saved.giftOn === today && Number.isInteger(saved.lastGift) ? GIFTS[saved.lastGift - 1] ?? null : null
+  return { state: 'week', day, filled, gifts, todayGift, giftToday }
 }
 
 /** Le cadeau du jour est ouvert : il ne revient pas, et aucun autre n'arrive avant demain. */
@@ -90,7 +93,14 @@ export function openGift(day, { now = new Date(), storage = globalThis.localStor
   const saved = read(storage)
   const opened = new Set(Array.isArray(saved.opened) ? saved.opened : [])
   opened.add(day)
-  write(storage, { ...saved, opened: [...opened].sort((a, b) => a - b), giftOn: localDateKey(now.toISOString()) })
+  write(storage, { ...saved, opened: [...opened].sort((a, b) => a - b), giftOn: localDateKey(now.toISOString()), lastGift: day })
+}
+
+/** Jours notés du bien-être d'après les états du jour (même compte que l'onglet Objectifs). */
+export function wellbeingDays(states, now = new Date()) {
+  const today = localDateKey(now.toISOString())
+  const days = (states?.days || []).filter((d) => !d.future && d.observed?.wellbeing)
+  return { noted: days.length, todayNoted: days.some((d) => d.date === today) }
 }
 
 /** « Découvrir » a été touché : la carte des premières analyses ne revient plus les jours suivants. */

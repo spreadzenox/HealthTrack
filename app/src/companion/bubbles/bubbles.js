@@ -25,7 +25,7 @@ const HABIT_ICONS = { meditation: 'lotus', stretching: 'stretch', relaxation: 'l
 /**
  * @param {object[]} entries entrées récentes
  * @param {{ now?: Date, askGut?: boolean, habits?: { id: string, label: string }[] }} [opts]
- * @returns {{ bubbles: Array<{ id: string, kind: 'meals'|'wellbeing'|'gut'|'habit', label: string, tone: string,
+ * @returns {{ bubbles: Array<{ id: string, kind: 'meal'|'wellbeing'|'gut'|'habit', label: string, tone: string,
  *   icon: string, fill?: number, total?: number, waiting?: boolean, habit?: object, ariaLabel: string }>,
  *   remaining: number, allDone: boolean, total: number, done: number }}
  */
@@ -37,18 +37,18 @@ export function homeBubbles(entries, { now = new Date(), askGut = false, habits 
     if (t.id === 'meals') {
       const label = `Repas ${t.count}/${t.slots.length}`
       bubbles.push({
-        id: 'meals', kind: 'meals', label, tone: 'peach', icon: 'meal', fill: t.count, total: t.slots.length,
+        id: 'meals', kind: 'meal', label, tone: 'peach', theme: 'peche', icon: 'meal', fill: t.count, total: t.slots.length,
         ariaLabel: `Repas, ${t.count} sur ${t.slots.length}, touchez pour photographier le repas`,
       })
     } else if (t.id === 'wellbeing') {
-      bubbles.push({ id: 'wellbeing', kind: 'wellbeing', label: 'Bien-être', tone: 'mint', icon: 'smile',
+      bubbles.push({ id: 'wellbeing', kind: 'wellbeing', label: 'Bien-être', tone: 'mint', theme: 'menthe', icon: 'smile',
         ariaLabel: 'Bien-être, à faire, touchez pour noter' })
     } else if (t.id === 'gut') {
       const waiting = !t.available
-      bubbles.push({ id: 'gut', kind: 'gut', label: 'Ventre', tone: 'peach', icon: 'digestion', waiting,
-        ariaLabel: waiting ? `Ventre, à partir de ${GUT_EVENING_FROM_HOUR} h` : 'Ventre, à faire, touchez pour noter' })
+      bubbles.push({ id: 'gut', kind: 'gut', label: 'Digestion', tone: 'peach', theme: 'peche', icon: 'digestion', waiting,
+        ariaLabel: waiting ? `Digestion, à partir de ${GUT_EVENING_FROM_HOUR} h` : 'Digestion, à faire, touchez pour noter' })
     } else if (t.habit) {
-      bubbles.push({ id: t.id, kind: 'habit', label: t.habit.label, tone: 'honey',
+      bubbles.push({ id: t.id, kind: 'habit', label: t.habit.label, tone: 'honey', theme: 'miel',
         icon: HABIT_ICONS[t.habit.id] ?? 'sparkle', habit: t.habit,
         ariaLabel: `${t.habit.label}, à faire, touchez pour noter` })
     }
@@ -63,7 +63,7 @@ export function homeBubbles(entries, { now = new Date(), askGut = false, habits 
 /** Texte bref après un éclatement (ile.SPEC § 3, 2 s). */
 export function poppedMessage(bubble, done) {
   if (bubble.kind === 'habit') return `${bubble.label} : ${done ? 'oui' : 'non'}, c’est noté.`
-  if (bubble.kind === 'meals') return 'Repas noté.'
+  if (bubble.kind === 'meal') return 'Repas noté.'
   if (bubble.kind === 'wellbeing') return 'Bien-être noté.'
   return 'C’est noté.'
 }
@@ -75,30 +75,45 @@ export function bubblesLeftText(n) {
 }
 
 /**
- * Place des bulles sur l'orbite (ile.SPEC § 3), en fraction du cadre de l'îlot (x, y de 0 à 1) : créneaux égaux,
- * décalés de `phase` (radians). Devant (θ = 0), la bulle passe au bas de l'îlot ; derrière, au-dessus de la tête.
- * `scale` donne la perspective (80 % derrière), `back` vrai quand la bulle est derrière Pilou.
- * Au-delà de 6 bulles, rayon × 0,85.
+ * Orbite des bulles en unités du monde (ile.SPEC § 3 ; Pilou mesure 1,24, l'îlot 1,3 de rayon, +z vers l'écran) :
+ * créneaux égaux décalés de `phase` (radians). Devant (θ = 0) la bulle passe devant le bord de l'îlot ; derrière, elle
+ * remonte au-dessus de sa tête. Le premier créneau est sur le côté, pour que rien ne se pose devant le visage au repos.
  */
-export function orbitLayout(n, phase = 0) {
+export const BUBBLE_RADIUS = 0.46
+
+export function orbitWorld(n, phase = 0) {
   const out = []
-  const k = 0.2 // largeur du cadre par unité du monde
   for (let i = 0; i < n; i++) {
-    // Premier créneau sur le côté gauche, pour que rien ne se pose devant le visage au repos
     const theta = phase + (2 * Math.PI * i) / n - Math.PI / 2
     const c = Math.cos(theta)
-    const s = Math.sin(theta)
-    const x = 1.86 * s
-    const z = 1.25 * c
-    const y = 0.9 - 0.95 * c + 0.45 * Math.max(0, -c) ** 2
-    const scale = (0.9 + 0.1 * c) * (n > 6 ? 0.85 : 1)
     out.push({
-      x: 0.5 + x * k,
-      // Le cadre fait ≈ 0,9 fois sa largeur en hauteur ; le dessus de l'îlot est à 64 %
-      y: 0.64 + ((-y * k) + z * k * 0.25) / 0.9,
-      scale,
-      back: z < -0.05 * 1.25,
+      x: 1.86 * Math.sin(theta),
+      y: 0.9 - 0.95 * c + 0.45 * Math.max(0, -c) ** 2,
+      z: 1.25 * c,
+      // Au-delà de 6 bulles, rayon × 0,85
+      size: n > 6 ? 0.85 : 1,
     })
   }
   return out
+}
+
+/**
+ * Projection de repli (sans la scène 3D) d'un point du monde sur le cadre de l'îlot dessiné, en fraction du cadre
+ * (x, y de 0 à 1) : vue un peu plongeante, perspective de 80 % derrière. Même forme que `stage.project` du contrat.
+ */
+export function stillProject(x, y, z) {
+  return {
+    x: 0.5 + x * 0.2,
+    y: 0.495 - y * 0.05 + z * 0.23,
+    scale: 0.9 + 0.08 * z,
+    behind: z < -0.05,
+  }
+}
+
+/** Place des bulles sur le cadre de repli (fractions), pour les tests et l'îlot dessiné. */
+export function orbitLayout(n, phase = 0) {
+  return orbitWorld(n, phase).map((p) => {
+    const q = stillProject(p.x, p.y, p.z)
+    return { x: q.x, y: q.y, scale: q.scale * p.size, back: q.behind }
+  })
 }
