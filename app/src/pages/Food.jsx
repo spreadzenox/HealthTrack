@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
+import PilouFigure from '../companion/life/PilouFigure'
 import JournalTabs from '../components/JournalTabs'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { takePendingMealPhoto } from '../services/mealPhotoHandoff'
@@ -364,9 +365,10 @@ export default function Food() {
       )}
 
       {loading && (
-        <div className="loading">
-          <div className="spinner" aria-hidden />
-          <p>Analyse en cours…</p>
+        <div className="loading food-pilou-sniff">
+          {/* Lot VIE (étape 11) : Pilou renifle l'assiette pendant l'analyse (SPEC journée § 3.1) */}
+          <PilouFigure size={72} expr="curieux" move="sniff" />
+          <p>Pilou regarde votre assiette…</p>
         </div>
       )}
 

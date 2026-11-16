@@ -51,3 +51,6 @@
 :root[data-reduced-motion='on'] .pilou-figure .pilou-amber { animation: none !important; }
 .pilou-figure { display: inline-flex; align-items: flex-end; justify-content: center; }
 .pilou-sprite { display: block; width: auto; max-width: none; height: 100%; object-fit: contain; }
+/* Il renifle l'assiette (SPEC journée § 3.1) : petits coups de tête toutes les 350 ms */
+.pilou-move-sniff .pilou-body { animation: pilou-sniff 350ms cubic-bezier(.33, 1, .68, 1) infinite; }
+@keyframes pilou-sniff { 0%, 100% { transform: rotate(0deg) scale(1, 1); } 40% { transform: rotate(6deg) scale(1.03, 0.97); } }

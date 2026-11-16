@@ -20,3 +20,6 @@
   overflow: hidden;
   pointer-events: none;
 }
+.pilou-waiting { display: flex; align-items: center; gap: 12px; margin: 10px 0 0; }
+.pilou-waiting-text { margin: 0; color: var(--text-muted); font-weight: 700; }
+.food-pilou-sniff .pilou-figure { margin: 0 auto; }
