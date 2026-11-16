@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { getUnseenEntries, getLastSeenId, markAllSeen } from './whatsNew'
+import { getUnseenEntries, getLastSeenId, markAllSeen, bannerHeadline } from './whatsNew'
 
 const CHANGELOG = [
   { id: '2026-10-10-a', date: '2026-10-10', title: 'Trois' },
@@ -36,5 +36,25 @@ describe('whatsNew', () => {
   it('does nothing when marking an empty changelog', () => {
     markAllSeen([])
     expect(getLastSeenId()).toBeNull()
+  })
+})
+
+describe('bannerHeadline (REFONTE-UPG-2)', () => {
+  const unseen = [
+    { id: '2026-11-16-1030-c', title: 'Nouvelle police' },
+    { id: '2026-11-15-0435-b', title: 'Nouveaux onglets', aLaUne: true },
+    { id: '2026-11-14-0000-a', title: 'Ancienne' },
+  ]
+
+  it('met en avant une note « à la une » parmi les non lues, même si elle n’est pas la plus récente', () => {
+    expect(bannerHeadline(unseen).title).toBe('Nouveaux onglets')
+  })
+
+  it('prend la plus récente quand aucune note non lue n’est à la une', () => {
+    expect(bannerHeadline([unseen[0], unseen[2]]).title).toBe('Nouvelle police')
+  })
+
+  it('rien à montrer sans note non lue', () => {
+    expect(bannerHeadline([])).toBeNull()
   })
 })

@@ -3,12 +3,14 @@
  *
  * Une entrée = un fichier `changelog/AAAA-MM-JJ-HHMM-<slug>.json` (heure UTC) :
  *   { "date": "AAAA-MM-JJ", "kind": "nouveau" | "amélioration" | "correctif",
- *     "title": "…", "items": ["…"], "variants"?: ["play"] | ["sideload"] | ["play", "sideload"] }
+ *     "title": "…", "items": ["…"], "variants"?: ["play"] | ["sideload"] | ["play", "sideload"], "aLaUne"?: true }
  * L'id est le nom du fichier, dont l'ordre alphabétique est chronologique.
  * Un fichier par changement évite les conflits Git entre branches parallèles.
  * `variants` (facultatif) limite l'entrée à une variante ; sans lui, elle vaut pour toutes. Une note propre à Android
  * (barres système, sauvegarde Android, montre en Bluetooth) porte `["play", "sideload"]` : l'app iPhone
  * (dépôt HealthTrack-iOS), qui réutilise ce code, ne la montre pas.
+ * `aLaUne` : le bandeau des Nouveautés titre cette note tant qu'elle n'est pas lue, même si d'autres sont plus
+ * récentes (une seule à la fois, réservée à un changement que tout le monde doit lire : la refonte).
  */
 import { DISTRIBUTION, resolveDistribution } from '../config/distribution'
 

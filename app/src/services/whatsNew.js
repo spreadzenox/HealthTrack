@@ -31,3 +31,13 @@ export function markAllSeen(changelog) {
     /* stockage indisponible : la bannière réapparaîtra, sans gravité */
   }
 }
+
+/**
+ * Note que le bandeau met en titre (REFONTE-UPG-2) : une note marquée `aLaUne` parmi les non lues passe devant les
+ * plus récentes (un testeur qui arrive d'avant la refonte doit d'abord lire la nouvelle navigation), sinon la plus
+ * récente.
+ * @param {Array<{ aLaUne?: boolean }>} unseen  notes non lues, de la plus récente à la plus ancienne
+ */
+export function bannerHeadline(unseen) {
+  return unseen.find((e) => e.aLaUne) ?? unseen[0] ?? null
+}

@@ -1,11 +1,12 @@
 {
   "date": "2026-11-15",
   "kind": "nouveau",
+  "aLaUne": true,
   "title": "Nouveaux onglets : Accueil, Ma journée, Objectifs, Données",
   "items": [
     "Accueil montre votre bien-être du jour et vos mesures. Agir s’ouvre depuis le bas de l’Accueil.",
     "Ma journée regroupe ce que vous notez : repas, bien-être et, avec « Ma digestion », votre ventre.",
-    "Objectifs contient vos analyses. Données s’ouvre sur Tendances, puis Nutrition, Repas et Jours.",
+    "Objectifs contient vos analyses. Données regroupe Tendances et Nutrition ; le détail d’un jour s’ouvre dans Tendances.",
     "Dans Réglages, la ligne « Données » s’appelle maintenant « Sauvegarde »."
   ]
 }
