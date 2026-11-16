@@ -7,7 +7,7 @@
  * Rien ne fane, rien ne s'accumule : seules les bulles du jour existent ; « Oui » et « Non » éclatent pareil.
  * Tout ce qui se passe est aussi écrit (étiquette de l'îlot, annonce pour le lecteur d'écran).
  */
-import { Fragment, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import MealPhotoButton from '../../components/MealPhotoButton'
 import LineIcon from '../../components/LineIcon'
@@ -18,6 +18,8 @@ import { islandFlowers, flowerForBus, flowersForBus } from './flowers'
 import { firstWeek, openGift, markReadySeen, giftText, digestionCountdown, GIFTS, WEEK_DAYS } from './firstWeek'
 import { GUT_EVENING_FROM_HOUR } from '../../services/today'
 import { bus, EVENTS } from '../bus'
+import CompanionScene from '../CompanionScene'
+import { companionSceneEnabled } from '../flags'
 import { useReducedMotion } from './useReducedMotion'
 import './bubbles.css'
 
@@ -34,15 +36,11 @@ const MIN_BUBBLE_PX = 64
 
 const MOOD_PHRASES = ['est tranquille', 'est de bonne humeur', 'est content', 'est ravi', 'est rayonnant']
 
-// La scène 3D du lot SCÈNE (CONTRAT.md § 2), si elle est là et allumée ; sinon l'îlot dessiné ci-dessous.
-const sceneLoaders = import.meta.glob('../CompanionScene.jsx')
-const flagModules = import.meta.glob('../flags.js', { eager: true })
-const loadScene = Object.values(sceneLoaders)[0]
-const LazyScene = loadScene ? lazy(loadScene) : null
+// La scène 3D du lot SCÈNE (CONTRAT.md § 2), montée ici avec les bulles dans son `overlay` ; éteinte par son
+// interrupteur, l'îlot dessiné ci-dessous la remplace.
 function sceneEnabled() {
-  const flags = Object.values(flagModules)[0]
   try {
-    return Boolean(LazyScene && flags?.companionSceneEnabled?.())
+    return companionSceneEnabled()
   } catch {
     return false
   }
@@ -458,10 +456,8 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
       <div className={`cmp-stage${reduced ? ' is-reduced' : ''}`}
         onPointerDown={hold} onPointerUp={release} onPointerCancel={release} onPointerLeave={release}>
         {use3d ? (
-          <Suspense fallback={still}>
-            <LazyScene height={320} name={name} mood={mood.level / MOOD_TOP} label={label}
-              overlay={(stage) => <>{overlay(stage)}{giftBubble}</>} />
-          </Suspense>
+          <CompanionScene height={320} name={name} mood={mood.level / MOOD_TOP} label={label}
+            overlay={(stage) => <>{overlay(stage)}{giftBubble}</>} />
         ) : still}
       </div>
       {!use3d && <p className="cmp-island-label">{label}</p>}
