@@ -14,8 +14,8 @@ const text = iphone.replace(/<!--[\s\S]*?-->/g, '').replace(/<style>[\s\S]*?<\/s
   .replace(/\s+/g, ' ')
 
 // Empreinte de app/public/conditions.html d'Android lue en dernier (version du 1er novembre 2026, relue sur v671 ;
-// AUJ-7, 07/11 : « ventre » devient « digestion », mêmes remplacements sur la page iPhone)
-const ANDROID_CONDITIONS_RELUES = '43c547736c621a8a21ca2e7b2829a3389eeccf76af5083718086ef9975a80aa9'
+// AUJ-7, 07/11 : « ventre » devient « digestion », mêmes remplacements sur la page iPhone ; REFONTE-7d, 16/11 : Nunito)
+const ANDROID_CONDITIONS_RELUES = 'dd429168bd80e55fb472e125a22d64a9ceac43e8bd0c05749c2ee207849727e8'
 
 describe("conditions d'utilisation sur iPhone", () => {
   it("suivent la dernière version relue de la page d'Android", () => {

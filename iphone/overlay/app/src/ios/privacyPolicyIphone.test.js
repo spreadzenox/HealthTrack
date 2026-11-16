@@ -21,7 +21,7 @@ const text = iphone.replace(/<!--[\s\S]*?-->/g, '').replace(/<style>[\s\S]*?<\/s
 // v782 : « Votre avis », reprise avec App Attest au lieu de Play Integrity ;
 // AUJ-7 (07/11) : « ventre » devient « digestion », mêmes remplacements sur la page iPhone ;
 // v980 (CYCLE-2) : « règles et symptômes du cycle si vous les notez » parmi les données gardées, repris sur iPhone)
-const ANDROID_POLICY_RELUE = '4bcd3f03a8dc3721370f0912be63a1e6bdfe5defc96547dd091bcb80eeb7b5dc'
+const ANDROID_POLICY_RELUE = '1e3afeea3f64b8840cfd25d07339e9c8fcb8f0d850f2d6278e6979d861047253'
 
 describe('politique de confidentialité sur iPhone', () => {
   it("suit la dernière version relue de la page d'Android", () => {

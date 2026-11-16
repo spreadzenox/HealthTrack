@@ -58,13 +58,13 @@ const font = (rel) => `data:font/woff2;base64,${readFileSync(resolve(root, 'node
 
 function featureGraphicHtml() {
   return `<!doctype html><html><head><meta charset="utf-8"><style>
-@font-face { font-family: Figtree; src: url(${font('@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2')}) format('woff2'); font-weight: 300 900; }
+@font-face { font-family: Nunito; src: url(${font('@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2')}) format('woff2'); font-weight: 300 900; }
 @font-face { font-family: Plex; src: url(${font('@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2')}) format('woff2'); }
 html, body { margin: 0; width: 1024px; height: 500px; background: #10231D; overflow: hidden; }
 .wrap { display: flex; align-items: center; gap: 56px; height: 100%; padding: 0 88px; box-sizing: border-box; }
 svg { width: 260px; height: 260px; flex: none; }
-h1 { margin: 0; font: 800 92px/1 Figtree; color: #FFFFFF; letter-spacing: -1px; }
-p { margin: 22px 0 0; font: 600 34px/1.25 Figtree; color: #E3F5EE; max-width: 560px; }
+h1 { margin: 0; font: 800 92px/1 Nunito; color: #FFFFFF; letter-spacing: -1px; }
+p { margin: 22px 0 0; font: 600 34px/1.25 Nunito; color: #E3F5EE; max-width: 560px; }
 small { display: block; margin-top: 26px; font: 500 18px/1 Plex; color: #B9DCCD; white-space: nowrap; }
 </style></head><body><div class="wrap">
 <svg viewBox="12 12 84 84" xmlns="http://www.w3.org/2000/svg">${GLYPH}</svg>

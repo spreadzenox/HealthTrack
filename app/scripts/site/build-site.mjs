@@ -27,7 +27,7 @@ export function landingHtml() {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Halcya — ventre et bien-être</title>
   <style>
-    body { font-family: Figtree, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; max-width: 680px;
+    body { font-family: Nunito, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; max-width: 680px;
            margin: 0 auto; padding: 32px 20px; color: #10231D; background: #FFFFFF; line-height: 1.6; }
     h1 { font-weight: 800; margin-bottom: 4px; }
     a { color: #0B7A5E; }

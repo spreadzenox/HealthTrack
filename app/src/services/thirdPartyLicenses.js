@@ -30,7 +30,7 @@ export const NPM_LICENSES = [
     note: 'Code source : https://github.com/Cap-go/capacitor-health' },
   { name: 'pdf-lib, fontkit', packages: ['pdf-lib', '@pdf-lib/fontkit'], license: 'MIT' },
   { name: 'noble-curves', packages: ['@noble/curves'], license: 'MIT' },
-  { name: 'Polices Figtree et IBM Plex Mono', packages: ['@fontsource-variable/figtree', '@fontsource/ibm-plex-mono'],
+  { name: 'Polices Nunito et IBM Plex Mono', packages: ['@fontsource-variable/nunito', '@fontsource/ibm-plex-mono'],
     license: 'OFL-1.1' },
 ]
 

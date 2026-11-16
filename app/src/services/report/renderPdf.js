@@ -4,7 +4,7 @@
  * Deux pages : « En bref » (ventre, semaine par semaine, réintroduction, pistes, sommeil) puis « Détail »
  * (calendrier avec les sous-groupes FODMAP du jour, décompte par sous-groupe, aliments fréquents, sources).
  * Tout est fait sur le téléphone : `pdf-lib` et `fontkit` (MIT) sont chargés à la demande par l'appelant
- * (`import()` dynamique) pour ne pas alourdir le premier lancement, et les polices Figtree et IBM Plex Mono
+ * (`import()` dynamique) pour ne pas alourdir le premier lancement, et les polices Nunito et IBM Plex Mono
  * (SIL OFL 1.1) sont embarquées dans le fichier, sans réseau.
  *
  * Les listes longues sont coupées (« … et N autres ») pour que le rapport tienne toujours en deux pages.
@@ -69,9 +69,9 @@ function sanitizer(font) {
  */
 export async function loadReportFonts() {
   const [regular, bold, heavy, mono] = await Promise.all([
-    import('../../assets/fonts/report/figtree-400.ttf?url'),
-    import('../../assets/fonts/report/figtree-700.ttf?url'),
-    import('../../assets/fonts/report/figtree-800.ttf?url'),
+    import('../../assets/fonts/report/nunito-400.ttf?url'),
+    import('../../assets/fonts/report/nunito-700.ttf?url'),
+    import('../../assets/fonts/report/nunito-800.ttf?url'),
     import('../../assets/fonts/report/ibm-plex-mono-400.ttf?url'),
   ].map((p) => p.then((m) => fetch(m.default)).then((r) => r.arrayBuffer())))
   return { regular, bold, heavy, mono }

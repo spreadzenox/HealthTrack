@@ -533,7 +533,7 @@
 }
 
 .reco-link-also {
-  /* Une phrase (POL-PLAY-7) : Figtree, pas la mono des chiffres */
+  /* Une phrase (POL-PLAY-7) : la police de l’app, pas la mono des chiffres */
   margin: 6px 0 0;
   font-size: 0.8rem;
   color: var(--text-muted);

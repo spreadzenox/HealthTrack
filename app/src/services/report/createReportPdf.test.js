@@ -28,7 +28,7 @@ vi.mock('@capacitor/share', () => ({
 }))
 
 const font = (name) => Uint8Array.from(readFileSync(new URL(`../../assets/fonts/report/${name}`, import.meta.url)))
-const fonts = { regular: font('figtree-400.ttf'), bold: font('figtree-700.ttf'), heavy: font('figtree-800.ttf'), mono: font('ibm-plex-mono-400.ttf') }
+const fonts = { regular: font('nunito-400.ttf'), bold: font('nunito-700.ttf'), heavy: font('nunito-800.ttf'), mono: font('ibm-plex-mono-400.ttf') }
 const NOW = new Date(2026, 9, 27, 9)
 const gut = (d, level) => ({ type: 'gut', source: 'app_gut', at: new Date(2026, 9, 27 - d, 21).toISOString(), payload: { level, scope: 'day' } })
 const face = (d) => ({ type: 'face_burst', source: 'face', at: new Date(2026, 9, 27 - d, 9).toISOString(), payload: { valence: 0.2, arousal: 0.1, n: 5 } })

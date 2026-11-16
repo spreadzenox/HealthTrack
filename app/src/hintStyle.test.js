@@ -20,7 +20,7 @@ describe('phrases d’aide .hint (POL-PLAY-53)', () => {
 })
 
 // Audit du 31/10 (POL-PLAY-76) : les champs (profil nutrition, repas, réglages…) gardaient la police système du
-// navigateur au lieu de Figtree.
+// navigateur au lieu de la police de l’app.
 describe('champs de saisie (POL-PLAY-76)', () => {
   it('reprennent la police de l’app', () => {
     expect(rule(read('./index.css'), 'input,\ntextarea,\nselect')).toContain('font-family: inherit')
