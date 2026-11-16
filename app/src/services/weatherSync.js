@@ -14,12 +14,13 @@ import {
   parseWeatherDays,
   weatherDaysToEntries,
 } from './weather'
+import { parseCurrentWeather } from '../companion/world/weather.js'
 
 const KEY = 'healthtrack_weather'
 
 export const WEATHER_STALE_MS = 3 * 3600 * 1000
 
-const DEFAULTS = { enabled: false, location: null, lastSyncAt: null, lastError: null, today: null }
+const DEFAULTS = { enabled: false, location: null, lastSyncAt: null, lastError: null, today: null, current: null }
 
 export function getWeatherSettings() {
   try {
@@ -50,6 +51,7 @@ export function enableWeather({ lat, lon, name }) {
     lastSyncAt: null,
     lastError: null,
     today: null,
+    current: null,
   })
 }
 
@@ -102,6 +104,7 @@ export async function syncWeather({ force = false, now = new Date(), fetchImpl, 
         lastSyncAt: now.toISOString(),
         lastError: null,
         today: days.find((d) => d.date === todayKey) || null,
+        current: parseCurrentWeather(forecast, now),
       })
       if (result?.inserted > 0) window.dispatchEvent(new CustomEvent('health-entries-updated'))
       return { ran: true, saved: entries.length, inserted: result?.inserted ?? 0 }
