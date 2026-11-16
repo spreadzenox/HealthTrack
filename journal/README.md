@@ -60,6 +60,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 16/11 02:30 — [7b : garde-fou de lectures](runs/2026-11-16-0230-7b-budget-perf.md) | 🛠️ | Check « Budget de lectures » de la PR de 7b rouge : la mesure ouvrait encore `/journal`, devenu un renvoi vers Tendances › Jour. Garde-fou corrigé (Tendances › Jour mesurée sous son nom, avec son budget) ; rien ne change dans l'app. PR à merger après la build iOS. Rien à faire de votre côté |
 | 16/11 01:30 — [Refonte 7b : Données sur 2 onglets](runs/2026-11-16-0130-refonte-7b-donnees-deux-onglets.md) | 🛠️ | Données n'a plus que **Tendances et Nutrition** ; « Tous vos repas » depuis Nutrition ; l'ancienne adresse du Journal mène à Tendances › Jour ; visite guidée à jour. Android et iPhone dans la même PR, à merger après la build iOS. Rien à faire de votre côté |
 | 16/11 00:30 — [Archive S46, 6d mergée](runs/2026-11-16-0030-archive-s46.md) | 📝 | Main vert (v748). **#1026 (6d) mergée** à 00:41 après 14 checks verts, build iOS comprise (captures iPhone Premium et bien-être regardées, identiques à main). Résumé S46 archivé dans `semaines/2026-S46.md`, résumé S47 ouvert. Envoi Alpha de la nuit pas encore parti à 00:30 (cron en retard comme d'habitude). Rien à faire de votre côté |
 

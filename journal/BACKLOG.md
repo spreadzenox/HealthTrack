@@ -304,6 +304,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
 - [ ] **POLISH-OBJ-LIENS** (16/11 00:30, vu sur la capture iPhone `demo-clair-recommendations-bien-etre` de #1026, identique sur main) : dans Objectifs › Votre bien-être sans abonnement, deux liens se suivent, « Comment est calculé votre bien-être ? » et « Comment c'est calculé » ; n'en garder qu'un (vérifier où mène chacun), et regarder la même vue sur Android. Petit polish, après 7b.
+- [ ] **PERF-JOUR** (16/11 02:30) : Tendances › Jour lance deux analyses complètes dans le Worker (`dayStates` à
+  l'ouverture, puis `analysisResults` pour les contributions du jour affiché) : 74 lectures, 31 620 enregistrements
+  sur 3 ans de démo, contre 15 810 pour la vue Semaine. Voulu (contributions dès qu'un jour est montré), mais chaque
+  tâche relit toutes les saisies : partager la lecture entre les deux tâches du Worker diviserait le coût par deux.
+  Budget du garde-fou : `/tendances?vue=jour` à 34 500 (remplace `/journal`, devenu une redirection, en 7b).
 - [ ] **CI-UBUNTU-26** (15/11 23:30) : `ubuntu-latest` bascule vers Ubuntu 26.04, et Playwright 1.56.1 y refuse
   Chromium (« Playwright does not support chromium on ubuntu26.04-x64 ») : « Budget de lectures (perf) » rouge sur
   #1026 alors qu'il était vert sur main six minutes plus tôt. Fait : ce job épinglé sur `ubuntu-24.04`. Reste :
