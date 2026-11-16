@@ -42,6 +42,12 @@ describe('widget', () => {
     for (const t of [s.accessibility, done.accessibility]) expect(t).not.toMatch(/manqu|oubli|retard|série/i)
   })
 
+  it('la nuit, le reste attend demain, sans compte', () => {
+    const s = widgetState({ now: d(23), name: 'Bulle', bubbles: [{ label: 'Repas' }, { label: 'Bien-être' }], usageDay: 3 })
+    expect(s).toMatchObject({ pose: 'dort', title: 'Le reste peut attendre demain', bubbles: [], more: 0 })
+    expect(s.accessibility).toBe('Bulle dort. Le reste peut attendre demain. Jeudi · jour 3.')
+  })
+
   it('notification d’un repas seulement s’il n’est pas noté', () => {
     expect(mealNotification('lunch', { name: 'Bulle' })).toEqual({
       title: 'Bulle garde une place pour votre déjeuner',
