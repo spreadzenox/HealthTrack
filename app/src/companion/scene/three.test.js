@@ -136,3 +136,71 @@ describe('le Pilou simple (même API que le lot PILOU, CONTRAT § 3)', () => {
     expect(closed).toBe(true)
   })
 })
+
+describe('les cadeaux de la première semaine (SPEC île § 7)', async () => {
+  const { createGifts, giftArrival, GIFT_ITEMS } = await import('./gifts')
+  it('pose chaque cadeau une fois, l’écharpe sur Pilou', () => {
+    const p = createPlaceholderPilou(THREE, { quality: 'moyen' })
+    const g = createGifts({ pilou: () => p })
+    g.setItems(['arbuste', 'lanterne'])
+    g.place('echarpe', 0)
+    g.place('echarpe', 10)
+    expect(g.items).toEqual(['arbuste', 'lanterne', 'echarpe'])
+    expect(g.group.getObjectByName('arbuste')).toBeTruthy()
+    let scarfVisible = false
+    p.object3d.traverse((o) => { if (o.isGroup && o.visible && o.children.length === 4 && o.children[3].geometry?.type === 'BoxGeometry') scarfVisible = true })
+    expect(scarfVisible).toBe(true)
+    for (const it of GIFT_ITEMS) g.place(it, 0)
+    expect(g.items).toHaveLength(7)
+    expect(g.update(100)).toBe(true)
+    expect(g.update(10000)).toBe(false)
+  })
+
+  it('arrivées : fonctions du temps, entières à la fin, fondu en mouvements réduits', () => {
+    for (const it of GIFT_ITEMS) {
+      expect(giftArrival(it, 5000).k).toBe(1)
+      expect(giftArrival(it, null).opacity).toBe(1)
+    }
+    expect(giftArrival('lanterne', 0).y).toBeGreaterThan(1)
+    expect(giftArrival('arbuste', 0).k).toBe(0)
+    expect(giftArrival('arbuste', 100, { reducedMotion: true })).toEqual({ k: 1, y: 0, opacity: 0.5 })
+  })
+
+  it('la lanterne s’allume le soir', () => {
+    const g = createGifts()
+    g.setItems(['lanterne'])
+    g.update(0)
+    const mat = g.group.getObjectByName('lanterne').userData.lightMat
+    const day = mat.emissiveIntensity
+    g.setEvening(1)
+    g.update(0)
+    expect(mat.emissiveIntensity).toBeGreaterThan(day + 1)
+  })
+})
+
+describe('la boîte de la cérémonie (SPEC île § 7)', async () => {
+  const { boxPose, createGifts } = await import('./gifts')
+  it('tombe, atterrit, s’ouvre, se range', () => {
+    expect(boxPose(null).visible).toBe(false)
+    expect(boxPose(100).y).toBeCloseTo(1.4)
+    expect(boxPose(700).y).toBe(0)
+    expect(boxPose(1000).lid).toBe(0)
+    expect(boxPose(2500).lid).toBe(1)
+    expect(boxPose(2400).rays).toBeGreaterThan(0.5)
+    expect(boxPose(4449).scale).toBeLessThan(0.05)
+    expect(boxPose(4600).visible).toBe(false)
+  })
+  it('en mouvements réduits : pas de chute ni de rayons', () => {
+    const p = boxPose(300, { reducedMotion: true })
+    expect(p.y).toBe(0)
+    expect(p.rays).toBe(0)
+  })
+  it('la scène l’affiche le temps de la cérémonie', () => {
+    const g = createGifts()
+    g.openBox(0)
+    expect(g.update(1000)).toBe(true)
+    expect(g.group.getObjectByName('boite').visible).toBe(true)
+    g.update(5000)
+    expect(g.group.getObjectByName('boite').visible).toBe(false)
+  })
+})

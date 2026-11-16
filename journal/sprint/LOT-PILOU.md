@@ -38,6 +38,21 @@
   `…-pilou-scene.png` (haut, moyen, mouvements réduits, rayonnant), `…-pilou-face-kit.png` (scène / aperçu figurine /
   petit créature).
 
+- 16/11 21:00–23:50 — **Arrêt de l'émulateur Android 12L (API 32) à l'ouverture de l'Accueil** avec ce Pilou (le
+  Pilou simple passait ; Android 9, 14, 15 et 16 aussi, sauf un blocage sous Android 15 au 1er essai). Recherche par
+  branches d'essai lancées à la main (`emulator-samsung-a56.yml`, sans relancer le build iOS de la PR) :
+  sans aucun shader personnalisé → plante encore ; **sans les toiles 2D peintes (visage, iris) → passe** ;
+  toiles 2D peintes par le processeur (`getContext('2d', { willReadFrequently: true })`) → **les cinq émulateurs
+  passent**. Cause : la toile 2D accélérée par le GPU de la WebView 120, sous le rendu logiciel de l'émulateur.
+  Choix : toiles peintes par le processeur (coût nul ici : on n'y peint que la bouche, les joues et l'iris).
+- Repli sûr en plus (demande de l'orchestrateur) : `createPilou` du contrat enveloppe la figurine ; si elle ne se
+  construit pas ou si une image échoue (shader, contexte, exception), le Pilou simple de la scène prend sa place,
+  sans erreur visible ; testé (`index.test.js`, « repli sûr »).
+- 23:50 — conflit de #1058 avec main (après #1053 et #1062) résolu en gardant la version de main pour tous les
+  fichiers de la scène et du thème ; seul `app/src/companion/pilou/` (et ses fichiers de journal) diffère de main.
+- Les branches `claude/sprint-pilou-bisect-*` sont des essais, à ne pas merger ; leur suppression a été refusée
+  (403) : à supprimer à la main.
+
 ## PR
 - `[Sprint PILOU] Pilou figurine : corps verni, yeux de la créature, 12 expressions` — branche `claude/sprint-pilou-1`.
   Elle contient les commits du lot SCÈNE tant qu'ils ne sont pas sur main : **à merger après la PR de SCÈNE** (je

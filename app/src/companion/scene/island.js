@@ -115,6 +115,13 @@ function tuftGeometry() {
   }
   const g = new THREE.BufferGeometry()
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
+  // pied plus sombre, pointe dorée par le contre-jour
+  const col = []
+  for (let i = 0; i < pos.length; i += 3) {
+    const k = pos[i + 1] / 0.075
+    col.push(0.62 + 0.5 * k, 0.66 + 0.46 * k, 0.6 + 0.25 * k)
+  }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3))
   g.computeVertexNormals()
   // normales vers le haut : un gazon trapu se lit mieux éclairé comme une surface
   const n = g.attributes.normal
@@ -194,7 +201,7 @@ export function createIsland({ quality = 'haut', tufts = 600, seed = 7 } = {}) {
 
   // touffes de gazon (instanciées), jamais sous les pieds de Pilou
   const tuftGeo = tuftGeometry()
-  const tuftMat = new THREE.MeshStandardMaterial({ roughness: 0.78, side: THREE.DoubleSide })
+  const tuftMat = new THREE.MeshStandardMaterial({ roughness: 0.78, side: THREE.DoubleSide, vertexColors: true })
   const tuftMesh = new THREE.InstancedMesh(tuftGeo, tuftMat, Math.max(1, tufts))
   const greens = ['#7DBE48', '#8FCF57', '#6DAF3E', '#9DD866', '#84C64F'].map((h) => new THREE.Color(h))
   let placed = 0

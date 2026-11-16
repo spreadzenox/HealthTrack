@@ -22,7 +22,7 @@ describe('Pilou — module 3D (contrat § 3)', () => {
     p.update(0)
     const b = new THREE.Box3().setFromObject(p.kit.body)
     expect(b.min.y * ECHELLE).toBeGreaterThan(0.03)
-    expect(p.object3d.scale.x).toBeCloseTo(1.24 / 1.44)
+    expect(p.object3d.children[0].scale.x).toBeCloseTo(1.24 / 1.44)
     const all = new THREE.Box3().setFromObject(p.object3d)
     expect(all.min.y).toBeGreaterThanOrEqual(-0.05) // pieds plats, un peu enfoncés dans l'herbe
     expect(all.max.y / 1.24).toBeGreaterThan(1.15)
@@ -44,9 +44,9 @@ describe('Pilou — module 3D (contrat § 3)', () => {
     for (let t = 0; t < 2000; t += 33) p.update(t)
     p.react('doubletap')
     p.update(2100)
-    const a = p.object3d.children[0].children[0].matrixWorld.clone()
+    const a = p.object3d.children[0].children[0].children[0].matrixWorld.clone()
     p.update(2100)
-    expect(p.object3d.children[0].children[0].matrixWorld.equals(a)).toBe(true)
+    expect(p.object3d.children[0].children[0].children[0].matrixWorld.equals(a)).toBe(true)
   })
 
   it('accepte les 12 expressions, les séquences et rend toujours un texte', () => {
@@ -119,5 +119,31 @@ describe('Pilou — module 3D (contrat § 3)', () => {
     let maxY = 0
     for (let t = 0; t < 1500; t += 33) { p.update(t); maxY = Math.max(maxY, p.kit.body.position.y) }
     expect(maxY).toBe(0)
+  })
+})
+
+describe('Pilou — repli sûr', () => {
+  const quiet = () => vi.spyOn(console, 'warn').mockImplementation(() => {})
+  it('si la figurine ne se construit pas, le Pilou simple prend sa place, sans erreur', () => {
+    quiet()
+    const p = createPilou(THREE, { __fabrique: () => { throw new Error('shader') } })
+    expect(p.repli).toBe(true)
+    expect(p.object3d.children).toHaveLength(1)
+    expect(() => { p.update(0, 16); p.setMood(0.5); p.react('tap'); p.lookAt('camera') }).not.toThrow()
+    expect(p.anchors.head.isObject3D).toBe(true)
+    expect(p.stats().triangles).toBeGreaterThan(0)
+  })
+  it('si une image échoue, il passe au Pilou simple et continue', () => {
+    quiet()
+    let n = 0
+    const p = createPilou(THREE, {
+      __fabrique: (T, o) => {
+        const f = createPilou(T, { ...o, __fabrique: undefined })
+        return { ...f, object3d: f.object3d, update: (...a) => { if (++n === 3) throw new Error('contexte perdu'); return f.update(...a) } }
+      },
+    })
+    expect(p.repli).toBe(false)
+    for (let t = 0; t < 200; t += 33) expect(() => p.update(t, 33)).not.toThrow()
+    expect(p.repli).toBe(true)
   })
 })

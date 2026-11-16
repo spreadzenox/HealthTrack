@@ -5,6 +5,7 @@
 import { createPilou as construire, IRIS_DEFAUT } from './createPilou.js'
 import { HAUTEUR_TOTALE, H, BY } from './forme.js'
 import { HAPTIQUE } from './gestes.js'
+import { createPlaceholderPilou } from '../scene/placeholderPilou.js'
 
 export { EXPRESSIONS as TEXTES_PILOU, texteHumeur, DOUZE } from './animateur.js'
 export { createGestes, HAPTIQUE } from './gestes.js'
@@ -29,7 +30,7 @@ const GESTES = { tap: 'toucher', doubletap: 'saut', swipe: 'glisser' }
  * @param {{ quality?: 'haut'|'moyen'|'bas', reducedMotion?: boolean, seed?: number, envMap?: any, traits?: object|null,
  *   now?: () => Date, nom?: string, ombre?: boolean }} options
  */
-export function createPilou(THREE, options = {}) {
+function createPilouFigurine(THREE, options = {}) {
   const { quality = 'haut', reducedMotion = false, seed = 7, envMap = null, traits = null, now, nom, ombre = false, balance } = options
   const p = construire(THREE, {
     qualite: quality === 'moyen' || quality === 'bas' ? 'moyen' : 'haut',
@@ -129,5 +130,53 @@ export function createPilou(THREE, options = {}) {
     stats() { const s = p.stats(); return { triangles: s.triangles, drawCalls: s.dessins } },
     dispose() { p.dispose(); object3d.removeFromParent() },
   }
+  return api
+}
+
+const METHODES = ['update', 'etat', 'setNom', 'setExpression', 'play', 'setMood', 'nouvelleJournee', 'lookAt', 'react', 'jump',
+  'setReducedMotion', 'setTraits', 'setAccessory', 'hitTest', 'hitZone', 'setLight', 'stats']
+
+/**
+ * createPilou(THREE, options) — le Pilou figurine, avec un repli sûr : s'il ne peut pas se construire ou si une image
+ * échoue (shader, contexte, exception), il cède sa place au Pilou simple de la scène, sans erreur visible. Un Pilou
+ * plus simple sur un vieil appareil est acceptable ; un Accueil qui plante ne l'est pas (brief § 7.9).
+ */
+export function createPilou(THREE, options = {}) {
+  const object3d = new THREE.Group()
+  object3d.name = 'pilou'
+  let impl = null
+  let repli = false
+  const replier = (err) => {
+    if (repli) return
+    repli = true
+    console.warn('Pilou : figurine indisponible, Pilou simple', err)
+    try { impl?.dispose?.() } catch { /* déjà dans un état incertain */ }
+    while (object3d.children.length) object3d.remove(object3d.children[0])
+    impl = createPlaceholderPilou(THREE, options)
+    object3d.add(impl.object3d)
+    api.anchors = impl.anchors
+    api.kit = impl.kit
+  }
+  const api = {
+    object3d,
+    get repli() { return repli },
+    get traits() { return impl?.traits ?? null },
+    dispose() { try { impl?.dispose?.() } finally { object3d.removeFromParent() } },
+  }
+  for (const m of METHODES) {
+    api[m] = (...args) => {
+      try { return impl?.[m]?.(...args) } catch (err) {
+        if (repli) throw err
+        replier(err)
+        return impl?.[m]?.(...args)
+      }
+    }
+  }
+  try {
+    impl = (options.__fabrique || createPilouFigurine)(THREE, options)
+    object3d.add(impl.object3d)
+    api.anchors = impl.anchors
+    api.kit = impl.kit
+  } catch (err) { replier(err) }
   return api
 }

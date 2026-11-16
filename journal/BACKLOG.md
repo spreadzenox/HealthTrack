@@ -330,6 +330,64 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     changelog. Capture `npm run visual -- --whats-new --routes=/` : « Nouveau : Nouveaux onglets : Accueil, Ma
     journée, Objectifs, Données et 523 autres changements ». Code partagé sans correctif iPhone.
   - [ ] **UPG-3 — Passage complet des personas** sur les deux parcours (installation neuve ; `--legacy`), avant le 22/11.
+    - [x] **UPG-3a** (16/11 20:30, run « idées ») : 2 simulations, « Ventre et données » J1 neuve (Galaxy Watch) et
+      « Tout mesurer » J45 `--legacy` (`sport,cycle`, Pixel Watch) : [`J1`](simulations/2026-11-16-2030-ventre-et-donnees-J1.md),
+      [`J45`](simulations/2026-11-16-2030-tout-mesurer-maj-J45.md). Rien de perdu à la mise à jour ; constats en POLISH-SIM-99 à 108.
+      Écarté : « carbonara » à la place du repas décrit (analyse factice de l'outil, pas un défaut de l'app).
+    - [ ] **POLISH-SIM-99 — Visite guidée et Ma journée** (prioritaire pour le 22/11, point 2) : la visite ne montre pas
+      l'onglet « Ma journée » (là où l'on note) et dit « Essayer dans Agir » alors qu'Agir n'est plus un onglet ; le lien
+      retour de l'essai dit « ← Agir ». Ajouter l'étape Ma journée, dire « depuis l'Accueil ».
+    - [ ] **POLISH-SIM-100 — Objectifs migrés expliqués** (point 1) : après la conversion `sport,cycle`, Paramètres
+      montre « Confort digestif » coché sans que la personne l'ait choisi, et rien ne dit où sont passés Sport (famille
+      Activité) et Cycle (bouton « Règles »). Une note unique après la mise à jour ; vérifier que cocher Confort digestif
+      est voulu par la migration 5a (cycle = contexte de la digestion), sinon ne pas le cocher.
+    - [ ] **POLISH-SIM-101 — Page Nouveautés** : le bandeau met la note de la nouvelle navigation à la une (UPG-2), mais
+      la page la range par date, perdue dans une très longue liste. La mettre en tête de la page quand elle est non lue.
+    - [ ] **POLISH-SIM-102 — Deux décomptes de la digestion** : Ma journée « 9/28, encore 19 jours », Objectifs « 9 sur
+      14, premier score dans 5 jours ». Nommer les deux paliers (premier score à 14, pistes à 28) au même endroit.
+    - [ ] **POLISH-SIM-103 — Bien-être d'un jour** : Tendances › Jour affiche 4,0 en tête et 4,2 dans la saisie (moyenne
+      ou note ?) ; « Ce qui a pu peser » ne liste que des effets positifs.
+    - [ ] **POLISH-SIM-104 — Exemple de « Votre bien-être »** : famille Alimentation « Pas de lien net » au-dessus de
+      lignes GOS −1,1 pt et Lactose −0,9 pt.
+    - [ ] **POLISH-SIM-105 — Accueil « Ce que Halcya suit pour vous »** : liste VFC et température de la peau sans montre
+      qui les donne, et Météo non activée, juste après « Health Connect n'est pas sur ce téléphone » (vérifier sur
+      Android, la version web n'a pas Health Connect).
+    - [ ] **POLISH-SIM-106 — FODMAP de l'oignon cuit** : `fodmapMeasurements.json` n'a que l'oignon cru (fructanes) ;
+      l'oignon cuit n'est marqué que « fructose en excès ». Ajouter l'analogie documentée (confiance basse) pour
+      l'oignon cuit ou poêlé, comme pour l'ail.
+    - [ ] **POLISH-SIM-107 — Tendances** : en passant de Semaine à Jour, la mesure choisie (Sommeil) redevient
+      Bien-être ; le « + » ne propose pas FC, phases du sommeil, SpO2 ni digestion (à vérifier : données reçues ?).
+    - [ ] **POLISH-SIM-108 — Petits** : « Encore 4 choses aujourd'hui » ne baisse pas après un repas noté ; essai : les
+      jours « comme d'habitude » marqués « pas tenu » ; export CSV demandé (persona Tout mesurer : proposition, pas
+      une fonction à coder sans accord). « Gêne » qui ne reste pas cochée : traité par UPG-4 (#1045).
+- **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
+  l'intégrateur le 16/11 à 22:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
+  #1048 (MONDE) et #1053 (SCÈNE) sur main, le reste en PR.
+  - SCÈNE (8) : **#1053 mergée** (0825540, 22:02 ; contrat `companion/CONTRAT.md` et `bus.js`, three.js r187 MIT,
+    île, lumière, paliers, pause, image fixe de repli, interrupteur `halcya.companion.scene` ; v766, APK 35,0 Mo).
+    #1062 : 7 cadeaux en 3D, cérémonie de la boîte, météo de l'île, Réglages › Mouvements de Pilou, étiquette lisible
+    en sombre. Branche 3 : image fixe de nuit, ambre et lune, lanterne (`lightAt` de MONDE). À relever : palier et temps
+    d'image sur le job Android 9 et le simulateur iPhone (`data-quality` de `.companion-scene`).
+  - PILOU (9) : #1058 (corps verni, yeux de la créature, 12 expressions, ΔE menthe 2,8 moyen / 3,8 max dans la scène,
+    9 050 triangles) ; petits Pilou pré-rendus (12 × 218×240 webp, `pilouSprite`) pour VIE et MONDE. Branche 2 : petits
+    effets des expressions, yeux fermés en trait.
+  - BULLES (10) : #1056 (bulles-boutons, Humeur du jour à plancher, fleurs, « Jour N sur 7 », 7 cadeaux) ; branche 2 :
+    lucioles la nuit, jour 14, bandeau au défilement. Résolution convenue avec SCÈNE dans `Dashboard.jsx` : garder
+    `<CompanionHome …>` seule (elle monte la scène).
+  - VIE (11, 12) : **#1060** (réunit #1051 et #1054, fermées : Ma journée, rencontre et nom, cérémonie du jour 7, Pilou
+    dans Objectifs et Données, assiette reniflée ; bloc `companion` dans l'export et l'import, testé sur base ancienne) ;
+    en conflit avec main depuis #1053. Branche 5 : cairn des galets dans « Par famille ».
+  - MONDE (13) : **#1048 mergée** ; #1057 (réunit #1055, fermée : widget Android « Ma journée », Pilou dans les
+    notifications du soir Android et iPhone, lumière à l'échelle de la scène).
+  - STUDIO (14) : #1052 (fiche de traits locale, export et import, écran derrière l'interrupteur du compagnon, pièces 3D
+    et `brancherTraits` joints) ; branche 3 : `equiperPilou` après #1058.
+  - PHOTO (15) : **#1047 mergée** (relais, route éteinte, `503 disabled`) et #1050 (app, interrupteur de build éteint
+    partout ; lot fini à son merge). Missions P49 (Play) et PI3 (App Store) préparées, arrêtées avant l'envoi.
+  - Restes notés par les lots, hors sprint : retour haptique des bulles (`@capacitor/haptics` absent, touche les
+    builds natives : à décider) ; notification de repas de Pilou (SPEC journée § 9, texte prêt, fonction nouvelle :
+    proposition) ; widget iPhone (WidgetKit, extension Xcode à créer) ; brancher la photo sur `saveFiche` du Studio ;
+    course de test `AppRedirects.test.jsx` (appel GitHub de `UpdateBanner` après la fin de jsdom) corrigée dans #1050.
+    Règle pour tous : ne pas lancer `getAnalysis(...)` depuis l'Accueil (check « Budget de lectures »).
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.

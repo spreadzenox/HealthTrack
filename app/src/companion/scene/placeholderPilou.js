@@ -194,6 +194,24 @@ export function createPlaceholderPilou(THREE, { quality = 'haut', reducedMotion 
     root.add(foot)
   }
 
+  // --- écharpe (cadeau du jour 3) : rayures orange et rouge, une queue qui pend
+  const scarf = new THREE.Group()
+  const stripeA = mat({ color: '#FF8A4C' }), stripeB = mat({ color: '#E8483F' })
+  const scarfY = BODY.y0 + BODY.h * 0.42
+  const scarfR = bodyRadius(0.42) + 0.012
+  for (let i = 0; i < 3; i++) {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(scarfR, 0.022, 6, 32), i % 2 ? stripeB : stripeA)
+    ring.rotation.x = Math.PI / 2
+    ring.position.y = scarfY - 0.03 + i * 0.03
+    scarf.add(ring)
+  }
+  const tail = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.2, 0.02), stripeA)
+  tail.position.set(0.14, scarfY - 0.11, scarfR - 0.03)
+  tail.rotation.z = 0.15
+  scarf.add(tail)
+  scarf.visible = false
+  body.add(scarf)
+
   // --- antenne laquée et point ambre qui luit de l'intérieur (halo en sprite additif)
   const antennaPivot = new THREE.Group()
   antennaPivot.position.set(0, BODY.y0 + BODY.h - 0.01, 0)
@@ -357,6 +375,7 @@ export function createPlaceholderPilou(THREE, { quality = 'haut', reducedMotion 
     setTraits() { /* le double numérique arrive avec le Pilou du lot PILOU (étape 14) */ },
     setAccessory(name, on) {
       if (name === 'montre') watch.visible = on !== false
+      if (name === 'echarpe') scarf.visible = on !== false
     },
     hitTest(ndcX, ndcY, camera) {
       const box = new THREE.Box3().setFromObject(root)

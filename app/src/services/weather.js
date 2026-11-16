@@ -7,6 +7,7 @@
  * pollens. Seules les journées terminées sont enregistrées : celle en cours changerait encore.
  */
 import { decimalMark } from '../i18n/locale.js'
+import { CURRENT_FIELDS } from '../companion/world/weather.js'
 
 const FORECAST_API = 'https://api.open-meteo.com/v1/forecast'
 const AIR_API = 'https://air-quality-api.open-meteo.com/v1/air-quality'
@@ -42,6 +43,8 @@ export function forecastUrl(location) {
     ...coordParams(location),
     hourly: 'pressure_msl,relative_humidity_2m',
     daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration',
+    // la météo du moment, pour l'îlot de Pilou (même lecture, même position arrondie)
+    current: CURRENT_FIELDS,
     past_days: String(WEATHER_PAST_DAYS),
     forecast_days: '1',
   })
