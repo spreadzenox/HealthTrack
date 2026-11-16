@@ -78,6 +78,7 @@ describe('URLs Open-Meteo', () => {
     expect(url.searchParams.get('past_days')).toBe('92')
     expect(url.searchParams.get('hourly')).toContain('pressure_msl')
     expect(url.searchParams.get('daily')).toContain('sunshine_duration')
+    expect(url.searchParams.get('current')).toBe('temperature_2m,precipitation,weather_code,wind_gusts_10m')
   })
 
   it('qualité de l’air : indice européen et pollens', () => {

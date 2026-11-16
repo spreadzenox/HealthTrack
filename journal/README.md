@@ -8,16 +8,31 @@
 > 1 à 6 et 7a faites des deux côtés ; une seule routine et un seul dépôt pour Android et l'iPhone, puis une seule PR
 > pour les deux apps ; mode polish ; chantier cycle commencé).
 
+**🚀 Sprint de la refonte, ce soir jusqu'à 03:00 (votre ordre du 16/11 vers 20:15)** — relevé de 21:30 : sept équipiers
+codent Pilou et son monde en parallèle (étapes 8 à 15). **#1047 (relais de la photo, éteint) et #1048 (Monde) mergées, 7 PR encore ouvertes** (chacune attend sa
+build iPhone, près d'une heure) :
+- **Scène (8)** #1053 : Pilou sur son île en 3D en tête de l'Accueil, image fixe si le téléphone est trop lent.
+- **Pilou (9)** #1058 : la figurine vernie, ses yeux, 12 expressions, sa montre à l'heure réelle (mergée après #1053).
+- **Bulles (10)** #1056 : ce qu'il reste à noter en bulles, l'« Humeur du jour », les fleurs, « Jour 3 sur 7 », 7 cadeaux.
+- **Vie (11 et 12)** #1051 et #1054 : Pilou dans Ma journée ; la rencontre et son nom (une seule fois pour vous, sans
+  refaire l'accueil ; gardé dans la sauvegarde).
+- **Monde (13)** #1048, **mergée** (fonctions de fond, rien de visible seul) : la lumière qui suit l'heure, la météo sur l'île, l'île qui grandit, le widget.
+- **Studio (14)** #1052 : habiller Pilou à la main dans Réglages, caché tant que Pilou n'est pas sur main.
+- **Photo (15)** #1047 (relais, mergée) et #1050 : **éteinte partout** ; elle n'arrivera chez les testeurs qu'après vos déclarations
+  (missions P49 pour Google Play et PI3 pour l'App Store, prêtes, arrêtées avant le bouton d'envoi).
+- Ce que le sprint aura livré et ce qui restera, lot par lot : en tête de ce résumé au premier run après 03:00.
+
 **🎯 Version propre de la refonte pour le dimanche 22/11 au soir (votre objectif du 15/11) : ce qui sera prêt, ce qui ne le sera pas**
 - **Prêt, sauf surprise** (étapes 1 à 7, sans Pilou) : 4 onglets et Réglages ; Ma journée et les habitudes ; l'accueil
   en 4 temps ; Objectifs (score, familles, défi de 10 jours, réintroduction, seuils de 6d) ; Données sur Tendances,
   avec le détail du jour qui reprend ce que faisait le Journal (7a faite le 15/11 ; 7b, deux onglets et la visite
   guidée, mergée le 16/11 ; 7c, le retrait du code du Journal, mergée le 16/11). À chaque étape : une base d'avant la refonte et une ancienne
   sauvegarde ouvertes sans perte, visite guidée à jour. La police Nunito et le fond crème (7d, mergée le 16/11 vers 12:50).
-- **Pas prêt le 22/11** : Pilou en 3D et son île (étapes 8 à 13), le double numérique (14 et 15).
+- **Pilou en 3D, son île et le double numérique (étapes 8 à 15)** : en sprint ce soir (voir plus haut) ; ce qui sera prêt
+  le 22/11 dépendra de ce qui sera mergé à 03:00.
 - **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs
   (outil du parcours « mise à jour » prêt le 16/11 ; l'essai en cours visible depuis l'Accueil, UPG-1, mergé le 16/11 à
-  18:00 ; le bandeau Nouveautés qui annonce la nouvelle navigation, UPG-2, en PR #1043 ; ensuite le passage, UPG-3).
+  18:00 ; le bandeau Nouveautés qui annonce la nouvelle navigation, UPG-2, mergé, #1043 ; « Ma digestion » reste cochée, UPG-4, en PR #1045, verte, mergée après le sprint ; passage UPG-3 commencé le 16/11 20:30 : 2 personas, rien de perdu, 10 constats, d'abord la visite guidée sans « Ma journée » et les anciens objectifs « sport » et « cycle » convertis sans un mot).
 
 **Où en est Halcya**
 
@@ -62,6 +77,8 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 16/11 21:30 — [Intégrateur du sprint](runs/2026-11-16-2130-integrateur-sprint.md) | 📝 | Main vert. Sprint de la refonte en cours : #1047 (relais photo, éteint) et #1048 (Monde) mergées, 7 PR encore ouvertes (étapes 8 à 15) ; état par lot noté au BACKLOG, PRODUIT et PARITE. #1045 (« Ma digestion » reste cochée) verte, mergée après 03:00. Rien à faire de votre côté |
+| 16/11 20:30 — [« idées » : 2 personas, installation neuve et mise à jour](runs/2026-11-16-2030-idees-upg-3-personas.md) | 💡 | Passage des personas commencé (UPG-3) : une personne qui installe Halcya (jour 1) et un testeur de 45 jours qui reçoit la refonte. **Rien de perdu** à la mise à jour (essai, jours passés, export). 10 points à polir avant le 22/11, d'abord : la visite guidée ne présente pas « Ma journée » et parle encore d'« Agir » comme d'un onglet ; vos anciens objectifs « sport » et « cycle » sont convertis sans explication (et « Confort digestif » se retrouve coché) ; la page Nouveautés ne met pas la note de la nouvelle navigation en tête. Rien à faire de votre côté |
 | 16/11 18:30 — [#1044 mergée, #1043 remise à jour](runs/2026-11-16-1830-merge-1044-upg-1.md) | 🛠️ | **#1044 mergée** : un essai en cours se voit de nouveau depuis l'Accueil (consigne et jour de l'essai, carte remontée sous le bien-être les jours « avec »), Android et iPhone, après 14 checks verts et les captures iPhone de l'Accueil (clair et sombre) ; release **v761** (34,8 Mo). #1043 (bandeau des Nouveautés qui annonce d'abord la nouvelle navigation) remise à jour sur main ; sa build iOS repart, à merger au run suivant. Rien à faire de votre côté |
 | 16/11 17:30 — [UPG-1 : l'essai en cours sur l'Accueil](runs/2026-11-16-1730-upg-1-essai-accueil.md) | 🛠️ | Un essai en cours se voit de nouveau depuis l'Accueil : la carte du bas dit sa consigne et le jour (« Dormir au moins 7 h 30 · jour 4 sur 10 · aujourd’hui, jour avec ») et remonte sous votre bien-être les jours « avec ». Android et iPhone dans la même PR (#1044), à merger après sa build iOS. #1042 (outil « mise à jour » des personas) mergée. Rien à faire de votre côté |
 | 16/11 16:30 — [#1041 mergée, Nouveautés d'abord la navigation](runs/2026-11-16-1630-upg-2-nouveautes.md) | 🛠️ | **#1041 mergée** (derniers chevrons en icône) après sa build iOS relancée verte, release **v759** (34,7 Mo), captures iPhone d'Objectifs regardées. **UPG-2 en PR** : un testeur qui arrive d'avant la refonte voit d'abord, dans le bandeau des Nouveautés, la note « Nouveaux onglets » au lieu de « Nouvelle police » ; cette note dit maintenant que Données regroupe Tendances et Nutrition. #1042 remise à jour, à merger au run suivant. Rien à faire de votre côté |
