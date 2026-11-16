@@ -21,6 +21,11 @@
  *   (modèles, plafond global du jour et par minute, plafond Gold du jour, budget du mois) ; la réponse dit quel
  *   niveau a réellement répondu (`served`) pour que le banc écarte une mesure Gold servie par Flash-Lite.
  *
+ * - POST /v1/pilou/style      → double numérique par photo (étape 15 de la refonte, src/pilou.js) : `{ image }` (selfie
+ *   JPEG de 512 px), en-tête `X-Install-Id`. Réponse `{ style, quota: { remaining, resetAt } }`. Répond `503 disabled`
+ *   tant que `PILOU_STYLE=on` n'est pas réglé ; 3 analyses par mois et par installation ; ni la photo, ni la fiche, ni
+ *   le corps ne sont journalisés.
+ *
  * Play Integrity (src/integrity.js) : en-tête facultatif `X-Integrity-Token` sur l'analyse ; selon INTEGRITY_MODE, un
  * verdict refusé est seulement journalisé (observe) ou bloque l'analyse avec une 403 `integrity` (enforce). Seules les
  * requêtes Android sont concernées. Une requête iPhone (`X-Platform: ios`) n'est vérifiée que si APP_ATTEST_MODE n'est
@@ -50,6 +55,7 @@ import { readUsage } from './costs.js'
 import { DIGEST_MAX_DAYS, FEEDBACK_MAX_LENGTH, digestFeedback, parseFeedback } from './feedback.js'
 import { MEAL_TEXT_MAX_LENGTH, RESPONSE_SCHEMA, STOOL_INSTRUCTION, STOOL_SCHEMA, photoInstruction, textInstruction, textUserPart } from './prompts.js'
 import { fromTestLabNetwork } from './testLabNet.js'
+import { PILOU_CAP_MESSAGE, PILOU_DISABLED_MESSAGE, PILOU_FAILED_MESSAGE, PILOU_MAX_BODY_BYTES, buildPilouRequest, normalizePilouStyle } from './pilou.js'
 
 /** Taille maximale du corps JSON (photo en base64 comprise). */
 export const MAX_BODY_BYTES = 6 * 1024 * 1024
@@ -174,7 +180,7 @@ export function normalizeStool(parsed) {
  *   billingQuota?: ReturnType<import('./quota.js').createQuota>, allowedOrigins?: string[],
  *   log?: (entry: object) => void, now?: () => number }} deps
  */
-export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, appAttest = null, billingQuota = null, benchAuth = null, feedback = null, goldVertex = null, costs = null, goldDailyCap = 40, goldInstalls = [], allowedOrigins = [], log = () => {}, now = Date.now }) {
+export function createHandler({ quota, vertex, ingredientNames, credits = null, billing = null, integrity = null, appAttest = null, billingQuota = null, benchAuth = null, feedback = null, pilou = null, goldVertex = null, costs = null, goldDailyCap = 40, goldInstalls = [], allowedOrigins = [], log = () => {}, now = Date.now }) {
   const origins = new Set(allowedOrigins)
   /**
    * « plateforme:installId » → { premium, source, until } : droits relus récemment (mémoire seulement). La plateforme
@@ -258,7 +264,7 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
   }
 
   async function generate(request, tier) {
-    const args = { systemInstruction: request.systemInstruction, parts: request.parts, schema: request.schema ?? RESPONSE_SCHEMA }
+    const args = { systemInstruction: request.systemInstruction, parts: request.parts, schema: request.schema ?? RESPONSE_SCHEMA, ...(request.temperature !== undefined ? { temperature: request.temperature } : {}) }
     if (tier === 'gold' && !request.liteOnly) {
       const slot = goldSlot()
       if (slot.ok) {
@@ -536,6 +542,85 @@ export function createHandler({ quota, vertex, ingredientNames, credits = null, 
         if (slotId && !err?.billed) quota.refund(slotId)
         log({ event: 'error', route: path, status: err?.status ?? null, message: String(err?.message ?? err).slice(0, 300) })
         send(res, err?.status === 429 ? 503 : 502, { error: 'upstream', status: err?.status ?? null }, origin)
+      }
+      return
+    }
+
+    if (path === '/v1/pilou/style') {
+      if (!pilou?.enabled) {
+        send(res, 503, { error: 'disabled', message: PILOU_DISABLED_MESSAGE }, origin)
+        return
+      }
+      if (req.method !== 'POST') {
+        send(res, 405, { error: 'method', message: 'POST attendu.' }, origin)
+        return
+      }
+      const started = now()
+      let capKey = null
+      let reserved = false
+      try {
+        const installId = String(req.headers['x-install-id'] ?? '')
+        if (!INSTALL_ID.test(installId)) throw new HttpError(400, 'install_id', 'Identifiant d\'installation manquant.')
+        // Corps brut gardé : l'assertion App Attest de l'iPhone signe ces octets exacts ; il n'est jamais journalisé
+        const raw = await readBody(req, PILOU_MAX_BODY_BYTES)
+        let body
+        try {
+          body = JSON.parse(raw.toString('utf8'))
+        } catch {
+          throw new HttpError(400, 'bad_json', 'JSON attendu.')
+        }
+        const request = buildPilouRequest(body)
+        body = null
+        if (integrity) {
+          const attest = { keyId: req.headers['x-appattest-key'], assertion: req.headers['x-appattest-assertion'], time: req.headers['x-appattest-time'] }
+          const check = await integrity.check(installId, req.headers['x-integrity-token'], { clientStatus: req.headers['x-integrity-status'], platform: req.headers['x-platform'], attest, body: raw, testnet: fromTestLabNetwork(req) })
+          if (!check.ok) throw new HttpError(403, 'integrity', String(check.status).startsWith('attest_') ? INTEGRITY_MESSAGE_IOS : INTEGRITY_MESSAGE)
+        }
+        if (costs) {
+          try {
+            await costs.hydrate()
+          } catch (err) {
+            log({ event: 'costs_store_failed', op: 'get', status: err?.status ?? null })
+          }
+          if (costs.stopped()) {
+            send(res, 429, { error: 'quota', scope: 'global', message: QUOTA_MESSAGES.global }, origin)
+            return
+          }
+        }
+        capKey = hashInstallId(installId)
+        const month = pilou.cap.take(capKey)
+        if (!month.ok) {
+          capKey = null
+          log({ event: 'quota', route: 'pilou', scope: 'month' })
+          send(res, 429, { error: 'quota', scope: 'month', message: PILOU_CAP_MESSAGE, resetAt: month.resetAt }, origin)
+          return
+        }
+        // Plafonds globaux du jour et par minute, partagés avec les repas (ils protègent le budget)
+        const slot = quota.take(`pilou-${capKey}`)
+        if (!slot.ok) {
+          pilou.cap.refund(capKey)
+          capKey = null
+          send(res, 429, { error: 'quota', scope: slot.scope, message: QUOTA_MESSAGES[slot.scope] ?? QUOTA_MESSAGES.global, resetAt: slot.resetAt }, origin)
+          return
+        }
+        reserved = true
+        const generated = await generate(request, 'free')
+        // La photo n'est plus référencée : effacée de la mémoire dès la réponse du modèle
+        request.parts = null
+        const style = normalizePilouStyle(generated.parsed)
+        log({ event: 'pilou_style', model: generated.model, location: generated.location, eur: Number(generated.eur.toFixed(5)), unsure: style.incertains.length, status: 200, ms: now() - started })
+        send(res, 200, { style, quota: { remaining: month.remaining, resetAt: month.resetAt } }, origin)
+      } catch (err) {
+        if (err instanceof HttpError) {
+          log({ event: 'rejected', route: path, code: err.code, status: err.status })
+          send(res, err.status, { error: err.code, message: err.message }, origin)
+          return
+        }
+        // Échec côté Vertex : l'analyse n'est rendue que si elle n'a rien coûté
+        if (capKey && !err?.billed) pilou.cap.refund(capKey)
+        if (reserved && !err?.billed) quota.refund(`pilou-${capKey}`)
+        log({ event: 'error', route: path, status: err?.status ?? null, ms: now() - started, message: String(err?.message ?? err).slice(0, 300) })
+        send(res, err?.status === 429 ? 503 : 502, { error: 'upstream', message: PILOU_FAILED_MESSAGE }, origin)
       }
       return
     }
