@@ -159,6 +159,9 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
   données, du tutoriel de départ » (lu comme le dimanche 22/11 ; à lui faire confirmer). À suivre
   dans les bilans : l'étape en cours (tête du résumé), et à l'étape 15 l'envoi d'un selfie au relais, seule sortie
   nouvelle du téléphone, qui n'entre dans aucune version avant ses déclarations.
+- **Sprint du 16/11 au 17/11 03:00** (ordre du propriétaire : finir la refonte avec une équipe en parallèle) : sept
+  sessions, une par lot (`journal/sprint/SPRINT.md`), lancées et suivies par l'orchestrateur ; le run horaire est
+  l'intégrateur et tient seul le journal. Après 03:00, retirer le bloc SPRINT des instructions et faire le point.
 - **Testeurs.** J = 08/11. Relance du septième jour vers le 15/11. Demande d'accès à la production (P30) au
   quatorzième jour.
 - **Maquettes PROP-SIM** (propositions issues des simulations) : les montrer au propriétaire quand la routine en
