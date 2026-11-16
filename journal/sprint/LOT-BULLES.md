@@ -1,6 +1,6 @@
 # Lot BULLES — étape 10 du brief (Compagnon 2)
 
-Mis à jour : 16/11 22:40 (heure de Paris). PR 1 : #1056, conflit avec #1053 résolu (CompanionHome seule), build iOS relancée. Branche suivante : `claude/sprint-bulles-2` (PR à l'ouverture après #1056).
+Mis à jour : 16/11 23:55 (heure de Paris). **PR 1 #1056 MERGÉE** (squash ed1fa08). PR 2 : `claude/sprint-bulles-2` (voir plus bas).
 
 ## Où j'en suis
 - **PR 1 (`claude/sprint-bulles-1`)** : l'Accueil a ses bulles, sa jauge et sa première semaine, avec ou sans 3D.
@@ -52,6 +52,9 @@ Mis à jour : 16/11 22:40 (heure de Paris). PR 1 : #1056, conflit avec #1053 ré
   dernier commit (taille du mot en unités de la bulle, mots jamais coupés).
 
 ## Pour le lot SCÈNE (constat, rien de bloquant)
+- Sur iPhone, thème sombre (captures/pr-1056, `iphone-16e-demo-sombre-accueil.png`) : l'étiquette de la scène
+  (« Pilou est tranquille · 3 bulles à faire ») est presque illisible, texte clair sur pastille claire
+  (`CompanionScene.css`).
 - `webglAvailable()` (`companion/mood.js`) ouvre un contexte WebGL de sonde à chaque montage de la scène, sans le
   libérer (`WEBGL_lose_context`) : une fois, une capture locale a montré « Too many active WebGL contexts ».
 
