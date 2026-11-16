@@ -263,7 +263,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     exemple, la page repasse par le chargement au lieu de garder les données d'avant ; une saisie ordinaire relit sans
     spinner ; deux tests, capture de la visite juste après « Exemple au jour 14 » puis 7 s après) ; (3) capture iPhone de la visite sur Tendances (le plan ne l'ouvre pas).
   - [x] **REFONTE-7c** : retrait de `Journal.jsx`, `DailyJournal.jsx`, `JournalEmpty.jsx` et de leurs tests —
-    **code fait le 16/11 à 04:30, mergé vers 05:55 (#1031, 488dc0c), Android et iPhone** : plus aucun import de ces fichiers (seul le service
+    **code fait le 16/11 à 04:30, mergé vers 05:35 (#1031, 488dc0c), Android et iPhone** : plus aucun import de ces fichiers (seul le service
     `dailyJournal.js`, partagé par Ma journée, Tendances, le rapport et les essais, reste) ; `/journal` renvoie toujours
     vers Tendances › Jour (`AppRedirects`). iPhone : correctif 57 réduit à `dayDeviations.js` (son morceau du Journal
     retiré), test du cycle de Santé porté sur le détail du jour (`DayEntries.cycle.ios.test.jsx`), test « Selles »
