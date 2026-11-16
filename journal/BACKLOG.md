@@ -285,7 +285,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [ ] **REFONTE-7a-2 — Restes de 7a** : captures sur historique presque vide, grand texte, 320 px, version Play.
     Le plan de captures iPhone ne touche aucun jour de Tendances : « Vos saisies » n'y est jamais vu (ajouter une
     capture « Tendances › Jour › veille » à `captureMode.js`, comme `--click="Jour > Jour précédent"` côté Android). **Plan iPhone fait le 16/11 à 10:30 (en PR)** : `demo-clair-tendances-jour-veille` (`REVEALS` accepte une suite de boutons, trouvés par texte, libellé d'accessibilité ou motif). Captures Android regardées le 16/11 à 10:30 (Tendances › Jour › veille : `--history-days=2`, `--play --font-scale=1.5`, `--play --size=320x640`) : propres, aucune erreur JS ; à 320 px, les « … » des saisies passent à la ligne (lisible). Reste : regarder `demo-clair-tendances-jour-veille` et `vide-tendances-visite` sur la PR iPhone.
-  - [ ] **REFONTE-7d — Nunito et fond crème** (**préparée le 16/11 08:30** :
+  - [x] **REFONTE-7d — Nunito et fond crème** (**mergée le 16/11 vers 12:50, #1038** ; **préparée le 16/11 08:30** :
     [`ETAPE-7D-NUNITO.md`](maquettes/compagnon-etapes/ETAPE-7D-NUNITO.md), captures avant/après de 4 écrans dans
     `compagnon-etapes/7d/`) : Nunito variable (OFL, +19 Ko au premier lancement, chiffres tabulaires, mêmes glyphes
     absents que Figtree) ; fond `#fff8f0`, surface `#f8efe4`, bord `#eadfd1` (marque à 5,04:1) ; sombre inchangé ;
@@ -298,6 +298,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     `DESIGN.md` § 3-4, Nouveautés. Suites Android (3 678) et iPhone (4 040) vertes, build OK, captures claires (35)
     et sombres regardées. Reste (7d-2) : chevron « › » de la carte Agir plus petit (si Agir reste à l'Accueil) ;
     regarder les captures iPhone de la PR ; visuels de la fiche Play régénérés par la CI.
+  - [x] **REFONTE-7d-2 — Chevron des listes** (16/11 12:30) : le « › » texte de la carte Agir et des lignes de
+    Réglages, réduit par Nunito, devient l'icône chevron de la carte Bien-être (`LineIcon`, tournée vers la droite,
+    `--text-muted`) ; test rouge puis vert dans `More.test.jsx`. iPhone : le correctif 26 (`More.jsx`) s'applique
+    toujours, suites Accueil et Réglages vertes dans `upstream/`. Captures Accueil et Réglages regardées.
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.

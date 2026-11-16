@@ -387,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **16/11 12:30** — **#1038 (REFONTE-7d, Nunito et fond crème) mergée** après 15 checks verts et les captures iPhone (clair et sombre). **REFONTE-7d-2 en PR** : chevrons des listes en icône. Ensuite : passage complet des personas (installation neuve et mise à jour), puis Pilou (8).
 - **16/11 11:30** — **#1037 (captures iPhone de Tendances, restes 7a-2 et 7b-2 (3)) mergée** après sa build iOS verte ; étapes 7a à 7c soldées. **REFONTE-7d en PR** (Android et iPhone) : police Nunito et fond crème, thème sombre inchangé. Ensuite : 7d-2, passage des personas, puis Pilou (8).
 - **16/11 09:30** — REFONTE-7c-2 (3) en PR (Android et iPhone) : carte « Hier » en tête de Ma journée, qui repose en Oui / Non les habitudes d'hier restées sans réponse (« Passer » la range). #1034 (7c-2 (2)) mergée à 07:38. Restent 7a-2 et 7b-2 (3) (captures iPhone), puis Nunito (7d).
 - **16/11 07:30** — REFONTE-7c-2 (2) en PR (iPhone) : « Ce qui a pu peser ce jour-là » de Tendances › Jour tient compte de la variabilité cardiaque de l'app Santé (correctif 64), comme la tuile de l'ancien Journal. **#1033 (7c-2 (1), CSS morte) mergée** vers 07:45 après sa build iOS verte. Restent 7c-2 (3) « Hier », 7a-2 et 7b-2 (3) (captures iPhone), puis Nunito.

@@ -30,6 +30,13 @@ describe('More page', () => {
     expect(screen.getAllByRole('link', { name: /Connecteurs|Sources/ })).toHaveLength(1)
   })
 
+  it('draws each chevron as the line icon, not a text glyph that shrinks with the font (7d-2)', () => {
+    renderMore()
+    const link = screen.getByRole('link', { name: /Sources/ })
+    expect(link.querySelector('svg.more-chevron')).not.toBeNull()
+    expect(link.textContent).not.toContain('›')
+  })
+
   it('tells how many news are unread', () => {
     const log = [
       { id: 'b', date: '2026-10-10', kind: 'nouveau', title: 'B', items: [] },

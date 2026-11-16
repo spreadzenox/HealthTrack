@@ -23,6 +23,7 @@ import { headerLine, measureTiles } from '../services/today'
 import { gutAsked, gutCardMode, shouldShowUnlockReminder, dismissUnlockReminder } from '../settings/onboarding'
 import { describeFaceUnlock, getFaceSenseStatus } from '../services/faceSense'
 import AddStrip from '../components/AddStrip'
+import LineIcon from '../components/LineIcon'
 import PeriodSheet from '../components/PeriodSheet'
 import { listEntries, createEntry, deleteEntry } from '../storage/localHealthStorage'
 import { habitEntry, yesterdayCatchUp, skipYesterday } from '../services/habits'
@@ -203,7 +204,7 @@ export default function Dashboard({ view = 'home' }) {
             <span className="more-title">Agir</span>
             <span className="more-desc">Vérifier une piste par un essai</span>
           </span>
-          <span className="more-chevron" aria-hidden="true">›</span>
+          <LineIcon name="chevron" size={20} className="more-chevron" />
         </Link>
       )}
       {/* AUJ-4 : le bloc digestif ; les résultats des analyses n'ont qu'une maison (leçon 16). */}
