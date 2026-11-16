@@ -17,7 +17,9 @@ Mis à jour : 16/11 21:15 (heure de Paris). PR 1 : #1056.
   - Branchement minimal : `Dashboard.jsx` (vue Accueil, une balise), `tokens.css` (couleurs `--cmp-*`, clair et
     sombre), une note de Nouveautés.
   - Mouvements réduits : `prefers-reduced-motion` (fondus de 200 ms, orbite arrêtée, film figé, coche).
-  - Captures : `journal/runs/captures/2026-11-16-sprint-bulles-accueil-{demo,vide,sombre}.png`.
+  - Captures : `journal/runs/captures/2026-11-16-sprint-bulles-accueil-{demo,vide,sombre}.png` (îlot dessiné, sans la
+    scène) et `…-sprint-bulles-avec-scene-{demo,vide}.png` (intégration vérifiée en local avec `claude/sprint-scene-1`
+    fusionnée et le conflit résolu comme ci-dessous : bulles placées par la vraie caméra autour de Pilou).
 
 ## ⚠ ORDRE DES MERGES AVEC SCÈNE (à relayer, merci)
 La PR SCÈNE monte `<CompanionScene />` dans `Dashboard.jsx` juste après l'en-tête ; ma PR monte `<CompanionHome>` au

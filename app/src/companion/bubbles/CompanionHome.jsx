@@ -130,10 +130,14 @@ function BubblesLayer({ stage, bubbles, heldRef, reduced, onPress, popping, posi
   const o = stage.project(0, 0, 0)
   const unit = Math.abs(stage.project(1, 0, 0).x - o.x) || 0
   const world = orbitWorld(bubbles.length, reduced ? 0 : phase)
+  const W = stage.width || 0
+  const H = stage.height || 0
+  // Une bulle reste entière dans le cadre de la scène (4 px de marge)
+  const clamp = (v, half, max) => (max > 2 * half + 8 ? Math.min(max - half - 4, Math.max(half + 4, v)) : v)
   const placed = world.map((w) => {
     const p = stage.project(w.x, w.y, w.z)
     const d = Math.max(MIN_BUBBLE_PX, 2 * BUBBLE_RADIUS * unit * p.scale * w.size)
-    return { x: p.x, y: p.y, d, scale: p.scale, behind: p.behind }
+    return { x: clamp(p.x, d / 2, W), y: clamp(p.y, d / 2, H), d, scale: p.scale, behind: p.behind }
   })
   // Dernière place connue de chaque bulle : une bulle qui part éclate là où elle était
   useEffect(() => {
