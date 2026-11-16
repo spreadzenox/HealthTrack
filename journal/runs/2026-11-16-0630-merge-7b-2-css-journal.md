@@ -1,6 +1,6 @@
 # Run 16/11 06:30 — #1032 mergée, REFONTE-7c-2 (1) : CSS morte de l'ancien Journal
 
-**Type** : run de code  ·  **Android** : main a9092e7 (#1032) ; sur 488dc0c (#1031) « Build & Release » (v752),
+**Type** : run de code  ·  **Android** : main a9092e7 (#1032), « Build & Release » vert, release **v753** (APK 34,6 Mo, 05:37 UTC) ; sur 488dc0c (#1031) « Build & Release » (v752),
 « Play — AAB », « Tests », « iOS — TestFlight » et émulateurs verts  ·  **TestFlight** : « iOS — TestFlight » vert sur
 488dc0c ; pas de relevé App Store Connect à ce run  ·  **Parité** : 70 % (33/47), inchangée
 
