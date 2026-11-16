@@ -79,7 +79,7 @@ export function createPilou(THREE, options = {}) {
   /* ---------- le corps : ventre peint au bord irrégulier, visage peint et projeté, sous-surface ---------- */
   const FACE_S = Q.visage
   const faceCv = makeCanvas(FACE_S, FACE_S)
-  const faceCtx = ctx2d(faceCv)
+  const faceCtx = null // ESSAI
   const faceTex = keep(new THREE.CanvasTexture(faceCv))
   faceTex.colorSpace = THREE.SRGBColorSpace
   faceTex.generateMipmaps = false
@@ -147,7 +147,7 @@ export function createPilou(THREE, options = {}) {
 
   /* ---------- les yeux de la créature : globes 3D, cornée vernie, iris réfracté, pupille vivante ---------- */
   const irisCv = makeCanvas(Q.iris, Q.iris)
-  const irisCtx = ctx2d(irisCv)
+  const irisCtx = null // ESSAI
   const irisTex = keep(new THREE.CanvasTexture(irisCv))
   irisTex.colorSpace = THREE.SRGBColorSpace
   function paintIris(hex) {
