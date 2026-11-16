@@ -43,3 +43,5 @@ import './components/MealFodmapLine.css'
 import './pages/Licences.css'
 // Scène du compagnon (refonte, étape 8, lot SCÈNE) : montée à la demande par l'Accueil, son style reste chargé d'emblée
 import './companion/CompanionScene.css'
+// Double numérique par photo (refonte, étape 15 ; écran monté seulement si VITE_PILOU_PHOTO=on)
+import './companion/photo/PilouPhoto.css'

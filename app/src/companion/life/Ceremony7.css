@@ -1,0 +1,49 @@
+/* Cérémonie du jour 7 (SPEC comprendre § 5) */
+.ceremony7 {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: calc(var(--safe-top) + 24px) 24px calc(var(--safe-bottom) + 24px);
+  background: var(--bg);
+  text-align: center;
+  animation: ceremony7-in 350ms cubic-bezier(.33, 1, .68, 1) both;
+}
+.ceremony7-stage {
+  position: relative;
+  width: 260px;
+  height: 200px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, var(--life-sky-top) 0%, var(--life-sky-low) 100%);
+}
+.ceremony7-rainbow { position: absolute; left: 10px; top: 14px; }
+.ceremony7-rainbow path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: ceremony7-trace 1300ms cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.ceremony7-pilou { position: absolute; left: 50%; bottom: 8px; margin-left: -56px; }
+.ceremony7-tag {
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--tone-bg);
+  color: var(--tone-label);
+  font-weight: 800;
+}
+.ceremony7-title { margin: 0; font-size: 1.5rem; font-weight: 900; line-height: 1.2; animation: ceremony7-pop 400ms cubic-bezier(.34, 1.56, .64, 1) 1.6s both; }
+.ceremony7-text { margin: 0; max-width: 32ch; color: var(--text-muted); }
+.ceremony7-action { width: 100%; max-width: 360px; min-height: var(--button-height); border-radius: var(--radius-pill); margin-top: 8px; }
+.ceremony7-later { min-height: var(--tap-min); background: none; color: var(--text-muted); font-weight: 700; }
+@keyframes ceremony7-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes ceremony7-trace { to { stroke-dashoffset: 0; } }
+@keyframes ceremony7-pop { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .ceremony7, .ceremony7-title { animation: ceremony7-fade 300ms ease both; }
+  .ceremony7-rainbow path { animation: none; stroke-dashoffset: 0; }
+}
+:root[data-reduced-motion='on'] .ceremony7-rainbow path { animation: none; stroke-dashoffset: 0; }
+@keyframes ceremony7-fade { from { opacity: 0; } to { opacity: 1; } }

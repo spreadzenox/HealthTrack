@@ -5,6 +5,7 @@
  * historique du bien-être (WellbeingHistory) est retiré. « Votre forme », le radar et les comptes à rebours en texte sont
  * retirés de cette page (code gardé). `?mesure=digestion` et `?vue=jour` ouvrent la page réglée (AUJ-9).
  */
+import PilouPeek from '../companion/life/PilouPeek'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import JournalTabs from '../components/JournalTabs'
@@ -94,6 +95,8 @@ export default function Trends({
   return (
     <section className="journal-page">
       <JournalTabs />
+      {/* Lot VIE (étape 12) : la petite tête de Pilou dépasse du bord de la carte, décorative */}
+      {data && <PilouPeek />}
       {data ? (
         <TrendsViewer
           states={data.states}

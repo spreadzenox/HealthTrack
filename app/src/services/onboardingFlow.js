@@ -8,6 +8,7 @@ import { getConnector } from '../connectors/connectorRegistry'
 import { isFaceSenseAvailable } from './faceSense'
 import { runFirstImport } from './firstImport'
 import { matchHealthApp } from '../devices/healthApps'
+import { loadCompanion } from '../companion/life/companionState'
 
 /** iPhone : la carte principale dit « Santé » (Apple), Android « Health Connect ». */
 /**
@@ -36,7 +37,8 @@ export const healthStoreName = () => (Capacitor?.getPlatform?.() === 'ios' ? 'Sa
  */
 export const TEMPS = ['goal', 'watch', 'auto', 'notes']
 export function stepsFor() {
-  const steps = ['intro', ...TEMPS]
+  // Lot VIE (étape 12) : la rencontre de Pilou et son nom, juste après l'ouverture, une seule fois
+  const steps = ['intro', ...(loadCompanion().metAt ? [] : ['meet']), ...TEMPS]
   if (isFaceSenseAvailable()) steps.push('face')
   if (FEATURES.billing) steps.push('premium')
   return steps
