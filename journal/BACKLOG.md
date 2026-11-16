@@ -245,8 +245,20 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     jour du cycle) ; habitudes « Méditation  Oui » en miel, une réponse par jour, Oui / Non sur place ; placé à la fin
     du détail d'un jour passé (Jour, Semaine, Mois). Inventaire couvert : lignes 1, 2, 3, 5, 6, 8. **Mergée le 15/11
     vers 22:40 (#1024, 216c8b9)**, build iOS verte, captures `tendances` regardées des deux côtés.
-  - [ ] **REFONTE-7b** : Données sur 2 onglets (Tendances · Nutrition), Repas depuis Nutrition, `/journal` redirigé
+  - [x] **REFONTE-7b** : Données sur 2 onglets (Tendances · Nutrition), Repas depuis Nutrition, `/journal` redirigé
     vers `/tendances?vue=jour`, visite guidée sur Tendances, `captureMode.js` iPhone et `visual-check` sans `/journal`.
+    — **code fait le 16/11 à 01:30, en PR (Android et iPhone)** : `JournalTabs` = Tendances · Nutrition (Repas range
+    sous Nutrition), lien « Tous vos repas » à côté de « Vos apports », `/journal` redirigé (test `AppRedirects`),
+    « Voir un exemple » en bas de Tendances, visite guidée : « Vos journées » puis « Une journée d'un coup d'œil » sur
+    `/tendances?vue=jour`, projecteur sur le détail du jour (`.trends-detail`), texte « Touchez un jour pour revoir vos
+    notes et vos repas. » (l'ancien promettait sommeil, pas et cœur, que le détail ne montre pas tous) ; capture
+    « 07-jours » retirée de la fiche Play (6 captures) ; plan de captures iPhone sans `/journal`. Données : aucune
+    lecture ni écriture changée, rien à migrer. À merger quand la build iOS est verte.
+  - [ ] **REFONTE-7b-2 — Restes de 7b** : (1) la visite à « Une journée d'un coup d'œil » montre, vers 1 h 30 du
+    matin, deux repas fictifs identiques à l'heure présente (données de `tourData.js` pour aujourd'hui, à regarder :
+    repas futurs ramenés à « maintenant » ?) ; (2) l'exemple ne s'affiche qu'après le calcul d'Analyses sur le fil
+    principal (≈ 3 à 6 s avec `--settle=6000`, « Vos courbes apparaîtront après 3 jours » avant) : montrer le
+    chargement plutôt que l'état vide ; (3) capture iPhone de la visite sur Tendances (le plan ne l'ouvre pas).
   - [ ] **REFONTE-7c** : retrait de `Journal.jsx`, `DailyJournal.jsx`, `JournalEmpty.jsx` et de leurs tests ; « Hier »
     dans Ma journée si utile (inventaire, ligne 9).
   - [ ] **REFONTE-7a-2 — Restes de 7a** : captures sur historique presque vide, grand texte, 320 px, version Play.
@@ -292,6 +304,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
 - [ ] **POLISH-OBJ-LIENS** (16/11 00:30, vu sur la capture iPhone `demo-clair-recommendations-bien-etre` de #1026, identique sur main) : dans Objectifs › Votre bien-être sans abonnement, deux liens se suivent, « Comment est calculé votre bien-être ? » et « Comment c'est calculé » ; n'en garder qu'un (vérifier où mène chacun), et regarder la même vue sur Android. Petit polish, après 7b.
+- [ ] **PERF-JOUR** (16/11 02:30) : Tendances › Jour lance deux analyses complètes dans le Worker (`dayStates` à
+  l'ouverture, puis `analysisResults` pour les contributions du jour affiché) : 74 lectures, 31 620 enregistrements
+  sur 3 ans de démo, contre 15 810 pour la vue Semaine. Voulu (contributions dès qu'un jour est montré), mais chaque
+  tâche relit toutes les saisies : partager la lecture entre les deux tâches du Worker diviserait le coût par deux.
+  Budget du garde-fou : `/tendances?vue=jour` à 34 500 (remplace `/journal`, devenu une redirection, en 7b).
 - [ ] **CI-UBUNTU-26** (15/11 23:30) : `ubuntu-latest` bascule vers Ubuntu 26.04, et Playwright 1.56.1 y refuse
   Chromium (« Playwright does not support chromium on ubuntu26.04-x64 ») : « Budget de lectures (perf) » rouge sur
   #1026 alors qu'il était vert sur main six minutes plus tôt. Fait : ce job épinglé sur `ubuntu-24.04`. Reste :

@@ -15,7 +15,6 @@ const Food = withNutrition(() => import('./pages/Food'))
 const Nutrition = withNutrition(() => import('./pages/Nutrition'))
 const Recommendations = withNutrition(() => import('./pages/Recommendations'))
 const Objectives = lazy(() => import('./pages/Objectives'))
-const Journal = lazy(() => import('./pages/Journal'))
 const Trends = lazy(() => import('./pages/Trends'))
 const Data = lazy(() => import('./pages/Data'))
 const Connectors = lazy(() => import('./pages/Connectors'))
@@ -52,7 +51,6 @@ export default function App() {
             <Route index element={<Dashboard key="home" />} />
             {/* Refonte « Compagnon », étape 2 : Ma journée, ce qui se note à la main (même module que l'Accueil) */}
             <Route path="ma-journee" element={<Dashboard key="day" view="day" />} />
-            <Route path="journal" element={<Journal />} />
             <Route path="tendances" element={<Trends />} />
             <Route path="food" element={<Food />} />
             <Route path="nutrition" element={<Nutrition />} />
@@ -71,6 +69,8 @@ export default function App() {
             <Route path="premium" element={<Premium />} />
             {/* ORG-3b : l'historique du bien-être est la vue Jour de Données › Tendances */}
             <Route path="bien-etre" element={<Navigate to="/tendances?vue=jour" replace />} />
+            {/* REFONTE-7b : le Journal jour par jour rejoint Tendances (détail du jour, « Vos saisies ») */}
+            <Route path="journal" element={<Navigate to="/tendances?vue=jour" replace />} />
             <Route path="reintroduction" element={<Reintroduction />} />
             <Route path="agir" element={<Act />} />
             <Route path="agir/essai/:id" element={<Trial />} />

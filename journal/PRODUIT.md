@@ -387,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **16/11 01:30** — **Refonte « Compagnon », étape 7b (code), en PR (Android et iPhone).** Données n'a plus que deux onglets, Tendances et Nutrition ; « Tous vos repas » s'ouvre depuis Nutrition ; l'ancienne adresse du Journal mène à Tendances › Jour ; la visite guidée montre les journées sur Tendances. Rien à migrer (aucune donnée lue ou écrite autrement). Capture « Journal » retirée de la fiche Play. Reste 7c (retrait du code du Journal) avant Nunito.
 - **16/11 00:30** — **#1026 (étape 6d) mergée** (Android et iPhone, build iOS verte, captures iPhone regardées) : score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours. Résumé S46 archivé (`semaines/2026-S46.md`).
 - **15/11 22:35** — **#1024 (étape 7a) mergée** (Android et iPhone) : « Vos saisies » vit dans le détail du jour de Tendances. #1026 (6d) remise à jour sur main, à merger au run suivant.
 - **15/11 21:35** — **Refonte « Compagnon », étape 6d (code), en PR.** L'horizon moyen du bien-être (de 2 à 6 jours avant) s'ouvre à 35 jours notés au lieu de 21 : au banc, un vrai lien fort donnait 7,25 % (21 j) et 6 % (28 j) de jeux avec un faux lien, ≤ 5 % après ; deux cas de non-régression dans `bench.test.js`. La visite guidée et le paywall de l'accueil disent « premier score au 7e jour noté, pistes vers le 14e » (digestion 14 et 28). #1024 (7a) remise à jour sur main (build iOS relancée) : à merger au run suivant.

@@ -2,6 +2,23 @@
   padding-bottom: 32px;
 }
 
+.nutrition-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.nutrition-meals-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  text-decoration: underline;
+}
+
 .nutrition-intro {
   font-size: 0.9rem;
   color: var(--text-muted);

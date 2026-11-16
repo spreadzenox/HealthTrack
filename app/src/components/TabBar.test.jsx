@@ -44,7 +44,6 @@ describe('TabBar', () => {
     ['/tendances', 'Données'],
     ['/nutrition', 'Données'],
     ['/food', 'Données'],
-    ['/journal', 'Données'],
     ['/bien-etre', 'Données'],
   ])('marks only the tab of %s as the current page: %s', (path, tab) => {
     renderAt(path)

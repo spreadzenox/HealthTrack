@@ -67,7 +67,8 @@ describe('mode captures iOS : parcours des pages piloté par l’app', () => {
     ])
     expect(plan[3]).toMatchObject({ route: '/journal', data: 'empty', theme: 'light' })
     // par défaut : les pages qui ont un état vide à montrer
-    expect(EMPTY_ROUTES).toEqual(expect.arrayContaining(['/', '/journal', '/recommendations', '/connectors']))
+    expect(EMPTY_ROUTES).toEqual(expect.arrayContaining(['/', '/tendances', '/recommendations', '/connectors']))
+    expect(EMPTY_ROUTES).not.toContain('/journal')
     expect(buildPlan().some((s) => s.data === 'empty')).toBe(false)
   })
 
@@ -363,7 +364,7 @@ describe('sonde HealthKit (I4)', () => {
     expect(logs.join('\n')).toContain('[healthkit] base {"synced":2,"pas":[1234]}')
   })
 
-  it('puis les pas importés sont cherchés dans le Journal, et la page est capturée (I4)', async () => {
+  it('puis les pas importés sont cherchés dans Tendances › Jour (le Journal est retiré, refonte 7b), et la page est capturée (I4)', async () => {
     const h = health({ acceptOnAck: true })
     const logs = []
     const signals = []
@@ -381,8 +382,8 @@ describe('sonde HealthKit (I4)', () => {
       signal: async (name) => signals.push(name), waitAck, wait: async () => {}, log: (m) => logs.push(m),
       health: h.api, connector: { sync }, store, navigate, readText: () => 'Aujourd’hui · Pas 1\u202f234',
     })
-    expect(navigate).toHaveBeenCalledWith('/journal')
-    expect(logs.join('\n')).toContain('[healthkit] journal {"pas":true}')
+    expect(navigate).toHaveBeenCalledWith('/tendances?vue=jour')
+    expect(logs.join('\n')).toContain('[healthkit] tendances {"pas":true}')
     expect(signals).toEqual(['healthkit-autorisation', 'healthkit-journal'])
   })
 

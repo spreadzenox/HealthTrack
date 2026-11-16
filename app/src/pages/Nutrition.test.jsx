@@ -324,3 +324,13 @@ describe('Nutrition page', () => {
     loadNutritionEntries.mockResolvedValue([])
   })
 })
+
+describe('Nutrition page : lien vers l’historique des repas (refonte, étape 7b)', () => {
+  it('links to all meals, since Repas no longer has a tab', async () => {
+    localStorage.clear()
+    loadNutritionEntries.mockResolvedValue([])
+    render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    const link = await screen.findByRole('link', { name: 'Tous vos repas' })
+    expect(link).toHaveAttribute('href', '/food')
+  })
+})

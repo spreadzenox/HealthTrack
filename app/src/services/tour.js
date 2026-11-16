@@ -29,11 +29,13 @@ export function startTour(from) {
 
 /** Première étape de la visite sur l'écran `from` (0 si la visite n'y passe pas). */
 export function startIndex(steps, from) {
-  const i = from ? steps.findIndex((s) => s.route === from) : -1
+  const i = from ? steps.findIndex((s) => s.route.split('?')[0] === from) : -1
   return i < 0 ? 0 : i
 }
 
 const W = FIRST_RESULTS_DAY.wellbeing
+// Refonte, étape 7b : les journées se voient dans Données › Tendances, vue Jour (le Journal jour par jour est retiré)
+export const DAY_ROUTE = '/tendances?vue=jour'
 const D = FIRST_RESULTS_DAY.digestion
 const SW = FIRST_SCORE_DAY.wellbeing
 const SD = FIRST_SCORE_DAY.digestion
@@ -47,8 +49,8 @@ export function tourSteps({ hc, face, gut }) {
     { route: '/', title: 'Votre Accueil', text: hc ? 'Vos 30 derniers jours arrivent. Le reste se remplit au fil des jours.' : 'Pour l’instant, il attend vos premières notes.', button: `Exemple au jour ${W}` },
     { route: '/', days: W, reveal: true, anchor: '.day-status', title: 'Votre bien-être du jour', text: face ? 'Lu par la caméra quand vous regardez votre téléphone, et par vos notes.' : 'D’après vos notes. Avec la lecture du visage, il se remplit tout seul.', button: 'Suivant' },
     { route: '/', days: W, anchor: '.today-sources', title: 'Vos mesures du jour', text: hc ? 'Ce que vos appareils envoient, comparé à vos habitudes.' : `Avec ${healthStoreName()} ou une montre, vos nuits et vos pas s’affichent ici.`, button: 'Suivant' },
-    { route: '/journal', title: 'Vos journées', text: 'Chacune de vos journées sera gardée ici.', button: `Exemple au jour ${W}` },
-    { route: '/journal', days: W, reveal: true, anchor: '.day-card', title: 'Une journée d’un coup d’œil', text: 'Sommeil, pas, cœur, repas et notes au même endroit.', button: 'Suivant' },
+    { route: DAY_ROUTE, title: 'Vos journées', text: 'Chacune de vos journées sera gardée ici.', button: `Exemple au jour ${W}` },
+    { route: DAY_ROUTE, days: W, reveal: true, anchor: '.trends-detail', title: 'Une journée d’un coup d’œil', text: 'Touchez un jour pour revoir vos notes et vos repas.', button: 'Suivant' },
     { route: '/recommendations/bien-etre', title: 'Objectifs', text: gut ? `Bien-être : un score après ${SW} jours notés, des pistes après ${W}. Digestion : ${SD} et ${D}.` : `Un premier score après ${SW} jours notés, vos pistes après ${W}.`, button: `Exemple au jour ${W}` },
     { route: '/recommendations/bien-etre', days: W, reveal: true, anchor: '[aria-labelledby="reco-pistes-wellbeing"]', title: `Au jour ${W} : vos premières pistes`, text: 'Ce qui va avec vos bons et vos mauvais jours. Des pistes, pas des causes.', button: 'Suivant' },
     { route: '/recommendations/bien-etre', days: W, anchor: '[aria-labelledby="reco-weigh-wellbeing"]', title: 'Le détail de chaque piste', text: 'De combien chaque facteur joue sur votre bien-être, en points sur 5.', button: 'Suivant' },
