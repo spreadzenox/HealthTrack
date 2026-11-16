@@ -418,7 +418,12 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
     bus.emit(EVENTS.MILESTONE, { kind: 'day7' })
   }, [week?.state]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const label = message || `${name} ${MOOD_PHRASES[mood.level]} · ${bubblesLeftText(list.bubbles.length)}`
+  // Assemblage (lot SCÈNE) : la nuit, Pilou dort (lot MONDE) ; l'étiquette le dit, sans compter ce qui reste (SPEC île § 5)
+  const [asleep, setAsleep] = useState(() => Boolean(bus.last(EVENTS.TIME_PHASE)?.light?.asleep))
+  useEffect(() => bus.on(EVENTS.TIME_PHASE, (p) => setAsleep(Boolean(p?.light?.asleep)), { replay: true }), [])
+  const label = message || (asleep
+    ? (list.bubbles.length ? `${name} dort. Le reste peut attendre demain.` : `${name} dort`)
+    : `${name} ${MOOD_PHRASES[mood.level]} · ${bubblesLeftText(list.bubbles.length)}`)
   const overlay = (stage) => (
     <BubblesLayer stage={stage} bubbles={list.bubbles} heldRef={heldRef} reduced={reduced || Boolean(stage?.reducedMotion)}
       onPress={press} popping={popping} positionsRef={positionsRef} />
