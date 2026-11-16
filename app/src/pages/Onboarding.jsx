@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import MeetPilou from '../companion/life/MeetPilou'
+import OnboardingPilou from '../companion/life/OnboardingPilou'
 import { useNavigate } from 'react-router-dom'
 import {
   FLOW_VERSION,
@@ -38,8 +40,6 @@ import { CHANGELOG } from '../data/changelog'
 import { getLastSeenId, markAllSeen } from '../services/whatsNew'
 import { APP_NAME } from '../config/brand'
 import './Onboarding.css'
-import MeetPilou from '../companion/life/MeetPilou'
-import OnboardingPilou from '../companion/life/OnboardingPilou'
 import { getApproxPosition } from '../services/approxPosition'
 import { disableWeather, enableWeather, getWeatherSettings, syncWeather } from '../services/weatherSync'
 import {
@@ -840,10 +840,11 @@ export default function Onboarding() {
 
       <main className="onb-body">
         {step === 'intro' && <IntroStep />}
-        {step === 'meet' && <MeetPilou mode="onboarding" onDone={() => go(state.step + 1)} />}
-        {temps >= 0 && <OnboardingPilou step={step} gut={gut} watch={state.watch} />}
         {step === 'goal' && <GoalStep gut={gut} onGut={(on) => update(chooseObjectives(state, on))} />}
         {step === 'watch' && <WatchStep state={state} update={update} installed={installed} />}
+        {/* Lot VIE (étape 12) : la rencontre ; Pilou en tête de chaque temps (order: -1, OnboardingPilou.css) */}
+        {step === 'meet' && <MeetPilou mode="onboarding" onDone={() => go(state.step + 1)} />}
+        {temps >= 0 && <OnboardingPilou step={step} gut={gut} watch={state.watch} />}
         {step === 'auto' && (
           <AutoStep watch={state.watch === 'yes'}>
             <FoundStep

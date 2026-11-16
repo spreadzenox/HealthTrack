@@ -1,5 +1,6 @@
 /* Bandeau-ciel de l'onboarding (SPEC comprendre § 4) */
 .onb-pilou {
+  order: -1;
   display: flex;
   align-items: flex-end;
   gap: 12px;
