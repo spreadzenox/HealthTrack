@@ -32,8 +32,11 @@ Rien de lu ni d'écrit autrement (affichage seulement) : rien à migrer, export 
   (bien-être 4,0, « Ce qui a pu peser », « Vos saisies » à 05:25, 05:10, 04:55 : ordre gardé au petit matin).
 - iPhone : `scripts/upstream.sh` (HEAD) prépare v1104, 51 correctifs appliqués ; aucun ne touche `Trends.jsx`.
 
+4. **#1031 (7c) mergée** (squash, 488dc0c) après 14 checks verts, build iOS comprise ; captures iPhone 16e
+   `demo-clair-tendances` (Semaine, attendu en pointillé) et `healthkit-journal` (ancienne adresse → Tendances › Jour,
+   « Ce qui a pu peser ») regardées. PR de ce run (#1032) remise à jour sur main.
+
 ## Suite
-- Merger #1031 (7c) quand sa build iOS est verte et ses captures `tendances` regardées, puis remettre la PR de ce run
-  à jour sur main (nouvelle build iOS) et la merger au run suivant.
+- Merger #1032 quand ses checks sont verts, build iOS comprise ; relever la release de 488dc0c.
 - REFONTE-7b-2 (3) (capture iPhone de la visite), 7c-2, 7a-2, puis Nunito (7d).
 - Relever la build TestFlight chez les testeurs externes (soumission du jour après l'envoi Alpha de 23:45).

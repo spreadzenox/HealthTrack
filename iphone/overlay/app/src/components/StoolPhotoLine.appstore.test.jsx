@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 // des selles fait partie de la soumission (il déclare « Santé » dans « Confidentialité de l'app »). Même règle qu'Android :
 // seulement avec l'objectif digestion. Android v884 (AUJ-1b, 07/11) : la ligne quitte le Journal pour le bouton
 // « Selles » du bandeau d'ajout de l'Accueil (même composant, `StoolPhotoLine`), sur iPhone comme sur Android.
+// REFONTE-7c (16/11) : le Journal est retiré, seul le test du composant reste.
 vi.mock('../config/distribution', async (importOriginal) => {
   const actual = await importOriginal()
   return { ...actual, DISTRIBUTION: 'appstore', FEATURES: actual.featuresFor('appstore') }
@@ -20,24 +21,13 @@ vi.mock('../storage/localHealthStorage', () => ({
 }))
 vi.mock('react-router-dom', async (importOriginal) => ({ ...(await importOriginal()), useNavigate: () => vi.fn() }))
 
-import Journal from './Journal'
-import StoolPhotoLine from '../components/StoolPhotoLine'
-
-const ONBOARDING_KEY = 'healthtrack_onboarding'
+import StoolPhotoLine from './StoolPhotoLine'
 
 describe('Photo des selles sur iPhone, comme sur Android (décision du 05/11 ; Accueil depuis v884)', () => {
   beforeEach(async () => {
     const { listEntries, countEntries } = await import('../storage/localHealthStorage')
     listEntries.mockResolvedValue([])
     countEntries.mockResolvedValue(0)
-  })
-
-  it('la ligne a quitté le Journal, même avec l’objectif digestion', async () => {
-    localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ done: true, goal: 'gut' }))
-    render(<BrowserRouter><Journal /></BrowserRouter>)
-    await screen.findByText('Vos derniers jours')
-    expect(screen.queryByRole('button', { name: /estimer la forme avec une photo/ })).toBeNull()
-    localStorage.removeItem(ONBOARDING_KEY)
   })
 
   it('le composant du bouton « Selles » de l’Accueil reste proposé sur iPhone', async () => {
