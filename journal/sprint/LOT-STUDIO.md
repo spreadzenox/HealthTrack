@@ -12,6 +12,12 @@
   SCÈNE, lu par `import.meta.glob` : tant que `flags.js` n'existe pas ou qu'il est éteint, l'entrée est cachée ; la
   route `/pilou/studio` existe mais rien n'y mène). `CONTRAT.md` et `bus.js` recopiés à l'identique.
 
+- 16/11 21:35 — consigne de l'orchestrateur (21:20) appliquée : pas de push sur #1052 pendant son build. Branche
+  `claude/sprint-studio-3` (= studio-2 + `claude/sprint-pilou-1`) : `studio/pourPilou.js`,
+  `equiperPilou(THREE, pilou)` pose les pièces sur `kit.body` dans un vinyle satiné tiré de `kit.vinyl`, garde le
+  `setTraits` de PILOU (iris), anime, libère, compte les triangles. Testé sur le vrai `createPilou` (budget, place
+  sur la tête) ; capture `journal/runs/captures/2026-11-16-sprint-studio-pilou-figurine.png`.
+
 ## Plan
 1. **Fiche et traits, sans 3D** (`studio/traits.js`, `studio/fiche.js`) : schéma de PILOU-DOUBLE.md § 4, libellés,
    palettes curatées, `normaliser`, `tirer` (« Surprenez-moi »), `compter` ; fiche gardée sur le téléphone, dans
@@ -30,7 +36,16 @@
   `incertains` : le Studio ouvre l'onglet du premier champ incertain et affiche « À vérifier : … ». Après l'analyse,
   enregistrez la fiche puis ouvrez `/pilou/studio`.
 
-## Pour le lot PILOU (rebranchement des traits, brief § 9)
+## Pour le lot PILOU (rebranchement des traits, brief § 9) — deux petits gestes dans son dossier
+1. `pilou/index.js` : `import { equiperPilou } from '../studio/pourPilou.js'` puis `return equiperPilou(THREE, api)`
+   à la fin de `createPilou` (les pièces 3D suivent alors `setTraits`).
+2. Traits peints (sourcils, taches, grain de beauté, barbe courte, moustache, piercing) : `drawVisage(ctx, S, F, T)`
+   appelle `T?.peindre(ctx, X, Y, k, F, phase)` avec `phase` = `sous` (avant les joues), `peau` (après les joues),
+   `sourcils` (à la place des sourcils discrets si `T.aSourcils()`), `dessus` (après la bouche) ; `paintFace` passe
+   `api.peintreTraits` et ajoute la fiche à la clé de cache (`faceKey(F) + JSON.stringify(fiche)`).
+   Je peux faire ces deux gestes moi-même dans une PR après le merge de #1058, si PILOU préfère.
+
+## Ancien détail pour PILOU
 - `setTraits(fiche)` du contrat reçoit la fiche (`traits:changed`, rejouée). Le visage peint : `studio/visage.js`
   (`drawFace(ctx, S, F, T)`, repris du kit) avec le peintre `studio/peintre.js` (`creerPeintre()` →
   `set(fiche)`, `peindre(ctx, X, Y, k, F, phase)`, `iris()`, `formeYeux(F)`) : appelez `T.peindre` aux phases `sous`,
