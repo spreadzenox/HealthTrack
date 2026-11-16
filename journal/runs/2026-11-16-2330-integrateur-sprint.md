@@ -12,15 +12,14 @@ en cours à 23:30  ·  **Parité** : 70 % (33/47), inchangée
 
 ## Fait
 - Relevé des `journal/sprint/LOT-*.md` (version la plus récente par lot sur main et `claude/sprint-*`) et des PR.
-- **#1062 (SCÈNE 2) mergée par son équipier pendant le run** (f135f54), puis **#1056 (BULLES)** à 23:52 (ed1fa08 ; scène importée directement, donc pas de rouge `bundleGuard`), puis **#1060 (VIE)** à 00:16 (42072c6) ; « Tests » de main vert après chacun. PR encore ouvertes : #1050 (PHOTO), #1052 (STUDIO), #1057 (MONDE, à jour à 23:15), #1058 (PILOU), #1060 (VIE, à jour à 23:10) ; #1045 (UPG-4)
+- **#1062 (SCÈNE 2) mergée par son équipier pendant le run** (f135f54), puis **#1056 (BULLES)** à 23:52 (ed1fa08 ; scène importée directement, donc pas de rouge `bundleGuard`), puis **#1060 (VIE)** à 00:16 (42072c6) ; « Tests » de main vert après chacun. PR encore ouvertes : #1050 (PHOTO), #1052 (STUDIO), #1057 (MONDE, à jour à 23:15), #1058 (PILOU) ; #1045 (UPG-4)
   reportée après 03:00.
 - Assemblage confié au lot SCÈNE à 22:40 : fusion locale de tout, 3 980 tests verts, 1 rouge d'une ligne
   (`pageStyles.js`), conflits VIE × STUDIO décrits et résolus en gardant les deux.
 - Tête du résumé, tableau des runs, BACKLOG (bloc sprint), PRODUIT (historique), PARITE.
 
 ## Points relevés pour la suite
-- Le correctif `bundleGuard` (import de `CompanionScene.css` dans `pageStyles.js`) doit arriver avec #1056 ou la PR
-  d'assemblage, sinon « Tests » de main rougit au merge de #1056 : à vérifier au run de 00:30 (main rouge = priorité).
+- `bundleGuard` : #1056 importe la scène directement ; « Tests » de main resté vert (vérifié sur ed1fa08 et 42072c6).
 - Ordre des merges attendu : PILOU (#1058) avant les images fixes refaites de la PR d'assemblage.
 - Restes hors sprint inchangés (haptique, notification de repas, widget iPhone, photo → `saveFiche`).
 
