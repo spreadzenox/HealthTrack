@@ -27,6 +27,7 @@ const FORECAST = {
     precipitation_sum: [0, 3, 1],
     sunshine_duration: [3600, 0, 7200],
   },
+  current: { temperature_2m: 11.4, precipitation: 0.3, weather_code: 61, wind_gusts_10m: 18 },
 }
 const AIR = {
   hourly: { time: ['2026-10-10T00:00', '2026-10-11T00:00', '2026-10-12T00:00'], european_aqi: [12, 25, 30], grass_pollen: [5, 0, 0] },
@@ -92,6 +93,8 @@ describe('syncWeather', () => {
     expect(entries[1].payload).toMatchObject({ pressureChangeHpa: -8, aqi: 25, place: 'Nantes' })
     const s = getWeatherSettings()
     expect(s.today).toMatchObject({ date: '2026-10-12', tempMaxC: 14 })
+    // météo du moment, pour l'îlot de Pilou
+    expect(s.current).toEqual({ tempC: 11.4, precipMmH: 0.3, windKmH: 18, code: 61, at: NOW.toISOString() })
     expect(s.lastSyncAt).toBe(NOW.toISOString())
     expect(s.lastError).toBeNull()
     expect(onUpdated).toHaveBeenCalled()
