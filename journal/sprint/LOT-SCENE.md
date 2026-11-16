@@ -1,6 +1,6 @@
 # Lot SCÈNE (étape 8 du brief : Compagnon 1a, et le socle commun)
 
-## ASSEMBLAGE (confié par l'orchestrateur à 22:40) — essai local du 16/11 23:10
+## ASSEMBLAGE (confié par l'orchestrateur à 22:40) — essai local du 16/11 22:45
 Fusion locale de main + scene-3 + PILOU #1058 + MONDE #1057 + VIE #1060 + BULLES #1056 + STUDIO #1052 + PHOTO #1050 :
 lint propre, **3 980 tests verts, 1 rouge à la rencontre**. Rendu de l'Accueil complet : vrai Pilou de PILOU, bulles,
 jauge « Humeur du jour », ciel de MONDE (jour, soir, nuit avec Pilou endormi), cadeaux ; thème sombre lisible.
