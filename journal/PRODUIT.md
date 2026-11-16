@@ -387,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **16/11 03:35** — **#1029 (étape 7b) mergée** (Android et iPhone, 14 checks verts, captures iPhone regardées), release v750. REFONTE-7b-2 (1) en PR : l'exemple de la visite ouvert tôt le matin garde ses saisies du jour dans l'ordre, à des heures distinctes. Restent 7b-2 (2, 3) et 7c avant Nunito.
 - **16/11 01:30** — **Refonte « Compagnon », étape 7b (code), en PR (Android et iPhone).** Données n'a plus que deux onglets, Tendances et Nutrition ; « Tous vos repas » s'ouvre depuis Nutrition ; l'ancienne adresse du Journal mène à Tendances › Jour ; la visite guidée montre les journées sur Tendances. Rien à migrer (aucune donnée lue ou écrite autrement). Capture « Journal » retirée de la fiche Play. Reste 7c (retrait du code du Journal) avant Nunito.
 - **16/11 00:30** — **#1026 (étape 6d) mergée** (Android et iPhone, build iOS verte, captures iPhone regardées) : score au 7e jour noté, pistes au 14e, horizon moyen du bien-être à 35 jours. Résumé S46 archivé (`semaines/2026-S46.md`).
 - **15/11 22:35** — **#1024 (étape 7a) mergée** (Android et iPhone) : « Vos saisies » vit dans le détail du jour de Tendances. #1026 (6d) remise à jour sur main, à merger au run suivant.
