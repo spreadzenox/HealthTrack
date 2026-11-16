@@ -20,6 +20,8 @@ Build & Release v763 sur #1046, Play — AAB, émulateur A56 de #1049 en cours) 
   sprint (les builds macOS sont pour les équipiers) : reportée après 03:00.
 - `git reset --hard` refusé par l'environnement ; remplacé par `git checkout -B main origin/main` (arbre propre).
 
+- Pendant le run : **#1048 (MONDE) mergée** par son équipier (38c46e2) ; ma branche remise à jour.
+
 ## Points relevés pour la suite
 - SCÈNE : relever le palier choisi et le temps d'image sur le job Android 9 et le simulateur iPhone après le merge de #1053.
 - VIE : après #1054, toute capture faite sans les graines `--meet`/`--ceremony` montre la rencontre.
