@@ -387,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **16/11 20:30** — Run « idées » : **UPG-3a**, deux simulations (installation neuve J1 ; mise à jour J45 depuis la version des testeurs, objectifs `sport,cycle`). Rien de perdu ; 10 constats (POLISH-SIM-99 à 108), en tête la visite guidée qui ne montre pas « Ma journée » et les anciens objectifs convertis sans explication.
 - **16/11 18:30** — **#1044 (UPG-1) mergée** (29baea3) après 14 checks verts, build iOS comprise (captures iPhone de l'Accueil regardées, clair et sombre). #1043 (UPG-2) remise à jour sur main (journal seulement en conflit), build iOS relancée. Reste UPG-3 (passage complet des personas) avant le 22/11, puis REFONTE-8.
 - **16/11 17:30** — **REFONTE-UPG-1** (#1044) : l'essai en cours revient sur l'Accueil (consigne, jour, « jour avec / sans »), remonté sous le bien-être les jours « avec ». #1042 (UPG-0) mergée. Restent UPG-2 (#1043) et UPG-3 (passage complet).
 - **16/11 16:30** — **#1041 (7d-4) mergée** après sa build iOS relancée verte (captures iPhone d'Objectifs regardées, clair et sombre) ; #1042 (UPG-0) remise à jour sur main. **REFONTE-UPG-2 en PR** (Android et iPhone) : le bandeau des Nouveautés met en avant la note de la nouvelle navigation pour un testeur qui arrive d'avant la refonte. Ensuite : UPG-1 (essai en cours sur la carte Agir de l'Accueil), puis UPG-3.
