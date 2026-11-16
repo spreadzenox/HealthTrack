@@ -13,6 +13,7 @@ import { objectivesOverview, TREND_WORDS } from '../services/objectivesOverview'
 import { gutCardMode } from '../settings/onboarding'
 import { isExampleMode } from '../storage/exampleMode'
 import { appLocale } from '../i18n/locale.js'
+import PilouGuide from '../companion/life/PilouGuide'
 
 const CARDS = {
   wellbeing: { title: 'Bien-être', tone: 'mint', to: '/recommendations/bien-etre', more: 'Ce qui va avec votre bien-être' },
@@ -106,11 +107,18 @@ export default function Objectives({ read = readStates, now }) {
       <h2 className="page-title">Objectifs</h2>
       {states === undefined ? (
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul de vos scores…</p></div>
-      ) : (
-        <ul className="objectives-list">
-          {objectivesOverview(states, { gut, now: now || new Date() }).map((card) => <ObjectiveCard key={card.key} card={card} />)}
-        </ul>
-      )}
+      ) : (() => {
+        const cards = objectivesOverview(states, { gut, now: now || new Date() })
+        return (
+          <>
+            {/* Lot VIE (étape 12) : Pilou guide discret, une phrase, aucun chiffre */}
+            <PilouGuide card={cards.find((c) => c.key === 'wellbeing')} />
+            <ul className="objectives-list">
+              {cards.map((card) => <ObjectiveCard key={card.key} card={card} />)}
+            </ul>
+          </>
+        )
+      })()}
     </section>
   )
 }

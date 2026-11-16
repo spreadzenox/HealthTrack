@@ -20,6 +20,8 @@
  * Retirés : l'historique, « Sur quelques semaines », « Autres liens repérés », « Bientôt » et l'analyse « dans les
  * heures ». Des liens statistiques, jamais une cause ni un diagnostic.
  */
+import PilouFigure from '../companion/life/PilouFigure'
+import PilouWaiting from '../companion/life/PilouWaiting'
 import SeeExample from '../components/SeeExample'
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
@@ -265,6 +267,8 @@ function FamilyDetail({ outcome, detail }) {
         <section className="reco-block" aria-labelledby="reco-family-pistes">
           <h3 id="reco-family-pistes" className="reco-section-title">{many ? 'Pistes à tester' : 'Piste à tester'}</h3>
           <ul className="reco-pistes">{detail.pistes.map((f) => <PisteCard key={f.key} f={f} />)}</ul>
+          {/* Lot VIE (étape 12) : Pilou attend discrètement à côté de la piste (SPEC comprendre § 6.5) */}
+          <PilouWaiting />
         </section>
       ) : (
         <section className="reco-block">
@@ -375,6 +379,7 @@ function HowWellbeing() {
       <button type="button" className="reco-how-link" aria-expanded={open} onClick={() => setOpen(!open)}>
         Comment est calculé votre bien-être ?
       </button>
+      {open && <PilouFigure size={64} expr="content" move="hop" className="reco-how-pilou" />}
       {open && (
         <p className="reco-how-text" data-testid="reco-how-wellbeing">
           Deux sources, réunies chaque jour : votre note et la lecture du visage, si vous l’utilisez. Un jour sans
