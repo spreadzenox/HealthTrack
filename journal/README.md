@@ -21,7 +21,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v753** (APK 34,6 Mo, 16/11 05:37 UTC, merge de #1032) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | « iOS — TestFlight » vert sur le merge de #1030 (16/11 03:34 UTC) ; chez les testeurs externes : à relever ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | release **v754** (APK 34,6 Mo, 16/11 06:45 UTC, merge de #1033) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | « iOS — TestFlight » vert sur le merge de #1030 (16/11 03:34 UTC) ; chez les testeurs externes : à relever ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -60,6 +60,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 16/11 07:30 — [7c-2 : VFC de l'app Santé](runs/2026-11-16-0730-7c-2-vfc-sante.md) | 🛠️ | iPhone : « Ce qui a pu peser ce jour-là » (Tendances › Jour) tient compte de la variabilité cardiaque de l'app Santé, comme l'ancien Journal (elle n'y apparaissait jamais). PR ouverte, à merger après sa build iOS ; **#1033 (CSS morte du Journal) mergée** après sa build iOS verte (captures iPhone de Tendances et Nutrition regardées). Rien à faire de votre côté |
 | 16/11 06:30 — [#1032 mergée, CSS morte du Journal](runs/2026-11-16-0630-merge-7b-2-css-journal.md) | 🛠️ | **#1032 mergée** (Tendances montre un chargement pendant que l'exemple de la visite se prépare) après 14 checks verts et les captures iPhone. Étape **7c-2 (1)** en PR : 110 lignes de mise en forme de l'ancien Journal retirées ; rien ne change à l'écran. Rien à faire de votre côté |
 | 16/11 05:30 — [7b-2 : chargement de l'exemple](runs/2026-11-16-0530-7b-2-chargement-exemple.md) | 🛠️ | Pendant la visite, Tendances montre un chargement le temps de préparer l'exemple (3 à 6 s) au lieu de « Vos courbes apparaîtront après 3 jours ». **#1031 (7c) mergée** après sa build iOS verte (captures iPhone de Tendances regardées), release **v752** (34,6 Mo). PR #1032 ouverte, à merger après sa build iOS. Rien à faire de votre côté |
 | 16/11 02:30 — [7b : garde-fou de lectures](runs/2026-11-16-0230-7b-budget-perf.md) | 🛠️ | Check « Budget de lectures » de la PR de 7b rouge : la mesure ouvrait encore `/journal`, devenu un renvoi vers Tendances › Jour. Garde-fou corrigé (Tendances › Jour mesurée sous son nom, avec son budget) ; rien ne change dans l'app. PR à merger après la build iOS. Rien à faire de votre côté |
