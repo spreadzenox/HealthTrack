@@ -65,7 +65,16 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Bran
 - Nouveautés : `2026-11-16-2100-widget-pilou.json` (`variants: ["play", "sideload"]`).
 - Correctif iPhone 18 (contexte de `Layout.jsx`) : vérifié, il s'applique toujours.
 
+**PR 3 — `claude/sprint-monde-3`** (partie de la 2) : Pilou dans les notifications du soir.
+- Android : `PilouNotice.java` ; `setLargeIcon` pose « soir » sur la note du soir et le bilan de la digestion, pose
+  « content » sur leur « Noté » éphémère (Pilou réagit au fait de noter). Rien d'autre ne change.
+- iPhone : `EveningPlugins.swift` joint la pose « soir » (`UNNotificationAttachment`, copie d'un JPEG du site de l'app :
+  `iphone/overlay/app/public/companion/pilou_pose_*.jpg`, 12 Ko) aux deux notifications du soir. Pas de nouveau
+  fichier Swift, donc pas de modification du projet Xcode.
+- Nouveautés : `2026-11-16-2115-pilou-notifications.json` (toutes les variantes).
+
 ## Parité iPhone (pour PARITE.md)
+- Notifications du soir avec Pilou : ✅ des deux côtés (PR 3).
 - Fonctions pures, météo du moment, contexte du monde : code partagé, identiques sur iPhone.
 - **Widget : Android seulement pour l'instant.** Sur iPhone il faut une extension WidgetKit (cible Xcode, App Group
   pour partager l'état) : ligne à ajouter dans PARITE.md « Widget de Pilou | `PilouWidget` (App Widget) | WidgetKit |
@@ -73,7 +82,7 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Bran
   La note de Nouveautés est réservée à play et sideload.
 
 ## Ce qui reste
-- Vignette de Pilou dans les notifications existantes (note du soir, bilan du ventre) : `setLargeIcon` avec la pose
-  du moment, Android ; iPhone : pièce jointe d'image (`UNNotificationAttachment`).
+- Notification de repas de la SPEC journée § 9 (« Pilou garde une place pour votre déjeuner ») : texte prêt
+  (`mealNotification`), mais c'est une fonction nouvelle (réglage, alarmes) : proposée, pas codée dans ce sprint.
 - Re-rendre les poses avec le module PILOU ; nom choisi pour Pilou (lot VIE, `pilouName()`) dans le widget.
 - Widget iPhone (WidgetKit) si le temps le permet.

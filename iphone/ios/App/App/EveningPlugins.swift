@@ -163,6 +163,7 @@ final class EveningNotifications {
         content.body = body
         content.categoryIdentifier = category
         content.interruptionLevel = .passive
+        content.attachments = PilouNotice.attachments("pilou_pose_soir")
         return content
     }
 
@@ -234,5 +235,21 @@ final class HalcyaNotificationHandler: NSObject, UNUserNotificationCenterDelegat
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
         didReceive(response: response)
         completionHandler()
+    }
+}
+
+/// Vignette de Pilou dans les notifications du soir (étape 13 de la refonte « Compagnon », comme `PilouNotice` sur
+/// Android) : l'image pré-rendue est dans le site de l'app (`public/companion/`, ajoutée par `overlay/`) ; iOS déplace
+/// le fichier joint, donc on en joint une copie. Sans image, la notification reste la même ; le texte dit tout.
+enum PilouNotice {
+    static func attachments(_ name: String) -> [UNNotificationAttachment] {
+        guard let source = Bundle.main.url(forResource: name, withExtension: "jpg", subdirectory: "public/companion") else { return [] }
+        let copy = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".jpg")
+        do {
+            try FileManager.default.copyItem(at: source, to: copy)
+            return [try UNNotificationAttachment(identifier: name, url: copy, options: nil)]
+        } catch {
+            return []
+        }
     }
 }
