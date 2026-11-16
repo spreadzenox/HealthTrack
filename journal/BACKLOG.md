@@ -270,12 +270,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     réduit au composant (`StoolPhotoLine.appstore.test.jsx`), `DailyJournal.ios.test.jsx` retiré. Données : rien de
     lu ni d'écrit autrement, rien à migrer.
   - [ ] **REFONTE-7c-2 — Restes de 7c** : ~~(1) règles CSS du Journal devenues mortes (`App.css` : `.day-card*`,
-    `.journal-*`) à repérer et retirer, captures à l'appui~~ **fait le 16/11 à 06:30, en PR** (110 lignes de `App.css` :
+    `.journal-*`) à repérer et retirer, captures à l'appui~~ **fait le 16/11 à 06:30, mergé vers 07:45 (#1033)** (110 lignes de `App.css` :
     `.day-list`, `.day-card*`, `.day-summary*`, `.day-card .entry-delete-question`, `.journal-empty` ; le test CSS
     GRANDE-POLICE-1 de ces tuiles retiré avec elles ; `.journal-page`, `.journal-tabs` et `.journal-empty-title/-text`
-    servent encore à Tendances et Nutrition) ; (2) iPhone : la tuile « Variabilité cardiaque » du Journal
-    disait son « d'habitude » en SDNN (correctif 57) ; vérifier que « Ce qui a pu peser ce jour-là » de Tendances › Jour
-    lit la VFC de l'app Santé, sinon l'y brancher ; (3) « Hier » dans Ma journée si utile (inventaire, ligne 9 : une
+    servent encore à Tendances et Nutrition) ; ~~(2) iPhone : vérifier que « Ce qui a pu peser ce jour-là »
+    de Tendances › Jour lit la VFC de l'app Santé, sinon l'y brancher~~ **fait le 16/11 à 07:30 (en PR)** : elle ne la
+    lisait pas (facteurs des Analyses sans la SDNN) ; correctif iPhone 64 (`analysisResults.js`, `trendsDay.js`), test
+    sur 70 jours synthétiques ; (3) « Hier » dans Ma journée si utile (inventaire, ligne 9 : une
     ligne seulement s'il manque la note du soir de la veille).
   - [ ] **REFONTE-7a-2 — Restes de 7a** : captures sur historique presque vide, grand texte, 320 px, version Play.
     Le plan de captures iPhone ne touche aucun jour de Tendances : « Vos saisies » n'y est jamais vu (ajouter une
