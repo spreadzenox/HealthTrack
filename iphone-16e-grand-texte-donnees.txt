@@ -1,0 +1,35 @@
+== Documents
+total 0
+drwxr-xr-x  4 runner  staff  128 Nov 16 02:20 .
+drwxr-xr-x@ 7 runner  staff  224 Nov 16 02:20 ..
+drwxr-xr-x  5 runner  staff  160 Nov 16 02:20 capture
+drwxr-xr-x@ 3 runner  staff   96 Nov 16 02:20 Copie de secours
+== Documents/Copie de secours
+total 984
+drwxr-xr-x@ 3 runner  staff      96 Nov 16 02:20 .
+drwxr-xr-x  4 runner  staff     128 Nov 16 02:20 ..
+-rw-r--r--@ 1 runner  staff  501545 Nov 16 02:22 Halcya-copie-de-secours.json
+== Library/WebKit
+Library/WebKit
+Library/WebKit/fr.jpesquet.sante
+Library/WebKit/fr.jpesquet.sante/WebsiteData
+Library/WebKit/fr.jpesquet.sante/WebsiteData/SearchHistory
+Library/WebKit/fr.jpesquet.sante/WebsiteData/IndexedDB
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeysHashSalts
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeys
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeys/v1
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeys/v1/salt
+Library/WebKit/fr.jpesquet.sante/WebsiteData/DeviceIdHashSalts
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/Mv_0kNxrbgQwxcnt2YlsM_oYkHWJ3WpuWf2ekOZwumQ
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/Mv_0kNxrbgQwxcnt2YlsM_oYkHWJ3WpuWf2ekOZwumQ/Mv_0kNxrbgQwxcnt2YlsM_oYkHWJ3WpuWf2ekOZwumQ
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/Mv_0kNxrbgQwxcnt2YlsM_oYkHWJ3WpuWf2ekOZwumQ/Mv_0kNxrbgQwxcnt2YlsM_oYkHWJ3WpuWf2ekOZwumQ/IndexedDB
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/Mv_0kNxrbgQwxcnt2YlsM_oYkHWJ3WpuWf2ekOZwumQ/Mv_0kNxrbgQwxcnt2YlsM_oYkHWJ3WpuWf2ekOZwumQ/LocalStorage
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/Mv_0kNxrbgQwxcnt2YlsM_oYkHWJ3WpuWf2ekOZwumQ/Mv_0kNxrbgQwxcnt2YlsM_oYkHWJ3WpuWf2ekOZwumQ/origin
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/salt
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceMonitorThrottler
+Library/WebKit/fr.jpesquet.sante/WebsiteData/LocalStorage
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics/observations.db-wal
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics/observations.db-shm
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics/observations.db
