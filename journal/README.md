@@ -26,7 +26,7 @@
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v756** (APK 34,8 Mo, 16/11 11:49 UTC, merge de #1038 ; v757 de #1039 en cours) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | **1107.1107 validée par Apple et chez « Testeurs Halcya »** (16/11 09:54 UTC) ; anciennes builds expirées ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | release **v762** (APK 34,8 Mo, 16/11 19:00 UTC, merge de #1043) ; v757 de #1039 en cours) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | **1107.1107 validée par Apple et chez « Testeurs Halcya »** (16/11 09:54 UTC) ; anciennes builds expirées ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
