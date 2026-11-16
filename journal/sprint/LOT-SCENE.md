@@ -1,5 +1,20 @@
 # Lot SCÈNE (étape 8 du brief : Compagnon 1a, et le socle commun)
 
+## ASSEMBLAGE — complément du 17/11 00:50 (branche de journal `claude/sprint-scene-5`, sans PR)
+- **Mise à jour depuis une version d'avant la refonte** (main + SCÈNE 3 + PILOU, `npm run visual -- --meet`) : la
+  rencontre de VIE arrive une fois en surimpression (« Comment voulez-vous l'appeler ? »), sans refaire l'onboarding ;
+  avec `--ceremony` sur des données de démo (utilisateur ancien), **pas de fête des 7 jours** : conforme.
+  Capture : `journal/runs/captures/2026-11-16-sprint-scene-assemblage-rencontre.png`.
+- Écart de style, non bloquant : la rencontre montre Pilou en image (sprite du lot PILOU) sur un îlot 2D plat, pas
+  l'île 3D de l'Accueil.
+- **Captures de main** : la dernière série (`captures/main`) date de 19:53, avant le sprint ; chaque build iOS de main
+  du sprint a été annulé par le merge suivant (concurrence). Les captures de référence sont donc celles des PR
+  (`captures/pr-1053`, `pr-1062`, `pr-1065`, `pr-1070`). La série de main viendra du dernier merge de la nuit.
+- **Palier de qualité choisi** sur le job Android 9 et le simulateur iPhone : non relevé — aucun de ces jobs n'écrit
+  `data-quality` ni l'événement `scene:quality` dans ses journaux. Sur les captures iPhone de #1062, la scène est en
+  3D (ciel et Pilou animés au rendu du simulateur) ; sur Chromium sans GPU, image fixe. À mesurer sur un vrai
+  téléphone (non bloquant).
+
 ## ASSEMBLAGE — état au 17/11 00:45
 - **PR d'assemblage ouverte** (`claude/sprint-scene-4`), **empilée sur #1065 (SCÈNE 3) et sur #1058 (PILOU)** : à
   merger après elles deux. Elle porte : les images fixes refaites avec le Pilou de PILOU (jour et nuit) ; l'étiquette
