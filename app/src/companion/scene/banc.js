@@ -17,6 +17,7 @@ if (Q.get('j7') === '1') stage.gifts.place('arc-en-ciel', 0)
 if (Q.get('soir') === '1') stage.applyLight({ phase: 'soir', sun: { color: '#FF9F72', intensity: 2.2 } })
 if (Q.get('pluie') === '1') stage.setWeather({ effect: 'pluie', particles: { kind: 'pluie', count: 40 } })
 if (Q.get('neige') === '1') stage.setWeather({ effect: 'neige', particles: { kind: 'neige', count: 30 }, accessory: 'echarpe' })
+if (Q.get('box')) stage.gifts.openBox(0)
 window.seek = (t) => { stage.render(t); return stage.stats() }
 window.bench = (n = 60) => {
   const times = []
@@ -26,4 +27,5 @@ window.bench = (n = 60) => {
 }
 window.stage = stage
 window.seek(+(Q.get('t') || 0))
+if (Q.get('box')) window.seek(+Q.get('box'))
 window.ready = true

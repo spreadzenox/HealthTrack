@@ -48,6 +48,8 @@ export default function CompanionScene({
 }) {
   const systemReduced = useReducedMotion()
   const reducedMotion = reducedProp ?? systemReduced
+  const reducedRef = useRef(reducedMotion)
+  reducedRef.current = reducedMotion
   const wrapRef = useRef(null)
   const canvasRef = useRef(null)
   const stageRef = useRef(null)
@@ -101,7 +103,7 @@ export default function CompanionScene({
       width: { get: () => sizeRef.current.width, enumerable: true },
       height: { get: () => sizeRef.current.height, enumerable: true },
       quality: { get: () => stageRef.current?.tier ?? 'bas', enumerable: true },
-      reducedMotion: { get: () => Boolean(stageRef.current?.reducedMotion), enumerable: true },
+      reducedMotion: { get: () => Boolean(stageRef.current ? stageRef.current.reducedMotion : reducedRef.current), enumerable: true },
       paused: { get: () => loopRef.current?.paused ?? true, enumerable: true },
     })
     return api
@@ -291,7 +293,7 @@ export default function CompanionScene({
             poke()
           }),
           bus.on(EVENTS.ACTIVITY_END, () => P().setExpression?.(moodExpression(bus.last(EVENTS.MOOD_CHANGED)?.value ?? 0))),
-          bus.on(EVENTS.GIFT_OPENED, () => { P().play?.('surpris'); poke() }),
+          bus.on(EVENTS.GIFT_OPENED, () => { P().play?.('surpris'); P().lookAt?.({ x: 0.05, y: 0.1, z: 0.62 }); live.gifts.openBox(loop.time); setTimeout(() => P().lookAt?.('camera'), 3400); poke() }),
           bus.on(EVENTS.GIFT_PLACED, (p) => {
             // à l'ouverture (événement ancien rejoué) : tout est posé d'un coup ; sinon le nouveau cadeau arrive
             const fresh = p?.at == null || Date.now() - p.at < 5000

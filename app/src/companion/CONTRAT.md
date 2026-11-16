@@ -112,7 +112,7 @@ sans donnée de santé brute au-delà de ce qui est écrit ici, sans contenu de 
 | `flower:grow` | BULLES | `{ id, theme, angleDeg, radius, scale, at }` | la scène fait pousser une fleur à cette place (repère de l'île, rayon du plateau = 1), 1 400 ms |
 | `flowers:set` | BULLES | `{ flowers: [{ id, theme, angleDeg, radius, scale }] }` | état complet (ouverture, changement de jour) ; sans animation |
 | `mood:changed` | BULLES | `{ value, word, done, planned }` | humeur 0…1 (ne redescend jamais dans la journée), mot (« Tranquille »…) |
-| `gift:opened` | BULLES | `{ day, item }` | Pilou Surpris ; la scène joue la cérémonie (SPEC île § 7) |
+| `gift:opened` | BULLES | `{ day, item }` | Pilou Surpris ; la scène joue la cérémonie (SPEC île § 7) : la boîte tombe devant Pilou et s'ouvre (≈ 4,5 s) ; BULLES émet `gift:placed` vers 2 100 ms pour que l'accessoire sorte de la boîte |
 | `gift:placed` | BULLES | `{ day, item, items, at }` | l'accessoire est à sa place ; `items` = tous les cadeaux reçus (rejouable à l'ouverture) ; la scène anime `item` si `at` a moins de 5 s, sinon pose tout d'un coup |
 | `meal:logged` | VIE / Ma journée | `{ slot, count, total }` | `slot` ∈ `breakfast`, `lunch`, `dinner`, `snack` ; jamais le contenu de l'assiette ; Pilou mâchouille puis Rassasié |
 | `wellbeing:noted` | VIE / Ma journée | `{ level, difficult, source }` | `level` 1…5, `difficult` = level ≤ 2 → Réconfortant ; `source` ∈ `note`, `face` |

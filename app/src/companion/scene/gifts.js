@@ -142,6 +142,65 @@ export function rainbowShrink(ms, { reducedMotion = false } = {}) {
   return EASE.io(seg(ms, 6000, 7300))
 }
 
+/**
+ * La boîte de la cérémonie du cadeau (SPEC île § 7), t = 0 au toucher de la bulle dorée : elle tombe (200–620 ms) et
+ * atterrit au ressort 380 / 12, le ruban est tiré (1 400–1 700), le couvercle saute en arc (1 900–2 420), rayons dorés
+ * jusqu'à 2 900, puis la boîte se range (4 000–4 450). Mouvements réduits : fondus, pas de rayons.
+ */
+export const BOX_MS = 4500
+export function boxPose(ms, { reducedMotion = false } = {}) {
+  if (ms == null || ms < 0 || ms >= BOX_MS) return { visible: false }
+  if (reducedMotion) {
+    const fadeIn = seg(ms, 0, 200)
+    const fadeOut = 1 - seg(ms, 4000, 4200)
+    return { visible: true, y: 0, squash: 0, lid: ms < 1900 ? 0 : 1, lidOpacity: ms < 1900 ? 1 : 0, rays: 0, scale: 1, opacity: Math.min(fadeIn, fadeOut) }
+  }
+  const fall = ms < 620 ? 1.4 * (1 - EASE.in(seg(ms, 200, 620))) : 0
+  const land = ms >= 620 && ms < 1400 ? 0.18 * (1 - spring(ms - 620, 380, 12)) : 0
+  const tug = ms >= 1400 && ms < 1900 ? 0.08 * Math.sin(Math.PI * seg(ms, 1400, 1700)) : 0
+  const lid = EASE.out(seg(ms, 1900, 2420))
+  const rays = ms >= 1900 && ms < 2900 ? Math.sin(Math.PI * seg(ms, 1900, 2900)) : 0
+  const scale = 1 - EASE.in(seg(ms, 4000, 4450))
+  return { visible: true, y: fall, squash: land - tug, lid, lidOpacity: 1 - seg(ms, 3000, 3600), rays, scale, opacity: 1 }
+}
+
+function buildBox() {
+  const g = new THREE.Group()
+  const gold = glaze('#F5C451', { roughness: 0.25 })
+  const ribbon = glaze('#E8483F')
+  const body = new THREE.Group()
+  body.add(new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.17, 0.22), gold))
+  const rb1 = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.172, 0.224), ribbon)
+  const rb2 = new THREE.Mesh(new THREE.BoxGeometry(0.224, 0.172, 0.035), ribbon)
+  body.add(rb1, rb2)
+  body.position.y = 0.085
+  const lid = new THREE.Group()
+  lid.add(new THREE.Mesh(new THREE.BoxGeometry(0.245, 0.05, 0.245), gold))
+  const bow = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.012, 6, 12), ribbon)
+  bow.position.y = 0.04
+  lid.add(bow)
+  lid.position.y = 0.195
+  const S = 64
+  const d = new Uint8Array(S * S * 4)
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    const dx = x - S / 2 + 0.5, dy = y - S / 2 + 0.5
+    const r = Math.hypot(dx, dy) / (S / 2)
+    const spokes = 0.55 + 0.45 * Math.cos(Math.atan2(dy, dx) * 8)
+    const a = Math.max(0, 1 - r) ** 1.5 * spokes
+    const i = (y * S + x) * 4
+    d[i] = 255; d[i + 1] = 220; d[i + 2] = 140; d[i + 3] = Math.round(a * 255)
+  }
+  const rayTex = new THREE.DataTexture(d, S, S, THREE.RGBAFormat)
+  rayTex.needsUpdate = true
+  rayTex.magFilter = THREE.LinearFilter
+  const rayMat = new THREE.SpriteMaterial({ map: rayTex, color: '#FFD98A', blending: THREE.AdditiveBlending, transparent: true, opacity: 0, depthWrite: false })
+  const rays = new THREE.Sprite(rayMat)
+  rays.position.y = 0.3
+  g.add(body, lid, rays)
+  g.userData = { body, lid, rays, rayMat }
+  return g
+}
+
 const BUILDERS = { arbuste: buildShrub, lanterne: buildLantern, galets: buildStones, papillon: buildButterfly, nuage: buildCloud, 'arc-en-ciel': buildRainbow }
 
 /**
@@ -182,8 +241,21 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
     placed.set(item, { item, bornAt: t, obj })
   }
 
+  let box = null
+  let boxAt = null
+
   return {
     group,
+    /** Cérémonie : la boîte dorée tombe devant Pilou et s'ouvre (`gift:opened`, t = temps de la scène). */
+    openBox(t) {
+      if (!box) {
+        box = buildBox()
+        box.name = 'boite'
+        box.position.set(0.05, topY(0.05, 0.62), 0.62)
+        group.add(box)
+      }
+      boxAt = t
+    },
     /** Un cadeau reçu maintenant (`t` = temps de la scène) : il arrive avec son animation. */
     place(item, t) {
       add(item, t)
@@ -200,6 +272,23 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
     },
     update(t) {
       let moving = false
+      if (box) {
+        const b = boxPose(boxAt == null ? null : t - boxAt, { reducedMotion: rm })
+        box.visible = b.visible
+        if (b.visible) {
+          moving = true
+          const { body, lid, rays, rayMat } = box.userData
+          box.position.y = topY(0.05, 0.62) + b.y
+          box.scale.setScalar(Math.max(0.001, b.scale) * 1.6)
+          body.scale.set(1 + b.squash * 0.5, 1 - b.squash, 1 + b.squash * 0.5)
+          lid.position.set(0.32 * b.lid, 0.195 + 0.5 * Math.sin(Math.PI * Math.min(1, b.lid)) * (b.lid < 1 ? 1 : 0) + (b.lid >= 1 ? -0.17 : 0) * 1, 0)
+          lid.rotation.z = -1.4 * b.lid
+          lid.visible = b.lidOpacity > 0
+          rayMat.opacity = 0.8 * b.rays
+          rays.scale.setScalar(0.25 + 0.55 * b.rays)
+          box.traverse((m) => { if (m.isMesh && !m.isSprite) { m.material.transparent = b.opacity < 1; m.material.opacity = b.opacity } })
+        }
+      }
       for (const p of placed.values()) {
         if (!p.obj) continue
         const ms = p.bornAt == null ? null : t - p.bornAt

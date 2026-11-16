@@ -177,3 +177,30 @@ describe('les cadeaux de la première semaine (SPEC île § 7)', async () => {
     expect(mat.emissiveIntensity).toBeGreaterThan(day + 1)
   })
 })
+
+describe('la boîte de la cérémonie (SPEC île § 7)', async () => {
+  const { boxPose, createGifts } = await import('./gifts')
+  it('tombe, atterrit, s’ouvre, se range', () => {
+    expect(boxPose(null).visible).toBe(false)
+    expect(boxPose(100).y).toBeCloseTo(1.4)
+    expect(boxPose(700).y).toBe(0)
+    expect(boxPose(1000).lid).toBe(0)
+    expect(boxPose(2500).lid).toBe(1)
+    expect(boxPose(2400).rays).toBeGreaterThan(0.5)
+    expect(boxPose(4449).scale).toBeLessThan(0.05)
+    expect(boxPose(4600).visible).toBe(false)
+  })
+  it('en mouvements réduits : pas de chute ni de rayons', () => {
+    const p = boxPose(300, { reducedMotion: true })
+    expect(p.y).toBe(0)
+    expect(p.rays).toBe(0)
+  })
+  it('la scène l’affiche le temps de la cérémonie', () => {
+    const g = createGifts()
+    g.openBox(0)
+    expect(g.update(1000)).toBe(true)
+    expect(g.group.getObjectByName('boite').visible).toBe(true)
+    g.update(5000)
+    expect(g.group.getObjectByName('boite').visible).toBe(false)
+  })
+})
