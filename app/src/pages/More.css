@@ -59,9 +59,9 @@
 
 .more-chevron {
   flex: none;
-  font-size: 1.5rem;
   color: var(--text-muted);
-  line-height: 1;
+  /* L'icône chevron pointe vers le bas : tournée vers la droite, comme sur la carte Bien-être (7d-2). */
+  transform: rotate(-90deg);
 }
 
 /* Accueil : le lien vers Agir (refonte « Compagnon », étape 2) */

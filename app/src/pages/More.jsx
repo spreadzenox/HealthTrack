@@ -40,7 +40,7 @@ export default function More({ changelog = CHANGELOG }) {
                 {item.to === '/nouveautes' && unseen > 0 && (
                   <span className="more-badge">{unseen} non lue{unseen > 1 ? 's' : ''}</span>
                 )}
-                <span className="more-chevron" aria-hidden="true">›</span>
+                <LineIcon name="chevron" size={20} className="more-chevron" />
               </Item>
             </li>
           )
