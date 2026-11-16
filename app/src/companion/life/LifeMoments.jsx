@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { loadOnboarding } from '../../settings/onboarding'
 import { needsMeeting } from './companionState'
 import { emitAppOpened, wasOpened } from './appOpened'
+import { watchReducedMotion } from './reducedMotionRoot'
 import { useCeremony7 } from './useCeremony7'
 import { useCompanionName } from './useCompanionName'
 import Ceremony7 from './Ceremony7'
@@ -33,6 +34,8 @@ export default function LifeMoments({ read, now } = {}) {
   useEffect(() => {
     if (!wasOpened()) emitAppOpened()
   }, [])
+  // Le réglage « Mouvements réduits » de l'app coupe aussi les animations CSS de Pilou
+  useEffect(() => watchReducedMotion(), [])
   const [ceremony, ceremonyDone] = useCeremony7(pathname, !away && !meet, { read, now })
   if (away) return null
   if (!meet) {
