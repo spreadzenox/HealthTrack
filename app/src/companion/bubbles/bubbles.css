@@ -170,6 +170,7 @@
 }
 
 .cmp-bubble {
+  container-type: inline-size;
   position: relative;
   display: grid;
   place-items: center;
@@ -257,7 +258,8 @@ label.cmp-bubble {
 
 .cmp-bubble-word {
   font-weight: 900;
-  font-size: 0.7rem;
+  /* le mot tient toujours dans sa bulle, grand texte compris (unités de la bulle) */
+  font-size: min(0.7rem, 15cqi);
   line-height: 1.1;
   text-align: center;
   hyphens: none;
@@ -265,7 +267,12 @@ label.cmp-bubble {
 }
 
 .cmp-bubble-word.is-long {
-  font-size: 0.6rem;
+  font-size: min(0.6rem, 12.5cqi);
+}
+
+/* un mot ne se coupe jamais, pas même au trait d'union (« Bien-être ») */
+.cmp-bubble-token {
+  white-space: nowrap;
 }
 
 .cmp-bubble-moon {

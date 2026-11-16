@@ -7,7 +7,7 @@
  * Rien ne fane, rien ne s'accumule : seules les bulles du jour existent ; « Oui » et « Non » éclatent pareil.
  * Tout ce qui se passe est aussi écrit (étiquette de l'îlot, annonce pour le lecteur d'écran).
  */
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import MealPhotoButton from '../../components/MealPhotoButton'
 import LineIcon from '../../components/LineIcon'
@@ -186,7 +186,11 @@ function BubbleFace({ b }) {
       <span className="cmp-bubble-film" aria-hidden="true" />
       <span className="cmp-bubble-face">
         <BubbleIcon name={b.icon} size={22} />
-        <span className={`cmp-bubble-word${b.label.split(' ').some((w) => w.length > 8) ? ' is-long' : ''}`}>{b.label}</span>
+        <span className={`cmp-bubble-word${b.label.split(' ').some((w) => w.length > 8) ? ' is-long' : ''}`}>
+          {b.label.split(' ').map((w, i) => (
+            <Fragment key={i}>{i ? ' ' : ''}<span className="cmp-bubble-token">{w}</span></Fragment>
+          ))}
+        </span>
       </span>
       {b.waiting && <span className="cmp-bubble-moon" aria-hidden="true"><LineIcon name="moon" size={12} /></span>}
     </>

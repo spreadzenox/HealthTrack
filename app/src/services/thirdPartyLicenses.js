@@ -23,6 +23,7 @@ export const LICENSE_URLS = {
 export const NPM_LICENSES = [
   { name: 'React, React DOM', packages: ['react', 'react-dom'], license: 'MIT' },
   { name: 'React Router', packages: ['react-router-dom'], license: 'MIT' },
+  { name: 'three.js', packages: ['three'], license: 'MIT' },
   { name: 'Capacitor', packages: ['@capacitor/core', '@capacitor/android', '@capacitor/cli', '@capacitor/app',
     '@capacitor/app-launcher', '@capacitor/filesystem', '@capacitor/share'], license: 'MIT' },
   { name: 'Capacitor Bluetooth LE', packages: ['@capacitor-community/bluetooth-le'], license: 'MIT' },
