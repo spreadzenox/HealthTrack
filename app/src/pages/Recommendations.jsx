@@ -20,6 +20,7 @@
  * Retirés : l'historique, « Sur quelques semaines », « Autres liens repérés », « Bientôt » et l'analyse « dans les
  * heures ». Des liens statistiques, jamais une cause ni un diagnostic.
  */
+import PilouFigure from '../companion/life/PilouFigure'
 import PilouWaiting from '../companion/life/PilouWaiting'
 import SeeExample from '../components/SeeExample'
 import { useEffect, useState } from 'react'
@@ -378,6 +379,7 @@ function HowWellbeing() {
       <button type="button" className="reco-how-link" aria-expanded={open} onClick={() => setOpen(!open)}>
         Comment est calculé votre bien-être ?
       </button>
+      {open && <PilouFigure size={64} expr="content" move="hop" className="reco-how-pilou" />}
       {open && (
         <p className="reco-how-text" data-testid="reco-how-wellbeing">
           Deux sources, réunies chaque jour : votre note et la lecture du visage, si vous l’utilisez. Un jour sans

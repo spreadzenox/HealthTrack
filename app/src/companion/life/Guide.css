@@ -23,3 +23,4 @@
 .pilou-waiting { display: flex; align-items: center; gap: 12px; margin: 10px 0 0; }
 .pilou-waiting-text { margin: 0; color: var(--text-muted); font-weight: 700; }
 .food-pilou-sniff .pilou-figure { margin: 0 auto; }
+.reco-how-pilou { display: block; margin: 6px 0 0; }
