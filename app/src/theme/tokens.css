@@ -62,6 +62,14 @@
   --accent-amber: #ffb84d;
   --accent-mint: #5ee0b5;
   --chart-bar-2: #b9dccd;
+  /* Scène du compagnon (refonte, étape 8) : ciel abricot de l'heure dorée derrière l'île (brief § 6, § 7.5) */
+  --companion-sky-top: #ffd7ba;
+  --companion-sky-bottom: #fff3e6;
+  --companion-haze: #ffc9a6;
+  --companion-label-bg: rgba(255, 250, 244, 0.86);
+  /* encre fixe : l'étiquette est posée sur le ciel clair de la scène, aussi en thème sombre */
+  --companion-label-ink: #10231d;
+  --companion-label-shadow: rgba(90, 60, 30, 0.12);
   --chart-ref: #6fa893;
 
   /* États (texte ou trait ; lisibles sur le fond et sur la surface) */
@@ -107,6 +115,27 @@
   --error: var(--color-danger);
   --border: var(--color-border);
   --radius: 12px;
+  /* Compagnon, l'îlot et ses bulles (refonte étape 10, specs/ile.SPEC.md § 3 et § 5) */
+  --cmp-sky-top: #ffd7ba;
+  --cmp-sky-bottom: #fff3e6;
+  --cmp-grass: #8fd27a;
+  --cmp-grass-edge: #5ea956;
+  --cmp-soil: #b67a55;
+  --cmp-soil-deep: #7d4f37;
+  --cmp-glass-rgb: 255, 255, 255;
+  --cmp-glass: 0.8;
+  --cmp-veil: 0.62;
+  --cmp-veil-rgb: 255, 255, 255;
+  --cmp-film-1: rgba(255, 182, 193, 0.35);
+  --cmp-film-2: rgba(173, 216, 230, 0.35);
+  --cmp-film-3: rgba(255, 255, 160, 0.3);
+  --cmp-moon-bg: #3d4a8c;
+  --cmp-moon-ink: #ffffff;
+  --cmp-gold: #f2c14e;
+  --cmp-gold-light: #fff8dc;
+  --cmp-gold-edge: #e2b23c;
+  --cmp-gold-ink: #3d2a00;
+  --cmp-on-cta: #ffffff;
 }
 
 /* Thème sombre : fond encre, émeraude éclaircie, pastels assombris. */
@@ -171,6 +200,12 @@
   --scrim: rgba(0, 0, 0, 0.6);
   --shadow: rgba(0, 0, 0, 0.35);
   --toggle-thumb: #e8f0ec;
+  --cmp-sky-top: #4a3a52;
+  --cmp-sky-bottom: #2a2430;
+  --cmp-glass: 0.16;
+  --cmp-veil: 0.6;
+  --cmp-veil-rgb: 0, 0, 0;
+  --cmp-on-cta: #0c1915;
 }
 
 /*

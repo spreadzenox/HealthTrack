@@ -3,7 +3,7 @@ import 'fake-indexeddb/auto'
 import { render, waitFor } from '@testing-library/react'
 
 // Seule la table des routes est en jeu : les écrans sont remplacés par leur nom
-vi.mock('./components/Layout', async () => {
+vi.mock('./Layout', async () => {
   const { Outlet } = await import('react-router-dom')
   return { default: () => <Outlet /> }
 })

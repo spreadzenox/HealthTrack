@@ -7,15 +7,6 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Bran
 **#1048 mergée** (21:38, tous les checks verts, build iOS compris). Le reste (anciennes branches 2 et 3) est réuni
 dans une seule PR depuis `claude/sprint-monde-3`, mise à jour sur main.
 
-**Règle du propriétaire (22:01)** appliquée : plus aucune ligne d'attribution ni lien de session dans mes commits,
-PR et commentaires ; corps de #1057, #1055 et mon commentaire nettoyés ; au merge, message de squash écrit à la main.
-
-**Pour l'intégrateur** : course préexistante vue sur #1057 (job « Tests d'Android avec les correctifs iOS », 21:43) :
-`AppRedirects.test.jsx` laisse `UpdateBanner` appeler la vraie API GitHub ; si la réponse arrive après la fin de
-jsdom, `setRelease` lève « window is not defined » (erreur non gérée, job rouge alors que 4100 tests passent).
-Correctif proposé : drapeau `alive` dans `check` de `UpdateBanner.jsx`, ou `vi.mock('./services/updateCheck')` dans
-ce test. Hors du lot MONDE, non fait ici.
-
 ## Avant (16/11, 21:25)
 
 **Consigne de l'orchestrateur de 21:20 appliquée** : #1055 et #1057 (empilées sur #1048) fermées, branches gardées,

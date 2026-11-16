@@ -8,6 +8,7 @@ import SettingsButton from './components/SettingsButton'
 import { APP_NAME } from './config/brand'
 import { useAutoSync } from './hooks/useAutoSync'
 import TourHost from './components/TourHost'
+import LifeMoments from './companion/life/LifeMoments'
 import { takePilouWidgetOpen } from './companion/world/widgetSync'
 import { FEATURES } from './config/distribution'
 import { loadOnboarding, needsOnboarding } from './settings/onboarding'
@@ -128,6 +129,8 @@ export default function Layout() {
       </main>
       <TabBar />
       {!onboardingPending && !pathname.startsWith('/bienvenue') && <TourHost />}
+      {/* Lot VIE (étape 12) : la rencontre unique d'un utilisateur qui met à jour, app:opened sur le bus */}
+      {!onboardingPending && <LifeMoments />}
     </div>
   )
 }

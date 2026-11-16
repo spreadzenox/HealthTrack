@@ -1,0 +1,59 @@
+/* Scène du compagnon (étape 8) : ciel abricot peint en CSS derrière un canevas transparent ; l'interface autour
+   reste crème (brief § 6). */
+.companion-scene {
+  position: relative;
+  margin: 0 -4px 12px;
+  border-radius: 28px;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 55% at 32% 30%, color-mix(in srgb, var(--cs-haze, var(--companion-haze)) 70%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--cs-sky-top, var(--companion-sky-top)) 0%, var(--cs-sky-bottom, var(--companion-sky-bottom)) 100%);
+  isolation: isolate;
+}
+.companion-scene__frame {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+}
+.companion-scene__still,
+.companion-scene__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.companion-scene__still { object-fit: contain; }
+.companion-scene__canvas {
+  opacity: 0;
+  transition: opacity 240ms cubic-bezier(.4, 0, .2, 1);
+  touch-action: pan-y;
+}
+.companion-scene__canvas.is-ready { opacity: 1; }
+.companion-scene__overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.companion-scene__overlay > * { pointer-events: auto; }
+.companion-scene__label {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  margin: 0;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--companion-label-bg);
+  color: var(--companion-label-ink);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  max-width: calc(100% - 28px);
+  box-shadow: 0 1px 3px var(--companion-label-shadow);
+}
+@media (prefers-reduced-motion: reduce) {
+  .companion-scene__canvas { transition: none; }
+}

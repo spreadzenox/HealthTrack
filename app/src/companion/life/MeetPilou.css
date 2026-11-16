@@ -1,0 +1,130 @@
+/* La rencontre (lot VIE ; SPEC comprendre § 2 et § 3) : ciel abricot, îlot, Pilou qui pousse, carte du nom. */
+.meet-pilou {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 100%;
+}
+.meet-sky {
+  position: relative;
+  min-height: 260px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, var(--life-sky-top) 0%, var(--life-sky-haze) 55%, var(--life-sky-low) 100%);
+  overflow: hidden;
+}
+.meet-island {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  width: 210px;
+  height: 46px;
+  margin-left: -105px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 30%, var(--life-grass-light) 0%, var(--life-grass) 60%, var(--life-earth) 61%, var(--life-earth-dark) 100%);
+}
+.meet-pilou-figure {
+  position: absolute;
+  left: 50%;
+  bottom: 38px;
+  z-index: 1;
+  width: 128px;
+  margin-left: -64px;
+  transform-origin: 50% 100%;
+}
+.meet-pilou.is-hatch .meet-pilou-figure {
+  animation: meet-hatch 2.6s cubic-bezier(.33, 1, .68, 1) 0.6s both;
+}
+.meet-bubble {
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  max-width: 62%;
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 20px;
+  background: var(--life-white);
+  color: var(--text);
+  font-weight: 900;
+  font-size: 1rem;
+  line-height: 1.3;
+  animation: meet-bubble 320ms cubic-bezier(.34, 1.56, .64, 1) both;
+}
+.meet-pilou.is-hatch .meet-bubble { animation-delay: 3.6s; }
+.meet-skip {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  min-height: var(--tap-min);
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
+  background: var(--life-white-veil);
+  color: var(--peach-text);
+  font-weight: 700;
+}
+.meet-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px 20px;
+  border-radius: 32px;
+  background: var(--life-card);
+  animation: meet-card 500ms cubic-bezier(.33, 1, .68, 1) both;
+}
+.meet-title { margin: 0; font-size: 1.45rem; font-weight: 900; line-height: 1.2; }
+.meet-lead { margin: 0; color: var(--text-muted); }
+.meet-field { position: relative; display: block; }
+.meet-field input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 44px 0 16px;
+  border: 2px solid var(--mint-track);
+  border-radius: 16px;
+  background: var(--life-white);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+.meet-pilou.is-named .meet-field input { border-color: var(--mint-label); color: var(--mint-label); }
+.meet-check { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--mint-label); font-weight: 900; }
+.meet-action { width: 100%; min-height: var(--button-height); border-radius: var(--radius-pill); }
+.meet-default { align-self: center; min-height: var(--tap-min); background: none; color: var(--text-muted); font-weight: 700; }
+
+/* Un saut par syllabe (SPEC § 3) */
+.meet-hops-1 { animation: meet-hop 420ms cubic-bezier(.33, 1, .68, 1) 400ms 1; }
+.meet-hops-2 { animation: meet-hop 420ms cubic-bezier(.33, 1, .68, 1) 400ms 2; }
+.meet-hops-3 { animation: meet-hop 420ms cubic-bezier(.33, 1, .68, 1) 400ms 3; }
+
+@keyframes meet-hatch {
+  0% { transform: translateY(70%) scale(0.2, 0.1); opacity: 0; }
+  30% { transform: translateY(40%) scale(0.3, 0.6); opacity: 1; }
+  55% { transform: translateY(-30%) scale(0.9, 1.25); }
+  75% { transform: translateY(0) scale(1.2, 0.76); }
+  88% { transform: translateY(0) scale(0.96, 1.04); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes meet-hop { 0%, 100% { transform: translateY(0) scale(1, 1); } 15% { transform: scale(1.08, 0.88); } 50% { transform: translateY(-26%) scale(0.94, 1.1); } 85% { transform: scale(1.06, 0.9); } }
+@keyframes meet-bubble { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+@keyframes meet-card { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .meet-pilou .meet-pilou-figure,
+  .meet-pilou .meet-card,
+  .meet-pilou .meet-bubble { animation: meet-fade 300ms ease both !important; }
+}
+:root[data-reduced-motion='on'] .meet-pilou .meet-pilou-figure,
+:root[data-reduced-motion='on'] .meet-pilou .meet-card,
+:root[data-reduced-motion='on'] .meet-pilou .meet-bubble { animation: meet-fade 300ms ease both !important; }
+@keyframes meet-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* Pour un utilisateur qui met à jour : en surimpression, une seule fois */
+.meet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow-y: auto;
+  padding: calc(var(--safe-top) + 16px) 16px calc(var(--safe-bottom) + 16px);
+  background: var(--bg);
+}
+.meet-overlay .visually-hidden,
+.meet-pilou .visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
