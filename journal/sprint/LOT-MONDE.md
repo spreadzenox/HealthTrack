@@ -2,7 +2,14 @@
 
 Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Branches `claude/sprint-monde-<n>`.
 
-## Où j'en suis (16/11, 21:05)
+## Où j'en suis (16/11, 21:25)
+
+**Consigne de l'orchestrateur de 21:20 appliquée** : #1055 et #1057 (empilées sur #1048) fermées, branches gardées,
+leurs builds iOS et émulateurs annulés. Seule #1048 reste ouverte. Après son merge, je rouvre **une seule** PR depuis
+`claude/sprint-monde-3`, qui contient tout le reste (sprint-monde-2 compris). (Message direct à l'orchestrateur refusé
+par la plateforme : réponse écrite ici.)
+
+## Historique (16/11, 21:05)
 
 **PR 2 — `claude/sprint-monde-2`** (partie de la 1) : le widget Android et les entrées réelles du monde. Voir plus bas.
 
