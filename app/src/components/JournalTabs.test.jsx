@@ -11,22 +11,20 @@ function renderAt(path) {
   )
 }
 
-describe('JournalTabs (Jours | Repas | Nutrition | Tendances ; Tendances revient au Journal, ORG-3 du 07/11)', () => {
-  it('links to the days, meals, nutrition and trends', () => {
-    renderAt('/food')
+describe('JournalTabs (Données = Tendances · Nutrition, refonte « Compagnon », étape 7b)', () => {
+  it('links to trends then nutrition, and nothing else', () => {
+    renderAt('/tendances')
     const nav = screen.getByRole('navigation', { name: 'Données' })
-    expect(nav).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Jours' })).toHaveAttribute('href', '/journal')
-    expect(screen.getByRole('link', { name: 'Repas' })).toHaveAttribute('href', '/food')
-    expect(screen.getByRole('link', { name: 'Nutrition' })).toHaveAttribute('href', '/nutrition')
-    expect(screen.getByRole('link', { name: 'Tendances' })).toHaveAttribute('href', '/tendances')
+    const links = Array.from(nav.querySelectorAll('a')).map((a) => [a.textContent, a.getAttribute('href')])
+    expect(links).toEqual([['Tendances', '/tendances'], ['Nutrition', '/nutrition']])
+    expect(screen.queryByRole('link', { name: 'Jours' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Repas' })).not.toBeInTheDocument()
   })
 
   it.each([
-    ['/journal', 'Jours', 'Repas'],
-    ['/food', 'Repas', 'Nutrition'],
-    ['/nutrition', 'Nutrition', 'Jours'],
-    ['/tendances', 'Tendances', 'Jours'],
+    ['/tendances', 'Tendances', 'Nutrition'],
+    ['/nutrition', 'Nutrition', 'Tendances'],
+    ['/food', 'Nutrition', 'Tendances'],
   ])('on %s, « %s » is current', (path, current, other) => {
     renderAt(path)
     expect(screen.getByRole('link', { name: current })).toHaveAttribute('aria-current', 'page')

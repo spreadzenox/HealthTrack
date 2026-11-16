@@ -14,12 +14,12 @@ const SEEDED_KEY = 'halcya_ios_capture_seeded'
 
 // Les mêmes pages que `npm run visual` d'Android (scripts/visual/visual-check.mjs, DEFAULT_ROUTES), sauf /bienvenue et
 // /montre (montre Huawei en direct : aucun lien vers cette page sur iPhone)
-export const ROUTES = ['/', '/ma-journee', '/journal', '/tendances', '/food', '/nutrition', '/data', '/connectors', '/recommendations',
+export const ROUTES = ['/', '/ma-journee', '/tendances', '/food', '/nutrition', '/data', '/connectors', '/recommendations',
   '/recommendations/bien-etre', '/recommendations/ventre', '/agir', '/settings', '/plus', '/nouveautes', '/premium', '/bien-etre', '/reintroduction', '/licences']
-export const DARK_ROUTES = ['/', '/ma-journee', '/journal', '/recommendations']
+export const DARK_ROUTES = ['/', '/ma-journee', '/tendances', '/recommendations']
 // États vides : onboarding fini, base vide (installation neuve sans source branchée ; `npm run visual -- --empty`
 // d'Android), pour voir sur iPhone ce que chaque page dit avant la première donnée
-export const EMPTY_ROUTES = ['/', '/ma-journee', '/journal', '/tendances', '/food', '/nutrition', '/recommendations', '/bien-etre',
+export const EMPTY_ROUTES = ['/', '/ma-journee', '/tendances', '/food', '/nutrition', '/recommendations', '/bien-etre',
   '/connectors']
 // (REFONTE-6b) Pages recapturées comme les voit un abonné (`-abonne`) : sans abonnement, le détail d'un objectif
 // floute ses pistes et masque « Par famille », et depuis la fin de la période de lancement sur iPhone (06/11) le
@@ -120,7 +120,7 @@ export function buildPlan(routes = ROUTES, darkRoutes = DARK_ROUTES, scrolls = S
 
 // Taille du texte d'iOS agrandie (3e passage de scripts/ios-captures.sh, `simctl ui content_size`) : le natif agrandit
 // la police de <html> avant le premier rendu (TextSize.swift) ; l'accueil vierge puis quelques pages de démo, sans sondes
-export const LARGE_TEXT_ROUTES = ['/', '/ma-journee', '/journal', '/tendances', '/recommendations', '/agir', '/connectors', '/settings']
+export const LARGE_TEXT_ROUTES = ['/', '/ma-journee', '/tendances', '/recommendations', '/agir', '/connectors', '/settings']
 
 export function textSizeAdjusted(doc = document) {
   const style = doc?.documentElement?.style
@@ -522,16 +522,17 @@ export async function probeHealthKit({ signal, waitAck, wait, log, health, conne
       },
       failed('base'),
     )
-    // Montrés dans le Journal (I4) : la page Jours relue (« 1 234 » pas d'aujourd'hui), puis capturée
+    // Montrés dans le détail du jour de Tendances (I4 ; le Journal jour par jour est retiré, refonte 7b) : « 1 234 »
+    // pas d'aujourd'hui relus, puis capturés
     const go =
       navigate ??
       ((path) => {
         window.history.pushState({}, '', path)
         window.dispatchEvent(new PopStateEvent('popstate'))
       })
-    go('/journal')
+    go('/tendances?vue=jour')
     await wait(3000)
-    say('journal', { pas: /1[\s\u202f\u00a0]?234/.test((readText ?? (() => pageText(document.body)))()) })
+    say('tendances', { pas: /1[\s\u202f\u00a0]?234/.test((readText ?? (() => pageText(document.body)))()) })
     await signal('healthkit-journal')
     await waitAck('healthkit-journal')
   } catch (e) {

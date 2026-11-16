@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import JournalTabs from '../components/JournalTabs'
 import { loadNutritionEntries } from '../services/nutritionData'
 import { getBodyProfile, getLatestBodyComposition } from '../services/bodyProfile'
@@ -64,6 +65,16 @@ function NutrientBar({ row }) {
   )
 }
 
+// Titre et lien vers l'historique des repas (Repas n'a plus d'onglet dans Données depuis la refonte, étape 7b)
+function NutritionTitle() {
+  return (
+    <div className="nutrition-head">
+      <h2 className="page-title">Vos apports</h2>
+      <Link to="/food" className="nutrition-meals-link">Tous vos repas</Link>
+    </div>
+  )
+}
+
 export default function Nutrition() {
   const [entries, setEntries] = useState([])
   const [profile, setProfile] = useState(null)
@@ -100,7 +111,7 @@ export default function Nutrition() {
     return (
       <section className="food-page nutrition-page">
         <JournalTabs />
-        <h2 className="page-title">Vos apports</h2>
+        <NutritionTitle />
         <p>Chargement…</p>
       </section>
     )
@@ -109,7 +120,7 @@ export default function Nutrition() {
   return (
     <section className="food-page nutrition-page">
       <JournalTabs />
-      <h2 className="page-title">Vos apports</h2>
+      <NutritionTitle />
 
       <BodyProfileCard profile={profile} composition={bodyComp} onSaved={load} />
 

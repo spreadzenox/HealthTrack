@@ -8,6 +8,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import JournalTabs from '../components/JournalTabs'
+import SeeExample from '../components/SeeExample'
 import TrendsViewer from '../components/TrendsViewer'
 import { getAnalysis } from '../services/analysisRunner'
 import { readMeasureDays } from '../services/trendsMeasureDays'
@@ -101,6 +102,8 @@ export default function Trends({
       ) : (
         <div className="loading"><div className="spinner" aria-hidden /></div>
       )}
+      {/* « Voir un exemple » des premiers jours : la visite passe ici depuis la fin du Journal (étape 7b) */}
+      <SeeExample />
     </section>
   )
 }

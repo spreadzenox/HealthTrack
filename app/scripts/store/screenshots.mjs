@@ -2,7 +2,8 @@
 
 /** Captures retenues, dans l'ordre de la fiche : [route de l'app, nom de la capture visuelle, nom du fichier,
  *  options de `npm run visual` propres à cette capture (facultatif)].
- *  Refaites le 10/11 (LISTING-CAPTURES) : celles du 03/11 précédaient l'écran Aujourd'hui, Tendances et Agir (07/11). */
+ *  Refaites le 10/11 (LISTING-CAPTURES) : celles du 03/11 précédaient l'écran Aujourd'hui, Tendances et Agir (07/11).
+ *  « 07-jours » (le Journal jour par jour) retirée le 16/11 : l'écran est retiré par la refonte (étape 7b). */
 export const SCREENSHOTS = [
   ['/', 'dashboard', '01-aujourdhui'],
   ['/tendances', 'tendances', '02-tendances'],
@@ -10,7 +11,6 @@ export const SCREENSHOTS = [
   ['/agir', 'agir', '04-agir', ['--trial=8']],
   ['/food', 'food', '05-repas'],
   ['/reintroduction', 'reintroduction', '06-reintroduction'],
-  ['/journal', 'journal', '07-jours'],
 ]
 
 /** Variante play, abonnement Gold factice (aucun aperçu flouté ni « Débloquer » sur la fiche), 1080 × 1920. */

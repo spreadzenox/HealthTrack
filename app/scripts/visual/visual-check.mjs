@@ -38,7 +38,7 @@
  *                                          libre, refonte étape 4) ; avec --day-done, leurs réponses du jour aussi ;
  *                                          --habits=history : « Méditation » répondue chaque jour noté (Objectifs, 4b)
  *   npm run visual -- --empty --routes=/nutrition --first-meal  # un seul repas, noté aujourd'hui (POLISH-SIM-97)
- *   npm run visual -- --routes=/journal --cycle  # règles hier et avant-hier, symptômes : ligne « Règles » (CYCLE-1b)
+ *   npm run visual -- --routes=/tendances --cycle --click="Jour > Jour précédent"  # règles d'hier : ligne « Règles » (CYCLE-1b, 7a)
  *   npm run visual -- --routes=/ --calibration  # notes de bien-être d'hier seulement : calibration de départ
  *                                          en cours (BE-BIAIS-2, 1 jour sur 3, note du jour demandée)
  *   npm run visual -- --routes=/ --pistes-summary   # pistes déjà repérées : la carte lilas cite celle qui touche
@@ -178,7 +178,6 @@ const FIRST_MEAL_ITEMS = [
 const DEFAULT_ROUTES = [
   ['/', 'dashboard'],
   ['/ma-journee', 'ma-journee'],
-  ['/journal', 'journal'],
   ['/tendances', 'tendances'],
   ['/food', 'food'],
   ['/nutrition', 'nutrition'],

@@ -20,7 +20,7 @@ import GuidedTour from './GuidedTour'
 import { createEntry, exportToJson, listEntries } from '../storage/localHealthStorage'
 import { isExampleMode } from '../storage/exampleMode'
 import { loadOnboarding, saveOnboarding } from '../settings/onboarding'
-import { tourSteps } from '../services/tour'
+import { startIndex, tourSteps } from '../services/tour'
 
 function Where() {
   return <p data-testid="where">{useLocation().pathname}</p>
@@ -138,6 +138,18 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
       'Exemple au jour 14', 'Exemple au jour 14', 'Exemple au jour 14',
       'Exemple au jour 28', 'Exemple au jour 14',
     ])
+  })
+
+  it('les journées se montrent dans Données › Tendances, vue Jour ; plus aucune étape sur le Journal (REFONTE-7b)', () => {
+    for (const gut of [false, true]) {
+      const steps = tourSteps({ hc: true, face: false, gut })
+      expect(steps.some((s) => s.route.startsWith('/journal'))).toBe(false)
+      const days = steps.filter((s) => s.title === 'Vos journées' || s.title === 'Une journée d’un coup d’œil')
+      expect(days.map((s) => s.route)).toEqual(['/tendances?vue=jour', '/tendances?vue=jour'])
+      expect(days[1].anchor).toBe('.trends-detail')
+      // « Voir un exemple » depuis Tendances reprend la visite à cette étape
+      expect(steps[startIndex(steps, '/tendances')].title).toBe('Vos journées')
+    }
   })
 
   it('étape Objectifs : le score et les pistes, chacun à son jour, pour chaque objectif (POLISH-SIM-15, REFONTE-6d)', () => {

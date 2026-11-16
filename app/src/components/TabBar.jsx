@@ -39,7 +39,7 @@ const TABS = [
   { to: '/', label: 'Accueil', icon: 'home', exact: ['/', '/agir'] },
   { to: '/ma-journee', label: 'Ma journée', icon: 'day', paths: ['/ma-journee'] },
   { to: '/recommendations', label: 'Objectifs', icon: 'goals', paths: ['/recommendations', '/reintroduction', '/agir/essai'] },
-  { to: '/tendances', label: 'Données', icon: 'data', paths: ['/tendances', '/nutrition', '/food', '/journal', '/bien-etre'] },
+  { to: '/tendances', label: 'Données', icon: 'data', paths: ['/tendances', '/nutrition', '/food', '/bien-etre'] },
 ]
 
 export default function TabBar() {
