@@ -64,7 +64,7 @@ export default function PilouBanner({ entries, tasks, remaining, todayKey, now }
       <div className="pilou-banner-text">
         <p className="pilou-says" aria-live="polite">{text}</p>
         {reaction?.sub && <p className="pilou-sub">{reaction.sub}</p>}
-        {!reaction?.sub && remaining > 0 && (
+        {remaining > 0 && (
           <p className="pilou-remaining">
             <span>{remainingText(remaining)}</span>
             <span className="day-dots" aria-hidden="true">
