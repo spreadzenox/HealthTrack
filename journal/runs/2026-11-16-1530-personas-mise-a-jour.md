@@ -31,6 +31,17 @@ ajoutée après l'Alpha de 23:45)  ·  **Parité** : 70 % (33/47), inchangée
 ## Vérifications
 - Suite Vitest complète, build : voir la PR. Aucun fichier de `app/src/` touché, pas de build iOS nécessaire.
 
+## #1041 : build iOS rouge, relancée
+- « Build iOS (simulateur) et captures » de #1041 a fini à 14:45 UTC en **échec** à l'étape « Achat d'essai App Store
+  (StoreKit Test, I6) » : `StoreKit Test : transaction non vérifiée (halcya_premium_mensuel) : invalidCertificateChain`
+  (`AppStoreBillingTests.swift:90`). La PR ne touche ni StoreKit ni le Swift ; la même étape est verte sur main
+  (09f448e, 12:31 UTC) et sur les 5 builds précédentes ; même panne intermittente déjà vue le 30/10 (#77, verte en
+  relance). Le test UI `testEnregistrerLeRapportDansFichiers` (« Créer le PDF » introuvable) échoue aussi mais n'est
+  pas bloquant. **Job relancé à 15:45** (pas d'étape assouplie). Si la relance est rouge au même endroit : traiter
+  `invalidCertificateChain` (certificat de test StoreKit du simulateur) comme un vrai défaut avant tout merge.
+- Si `invalidCertificateChain` revient sur une 3e PR, ouvrir une étape iPhone au BACKLOG (fiabiliser la chaîne de
+  certificats de StoreKit Test, ou dire « échec de l'environnement » à part d'un vrai échec d'achat).
+
 ## Suite
-- Run suivant : merger #1041 après sa build iOS (captures d'Objectifs), puis UPG-1 et UPG-2 (petits, Android et
+- Run suivant : merger #1041 après sa build iOS relancée (captures d'Objectifs), puis #1042 (rebase sur main), puis UPG-1 et UPG-2 (petits, Android et
   iPhone), puis UPG-3 (passage complet des personas sur les deux parcours) avant le 22/11.
