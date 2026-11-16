@@ -261,7 +261,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     principal (≈ 3 à 6 s avec `--settle=6000`, « Vos courbes apparaîtront après 3 jours » avant) : montrer le
     chargement plutôt que l'état vide~~ **fait le 16/11 à 05:30, mergé à 06:40 (#1032)** (`Trends.jsx` : à l'entrée ou à la sortie du mode
     exemple, la page repasse par le chargement au lieu de garder les données d'avant ; une saisie ordinaire relit sans
-    spinner ; deux tests, capture de la visite juste après « Exemple au jour 14 » puis 7 s après) ; (3) capture iPhone de la visite sur Tendances (le plan ne l'ouvre pas).
+    spinner ; deux tests, capture de la visite juste après « Exemple au jour 14 » puis 7 s après) ; ~~(3) capture iPhone de la visite sur Tendances (le plan ne l'ouvre pas)~~ **plan fait le 16/11 à 10:30 (en PR)** : `vide-tendances-visite` (base vide, accueil fini à l'instant, « Voir un exemple » puis « Exemple au jour N », 8 s d'attente).
   - [x] **REFONTE-7c** : retrait de `Journal.jsx`, `DailyJournal.jsx`, `JournalEmpty.jsx` et de leurs tests —
     **code fait le 16/11 à 04:30, mergé vers 05:35 (#1031, 488dc0c), Android et iPhone** : plus aucun import de ces fichiers (seul le service
     `dailyJournal.js`, partagé par Ma journée, Tendances, le rapport et les essais, reste) ; `/journal` renvoie toujours
@@ -284,7 +284,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     bien-être d'hier n'est pas reposée ici : elle se modifie depuis Tendances › Jour (7a).
   - [ ] **REFONTE-7a-2 — Restes de 7a** : captures sur historique presque vide, grand texte, 320 px, version Play.
     Le plan de captures iPhone ne touche aucun jour de Tendances : « Vos saisies » n'y est jamais vu (ajouter une
-    capture « Tendances › Jour › veille » à `captureMode.js`, comme `--click="Jour > Jour précédent"` côté Android).
+    capture « Tendances › Jour › veille » à `captureMode.js`, comme `--click="Jour > Jour précédent"` côté Android). **Plan iPhone fait le 16/11 à 10:30 (en PR)** : `demo-clair-tendances-jour-veille` (`REVEALS` accepte une suite de boutons, trouvés par texte, libellé d'accessibilité ou motif). Captures Android regardées le 16/11 à 10:30 (Tendances › Jour › veille : `--history-days=2`, `--play --font-scale=1.5`, `--play --size=320x640`) : propres, aucune erreur JS ; à 320 px, les « … » des saisies passent à la ligne (lisible). Reste : regarder `demo-clair-tendances-jour-veille` et `vide-tendances-visite` sur la PR iPhone.
   - [ ] **REFONTE-7d — Nunito et fond crème** (**préparée le 16/11 08:30** :
     [`ETAPE-7D-NUNITO.md`](maquettes/compagnon-etapes/ETAPE-7D-NUNITO.md), captures avant/après de 4 écrans dans
     `compagnon-etapes/7d/`) : Nunito variable (OFL, +19 Ko au premier lancement, chiffres tabulaires, mêmes glyphes
