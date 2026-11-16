@@ -47,7 +47,7 @@
   padding: 5px 11px;
   border-radius: 999px;
   background: var(--companion-label-bg);
-  color: var(--color-ink);
+  color: var(--companion-label-ink);
   font-size: 13px;
   font-weight: 700;
   line-height: 1.2;
