@@ -39,10 +39,5 @@
 - Pièces 3D (cheveux, montures, barbe longue, boucles, couvre-chefs) : PR 2 du lot STUDIO, `studio/pieces.js`,
   `creerPieces({ THREE, toon, ol, body })` comme dans le kit ; je fournis une matière « vinyle satiné » par défaut.
 
-## Nouveautés
-- Pas de note tant que l'interrupteur du compagnon est éteint (rien de visible). Texte prêt pour le jour où il
-  s'allume : « Studio Pilou : dans Réglages, donnez à Pilou vos cheveux, vos yeux, vos lunettes. Tout se règle à la
-  main et reste sur ce téléphone. »
-
 ## PR
 - (aucune encore)
