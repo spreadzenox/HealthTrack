@@ -323,9 +323,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     (« Dormir au moins 7 h 30 ») et « Essai · jour 4 sur 10 · aujourd’hui, jour avec / jour sans » (mots d'Agir) ;
     deux essais : « 2 essais en cours · … », lien vers Agir. Un jour « avec », elle remonte sous « Bien-être
     aujourd’hui ». `homeTrial()` (trials.js) ne lit que les entrées `trial`. Code partagé sans correctif iPhone.
-  - [ ] **UPG-2 — Nouveautés d'un testeur qui arrive** : le bandeau titre « Nouvelle police et fond crème et 17
-    autres changements » ; la nouvelle que ce testeur doit lire est la navigation à 4 onglets et la fin du Journal.
-    Mettre en avant la note de la refonte (`2026-11-15-0435-refonte-navigation`) quand elle fait partie des non lues.
+  - [x] **UPG-2 — Nouveautés d'un testeur qui arrive** (16/11 16:30) : champ `aLaUne` des notes de Nouveautés ;
+    `bannerHeadline` (services/whatsNew.js) titre le bandeau avec la note à la une si elle est non lue, sinon la plus
+    récente. Seule note à la une : `2026-11-15-0435-refonte-navigation` (test), dont le 3e point est remis à jour
+    (Données = Tendances et Nutrition, le détail d'un jour dans Tendances). Tests : whatsNew, WhatsNewBanner (nouveau),
+    changelog. Capture `npm run visual -- --whats-new --routes=/` : « Nouveau : Nouveaux onglets : Accueil, Ma
+    journée, Objectifs, Données et 523 autres changements ». Code partagé sans correctif iPhone.
   - [ ] **UPG-3 — Passage complet des personas** sur les deux parcours (installation neuve ; `--legacy`), avant le 22/11.
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
