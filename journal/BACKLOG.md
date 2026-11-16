@@ -307,6 +307,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     de présentation passent en Nunito sur fond crème, barre à 4 onglets. Envoi sur Play par « Play — fiche du Store »
     au passage du soir (23:23). Reste repéré (7d-4) : le lien texte « Ce qui va avec votre bien-être › » de la carte
     Objectifs garde le « › » texte, plus petit en Nunito ; à passer à l'icône chevron comme en 7d-2.
+  - [x] **REFONTE-7d-4 — Derniers chevrons texte** (16/11 14:30) : le « › » du lien « Ce qui va avec votre
+    bien-être / confort digestif » des cartes Objectifs et celui des familles qui s'ouvrent (« Par famille ») passent
+    à l'icône chevron, tournée vers la droite. Tests (Objectives, Recommendations) ; captures Objectifs et « Votre
+    bien-être » regardées. Code partagé sans correctif iPhone : repris tel quel par la build iOS de la PR. Plus aucun
+    « › » texte affiché comme flèche dans l'app (les « Réglages › Paramètres » des phrases restent : chemins écrits).
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.

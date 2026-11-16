@@ -214,7 +214,7 @@ function Families({ outcome, families, base }) {
           const body = (
             <>
               <span className="reco-family-name">
-                <span className="reco-family-label">{fam.label}{open && <span aria-hidden="true"> ›</span>}</span>
+                <span className="reco-family-label">{fam.label}{open && <LineIcon name="chevron" size={16} className="reco-family-chevron" />}</span>
                 {fam.lead && fam.lead !== fam.label && <span className="reco-family-lead">{fam.lead}</span>}
               </span>
               {fam.level > 0 && (

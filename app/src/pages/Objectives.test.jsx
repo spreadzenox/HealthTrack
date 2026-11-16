@@ -37,6 +37,14 @@ describe('Objectifs, vue d’ensemble (refonte « Compagnon », étape 6a)', () 
     expect(card).toHaveAttribute('href', '/recommendations/bien-etre')
   })
 
+  it('le lien « Ce qui va avec » finit par l’icône chevron, pas un « › » texte que Nunito rapetisse (7d-4)', async () => {
+    goals([])
+    show(states([3, 3, 3, 3, 4, 4, 4]))
+    const card = await screen.findByTestId('objective-wellbeing')
+    expect(card.querySelector('.objective-more svg.objective-chevron')).not.toBeNull()
+    expect(card.textContent).not.toContain('›')
+  })
+
   it('avant 7 jours notés : aucun score, ce qu’il reste et le compte des jours notés', async () => {
     goals([])
     show(states([4, null, 4, 4]))

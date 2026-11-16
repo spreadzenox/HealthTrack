@@ -58,7 +58,10 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     renderPage({}, readyResults)
     const block = await screen.findByRole('region', { name: 'Par famille' })
     const rows = within(block).getAllByRole('listitem')
-    expect(rows.map((li) => li.querySelector('.reco-family-label').textContent.replace(' ›', ''))).toEqual(['Sommeil', 'Activité', 'Alimentation'])
+    expect(rows.map((li) => li.querySelector('.reco-family-label').textContent)).toEqual(['Sommeil', 'Activité', 'Alimentation'])
+    // 7d-4 : une famille qui s'ouvre finit par l'icône chevron, plus par un « › » texte
+    expect(rows[0].querySelector('.reco-family-label svg.reco-family-chevron')).not.toBeNull()
+    expect(rows[2].querySelector('.reco-family-chevron')).toBeNull()
     expect(rows[0]).toHaveTextContent('Lien moyen')
     expect(rows[0].querySelectorAll('.reco-family-dot.is-on')).toHaveLength(2)
     expect(rows[1]).toHaveTextContent('Pas')
