@@ -9,7 +9,7 @@
 > pour les deux apps ; mode polish ; chantier cycle commencé).
 
 **🚀 Sprint de la refonte, ce soir jusqu'à 03:00 (votre ordre du 16/11 vers 20:15)** — relevé de 21:30 : sept équipiers
-codent Pilou et son monde en parallèle (étapes 8 à 15). **#1048 (Monde) mergée, 8 PR encore ouvertes** (chacune attend sa
+codent Pilou et son monde en parallèle (étapes 8 à 15). **#1047 (relais de la photo, éteint) et #1048 (Monde) mergées, 7 PR encore ouvertes** (chacune attend sa
 build iPhone, près d'une heure) :
 - **Scène (8)** #1053 : Pilou sur son île en 3D en tête de l'Accueil, image fixe si le téléphone est trop lent.
 - **Pilou (9)** #1058 : la figurine vernie, ses yeux, 12 expressions, sa montre à l'heure réelle (mergée après #1053).
@@ -18,7 +18,7 @@ build iPhone, près d'une heure) :
   refaire l'accueil ; gardé dans la sauvegarde).
 - **Monde (13)** #1048, **mergée** (fonctions de fond, rien de visible seul) : la lumière qui suit l'heure, la météo sur l'île, l'île qui grandit, le widget.
 - **Studio (14)** #1052 : habiller Pilou à la main dans Réglages, caché tant que Pilou n'est pas sur main.
-- **Photo (15)** #1047 et #1050 : **éteinte partout** ; elle n'arrivera chez les testeurs qu'après vos déclarations
+- **Photo (15)** #1047 (relais, mergée) et #1050 : **éteinte partout** ; elle n'arrivera chez les testeurs qu'après vos déclarations
   (missions P49 pour Google Play et PI3 pour l'App Store, prêtes, arrêtées avant le bouton d'envoi).
 - Ce que le sprint aura livré et ce qui restera, lot par lot : en tête de ce résumé au premier run après 03:00.
 
@@ -77,7 +77,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
-| 16/11 21:30 — [Intégrateur du sprint](runs/2026-11-16-2130-integrateur-sprint.md) | 📝 | Main vert. Sprint de la refonte en cours : #1048 (Monde) mergée, 8 PR encore ouvertes (étapes 8 à 15) ; état par lot noté au BACKLOG, PRODUIT et PARITE. #1045 (« Ma digestion » reste cochée) verte, mergée après 03:00. Rien à faire de votre côté |
+| 16/11 21:30 — [Intégrateur du sprint](runs/2026-11-16-2130-integrateur-sprint.md) | 📝 | Main vert. Sprint de la refonte en cours : #1047 (relais photo, éteint) et #1048 (Monde) mergées, 7 PR encore ouvertes (étapes 8 à 15) ; état par lot noté au BACKLOG, PRODUIT et PARITE. #1045 (« Ma digestion » reste cochée) verte, mergée après 03:00. Rien à faire de votre côté |
 | 16/11 20:30 — [« idées » : 2 personas, installation neuve et mise à jour](runs/2026-11-16-2030-idees-upg-3-personas.md) | 💡 | Passage des personas commencé (UPG-3) : une personne qui installe Halcya (jour 1) et un testeur de 45 jours qui reçoit la refonte. **Rien de perdu** à la mise à jour (essai, jours passés, export). 10 points à polir avant le 22/11, d'abord : la visite guidée ne présente pas « Ma journée » et parle encore d'« Agir » comme d'un onglet ; vos anciens objectifs « sport » et « cycle » sont convertis sans explication (et « Confort digestif » se retrouve coché) ; la page Nouveautés ne met pas la note de la nouvelle navigation en tête. Rien à faire de votre côté |
 | 16/11 18:30 — [#1044 mergée, #1043 remise à jour](runs/2026-11-16-1830-merge-1044-upg-1.md) | 🛠️ | **#1044 mergée** : un essai en cours se voit de nouveau depuis l'Accueil (consigne et jour de l'essai, carte remontée sous le bien-être les jours « avec »), Android et iPhone, après 14 checks verts et les captures iPhone de l'Accueil (clair et sombre) ; release **v761** (34,8 Mo). #1043 (bandeau des Nouveautés qui annonce d'abord la nouvelle navigation) remise à jour sur main ; sa build iOS repart, à merger au run suivant. Rien à faire de votre côté |
 | 16/11 17:30 — [UPG-1 : l'essai en cours sur l'Accueil](runs/2026-11-16-1730-upg-1-essai-accueil.md) | 🛠️ | Un essai en cours se voit de nouveau depuis l'Accueil : la carte du bas dit sa consigne et le jour (« Dormir au moins 7 h 30 · jour 4 sur 10 · aujourd’hui, jour avec ») et remonte sous votre bien-être les jours « avec ». Android et iPhone dans la même PR (#1044), à merger après sa build iOS. #1042 (outil « mise à jour » des personas) mergée. Rien à faire de votre côté |
