@@ -24,6 +24,9 @@ Halcya » (soumission du jour faite à 07:36 UTC ; la build du soir viendra apr�
 - Constats rangés en **POLISH-SIM-99 à 108** (BACKLOG, sous UPG-3).
 
 ## Suite
+- **Sprint jusqu'au 17/11 03:00** (#1046, mergée par l'orchestrateur pendant ce run) : les runs horaires sont
+  intégrateurs (journal seul, aucune PR sur app/, iphone/ ou relay/) ; les POLISH-SIM-99 à 108 attendent la fin du
+  sprint, ou un équipier si le sprint les reprend. #1045 est une PR [Auto] d'avant le sprint : à juger par le run suivant.
 - Merger #1045 après sa build iOS. Puis, avant le 22/11 : POLISH-SIM-99 (visite guidée : étape « Ma journée », plus
   d'« Agir » comme onglet), 100 (objectifs convertis expliqués), 101 (note de navigation en tête de la page
   Nouveautés), 102 (décomptes de la digestion). Ensuite une seconde paire de personas (« Stressé et pressé » J14,
