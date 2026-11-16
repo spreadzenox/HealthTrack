@@ -12,8 +12,8 @@ en cours à 23:30  ·  **Parité** : 70 % (33/47), inchangée
 
 ## Fait
 - Relevé des `journal/sprint/LOT-*.md` (version la plus récente par lot sur main et `claude/sprint-*`) et des PR.
-- Aucun merge sur main depuis #1063. PR ouvertes : #1050 (PHOTO), #1052 (STUDIO), #1056 (BULLES, conflit résolu à
-  22:40), #1057 (MONDE, à jour à 23:15), #1058 (PILOU), #1060 (VIE, à jour à 23:10), #1062 (SCÈNE 2) ; #1045 (UPG-4)
+- **#1062 (SCÈNE 2) mergée par son équipier pendant le run** (f135f54). PR encore ouvertes : #1050 (PHOTO), #1052 (STUDIO), #1056 (BULLES, conflit résolu à
+  22:40), #1057 (MONDE, à jour à 23:15), #1058 (PILOU), #1060 (VIE, à jour à 23:10) ; #1045 (UPG-4)
   reportée après 03:00.
 - Assemblage confié au lot SCÈNE à 22:40 : fusion locale de tout, 3 980 tests verts, 1 rouge d'une ligne
   (`pageStyles.js`), conflits VIE × STUDIO décrits et résolus en gardant les deux.
