@@ -3,10 +3,7 @@
  * déjà chez Open-Meteo, position arrondie à ≈ 10 km) donne UN seul effet, par priorité, avec ce que fait Pilou et
  * l'étiquette qui le dit en mots. Aucune information ne passe seulement par l'image : l'étiquette est toujours là.
  *
- * Ce que fait Pilou : `pilou = { gesture, accessory }` (geste joué une fois à l'entrée de l'effet, accessoire porté
- * tant qu'il dure) ; en mouvements réduits, seul l'accessoire compte (il apparaît en fondu).
- *
- * Entrée : { temperature (°C), precipitation (mm/h), windGusts (km/h), weatherCode (code WMO), at (ISO) }.
+ * Entrée, forme du contrat : { tempC, precipMmH, windKmH (rafales), code (WMO) }.
  */
 
 /** Seuils de la SPEC § 6. */
@@ -47,25 +44,39 @@ function calmWord(code, night) {
 
 const label = (word, tail) => (tail ? `${word} · ${tail}` : word)
 
+/** Lit les deux formes d'entrée : celle du contrat ({ tempC, precipMmH, windKmH, code }) et celle de weatherSync. */
+function readWeather(w) {
+  return {
+    temp: num(w.tempC ?? w.temperature),
+    precip: num(w.precipMmH ?? w.precipitation),
+    gusts: num(w.windKmH ?? w.windGusts),
+    code: num(w.code ?? w.weatherCode),
+  }
+}
+
 /**
- * Effet météo de l'îlot. `options.night` change le mot du ciel clair ; `options.reducedMotion` retire toutes les
- * particules (l'accessoire apparaît en fondu, l'étiquette dit la météo). Sans météo connue : effet 'aucun', sans
- * étiquette.
+ * Effet météo de l'îlot, forme du contrat (CONTRAT.md § 5) : `{ effect, label, particles: { kind, count }, accessory,
+ * skyVeil }`, `effect` ∈ pluie, neige, vent, chaleur, froid ou null (un seul à la fois) ; `accessory` ∈ parapluie,
+ * echarpe, eventail ou null. En ajout : `gesture` (joué une fois à l'entrée de l'effet : leve-les-yeux, se-penche,
+ * s-evente, frisson), `split` ({ back, front } : particules derrière et devant), `particleOpacity`, `frost` (herbe
+ * givrée), `breath` (buée), `wind` (0…1, penche les fleurs), `cloudSpeed`, `warmth` (0…1), `fadeMs`.
+ * Entrée : `{ tempC, precipMmH, windKmH, code }` (ou `{ temperature, precipitation, windGusts, weatherCode, at }`).
+ * `options.night` change le mot du ciel clair ; `options.reducedMotion` retire toutes les particules (l'accessoire
+ * apparaît en fondu, l'étiquette dit la météo) ; avec `options.now`, une météo lue il y a plus de 3 h est ignorée.
  */
 export function weatherDecor(weather, { night = false, reducedMotion = false, now = null } = {}) {
   const w = weather || {}
-  const temp = num(w.temperature)
-  const precip = num(w.precipitation)
-  const gusts = num(w.windGusts)
-  const code = num(w.weatherCode)
+  const { temp, precip, gusts, code } = readWeather(w)
   const stale = now != null && w.at && (now instanceof Date ? now.getTime() : now) - new Date(w.at).getTime() > WEATHER_MAX_AGE_MS
   const base = {
-    effect: 'aucun',
+    effect: null,
     label: null,
-    pilou: null,
-    particles: { back: 0, front: 0 },
-    particleOpacity: 0,
+    particles: { kind: null, count: 0 },
+    accessory: null,
     skyVeil: 0,
+    gesture: null,
+    split: { back: 0, front: 0 },
+    particleOpacity: 0,
     frost: false,
     breath: false,
     wind: 0,
@@ -75,43 +86,46 @@ export function weatherDecor(weather, { night = false, reducedMotion = false, no
   }
   if (stale || (temp == null && precip == null && gusts == null && code == null)) return base
   const t = temp == null ? null : formatTemperature(temp)
-  const parts = (n) => (reducedMotion ? { back: 0, front: 0 } : n)
+  const parts = (kind, back, front) =>
+    reducedMotion
+      ? { particles: { kind: null, count: 0 }, split: { back: 0, front: 0 } }
+      : { particles: { kind, count: back + front }, split: { back, front } }
 
   const snowing = code != null && SNOW_CODES.has(code)
   const raining = !snowing && (precip != null ? precip >= RAIN_MM_H : code != null && RAIN_CODES.has(code))
   if (raining) {
-    return { ...base, effect: 'pluie', label: label(rainWord(precip), t), pilou: { gesture: 'leve-les-yeux', accessory: 'feuille-parapluie' }, particles: parts({ back: 30, front: 10 }), particleOpacity: 0.45, skyVeil: 0.35 }
+    return { ...base, ...parts('pluie', 30, 10), effect: 'pluie', label: label(rainWord(precip), t), accessory: 'parapluie', gesture: 'leve-les-yeux', particleOpacity: 0.45, skyVeil: 0.35 }
   }
   if (snowing) {
-    return { ...base, effect: 'neige', label: label('Neige', t), pilou: { gesture: null, accessory: 'echarpe' }, particles: parts({ back: 22, front: 8 }), particleOpacity: 0.8, skyVeil: 0.2, frost: true }
+    return { ...base, ...parts('neige', 22, 8), effect: 'neige', label: label('Neige', t), accessory: 'echarpe', particleOpacity: 0.8, skyVeil: 0.2, frost: true }
   }
   if (gusts != null && gusts >= GUST_KMH) {
-    return { ...base, effect: 'vent', label: `Vent · ${Math.round(gusts)} km/h`, pilou: { gesture: 'se-penche', accessory: null }, particles: parts({ back: 0, front: 6 }), particleOpacity: 0.9, wind: Math.min(1, (gusts - GUST_KMH) / 30 + 0.5), cloudSpeed: reducedMotion ? 1 : 5 }
+    return { ...base, ...parts('feuilles', 0, 6), effect: 'vent', label: `Vent · ${Math.round(gusts)} km/h`, gesture: 'se-penche', particleOpacity: 0.9, wind: Math.min(1, (gusts - GUST_KMH) / 30 + 0.5), cloudSpeed: reducedMotion ? 1 : 5 }
   }
   if (temp != null && temp >= HOT_C) {
-    return { ...base, effect: 'chaleur', label: label('Chaleur', t), pilou: { gesture: 's-evente', accessory: 'feuille-eventail' }, warmth: Math.min(1, (temp - HOT_C) / 8 + 0.5) }
+    return { ...base, effect: 'chaleur', label: label('Chaleur', t), accessory: 'eventail', gesture: 's-evente', warmth: Math.min(1, (temp - HOT_C) / 8 + 0.5) }
   }
   if (temp != null && temp <= COLD_C) {
-    return { ...base, effect: 'froid', label: label('Froid', t), pilou: { gesture: 'frisson', accessory: 'echarpe' }, particles: parts({ back: 6, front: 2 }), particleOpacity: 0.6, frost: true, breath: !reducedMotion }
+    return { ...base, ...parts('flocons', 6, 2), effect: 'froid', label: label('Froid', t), accessory: 'echarpe', gesture: 'frisson', particleOpacity: 0.6, frost: true, breath: !reducedMotion }
   }
   const word = calmWord(code, night)
-  return { ...base, effect: 'aucun', label: word ? label(word, t) : t }
+  return { ...base, label: word ? label(word, t) : t }
 }
 
 /** Les champs `current` d'Open-Meteo demandés pour l'îlot (ajoutés à la lecture météo existante). */
 export const CURRENT_FIELDS = 'temperature_2m,precipitation,weather_code,wind_gusts_10m'
 
-/** Lecture du bloc `current` d'une réponse Open-Meteo → entrée de weatherDecor, ou null. */
+/** Lecture du bloc `current` d'une réponse Open-Meteo → `{ tempC, precipMmH, windKmH, code, at }` (forme du contrat), ou null. */
 export function parseCurrentWeather(forecast, fetchedAt = new Date()) {
   const c = forecast?.current
   if (!c || typeof c !== 'object') return null
   const out = {
-    temperature: num(c.temperature_2m),
-    precipitation: num(c.precipitation),
-    weatherCode: num(c.weather_code),
-    windGusts: num(c.wind_gusts_10m),
+    tempC: num(c.temperature_2m),
+    precipMmH: num(c.precipitation),
+    windKmH: num(c.wind_gusts_10m),
+    code: num(c.weather_code),
     at: (fetchedAt instanceof Date ? fetchedAt : new Date(fetchedAt)).toISOString(),
   }
-  if (out.temperature == null && out.precipitation == null && out.weatherCode == null && out.windGusts == null) return null
+  if (out.tempC == null && out.precipMmH == null && out.code == null && out.windKmH == null) return null
   return out
 }

@@ -6,7 +6,7 @@
  */
 import { lightAt, worldDayKey, LIGHT_FADE_MS } from './daylight.js'
 import { weatherDecor } from './weather.js'
-import { islandGrowth, seasonOf } from './growth.js'
+import { growthAt } from './growth.js'
 
 export * from './daylight.js'
 export * from './weather.js'
@@ -38,10 +38,10 @@ export function worldState({
   reducedMotion = false,
   name = 'Pilou',
 } = {}) {
-  const light = lightAt(now, { wakeMinute, bedMinute })
+  const light = lightAt(now, { wake: wakeMinute, bedtime: bedMinute })
   const decor = weatherDecor(weather, { night: light.night, reducedMotion, now })
-  const growth = islandGrowth(usageDays)
-  const season = seasonOf(now, latitude)
+  const growth = growthAt(usageDays, now, { hemisphere: typeof latitude === 'number' ? latitude : 'nord' })
+  const season = growth.season
   const who = String(name || 'Pilou').trim() || 'Pilou'
   const label = light.asleep ? `${who} dort. Le reste peut attendre demain.` : decor.label
   return {

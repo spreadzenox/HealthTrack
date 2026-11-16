@@ -94,7 +94,7 @@ describe('syncWeather', () => {
     const s = getWeatherSettings()
     expect(s.today).toMatchObject({ date: '2026-10-12', tempMaxC: 14 })
     // météo du moment, pour l'îlot de Pilou
-    expect(s.current).toEqual({ temperature: 11.4, precipitation: 0.3, weatherCode: 61, windGusts: 18, at: NOW.toISOString() })
+    expect(s.current).toEqual({ tempC: 11.4, precipMmH: 0.3, windKmH: 18, code: 61, at: NOW.toISOString() })
     expect(s.lastSyncAt).toBe(NOW.toISOString())
     expect(s.lastError).toBeNull()
     expect(onUpdated).toHaveBeenCalled()

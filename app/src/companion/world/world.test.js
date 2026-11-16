@@ -10,7 +10,7 @@ import {
   worldDayKey,
 } from './daylight.js'
 import { formatTemperature, parseCurrentWeather, weatherDecor } from './weather.js'
-import { countUsageDays, islandGrowth, seasonOf, worldNews } from './growth.js'
+import { countUsageDays, growthAt, islandGrowth, seasonOf, worldNews } from './growth.js'
 
 const at = (h, m = 0) => h * 60 + m
 const lum = (hex) => {
@@ -39,27 +39,25 @@ describe('courbes', () => {
 describe('cycle du jour', () => {
   it("garde exactement la lumière du kit l'après-midi (contre-jour doré)", () => {
     const l = lightAt(at(15, 30))
-    expect(l.sun).toBe('#FFCFA0')
-    expect(l.sunElevation).toBe(15)
-    expect(l.sunIntensity).toBe(3.6)
-    expect(l.fill).toBe('#FFE4D2')
-    expect(l.fillIntensity).toBe(1.15)
+    expect(l.sun).toEqual({ color: '#FFCFA0', intensity: 3.6, elevationDeg: 15, azimuthDeg: -150 })
+    expect(l.fill).toEqual({ color: '#FFE4D2', intensity: 1.15 })
     expect(l.env).toBe(0.62)
+    expect(l.phase).toBe('midi')
     expect(l.haze).toBe('#FFC9A6')
   })
 
   it('reprend les ciels de la SPEC aux heures clés', () => {
-    expect(lightAt(at(6, 48))).toMatchObject({ skyTop: '#F2B6A6', skyBottom: '#FFE6CF' })
-    expect(lightAt(at(8, 12))).toMatchObject({ skyTop: '#FFCCAE', skyBottom: '#FFF1E2' })
-    expect(lightAt(at(12, 30))).toMatchObject({ skyTop: '#FFD7BA', skyBottom: '#FFF3E6' })
-    expect(lightAt(at(18, 40))).toMatchObject({ skyTop: '#C9A4E2', skyBottom: '#FFD9B0', sun: '#FF9F72' })
-    expect(lightAt(at(21, 24))).toMatchObject({ skyTop: '#1C2452', skyBottom: '#4A4A8C', sun: '#CCD6FF' })
+    expect(lightAt(at(6, 48)).sky).toEqual({ top: '#F2B6A6', bottom: '#FFE6CF' })
+    expect(lightAt(at(8, 12)).sky).toEqual({ top: '#FFCCAE', bottom: '#FFF1E2' })
+    expect(lightAt(at(12, 30)).sky).toEqual({ top: '#FFD7BA', bottom: '#FFF3E6' })
+    expect(lightAt(at(18, 40))).toMatchObject({ sky: { top: '#C9A4E2', bottom: '#FFD9B0' }, sun: { color: '#FF9F72' } })
+    expect(lightAt(at(21, 24))).toMatchObject({ sky: { top: '#1C2452', bottom: '#4A4A8C' }, sun: { color: '#CCD6FF' } })
   })
 
   it('le soleil reste toujours derrière Pilou (contre-jour, z < 0)', () => {
     for (let minute = 0; minute < 1440; minute += 7) {
-      const { sunDirection: d, sunAzimuth } = lightAt(minute)
-      expect(sunAzimuth).toBe(-150)
+      const { sunDirection: d, sun } = lightAt(minute)
+      expect(sun.azimuthDeg).toBe(-150)
       expect(d[2]).toBeLessThan(0)
       expect(d[1]).toBeGreaterThan(0)
     }
@@ -70,12 +68,14 @@ describe('cycle du jour', () => {
     const apm = lightAt(at(15, 30))
     const soir = lightAt(at(18, 40))
     const nuit = lightAt(at(23))
-    expect(matin.sunElevation).toBeGreaterThan(apm.sunElevation)
-    expect(lum(matin.sun)).toBeGreaterThan(lum(apm.sun))
-    expect(soir.sunElevation).toBeLessThan(apm.sunElevation)
-    expect(hexToRgb(soir.sun)[2]).toBeLessThan(hexToRgb(apm.sun)[2]) // plus orangé : moins de bleu
-    expect(nuit.ambre).toBe(1)
-    expect(nuit.sunIntensity).toBeLessThan(1)
+    expect(matin.sun.elevationDeg).toBeGreaterThan(apm.sun.elevationDeg)
+    expect(lum(matin.sun.color)).toBeGreaterThan(lum(apm.sun.color))
+    expect(soir.sun.elevationDeg).toBeLessThan(apm.sun.elevationDeg)
+    expect(hexToRgb(soir.sun.color)[2]).toBeLessThan(hexToRgb(apm.sun.color)[2]) // plus orangé : moins de bleu
+    expect(nuit.ambreGlow).toBe(1)
+    expect(nuit.sun.intensity).toBeLessThan(1)
+    expect(nuit.ambreGlow).toBeGreaterThan(apm.ambreGlow)
+    expect(nuit.hemi.ground).not.toBe(apm.hemi.ground)
     expect(nuit.stars).toBe(1)
     expect(apm.stars).toBe(0)
   })
@@ -84,11 +84,11 @@ describe('cycle du jour', () => {
     let prev = lightAt(0)
     for (let minute = 1; minute < 1440; minute += 1) {
       const cur = lightAt(minute)
-      expect(Math.abs(cur.sunIntensity - prev.sunIntensity)).toBeLessThan(0.08)
-      expect(Math.abs(cur.sunElevation - prev.sunElevation)).toBeLessThan(0.6)
+      expect(Math.abs(cur.sun.intensity - prev.sun.intensity)).toBeLessThan(0.08)
+      expect(Math.abs(cur.sun.elevationDeg - prev.sun.elevationDeg)).toBeLessThan(0.6)
       prev = cur
     }
-    expect(lightAt(1439.99).sunIntensity).toBeCloseTo(lightAt(0).sunIntensity, 2)
+    expect(lightAt(1439.99).sun.intensity).toBeCloseTo(lightAt(0).sun.intensity, 2)
   })
 
   it('accepte une date et ne dépend que de l’heure locale', () => {
@@ -115,6 +115,15 @@ describe('cycle du jour', () => {
     expect(dayPhase(at(8), { bedMinute: at(1), wakeMinute: at(9) })).toBe('nuit')
     expect(dayPhase(at(23), { bedMinute: at(23, 30), wakeMinute: at(6) })).toBe('soir')
     expect(lightAt(at(23)).asleep).toBe(true)
+    // phases du contrat (time:phase)
+    expect(lightAt(at(7, 30)).phase).toBe('aube')
+    expect(lightAt(at(9)).phase).toBe('matin')
+    expect(lightAt(at(14)).phase).toBe('midi')
+    expect(lightAt(at(19)).phase).toBe('soir')
+    expect(lightAt(at(21, 50)).phase).toBe('soir') // ciel de nuit, mais Pilou veille à la lanterne
+    expect(lightAt(at(23)).phase).toBe('nuit')
+    expect(lightAt(at(22), { bedtime: at(21, 45) }).phase).toBe('nuit')
+    expect(lightAt(at(8), { wake: at(9), bedtime: at(1) }).phase).toBe('nuit')
     expect(lightAt(at(19)).lantern).toBe(true)
     expect(lightAt(at(10)).lantern).toBe(false)
   })
@@ -137,7 +146,8 @@ describe('météo sur l’îlot', () => {
     expect(weatherDecor({ temperature: 11.2, precipitation: 0.4, windGusts: 50, weatherCode: 61 })).toMatchObject({
       effect: 'pluie',
       label: 'Pluie fine · 11 °C',
-      pilou: { accessory: 'feuille-parapluie' },
+      accessory: 'parapluie',
+      particles: { kind: 'pluie', count: 40 },
     })
     expect(weatherDecor({ temperature: 0, precipitation: 1.2, weatherCode: 73 })).toMatchObject({ effect: 'neige', label: 'Neige · 0 °C', frost: true })
     expect(weatherDecor({ temperature: 14, precipitation: 0, windGusts: 38.4 })).toMatchObject({ effect: 'vent', label: 'Vent · 38 km/h' })
@@ -145,18 +155,19 @@ describe('météo sur l’îlot', () => {
     expect(weatherDecor({ temperature: 2, precipitation: 0, windGusts: 10 })).toMatchObject({
       effect: 'froid',
       label: 'Froid · 2 °C',
-      pilou: { gesture: 'frisson', accessory: 'echarpe' },
+      gesture: 'frisson',
+      accessory: 'echarpe',
       breath: true,
     })
   })
 
   it('respecte les seuils de la SPEC', () => {
-    expect(weatherDecor({ temperature: 15, precipitation: 0.19 }).effect).toBe('aucun')
+    expect(weatherDecor({ temperature: 15, precipitation: 0.19 }).effect).toBeNull()
     expect(weatherDecor({ temperature: 15, precipitation: 0.2 }).effect).toBe('pluie')
-    expect(weatherDecor({ temperature: 15, windGusts: 34.9 }).effect).toBe('aucun')
-    expect(weatherDecor({ temperature: 27.9 }).effect).toBe('aucun')
+    expect(weatherDecor({ temperature: 15, windGusts: 34.9 }).effect).toBeNull()
+    expect(weatherDecor({ temperature: 27.9 }).effect).toBeNull()
     expect(weatherDecor({ temperature: 5 }).effect).toBe('froid')
-    expect(weatherDecor({ temperature: 5.1 }).effect).toBe('aucun')
+    expect(weatherDecor({ temperature: 5.1 }).effect).toBeNull()
   })
 
   it('reste dans le budget de particules du téléphone', () => {
@@ -168,7 +179,8 @@ describe('météo sur l’îlot', () => {
     ]
     for (const c of cases) {
       const d = weatherDecor(c)
-      expect(d.particles.back + d.particles.front).toBeLessThanOrEqual(40)
+      expect(d.particles.count).toBeLessThanOrEqual(40)
+      expect(d.split.back + d.split.front).toBe(d.particles.count)
       expect(d.particleOpacity).toBeLessThanOrEqual(0.9)
     }
     expect(weatherDecor({ precipitation: 5 }).particleOpacity).toBeLessThanOrEqual(0.45)
@@ -177,7 +189,7 @@ describe('météo sur l’îlot', () => {
   it('en mouvements réduits : aucune particule, l’étiquette dit toujours la météo', () => {
     for (const c of [{ precipitation: 3, temperature: 8 }, { weatherCode: 71, temperature: -1 }, { windGusts: 60 }, { temperature: 1 }]) {
       const d = weatherDecor(c, { reducedMotion: true })
-      expect(d.particles).toEqual({ back: 0, front: 0 })
+      expect(d.particles).toEqual({ kind: null, count: 0 })
       expect(d.breath).toBe(false)
       expect(d.label).toBeTruthy()
     }
@@ -191,7 +203,7 @@ describe('météo sur l’îlot', () => {
   })
 
   it('sans météo, ou trop ancienne : rien sur l’îlot', () => {
-    expect(weatherDecor(null)).toMatchObject({ effect: 'aucun', label: null })
+    expect(weatherDecor(null)).toMatchObject({ effect: null, label: null, accessory: null })
     const old = { temperature: 20, weatherCode: 0, at: '2026-11-16T08:00:00Z' }
     expect(weatherDecor(old, { now: new Date('2026-11-16T12:00:01Z') }).label).toBeNull()
     expect(weatherDecor(old, { now: new Date('2026-11-16T10:00:00Z') }).label).toBe('Grand soleil · 20 °C')
@@ -202,7 +214,8 @@ describe('météo sur l’îlot', () => {
       { current: { temperature_2m: 11.3, precipitation: 0.3, weather_code: 61, wind_gusts_10m: 22 } },
       new Date('2026-11-16T19:00:00Z'),
     )
-    expect(w).toEqual({ temperature: 11.3, precipitation: 0.3, weatherCode: 61, windGusts: 22, at: '2026-11-16T19:00:00.000Z' })
+    expect(w).toEqual({ tempC: 11.3, precipMmH: 0.3, windKmH: 22, code: 61, at: '2026-11-16T19:00:00.000Z' })
+    expect(weatherDecor(w).label).toBe('Pluie fine · 11 °C')
     expect(parseCurrentWeather({})).toBeNull()
     expect(formatTemperature(-0.4)).toBe('0 °C')
   })
@@ -246,6 +259,18 @@ describe('croissance de l’îlot', () => {
     expect(seasonOf(new Date(2027, 8, 22))).toBe('automne')
     expect(seasonOf(new Date(2026, 10, 16), -33.9)).toBe('printemps-ete')
     expect(seasonOf(new Date(2026, 6, 1), -33.9)).toBe('hiver')
+  })
+
+  it('forme du contrat : growthAt', () => {
+    expect(growthAt(30, new Date(2026, 10, 16))).toEqual({
+      ...growthAt(30, new Date(2026, 10, 16)),
+      neighbourIsland: true,
+      pond: false,
+      season: 'automne',
+    })
+    const g = growthAt(90, new Date(2026, 10, 16), { hemisphere: 'sud' })
+    expect(g).toMatchObject({ g: 1, islandScaleXZ: 1.3, islandScaleY: 1.12, tufts: 42, shrubScale: 1.45, pond: true, season: 'printemps-ete' })
+    expect(worldNews(growthAt(29), growthAt(30))).toBe('Un îlot voisin est apparu')
   })
 
   it('dit ce qui est nouveau, une seule phrase', () => {

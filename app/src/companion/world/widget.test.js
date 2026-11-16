@@ -62,9 +62,9 @@ describe('état du monde', () => {
       latitude: 47.2,
     })
     expect(w.day).toBe('2026-11-19')
-    expect(w.light.sun).toBe('#FFCFA0')
+    expect(w.light.sun.color).toBe('#FFCFA0')
     expect(w.weather.effect).toBe('pluie')
-    expect(w.growth.neighbor).toBe(true)
+    expect(w.growth.neighbourIsland).toBe(true)
     expect(w.season).toBe('automne')
     expect(w.label).toBe('Pluie fine · 11 °C')
     expect(w.labels).toEqual(['Pluie fine · 11 °C'])
@@ -80,6 +80,6 @@ describe('état du monde', () => {
   it('en mouvements réduits : fondu de 600 ms et aucune particule', () => {
     const w = worldState({ now: d(10), reducedMotion: true, weather: { precipitation: 3, at: d(10).toISOString() } })
     expect(w.lightFadeMs).toBe(600)
-    expect(w.weather.particles).toEqual({ back: 0, front: 0 })
+    expect(w.weather.particles).toEqual({ kind: null, count: 0 })
   })
 })

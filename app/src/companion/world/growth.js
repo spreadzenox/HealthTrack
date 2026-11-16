@@ -48,7 +48,28 @@ export function islandGrowth(usageDays) {
 }
 
 /**
- * Saison de l'îlot selon la date et l'hémisphère (latitude < 0 : sud, décalé de six mois) : 'automne' (feuillage
+ * Forme du contrat (CONTRAT.md § 5) : `growthAt(daysOfUse, date, { hemisphere = 'nord' })` →
+ * `{ g, islandScaleXZ, islandScaleY, tufts, shrubScale, neighbourIsland, pond, season }`, plus en ajout `days` et
+ * `tree` (l'arbuste est devenu un petit arbre). `hemisphere` : 'nord', 'sud', ou une latitude.
+ */
+export function growthAt(daysOfUse, date = new Date(), { hemisphere = 'nord' } = {}) {
+  const g = islandGrowth(daysOfUse)
+  return {
+    g: g.g,
+    islandScaleXZ: g.widthScale,
+    islandScaleY: g.heightScale,
+    tufts: g.tufts,
+    shrubScale: g.shrubScale,
+    neighbourIsland: g.neighbor,
+    pond: g.pond,
+    season: seasonOf(date, hemisphere),
+    days: g.days,
+    tree: g.tree,
+  }
+}
+
+/**
+ * Saison de l'îlot selon la date et l'hémisphère ('sud' ou une latitude < 0 : décalé de six mois) : 'automne' (feuillage
  * orange, herbe dorée), 'hiver' (calotte de neige), 'fin-hiver' (amandier en fleur), 'printemps-ete' (herbe vive).
  * Bornes au jour près : automne du 22/09, hiver du 21/12, fin d'hiver du 01/02, printemps du 21/03.
  */
@@ -56,7 +77,8 @@ export function seasonOf(date, latitude = null) {
   const d = date instanceof Date ? date : new Date(date)
   let month = d.getMonth() + 1
   const day = d.getDate()
-  if (typeof latitude === 'number' && latitude < 0) month = ((month + 5) % 12) + 1
+  const south = latitude === 'sud' || (typeof latitude === 'number' && latitude < 0)
+  if (south) month = ((month + 5) % 12) + 1
   const md = month * 100 + day
   if (md >= 1221 || md < 201) return 'hiver'
   if (md < 321) return 'fin-hiver'
@@ -72,15 +94,16 @@ export const SEASON_LABEL = Object.freeze({
 })
 
 /**
- * Ce qui est nouveau sur l'îlot depuis la dernière visite (deux états { growth, season }), pour l'étiquette et le
+ * Ce qui est nouveau sur l'îlot depuis la dernière visite (deux sorties de growthAt, ou deux états { growth, season }), pour l'étiquette et le
  * petit saut de Pilou à l'ouverture. Une seule phrase, la plus marquante ; null si rien n'a changé.
  */
 export function worldNews(previous, current) {
   if (!previous || !current) return null
-  const pg = previous.growth || {}
-  const cg = current.growth || {}
-  if (cg.pond && !pg.pond) return 'Une mare est apparue sur l\'îlot'
-  if (cg.neighbor && !pg.neighbor) return 'Un îlot voisin est apparu'
+  const pg = previous.growth || previous
+  const cg = current.growth || current
+  const neighbour = (x) => Boolean(x.neighbourIsland ?? x.neighbor)
+  if (cg.pond && !pg.pond) return "Une mare est apparue sur l'îlot"
+  if (neighbour(cg) && !neighbour(pg)) return 'Un îlot voisin est apparu'
   if (cg.tree && !pg.tree) return "L'arbuste est devenu un petit arbre"
   if (current.season && previous.season && current.season !== previous.season) return SEASON_LABEL[current.season] || null
   return null

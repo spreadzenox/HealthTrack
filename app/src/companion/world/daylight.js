@@ -42,9 +42,6 @@ export const LIGHT_KEYS = Object.freeze([
 /** Azimut du soleil (degrés, repère du kit) : toujours derrière Pilou, un peu sur le côté. */
 export const SUN_AZIMUTH = -150
 
-const COLOR_FIELDS = ['skyTop', 'skyBottom', 'haze', 'sun', 'fill']
-const NUMBER_FIELDS = ['sunElevation', 'sunIntensity', 'fillIntensity', 'env', 'ambre', 'stars']
-
 const isMinute = (v) => typeof v === 'number' && Number.isFinite(v)
 
 /** Minute du jour (0 à 1439,99…) d'une date, à l'heure locale du téléphone. */
@@ -78,28 +75,77 @@ export function dayPhase(minute, { wakeMinute = DEFAULT_WAKE_MINUTE, bedMinute =
   return 'matin'
 }
 
+/** Couleur du sol pour la lumière d'hémisphère : herbe le jour, bleu nuit la nuit. */
+const GROUND_DAY = '#7A8A45'
+const GROUND_NIGHT = '#20264A'
+
 /**
- * Lumière d'une minute du jour : couleurs (hexadécimal) et grandeurs interpolées entre les deux clés voisines avec la
- * courbe `soft`. Retourne aussi la phase, si Pilou dort, si la lanterne est allumée, et la direction du soleil.
+ * Phase de la lumière, au sens du contrat (`time:phase` : aube, matin, midi, soir, nuit). « nuit » suit le coucher
+ * habituel de la personne (Pilou s'endort), pas seulement le ciel : à 21 h 30, le ciel est sombre mais Pilou veille
+ * encore à la lanterne (« soir ») si l'on se couche à 23 h.
  */
-export function lightAt(minuteOrDate, options = {}) {
-  const minute = normMinute(minuteOrDate instanceof Date ? minuteOfDay(minuteOrDate) : Number(minuteOrDate) || 0)
+export function lightPhase(minute, options = {}) {
+  const t = normMinute(minute)
+  const pilou = dayPhase(t, options)
+  if (pilou === 'nuit') return 'nuit'
+  if (pilou === 'soir') return 'soir'
+  if (t >= 12 * 60) return 'midi'
+  if (t >= 8 * 60 + 12) return 'matin'
+  return 'aube'
+}
+
+const toPhaseOptions = (o = {}) => ({
+  wakeMinute: o.wake ?? o.wakeMinute,
+  bedMinute: o.bedtime ?? o.bedMinute,
+})
+
+/**
+ * Lumière d'une date (ou d'une minute du jour), forme du contrat (CONTRAT.md § 5) :
+ * `{ phase, sky: { top, bottom }, sun: { color, intensity, elevationDeg, azimuthDeg }, fill: { color, intensity },
+ * hemi: { sky, ground, intensity }, haze, ambreGlow, stars }`, plus, en ajout : `minute`, `key` (clé la plus proche),
+ * `pilouPhase` (matin, apres-midi, soir, nuit), `asleep`, `lantern`, `night`, `env` (intensité de l'environnement),
+ * `sunDirection` ([x, y, z] unitaire, repère du kit).
+ * Couleurs et grandeurs interpolées entre les deux clés voisines avec la courbe `soft`.
+ * `options` : `{ wake, bedtime }` en minutes depuis minuit (aussi `wakeMinute`, `bedMinute`).
+ */
+export function lightAt(dateOrMinute, options = {}) {
+  const minute = normMinute(dateOrMinute instanceof Date ? minuteOfDay(dateOrMinute) : Number(dateOrMinute) || 0)
+  const phaseOptions = toPhaseOptions(options)
   let i = 0
   while (i < LIGHT_KEYS.length - 2 && LIGHT_KEYS[i + 1].minute <= minute) i += 1
   const a = LIGHT_KEYS[i]
   const b = LIGHT_KEYS[i + 1]
   const span = b.minute - a.minute
   const t = EASE.soft(clamp01(span > 0 ? (minute - a.minute) / span : 0))
-  const out = { minute, key: t < 0.5 ? a.name : b.name }
-  for (const f of COLOR_FIELDS) out[f] = mixHex(a[f], b[f], t)
-  for (const f of NUMBER_FIELDS) out[f] = Math.round(lerp(a[f], b[f], t) * 1000) / 1000
-  out.sunAzimuth = SUN_AZIMUTH
-  out.sunDirection = sunDirection(SUN_AZIMUTH, out.sunElevation)
-  out.phase = dayPhase(minute, options)
-  out.asleep = out.phase === 'nuit'
-  out.lantern = out.phase === 'soir' || out.phase === 'nuit'
-  out.night = out.stars >= 0.5
-  return out
+  const c = (f) => mixHex(a[f], b[f], t)
+  const n = (f) => Math.round(lerp(a[f], b[f], t) * 1000) / 1000
+  const stars = n('stars')
+  const env = n('env')
+  const pilouPhase = dayPhase(minute, phaseOptions)
+  const sunElevation = n('sunElevation')
+  return {
+    phase: lightPhase(minute, phaseOptions),
+    sky: { top: c('skyTop'), bottom: c('skyBottom') },
+    sun: { color: c('sun'), intensity: n('sunIntensity'), elevationDeg: sunElevation, azimuthDeg: SUN_AZIMUTH },
+    fill: { color: c('fill'), intensity: n('fillIntensity') },
+    hemi: {
+      sky: mixHex(c('skyTop'), c('skyBottom'), 0.5),
+      ground: mixHex(GROUND_DAY, GROUND_NIGHT, stars),
+      intensity: Math.round(env * 0.9 * 1000) / 1000,
+    },
+    haze: c('haze'),
+    ambreGlow: n('ambre'),
+    stars,
+    // ajouts
+    minute,
+    key: t < 0.5 ? a.name : b.name,
+    env,
+    pilouPhase,
+    asleep: pilouPhase === 'nuit',
+    lantern: pilouPhase === 'soir' || pilouPhase === 'nuit',
+    night: stars >= 0.5,
+    sunDirection: sunDirection(SUN_AZIMUTH, sunElevation),
+  }
 }
 
 /** Vecteur unitaire [x, y, z] du soleil, comme dans le kit (sin az · cos él, sin él, cos az · cos él). */

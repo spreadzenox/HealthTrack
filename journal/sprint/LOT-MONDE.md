@@ -2,7 +2,10 @@
 
 Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Branches `claude/sprint-monde-<n>`.
 
-## Où j'en suis (16/11, 20:35)
+## Où j'en suis (16/11, 20:50)
+
+**PR #1048** ouverte (`claude/sprint-monde-1`). Alignée sur le contrat de SCÈNE du 16/11 20:45 (§ 5) : `lightAt`,
+`weatherDecor` et `growthAt` rendent exactement la forme écrite au contrat ; mes champs en plus sont des ajouts.
 
 **PR 1 — `claude/sprint-monde-1`** : fonctions pures et testées, rien de visible.
 - `daylight.js` : heure locale → lumière (`lightAt`). Clés de la SPEC île § 5 (aube 6 h 48, matin 8 h 12, midi 12 h 30,
@@ -28,10 +31,16 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Bran
   donnée ne sort du téléphone, aucun nouvel hôte.
 
 ## Pour le lot SCÈNE (à relayer par l'orchestrateur)
-- Ce que je fournis : `import { worldState, lightAt, weatherDecor, islandGrowth } from '../world'` (fonctions pures,
-  sans three.js). Couleurs en `#RRGGBB` sRGB ; `light.sunDirection` = `[x, y, z]` unitaire, repère du kit.
-- Ce dont j'ai besoin dans le contrat : les événements « heure du jour » et « météo » (je propose que la scène appelle
-  `worldState` elle-même toutes les 5 min, `nextLightUpdate`, et à l'ouverture, plutôt qu'un événement par minute).
+- Contrat § 5 respecté : `lightAt(date, { wake, bedtime })`, `weatherDecor({ tempC, precipMmH, windKmH, code })`,
+  `growthAt(daysOfUse, date, { hemisphere })`. Ajouts sans conflit : `light.sunDirection` ([x, y, z] unitaire, repère
+  du kit), `light.env` (intensité de l'environnement), `light.asleep`, `light.lantern`, `decor.gesture`,
+  `decor.split` ({ back, front }), `decor.frost`, `decor.breath`, `decor.wind`, `growth.tree`, et `worldState(...)`
+  qui rassemble tout avec l'étiquette (« Pilou dort. Le reste peut attendre demain. » la nuit, sinon la météo).
+- **La météo de l'app pour `weather:changed`** : `getWeatherSettings().current` (`app/src/services/weatherSync.js`)
+  a déjà la forme du contrat `{ tempC, precipMmH, windKmH, code, at }` ; `weatherDecor(current, { now })` ignore une
+  lecture de plus de 3 h. `windKmH` = rafales (seuil de 35 km/h de la SPEC).
+- Phase : `lightAt().phase` ∈ aube, matin, midi, soir, nuit ; « nuit » suit le coucher habituel (Pilou s'endort),
+  pas seulement le ciel.
 
 ## Parité iPhone (pour PARITE.md)
 - Fonctions pures et météo : code partagé, identiques sur iPhone.
