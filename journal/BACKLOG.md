@@ -362,7 +362,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       une fonction à coder sans accord). « Gêne » qui ne reste pas cochée : traité par UPG-4 (#1045).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 16/11 à 23:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
-  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16), Tests de main verts après chacun ; le reste en PR.
+  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, interrupteur éteint), Tests de main verts après chacun ; le reste en PR.
   - ASSEMBLAGE (confié au lot SCÈNE par l'orchestrateur à 22:40, `claude/sprint-scene-3`) : fusion locale de main et
     des 7 PR → lint propre, 3 980 tests verts, 1 rouge (`bundleGuard.test.js` : `companion/CompanionScene.css` à
     importer dans `app/src/pageStyles.js`, une ligne, dans la PR d'assemblage ou #1056). Conflits connus et leur
@@ -388,8 +388,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     notifications du soir Android et iPhone, lumière à l'échelle de la scène).
   - STUDIO (14) : #1052 (fiche de traits locale, export et import, écran derrière l'interrupteur du compagnon, pièces 3D
     et `brancherTraits` joints) ; branche 3 : `equiperPilou` après #1058.
-  - PHOTO (15) : **#1047 mergée** (relais, route éteinte, `503 disabled`) et #1050 (app, interrupteur de build éteint
-    partout ; lot fini à son merge). Missions P49 (Play) et PI3 (App Store) préparées, arrêtées avant l'envoi.
+  - PHOTO (15) : **#1047 mergée** (relais, route éteinte, `503 disabled`) et **#1050 mergée** (app, interrupteur de build éteint
+    partout ; lot fini). Missions P49 (Play) et PI3 (App Store) préparées, arrêtées avant l'envoi.
   - Restes notés par les lots, hors sprint : retour haptique des bulles (`@capacitor/haptics` absent, touche les
     builds natives : à décider) ; notification de repas de Pilou (SPEC journée § 9, texte prêt, fonction nouvelle :
     proposition) ; widget iPhone (WidgetKit, extension Xcode à créer) ; brancher la photo sur `saveFiche` du Studio ;

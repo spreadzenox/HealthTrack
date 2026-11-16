@@ -12,7 +12,7 @@ en cours à 23:30  ·  **Parité** : 70 % (33/47), inchangée
 
 ## Fait
 - Relevé des `journal/sprint/LOT-*.md` (version la plus récente par lot sur main et `claude/sprint-*`) et des PR.
-- **#1062 (SCÈNE 2) mergée par son équipier pendant le run** (f135f54), puis **#1056 (BULLES)** à 23:52 (ed1fa08 ; scène importée directement, donc pas de rouge `bundleGuard`), puis **#1060 (VIE)** à 00:16 (42072c6) ; « Tests » de main vert après chacun. PR encore ouvertes : #1050 (PHOTO), #1052 (STUDIO), #1057 (MONDE, à jour à 23:15), #1058 (PILOU) ; #1045 (UPG-4)
+- **#1062 (SCÈNE 2) mergée par son équipier pendant le run** (f135f54), puis **#1056 (BULLES)** à 23:52 (ed1fa08 ; scène importée directement, donc pas de rouge `bundleGuard`), puis **#1060 (VIE)** à 00:16 (42072c6), puis **#1050 (PHOTO, éteinte)** (dedb890 ; lot fini) ; « Tests » de main vert après chacun. PR encore ouvertes : #1052 (STUDIO), #1057 (MONDE, à jour à 23:15), #1058 (PILOU) ; #1045 (UPG-4)
   reportée après 03:00.
 - Assemblage confié au lot SCÈNE à 22:40 : fusion locale de tout, 3 980 tests verts, 1 rouge d'une ligne
   (`pageStyles.js`), conflits VIE × STUDIO décrits et résolus en gardant les deux.
