@@ -389,7 +389,9 @@ export default function CompanionScene({
     live.setReducedMotion(reducedMotion)
   }, [reducedMotion])
 
-  const text = label || [`${name} est ${moodWord(mood)}`, weatherLabel].filter(Boolean).join(' · ')
+  // la nuit (heure de coucher, lot MONDE), Pilou dort : l'étiquette le dit (SPEC île § 5)
+  const asleep = Boolean(light.asleep)
+  const text = label || [asleep ? `${name} dort` : `${name} est ${moodWord(mood)}`, weatherLabel].filter(Boolean).join(' · ')
   const showFallback = tier === 'bas' || !ready
 
   return (

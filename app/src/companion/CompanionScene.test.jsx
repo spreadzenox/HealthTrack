@@ -6,6 +6,8 @@ import { bus, EVENTS } from './bus'
 import { companionSceneEnabled, setCompanionSceneEnabled } from './flags'
 import { getReducedMotionSetting, setReducedMotionSetting, isReducedMotion } from './motion'
 
+const NOON = () => new Date(2026, 10, 16, 12, 0)
+
 afterEach(() => {
   cleanup()
   bus.clear()
@@ -14,7 +16,7 @@ afterEach(() => {
 
 describe('<CompanionScene> (CONTRAT.md § 2)', () => {
   it('sans WebGL (jsdom) : image fixe décorative et étiquette lisible', () => {
-    const { container } = render(<CompanionScene />)
+    const { container } = render(<CompanionScene now={NOON} />)
     const img = container.querySelector('img.companion-scene__still')
     expect(img).toBeTruthy()
     expect(img.getAttribute('aria-hidden')).toBe('true')
@@ -24,7 +26,7 @@ describe('<CompanionScene> (CONTRAT.md § 2)', () => {
   })
 
   it('l’étiquette suit l’humeur du bus, et le nom choisi', () => {
-    render(<CompanionScene name="Nuage" />)
+    render(<CompanionScene name="Nuage" now={NOON} />)
     expect(screen.getByText('Nuage est tranquille')).toBeTruthy()
     act(() => bus.emit(EVENTS.MOOD_CHANGED, { value: 0.5, word: 'Content', done: 2, planned: 4 }))
     expect(screen.getByText('Nuage est content')).toBeTruthy()
@@ -37,7 +39,7 @@ describe('<CompanionScene> (CONTRAT.md § 2)', () => {
       const p = stage.project(0, 0.6, 0)
       return <button type="button">Repas {Math.round(p.x)}</button>
     })
-    render(<CompanionScene overlay={overlay} />)
+    render(<CompanionScene overlay={overlay} now={NOON} />)
     const stage = overlay.mock.calls[0][0]
     expect(stage.width).toBeGreaterThan(0)
     expect(stage.quality).toBe('bas')
@@ -124,9 +126,11 @@ describe('cycle du jour (lot MONDE) et image fixe', () => {
   it('la nuit, l’image fixe est celle de la nuit ; le jour, celle de l’heure dorée', async () => {
     const night = render(<CompanionScene now={() => new Date(2026, 10, 16, 23, 30)} />)
     await vi.waitFor(() => expect(night.container.querySelector('img').getAttribute('src')).toMatch(/nuit/))
+    expect(screen.getByText('Pilou dort')).toBeTruthy()
     cleanup()
     const day = render(<CompanionScene now={() => new Date(2026, 10, 16, 13, 0)} />)
     await vi.waitFor(() => expect(day.container.querySelector('section').style.getPropertyValue('--cs-sky-top')).not.toBe(''))
     expect(day.container.querySelector('img').getAttribute('src')).not.toMatch(/nuit/)
+    expect(screen.getByText('Pilou est tranquille')).toBeTruthy()
   })
 })
