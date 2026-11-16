@@ -37,6 +37,6 @@ Rien de lu ni d'écrit autrement (affichage seulement) : rien à migrer, export 
    « Ce qui a pu peser ») regardées. PR de ce run (#1032) remise à jour sur main.
 
 ## Suite
-- Merger #1032 quand ses checks sont verts, build iOS comprise ; relever la release de 488dc0c.
+- Merger #1032 quand ses checks sont verts, build iOS comprise ; « Play — AAB », émulateurs et builds iOS de 488dc0c en cours à la fin du run ; « Build & Release » vert : release **v752** (APK 34,6 Mo, 04:40 UTC).
 - REFONTE-7b-2 (3) (capture iPhone de la visite), 7c-2, 7a-2, puis Nunito (7d).
 - Relever la build TestFlight chez les testeurs externes (soumission du jour après l'envoi Alpha de 23:45).
