@@ -293,3 +293,14 @@ export function decrire(fiche, nom = 'Pilou') {
   if (fiche.couvre_chef !== 'aucun') p.push(libelle(fiche.couvre_chef).toLowerCase())
   return `${nom} : ${p.join(', ')}`
 }
+
+/* ---------- apparitions (SPEC § 8) : durée par famille, en ms ---------- */
+export const APPARITION = { cheveux: 1400, sourcils: 420, yeux: 600, lunettes: 900, taches: 700, grain: 700, boucles: 500, barbe: 800, couvre: 650 }
+/** La famille animée quand un champ change dans le Studio. */
+export function familleDe(chemin) {
+  if (chemin === 'couvre_chef') return 'couvre'
+  if (chemin.startsWith('peau.taches')) return 'taches'
+  if (chemin.startsWith('peau.grain')) return 'grain'
+  if (chemin.startsWith('oreilles.')) return 'boucles'
+  return chemin.split('.')[0]
+}

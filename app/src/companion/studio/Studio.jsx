@@ -8,8 +8,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   SCHEMA, COUVRE_CHEFS, PAL_CHEVEUX, PAL_YEUX, PAL_MONTURE, PAL_COUVRE, NOMS_CHAMPS,
-  normaliser, changer, incompatibilite, tirer, libelle, decrire,
+  normaliser, changer, incompatibilite, tirer, libelle, decrire, APPARITION, familleDe,
 } from './traits'
+import { isReducedMotion } from '../motion'
 import { loadFiche, saveFiche, resetFiche } from './fiche'
 import { dessinerPilou } from './apercu2d'
 import { bus } from '../bus'
@@ -56,7 +57,7 @@ function visible(fiche, chemin) {
   return true
 }
 
-function Apercu({ fiche, description }) {
+function Apercu({ fiche, description, anim }) {
   const ref = useRef(null)
   useEffect(() => {
     const c = ref.current
@@ -66,8 +67,25 @@ function Apercu({ fiche, description }) {
     c.width = Math.round(w * dpr)
     c.height = Math.round(h * dpr)
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    dessinerPilou(ctx, w, h, fiche)
-  }, [fiche])
+    const reduit = isReducedMotion()
+    const cles = anim ? (anim.cle === 'tout' ? Object.keys(APPARITION) : [anim.cle]) : []
+    const duree = reduit ? 200 : anim?.cle === 'tout' ? 700 : APPARITION[anim?.cle] || 500
+    if (!cles.length || typeof requestAnimationFrame !== 'function') {
+      dessinerPilou(ctx, w, h, fiche)
+      return
+    }
+    let id = 0
+    const t0 = performance.now()
+    const image = (now) => {
+      const p = Math.min(1, (now - t0) / duree)
+      const rv = Object.fromEntries(cles.map((k) => [k, p]))
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      dessinerPilou(ctx, w, h, fiche, { rv, reduit })
+      if (p < 1) id = requestAnimationFrame(image)
+    }
+    id = requestAnimationFrame(image)
+    return () => cancelAnimationFrame(id)
+  }, [fiche, anim])
   return (
     <div className="studio-apercu">
       <canvas ref={ref} className="studio-apercu-canvas" aria-hidden="true" />
@@ -83,6 +101,8 @@ export default function Studio() {
   const [onglet, setOnglet] = useState('cheveux')
   const [merci, setMerci] = useState('')
   const [message, setMessage] = useState('')
+  const [anim, setAnim] = useState(null)
+  const tours = useRef(0)
   const graine = useRef(0)
 
   useEffect(() => {
@@ -104,6 +124,7 @@ export default function Studio() {
     const etait = incertains.includes(chemin)
     const base = brouillon || normaliser({}).fiche
     setBrouillon(changer(base, chemin, v))
+    setAnim({ cle: brouillon ? familleDe(chemin) : 'tout', n: (tours.current += 1) })
     setMessage('')
     if (etait) {
       const n = NOMS_CHAMPS[chemin] || 'ce réglage'
@@ -114,6 +135,7 @@ export default function Studio() {
     // la graine change à chaque toucher (SPEC § 9) ; elle part de l'heure pour ne pas toujours tirer le même Pilou
     graine.current = graine.current ? graine.current + 1 : Date.now() % 100000
     setBrouillon(tirer(graine.current))
+    setAnim({ cle: 'tout', n: graine.current })
     setMerci('')
     setMessage('')
   }
@@ -141,7 +163,7 @@ export default function Studio() {
       <h2 className="page-title">Studio {nom}</h2>
       <p className="page-intro">{nom} garde son corps, son antenne et sa montre. Vous choisissez ses traits.</p>
 
-      <Apercu fiche={brouillon} description={decrire(brouillon, nom)} />
+      <Apercu fiche={brouillon} description={decrire(brouillon, nom)} anim={anim} />
 
       {incertains.length > 0 && (
         <div className="studio-bandeaux">
