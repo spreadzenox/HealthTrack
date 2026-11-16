@@ -18,6 +18,7 @@ beforeEach(() => {
 import { getBodySettings, setBodySettings } from '../settings/bodySettings'
 import { getHiddenLinks, setHiddenLinks } from '../settings/hiddenLinks'
 import { getHabits, setHabits } from '../settings/habits'
+import { companionName, markMet, needsMeeting } from '../companion/life/companionState'
 import {
   createEntry,
   listEntries,
@@ -1025,5 +1026,33 @@ describe('habitudes dans la sauvegarde (refonte étape 4)', () => {
     await importFromJson(JSON.stringify({ version: 1, entries: [entry], habits: [{ id: 'meditation' }, { id: 'custom:marche', label: 'Marche' }] }), { merge: true })
     expect(getHabits().map((h) => h.id)).toEqual(['meditation', 'reading', 'custom:piano'])
     expect(parseBackup(JSON.stringify([entry])).habits).toEqual([])
+  })
+})
+
+describe('compagnon dans la sauvegarde (lot VIE, étape 12)', () => {
+  const entry = { type: 'wellbeing', source: 'app_wellbeing', at: '2026-11-10T09:00:00.000Z', payload: { score: 3 } }
+  beforeEach(async () => {
+    localStorage.clear()
+    await deleteAllEntries()
+  })
+
+  it('le nom et la rencontre suivent l’export ; sur un téléphone neuf, rien n’est rejoué', async () => {
+    expect(JSON.parse(await exportToJson())).not.toHaveProperty('companion')
+    markMet('onboarding', { name: 'Câlin' })
+    await createEntry(entry)
+    const json = await exportToJson()
+    expect(JSON.parse(json).companion).toMatchObject({ name: 'Câlin' })
+    localStorage.clear()
+    await importFromJson(json)
+    expect(companionName()).toBe('Câlin')
+    expect(needsMeeting({ done: true })).toBe(false)
+  })
+
+  it('sauvegarde d’avant la refonte : données importées, compagnon intact, la rencontre reste à faire une fois', async () => {
+    await importFromJson(JSON.stringify({ version: 1, entries: [entry], habits: [] }))
+    expect(await listEntries({ type: 'wellbeing' })).toHaveLength(1)
+    expect(companionName()).toBe('Pilou')
+    expect(needsMeeting({ done: true })).toBe(true)
+    expect(parseBackup(JSON.stringify([entry])).companion).toBeNull()
   })
 })

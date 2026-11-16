@@ -1,0 +1,23 @@
+/* Couleurs du compagnon dans l’interface (lot VIE) : ciel abricot de la scène (brief § 7.5), soir mauve-pêche,
+   nuit bleutée, îlot. Une seule source, comme tokens.css. */
+:root {
+  --life-night-top: #2e3463;
+  --life-night-bottom: #4a4f8c;
+  --life-grass: #5fbf7a;
+  --life-grass-light: #8fdc9f;
+  --life-earth-dark: #8a5f45;
+  --life-earth: #a3765a;
+  --life-dusk-3: #c9a9d9;
+  --life-dusk-2: #e9c3d6;
+  --life-dusk-1: #ffe1cf;
+  --life-night-ink: #f3efff;
+  --life-sky-haze: #ffc9a6;
+  --life-sky-2: #ffd6b3;
+  --life-sky-top: #ffd9b8;
+  --life-sky-low: #ffe7d2;
+  --life-sky-1: #fff1dc;
+  --life-card: #fff9f2;
+  --life-white: #fff;
+  --life-white-veil: rgba(255, 255, 255, 0.7);
+  --life-hairline: rgba(74, 51, 43, 0.06);
+}
