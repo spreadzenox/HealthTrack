@@ -387,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **16/11 17:30** — **REFONTE-UPG-1** (#1044) : l'essai en cours revient sur l'Accueil (consigne, jour, « jour avec / sans »), remonté sous le bien-être les jours « avec ». #1042 (UPG-0) mergée. Restent UPG-2 (#1043) et UPG-3 (passage complet).
 - **16/11 15:30** — **REFONTE-UPG-0** : l'outil de personas rejoue un testeur d'avant la refonte (`--legacy` : anciens objectifs, essai en cours, Nouveautés lues au 14/11, aucune habitude). Premier passage sans perte ; à corriger avant le passage complet : UPG-1 (essai en cours invisible depuis l'Accueil) et UPG-2 (bandeau Nouveautés). #1041 (7d-4) attend sa build iOS.
 - **16/11 14:30** — **REFONTE-7d-4 en PR** (Android et iPhone) : derniers « › » texte (carte Objectifs, familles d'« Ce qui va avec ») passés à l'icône chevron. #1040 (7d-3, images de la fiche) mergée par le run de 13:30, release v758. Ensuite : passage complet des personas (installation neuve et mise à jour), puis Pilou (8).
 - **16/11 12:30** — **#1038 (REFONTE-7d, Nunito et fond crème) mergée** après 15 checks verts et les captures iPhone (clair et sombre). **REFONTE-7d-2 en PR** : chevrons des listes en icône. Ensuite : passage complet des personas (installation neuve et mise à jour), puis Pilou (8).
