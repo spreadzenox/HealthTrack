@@ -33,6 +33,17 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branc
 - 16/11 21:05 : `PilouFigure` prend les images pré-rendues du lot PILOU dès que `companion/pilou/sprites.js` est sur
   main (`import.meta.glob`, rien ne casse s'il manque) ; essayé avec ses images (capture
   `2026-11-16-sprint-vie-objectifs-sprite-pilou.png`). Le dessin SVG reste le repli.
+- 16/11 21:10 : `claude/sprint-vie-4` (partie de vie-3) : Pilou renifle l'assiette pendant l'analyse d'une photo de
+  repas (« Pilou regarde votre assiette… »), et attend à côté de la piste à tester (80 px, SPEC comprendre § 6.5).
+
+## Ce qui reste (hors de ce sprint si le temps manque)
+- Les chorégraphies fines de la SPEC (vol de l'assiette, mastication, ondes lilas de la méditation, bouillotte du
+  soir, confettis) sont jouées par Pilou en 3D sur l'Accueil (lots SCÈNE et PILOU, via le bus) ; dans Ma journée,
+  Pilou 2D en garde une version CSS simple.
+- Mini-Pilou de la fiche « Comment est calculé votre bien-être ? » (SPEC § 6.4), cairn des galets (§ 6.3), rituel du
+  soir et lanternes du défi (§ 7) : non faits.
+- Réglage visible des mouvements réduits dans Réglages › Pilou : `motion.js` du lot SCÈNE pas encore sur main ; mes
+  styles lisent déjà `prefers-reduced-motion` et `:root[data-reduced-motion='on']`.
 
 ## Découpage prévu
 1. `claude/sprint-vie-1` (étape 11) : nom du compagnon (« Pilou » par défaut) et son état local ; la bannière de
