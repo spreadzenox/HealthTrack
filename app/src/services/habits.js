@@ -62,3 +62,34 @@ export function habitAnswers(entries, dateKey) {
   }
   return out
 }
+
+const SKIP_KEY = 'healthtrack_yesterday_skipped'
+const WEEKDAYS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
+
+/** « Passer » : la carte « Hier » ne revient pas pour ce jour (une seule date gardée). */
+export function skipYesterday(dateKey) {
+  try { localStorage.setItem(SKIP_KEY, dateKey) } catch { /* stockage indisponible */ }
+}
+
+function skipped(dateKey) {
+  try { return localStorage.getItem(SKIP_KEY) === dateKey } catch { return false }
+}
+
+/**
+ * Rattrapage de la veille dans Ma journée (journee.SPEC § 10, « Saisie après coup » ; inventaire de l'étape 7,
+ * ligne 9) : les habitudes suivies sans réponse hier, si la personne répondait encore la veille ou avant-hier.
+ * Après deux jours ou plus sans réponse, pas de rattrapage : on repart d'aujourd'hui.
+ * @returns {{ dateKey: string, title: string, pending: { id: string, label: string }[] } | null}
+ */
+export function yesterdayCatchUp(entries, habits, now = new Date()) {
+  if (!habits?.length) return null
+  const y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 12)
+  const b = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2, 12)
+  const dateKey = localDateKey(y.toISOString())
+  if (skipped(dateKey)) return null
+  const answered = habitAnswers(entries, dateKey)
+  if (answered.size === 0 && habitAnswers(entries, localDateKey(b.toISOString())).size === 0) return null
+  const pending = habits.filter((h) => !answered.has(h.id))
+  if (pending.length === 0) return null
+  return { dateKey, title: `Hier, ${WEEKDAYS[y.getDay()]}`, pending }
+}
