@@ -21,6 +21,17 @@ Mis à jour : 16/11 21:05 (heure de Paris, horloge de la session). PR 1 : #1056 
     scène) et `…-sprint-bulles-avec-scene-{demo,vide}.png` (intégration vérifiée en local avec `claude/sprint-scene-1`
     fusionnée et le conflit résolu comme ci-dessous : bulles placées par la vraie caméra autour de Pilou).
 
+## Réponse à l'orchestrateur (message de 21:20, règle de merge du sprint)
+- Règle reçue et appliquée : merge dès que c'est vert, captures regardées et pas de conflit ; je ne pousse plus sur
+  #1056 avant son merge ; la suite est sur `claude/sprint-bulles-2`.
+- Jonction avec SCÈNE déjà faite : `CompanionHome` monte `<CompanionScene>` (par `import.meta.glob`) avec les
+  bulles dans `overlay`, plus `label`, `name` et `mood`. Vérifié en local avec `claude/sprint-scene-1` fusionnée
+  (captures `…-sprint-bulles-avec-scene-*.png`).
+- Conflit dans `Dashboard.jsx` avec #1053, quel que soit l'ordre : garder `<CompanionHome …>` seule (elle monte la
+  scène), retirer `{home && companionSceneEnabled() && <CompanionScene />}` et ses deux imports. Si #1053 passe
+  avant, je le fais une fois dans #1056.
+- (Je n'ai pas pu vous répondre par message de session : refus « appareil non approuvé ».)
+
 ## Branche 2 (`claude/sprint-bulles-2`, PR après le merge de #1056)
 - La nuit : les bulles restantes deviennent des lucioles (cible de 44 px, toujours touchables), « Pilou dort. Le reste
   peut attendre demain. » ; heure lue dans `time:phase` de la scène (`nuit`), sinon 22 h 30 à 5 h.
