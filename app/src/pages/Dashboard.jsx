@@ -31,6 +31,7 @@ import { getHabits } from '../settings/habits'
 import { CYCLE_TYPE, cycleVisible } from '../services/cycle'
 import { goalsOf } from '../settings/onboarding'
 import { TRIAL_TYPE, homeTrial } from '../services/trials'
+import { syncPilouWidget } from '../companion/world/widgetSync'
 import CompanionHome from '../companion/bubbles/CompanionHome'
 import { useFirstWeekInputs } from '../companion/bubbles/useFirstWeekInputs'
 
@@ -184,6 +185,10 @@ export default function Dashboard({ view = 'home' }) {
   const head = headerLine()
   // Refonte étape 1 : sans l'objectif digestion, on ne demande pas le ventre (sauf à qui le note déjà)
   const askGut = gutAsked(gutMode, entries)
+  // Étape 13 : le widget de Pilou (Android) suit ce qui reste à noter aujourd'hui
+  useEffect(() => {
+    if (!loading && !error) syncPilouWidget({ entries, askGut, habits })
+  }, [entries, askGut, habits, loading, error])
 
   return (
     <section className="dashboard">

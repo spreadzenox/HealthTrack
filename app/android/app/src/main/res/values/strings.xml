@@ -7,4 +7,8 @@
     <!-- Required by Health Connect: URL shown in the permissions rationale screen.
          Points to the in-app privacy policy bundled with the APK (served from assets). -->
     <string name="health_connect_privacy_policy_url">file:///android_asset/public/privacypolicy.html</string>
+    <!-- Widget de Pilou (PilouWidget.java) -->
+    <string name="pilou_widget_label">Ma journée</string>
+    <string name="pilou_widget_description">Pilou sur son îlot et ce qu\'il reste à noter aujourd\'hui.</string>
+    <string name="pilou_widget_placeholder_title">Ma journée</string>
 </resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Widget de Pilou : 4 × 2 cases, redessiné toutes les 30 min (heure, soir, nuit, changement de jour). -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/pilou_widget_description"
+    android:initialLayout="@layout/widget_pilou"
+    android:minWidth="250dp"
+    android:minHeight="110dp"
+    android:previewImage="@drawable/pilou_pose_content"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen" />
