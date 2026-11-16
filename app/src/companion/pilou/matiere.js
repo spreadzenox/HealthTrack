@@ -65,6 +65,7 @@ export function makeMatiere(THREE, makeCanvas) {
 
   /** Injection dans une matière standard/physique : { key, uniforms, vDecl, fDecl, vrep, frep, sss }. */
   function patchMat(mat, o) {
+    if (o.essai) return mat // ESSAI
     const U = Object.assign({}, NOISE_U, o.uniforms || {})
     if (o.sss) {
       U.uWrap = { value: new THREE.Vector3(...o.sss.wrap) }

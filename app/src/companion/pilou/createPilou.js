@@ -224,7 +224,7 @@ export function createPilou(THREE, options = {}) {
       uLidT: { value: 0.9 }, uLidB: { value: -0.9 }, uCut: { value: 0.5 }, uKeyU: { value: V2(0, 1) },
     }
     const mat = M.patchMat(keep(new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.34, clearcoat: 1, clearcoatRoughness: 0.03, specularIntensity: 0.25, envMapIntensity: 1.25 })), {
-      key: 'pilou-oeil', uniforms: U,
+      key: 'pilou-oeil', uniforms: U, essai: true,
       vDecl: 'varying vec3 vU;', vrep: [['#include <begin_vertex>', '#include <begin_vertex>\nvU = position;']],
       fDecl: `varying vec3 vU; uniform vec3 uCamU; uniform mat3 uGaze, uGazeT; uniform float uPupil, uLidT, uLidB, uCut; uniform sampler2D uIris; uniform vec2 uKeyU;
               float eyeOcc = 1.;`,
