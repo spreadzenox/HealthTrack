@@ -38,6 +38,8 @@ import { CHANGELOG } from '../data/changelog'
 import { getLastSeenId, markAllSeen } from '../services/whatsNew'
 import { APP_NAME } from '../config/brand'
 import './Onboarding.css'
+import MeetPilou from '../companion/life/MeetPilou'
+import OnboardingPilou from '../companion/life/OnboardingPilou'
 import { getApproxPosition } from '../services/approxPosition'
 import { disableWeather, enableWeather, getWeatherSettings, syncWeather } from '../services/weatherSync'
 import {
@@ -731,7 +733,7 @@ function LaunchStep({ until }) {
 /**
  * Accueil du premier lancement, en 4 temps (refonte « Compagnon », étape 5b) : plein écran, sans barre d'onglets,
  * reprend à l'écran où la personne s'était arrêtée. « Continuer » n'est jamais bloqué par une autorisation ni par un
- * choix. La rencontre de Pilou viendra à l'étape 12.
+ * choix. Étape 12 (lot VIE) : la rencontre de Pilou et son nom après l'ouverture, Pilou en tête de chaque temps.
  */
 export default function Onboarding() {
   const navigate = useNavigate()
@@ -803,7 +805,7 @@ export default function Onboarding() {
   if (step === 'intro') footerLabel = 'Commencer'
   if (step === 'notes') footerLabel = 'C’est parti !'
   const faceUndecided = step === 'face' && state.face == null && !isFaceSenseEnabled()
-  const showFooter = !(step === 'premium' && !launch) && !faceUndecided
+  const showFooter = !(step === 'premium' && !launch) && !faceUndecided && step !== 'meet'
 
   return (
     <div className="onboarding">
@@ -838,6 +840,8 @@ export default function Onboarding() {
 
       <main className="onb-body">
         {step === 'intro' && <IntroStep />}
+        {step === 'meet' && <MeetPilou mode="onboarding" onDone={() => go(state.step + 1)} />}
+        {temps >= 0 && <OnboardingPilou step={step} gut={gut} watch={state.watch} />}
         {step === 'goal' && <GoalStep gut={gut} onGut={(on) => update(chooseObjectives(state, on))} />}
         {step === 'watch' && <WatchStep state={state} update={update} installed={installed} />}
         {step === 'auto' && (
