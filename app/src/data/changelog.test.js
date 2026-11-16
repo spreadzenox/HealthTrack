@@ -43,3 +43,9 @@ describe('changelog par variante (VC-5)', () => {
     expect(changelogFor(ALL_CHANGELOG, 'sideload').some((e) => e.id < PLAY_CHANGELOG_SINCE)).toBe(true)
   })
 })
+
+describe('notes à la une (REFONTE-UPG-2)', () => {
+  it('la note de la nouvelle navigation est à la une, et elle seule', () => {
+    expect(ALL_CHANGELOG.filter((e) => e.aLaUne).map((e) => e.id)).toEqual(['2026-11-15-0435-refonte-navigation'])
+  })
+})

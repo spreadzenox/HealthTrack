@@ -1,7 +1,7 @@
 import { useReducer } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useChangelog } from '../hooks/useChangelog'
-import { getLastSeenId, getUnseenEntries, markAllSeen } from '../services/whatsNew'
+import { bannerHeadline, getLastSeenId, getUnseenEntries, markAllSeen } from '../services/whatsNew'
 import './WhatsNew.css'
 
 export default function WhatsNewBanner({ changelog: given }) {
@@ -21,7 +21,7 @@ export default function WhatsNewBanner({ changelog: given }) {
   return (
     <div className="whats-new-banner" role="status">
       <p className="whats-new-banner-text">
-        <strong>Nouveau :</strong> {unseen[0].title}
+        <strong>Nouveau :</strong> {bannerHeadline(unseen).title}
         {unseen.length > 1 && ` et ${unseen.length - 1} autre${unseen.length > 2 ? 's' : ''} changement${unseen.length > 2 ? 's' : ''}`}
       </p>
       <div className="whats-new-banner-actions">
