@@ -106,9 +106,7 @@ describe('bus du compagnon', () => {
   })
 
   it('chaque événement du code est décrit dans CONTRAT.md', async () => {
-    const { readFileSync } = await import('fs')
-    const { resolve } = await import('path')
-    const md = readFileSync(resolve(__dirname, 'CONTRAT.md'), 'utf-8')
+    const { default: md } = await import('./CONTRAT.md?raw')
     for (const name of Object.values(EVENTS)) expect(md, name).toContain(`\`${name}`)
   })
 })
