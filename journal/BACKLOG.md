@@ -360,6 +360,23 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [ ] **POLISH-SIM-108 — Petits** : « Encore 4 choses aujourd'hui » ne baisse pas après un repas noté ; essai : les
       jours « comme d'habitude » marqués « pas tenu » ; export CSV demandé (persona Tout mesurer : proposition, pas
       une fonction à coder sans accord). « Gêne » qui ne reste pas cochée : traité par UPG-4 (#1045).
+- **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
+  l'intégrateur le 16/11 à 21:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais) et #1048 (MONDE) sur main, le reste en PR.
+  - SCÈNE (8) : #1053 (contrat `companion/CONTRAT.md` et `bus.js`, three.js r187 MIT, île, lumière, paliers, pause,
+    image fixe de repli, interrupteur `halcya.companion.scene`) ; branche 2 prête (7 cadeaux en 3D, météo de l'île).
+    À relever après merge : palier et temps d'image sur le job Android 9 et le simulateur iPhone.
+  - PILOU (9) : #1058, à merger après #1053 (corps verni, yeux de la créature, 12 expressions, ΔE menthe 2,8 moyen /
+    3,8 max dans la scène, 9 050 triangles) ; petits Pilou pré-rendus (12 × 218×240 webp) pour VIE et MONDE.
+  - BULLES (10) : #1056 (bulles-boutons, Humeur du jour à plancher, fleurs, « Jour N sur 7 », 7 cadeaux ; check
+    « Budget de lectures » corrigé) ; branche 2 : lucioles la nuit, jour 14, bandeau au défilement.
+  - VIE (11, 12) : #1051 (Pilou dans Ma journée) et #1054 (rencontre et nom, une seule fois pour un utilisateur
+    d'avant la refonte, bloc `companion` dans l'export et l'import, testé sur base ancienne) ; branches 3 et 4 :
+    cérémonie du jour 7, Pilou dans Objectifs et Données, assiette reniflée. Graines `--meet`/`--ceremony` des captures.
+  - MONDE (13) : **#1048 mergée** (38c46e2, 16/11 vers 21:45) (lumière par heure, météo, croissance, widget : fonctions pures) ; la suite en une seule PR après.
+  - STUDIO (14) : #1052 (fiche de traits locale, export et import, écran derrière l'interrupteur du compagnon) ;
+    branche 3 : pièces 3D sur le Pilou figurine (`equiperPilou`).
+  - PHOTO (15) : **#1047 mergée** (2749dca ; relais, route éteinte, `503 disabled`) et #1050 (app, interrupteur de build éteint partout) ;
+    missions P49 (Play) et PI3 (App Store) préparées, arrêtées avant l'envoi. Rien de visible pour les testeurs.
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.
