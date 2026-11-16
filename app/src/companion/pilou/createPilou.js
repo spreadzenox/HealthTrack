@@ -83,6 +83,8 @@ export function createPilou(THREE, options = {}) {
   const faceCtx = ctx2d(faceCv)
   const faceTex = keep(new THREE.CanvasTexture(faceCv))
   faceTex.colorSpace = THREE.SRGBColorSpace
+  faceTex.generateMipmaps = false
+  faceTex.minFilter = THREE.LinearFilter
   const bodyU = {
     uFace: { value: faceTex }, uBellyCol: { value: C(PAL.belly) },
     uDark: { value: C('#5CC69F') }, uLight: { value: C('#8BE3C2') }, uThick: { value: 0.9 }, uBal: balU,
@@ -219,13 +221,13 @@ export function createPilou(THREE, options = {}) {
     sc.scale.set(EX, EY, EZ)
     g.add(sc)
     const U = {
-      uCamU: { value: new THREE.Vector3(0, 0, 10) }, uGaze: { value: new THREE.Matrix3() }, uPupil: { value: 0.4 }, uIris: { value: irisTex },
+      uCamU: { value: new THREE.Vector3(0, 0, 10) }, uGaze: { value: new THREE.Matrix3() }, uGazeT: { value: new THREE.Matrix3() }, uPupil: { value: 0.4 }, uIris: { value: irisTex },
       uLidT: { value: 0.9 }, uLidB: { value: -0.9 }, uCut: { value: 0.5 }, uKeyU: { value: V2(0, 1) },
     }
     const mat = M.patchMat(keep(new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.34, clearcoat: 1, clearcoatRoughness: 0.03, specularIntensity: 0.25, envMapIntensity: 1.25 })), {
       key: 'pilou-oeil', uniforms: U,
       vDecl: 'varying vec3 vU;', vrep: [['#include <begin_vertex>', '#include <begin_vertex>\nvU = position;']],
-      fDecl: `varying vec3 vU; uniform vec3 uCamU; uniform mat3 uGaze; uniform float uPupil, uLidT, uLidB, uCut; uniform sampler2D uIris; uniform vec2 uKeyU;
+      fDecl: `varying vec3 vU; uniform vec3 uCamU; uniform mat3 uGaze, uGazeT; uniform float uPupil, uLidT, uLidB, uCut; uniform sampler2D uIris; uniform vec2 uKeyU;
               float eyeOcc = 1.;`,
       frep: [
         ['#include <color_fragment>', `#include <color_fragment>
@@ -237,7 +239,7 @@ export function createPilou(THREE, options = {}) {
           float zI = .6, pg = dot(p, g);
           float den = min(dot(rr, g), -1e-3);
           vec3 hit = p + rr * ((zI - pg) / den);
-          vec3 loc = transpose(uGaze) * hit;
+          vec3 loc = uGazeT * hit;
           vec2 q = loc.xy / .8;
           float rho = pg > zI ? length(q) : 1.3;
           vec2 dir = q / max(rho, 1e-4);
@@ -468,8 +470,16 @@ export function createPilou(THREE, options = {}) {
         pos.setXYZ(kk, v.x, v.y, v.z)
       }
     }
-    antMesh.geometry.dispose()
-    antMesh.geometry = geo
+    // on garde les mêmes tampons GPU : seules les positions et normales sont réécrites (aucune création par image)
+    if (!antMesh.geometry.index) antMesh.geometry = geo
+    else {
+      antMesh.geometry.attributes.position.array.set(geo.attributes.position.array)
+      antMesh.geometry.attributes.normal.array.set(geo.attributes.normal.array)
+      antMesh.geometry.attributes.position.needsUpdate = true
+      antMesh.geometry.attributes.normal.needsUpdate = true
+      antMesh.geometry.computeBoundingSphere()
+      geo.dispose()
+    }
     const tip = rot(new THREE.Vector3(0.222, 0.292, 0), ax, az)
     bead.position.copy(tip)
     halo.position.copy(tip)
@@ -666,6 +676,7 @@ export function createPilou(THREE, options = {}) {
       const pitch = clamp(lerp(F.lookY * 0.32, camPitch, w), -0.45, 0.45)
       tm.makeRotationFromEuler(te.set(-pitch, yaw, 0, 'YXZ'))
       e.U.uGaze.value.setFromMatrix4(tm)
+      e.U.uGazeT.value.copy(e.U.uGaze.value).transpose()
       tv.copy(keyDir)
       e.g.getWorldQuaternion(tq)
       tv.applyQuaternion(tq.invert())

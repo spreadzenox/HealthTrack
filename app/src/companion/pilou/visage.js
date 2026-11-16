@@ -8,7 +8,7 @@ const KEYS = ['ferme', 'blush', 'hatch', 'brow', 'mw', 'mU', 'mL', 'mA', 'mx', '
 const BROW = ['browY', 'browA', 'browYL', 'browYR', 'lookX', 'lookY', 'es', 'esy']
 export function faceKey(F) {
   let k = ''
-  for (const n of KEYS) k += (F[n] ?? 0).toFixed(3) + ','
+  for (const n of KEYS) k += Math.round((F[n] ?? 0) * 250) + ',' // pas de 0,004 : on ne renvoie la toile au GPU que si ça se voit
   if (F.brow > 0.01) for (const n of BROW) k += (F[n] ?? 0).toFixed(3) + ','
   return k
 }
