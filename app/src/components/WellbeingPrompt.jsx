@@ -26,6 +26,7 @@ import {
 import { APP_NAME } from '../config/brand'
 import LineIcon from './LineIcon'
 import { NOTE_CHOICES, choiceToScore, scoreToChoice } from '../services/mood/wellbeingScale'
+import WellbeingMirror from '../companion/life/WellbeingMirror'
 
 
 const minuteToTime = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
@@ -307,6 +308,8 @@ export default function WellbeingPrompt({ open = false, onClose, onSaved, entry,
           ))}
         </div>
         )}
+        {/* Lot VIE (étape 11) : le miroir, Pilou reflète le cran choisi (SPEC journée § 4) */}
+        {!reminderMode && selected != null && <WellbeingMirror choice={selected} />}
 
         {showDetails && (
           <div className="wellbeing-details">

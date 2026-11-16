@@ -4,7 +4,9 @@
  * photo), bien-être (« Noter »), digestion le soir (seulement avec l'objectif digestion). Une ligne part quand
  * c'est fait ; tout fait : « Plus rien à faire ». « Déjà noté (n) » rouvre les saisies du jour pour les modifier.
  * Étape 4 : une ligne miel par habitude suivie, « Oui » et « Non » de même poids (on note, on ne juge pas).
- * Aucune calorie ici, aucun compteur de jours manqués (brief § 5). Pilou arrive plus tard.
+ * Aucune calorie ici, aucun compteur de jours manqués (brief § 5).
+ * Étape 11 (lot VIE) : la bannière de Pilou remplace « Encore N choses » et répond à chaque saisie ; la fin de
+ * journée est la sienne (fête sobre, ou le calme du soir à partir de 21 h).
  */
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -15,6 +17,12 @@ import { scoreToChoice } from '../services/mood/wellbeingScale'
 import { appLocale } from '../i18n/locale.js'
 import MealPhotoButton from './MealPhotoButton'
 import LineIcon from './LineIcon'
+import PilouBanner from '../companion/life/PilouBanner'
+import PilouFigure from '../companion/life/PilouFigure'
+import { finishedLine } from '../companion/life/lines'
+import { companionName } from '../companion/life/companionState'
+import { useDayDone } from '../companion/life/useDayDone'
+import { localDateKey } from '../services/analysisEngine'
 import './DayChecklist.css'
 
 /** Temps laissé à la ligne pour dire « Noté » puis partir (spec § 2 : pose ≥ 300 ms, glissé 400 ms). */
@@ -85,7 +93,8 @@ function HabitLine({ habit, onAnswer }) {
  *   onHabit?: (habit: object, done: boolean) => void, onHabitUndo?: (entry: object) => void }} props
  */
 export default function DayChecklist({ entries, askGut = false, habits = [], now, onWellbeing, onGut, onHabit, onHabitUndo }) {
-  const list = dayChecklist(entries, { now: now || new Date(), askGut, habits })
+  const at = now || new Date()
+  const list = dayChecklist(entries, { now: at, askGut, habits })
   const [notedOpen, setNotedOpen] = useState(false)
   // Une ligne faite sous nos yeux reste le temps de dire « Noté », puis part (spec § 2).
   const pendingBefore = useRef(null)
@@ -109,17 +118,14 @@ export default function DayChecklist({ entries, askGut = false, habits = [], now
 
   const shown = list.tasks.filter((t) => !t.done || leaving.includes(t.id))
   const finished = list.allDone && !leaving.length
+  useDayDone(finished)
 
   return (
     <section className="day-checklist" aria-label="À noter aujourd’hui">
       <p className="visually-hidden" role="status">{said}</p>
-      {!list.allDone && (
-        <p className="day-remaining">
-          <span>{remainingText(list.remaining)}</span>
-          <span className="day-dots" aria-hidden="true">
-            {list.tasks.map((t) => <span key={t.id} className={t.done ? 'day-dot' : 'day-dot is-todo'} />)}
-          </span>
-        </p>
+      {!finished && (
+        <PilouBanner entries={entries} tasks={list.tasks} remaining={list.allDone ? 0 : list.remaining}
+          todayKey={localDateKey(at.toISOString())} now={at} />
       )}
       {shown.map((t) => {
         const gone = t.done
@@ -146,13 +152,16 @@ export default function DayChecklist({ entries, askGut = false, habits = [], now
           </div>
         )
       })}
-      {finished && (
-        <div className="day-finished" data-tone="mint">
-          <span className="day-finished-mark" aria-hidden="true"><LineIcon name="check" size={26} /></span>
-          <h2 className="day-finished-title">Plus rien à faire</h2>
-          <p className="day-finished-text">Tout est noté pour aujourd’hui.</p>
-        </div>
-      )}
+      {finished && (() => {
+        const end = finishedLine(at.getHours(), companionName())
+        return (
+          <div className={`day-finished${end.move === 'sleep' ? ' is-night' : ''}`} data-tone="mint" data-testid="day-finished">
+            <PilouFigure size={88} expr={end.expr} move={end.move} className="day-finished-pilou" />
+            <h2 className="day-finished-title">{end.title}</h2>
+            <p className="day-finished-text">{end.text}</p>
+          </div>
+        )
+      })()}
       {list.noted.length > 0 && (
         <div className="day-noted">
           <button type="button" className="day-noted-toggle" aria-expanded={notedOpen} onClick={() => setNotedOpen((o) => !o)}>
