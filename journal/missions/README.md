@@ -51,6 +51,8 @@ retour à la routine.
 | [P34](P34.md) | Vérifier l'enregistrement de Halcya (vérification des développeurs Android) | b | maintenant (pas urgent) |
 | [P45](P45.md) | Adresse de commentaires du test fermé, puis relevé anonyme des commentaires des testeurs | b | ✅ adresse en place (13/11) ; relevés du 16/11 et du 19/11 par l'orchestrateur |
 | [ETAT-PLAY](ETAT-PLAY.md) | Relevé de l'état d'examen des pistes Alpha et test interne | b | quand le résumé le demande |
+| [P49](P49.md) | Google Play : déclarer le double numérique par photo (Sécurité des données, politique) | c (préparée jusqu'au bouton) | **pas encore** : quand la routine dit « P49 maintenant » |
+| [PI3](PI3.md) | App Store : déclarer le double numérique par photo (confidentialité, IA tierce) | c (préparée jusqu'au bouton) | **pas encore** : avec P49 |
 | [P48](P48.md) | Ajouter « Menstruation » à la déclaration Health Connect | b puis c | **pas encore** (« P48 maintenant » en tête du résumé) |
 | [P30](P30.md) | Demander l'accès à la production | b puis c | au jour 14 du test fermé |
 | [P32](P32.md) | Pays de la production | b puis c | le jour de la production |
