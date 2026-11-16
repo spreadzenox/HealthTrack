@@ -136,7 +136,7 @@ export function makeMatiere(THREE, makeCanvas) {
 
   function canvasTex(w, h, draw, srgb = true) {
     const c = makeCanvas(w, h)
-    const x = c.getContext('2d')
+    const x = c.getContext('2d', { willReadFrequently: true })
     if (x) draw(x, w, h)
     const t = new THREE.CanvasTexture(c)
     if (srgb) t.colorSpace = THREE.SRGBColorSpace
