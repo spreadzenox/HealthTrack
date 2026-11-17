@@ -1,0 +1,2 @@
+Executable=/Users/runner/work/_temp/dd/Build/Products/Debug-iphonesimulator/App.app/App
+[Dict]
