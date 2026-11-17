@@ -16,8 +16,9 @@ de 10022f1 en cours à 02:35  ·  **TestFlight** : 1107.1107 chez « Testeurs Ha
 - **#1070 (SCÈNE 4, assemblage) mergée à 02:09** (930dcdd) sous la règle de la dernière vague (build iOS vert sur le
   commit précédent 6bf72be ; le dernier commit ne résolvait qu'un conflit de `pageStyles.js`) ; #1065 fermée.
 - **Lots finis : SCÈNE (02:12), VIE (02:10), BULLES, MONDE, PHOTO.**
-- En PR : #1071 (PILOU 3) et #1072 (STUDIO 4) : tous les checks verts (Vitest, APK, émulateurs, Android 12L, API 28,
-  relais) sauf « Build iOS (simulateur) et captures », en cours à 02:35. Leurs équipiers mergent s'il finit avant 03:00.
+- **#1071 (PILOU 3) mergée à 02:38** (9b785e3), pendant ce run : branche du journal remise à jour sur main.
+- En PR : #1072 (STUDIO 4) : tous les checks verts (Vitest, APK, émulateurs, Android 12L, API 28, relais) sauf
+  « Build iOS (simulateur) et captures », en cours à 02:40. Son équipier merge s'il finit avant 03:00.
 - Défaut relevé par SCÈNE sur les captures iPhone de #1070, sur main : carte de la rencontre illisible en thème sombre
   (fond clair, texte clair) ; capture iPhone « vide-accueil » blanche ; mode captures recouvert par la rencontre.
   Noté POLISH-MEET-DARK au BACKLOG, premier correctif après 03:00.
@@ -31,6 +32,6 @@ de 10022f1 en cours à 02:35  ·  **TestFlight** : 1107.1107 chez « Testeurs Ha
   anciennes ; rien à faire à 02:30.
 
 ## Suite
-- Premier run après 03:00 : bilan lot par lot en tête du résumé (livré / reste), #1071 et #1072 si encore ouvertes,
+- Premier run après 03:00 : bilan lot par lot en tête du résumé (livré / reste), #1072 si encore ouverte,
   POLISH-MEET-DARK, série de captures de main des deux côtés, #1045, POLISH-FLAKY-DASH, REFONTE-RESTES-SPRINT, puis
   POLISH-SIM-99 à 108 et la fin d'UPG-3.

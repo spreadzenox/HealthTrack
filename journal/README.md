@@ -12,10 +12,10 @@
 ont codé Pilou et son monde en parallèle (étapes 8 à 15). **Cinq lots finis sur sept : Scène, Bulles, Vie, Monde et
 Photo.** Sur main : #1047, #1048, #1053, #1062, #1056, #1060, #1050, #1057, #1058, #1052, #1066, puis **#1067 (Vie, 02:07 :
 le cairn des galets dans « Par famille »)** et **#1070 (Scène, 02:09 : l'assemblage, la nuit sur l'île, Pilou qui dort,
-images fixes avec le vrai Pilou ; release v777, APK 35,3 Mo)**. Tests de main verts. **Deux PR encore ouvertes, tous leurs
-checks verts sauf la build iPhone, en cours** : #1071 (Pilou : petits effets dessinés des expressions, yeux fermés en
-trait) et #1072 (Studio : vos réglages de Studio portés par le vrai Pilou, pièces 3D et visage peint). Leurs équipiers
-les mergent si la build iPhone finit avant 03:00 ; sinon elles restent en PR propre et le run suivant les reprend.
+images fixes avec le vrai Pilou ; release v777, APK 35,3 Mo)**. Tests de main verts. **#1071 (Pilou, 02:38 : petits effets dessinés des
+expressions, yeux fermés en trait) mergée.** **Une PR encore ouverte, tous ses checks verts sauf la build iPhone, en
+cours** : #1072 (Studio : vos réglages de Studio portés par le vrai Pilou, pièces 3D et visage peint). Son équipier la
+merge si la build iPhone finit avant 03:00 ; sinon elle reste en PR propre et le run suivant la reprend.
 **Ce soir, l'envoi Alpha (prévu 23:45, parti les nuits précédentes vers 03:10 à 03:40) emporte la refonte avec Pilou.**
 **Un défaut à corriger en premier après 03:00** (relevé par le lot Scène sur les captures iPhone) : en thème sombre, la
 carte de la rencontre de Pilou garde un fond clair sous un texte clair (« Comment voulez-vous l'appeler ? ») ; vous la
@@ -25,7 +25,7 @@ verrez une fois, à la mise à jour. La capture iPhone « Accueil sans données 
   demain. »), Réglages › Mouvements de Pilou. Reste : la croissance de l'île au fil des semaines et le vrai lever et
   coucher du soleil (fonctions de Monde écrites, pas branchées), le palier de qualité mesuré sur un vrai téléphone.
 - **Pilou (9)** **#1058 mergée** (00:58) : la figurine vernie, ses yeux, 12 expressions, sa montre à l'heure réelle.
-  #1071 (en PR, build iPhone en cours) : petits effets dessinés des expressions, yeux fermés en trait.
+  **#1071 mergée** (02:38) : petits effets dessinés des expressions, yeux fermés en trait. Plus rien en PR.
 - **Bulles (10)** : **lot fini.** #1056 et #1066 : bulles, « Humeur du jour », fleurs, « Jour 3 sur 7 », 7 cadeaux, lucioles
   la nuit, jour 14, bandeau au défilement. Restes : retour haptique (à décider : ajoute un module natif), îlot qui se
   range en haut au défilement.
@@ -97,7 +97,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
-| 17/11 02:30 — [Intégrateur du sprint](runs/2026-11-17-0230-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v777, APK 35,3 Mo). **#1067 (Vie) mergée à 02:07, #1070 (assemblage de la Scène) à 02:09 ; #1065 fermée. Cinq lots finis sur sept.** #1071 (Pilou) et #1072 (Studio) : checks verts sauf la build iPhone, en cours. Défaut relevé : carte de la rencontre illisible en thème sombre (premier correctif après 03:00). Alpha du soir pas encore parti. Journal seul. |
+| 17/11 02:30 — [Intégrateur du sprint](runs/2026-11-17-0230-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v777, APK 35,3 Mo). **#1067 (Vie) mergée à 02:07, #1070 (assemblage de la Scène) à 02:09 ; #1065 fermée. Cinq lots finis sur sept.** **#1071 (Pilou) mergée à 02:38.** #1072 (Studio) : checks verts sauf la build iPhone, en cours. Défaut relevé : carte de la rencontre illisible en thème sombre (premier correctif après 03:00). Alpha du soir pas encore parti. Journal seul. |
 | 17/11 01:30 — [Intégrateur du sprint](runs/2026-11-17-0130-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v774, APK 35,3 Mo). **#1052 (Studio) mergée à 01:22, #1066 (Bulles 2) à 01:30 : lots Bulles, Monde et Photo finis.** Un rouge isolé de Tests sur 99c1de6 (test de Ma journée instable), vert au commit suivant. 5 PR du sprint ouvertes (#1065, #1067, #1070, #1071, #1072). Alpha du soir pas encore parti (retard habituel du cron). Journal seul. |
 | 17/11 00:30 — [Intégrateur du sprint](runs/2026-11-17-0030-integrateur-sprint.md) | 📝 | Main vert (Tests, Build & Release v771). **#1050 (Photo, éteinte) mergée à 00:26 : lot Photo fini**, puis **#1057 (Monde : widget Android, notifications du soir)** à 00:40. puis **#1058 (Pilou figurine)** à 00:58. 4 PR du sprint ouvertes (#1052 Studio, #1065 Scène, #1066 Bulles, #1067 Vie). Envoi Alpha du soir pas encore parti à 00:30 (retard habituel du cron) ; examen bêta TestFlight au premier run où la build du soir est traitée. Journal seul. |
 | 16/11 23:30 — [Intégrateur du sprint](runs/2026-11-16-2330-integrateur-sprint.md) | 📝 | Main vert (v767). **#1062 (Scène 2 : cadeaux en 3D, météo de l'île) mergée** pendant le run, puis **#1056 (Bulles)** et **#1060 (Vie)**, Tests de main verts ; 4 PR du sprint attendent leur build iPhone. Assemblage local des 7 PR par le lot Scène : 3 980 tests verts, l'Accueil complet tient ; conflits entre lots identifiés et résolus sur le papier. Rien à faire de votre côté |
