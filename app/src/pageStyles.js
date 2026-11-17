@@ -41,6 +41,8 @@ import './components/SoonList.css'
 import './components/MealFodmapLine.css'
 // Licences des composants de tiers (LICENCES-TIERCES, 02/11)
 import './pages/Licences.css'
+// Scène du compagnon (refonte, étape 8, lot SCÈNE) : montée à la demande par l'Accueil, son style reste chargé d'emblée
+import './companion/CompanionScene.css'
 // Studio Pilou (refonte « Compagnon », étape 14, lot STUDIO)
 import './companion/studio/Studio.css'
 // Double numérique par photo (refonte, étape 15 ; écran monté seulement si VITE_PILOU_PHOTO=on)
