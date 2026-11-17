@@ -1,6 +1,17 @@
 # Lot BULLES — étape 10 du brief (Compagnon 2)
 
-Mis à jour : 16/11 21:15 (heure de Paris). PR 1 : #1056.
+**LOT FINI** (17/11 01:35, heure de Paris). Sur main : #1056 (bulles, humeur du jour, fleurs, première semaine et
+cadeaux) et #1066 (la nuit en lucioles, le jour 14, le bandeau au défilement, le nom choisi). Plus rien en PR.
+Mergés avec les garde-fous entiers (checks verts, build iOS comprise, captures regardées des deux côtés) ; pas de
+recours à la règle de la dernière vague.
+
+## Ce qui reste (hors sprint, à décider)
+- Retour haptique de la SPEC (appui, éclatement, cadeau) : l'app n'a pas `@capacitor/haptics` ; l'ajouter touche les
+  builds natives Android et iPhone.
+- Bandeau au défilement complet (ile.SPEC § 9) : l'îlot qui rétrécit et se range en haut à gauche ; aujourd'hui, un
+  bandeau simple prend le relais quand l'îlot sort de l'écran.
+- Cérémonie du cadeau et grande fleur du jour 14 en 3D : côté scène (le bus émet `gift:opened`, `gift:placed`,
+  `flower:grow`, `milestone`).
 
 ## Où j'en suis
 - **PR 1 (`claude/sprint-bulles-1`)** : l'Accueil a ses bulles, sa jauge et sa première semaine, avec ou sans 3D.
@@ -20,6 +31,44 @@ Mis à jour : 16/11 21:15 (heure de Paris). PR 1 : #1056.
   - Captures : `journal/runs/captures/2026-11-16-sprint-bulles-accueil-{demo,vide,sombre}.png` (îlot dessiné, sans la
     scène) et `…-sprint-bulles-avec-scene-{demo,vide}.png` (intégration vérifiée en local avec `claude/sprint-scene-1`
     fusionnée et le conflit résolu comme ci-dessous : bulles placées par la vraie caméra autour de Pilou).
+
+## Réponse à l'orchestrateur (message de 21:20, règle de merge du sprint)
+- Règle reçue et appliquée : merge dès que c'est vert, captures regardées et pas de conflit ; je ne pousse plus sur
+  #1056 avant son merge ; la suite est sur `claude/sprint-bulles-2`.
+- Jonction avec SCÈNE déjà faite : `CompanionHome` monte `<CompanionScene>` (par `import.meta.glob`) avec les
+  bulles dans `overlay`, plus `label`, `name` et `mood`. Vérifié en local avec `claude/sprint-scene-1` fusionnée
+  (captures `…-sprint-bulles-avec-scene-*.png`).
+- Conflit dans `Dashboard.jsx` avec #1053, quel que soit l'ordre : garder `<CompanionHome …>` seule (elle monte la
+  scène), retirer `{home && companionSceneEnabled() && <CompanionScene />}` et ses deux imports. Si #1053 passe
+  avant, je le fais une fois dans #1056.
+- (Je n'ai pas pu vous répondre par message de session : refus « appareil non approuvé ».)
+
+## Branche 2 (`claude/sprint-bulles-2`, PR après le merge de #1056)
+- La nuit : les bulles restantes deviennent des lucioles (cible de 44 px, toujours touchables), « Pilou dort. Le reste
+  peut attendre demain. » ; heure lue dans `time:phase` de la scène (`nuit`), sinon 22 h 30 à 5 h.
+- Jour 14 : grande fleur pêche (`flower:grow` scale 2,1), `milestone` `day14`, « Confort digestif : premier score
+  prêt », une seule fois et seulement pour qui a vu le délai courir.
+- Bandeau au défilement (ile.SPEC § 9, en partie) : quand l'îlot sort de l'écran, un bandeau en haut (humeur, pastilles,
+  « N bulles à faire ») ramène à l'îlot. L'îlot ne se réduit pas en remontant (version simple).
+- Nom : lu dans `life/companionState.js` du lot VIE dès qu'il est là (`import.meta.glob`), sinon « Pilou ».
+
+## Correctif de la PR 1 (budget de lectures)
+- Le check « Budget de lectures (perf) » a échoué : l'Accueil lançait le calcul des états du jour (16 206 lectures,
+  budget 1 500). Corrigé : relecture du cache, sinon compte léger sur 45 jours (598 lectures en local, budget
+  respecté). **Pour tous les lots : ne lancez pas `getAnalysis(...)` depuis l'Accueil.**
+
+## Captures iPhone de #1056 (branche captures/pr-1056, avant le merge de main)
+- Accueil en clair, en sombre et vide sur iPhone 16e et 17 Pro : bulles, jauge et barre de la semaine conformes.
+- En « grand texte », un mot débordait (« Digestio ») et « Bien-être » se coupait au trait d'union : corrigé dans le
+  dernier commit (taille du mot en unités de la bulle, mots jamais coupés).
+
+## Pour le lot SCÈNE (constat, rien de bloquant)
+- `webglAvailable()` (`companion/mood.js`) ouvre un contexte WebGL de sonde à chaque montage de la scène, sans le
+  libérer (`WEBGL_lose_context`) : une fois, une capture locale a montré « Too many active WebGL contexts ».
+
+## Non fait, pour l'intégrateur
+- Retour haptique de la SPEC (appui, éclatement, cadeau) : l'app n'a pas `@capacitor/haptics` ; l'ajouter touche les
+  builds natives Android et iPhone, à décider hors sprint.
 
 ## ⚠ ORDRE DES MERGES AVEC SCÈNE (à relayer, merci)
 La PR SCÈNE monte `<CompanionScene />` dans `Dashboard.jsx` juste après l'en-tête ; ma PR monte `<CompanionHome>` au
