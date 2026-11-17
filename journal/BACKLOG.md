@@ -3,6 +3,8 @@
 > Document vivant, maintenu par Claude à chaque run. Cocher ce qui est livré (avec le n° de PR),
 > re-prioriser librement. Les idées viennent de l'audit de l'app, de `RESEARCH.md` et des runs.
 
+> **🔴 17/11 19:30 — CI-BILLING** : GitHub Actions refuse tous les jobs (« account is locked due to a billing issue »). Bloque merges, releases, Alpha et TestFlight. Geste du propriétaire : mission `missions/P50.md`. Au retour : relancer les checks de #1090 (`gh api -X POST …/actions/runs/<id>/rerun`), la merger, puis vérifier Build & Release, Play — AAB et TestFlight.
+
 ## Vision (horizon 6–12 mois) — réorientée le 11/10/2026 (directions du propriétaire, voir charte §0)
 
 HealthTrack devient le **hub ultime de la santé, de l'humeur et de la vie** — un « humain augmenté par les

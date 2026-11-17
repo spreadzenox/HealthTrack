@@ -264,6 +264,12 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 4. Actions du propriétaire (jamais faites par la routine) — la plus débloquante d'abord
 
+> **🔴 P50 (17/11, 19:30) — la plus débloquante : le compte GitHub est bloqué pour un problème de facturation.**
+> Depuis le 17/11 vers 18:40, chaque job GitHub Actions échoue sans démarrer (« The job was not started because your
+> account is locked due to a billing issue »). Tant que ce n'est pas réglé : aucun test de PR, donc aucun merge ; aucune
+> release, aucun envoi Alpha ni TestFlight. Voie b jusqu'à l'écran de paiement, c pour le paiement :
+> [`missions/P50.md`](missions/P50.md) (https://github.com/settings/billing).
+
 > **Décision du propriétaire du 13/11 vers 19:05 — un seul dépôt, une seule routine (« go bascule ») : faite.** La
 > version iPhone vit dans `iphone/` (#945, #950) ; cette routine fait Android (Google Play) et l'iPhone (App Store,
 > TestFlight). Un produit, deux magasins : une fonction n'est livrée que des deux côtés, ou avec une ligne de

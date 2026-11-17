@@ -44,6 +44,7 @@ retour à la routine.
 
 | Mission | Objet | Voie | Quand |
 |---|---|---|---|
+| [P50](P50.md) | **Débloquer GitHub Actions : le compte GitHub est bloqué pour un problème de facturation** (17/11) | b puis c (le paiement) | **maintenant : plus aucun test, release ni envoi tant que ce n'est pas fait** |
 | [P43](P43.md) | Activer l'API qui lit les plantages (Android vitals) | b | ✅ fait le 14/11 par l'orchestrateur |
 | [P46](P46.md) | Expiration des avis au bout de 90 jours (Firestore `feedback`) | b | ✅ fait le 14/11 par l'orchestrateur |
 | [P39](P39.md) | Expiration des clés App Attest (Firestore `appattest`) | b | ✅ fait le 14/11 par l'orchestrateur |
