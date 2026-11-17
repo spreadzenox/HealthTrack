@@ -1,0 +1,54 @@
+import { describe, it, expect, afterEach, vi } from 'vitest'
+import { render, screen, cleanup } from '@testing-library/react'
+import { bus, EVENTS } from './bus'
+import { USAGE_DAYS_KEY, WORLD_SEEN_KEY } from './world/context.js'
+import { worldDayKey } from './world/daylight.js'
+
+const { default: CompanionScene } = await import('./CompanionScene')
+
+afterEach(() => {
+  cleanup()
+  bus.clear()
+  localStorage.removeItem(USAGE_DAYS_KEY)
+  localStorage.removeItem(WORLD_SEEN_KEY)
+})
+
+const seenBefore = { pond: false, neighbour: true, tree: false, season: 'automne' }
+
+describe("la nouvelle de l'îlot à l'ouverture (MONDE-4b)", () => {
+  it('le petit arbre est dit dans l’étiquette et Pilou saute, une seule fois', async () => {
+    const now = new Date(2026, 10, 17, 12, 0)
+    localStorage.setItem(USAGE_DAYS_KEY, JSON.stringify({ day: worldDayKey(now), days: 45 }))
+    localStorage.setItem(WORLD_SEEN_KEY, JSON.stringify(seenBefore))
+    const news = []
+    bus.on(EVENTS.WORLD_NEWS, (p) => news.push(p))
+    render(<CompanionScene now={() => now} />)
+    expect(await screen.findByText("L'arbuste est devenu un petit arbre")).toBeTruthy()
+    expect(news.map((p) => p.text)).toEqual(["L'arbuste est devenu un petit arbre"])
+    cleanup()
+    render(<CompanionScene now={() => now} />)
+    await vi.waitFor(() => expect(JSON.parse(localStorage.getItem(WORLD_SEEN_KEY)).tree).toBe(true))
+    await new Promise((r) => setTimeout(r, 50))
+    expect(screen.queryByText("L'arbuste est devenu un petit arbre")).toBeNull()
+  })
+
+  it('la nouvelle passe avant l’étiquette de l’Accueil, le temps de la dire', async () => {
+    const now = new Date(2026, 10, 17, 12, 0)
+    localStorage.setItem(USAGE_DAYS_KEY, JSON.stringify({ day: worldDayKey(now), days: 45 }))
+    localStorage.setItem(WORLD_SEEN_KEY, JSON.stringify(seenBefore))
+    render(<CompanionScene now={() => now} label="Pilou est tranquille · 2 bulles à faire" />)
+    expect(await screen.findByText("L'arbuste est devenu un petit arbre")).toBeTruthy()
+  })
+
+  it('la nuit, Pilou dort : la nouvelle attend le matin', async () => {
+    const night = new Date(2026, 10, 17, 2, 0)
+    localStorage.setItem(USAGE_DAYS_KEY, JSON.stringify({ day: worldDayKey(night), days: 45 }))
+    localStorage.setItem(WORLD_SEEN_KEY, JSON.stringify(seenBefore))
+    const phases = []
+    bus.on(EVENTS.TIME_PHASE, (p) => phases.push(p))
+    render(<CompanionScene now={() => night} />)
+    await vi.waitFor(() => expect(phases.some((p) => p.growth?.tree)).toBe(true))
+    expect(screen.queryByText("L'arbuste est devenu un petit arbre")).toBeNull()
+    expect(JSON.parse(localStorage.getItem(WORLD_SEEN_KEY)).tree).toBe(false)
+  })
+})

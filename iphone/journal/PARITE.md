@@ -123,6 +123,7 @@ Une ligne par livraison Android reportée ici (date, PR `[Auto]`, ce que ça cha
 
 | Date | PR Android | Ce que ça demande côté iOS | État |
 |---|---|---|---|
+| 17/11 22:30 | PR MONDE-4b (nouvelle de l'îlot dite une fois) | Code partagé (`app/src/companion/`, WebView) : rien à corriger côté iOS, `iphone/patches/` ne touche pas `companion/`. | ⏳ en PR #1092, Actions bloquées (P50) |
 | 17/11 21:30 | PR MONDE-4b (petit arbre) | Code partagé (`app/src/companion/scene/gifts.js`, WebView) : rien à corriger côté iOS, `iphone/patches/` ne touche pas `companion/`. | ⏳ en PR (empilée sur MONDE-4a), Actions bloquées (P50) |
 | 17/11 18:30 | PR MONDE-4a (îlot voisin, mare) | Code partagé (`app/src/companion/scene/`, WebView) : rien à corriger côté iOS, `iphone/patches/` ne touche pas `companion/`. Le simulateur sort l'Accueil en image fixe : l'îlot voisin et la mare se verront sur un vrai iPhone. | ⏳ en PR, merge après la build simulateur et les captures de l'Accueil |
 | 17/11 15:30 | PR MONDE-3 (croissance de l'îlot) | Code partagé (`app/src/companion/`, WebView ; décompte des jours d'usage gardé dans `localStorage`, recompté une fois par jour de Pilou) : rien à corriger côté iOS, `iphone/patches/` ne touche pas `companion/`. Sur iPhone, sans widget, le recompte se fait 4 s après l'ouverture de l'Accueil, une fois par jour. | ✅ mergée (#1088, 17/11 17:50) ; build simulateur verte, captures de l'Accueil relues (clair, sombre, vide) |

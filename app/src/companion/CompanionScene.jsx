@@ -40,6 +40,9 @@ function skyStyle(light) {
 /** Délai avant de recompter les jours d'usage : après l'ouverture de l'Accueil, jamais pendant. */
 export const USAGE_RECOUNT_DELAY_MS = 4000
 
+/** Durée de la nouvelle de l'îlot dans l'étiquette. */
+export const WORLD_NEWS_MS = 6000
+
 function hemisphereNow() {
   try {
     const lat = getWeatherSettings()?.location?.lat
@@ -165,6 +168,15 @@ export default function CompanionScene({
             ? world.growthAt(usage.days, now, { hemisphere: hemisphereNow() })
             : null
           bus.emit(EVENTS.TIME_PHASE, { phase: l?.phase, light: l, season, growth, at: Date.now() })
+          // ce qui est nouveau sur l'îlot, dit une fois ; la nuit, Pilou dort : la nouvelle attend son réveil
+          if (growth && !l?.asleep && loadContext) {
+            context()
+              .then((ctx) => {
+                const text = alive ? ctx.takeWorldNews?.({ growth, season }) : null
+                if (text) bus.emit(EVENTS.WORLD_NEWS, { text, at: Date.now() })
+              })
+              .catch(() => {})
+          }
         }
         tick()
         timer = setInterval(() => {
@@ -217,6 +229,19 @@ export default function CompanionScene({
       if (timer) clearInterval(timer)
       if (usageTimer) clearTimeout(usageTimer)
     }
+  }, [])
+
+  // la nouvelle de l'îlot (MONDE-4b) : l'étiquette la dit quelques secondes à la place de l'humeur
+  const [news, setNews] = useState(null)
+  useEffect(() => {
+    let timer = null
+    const off = bus.on(EVENTS.WORLD_NEWS, (p) => {
+      if (!p?.text) return
+      setNews(p.text)
+      clearTimeout(timer)
+      timer = setTimeout(() => setNews(null), WORLD_NEWS_MS)
+    })
+    return () => { off?.(); clearTimeout(timer) }
   }, [])
 
   // la météo réelle (déjà gardée par Halcya) → `weather:changed`, à l'ouverture puis toutes les 30 min
@@ -394,6 +419,7 @@ export default function CompanionScene({
             poke()
           }, { replay: true }),
           bus.on(EVENTS.MILESTONE, () => { P().play?.('fier'); poke() }),
+          bus.on(EVENTS.WORLD_NEWS, () => { if (!asleepNow) P().jump?.({ height: 0.15 }); poke() }),
           bus.on(EVENTS.DAY_DONE, () => { P().setExpression?.('rayonnant'); poke() }),
           bus.on(EVENTS.APP_OPENED, (p) => {
             const r = appOpenedReaction(p, asleepNow)
@@ -483,7 +509,7 @@ export default function CompanionScene({
 
   // la nuit (heure de coucher, lot MONDE), Pilou dort : l'étiquette le dit (SPEC île § 5)
   const asleep = Boolean(light.asleep)
-  const text = label || [asleep ? `${name} dort` : `${name} est ${moodWord(mood)}`, weatherLabel].filter(Boolean).join(' · ')
+  const text = (!asleep && news) || label || [asleep ? `${name} dort` : `${name} est ${moodWord(mood)}`, weatherLabel].filter(Boolean).join(' · ')
   const showFallback = tier === 'bas' || !ready
 
   return (

@@ -38,6 +38,7 @@ export const EVENTS = Object.freeze({
   // Monde (lot MONDE, relayé par la scène)
   TIME_PHASE: 'time:phase',
   WEATHER_CHANGED: 'weather:changed',
+  WORLD_NEWS: 'world:news',
   // Double numérique (lots STUDIO et PHOTO)
   TRAITS_CHANGED: 'traits:changed',
   // Scène (lot SCÈNE)
