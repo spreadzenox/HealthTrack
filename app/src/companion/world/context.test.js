@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { habitualSleep, loadWorldContext, usageDaysFromEntries } from './context.js'
 import { lightAt } from './index.js'
 
@@ -59,5 +59,65 @@ describe('contexte du monde', () => {
 
     const broken = await loadWorldContext({ now, list: async () => { throw new Error('x') }, weatherSettings: () => ({ enabled: false, current }) })
     expect(broken).toEqual({ daysOfUse: 0, wake: null, bedtime: null, hemisphere: 'nord', weather: null })
+  })
+})
+
+describe('worldContextForDay (MONDE-1 : un seul cache pour la scène et le widget)', async () => {
+  const { worldContextForDay, resetWorldContextCache } = await import('./context.js')
+  it('lit une fois par jour de Pilou et relit après 4 h', async () => {
+    resetWorldContextCache()
+    let n = 0
+    const load = vi.fn(async () => ({ wake: 480 + n++, bedtime: 1380 }))
+    const a = await worldContextForDay({ now: new Date(2026, 10, 17, 23, 0), load })
+    const b = await worldContextForDay({ now: new Date(2026, 10, 18, 3, 30), load })
+    expect(b).toBe(a)
+    expect(load).toHaveBeenCalledTimes(1)
+    const c = await worldContextForDay({ now: new Date(2026, 10, 18, 4, 5), load })
+    expect(c.wake).toBe(481)
+    expect(load).toHaveBeenCalledTimes(2)
+    resetWorldContextCache()
+  })
+
+  it('une lecture qui échoue rend un contexte vide (heures par défaut)', async () => {
+    resetWorldContextCache()
+    const v = await worldContextForDay({ now: new Date(2026, 10, 17, 12, 0), load: async () => { throw new Error('x') } })
+    expect(v).toEqual({})
+    resetWorldContextCache()
+  })
+})
+
+describe('travail de nuit (MONDE-1)', () => {
+  it('couché à 8 h, levé à 15 h : Pilou dort le matin et veille le soir', () => {
+    const opts = { wake: 15 * 60, bedtime: 8 * 60 }
+    expect(lightAt(new Date(2026, 10, 17, 10, 0), opts).asleep).toBe(true)
+    expect(lightAt(new Date(2026, 10, 17, 20, 0), opts).asleep).toBe(false)
+    expect(lightAt(new Date(2026, 10, 17, 2, 0), opts).asleep).toBe(false)
+  })
+})
+
+describe('sleepHabitsForDay (budget de lectures de l’Accueil)', async () => {
+  const { sleepHabitsForDay, loadSleepHabits, resetWorldContextCache } = await import('./context.js')
+  it('ne lit que le sommeil des 35 dernières nuits, jamais les notes', async () => {
+    const calls = []
+    const list = async (q) => {
+      calls.push(q)
+      return []
+    }
+    expect(await loadSleepHabits({ now: new Date(2026, 10, 17, 12, 0), list })).toEqual({ wake: null, bedtime: null })
+    expect(calls).toHaveLength(1)
+    expect(calls[0].type).toBe('sleep')
+    expect(calls[0].source).toBeUndefined()
+  })
+
+  it('lit une fois par jour de Pilou ; une erreur rend les heures par défaut', async () => {
+    resetWorldContextCache()
+    const load = vi.fn(async () => ({ wake: 480, bedtime: 1380 }))
+    await sleepHabitsForDay({ now: new Date(2026, 10, 17, 23, 0), load })
+    await sleepHabitsForDay({ now: new Date(2026, 10, 18, 3, 0), load })
+    expect(load).toHaveBeenCalledTimes(1)
+    resetWorldContextCache()
+    const v = await sleepHabitsForDay({ now: new Date(2026, 10, 17, 12, 0), load: async () => { throw new Error('x') } })
+    expect(v).toEqual({ wake: null, bedtime: null })
+    resetWorldContextCache()
   })
 })

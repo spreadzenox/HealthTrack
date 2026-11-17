@@ -1,7 +1,7 @@
 /**
  * Les entrées réelles du monde de Pilou, lues sur le téléphone (rien ne sort) : jours d'usage pour la croissance,
  * lever et coucher habituels pour le cycle du jour (lus dans le sommeil, sinon 7 h et 22 h 30), hémisphère et météo
- * du moment (réglages météo de l'app). La scène appelle `loadWorldContext()` à l'ouverture et au changement de jour,
+ * du moment (réglages météo de l'app). Le widget appelle `loadWorldContext()` (la scène, `sleepHabitsForDay()`) au changement de jour,
  * puis passe ces valeurs à `lightAt`, `weatherDecor` et `growthAt` (index.js).
  */
 import { listEntries } from '../../storage/localHealthStorage'
@@ -9,6 +9,7 @@ import { localDateKey } from '../../services/analysisEngine'
 import { computeSleepRegularity } from '../../services/sleepRegularity'
 import { getWeatherSettings } from '../../services/weatherSync'
 import { countUsageDays } from './growth.js'
+import { worldDayKey } from './daylight.js'
 
 /** Ce que la personne note elle-même : un jour avec l'une de ces sources est un jour d'usage. */
 export const MANUAL_SOURCES = Object.freeze([
@@ -39,25 +40,33 @@ export function habitualSleep(sleepEntries, now = new Date()) {
 }
 
 /**
+ * Lever et coucher habituels seuls (35 nuits au plus) : la lecture légère dont la scène de l'Accueil a besoin.
+ * Ne lève jamais : sans sommeil lisible, `{ wake: null, bedtime: null }` (7 h et 22 h 30).
+ */
+export async function loadSleepHabits({ now = new Date(), list = listEntries } = {}) {
+  try {
+    const since = new Date(now.getTime() - 35 * 86_400_000).toISOString()
+    return habitualSleep(await list({ type: 'sleep', since, limit: 500 }), now)
+  } catch {
+    return { wake: null, bedtime: null }
+  }
+}
+
+/**
  * @returns {Promise<{ daysOfUse: number, wake: number|null, bedtime: number|null, hemisphere: 'nord'|'sud',
  *   weather: object|null }>}
  * Ne lève jamais : en cas d'erreur de lecture, valeurs neutres (îlot de départ, heures par défaut).
  */
 export async function loadWorldContext({ now = new Date(), list = listEntries, weatherSettings = getWeatherSettings } = {}) {
   let daysOfUse = 0
-  let sleep = { wake: null, bedtime: null }
+  let sleep
   try {
     const perSource = await Promise.all(MANUAL_SOURCES.map((source) => list({ source, limit: 5000 })))
     daysOfUse = usageDaysFromEntries(perSource.flat())
   } catch {
     /* lecture impossible : îlot de départ */
   }
-  try {
-    const since = new Date(now.getTime() - 35 * 86_400_000).toISOString()
-    sleep = habitualSleep(await list({ type: 'sleep', since, limit: 500 }), now)
-  } catch {
-    /* sans sommeil lisible : 7 h et 22 h 30 */
-  }
+  sleep = await loadSleepHabits({ now, list })
   let settings = {}
   try {
     settings = weatherSettings() || {}
@@ -72,4 +81,40 @@ export async function loadWorldContext({ now = new Date(), list = listEntries, w
     hemisphere: typeof lat === 'number' && lat < 0 ? 'sud' : 'nord',
     weather: settings.enabled ? settings.current || null : null,
   }
+}
+
+let dayCache = null
+
+/**
+ * Le contexte du monde pour le jour de Pilou en cours (il change à 4 h), lu une seule fois par jour et partagé par
+ * la scène de l'Accueil et le widget Android : les deux s'endorment et se réveillent donc à la même heure.
+ * Ne lève jamais (voir `loadWorldContext`).
+ */
+export function worldContextForDay({ now = new Date(), load = loadWorldContext } = {}) {
+  const day = worldDayKey(now)
+  if (!dayCache || dayCache.day !== day) {
+    dayCache = { day, value: Promise.resolve().then(() => load({ now })).catch(() => ({})) }
+  }
+  return dayCache.value
+}
+
+let habitsCache = null
+
+/**
+ * Lever et coucher habituels pour le jour de Pilou en cours, lus une fois par jour. La scène de l'Accueil s'en sert
+ * au lieu de `worldContextForDay`, qui relit aussi toutes les notes pour compter les jours d'usage (trop lourd à
+ * l'ouverture). Même calcul que le contexte du widget : l'île et le widget s'endorment à la même heure.
+ */
+export function sleepHabitsForDay({ now = new Date(), load = loadSleepHabits } = {}) {
+  const day = worldDayKey(now)
+  if (!habitsCache || habitsCache.day !== day) {
+    habitsCache = { day, value: Promise.resolve().then(() => load({ now })).catch(() => ({ wake: null, bedtime: null })) }
+  }
+  return habitsCache.value
+}
+
+/** Pour les tests. */
+export function resetWorldContextCache() {
+  dayCache = null
+  habitsCache = null
 }

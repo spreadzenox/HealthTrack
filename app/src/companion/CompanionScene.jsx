@@ -24,7 +24,7 @@ import fallbackNightUrl from './scene/fallback-nuit.webp'
 import './CompanionScene.css'
 
 const pilouModules = import.meta.glob('./pilou/index.js')
-const worldModules = import.meta.glob('./world/index.js')
+const worldModules = import.meta.glob(['./world/index.js', './world/context.js'])
 
 const MAX_WIDTH = 360
 
@@ -119,16 +119,38 @@ export default function CompanionScene({
     }
     let alive = true
     let timer = null
+    // lever et coucher habituels, lus dans le sommeil une fois par jour (même calcul que le widget Android)
+    const loadContext = worldModules['./world/context.js']
+    const habits = { wake: null, bedtime: null }
     load()
       .then((world) => {
         if (!alive || typeof world.lightAt !== 'function') return
         const tick = () => {
-          const l = world.lightAt(nowRef.current())
+          const l = world.lightAt(nowRef.current(), habits)
           setLight((prev) => ({ ...prev, ...l, sky: { ...prev.sky, ...(l?.sky || {}) } }))
           bus.emit(EVENTS.TIME_PHASE, { phase: l?.phase, light: l, at: Date.now() })
         }
         tick()
-        timer = setInterval(tick, 5 * 60 * 1000)
+        timer = setInterval(() => {
+          refreshHabits()
+          tick()
+        }, 5 * 60 * 1000)
+        const refreshHabits = () => {
+          if (!loadContext) return
+          loadContext()
+            .then((ctx) => ctx.sleepHabitsForDay({ now: nowRef.current() }))
+            .then((c) => {
+              if (!alive || !c) return
+              const wake = Number.isFinite(c.wake) ? c.wake : null
+              const bedtime = Number.isFinite(c.bedtime) ? c.bedtime : null
+              if (wake === habits.wake && bedtime === habits.bedtime) return
+              habits.wake = wake
+              habits.bedtime = bedtime
+              tick()
+            })
+            .catch(() => {})
+        }
+        refreshHabits()
       })
       .catch(() => {})
     return () => {

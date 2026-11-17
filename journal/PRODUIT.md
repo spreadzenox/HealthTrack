@@ -387,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **17/11 09:30** — MONDE-1 : l'île de l'Accueil s'endort et se réveille aux heures de sommeil habituelles (même cache du jour que le widget Android), heures par défaut 7 h / 22 h 30 sans 7 nuits lisibles. #1080 : job émulateur API 35 annulé et relancé.
 - **17/11 08:30** — Run « idées » : restes du sprint découpés en MONDE-1 à MONDE-4 (`maquettes/compagnon/DECOUPAGE-RESTES-SPRINT.md`) ; défaut repéré : l'île s'endort à 22 h 30 fixe, le widget à l'heure de sommeil réelle. #1080 : job émulateur API 35 bloqué (CI-EMU-TIMEOUT au BACKLOG), non mergée.
 - **17/11 07:30** — **#1081 (POLISH-PILOU-DORT-YEUX) mergée** (049bfdb) après 14 checks verts et ses captures iPhone de l'Accueil relues ; #1080 remise à jour sur main (conflits de journal), POLISH-FLAKY-DASH ajouté (test seul). Build iPhone 1148.1148 validée par Apple et en test chez « Testeurs Halcya » ; nettoyage des anciennes builds lancé.
 - **17/11 06:30** — **#1072 (STUDIO 4) mergée** (b0f634c) après 14 checks verts et ses captures iPhone de l'Accueil relues ; #1080 et #1081 remises à jour sur main. Alpha du soir : 101147 (1a290f6) sur la piste alpha le 17/11 à 05:48. Build iPhone 1148.1148 soumise à l'examen bêta.
