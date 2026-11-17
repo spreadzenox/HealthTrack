@@ -1,0 +1,1513 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=98A0BFA3-CEC3-4FD6-9916-5A2149774DBF "-only-testing:HalcyaUITests/DonneesUITests/testImporterUnFichierDepuisFichiers"
+
+2026-11-17 00:10:37.841 xcodebuild[3452:265918] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-17 00:10:37.867 xcodebuild[3452:265918] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:98A0BFA3-CEC3-4FD6-9916-5A2149774DBF, OS:26.2, name:iPhone 17 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:98A0BFA3-CEC3-4FD6-9916-5A2149774DBF, OS:26.2, name:iPhone 17 Pro }
+2026-11-17 00:10:38.171 xcodebuild[3452:265918] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-17 00:10:39.636210+0000 HalcyaUITests-Runner[4029:267263] [Default] Running tests...
+2026-11-17 00:10:39.680899+0000 HalcyaUITests-Runner[4029:267298] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-17 00:10:40.319.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-17 00:10:40.320.
+Test Suite 'DonneesUITests' started at 2026-11-17 00:10:40.320.
+Test Case '-[HalcyaUITests.DonneesUITests testImporterUnFichierDepuisFichiers]' started.
+    t =     0.00s Start Test at 2026-11-17 00:10:40.322
+    t =     0.02s Set Up
+    t =     0.02s Open fr.jpesquet.sante
+    t =     0.03s     Activate fr.jpesquet.sante
+    t =     0.03s         Wait for fr.jpesquet.sante to idle
+    t =     0.04s Waiting 30.0s for Any (First Match) to exist
+2026-11-17 00:10:40.369742+0000 HalcyaUITests-Runner[4029:267303] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+    t =     1.06s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     1.06s         Checking existence of `Any (First Match)`
+    t =     1.10s Tap Any (First Match)
+    t =     1.10s     Wait for fr.jpesquet.sante to idle
+    t =     1.10s     Find the Any (First Match)
+    t =     1.14s     Check for interrupting elements affecting "Choisir un fichier à importer" Button
+    t =     1.18s     Synthesize event
+    t =     1.48s     Wait for fr.jpesquet.sante to idle
+    t =     1.48s Waiting 2.0s for Any (First Match) to exist
+    t =     2.55s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     2.55s         Checking existence of `Any (First Match)`
+    t =     2.60s         Capturing element debug description
+    t =     3.49s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.49s         Checking existence of `Any (First Match)`
+    t =     3.53s         Capturing element debug description
+    t =     3.53s     Checking existence of `Any (First Match)`
+    t =     3.57s Collecting debug information to assist test failure triage
+    t =     3.57s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =     3.64s Waiting 2.0s for Any (First Match) to exist
+    t =     4.68s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     4.68s         Checking existence of `Any (First Match)`
+    t =     4.72s         Capturing element debug description
+    t =     5.64s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     5.65s         Checking existence of `Any (First Match)`
+    t =     5.68s         Capturing element debug description
+    t =     5.69s     Checking existence of `Any (First Match)`
+    t =     5.73s Collecting debug information to assist test failure triage
+    t =     5.73s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =     5.79s Checking existence of `"Récents" Button`
+    t =     5.83s Checking existence of `"Explorer" Button`
+    t =     5.86s Checking existence of `"Parcourir" Button`
+    t =     5.90s Checking existence of `"Annuler" Button`
+    t =     6.25s Checking existence of `"Récents" Button`
+    t =     6.29s Checking existence of `"Explorer" Button`
+    t =     6.33s Checking existence of `"Parcourir" Button`
+    t =     6.36s Checking existence of `"Annuler" Button`
+    t =     6.71s Checking existence of `"Récents" Button`
+    t =     6.75s Checking existence of `"Explorer" Button`
+    t =     6.79s Checking existence of `"Parcourir" Button`
+    t =     6.84s Checking existence of `"Annuler" Button`
+    t =     7.19s Checking existence of `"Récents" Button`
+    t =     7.23s Checking existence of `"Explorer" Button`
+    t =     7.27s Checking existence of `"Parcourir" Button`
+    t =     7.31s Checking existence of `"Annuler" Button`
+    t =     7.66s Checking existence of `"Récents" Button`
+    t =     7.70s Checking existence of `"Explorer" Button`
+    t =     7.74s Checking existence of `"Parcourir" Button`
+    t =     7.78s Checking existence of `"Annuler" Button`
+    t =     8.12s Checking existence of `"Récents" Button`
+    t =     8.16s Checking existence of `"Explorer" Button`
+    t =     8.20s Checking existence of `"Parcourir" Button`
+    t =     8.24s Checking existence of `"Annuler" Button`
+    t =     8.58s Checking existence of `"Récents" Button`
+    t =     8.62s Checking existence of `"Explorer" Button`
+    t =     8.66s Checking existence of `"Parcourir" Button`
+    t =     8.69s Checking existence of `"Annuler" Button`
+    t =     9.03s Checking existence of `"Récents" Button`
+    t =     9.08s Checking existence of `"Explorer" Button`
+    t =     9.12s Checking existence of `"Parcourir" Button`
+    t =     9.15s Checking existence of `"Annuler" Button`
+    t =     9.49s Checking existence of `"Récents" Button`
+    t =     9.53s Checking existence of `"Explorer" Button`
+    t =     9.57s Checking existence of `"Parcourir" Button`
+    t =     9.60s Checking existence of `"Annuler" Button`
+    t =     9.95s Checking existence of `"Récents" Button`
+    t =     9.99s Checking existence of `"Explorer" Button`
+    t =    10.03s Checking existence of `"Parcourir" Button`
+    t =    10.07s Checking existence of `"Annuler" Button`
+    t =    10.41s Checking existence of `"Récents" Button`
+    t =    10.45s Checking existence of `"Explorer" Button`
+    t =    10.49s Checking existence of `"Parcourir" Button`
+    t =    10.53s Checking existence of `"Annuler" Button`
+    t =    10.88s Checking existence of `"Récents" Button`
+    t =    10.91s Checking existence of `"Explorer" Button`
+    t =    10.95s Checking existence of `"Parcourir" Button`
+    t =    10.99s Checking existence of `"Annuler" Button`
+    t =    11.33s Checking existence of `"Récents" Button`
+    t =    11.37s Checking existence of `"Explorer" Button`
+    t =    11.40s Checking existence of `"Parcourir" Button`
+    t =    11.44s Checking existence of `"Annuler" Button`
+    t =    11.79s Checking existence of `"Récents" Button`
+    t =    11.82s Checking existence of `"Explorer" Button`
+    t =    11.86s Checking existence of `"Parcourir" Button`
+    t =    11.90s Checking existence of `"Annuler" Button`
+sélecteur de fichiers absent après le toucher 1
+    t =    12.24s Tap "Choisir un fichier à importer" Button
+    t =    12.24s     Wait for fr.jpesquet.sante to idle
+    t =    12.24s     Find the "Choisir un fichier à importer" Button
+    t =    12.28s     Check for interrupting elements affecting "Choisir un fichier à importer" Button
+    t =    12.32s     Synthesize event
+    t =    12.63s     Wait for fr.jpesquet.sante to idle
+    t =    12.63s Waiting 2.0s for Any (First Match) to exist
+    t =    13.70s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    13.70s         Checking existence of `Any (First Match)`
+    t =    13.73s         Capturing element debug description
+    t =    14.63s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    14.64s         Checking existence of `Any (First Match)`
+    t =    14.67s         Capturing element debug description
+    t =    14.67s     Checking existence of `Any (First Match)`
+    t =    14.71s Collecting debug information to assist test failure triage
+    t =    14.71s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    14.78s Waiting 2.0s for Any (First Match) to exist
+    t =    15.79s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    15.79s         Checking existence of `Any (First Match)`
+    t =    15.83s         Capturing element debug description
+    t =    16.78s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    16.78s         Checking existence of `Any (First Match)`
+    t =    16.82s         Capturing element debug description
+    t =    16.82s     Checking existence of `Any (First Match)`
+    t =    16.86s Collecting debug information to assist test failure triage
+    t =    16.86s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    16.92s Checking existence of `"Récents" Button`
+    t =    16.96s Checking existence of `"Explorer" Button`
+    t =    16.99s Checking existence of `"Parcourir" Button`
+    t =    17.03s Checking existence of `"Annuler" Button`
+    t =    17.38s Checking existence of `"Récents" Button`
+    t =    17.42s Checking existence of `"Explorer" Button`
+    t =    17.46s Checking existence of `"Parcourir" Button`
+    t =    17.50s Checking existence of `"Annuler" Button`
+    t =    17.84s Checking existence of `"Récents" Button`
+    t =    17.88s Checking existence of `"Explorer" Button`
+    t =    17.92s Checking existence of `"Parcourir" Button`
+    t =    17.96s Checking existence of `"Annuler" Button`
+    t =    18.30s Checking existence of `"Récents" Button`
+    t =    18.34s Checking existence of `"Explorer" Button`
+    t =    18.37s Checking existence of `"Parcourir" Button`
+    t =    18.41s Checking existence of `"Annuler" Button`
+    t =    18.76s Checking existence of `"Récents" Button`
+    t =    18.80s Checking existence of `"Explorer" Button`
+    t =    18.83s Checking existence of `"Parcourir" Button`
+    t =    18.87s Checking existence of `"Annuler" Button`
+    t =    19.22s Checking existence of `"Récents" Button`
+    t =    19.26s Checking existence of `"Explorer" Button`
+    t =    19.30s Checking existence of `"Parcourir" Button`
+    t =    19.35s Checking existence of `"Annuler" Button`
+    t =    19.69s Checking existence of `"Récents" Button`
+    t =    19.75s Checking existence of `"Explorer" Button`
+    t =    19.79s Checking existence of `"Parcourir" Button`
+    t =    19.84s Checking existence of `"Annuler" Button`
+    t =    20.19s Checking existence of `"Récents" Button`
+    t =    20.22s Checking existence of `"Explorer" Button`
+    t =    20.26s Checking existence of `"Parcourir" Button`
+    t =    20.30s Checking existence of `"Annuler" Button`
+    t =    20.65s Checking existence of `"Récents" Button`
+    t =    20.69s Checking existence of `"Explorer" Button`
+    t =    20.73s Checking existence of `"Parcourir" Button`
+    t =    20.77s Checking existence of `"Annuler" Button`
+    t =    21.12s Checking existence of `"Récents" Button`
+    t =    21.16s Checking existence of `"Explorer" Button`
+    t =    21.20s Checking existence of `"Parcourir" Button`
+    t =    21.24s Checking existence of `"Annuler" Button`
+    t =    21.58s Checking existence of `"Récents" Button`
+    t =    21.62s Checking existence of `"Explorer" Button`
+    t =    21.66s Checking existence of `"Parcourir" Button`
+    t =    21.69s Checking existence of `"Annuler" Button`
+    t =    22.03s Checking existence of `"Récents" Button`
+    t =    22.07s Checking existence of `"Explorer" Button`
+    t =    22.11s Checking existence of `"Parcourir" Button`
+    t =    22.15s Checking existence of `"Annuler" Button`
+    t =    22.49s Checking existence of `"Récents" Button`
+    t =    22.52s Checking existence of `"Explorer" Button`
+    t =    22.56s Checking existence of `"Parcourir" Button`
+    t =    22.60s Checking existence of `"Annuler" Button`
+sélecteur de fichiers absent après le toucher 2
+    t =    22.94s Waiting 8.0s for Cell (First Match) to exist
+    t =    23.99s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    23.99s         Checking existence of `Cell (First Match)`
+    t =    24.02s         Capturing element debug description
+    t =    24.96s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    24.96s         Checking existence of `Cell (First Match)`
+    t =    24.99s         Capturing element debug description
+    t =    25.95s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    25.95s         Checking existence of `Cell (First Match)`
+    t =    25.99s         Capturing element debug description
+    t =    26.94s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    26.95s         Checking existence of `Cell (First Match)`
+    t =    26.98s         Capturing element debug description
+    t =    27.99s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    27.99s         Checking existence of `Cell (First Match)`
+    t =    28.02s         Capturing element debug description
+    t =    28.96s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    28.96s         Checking existence of `Cell (First Match)`
+    t =    29.00s         Capturing element debug description
+    t =    29.95s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    29.95s         Checking existence of `Cell (First Match)`
+    t =    29.98s         Capturing element debug description
+    t =    30.94s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    30.95s         Checking existence of `Cell (First Match)`
+    t =    30.98s         Capturing element debug description
+    t =    30.98s     Checking existence of `Cell (First Match)`
+    t =    31.01s Collecting debug information to assist test failure triage
+    t =    31.02s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    31.08s Waiting 3.0s for Any (First Match) to exist
+    t =    32.09s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    32.09s         Checking existence of `Any (First Match)`
+    t =    32.13s         Capturing element debug description
+    t =    33.13s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    33.13s         Checking existence of `Any (First Match)`
+    t =    33.17s         Capturing element debug description
+    t =    34.09s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    34.09s         Checking existence of `Any (First Match)`
+    t =    34.13s         Capturing element debug description
+    t =    34.13s     Checking existence of `Any (First Match)`
+    t =    34.16s Collecting debug information to assist test failure triage
+    t =    34.16s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    34.22s Waiting 3.0s for Any (First Match) to exist
+    t =    35.22s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    35.23s         Checking existence of `Any (First Match)`
+    t =    35.26s         Capturing element debug description
+    t =    36.26s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    36.26s         Checking existence of `Any (First Match)`
+    t =    36.30s         Capturing element debug description
+    t =    37.22s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    37.22s         Checking existence of `Any (First Match)`
+    t =    37.26s         Capturing element debug description
+    t =    37.26s     Checking existence of `Any (First Match)`
+    t =    37.30s Collecting debug information to assist test failure triage
+    t =    37.30s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    37.36s Checking existence of `Cell (First Match)`
+    t =    37.39s Waiting 8.0s for Cell (First Match) to exist
+    t =    38.42s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    38.42s         Checking existence of `Cell (First Match)`
+    t =    38.45s         Capturing element debug description
+    t =    39.39s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    39.39s         Checking existence of `Cell (First Match)`
+    t =    39.43s         Capturing element debug description
+    t =    40.46s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    40.46s         Checking existence of `Cell (First Match)`
+    t =    40.49s         Capturing element debug description
+    t =    41.41s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    41.41s         Checking existence of `Cell (First Match)`
+    t =    41.44s         Capturing element debug description
+    t =    42.39s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    42.39s         Checking existence of `Cell (First Match)`
+    t =    42.42s         Capturing element debug description
+    t =    43.46s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    43.46s         Checking existence of `Cell (First Match)`
+    t =    43.49s         Capturing element debug description
+    t =    44.43s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    44.43s         Checking existence of `Cell (First Match)`
+    t =    44.46s         Capturing element debug description
+    t =    45.39s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    45.39s         Checking existence of `Cell (First Match)`
+    t =    45.43s         Capturing element debug description
+    t =    45.43s     Checking existence of `Cell (First Match)`
+    t =    45.47s Collecting debug information to assist test failure triage
+    t =    45.48s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+étape « Sur mon iPhone » absente
+    t =    45.58s Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    45.96s Requesting snapshot of accessibility hierarchy for app with pid 67946
+Attributes: Application, 0x103f2d5e0, pid: 67946, label: 'Halcya'
+Element subtree:
+ →Application, 0x103f2d5e0, pid: 67946, label: 'Halcya'
+    Window (Main), 0x103f2d700, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103f2dac0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103f2dbe0, {{0.0, 0.0}, {402.0, 874.0}}
+          WebView, 0x103f2d820, {{0.0, 0.0}, {402.0, 874.0}}
+            WebView, 0x103f2d940, {{0.0, 0.0}, {402.0, 874.0}}
+              WebView, 0x103f2dd00, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x103f2de20, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x103f2df40, {{0.0, 0.0}, {402.0, 874.0}}
+                    Other, 0x103f2e060, {{0.0, -425.0}, {402.0, 874.0}}
+                      Other, 0x103f2e180, {{0.0, -425.0}, {402.0, 1335.0}}, label: 'Halcya – ventre et bien-être', Focused
+                        Other, 0x103f2e2a0, {{16.0, -363.0}, {370.0, 70.0}}, label: 'bannière', Focused
+                          Other, 0x103f2e3c0, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                            StaticText, 0x103f2e4e0, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                          Link, 0x103f2e600, {{342.0, -349.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                        Other, 0x103f2e720, {{16.0, -293.0}, {370.0, 1097.0}}, label: 'principal', Focused
+                          Other, 0x103f2e840, {{16.0, -293.0}, {370.0, 29.0}}, label: 'Vos données', value: 2, Focused
+                            StaticText, 0x103f2e960, {{16.0, -293.0}, {119.0, 29.0}}, label: 'Vos données', value: Vos données, Focused
+                          Other, 0x103f2ea80, {{16.0, -256.0}, {370.0, 110.0}}, Focused
+                            StaticText, 0x103f2eba0, {{16.0, -256.0}, {336.0, 44.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                            StaticText, 0x103f2ecc0, {{16.0, -234.0}, {356.0, 88.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                          Other, 0x103f2f080, {{32.0, -114.0}, {338.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                            StaticText, 0x103f2f1a0, {{32.0, -114.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                          Other, 0x103f2f2c0, {{32.0, -80.0}, {338.0, 21.0}}, Focused
+                            StaticText, 0x103f2f3e0, {{32.0, -80.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                          Other, 0x103f2f500, {{32.0, -51.0}, {338.0, 19.0}}, Focused
+                            StaticText, 0x103f2f620, {{32.0, -51.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                            StaticText, 0x103f2f740, {{41.0, -50.0}, {3.0, 18.0}}, value:  , Focused
+                            StaticText, 0x103f2f860, {{43.0, -51.0}, {24.0, 18.0}}, label: '253', value: 253, Focused
+                            StaticText, 0x103f2f980, {{66.0, -50.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                            StaticText, 0x103f2faa0, {{112.0, -50.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                          Button, 0x103f2fbc0, {{32.0, -20.0}, {338.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                          Other, 0x103f2fce0, {{16.0, 72.0}, {370.0, 212.0}}, label: 'article', Focused
+                            StaticText, 0x103f2fe00, {{34.0, 88.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                            Other, 0x103f2ff20, {{34.0, 118.0}, {334.0, 61.0}}, Focused
+                              StaticText, 0x103f30040, {{34.0, 118.0}, {330.0, 61.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                            StaticText, 0x103f303a0, {{42.0, 188.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                            Link, 0x103f304c0, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                              StaticText, 0x103f305e0, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                          Other, 0x103f30700, {{32.0, 324.0}, {338.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                            StaticText, 0x103f30820, {{32.0, 324.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                          Other, 0x103f30940, {{32.0, 358.0}, {338.0, 41.0}}, Focused
+                            StaticText, 0x103f30a60, {{32.0, 358.0}, {312.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                          Button, 0x103f30b80, {{16.0, 308.0}, {370.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                          Button, 0x103f30ca0, {{32.0, 411.0}, {338.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                          Button, 0x103f30dc0, {{32.0, 475.0}, {338.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                          Other, 0x103f30ee0, {{32.0, 605.0}, {338.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                            StaticText, 0x103f31000, {{32.0, 605.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                          Other, 0x103f31120, {{32.0, 639.0}, {338.0, 61.0}}, Focused
+                            StaticText, 0x103f31240, {{32.0, 639.0}, {326.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                          Button, 0x103f315e0, {{32.0, 712.0}, {338.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                        Other, 0x103f31700, {{0.0, 777.0}, {402.0, 97.0}}, label: 'Principal, navigation', Focused
+                          Link, 0x103f31820, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', Focused
+                            StaticText, 0x103f31940, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                          Link, 0x103f31a60, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', Focused
+                            StaticText, 0x103f31b80, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                          Link, 0x103f31ca0, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', Focused
+                            StaticText, 0x103f31dc0, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                          Link, 0x103f31ee0, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', Focused
+                            StaticText, 0x103f32000, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', value: Données, Focused
+                        Other, 0x103f32120, {{0.0, 0.0}, {402.0, 874.0}}, label: 'La rencontre, boîte de dialogue web', Focused
+                          Other, 0x103f32240, {{16.0, 78.0}, {370.0, 260.0}}, Focused
+                            Other, 0x103f32360, {{137.0, 166.0}, {128.0, 134.0}}, Focused
+                            Other, 0x103f32480, {{271.0, 96.0}, {100.0, 40.0}}, label: 'état de l’application', Focused
+                              StaticText, 0x103f325a0, {{285.0, 104.0}, {71.0, 23.0}}, label: 'Bonjour !', value: Bonjour !, Focused
+                          Other, 0x103f326c0, {{16.0, 354.0}, {370.0, 284.0}}, label: 'formulaire', Focused
+                            Other, 0x103f327e0, {{36.0, 373.0}, {330.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: 1, Focused
+                              StaticText, 0x103f32900, {{36.0, 373.0}, {197.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: Comment voulez-vou..., Focused
+                            Other, 0x103f32a20, {{36.0, 442.0}, {330.0, 46.0}}, Focused
+                              StaticText, 0x103f32b40, {{36.0, 442.0}, {278.0, 46.0}}, label: 'C’est vous qui choisissez. Vous pourrez changer son nom dans Réglages.', value: C’est vous qui cho..., Focused
+                            Other, 0x103f32c60, {{36.0, 500.0}, {330.0, 52.0}}, Focused
+                              StaticText, 0x103f32d80, {{36.0, 500.0}, {64.0, 23.0}}, label: 'Son nom', value: Son nom, Focused
+                              TextField, 0x103f32ea0, {{36.0, 500.0}, {330.0, 52.0}}, label: 'Son nom', placeholderValue: 'Son nom…', value: Pilou, Focused
+                            Button, 0x103f32fc0, {{36.0, 564.0}, {330.0, 52.0}}, label: 'Valider', Focused
+              Other, 0x103f330e0, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103f33200, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103f33320, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103f33440, {{65.0, 868.0}, {272.0, 3.0}}
+              Other, 0x103f33560, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103f33680, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103f337a0, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103f338c0, {{65.0, 868.0}, {272.0, 3.0}}
+    Window, 0x103f339e0, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103f33b00, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103f33c20, {{0.0, 0.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x103f2d5e0, pid: 67946, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103d0ed70, pid: 67946, label: 'Halcya'
+  }
+
+    t =    46.04s Waiting 3.0s for Cell (First Match) to exist
+    t =    47.06s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    47.06s         Checking existence of `Cell (First Match)`
+    t =    47.09s         Capturing element debug description
+    t =    48.14s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    48.14s         Checking existence of `Cell (First Match)`
+    t =    48.18s         Capturing element debug description
+    t =    49.05s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    49.05s         Checking existence of `Cell (First Match)`
+    t =    49.08s         Capturing element debug description
+    t =    49.09s     Checking existence of `Cell (First Match)`
+    t =    49.13s Collecting debug information to assist test failure triage
+    t =    49.13s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    49.20s Checking existence of `Cell (First Match)`
+    t =    49.23s Waiting 8.0s for Cell (First Match) to exist
+    t =    50.28s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    50.28s         Checking existence of `Cell (First Match)`
+    t =    50.31s         Capturing element debug description
+    t =    51.26s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    51.26s         Checking existence of `Cell (First Match)`
+    t =    51.30s         Capturing element debug description
+    t =    52.24s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    52.24s         Checking existence of `Cell (First Match)`
+    t =    52.29s         Capturing element debug description
+    t =    53.25s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    53.25s         Checking existence of `Cell (First Match)`
+    t =    53.29s         Capturing element debug description
+    t =    54.24s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    54.24s         Checking existence of `Cell (First Match)`
+    t =    54.27s         Capturing element debug description
+    t =    55.32s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    55.33s         Checking existence of `Cell (First Match)`
+    t =    55.37s         Capturing element debug description
+    t =    56.32s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    56.33s         Checking existence of `Cell (First Match)`
+    t =    56.36s         Capturing element debug description
+    t =    57.25s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    57.25s         Checking existence of `Cell (First Match)`
+    t =    57.28s         Capturing element debug description
+    t =    57.29s     Checking existence of `Cell (First Match)`
+    t =    57.32s Collecting debug information to assist test failure triage
+    t =    57.32s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+étape « Halcya » absente
+    t =    57.40s Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    57.75s Requesting snapshot of accessibility hierarchy for app with pid 67946
+Attributes: Application, 0x10394f420, pid: 67946, label: 'Halcya'
+Element subtree:
+ →Application, 0x10394f420, pid: 67946, label: 'Halcya'
+    Window (Main), 0x10393e940, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x1039267d0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10394c3e0, {{0.0, 0.0}, {402.0, 874.0}}
+          WebView, 0x103942cf0, {{0.0, 0.0}, {402.0, 874.0}}
+            WebView, 0x10394dfa0, {{0.0, 0.0}, {402.0, 874.0}}
+              WebView, 0x103947470, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x1039508a0, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x103937150, {{0.0, 0.0}, {402.0, 874.0}}
+                    Other, 0x103948230, {{0.0, -425.0}, {402.0, 874.0}}
+                      Other, 0x10394d890, {{0.0, -425.0}, {402.0, 1335.0}}, label: 'Halcya – ventre et bien-être', Focused
+                        Other, 0x10394ed20, {{16.0, -363.0}, {370.0, 70.0}}, label: 'bannière', Focused
+                          Other, 0x103946340, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                            StaticText, 0x103942730, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                          Link, 0x1039394a0, {{342.0, -349.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                        Other, 0x103907940, {{16.0, -293.0}, {370.0, 1097.0}}, label: 'principal', Focused
+                          Other, 0x103932ad0, {{16.0, -293.0}, {370.0, 29.0}}, label: 'Vos données', value: 2, Focused
+                            StaticText, 0x10394f770, {{16.0, -293.0}, {119.0, 29.0}}, label: 'Vos données', value: Vos données, Focused
+                          Other, 0x1039496e0, {{16.0, -256.0}, {370.0, 110.0}}, Focused
+                            StaticText, 0x10392f4e0, {{16.0, -256.0}, {336.0, 44.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                            StaticText, 0x10394c770, {{16.0, -234.0}, {356.0, 88.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                          Other, 0x10394caf0, {{32.0, -114.0}, {338.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                            StaticText, 0x103928a30, {{32.0, -114.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                          Other, 0x103949030, {{32.0, -80.0}, {338.0, 21.0}}, Focused
+                            StaticText, 0x10394a120, {{32.0, -80.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                          Other, 0x10394a490, {{32.0, -51.0}, {338.0, 19.0}}, Focused
+                            StaticText, 0x10394b5b0, {{32.0, -51.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                            StaticText, 0x1039455b0, {{41.0, -50.0}, {3.0, 18.0}}, value:  , Focused
+                            StaticText, 0x10394b230, {{43.0, -51.0}, {24.0, 18.0}}, label: '253', value: 253, Focused
+                            StaticText, 0x103935330, {{66.0, -50.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                            StaticText, 0x10392fee0, {{112.0, -50.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                          Button, 0x103944010, {{32.0, -20.0}, {338.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                          Other, 0x10394bce0, {{16.0, 72.0}, {370.0, 212.0}}, label: 'article', Focused
+                            StaticText, 0x1039477d0, {{34.0, 88.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                            Other, 0x103932e60, {{34.0, 118.0}, {334.0, 61.0}}, Focused
+                              StaticText, 0x1039501e0, {{34.0, 118.0}, {330.0, 61.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                            StaticText, 0x1039470e0, {{42.0, 188.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                            Link, 0x103945c70, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                              StaticText, 0x103946d80, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                          Other, 0x103943940, {{32.0, 324.0}, {338.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                            StaticText, 0x103950550, {{32.0, 324.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                          Other, 0x103949a40, {{32.0, 358.0}, {338.0, 41.0}}, Focused
+                            StaticText, 0x10394fb00, {{32.0, 358.0}, {312.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                          Button, 0x103946690, {{16.0, 308.0}, {370.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                          Button, 0x103947ed0, {{32.0, 411.0}, {338.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                          Button, 0x103947b50, {{32.0, 475.0}, {338.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                          Other, 0x103950c30, {{32.0, 605.0}, {338.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                            StaticText, 0x1039485d0, {{32.0, 605.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                          Other, 0x10392da50, {{32.0, 639.0}, {338.0, 61.0}}, Focused
+                            StaticText, 0x1039435c0, {{32.0, 639.0}, {326.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                          Button, 0x103940150, {{32.0, 712.0}, {338.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                        Other, 0x103933c60, {{0.0, 777.0}, {402.0, 97.0}}, label: 'Principal, navigation', Focused
+                          Link, 0x103950fa0, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', Focused
+                            StaticText, 0x103939f20, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                          Link, 0x1039244e0, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', Focused
+                            StaticText, 0x103928370, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                          Link, 0x103943cb0, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', Focused
+                            StaticText, 0x10394d520, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                          Link, 0x10393d7c0, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', Focused
+                            StaticText, 0x103940830, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', value: Données, Focused
+                        Other, 0x10394b950, {{0.0, 0.0}, {402.0, 874.0}}, label: 'La rencontre, boîte de dialogue web', Focused
+                          Other, 0x10394c060, {{16.0, 78.0}, {370.0, 260.0}}, Focused
+                            Other, 0x103945260, {{137.0, 166.0}, {128.0, 134.0}}, Focused
+                            Other, 0x103948950, {{271.0, 96.0}, {100.0, 40.0}}, label: 'état de l’application', Focused
+                              StaticText, 0x103944ed0, {{285.0, 104.0}, {71.0, 23.0}}, label: 'Bonjour !', value: Bonjour !, Focused
+                          Other, 0x103944370, {{16.0, 354.0}, {370.0, 284.0}}, label: 'formulaire', Focused
+                            Other, 0x103949db0, {{36.0, 373.0}, {330.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: 1, Focused
+                              StaticText, 0x10394a7f0, {{36.0, 373.0}, {197.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: Comment voulez-vou..., Focused
+                            Other, 0x103948cb0, {{36.0, 442.0}, {330.0, 46.0}}, Focused
+                              StaticText, 0x103945910, {{36.0, 442.0}, {278.0, 46.0}}, label: 'C’est vous qui choisissez. Vous pourrez changer son nom dans Réglages.', value: C’est vous qui cho..., Focused
+                            Other, 0x10394f0b0, {{36.0, 500.0}, {330.0, 52.0}}, Focused
+                              StaticText, 0x103942ab0, {{36.0, 500.0}, {64.0, 23.0}}, label: 'Son nom', value: Son nom, Focused
+                              TextField, 0x103942bd0, {{36.0, 500.0}, {330.0, 52.0}}, label: 'Son nom', placeholderValue: 'Son nom…', value: Pilou, Focused
+                            Button, 0x10394d060, {{36.0, 564.0}, {330.0, 52.0}}, label: 'Valider', Focused
+              Other, 0x10394d180, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103934b30, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103934c50, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103934d70, {{65.0, 868.0}, {272.0, 3.0}}
+              Other, 0x1039321f0, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103932310, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103932430, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x10394e660, {{65.0, 868.0}, {272.0, 3.0}}
+    Window, 0x10394e780, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x10394e8a0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x10394e9c0, {{0.0, 0.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x10394f420, pid: 67946, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103f31560, pid: 67946, label: 'Halcya'
+  }
+
+    t =    57.81s Waiting 3.0s for Cell (First Match) to exist
+    t =    58.86s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    58.86s         Checking existence of `Cell (First Match)`
+    t =    58.90s         Capturing element debug description
+    t =    59.82s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    59.83s         Checking existence of `Cell (First Match)`
+    t =    59.87s         Capturing element debug description
+    t =    60.81s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    60.81s         Checking existence of `Cell (First Match)`
+    t =    60.85s         Capturing element debug description
+    t =    60.85s     Checking existence of `Cell (First Match)`
+    t =    60.90s Collecting debug information to assist test failure triage
+    t =    60.90s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    60.99s Waiting 10.0s for Cell (First Match) to exist
+    t =    62.03s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    62.03s         Checking existence of `Cell (First Match)`
+    t =    62.08s         Capturing element debug description
+    t =    62.99s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    62.99s         Checking existence of `Cell (First Match)`
+    t =    63.03s         Capturing element debug description
+    t =    63.99s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    63.99s         Checking existence of `Cell (First Match)`
+    t =    64.02s         Capturing element debug description
+    t =    65.06s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    65.06s         Checking existence of `Cell (First Match)`
+    t =    65.11s         Capturing element debug description
+    t =    66.06s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    66.06s         Checking existence of `Cell (First Match)`
+    t =    66.09s         Capturing element debug description
+    t =    67.03s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    67.03s         Checking existence of `Cell (First Match)`
+    t =    67.06s         Capturing element debug description
+    t =    67.99s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    67.99s         Checking existence of `Cell (First Match)`
+    t =    68.03s         Capturing element debug description
+    t =    69.08s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    69.08s         Checking existence of `Cell (First Match)`
+    t =    69.11s         Capturing element debug description
+    t =    69.99s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    69.99s         Checking existence of `Cell (First Match)`
+    t =    70.03s         Capturing element debug description
+    t =    70.99s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    70.99s         Checking existence of `Cell (First Match)`
+    t =    71.03s         Capturing element debug description
+    t =    71.03s     Checking existence of `Cell (First Match)`
+    t =    71.07s Collecting debug information to assist test failure triage
+    t =    71.07s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    71.14s Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    71.46s Requesting snapshot of accessibility hierarchy for app with pid 67946
+Attributes: Application, 0x103e10b20, pid: 67946, label: 'Halcya'
+Element subtree:
+ →Application, 0x103e10b20, pid: 67946, label: 'Halcya'
+    Window (Main), 0x103e20880, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103e26af0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103e27750, {{0.0, 0.0}, {402.0, 874.0}}
+          WebView, 0x103e27330, {{0.0, 0.0}, {402.0, 874.0}}
+            WebView, 0x103e26f10, {{0.0, 0.0}, {402.0, 874.0}}
+              WebView, 0x103e25d30, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x103e25e50, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x103e25f70, {{0.0, 0.0}, {402.0, 874.0}}
+                    Other, 0x103e26090, {{0.0, -425.0}, {402.0, 874.0}}
+                      Other, 0x103e261b0, {{0.0, -425.0}, {402.0, 1335.0}}, label: 'Halcya – ventre et bien-être', Focused
+                        Other, 0x103e262d0, {{16.0, -363.0}, {370.0, 70.0}}, label: 'bannière', Focused
+                          Other, 0x103e37df0, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                            StaticText, 0x103e37f10, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                          Link, 0x103e38030, {{342.0, -349.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                        Other, 0x103e38150, {{16.0, -293.0}, {370.0, 1097.0}}, label: 'principal', Focused
+                          Other, 0x103e38270, {{16.0, -293.0}, {370.0, 29.0}}, label: 'Vos données', value: 2, Focused
+                            StaticText, 0x103e38390, {{16.0, -293.0}, {119.0, 29.0}}, label: 'Vos données', value: Vos données, Focused
+                          Other, 0x103e384b0, {{16.0, -256.0}, {370.0, 110.0}}, Focused
+                            StaticText, 0x103e2f1d0, {{16.0, -256.0}, {336.0, 44.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                            StaticText, 0x103e2f2f0, {{16.0, -234.0}, {356.0, 88.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                          Other, 0x103e2f6b0, {{32.0, -114.0}, {338.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                            StaticText, 0x103e2f7d0, {{32.0, -114.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                          Other, 0x103e2f8f0, {{32.0, -80.0}, {338.0, 21.0}}, Focused
+                            StaticText, 0x103e2fa10, {{32.0, -80.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                          Other, 0x103e2fb30, {{32.0, -51.0}, {338.0, 19.0}}, Focused
+                            StaticText, 0x103e2fc50, {{32.0, -51.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                            StaticText, 0x103e2fd70, {{41.0, -50.0}, {3.0, 18.0}}, value:  , Focused
+                            StaticText, 0x103e2fe90, {{43.0, -51.0}, {24.0, 18.0}}, label: '253', value: 253, Focused
+                            StaticText, 0x103e1fde0, {{66.0, -50.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                            StaticText, 0x103e1ff00, {{112.0, -50.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                          Button, 0x103e20020, {{32.0, -20.0}, {338.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                          Other, 0x103e20140, {{16.0, 72.0}, {370.0, 212.0}}, label: 'article', Focused
+                            StaticText, 0x103e20260, {{34.0, 88.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                            Other, 0x103e20380, {{34.0, 118.0}, {334.0, 61.0}}, Focused
+                              StaticText, 0x103e204a0, {{34.0, 118.0}, {330.0, 61.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                            StaticText, 0x103e2cca0, {{42.0, 188.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                            Link, 0x103e2cdc0, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                              StaticText, 0x103e2cee0, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                          Other, 0x103e2d000, {{32.0, 324.0}, {338.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                            StaticText, 0x103e2d120, {{32.0, 324.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                          Other, 0x103e2d240, {{32.0, 358.0}, {338.0, 41.0}}, Focused
+                            StaticText, 0x103e2d360, {{32.0, 358.0}, {312.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                          Button, 0x103e2d480, {{16.0, 308.0}, {370.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                          Button, 0x103e2d5a0, {{32.0, 411.0}, {338.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                          Button, 0x103e2d6c0, {{32.0, 475.0}, {338.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                          Other, 0x103e2d7e0, {{32.0, 605.0}, {338.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                            StaticText, 0x103e2d900, {{32.0, 605.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                          Other, 0x103e2da20, {{32.0, 639.0}, {338.0, 61.0}}, Focused
+                            StaticText, 0x103e2db40, {{32.0, 639.0}, {326.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                          Button, 0x103e2dee0, {{32.0, 712.0}, {338.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                        Other, 0x103e2e000, {{0.0, 777.0}, {402.0, 97.0}}, label: 'Principal, navigation', Focused
+                          Link, 0x103e2e120, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', Focused
+                            StaticText, 0x103e2e240, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                          Link, 0x103e2e360, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', Focused
+                            StaticText, 0x103e2e480, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                          Link, 0x103e2e5a0, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', Focused
+                            StaticText, 0x103e2e6c0, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                          Link, 0x103e2e7e0, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', Focused
+                            StaticText, 0x103e2e900, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', value: Données, Focused
+                        Other, 0x103e2ea20, {{0.0, 0.0}, {402.0, 874.0}}, label: 'La rencontre, boîte de dialogue web', Focused
+                          Other, 0x103e2eb40, {{16.0, 78.0}, {370.0, 260.0}}, Focused
+                            Other, 0x103e2ec60, {{137.0, 166.0}, {128.0, 134.0}}, Focused
+                            Other, 0x103e2ed80, {{271.0, 96.0}, {100.0, 40.0}}, label: 'état de l’application', Focused
+                              StaticText, 0x103e2eea0, {{285.0, 104.0}, {71.0, 23.0}}, label: 'Bonjour !', value: Bonjour !, Focused
+                          Other, 0x103e27d90, {{16.0, 354.0}, {370.0, 284.0}}, label: 'formulaire', Focused
+                            Other, 0x103e27eb0, {{36.0, 373.0}, {330.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: 1, Focused
+                              StaticText, 0x103e27fd0, {{36.0, 373.0}, {197.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: Comment voulez-vou..., Focused
+                            Other, 0x103e280f0, {{36.0, 442.0}, {330.0, 46.0}}, Focused
+                              StaticText, 0x103e28210, {{36.0, 442.0}, {278.0, 46.0}}, label: 'C’est vous qui choisissez. Vous pourrez changer son nom dans Réglages.', value: C’est vous qui cho..., Focused
+                            Other, 0x103e28330, {{36.0, 500.0}, {330.0, 52.0}}, Focused
+                              StaticText, 0x103e28450, {{36.0, 500.0}, {64.0, 23.0}}, label: 'Son nom', value: Son nom, Focused
+                              TextField, 0x103e28570, {{36.0, 500.0}, {330.0, 52.0}}, label: 'Son nom', placeholderValue: 'Son nom…', value: Pilou, Focused
+                            Button, 0x103e28690, {{36.0, 564.0}, {330.0, 52.0}}, label: 'Valider', Focused
+              Other, 0x103e287b0, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103e288d0, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103e289f0, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103e28b10, {{65.0, 868.0}, {272.0, 3.0}}
+              Other, 0x103e28c30, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103e28d50, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103e28e70, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103e28f90, {{65.0, 868.0}, {272.0, 3.0}}
+    Window, 0x103e290b0, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103e291d0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103e292f0, {{0.0, 0.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x103e10b20, pid: 67946, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103c50500, pid: 67946, label: 'Halcya'
+  }
+
+« halcya-essai-import » introuvable dans le sélecteur de fichiers
+aucun aperçu après le parcours 1
+    t =    71.53s Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    71.86s Requesting snapshot of accessibility hierarchy for app with pid 67946
+Attributes: Application, 0x103f2d080, pid: 67946, label: 'Halcya'
+Element subtree:
+ →Application, 0x103f2d080, pid: 67946, label: 'Halcya'
+    Window (Main), 0x103f2c660, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103f347c0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103f3a180, {{0.0, 0.0}, {402.0, 874.0}}
+          WebView, 0x103f2cd00, {{0.0, 0.0}, {402.0, 874.0}}
+            WebView, 0x103f34180, {{0.0, 0.0}, {402.0, 874.0}}
+              WebView, 0x103f39d60, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x103f39940, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x103f2ba70, {{0.0, 0.0}, {402.0, 874.0}}
+                    Other, 0x103f35640, {{0.0, -425.0}, {402.0, 874.0}}
+                      Other, 0x103f35760, {{0.0, -425.0}, {402.0, 1335.0}}, label: 'Halcya – ventre et bien-être', Focused
+                        Other, 0x103f35880, {{16.0, -363.0}, {370.0, 70.0}}, label: 'bannière', Focused
+                          Other, 0x103f359a0, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                            StaticText, 0x103f35ac0, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                          Link, 0x103f35be0, {{342.0, -349.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                        Other, 0x103f35d00, {{16.0, -293.0}, {370.0, 1097.0}}, label: 'principal', Focused
+                          Other, 0x103f35e20, {{16.0, -293.0}, {370.0, 29.0}}, label: 'Vos données', value: 2, Focused
+                            StaticText, 0x103f35f40, {{16.0, -293.0}, {119.0, 29.0}}, label: 'Vos données', value: Vos données, Focused
+                          Other, 0x103f36060, {{16.0, -256.0}, {370.0, 110.0}}, Focused
+                            StaticText, 0x103f36180, {{16.0, -256.0}, {336.0, 44.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                            StaticText, 0x103f362a0, {{16.0, -234.0}, {356.0, 88.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                          Other, 0x103f36660, {{32.0, -114.0}, {338.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                            StaticText, 0x103f36780, {{32.0, -114.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                          Other, 0x103f368a0, {{32.0, -80.0}, {338.0, 21.0}}, Focused
+                            StaticText, 0x103f31340, {{32.0, -80.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                          Other, 0x103f31460, {{32.0, -51.0}, {338.0, 19.0}}, Focused
+                            StaticText, 0x103949380, {{32.0, -51.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                            StaticText, 0x1039455b0, {{41.0, -50.0}, {3.0, 18.0}}, value:  , Focused
+                            StaticText, 0x10394bce0, {{43.0, -51.0}, {24.0, 18.0}}, label: '253', value: 253, Focused
+                            StaticText, 0x10394d890, {{66.0, -50.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                            StaticText, 0x103945fd0, {{112.0, -50.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                          Button, 0x103950550, {{32.0, -20.0}, {338.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                          Other, 0x103946340, {{16.0, 72.0}, {370.0, 212.0}}, label: 'article', Focused
+                            StaticText, 0x103946690, {{34.0, 88.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                            Other, 0x103949a40, {{34.0, 118.0}, {334.0, 61.0}}, Focused
+                              StaticText, 0x103943940, {{34.0, 118.0}, {330.0, 61.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                            StaticText, 0x103947b50, {{42.0, 188.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                            Link, 0x10394dc10, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                              StaticText, 0x1039435c0, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                          Other, 0x103945c70, {{32.0, 324.0}, {338.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                            StaticText, 0x103950c30, {{32.0, 324.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                          Other, 0x10394a120, {{32.0, 358.0}, {338.0, 41.0}}, Focused
+                            StaticText, 0x103907940, {{32.0, 358.0}, {312.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                          Button, 0x10392da50, {{16.0, 308.0}, {370.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                          Button, 0x103940150, {{32.0, 411.0}, {338.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                          Button, 0x103950fa0, {{32.0, 475.0}, {338.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                          Other, 0x1039267d0, {{32.0, 605.0}, {338.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                            StaticText, 0x103945260, {{32.0, 605.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                          Other, 0x10394d520, {{32.0, 639.0}, {338.0, 61.0}}, Focused
+                            StaticText, 0x103947ed0, {{32.0, 639.0}, {326.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                          Button, 0x103948230, {{32.0, 712.0}, {338.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                        Other, 0x1039244e0, {{0.0, 777.0}, {402.0, 97.0}}, label: 'Principal, navigation', Focused
+                          Link, 0x10394caf0, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', Focused
+                            StaticText, 0x103944ed0, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                          Link, 0x10394a7f0, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', Focused
+                            StaticText, 0x10394f0b0, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                          Link, 0x103933c60, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', Focused
+                            StaticText, 0x103943cb0, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                          Link, 0x103940830, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', Focused
+                            StaticText, 0x103939f20, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', value: Données, Focused
+                        Other, 0x10394f770, {{0.0, 0.0}, {402.0, 874.0}}, label: 'La rencontre, boîte de dialogue web', Focused
+                          Other, 0x10394b950, {{16.0, 78.0}, {370.0, 260.0}}, Focused
+                            Other, 0x10394f420, {{137.0, 166.0}, {128.0, 134.0}}, Focused
+                            Other, 0x10394c3e0, {{271.0, 96.0}, {100.0, 40.0}}, label: 'état de l’application', Focused
+                              StaticText, 0x10394dfa0, {{285.0, 104.0}, {71.0, 23.0}}, label: 'Bonjour !', value: Bonjour !, Focused
+                          Other, 0x1039496e0, {{16.0, 354.0}, {370.0, 284.0}}, label: 'formulaire', Focused
+                            Other, 0x103947470, {{36.0, 373.0}, {330.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: 1, Focused
+                              StaticText, 0x10394c060, {{36.0, 373.0}, {197.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: Comment voulez-vou..., Focused
+                            Other, 0x103937150, {{36.0, 442.0}, {330.0, 46.0}}, Focused
+                              StaticText, 0x10392f4e0, {{36.0, 442.0}, {278.0, 46.0}}, label: 'C’est vous qui choisissez. Vous pourrez changer son nom dans Réglages.', value: C’est vous qui cho..., Focused
+                            Other, 0x10393d7c0, {{36.0, 500.0}, {330.0, 52.0}}, Focused
+                              StaticText, 0x103944370, {{36.0, 500.0}, {64.0, 23.0}}, label: 'Son nom', value: Son nom, Focused
+                              TextField, 0x103928a30, {{36.0, 500.0}, {330.0, 52.0}}, label: 'Son nom', placeholderValue: 'Son nom…', value: Pilou, Focused
+                            Button, 0x10394c770, {{36.0, 564.0}, {330.0, 52.0}}, label: 'Valider', Focused
+              Other, 0x10392fee0, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103932ad0, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x10393e940, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103949db0, {{65.0, 868.0}, {272.0, 3.0}}
+              Other, 0x10394e310, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103948cb0, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103942730, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x1039508a0, {{65.0, 868.0}, {272.0, 3.0}}
+    Window, 0x10394ed20, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x1039394a0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103952950, {{0.0, 0.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x103f2d080, pid: 67946, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103958240, pid: 67946, label: 'Halcya'
+  }
+
+    t =    71.94s Waiting 1.0s for "Annuler" Button to exist
+    t =    72.94s     Checking `Expect predicate `existsNoRetry == 1` for object "Annuler" Button`
+    t =    72.94s         Checking existence of `"Annuler" Button`
+    t =    73.00s         Capturing element debug description
+    t =    73.00s     Checking existence of `"Annuler" Button`
+    t =    73.07s Collecting debug information to assist test failure triage
+    t =    73.07s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    73.16s Tap "Choisir un fichier à importer" Button
+    t =    73.16s     Wait for fr.jpesquet.sante to idle
+    t =    73.16s     Find the "Choisir un fichier à importer" Button
+    t =    73.21s     Check for interrupting elements affecting "Choisir un fichier à importer" Button
+    t =    73.27s     Synthesize event
+    t =    73.58s     Wait for fr.jpesquet.sante to idle
+    t =    73.58s Waiting 2.0s for Any (First Match) to exist
+    t =    74.61s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    74.61s         Checking existence of `Any (First Match)`
+    t =    74.66s         Capturing element debug description
+    t =    75.59s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    75.59s         Checking existence of `Any (First Match)`
+    t =    75.63s         Capturing element debug description
+    t =    75.63s     Checking existence of `Any (First Match)`
+    t =    75.68s Collecting debug information to assist test failure triage
+    t =    75.68s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    75.74s Waiting 2.0s for Any (First Match) to exist
+    t =    76.78s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    76.78s         Checking existence of `Any (First Match)`
+    t =    76.82s         Capturing element debug description
+    t =    77.75s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    77.75s         Checking existence of `Any (First Match)`
+    t =    77.80s         Capturing element debug description
+    t =    77.80s     Checking existence of `Any (First Match)`
+    t =    77.85s Collecting debug information to assist test failure triage
+    t =    77.85s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    77.93s Checking existence of `"Récents" Button`
+    t =    77.97s Checking existence of `"Explorer" Button`
+    t =    78.01s Checking existence of `"Parcourir" Button`
+    t =    78.05s Checking existence of `"Annuler" Button`
+    t =    78.40s Checking existence of `"Récents" Button`
+    t =    78.43s Checking existence of `"Explorer" Button`
+    t =    78.47s Checking existence of `"Parcourir" Button`
+    t =    78.52s Checking existence of `"Annuler" Button`
+    t =    78.87s Checking existence of `"Récents" Button`
+    t =    78.92s Checking existence of `"Explorer" Button`
+    t =    78.97s Checking existence of `"Parcourir" Button`
+    t =    79.01s Checking existence of `"Annuler" Button`
+    t =    79.36s Checking existence of `"Récents" Button`
+    t =    79.40s Checking existence of `"Explorer" Button`
+    t =    79.44s Checking existence of `"Parcourir" Button`
+    t =    79.49s Checking existence of `"Annuler" Button`
+    t =    79.83s Checking existence of `"Récents" Button`
+    t =    79.88s Checking existence of `"Explorer" Button`
+    t =    79.92s Checking existence of `"Parcourir" Button`
+    t =    79.97s Checking existence of `"Annuler" Button`
+    t =    80.31s Checking existence of `"Récents" Button`
+    t =    80.36s Checking existence of `"Explorer" Button`
+    t =    80.40s Checking existence of `"Parcourir" Button`
+    t =    80.44s Checking existence of `"Annuler" Button`
+    t =    80.80s Checking existence of `"Récents" Button`
+    t =    80.83s Checking existence of `"Explorer" Button`
+    t =    80.87s Checking existence of `"Parcourir" Button`
+    t =    80.91s Checking existence of `"Annuler" Button`
+    t =    81.25s Checking existence of `"Récents" Button`
+    t =    81.29s Checking existence of `"Explorer" Button`
+    t =    81.33s Checking existence of `"Parcourir" Button`
+    t =    81.36s Checking existence of `"Annuler" Button`
+    t =    81.71s Checking existence of `"Récents" Button`
+    t =    81.75s Checking existence of `"Explorer" Button`
+    t =    81.79s Checking existence of `"Parcourir" Button`
+    t =    81.83s Checking existence of `"Annuler" Button`
+    t =    82.18s Checking existence of `"Récents" Button`
+    t =    82.22s Checking existence of `"Explorer" Button`
+    t =    82.25s Checking existence of `"Parcourir" Button`
+    t =    82.29s Checking existence of `"Annuler" Button`
+    t =    82.64s Checking existence of `"Récents" Button`
+    t =    82.68s Checking existence of `"Explorer" Button`
+    t =    82.72s Checking existence of `"Parcourir" Button`
+    t =    82.75s Checking existence of `"Annuler" Button`
+    t =    83.09s Checking existence of `"Récents" Button`
+    t =    83.13s Checking existence of `"Explorer" Button`
+    t =    83.17s Checking existence of `"Parcourir" Button`
+    t =    83.20s Checking existence of `"Annuler" Button`
+    t =    83.55s Checking existence of `"Récents" Button`
+    t =    83.59s Checking existence of `"Explorer" Button`
+    t =    83.63s Checking existence of `"Parcourir" Button`
+    t =    83.67s Checking existence of `"Annuler" Button`
+sélecteur de fichiers absent après le toucher 1
+    t =    84.02s Tap "Choisir un fichier à importer" Button
+    t =    84.02s     Wait for fr.jpesquet.sante to idle
+    t =    84.03s     Find the "Choisir un fichier à importer" Button
+    t =    84.06s     Check for interrupting elements affecting "Choisir un fichier à importer" Button
+    t =    84.11s     Synthesize event
+    t =    84.41s     Wait for fr.jpesquet.sante to idle
+    t =    84.42s Waiting 2.0s for Any (First Match) to exist
+    t =    85.46s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    85.46s         Checking existence of `Any (First Match)`
+    t =    85.50s         Capturing element debug description
+    t =    86.42s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    86.43s         Checking existence of `Any (First Match)`
+    t =    86.47s         Capturing element debug description
+    t =    86.47s     Checking existence of `Any (First Match)`
+    t =    86.50s Collecting debug information to assist test failure triage
+    t =    86.50s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    86.56s Waiting 2.0s for Any (First Match) to exist
+    t =    87.59s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    87.59s         Checking existence of `Any (First Match)`
+    t =    87.63s         Capturing element debug description
+    t =    88.57s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    88.57s         Checking existence of `Any (First Match)`
+    t =    88.60s         Capturing element debug description
+    t =    88.60s     Checking existence of `Any (First Match)`
+    t =    88.64s Collecting debug information to assist test failure triage
+    t =    88.64s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =    88.70s Checking existence of `"Récents" Button`
+    t =    88.73s Checking existence of `"Explorer" Button`
+    t =    88.77s Checking existence of `"Parcourir" Button`
+    t =    88.80s Checking existence of `"Annuler" Button`
+    t =    89.15s Checking existence of `"Récents" Button`
+    t =    89.19s Checking existence of `"Explorer" Button`
+    t =    89.22s Checking existence of `"Parcourir" Button`
+    t =    89.26s Checking existence of `"Annuler" Button`
+    t =    89.60s Checking existence of `"Récents" Button`
+    t =    89.65s Checking existence of `"Explorer" Button`
+    t =    89.68s Checking existence of `"Parcourir" Button`
+    t =    89.72s Checking existence of `"Annuler" Button`
+    t =    90.05s Checking existence of `"Récents" Button`
+    t =    90.10s Checking existence of `"Explorer" Button`
+    t =    90.13s Checking existence of `"Parcourir" Button`
+    t =    90.17s Checking existence of `"Annuler" Button`
+    t =    90.51s Checking existence of `"Récents" Button`
+    t =    90.56s Checking existence of `"Explorer" Button`
+    t =    90.60s Checking existence of `"Parcourir" Button`
+    t =    90.63s Checking existence of `"Annuler" Button`
+    t =    90.97s Checking existence of `"Récents" Button`
+    t =    91.02s Checking existence of `"Explorer" Button`
+    t =    91.05s Checking existence of `"Parcourir" Button`
+    t =    91.09s Checking existence of `"Annuler" Button`
+    t =    91.43s Checking existence of `"Récents" Button`
+    t =    91.48s Checking existence of `"Explorer" Button`
+    t =    91.52s Checking existence of `"Parcourir" Button`
+    t =    91.55s Checking existence of `"Annuler" Button`
+    t =    91.89s Checking existence of `"Récents" Button`
+    t =    91.94s Checking existence of `"Explorer" Button`
+    t =    91.97s Checking existence of `"Parcourir" Button`
+    t =    92.01s Checking existence of `"Annuler" Button`
+    t =    92.35s Checking existence of `"Récents" Button`
+    t =    92.39s Checking existence of `"Explorer" Button`
+    t =    92.42s Checking existence of `"Parcourir" Button`
+    t =    92.46s Checking existence of `"Annuler" Button`
+    t =    92.81s Checking existence of `"Récents" Button`
+    t =    92.84s Checking existence of `"Explorer" Button`
+    t =    92.87s Checking existence of `"Parcourir" Button`
+    t =    92.91s Checking existence of `"Annuler" Button`
+    t =    93.26s Checking existence of `"Récents" Button`
+    t =    93.30s Checking existence of `"Explorer" Button`
+    t =    93.34s Checking existence of `"Parcourir" Button`
+    t =    93.37s Checking existence of `"Annuler" Button`
+    t =    93.71s Checking existence of `"Récents" Button`
+    t =    93.76s Checking existence of `"Explorer" Button`
+    t =    93.80s Checking existence of `"Parcourir" Button`
+    t =    93.83s Checking existence of `"Annuler" Button`
+    t =    94.18s Checking existence of `"Récents" Button`
+    t =    94.23s Checking existence of `"Explorer" Button`
+    t =    94.27s Checking existence of `"Parcourir" Button`
+    t =    94.31s Checking existence of `"Annuler" Button`
+    t =    94.66s Checking existence of `"Récents" Button`
+    t =    94.70s Checking existence of `"Explorer" Button`
+    t =    94.74s Checking existence of `"Parcourir" Button`
+    t =    94.77s Checking existence of `"Annuler" Button`
+sélecteur de fichiers absent après le toucher 2
+    t =    95.12s Waiting 8.0s for Cell (First Match) to exist
+    t =    96.16s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    96.16s         Checking existence of `Cell (First Match)`
+    t =    96.19s         Capturing element debug description
+    t =    97.13s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    97.13s         Checking existence of `Cell (First Match)`
+    t =    97.18s         Capturing element debug description
+    t =    98.13s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    98.13s         Checking existence of `Cell (First Match)`
+    t =    98.16s         Capturing element debug description
+    t =    99.19s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    99.19s         Checking existence of `Cell (First Match)`
+    t =    99.22s         Capturing element debug description
+    t =   100.16s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   100.16s         Checking existence of `Cell (First Match)`
+    t =   100.19s         Capturing element debug description
+    t =   101.12s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   101.13s         Checking existence of `Cell (First Match)`
+    t =   101.16s         Capturing element debug description
+    t =   102.13s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   102.13s         Checking existence of `Cell (First Match)`
+    t =   102.17s         Capturing element debug description
+    t =   103.12s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   103.12s         Checking existence of `Cell (First Match)`
+    t =   103.15s         Capturing element debug description
+    t =   103.16s     Checking existence of `Cell (First Match)`
+    t =   103.18s Collecting debug information to assist test failure triage
+    t =   103.18s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =   103.24s Waiting 3.0s for Any (First Match) to exist
+    t =   104.26s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   104.26s         Checking existence of `Any (First Match)`
+    t =   104.32s         Capturing element debug description
+    t =   105.26s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   105.26s         Checking existence of `Any (First Match)`
+    t =   105.30s         Capturing element debug description
+    t =   106.24s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   106.24s         Checking existence of `Any (First Match)`
+    t =   106.29s         Capturing element debug description
+    t =   106.29s     Checking existence of `Any (First Match)`
+    t =   106.33s Collecting debug information to assist test failure triage
+    t =   106.33s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =   106.40s Waiting 3.0s for Any (First Match) to exist
+    t =   107.44s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   107.45s         Checking existence of `Any (First Match)`
+    t =   107.49s         Capturing element debug description
+    t =   108.42s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   108.43s         Checking existence of `Any (First Match)`
+    t =   108.47s         Capturing element debug description
+    t =   109.41s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   109.41s         Checking existence of `Any (First Match)`
+    t =   109.45s         Capturing element debug description
+    t =   109.45s     Checking existence of `Any (First Match)`
+    t =   109.49s Collecting debug information to assist test failure triage
+    t =   109.49s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =   109.57s Checking existence of `Cell (First Match)`
+    t =   109.61s Waiting 8.0s for Cell (First Match) to exist
+    t =   110.62s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   110.63s         Checking existence of `Cell (First Match)`
+    t =   110.67s         Capturing element debug description
+    t =   111.69s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   111.69s         Checking existence of `Cell (First Match)`
+    t =   111.72s         Capturing element debug description
+    t =   112.63s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   112.63s         Checking existence of `Cell (First Match)`
+    t =   112.66s         Capturing element debug description
+    t =   113.69s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   113.69s         Checking existence of `Cell (First Match)`
+    t =   113.73s         Capturing element debug description
+    t =   114.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   114.66s         Checking existence of `Cell (First Match)`
+    t =   114.70s         Capturing element debug description
+    t =   115.61s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   115.61s         Checking existence of `Cell (First Match)`
+    t =   115.66s         Capturing element debug description
+    t =   116.61s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   116.61s         Checking existence of `Cell (First Match)`
+    t =   116.65s         Capturing element debug description
+    t =   117.61s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   117.61s         Checking existence of `Cell (First Match)`
+    t =   117.64s         Capturing element debug description
+    t =   117.64s     Checking existence of `Cell (First Match)`
+    t =   117.68s Collecting debug information to assist test failure triage
+    t =   117.68s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+étape « Sur mon iPhone » absente
+    t =   117.76s Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =   118.10s Requesting snapshot of accessibility hierarchy for app with pid 67946
+Attributes: Application, 0x103c69a60, pid: 67946, label: 'Halcya'
+Element subtree:
+ →Application, 0x103c69a60, pid: 67946, label: 'Halcya'
+    Window (Main), 0x103c50bd0, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103c65520, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103c4a000, {{0.0, 0.0}, {402.0, 874.0}}
+          WebView, 0x103c4ec80, {{0.0, 0.0}, {402.0, 874.0}}
+            WebView, 0x103c714b0, {{0.0, 0.0}, {402.0, 874.0}}
+              WebView, 0x103c59860, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x103c67e80, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x103c651b0, {{0.0, 0.0}, {402.0, 874.0}}
+                    Other, 0x103c65880, {{0.0, -425.0}, {402.0, 874.0}}
+                      Other, 0x103c65bf0, {{0.0, -425.0}, {402.0, 1335.0}}, label: 'Halcya – ventre et bien-être', Focused
+                        Other, 0x103c4a350, {{16.0, -363.0}, {370.0, 70.0}}, label: 'bannière', Focused
+                          Other, 0x103c63690, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                            StaticText, 0x103c57280, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                          Link, 0x103c4f740, {{342.0, -349.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                        Other, 0x103c4c970, {{16.0, -293.0}, {370.0, 1097.0}}, label: 'principal', Focused
+                          Other, 0x103c4c610, {{16.0, -293.0}, {370.0, 29.0}}, label: 'Vos données', value: 2, Focused
+                            StaticText, 0x103c72fe0, {{16.0, -293.0}, {119.0, 29.0}}, label: 'Vos données', value: Vos données, Focused
+                          Other, 0x103c5f100, {{16.0, -256.0}, {370.0, 110.0}}, Focused
+                            StaticText, 0x103c72910, {{16.0, -256.0}, {336.0, 44.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                            StaticText, 0x103c6b8c0, {{16.0, -234.0}, {356.0, 88.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                          Other, 0x103c62590, {{32.0, -114.0}, {338.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                            StaticText, 0x103c64790, {{32.0, -114.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                          Other, 0x103c58df0, {{32.0, -80.0}, {338.0, 21.0}}, Focused
+                            StaticText, 0x103c640a0, {{32.0, -80.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                          Other, 0x103c495d0, {{32.0, -51.0}, {338.0, 19.0}}, Focused
+                            StaticText, 0x103c5ff10, {{32.0, -51.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                            StaticText, 0x103c60290, {{41.0, -50.0}, {3.0, 18.0}}, value:  , Focused
+                            StaticText, 0x103c6c640, {{43.0, -51.0}, {24.0, 18.0}}, label: '253', value: 253, Focused
+                            StaticText, 0x103c53470, {{66.0, -50.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                            StaticText, 0x103c4e220, {{112.0, -50.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                          Button, 0x103c64e60, {{32.0, -20.0}, {338.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                          Other, 0x103c67b20, {{16.0, 72.0}, {370.0, 212.0}}, label: 'article', Focused
+                            StaticText, 0x103c6da60, {{34.0, 88.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                            Other, 0x103c628e0, {{34.0, 118.0}, {334.0, 61.0}}, Focused
+                              StaticText, 0x103c51990, {{34.0, 118.0}, {330.0, 61.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                            StaticText, 0x103c56f10, {{42.0, 188.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                            Link, 0x103c55720, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                              StaticText, 0x103c4d710, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                          Other, 0x103c64af0, {{32.0, 324.0}, {338.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                            StaticText, 0x103c6eeb0, {{32.0, 324.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                          Other, 0x103c725a0, {{32.0, 358.0}, {338.0, 41.0}}, Focused
+                            StaticText, 0x103c5fb90, {{32.0, 358.0}, {312.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                          Button, 0x103c71b90, {{16.0, 308.0}, {370.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                          Button, 0x103c4aa30, {{32.0, 411.0}, {338.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                          Button, 0x103c68c10, {{32.0, 475.0}, {338.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                          Other, 0x103c72c80, {{32.0, 605.0}, {338.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                            StaticText, 0x103c71810, {{32.0, 605.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                          Other, 0x103c4c2c0, {{32.0, 639.0}, {338.0, 61.0}}, Focused
+                            StaticText, 0x103c71ee0, {{32.0, 639.0}, {326.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                          Button, 0x103c5a950, {{32.0, 712.0}, {338.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                        Other, 0x103c688c0, {{0.0, 777.0}, {402.0, 97.0}}, label: 'Principal, navigation', Focused
+                          Link, 0x103c706c0, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', Focused
+                            StaticText, 0x103c5cb70, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                          Link, 0x103c68560, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', Focused
+                            StaticText, 0x103c65f50, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                          Link, 0x103c6a7d0, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', Focused
+                            StaticText, 0x103c60cc0, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                          Link, 0x103c553d0, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', Focused
+                            StaticText, 0x103c66d50, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', value: Données, Focused
+                        Other, 0x103c67440, {{0.0, 0.0}, {402.0, 874.0}}, label: 'La rencontre, boîte de dialogue web', Focused
+                          Other, 0x103c670c0, {{16.0, 78.0}, {370.0, 260.0}}, Focused
+                            Other, 0x103c62fb0, {{137.0, 166.0}, {128.0, 134.0}}, Focused
+                            Other, 0x103c63310, {{271.0, 96.0}, {100.0, 40.0}}, label: 'état de l’application', Focused
+                              StaticText, 0x103c62c60, {{285.0, 104.0}, {71.0, 23.0}}, label: 'Bonjour !', value: Bonjour !, Focused
+                          Other, 0x103c669e0, {{16.0, 354.0}, {370.0, 284.0}}, label: 'formulaire', Focused
+                            Other, 0x103c55e00, {{36.0, 373.0}, {330.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: 1, Focused
+                              StaticText, 0x103c639f0, {{36.0, 373.0}, {197.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: Comment voulez-vou..., Focused
+                            Other, 0x103c662f0, {{36.0, 442.0}, {330.0, 46.0}}, Focused
+                              StaticText, 0x103c57950, {{36.0, 442.0}, {278.0, 46.0}}, label: 'C’est vous qui choisissez. Vous pourrez changer son nom dans Réglages.', value: C’est vous qui cho..., Focused
+                            Other, 0x103c5a280, {{36.0, 500.0}, {330.0, 52.0}}, Focused
+                              StaticText, 0x103c6c990, {{36.0, 500.0}, {64.0, 23.0}}, label: 'Son nom', value: Son nom, Focused
+                              TextField, 0x103c6e7e0, {{36.0, 500.0}, {330.0, 52.0}}, label: 'Son nom', placeholderValue: 'Son nom…', value: Pilou, Focused
+                            Button, 0x103c6d3b0, {{36.0, 564.0}, {330.0, 52.0}}, label: 'Valider', Focused
+              Other, 0x103c6ddb0, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103c6d040, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103c70370, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103c6d700, {{65.0, 868.0}, {272.0, 3.0}}
+              Other, 0x103c6ccd0, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103c70000, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103c6e460, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103c6f8e0, {{65.0, 868.0}, {272.0, 3.0}}
+    Window, 0x103c6e110, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103c6f210, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103c61030, {{0.0, 0.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x103c69a60, pid: 67946, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103c5e350, pid: 67946, label: 'Halcya'
+  }
+
+    t =   118.17s Waiting 3.0s for Cell (First Match) to exist
+    t =   119.21s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   119.21s         Checking existence of `Cell (First Match)`
+    t =   119.25s         Capturing element debug description
+    t =   120.18s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   120.18s         Checking existence of `Cell (First Match)`
+    t =   120.22s         Capturing element debug description
+    t =   121.18s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   121.18s         Checking existence of `Cell (First Match)`
+    t =   121.21s         Capturing element debug description
+    t =   121.21s     Checking existence of `Cell (First Match)`
+    t =   121.26s Collecting debug information to assist test failure triage
+    t =   121.26s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =   121.33s Checking existence of `Cell (First Match)`
+    t =   121.37s Waiting 8.0s for Cell (First Match) to exist
+    t =   122.43s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   122.43s         Checking existence of `Cell (First Match)`
+    t =   122.47s         Capturing element debug description
+    t =   123.39s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   123.39s         Checking existence of `Cell (First Match)`
+    t =   123.43s         Capturing element debug description
+    t =   124.37s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   124.38s         Checking existence of `Cell (First Match)`
+    t =   124.42s         Capturing element debug description
+    t =   125.46s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   125.46s         Checking existence of `Cell (First Match)`
+    t =   125.50s         Capturing element debug description
+    t =   126.39s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   126.39s         Checking existence of `Cell (First Match)`
+    t =   126.43s         Capturing element debug description
+    t =   127.37s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   127.38s         Checking existence of `Cell (First Match)`
+    t =   127.42s         Capturing element debug description
+    t =   128.47s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   128.47s         Checking existence of `Cell (First Match)`
+    t =   128.51s         Capturing element debug description
+    t =   129.37s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   129.38s         Checking existence of `Cell (First Match)`
+    t =   129.42s         Capturing element debug description
+    t =   129.42s     Checking existence of `Cell (First Match)`
+    t =   129.45s Collecting debug information to assist test failure triage
+    t =   129.45s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+étape « Halcya » absente
+    t =   129.52s Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =   129.86s Requesting snapshot of accessibility hierarchy for app with pid 67946
+Attributes: Application, 0x103f2f280, pid: 67946, label: 'Halcya'
+Element subtree:
+ →Application, 0x103f2f280, pid: 67946, label: 'Halcya'
+    Window (Main), 0x103f2ea40, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103f2e410, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103f2e530, {{0.0, 0.0}, {402.0, 874.0}}
+          WebView, 0x103f2e2c0, {{0.0, 0.0}, {402.0, 874.0}}
+            WebView, 0x103f2ee60, {{0.0, 0.0}, {402.0, 874.0}}
+              WebView, 0x103f2e650, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x103f2e770, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x103f3c0c0, {{0.0, 0.0}, {402.0, 874.0}}
+                    Other, 0x103f3c1e0, {{0.0, -425.0}, {402.0, 874.0}}
+                      Other, 0x103f3c300, {{0.0, -425.0}, {402.0, 1335.0}}, label: 'Halcya – ventre et bien-être', Focused
+                        Other, 0x103f3c420, {{16.0, -363.0}, {370.0, 70.0}}, label: 'bannière', Focused
+                          Other, 0x103f3c540, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                            StaticText, 0x103f3c660, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                          Link, 0x103f3c780, {{342.0, -349.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                        Other, 0x103f3c8a0, {{16.0, -293.0}, {370.0, 1097.0}}, label: 'principal', Focused
+                          Other, 0x103f3c9c0, {{16.0, -293.0}, {370.0, 29.0}}, label: 'Vos données', value: 2, Focused
+                            StaticText, 0x103f3cae0, {{16.0, -293.0}, {119.0, 29.0}}, label: 'Vos données', value: Vos données, Focused
+                          Other, 0x103f3cc00, {{16.0, -256.0}, {370.0, 110.0}}, Focused
+                            StaticText, 0x103f3cd20, {{16.0, -256.0}, {336.0, 44.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                            StaticText, 0x103f3ce40, {{16.0, -234.0}, {356.0, 88.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                          Other, 0x103f3d200, {{32.0, -114.0}, {338.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                            StaticText, 0x103f3d320, {{32.0, -114.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                          Other, 0x103f3d440, {{32.0, -80.0}, {338.0, 21.0}}, Focused
+                            StaticText, 0x103f3d560, {{32.0, -80.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                          Other, 0x103f3d680, {{32.0, -51.0}, {338.0, 19.0}}, Focused
+                            StaticText, 0x103f3d7a0, {{32.0, -51.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                            StaticText, 0x103f3d8c0, {{41.0, -50.0}, {3.0, 18.0}}, value:  , Focused
+                            StaticText, 0x103f3d9e0, {{43.0, -51.0}, {24.0, 18.0}}, label: '253', value: 253, Focused
+                            StaticText, 0x103f3db00, {{66.0, -50.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                            StaticText, 0x103f3dc20, {{112.0, -50.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                          Button, 0x103f3dd40, {{32.0, -20.0}, {338.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                          Other, 0x103f3de60, {{16.0, 72.0}, {370.0, 212.0}}, label: 'article', Focused
+                            StaticText, 0x103f3df80, {{34.0, 88.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                            Other, 0x103f3e0a0, {{34.0, 118.0}, {334.0, 61.0}}, Focused
+                              StaticText, 0x103f3e1c0, {{34.0, 118.0}, {330.0, 61.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                            StaticText, 0x103f3e520, {{42.0, 188.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                            Link, 0x103f3e640, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                              StaticText, 0x103f3e760, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                          Other, 0x103f3e880, {{32.0, 324.0}, {338.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                            StaticText, 0x103f3e9a0, {{32.0, 324.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                          Other, 0x103f3eac0, {{32.0, 358.0}, {338.0, 41.0}}, Focused
+                            StaticText, 0x103f3ebe0, {{32.0, 358.0}, {312.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                          Button, 0x103f3ed00, {{16.0, 308.0}, {370.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                          Button, 0x103f3ee20, {{32.0, 411.0}, {338.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                          Button, 0x103f3ef40, {{32.0, 475.0}, {338.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                          Other, 0x103f3f060, {{32.0, 605.0}, {338.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                            StaticText, 0x103f3f180, {{32.0, 605.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                          Other, 0x103f3f2a0, {{32.0, 639.0}, {338.0, 61.0}}, Focused
+                            StaticText, 0x103f3f3c0, {{32.0, 639.0}, {326.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                          Button, 0x103f3f760, {{32.0, 712.0}, {338.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                        Other, 0x103f3f880, {{0.0, 777.0}, {402.0, 97.0}}, label: 'Principal, navigation', Focused
+                          Link, 0x103f3f9a0, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', Focused
+                            StaticText, 0x103f3fac0, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                          Link, 0x103f3fbe0, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', Focused
+                            StaticText, 0x103f3fd00, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                          Link, 0x103f3fe20, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', Focused
+                            StaticText, 0x103f3ff40, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                          Link, 0x103f40060, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', Focused
+                            StaticText, 0x103f40180, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', value: Données, Focused
+                        Other, 0x103f402a0, {{0.0, 0.0}, {402.0, 874.0}}, label: 'La rencontre, boîte de dialogue web', Focused
+                          Other, 0x103f403c0, {{16.0, 78.0}, {370.0, 260.0}}, Focused
+                            Other, 0x103f404e0, {{137.0, 166.0}, {128.0, 134.0}}, Focused
+                            Other, 0x103f40600, {{271.0, 96.0}, {100.0, 40.0}}, label: 'état de l’application', Focused
+                              StaticText, 0x103f40720, {{285.0, 104.0}, {71.0, 23.0}}, label: 'Bonjour !', value: Bonjour !, Focused
+                          Other, 0x103f40840, {{16.0, 354.0}, {370.0, 284.0}}, label: 'formulaire', Focused
+                            Other, 0x103f40960, {{36.0, 373.0}, {330.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: 1, Focused
+                              StaticText, 0x103f40a80, {{36.0, 373.0}, {197.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: Comment voulez-vou..., Focused
+                            Other, 0x103f40ba0, {{36.0, 442.0}, {330.0, 46.0}}, Focused
+                              StaticText, 0x103f40cc0, {{36.0, 442.0}, {278.0, 46.0}}, label: 'C’est vous qui choisissez. Vous pourrez changer son nom dans Réglages.', value: C’est vous qui cho..., Focused
+                            Other, 0x103f40de0, {{36.0, 500.0}, {330.0, 52.0}}, Focused
+                              StaticText, 0x103f40f00, {{36.0, 500.0}, {64.0, 23.0}}, label: 'Son nom', value: Son nom, Focused
+                              TextField, 0x103f41020, {{36.0, 500.0}, {330.0, 52.0}}, label: 'Son nom', placeholderValue: 'Son nom…', value: Pilou, Focused
+                            Button, 0x103f41140, {{36.0, 564.0}, {330.0, 52.0}}, label: 'Valider', Focused
+              Other, 0x103f41260, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103f41380, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103f414a0, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103f415c0, {{65.0, 868.0}, {272.0, 3.0}}
+              Other, 0x103f416e0, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103f41800, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103f41920, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103f41a40, {{65.0, 868.0}, {272.0, 3.0}}
+    Window, 0x103f41b60, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103f41c80, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103f41da0, {{0.0, 0.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x103f2f280, pid: 67946, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103c55720, pid: 67946, label: 'Halcya'
+  }
+
+    t =   129.93s Waiting 3.0s for Cell (First Match) to exist
+    t =   130.96s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   130.96s         Checking existence of `Cell (First Match)`
+    t =   131.00s         Capturing element debug description
+    t =   131.94s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   131.95s         Checking existence of `Cell (First Match)`
+    t =   131.98s         Capturing element debug description
+    t =   132.94s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   132.94s         Checking existence of `Cell (First Match)`
+    t =   132.97s         Capturing element debug description
+    t =   132.97s     Checking existence of `Cell (First Match)`
+    t =   133.01s Collecting debug information to assist test failure triage
+    t =   133.01s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =   133.08s Waiting 10.0s for Cell (First Match) to exist
+    t =   134.12s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   134.13s         Checking existence of `Cell (First Match)`
+    t =   134.15s         Capturing element debug description
+    t =   135.09s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   135.09s         Checking existence of `Cell (First Match)`
+    t =   135.13s         Capturing element debug description
+    t =   136.12s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   136.13s         Checking existence of `Cell (First Match)`
+    t =   136.17s         Capturing element debug description
+    t =   137.09s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   137.09s         Checking existence of `Cell (First Match)`
+    t =   137.13s         Capturing element debug description
+    t =   138.09s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   138.09s         Checking existence of `Cell (First Match)`
+    t =   138.13s         Capturing element debug description
+    t =   139.16s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   139.16s         Checking existence of `Cell (First Match)`
+    t =   139.19s         Capturing element debug description
+    t =   140.12s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   140.13s         Checking existence of `Cell (First Match)`
+    t =   140.17s         Capturing element debug description
+    t =   141.09s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   141.10s         Checking existence of `Cell (First Match)`
+    t =   141.13s         Capturing element debug description
+    t =   142.16s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   142.16s         Checking existence of `Cell (First Match)`
+    t =   142.20s         Capturing element debug description
+    t =   143.08s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   143.08s         Checking existence of `Cell (First Match)`
+    t =   143.12s         Capturing element debug description
+    t =   143.12s     Checking existence of `Cell (First Match)`
+    t =   143.16s Collecting debug information to assist test failure triage
+    t =   143.16s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =   143.23s Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =   143.54s Requesting snapshot of accessibility hierarchy for app with pid 67946
+Attributes: Application, 0x10394a120, pid: 67946, label: 'Halcya'
+Element subtree:
+ →Application, 0x10394a120, pid: 67946, label: 'Halcya'
+    Window (Main), 0x103e31400, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103e2a790, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103e2a8b0, {{0.0, 0.0}, {402.0, 874.0}}
+          WebView, 0x103e2a4f0, {{0.0, 0.0}, {402.0, 874.0}}
+            WebView, 0x103e2a610, {{0.0, 0.0}, {402.0, 874.0}}
+              WebView, 0x103c68560, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x103f2d080, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x103f144d0, {{0.0, 0.0}, {402.0, 874.0}}
+                    Other, 0x103f2cd00, {{0.0, -425.0}, {402.0, 874.0}}
+                      Other, 0x103f2e700, {{0.0, -425.0}, {402.0, 1335.0}}, label: 'Halcya – ventre et bien-être', Focused
+                        Other, 0x103f39da0, {{16.0, -363.0}, {370.0, 70.0}}, label: 'bannière', Focused
+                          Other, 0x103f2f280, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                            StaticText, 0x103f48aa0, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                          Link, 0x103f39940, {{342.0, -349.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                        Other, 0x103f48680, {{16.0, -293.0}, {370.0, 1097.0}}, label: 'principal', Focused
+                          Other, 0x103f29960, {{16.0, -293.0}, {370.0, 29.0}}, label: 'Vos données', value: 2, Focused
+                            StaticText, 0x103f209d0, {{16.0, -293.0}, {119.0, 29.0}}, label: 'Vos données', value: Vos données, Focused
+                          Other, 0x103f2ee60, {{16.0, -256.0}, {370.0, 110.0}}, Focused
+                            StaticText, 0x103f34180, {{16.0, -256.0}, {336.0, 44.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                            StaticText, 0x103f3a180, {{16.0, -234.0}, {356.0, 88.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                          Other, 0x103f35bd0, {{32.0, -114.0}, {338.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                            StaticText, 0x103f35cf0, {{32.0, -114.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                          Other, 0x103f35e10, {{32.0, -80.0}, {338.0, 21.0}}, Focused
+                            StaticText, 0x103f35f30, {{32.0, -80.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                          Other, 0x103f36050, {{32.0, -51.0}, {338.0, 19.0}}, Focused
+                            StaticText, 0x103f36170, {{32.0, -51.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                            StaticText, 0x103f36290, {{41.0, -50.0}, {3.0, 18.0}}, value:  , Focused
+                            StaticText, 0x103f363b0, {{43.0, -51.0}, {24.0, 18.0}}, label: '253', value: 253, Focused
+                            StaticText, 0x103f364d0, {{66.0, -50.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                            StaticText, 0x103f365f0, {{112.0, -50.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                          Button, 0x103f36710, {{32.0, -20.0}, {338.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                          Other, 0x103f36830, {{16.0, 72.0}, {370.0, 212.0}}, label: 'article', Focused
+                            StaticText, 0x103f36950, {{34.0, 88.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                            Other, 0x103f31ba0, {{34.0, 118.0}, {334.0, 61.0}}, Focused
+                              StaticText, 0x103f31cc0, {{34.0, 118.0}, {330.0, 61.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                            StaticText, 0x103f32020, {{42.0, 188.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                            Link, 0x103f32140, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                              StaticText, 0x103f32260, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                          Other, 0x103f32380, {{32.0, 324.0}, {338.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                            StaticText, 0x103f324a0, {{32.0, 324.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                          Other, 0x103f325c0, {{32.0, 358.0}, {338.0, 41.0}}, Focused
+                            StaticText, 0x103f326e0, {{32.0, 358.0}, {312.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                          Button, 0x103f32800, {{16.0, 308.0}, {370.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                          Button, 0x103f32920, {{32.0, 411.0}, {338.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                          Button, 0x103f32a40, {{32.0, 475.0}, {338.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                          Other, 0x103f32b60, {{32.0, 605.0}, {338.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                            StaticText, 0x103f32c80, {{32.0, 605.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                          Other, 0x103f32da0, {{32.0, 639.0}, {338.0, 61.0}}, Focused
+                            StaticText, 0x103f32ec0, {{32.0, 639.0}, {326.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                          Button, 0x103f33260, {{32.0, 712.0}, {338.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                        Other, 0x103f33380, {{0.0, 777.0}, {402.0, 97.0}}, label: 'Principal, navigation', Focused
+                          Link, 0x103f334a0, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', Focused
+                            StaticText, 0x103f335c0, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                          Link, 0x103f336e0, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', Focused
+                            StaticText, 0x103f33800, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                          Link, 0x103f33920, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', Focused
+                            StaticText, 0x103f33a40, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                          Link, 0x1039435c0, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', Focused
+                            StaticText, 0x103949a40, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', value: Données, Focused
+                        Other, 0x103943940, {{0.0, 0.0}, {402.0, 874.0}}, label: 'La rencontre, boîte de dialogue web', Focused
+                          Other, 0x103945fd0, {{16.0, 78.0}, {370.0, 260.0}}, Focused
+                            Other, 0x103946690, {{137.0, 166.0}, {128.0, 134.0}}, Focused
+                            Other, 0x103f33b60, {{271.0, 96.0}, {100.0, 40.0}}, label: 'état de l’application', Focused
+                              StaticText, 0x103f3a5a0, {{285.0, 104.0}, {71.0, 23.0}}, label: 'Bonjour !', value: Bonjour !, Focused
+                          Other, 0x103f3a6c0, {{16.0, 354.0}, {370.0, 284.0}}, label: 'formulaire', Focused
+                            Other, 0x103f3a7e0, {{36.0, 373.0}, {330.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: 1, Focused
+                              StaticText, 0x103f3a900, {{36.0, 373.0}, {197.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: Comment voulez-vou..., Focused
+                            Other, 0x103f3aa20, {{36.0, 442.0}, {330.0, 46.0}}, Focused
+                              StaticText, 0x103f3ab40, {{36.0, 442.0}, {278.0, 46.0}}, label: 'C’est vous qui choisissez. Vous pourrez changer son nom dans Réglages.', value: C’est vous qui cho..., Focused
+                            Other, 0x103f3ac60, {{36.0, 500.0}, {330.0, 52.0}}, Focused
+                              StaticText, 0x103f3ad80, {{36.0, 500.0}, {64.0, 23.0}}, label: 'Son nom', value: Son nom, Focused
+                              TextField, 0x103f3aea0, {{36.0, 500.0}, {330.0, 52.0}}, label: 'Son nom', placeholderValue: 'Son nom…', value: Pilou, Focused
+                            Button, 0x103f3afc0, {{36.0, 564.0}, {330.0, 52.0}}, label: 'Valider', Focused
+              Other, 0x103f3b0e0, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103f3b200, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103f3b320, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103f3b440, {{65.0, 868.0}, {272.0, 3.0}}
+              Other, 0x103f3b560, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103f3b680, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103f3b7a0, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103f3b8c0, {{65.0, 868.0}, {272.0, 3.0}}
+    Window, 0x103f3b9e0, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103f3bb00, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103f3bc20, {{0.0, 0.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x10394a120, pid: 67946, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103c4c970, pid: 67946, label: 'Halcya'
+  }
+
+« halcya-essai-import » introuvable dans le sélecteur de fichiers
+aucun aperçu après le parcours 2
+    t =   143.61s Requesting snapshot of accessibility hierarchy for app with pid 67946
+    t =   143.94s Requesting snapshot of accessibility hierarchy for app with pid 67946
+Attributes: Application, 0x103d1dd20, pid: 67946, label: 'Halcya'
+Element subtree:
+ →Application, 0x103d1dd20, pid: 67946, label: 'Halcya'
+    Window (Main), 0x103d18f40, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103d1e8b0, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103d1e070, {{0.0, 0.0}, {402.0, 874.0}}
+          WebView, 0x103d0e4e0, {{0.0, 0.0}, {402.0, 874.0}}
+            WebView, 0x103d15620, {{0.0, 0.0}, {402.0, 874.0}}
+              WebView, 0x103d1e490, {{0.0, 0.0}, {402.0, 874.0}}
+                Other, 0x103d124c0, {{0.0, 0.0}, {402.0, 874.0}}
+                  Other, 0x103d15a00, {{0.0, 0.0}, {402.0, 874.0}}
+                    Other, 0x103d1f0f0, {{0.0, -425.0}, {402.0, 874.0}}
+                      Other, 0x103d1ecd0, {{0.0, -425.0}, {402.0, 1335.0}}, label: 'Halcya – ventre et bien-être', Focused
+                        Other, 0x103d0ed70, {{16.0, -363.0}, {370.0, 70.0}}, label: 'bannière', Focused
+                          Other, 0x103d21c80, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                            StaticText, 0x103d220a0, {{58.0, -341.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                          Link, 0x103d13c00, {{342.0, -349.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                        Other, 0x103d1a5e0, {{16.0, -293.0}, {370.0, 1097.0}}, label: 'principal', Focused
+                          Other, 0x103d1a700, {{16.0, -293.0}, {370.0, 29.0}}, label: 'Vos données', value: 2, Focused
+                            StaticText, 0x103d1a820, {{16.0, -293.0}, {119.0, 29.0}}, label: 'Vos données', value: Vos données, Focused
+                          Other, 0x103d1a940, {{16.0, -256.0}, {370.0, 110.0}}, Focused
+                            StaticText, 0x103d1aa60, {{16.0, -256.0}, {336.0, 44.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                            StaticText, 0x103d1ab80, {{16.0, -234.0}, {356.0, 88.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                          Other, 0x103d1af40, {{32.0, -114.0}, {338.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                            StaticText, 0x103d1b060, {{32.0, -114.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                          Other, 0x103d1b180, {{32.0, -80.0}, {338.0, 21.0}}, Focused
+                            StaticText, 0x103d1b2a0, {{32.0, -80.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                          Other, 0x103d1b3c0, {{32.0, -51.0}, {338.0, 19.0}}, Focused
+                            StaticText, 0x103d1b4e0, {{32.0, -51.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                            StaticText, 0x103d1b600, {{41.0, -50.0}, {3.0, 18.0}}, value:  , Focused
+                            StaticText, 0x103d1b720, {{43.0, -51.0}, {24.0, 18.0}}, label: '253', value: 253, Focused
+                            StaticText, 0x103d1b840, {{66.0, -50.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                            StaticText, 0x103d1b960, {{112.0, -50.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                          Button, 0x103d1ba80, {{32.0, -20.0}, {338.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                          Other, 0x103d1bba0, {{16.0, 72.0}, {370.0, 212.0}}, label: 'article', Focused
+                            StaticText, 0x103d1bcc0, {{34.0, 88.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                            Other, 0x103d1bde0, {{34.0, 118.0}, {334.0, 61.0}}, Focused
+                              StaticText, 0x103d1bf00, {{34.0, 118.0}, {330.0, 61.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                            StaticText, 0x103d1c260, {{42.0, 188.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                            Link, 0x103d1c380, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                              StaticText, 0x103d10cb0, {{162.0, 230.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                          Other, 0x103d10dd0, {{32.0, 324.0}, {338.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                            StaticText, 0x103d10ef0, {{32.0, 324.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                          Other, 0x103d11010, {{32.0, 358.0}, {338.0, 41.0}}, Focused
+                            StaticText, 0x103d11130, {{32.0, 358.0}, {312.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                          Button, 0x103d11250, {{16.0, 308.0}, {370.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                          Button, 0x103d11370, {{32.0, 411.0}, {338.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                          Button, 0x103d11490, {{32.0, 475.0}, {338.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                          Other, 0x103d115b0, {{32.0, 605.0}, {338.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                            StaticText, 0x103d116d0, {{32.0, 605.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                          Other, 0x103d117f0, {{32.0, 639.0}, {338.0, 61.0}}, Focused
+                            StaticText, 0x103d11910, {{32.0, 639.0}, {326.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                          Button, 0x103d22900, {{32.0, 712.0}, {338.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                        Other, 0x103d22a20, {{0.0, 777.0}, {402.0, 97.0}}, label: 'Principal, navigation', Focused
+                          Link, 0x103d22b40, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', Focused
+                            StaticText, 0x103d22c60, {{37.0, 817.0}, {39.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                          Link, 0x103d22d80, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', Focused
+                            StaticText, 0x103d22ea0, {{123.0, 817.0}, {59.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                          Link, 0x103d22fc0, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', Focused
+                            StaticText, 0x103d230e0, {{226.0, 817.0}, {47.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                          Link, 0x103d23200, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', Focused
+                            StaticText, 0x103d23320, {{322.0, 817.0}, {47.0, 17.0}}, label: 'Données', value: Données, Focused
+                        Other, 0x103d23440, {{0.0, 0.0}, {402.0, 874.0}}, label: 'La rencontre, boîte de dialogue web', Focused
+                          Other, 0x103d23560, {{16.0, 78.0}, {370.0, 260.0}}, Focused
+                            Other, 0x103d23680, {{137.0, 166.0}, {128.0, 134.0}}, Focused
+                            Other, 0x103d237a0, {{271.0, 96.0}, {100.0, 40.0}}, label: 'état de l’application', Focused
+                              StaticText, 0x103d238c0, {{285.0, 104.0}, {71.0, 23.0}}, label: 'Bonjour !', value: Bonjour !, Focused
+                          Other, 0x103d239e0, {{16.0, 354.0}, {370.0, 284.0}}, label: 'formulaire', Focused
+                            Other, 0x103d23b00, {{36.0, 373.0}, {330.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: 1, Focused
+                              StaticText, 0x103d23c20, {{36.0, 373.0}, {197.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: Comment voulez-vou..., Focused
+                            Other, 0x103d23d40, {{36.0, 442.0}, {330.0, 46.0}}, Focused
+                              StaticText, 0x103d23e60, {{36.0, 442.0}, {278.0, 46.0}}, label: 'C’est vous qui choisissez. Vous pourrez changer son nom dans Réglages.', value: C’est vous qui cho..., Focused
+                            Other, 0x103d23f80, {{36.0, 500.0}, {330.0, 52.0}}, Focused
+                              StaticText, 0x103d240a0, {{36.0, 500.0}, {64.0, 23.0}}, label: 'Son nom', value: Son nom, Focused
+                              TextField, 0x103d241c0, {{36.0, 500.0}, {330.0, 52.0}}, label: 'Son nom', placeholderValue: 'Son nom…', value: Pilou, Focused
+                            Button, 0x103d242e0, {{36.0, 564.0}, {330.0, 52.0}}, label: 'Valider', Focused
+              Other, 0x103d24400, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103d24520, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103d24640, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103d24760, {{65.0, 868.0}, {272.0, 3.0}}
+              Other, 0x103d24880, {{369.0, 62.0}, {30.0, 750.0}}, label: 'Barre de défilement verticale, 2 pages', value: 92 %
+                Other, 0x103d249a0, {{396.0, 302.0}, {3.0, 487.0}}
+              Other, 0x103d24ac0, {{62.0, 841.0}, {278.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103d24be0, {{65.0, 868.0}, {272.0, 3.0}}
+    Window, 0x103d24d00, {{0.0, 0.0}, {402.0, 874.0}}
+      Other, 0x103d24e20, {{0.0, 0.0}, {402.0, 874.0}}
+        Other, 0x103d24f40, {{0.0, 0.0}, {402.0, 874.0}}
+Path to element:
+ →Application, 0x103d1dd20, pid: 67946, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103f2d080, pid: 67946, label: 'Halcya'
+  }
+
+    t =   144.01s Waiting 1.0s for "Annuler" Button to exist
+    t =   145.01s     Checking `Expect predicate `existsNoRetry == 1` for object "Annuler" Button`
+    t =   145.01s         Checking existence of `"Annuler" Button`
+    t =   145.05s         Capturing element debug description
+    t =   145.05s     Checking existence of `"Annuler" Button`
+    t =   145.09s Collecting debug information to assist test failure triage
+    t =   145.10s     Requesting snapshot of accessibility hierarchy for app with pid 67946
+/Users/runner/work/HealthTrack/HealthTrack/iphone/uitests/HalcyaUITests/SanteUITests.swift:175: error: -[HalcyaUITests.DonneesUITests testImporterUnFichierDepuisFichiers] : failed - aperçu de l'import jamais affiché
+    t =   145.20s Tear Down
+Test Case '-[HalcyaUITests.DonneesUITests testImporterUnFichierDepuisFichiers]' failed (145.356 seconds).
+Test Suite 'DonneesUITests' failed at 2026-11-17 00:13:05.678.
+	 Executed 1 test, with 1 failure (0 unexpected) in 145.356 (145.358) seconds
+Test Suite 'HalcyaUITests.xctest' failed at 2026-11-17 00:13:05.678.
+	 Executed 1 test, with 1 failure (0 unexpected) in 145.356 (145.359) seconds
+Test Suite 'Selected tests' failed at 2026-11-17 00:13:05.679.
+	 Executed 1 test, with 1 failure (0 unexpected) in 145.356 (145.360) seconds
+2026-11-17 00:13:23.435 xcodebuild[3452:265918] [MT] IDETestOperationsObserverDebug: 165.258 elapsed -- Testing started completed.
+2026-11-17 00:13:23.435 xcodebuild[3452:265918] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-17 00:13:23.435 xcodebuild[3452:265918] [MT] IDETestOperationsObserverDebug: 165.258 sec, +165.258 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-hehegfbigpupfjagtgyedsgsidcv/Logs/Test/Test-HalcyaUITests-2026.11.17_00-10-37-+0000.xcresult
+
+Failing tests:
+	DonneesUITests.testImporterUnFichierDepuisFichiers()
+
+** TEST EXECUTE FAILED **
+
+Testing started
