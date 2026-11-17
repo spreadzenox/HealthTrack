@@ -226,6 +226,8 @@ jobs:
   emulator-test-api35:
     name: HealthTrack sur Samsung A56 (API 35 / Android 15)
     runs-on: ubuntu-latest
+    # ≈ 4 à 9 min d'habitude ; un émulateur bloqué au démarrage échoue vite au lieu de retenir la PR 6 h (CI-EMU-TIMEOUT)
+    timeout-minutes: 30
     needs: build
 
     steps:
@@ -404,6 +406,8 @@ jobs:
   emulator-test-api36:
     name: HealthTrack sur Samsung A56 (API 36 / Android 16 — cible fix HC)
     runs-on: ubuntu-latest
+    # ≈ 4 à 9 min d'habitude ; un émulateur bloqué au démarrage échoue vite au lieu de retenir la PR 6 h (CI-EMU-TIMEOUT)
+    timeout-minutes: 30
     needs: build
 
     steps:
@@ -576,6 +580,8 @@ jobs:
   emulator-test-api34-edge:
     name: Bord à bord sous Android 14 (API 34)
     runs-on: ubuntu-latest
+    # ≈ 4 à 9 min d'habitude ; un émulateur bloqué au démarrage échoue vite au lieu de retenir la PR 6 h (CI-EMU-TIMEOUT)
+    timeout-minutes: 30
     needs: build
 
     steps:
