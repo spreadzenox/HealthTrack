@@ -10,7 +10,7 @@ export function emitAppOpened(now = new Date(), target = bus) {
   const firstOfDay = loadCompanion().lastAppDay !== today
   const awayDays = openDay(today, loadCompanion(), 'lastAppDay')
   opened = true
-  const payload = { firstOfDay, morning: now.getHours() < 11, awayDays }
+  const payload = { firstOfDay, morning: now.getHours() >= 5 && now.getHours() < 11, awayDays }
   target.emit(EVENTS.APP_OPENED, payload)
   return payload
 }

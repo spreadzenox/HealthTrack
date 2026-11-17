@@ -428,7 +428,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     un utilisateur existant la voit une fois à la mise à jour. Aussi : capture iPhone « vide-accueil » blanche (à
     vérifier) ; mode captures iPhone recouvert par la rencontre alors que `captureMode.js` sème `halcya_companion.metAt`
     (défaut de l'outil, pas du produit). Captures avant/après en clair et sombre, Android et iPhone.
-  - [ ] **POLISH-PILOU-DORT-YEUX** (vu le 17/11 03:30 sur captures/main, iPhone, Accueil vers 01:50) : « Pilou dort. » mais la figurine garde les yeux ouverts sur l'île ; vérifier que la scène 3D reçoit l'expression Endormi (yeux fermés en trait, #1071) la nuit.
+  - [x] **POLISH-PILOU-DORT-YEUX** (vu le 17/11 03:30 sur captures/main, iPhone, Accueil vers 01:50) : « Pilou dort. » mais la figurine garde les yeux ouverts sur l'île ; vérifier que la scène 3D reçoit l'expression Endormi (yeux fermés en trait, #1071) la nuit.
+    **Fait le 17/11 05:30** (PR « [Auto] Pilou dort vraiment la nuit ») : cause = `app:opened` jouait « réveil » (le « matin » commençait à minuit) puis revenait à l'humeur, et rien ne le rendormait avant le tick de 5 min ; au lever, l'ancien test `P().expression === 'endormi'` ne marchait que sur le repli (la figurine n'a pas ce getter) : Pilou ne se réveillait plus. Désormais `restExpression`/`appOpenedReaction` (`companion/mood.js`) : la nuit, l'ouverture ne le réveille pas et tous les retours à l'humeur le rendorment ; matin = 5 h à 11 h ; test `companion/sleep.test.js`. Reste : un geste de nuit (cadeau, câlin) le réveille jusqu'au tick suivant (5 min), voulu.
+  - [ ] **POLISH-PILOU-CILS-NUIT** (vu le 17/11 05:30, capture de nuit) : yeux fermés, le trait des cils se voit à peine sous la lumière de nuit ; à juger sur un vrai téléphone avant de l'épaissir.
   - [ ] **REFONTE-RESTES-SPRINT** (après POLISH-MEET-DARK, un sujet par run) : nom choisi dans l'étiquette de l'île
     (`Dashboard.jsx` → `name` de `<CompanionHome>`, une ligne, décrit dans `sprint/LOT-VIE.md` 00:50) et dans le widget
     (`world/widgetSync.js` → `pilouName()`) ; `growthAt` et `loadWorldContext()` branchés dans la scène ; poses du
