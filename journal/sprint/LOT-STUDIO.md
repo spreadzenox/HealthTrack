@@ -1,5 +1,13 @@
 # Lot STUDIO — étape 14 du brief (double numérique a, Studio Pilou à la main)
 
+## État au 17/11 01:25
+- **Sur main** : #1052 mergée à 01:22 (fiche de traits, export et import, écran Studio Pilou, aperçu 2D, pièces 3D,
+  Nouveautés). Build iOS vert sur son dernier commit (33a59b01), captures iPhone regardées.
+- **En PR** : #1072 (`claude/sprint-studio-4`) — les traits sur le vrai Pilou : `equiperPilou` (pièces 3D sur
+  `kit.body`, vinyle satiné) et visage peint (crochet facultatif dans `drawVisage`), robustesse sans toile 2D.
+- **Reste** : merger #1072 (empilée sur #1052, désormais sans conflit). Aperçu 3D dans le Studio (question à
+  l'orchestrateur, sans réponse : l'aperçu reste peint en 2D).
+
 Équipier du sprint du 16/11 (consignes : `journal/sprint/SPRINT.md` de la branche de l'orchestrateur). Branches
 `claude/sprint-studio-<n>`, PR « [Sprint STUDIO] … ». Dossier : `app/src/companion/studio/`.
 
