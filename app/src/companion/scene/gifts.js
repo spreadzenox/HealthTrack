@@ -40,13 +40,28 @@ function glaze(color, extra = {}) {
   return new THREE.MeshPhysicalMaterial({ color, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.12, ...extra })
 }
 
+/** Feuillage de l'arbuste du J1 par saison (SPEC île § 8) : automne orangé, neige en hiver, amandier en fleur. */
+export const SHRUB_LEAVES = Object.freeze({
+  'printemps-ete': ['#5FB24A', '#7CC75A'],
+  automne: ['#D9702C', '#EFA043'],
+  hiver: ['#EEF3F7', '#5E9A62'],
+  'fin-hiver': ['#F7E6EC', '#EFB9CB'],
+})
+
+function paintShrub(obj, season) {
+  const leaves = SHRUB_LEAVES[season]
+  if (!obj || !leaves) return
+  obj.userData.leaves?.forEach((m, i) => m.color.set(leaves[i]))
+}
+
 function buildShrub() {
   const g = new THREE.Group()
   const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.035, 0.22, 6), glaze('#8A5D3E', { clearcoat: 0.4 }))
   trunk.position.y = 0.11
   g.add(trunk)
-  const leaf = glaze('#5FB24A')
-  const leaf2 = glaze('#7CC75A')
+  const leaf = glaze(SHRUB_LEAVES['printemps-ete'][0])
+  const leaf2 = glaze(SHRUB_LEAVES['printemps-ete'][1])
+  g.userData.leaves = [leaf, leaf2]
   for (const [x, y, z, r, m] of [[0, 0.3, 0, 0.13, leaf], [0.09, 0.25, 0.04, 0.09, leaf2], [-0.08, 0.26, 0.03, 0.095, leaf2], [0.02, 0.38, -0.02, 0.085, leaf]]) {
     const b = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 1), m)
     b.position.set(x, y, z)
@@ -212,6 +227,7 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
   const placed = new Map()
   let rm = reducedMotion
   let evening = 0
+  let season = 'printemps-ete'
 
   function add(item, t) {
     if (!GIFT_ITEMS.includes(item) || placed.has(item)) return
@@ -221,6 +237,7 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
       return
     }
     const obj = BUILDERS[item]()
+    if (item === 'arbuste') paintShrub(obj, season)
     const place = GIFT_PLACES[item]
     if (place) {
       const x = place[0] * ISLAND.R * 0.92, z = place[1] * ISLAND.R * 0.92
@@ -263,6 +280,12 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
     /** Tous les cadeaux reçus, posés sans animation (ouverture de l'app). */
     setItems(items = []) {
       for (const it of items) if (!placed.has(it)) { add(it, null); const p = placed.get(it); if (p) p.bornAt = null }
+    },
+    /** Saison de l'îlot : le feuillage de l'arbuste la suit (posé avant ou après). */
+    setSeason(next) {
+      if (!SHRUB_LEAVES[next]) return
+      season = next
+      paintShrub(placed.get('arbuste')?.obj, season)
     },
     setEvening(v) {
       evening = Math.max(0, Math.min(1, v))

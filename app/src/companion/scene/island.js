@@ -23,6 +23,19 @@ const STRATA = [
 ]
 const PEBBLES = ['#E7DED0', '#B5ABA0', '#D2AD98', '#837A73', '#EFE2C8', '#A4ACA3']
 
+/**
+ * Couleurs du dessus de l'îlot par saison (SPEC île § 8) : `top` = [creux, bosses, bourrelet], `tufts` = teintes des
+ * touffes. Printemps-été = l'herbe vive d'origine ; automne = herbe dorée ; hiver = calotte de neige (quelques touffes
+ * vertes qui dépassent) ; fin d'hiver = herbe qui reverdit et petites fleurs blanches et roses d'amandier.
+ */
+export const SEASON_COLORS = Object.freeze({
+  'printemps-ete': { top: ['#6AAE3E', '#8CC955', '#58993A'], tufts: ['#7DBE48', '#8FCF57', '#6DAF3E', '#9DD866', '#84C64F'] },
+  automne: { top: ['#B39A3C', '#D1B650', '#977F32'], tufts: ['#C9A447', '#D8B65A', '#B38E3A', '#E0A048', '#C98A3C'] },
+  hiver: { top: ['#E3EAF1', '#F6F8FB', '#C8D3DF'], tufts: ['#EEF2F6', '#DDE5EC', '#F7F9FB', '#8FAE84', '#E6ECF1'] },
+  'fin-hiver': { top: ['#7AB24E', '#98CA66', '#649A42'], tufts: ['#8DC25A', '#9FD06B', '#F7EEF1', '#7DB64C', '#F3D3DF'] },
+})
+const DEFAULT_SEASON = 'printemps-ete'
+
 function boundaryY(i, theta) {
   if (!i) return STRATA[0].y
   return STRATA[i].y + 0.035 * valueNoise1(theta * 0.8 + i * 3.3, 71 + i) - 0.02 * Math.sin(theta + i * 1.7)
@@ -81,20 +94,32 @@ function islandTop(radial) {
   geo.rotateY(Math.PI)
   const p = geo.attributes.position
   const colors = new Float32Array(p.count * 3)
-  const c = new THREE.Color()
-  const a = new THREE.Color('#6AAE3E'), b = new THREE.Color('#8CC955'), rim = new THREE.Color('#58993A')
+  // mélange creux / bosses de chaque sommet (-1 = bourrelet), gardé pour recolorer à chaque saison
+  const mix = new Float32Array(p.count)
   for (let k = 0; k < p.count; k++) {
     const x = p.getX(k), y = p.getY(k), z = p.getZ(k)
     const r = Math.hypot(x, z)
     const th = Math.atan2(x, z)
     if (r < ISLAND.R) p.setY(k, y + 0.018 * (1 - (r / ISLAND.R) ** 2))
-    c.copy(a).lerp(b, 0.5 + 0.5 * valueNoise1(th * 4 + r * 7, 63))
-    if (r > ISLAND.R - 0.01) c.copy(rim)
-    colors.set([c.r, c.g, c.b], k * 3)
+    mix[k] = r > ISLAND.R - 0.01 ? -1 : 0.5 + 0.5 * valueNoise1(th * 4 + r * 7, 63)
   }
   geo.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+  geo.userData.mix = mix
   geo.computeVertexNormals()
   return geo
+}
+
+function paintTop(geo, season) {
+  const [a, b, rim] = SEASON_COLORS[season].top.map((h) => new THREE.Color(h))
+  const mix = geo.userData.mix
+  const col = geo.attributes.color
+  const c = new THREE.Color()
+  for (let k = 0; k < mix.length; k++) {
+    if (mix[k] < 0) c.copy(rim)
+    else c.copy(a).lerp(b, mix[k])
+    col.setXYZ(k, c.r, c.g, c.b)
+  }
+  col.needsUpdate = true
 }
 
 /** Une touffe d'herbe trapue : 4 brins effilés et courbés (12 triangles). */
@@ -151,7 +176,8 @@ function blobTexture() {
 /**
  * @param {{ quality: 'haut'|'moyen'|'bas', tufts: number, seed?: number }} opts
  */
-export function createIsland({ quality = 'haut', tufts = 600, seed = 7 } = {}) {
+export function createIsland({ quality = 'haut', tufts = 600, seed = 7, season = DEFAULT_SEASON } = {}) {
+  let current = SEASON_COLORS[season] ? season : DEFAULT_SEASON
   const group = new THREE.Group()
   group.name = 'ile'
   const physical = quality === 'haut'
@@ -166,7 +192,9 @@ export function createIsland({ quality = 'haut', tufts = 600, seed = 7 } = {}) {
   group.add(sideMesh)
 
   const topMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82 })
-  const top = new THREE.Mesh(islandTop(radial), topMat)
+  const topGeo = islandTop(radial)
+  paintTop(topGeo, current)
+  const top = new THREE.Mesh(topGeo, topMat)
   top.name = 'gazon'
   group.add(top)
 
@@ -203,7 +231,9 @@ export function createIsland({ quality = 'haut', tufts = 600, seed = 7 } = {}) {
   const tuftGeo = tuftGeometry()
   const tuftMat = new THREE.MeshStandardMaterial({ roughness: 0.78, side: THREE.DoubleSide, vertexColors: true })
   const tuftMesh = new THREE.InstancedMesh(tuftGeo, tuftMat, Math.max(1, tufts))
-  const greens = ['#7DBE48', '#8FCF57', '#6DAF3E', '#9DD866', '#84C64F'].map((h) => new THREE.Color(h))
+  const palette = (sea) => SEASON_COLORS[sea].tufts.map((h) => new THREE.Color(h))
+  const greens = palette(current)
+  const tuftTone = [] // indice de teinte de chaque touffe : la même touffe change de couleur avec la saison
   let placed = 0
   const golden = Math.PI * (3 - Math.sqrt(5))
   for (let i = 0; placed < tufts && i < tufts * 3; i++) {
@@ -220,7 +250,9 @@ export function createIsland({ quality = 'haut', tufts = 600, seed = 7 } = {}) {
     s.set(k, k * (0.8 + r() * 0.5), k)
     m.compose(v, q, s)
     tuftMesh.setMatrixAt(placed, m)
-    tuftMesh.setColorAt(placed, greens[Math.floor(r() * greens.length)])
+    const tone = Math.floor(r() * greens.length)
+    tuftTone.push(tone)
+    tuftMesh.setColorAt(placed, greens[tone])
     placed++
   }
   tuftMesh.count = placed
@@ -240,6 +272,18 @@ export function createIsland({ quality = 'haut', tufts = 600, seed = 7 } = {}) {
 
   return {
     group,
+    get season() {
+      return current
+    },
+    /** Change la saison (sortie de `seasonOf`) : recolore le dessus et les touffes, sans rien reconstruire. */
+    setSeason(next) {
+      if (!SEASON_COLORS[next] || next === current) return
+      current = next
+      paintTop(topGeo, current)
+      const tones = palette(current)
+      tuftTone.forEach((tone, i) => tuftMesh.setColorAt(i, tones[tone % tones.length]))
+      if (tuftMesh.instanceColor) tuftMesh.instanceColor.needsUpdate = true
+    },
     /** Hauteur du dessus de l'île en (x, z). */
     topY(x, z) {
       const rr = Math.hypot(x, z)

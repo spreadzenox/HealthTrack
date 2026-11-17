@@ -127,7 +127,7 @@ sans donnée de santé brute au-delà de ce qui est écrit ici, sans contenu de 
 | `expression:request` | tous | `{ name, mode, source }` | `mode` ∈ `state` (dure), `sequence` (une fois) ; `name` dans `EXPRESSIONS` ou `reveil` |
 | `look:request` | tous | `{ target }` | `'camera'`, `null` ou `{ x, y }` px dans la scène |
 | `pilou:touched` | SCÈNE | `{ gesture, x, y }` | relayé à `react` ; VIE peut afficher un texte |
-| `time:phase` | SCÈNE | `{ phase, light, at }` | émis à l'ouverture puis toutes les 5 min ; `phase` ∈ `aube`, `matin`, `midi`, `soir`, `nuit` ; `light` = sortie de `lightAt` |
+| `time:phase` | SCÈNE | `{ phase, light, season, at }` | émis à l'ouverture puis toutes les 5 min ; `phase` ∈ `aube`, `matin`, `midi`, `soir`, `nuit` ; `light` = sortie de `lightAt` ; `season` = sortie de `seasonOf` (hémisphère de la position météo), l'îlot et l'arbuste en prennent les couleurs |
 | `weather:changed` | SCÈNE (lit la météo de l'app) | `{ weather, decor }` | `weather` = `{ tempC, precipMmH, windKmH, code }`, `decor` = sortie de `weatherDecor` ; l'étiquette dit la météo |
 | `traits:changed` | STUDIO / PHOTO | `{ fiche }` | fiche au schéma de `PILOU-DOUBLE.md` (§ 5), ou `null` = Pilou d'origine |
 | `scene:ready` | SCÈNE | `{ quality, frameMs }` | premier rendu fait |
