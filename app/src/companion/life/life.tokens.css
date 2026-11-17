@@ -21,3 +21,16 @@
   --life-white-veil: rgba(255, 255, 255, 0.7);
   --life-hairline: rgba(74, 51, 43, 0.06);
 }
+
+/* Thème sombre (POLISH-MEET-DARK) : ciel du soir assourdi, carte et bulles sombres sous le texte clair. */
+:root[data-theme='dark'] {
+  --life-sky-top: #4a3a52;
+  --life-sky-2: #40344a;
+  --life-sky-haze: #3d3046;
+  --life-sky-low: #2a2430;
+  --life-sky-1: #2a2430;
+  --life-card: #1d2a24;
+  --life-white: #26332d;
+  --life-white-veil: rgba(0, 0, 0, 0.4);
+  --life-hairline: rgba(255, 255, 255, 0.08);
+}
