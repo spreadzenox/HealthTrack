@@ -395,12 +395,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     proposition) ; widget iPhone (WidgetKit, extension Xcode à créer) ; brancher la photo sur `saveFiche` du Studio ;
     course de test `AppRedirects.test.jsx` (appel GitHub de `UpdateBanner` après la fin de jsdom) corrigée dans #1050.
     Règle pour tous : ne pas lancer `getAnalysis(...)` depuis l'Accueil (check « Budget de lectures »).
-  - [ ] **POLISH-MEET-DARK** (premier run de code après 03:00, avant le reste) : relevé par le lot SCÈNE sur les captures
+  - [x] **POLISH-MEET-DARK** (fait le 17/11 03:30 : couleurs sombres de `life.tokens.css`, test `lifeTokens.test.js` ; « vide-accueil » et la surimpression des captures iPhone déjà réglées par #1067, vérifié sur captures/main 136e969) : relevé par le lot SCÈNE sur les captures
     iPhone de #1070 (6bf72be) : en thème sombre, la carte de la rencontre (`companion/life/`) garde un fond clair sous un
     texte clair (« Comment voulez-vous l'appeler ? », bulle « Bonjour ! ») : illisible. Partie avec la version du soir :
     un utilisateur existant la voit une fois à la mise à jour. Aussi : capture iPhone « vide-accueil » blanche (à
     vérifier) ; mode captures iPhone recouvert par la rencontre alors que `captureMode.js` sème `halcya_companion.metAt`
     (défaut de l'outil, pas du produit). Captures avant/après en clair et sombre, Android et iPhone.
+  - [ ] **POLISH-PILOU-DORT-YEUX** (vu le 17/11 03:30 sur captures/main, iPhone, Accueil vers 01:50) : « Pilou dort. » mais la figurine garde les yeux ouverts sur l'île ; vérifier que la scène 3D reçoit l'expression Endormi (yeux fermés en trait, #1071) la nuit.
   - [ ] **REFONTE-RESTES-SPRINT** (après POLISH-MEET-DARK, un sujet par run) : nom choisi dans l'étiquette de l'île
     (`Dashboard.jsx` → `name` de `<CompanionHome>`, une ligne, décrit dans `sprint/LOT-VIE.md` 00:50) et dans le widget
     (`world/widgetSync.js` → `pilouName()`) ; `growthAt` et `loadWorldContext()` branchés dans la scène ; poses du
