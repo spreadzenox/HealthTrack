@@ -1,0 +1,129 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=0B666A99-0717-4910-AEEB-CB0786C48DB5 "-only-testing:HalcyaUITests/DonneesUITests/testImporterUnFichierDepuisFichiers"
+
+2026-11-17 05:56:29.682 xcodebuild[57189:153043] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-17 05:56:29.724 xcodebuild[57189:153043] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:0B666A99-0717-4910-AEEB-CB0786C48DB5, OS:26.2, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:0B666A99-0717-4910-AEEB-CB0786C48DB5, OS:26.2, name:iPhone 16e }
+2026-11-17 05:56:34.074 xcodebuild[57189:153043] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-17 05:56:40.701977+0000 HalcyaUITests-Runner[57976:154845] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-17 05:56:43.663.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-17 05:56:43.664.
+Test Suite 'DonneesUITests' started at 2026-11-17 05:56:43.664.
+Test Case '-[HalcyaUITests.DonneesUITests testImporterUnFichierDepuisFichiers]' started.
+    t =     0.00s Start Test at 2026-11-17 05:56:43.666
+    t =     0.11s Set Up
+    t =     0.11s Open fr.jpesquet.sante
+    t =     0.11s     Activate fr.jpesquet.sante
+    t =     0.15s         Wait for fr.jpesquet.sante to idle
+    t =     0.26s Waiting 30.0s for Any (First Match) to exist
+    t =     1.26s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     1.26s         Checking existence of `Any (First Match)`
+    t =     1.41s Tap Any (First Match)
+    t =     1.41s     Wait for fr.jpesquet.sante to idle
+    t =     1.42s     Find the Any (First Match)
+    t =     1.48s     Check for interrupting elements affecting "Choisir un fichier à importer" Button
+    t =     1.65s     Synthesize event
+    t =     2.08s     Wait for fr.jpesquet.sante to idle
+    t =     2.26s Waiting 2.0s for Any (First Match) to exist
+    t =     3.28s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.28s         Checking existence of `Any (First Match)`
+    t =     3.36s         Capturing element debug description
+    t =     4.28s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     4.28s         Checking existence of `Any (First Match)`
+    t =     4.37s         Capturing element debug description
+    t =     4.37s     Checking existence of `Any (First Match)`
+    t =     4.43s Collecting debug information to assist test failure triage
+    t =     4.43s     Requesting snapshot of accessibility hierarchy for app with pid 21280
+    t =     4.54s Waiting 2.0s for Any (First Match) to exist
+    t =     5.56s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     5.56s         Checking existence of `Any (First Match)`
+    t =     5.69s         Capturing element debug description
+    t =     6.57s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     6.58s         Checking existence of `Any (First Match)`
+    t =     6.85s         Capturing element debug description
+    t =     6.87s     Checking existence of `Any (First Match)`
+    t =     7.54s Collecting debug information to assist test failure triage
+    t =     7.54s     Requesting snapshot of accessibility hierarchy for app with pid 21280
+    t =     7.92s Checking existence of `"Récents" Button`
+    t =     8.08s Waiting 8.0s for Cell (First Match) to exist
+    t =     9.12s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =     9.12s         Checking existence of `Cell (First Match)`
+    t =    10.34s         Capturing element debug description
+    t =    11.15s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    11.15s         Checking existence of `Cell (First Match)`
+    t =    12.67s         Capturing element debug description
+    t =    13.10s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    13.11s         Checking existence of `Cell (First Match)`
+    t =    13.80s         Capturing element debug description
+    t =    14.11s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    14.11s         Checking existence of `Cell (First Match)`
+    t =    14.27s         Capturing element debug description
+    t =    15.11s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    15.11s         Checking existence of `Cell (First Match)`
+    t =    15.27s         Capturing element debug description
+    t =    16.10s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    16.10s         Checking existence of `Cell (First Match)`
+    t =    16.24s         Capturing element debug description
+    t =    16.24s     Checking existence of `Cell (First Match)`
+    t =    16.54s Collecting debug information to assist test failure triage
+    t =    16.54s     Requesting snapshot of accessibility hierarchy for app with pid 21280
+    t =    16.85s Waiting 3.0s for Any (First Match) to exist
+    t =    17.87s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    17.88s         Checking existence of `Any (First Match)`
+    t =    17.99s Tap Any (First Match)
+    t =    17.99s     Wait for fr.jpesquet.sante to idle
+    t =    17.99s     Find the Any (First Match)
+    t =    18.09s     Check for interrupting elements affecting "Explorer" Button
+    t =    18.21s     Synthesize event
+    t =    18.64s     Wait for fr.jpesquet.sante to idle
+    t =    18.72s Checking existence of `Cell (First Match)`
+    t =    21.39s Checking existence of `Cell (First Match)`
+    t =    21.51s Waiting 10.0s for Cell (First Match) to exist
+    t =    22.56s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    22.56s         Checking existence of `Cell (First Match)`
+    t =    22.64s Tap Cell (First Match)
+    t =    22.64s     Wait for fr.jpesquet.sante to idle
+    t =    22.65s     Find the Cell (First Match)
+    t =    22.72s     Check for interrupting elements affecting "halcya-essai-import.json, json" Cell
+    t =    22.81s     Synthesize event
+    t =    23.13s     Wait for fr.jpesquet.sante to idle
+    t =    23.27s Waiting 3.0s for "Ouvrir" Button to exist
+    t =    24.29s     Checking `Expect predicate `existsNoRetry == 1` for object "Ouvrir" Button`
+    t =    24.30s         Checking existence of `"Ouvrir" Button`
+    t =    24.37s         Capturing element debug description
+    t =    25.29s     Checking `Expect predicate `existsNoRetry == 1` for object "Ouvrir" Button`
+    t =    25.29s         Checking existence of `"Ouvrir" Button`
+    t =    25.33s         Capturing element debug description
+    t =    26.28s     Checking `Expect predicate `existsNoRetry == 1` for object "Ouvrir" Button`
+    t =    26.28s         Checking existence of `"Ouvrir" Button`
+    t =    26.33s         Capturing element debug description
+    t =    26.33s     Checking existence of `"Ouvrir" Button`
+    t =    26.37s Collecting debug information to assist test failure triage
+    t =    26.37s     Requesting snapshot of accessibility hierarchy for app with pid 21280
+    t =    26.44s Waiting 5.0s for Any (First Match) to exist
+    t =    27.49s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    27.49s         Checking existence of `Any (First Match)`
+    t =    27.53s Waiting 30.0s for Any (First Match) to exist
+    t =    28.56s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    28.56s         Checking existence of `Any (First Match)`
+    t =    28.60s Tear Down
+Test Case '-[HalcyaUITests.DonneesUITests testImporterUnFichierDepuisFichiers]' passed (28.675 seconds).
+Test Suite 'DonneesUITests' passed at 2026-11-17 05:57:12.346.
+	 Executed 1 test, with 0 failures (0 unexpected) in 28.675 (28.681) seconds
+Test Suite 'HalcyaUITests.xctest' passed at 2026-11-17 05:57:12.346.
+	 Executed 1 test, with 0 failures (0 unexpected) in 28.675 (28.682) seconds
+Test Suite 'Selected tests' passed at 2026-11-17 05:57:12.347.
+	 Executed 1 test, with 0 failures (0 unexpected) in 28.675 (28.684) seconds
+2026-11-17 05:57:13.215 xcodebuild[57189:153043] [MT] IDETestOperationsObserverDebug: 39.129 elapsed -- Testing started completed.
+2026-11-17 05:57:13.215 xcodebuild[57189:153043] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-17 05:57:13.215 xcodebuild[57189:153043] [MT] IDETestOperationsObserverDebug: 39.129 sec, +39.129 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-ergvtpkulvbpfthhplwxlzdfuhpi/Logs/Test/Test-HalcyaUITests-2026.11.17_05-56-29-+0000.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
