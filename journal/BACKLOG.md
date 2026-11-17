@@ -362,7 +362,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       une fonction à coder sans accord). « Gêne » qui ne reste pas cochée : traité par UPG-4 (#1045).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 00:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
-  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40), Tests de main verts après chacun (v771) ; le reste en PR : #1052, #1058, #1065, #1066, #1067.
+  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), Tests de main verts après chacun (v771) ; le reste en PR : #1052, #1065, #1066, #1067.
   - ASSEMBLAGE (confié au lot SCÈNE par l'orchestrateur à 22:40, `claude/sprint-scene-3`) : fusion locale de main et
     des 7 PR → lint propre, 3 980 tests verts, 1 rouge (`bundleGuard.test.js` : `companion/CompanionScene.css` à
     importer dans `app/src/pageStyles.js`, une ligne, dans la PR d'assemblage ou #1056). Conflits connus et leur
@@ -374,7 +374,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     #1062 : 7 cadeaux en 3D, cérémonie de la boîte, météo de l'île, Réglages › Mouvements de Pilou, étiquette lisible
     en sombre (mergée, f135f54). #1065 (branche 3, en PR) : Pilou dort la nuit, image fixe de nuit, ambre et lune, lanterne (`lightAt` de MONDE). À relever : palier et temps
     d'image sur le job Android 9 et le simulateur iPhone (`data-quality` de `.companion-scene`).
-  - PILOU (9) : #1058 (corps verni, yeux de la créature, 12 expressions, ΔE menthe 2,8 moyen / 3,8 max dans la scène,
+  - PILOU (9) : **#1058 mergée** (00:58 ; corps verni, yeux de la créature, 12 expressions, ΔE menthe 2,8 moyen / 3,8 max dans la scène,
     9 050 triangles) ; petits Pilou pré-rendus (12 × 218×240 webp, `pilouSprite`) pour VIE et MONDE. Branche 2 : petits
     effets des expressions, yeux fermés en trait.
   - BULLES (10) : **#1056 mergée** (23:52 ; la scène est importée directement, son CSS reste chargé d'emblée ; bulles-boutons, Humeur du jour à plancher, fleurs, « Jour N sur 7 », 7 cadeaux) ; branche 2 :

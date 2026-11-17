@@ -16,7 +16,9 @@ annulées par le merge suivant)  ·  **Parité** : 70 % (33/47), inchangée
   **Lot PHOTO fini** (relais #1047 et app #1050 sur main, éteints ; missions P49 et PI3 prêtes).
 - **#1057 (MONDE) mergée par son équipier à 00:40** (ae8e213) pendant le run : widget Android « Ma journée », Pilou dans
   les notifications du soir (Android et iPhone) ; widget absent sur iPhone (PARITE).
-- PR du sprint encore ouvertes : #1052 (STUDIO), #1058 (PILOU), #1065 (SCÈNE 3 : la nuit sur l'île),
+- **#1058 (PILOU) mergée par son équipier à 00:58** (99c1de6) : la figurine remplace le Pilou simple ; reste au lot
+  SCÈNE les images fixes refaites avec ce Pilou.
+- PR du sprint encore ouvertes : #1052 (STUDIO), #1065 (SCÈNE 3 : la nuit sur l'île),
   #1066 (BULLES 2 : lucioles, jour 14), #1067 (VIE 5 : cairn des galets). #1045 (UPG-4) reportée après 03:00.
 - Tête du résumé (relevé de 00:30, v771, nouvelles PR), tableau des runs, BACKLOG (bloc sprint), PRODUIT
   (historique), PARITE (photo éteinte des deux côtés).
