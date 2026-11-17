@@ -66,7 +66,7 @@ verrez une fois, à la mise à jour. La capture iPhone « Accueil sans données 
   le 22/11 dépendra de ce qui sera mergé à 03:00.
 - **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs
   (outil du parcours « mise à jour » prêt le 16/11 ; l'essai en cours visible depuis l'Accueil, UPG-1, mergé le 16/11 à
-  18:00 ; le bandeau Nouveautés qui annonce la nouvelle navigation, UPG-2, mergé, #1043 ; « Ma digestion » reste cochée, UPG-4, #1045, mergée le 17/11 à 05:57 ; passage UPG-3 commencé le 16/11 20:30 : 2 personas, rien de perdu, 10 constats, d'abord la visite guidée sans « Ma journée » et les anciens objectifs « sport » et « cycle » convertis sans un mot).
+  18:00 ; le bandeau Nouveautés qui annonce la nouvelle navigation, UPG-2, mergé, #1043 ; « Ma digestion » reste cochée, UPG-4, #1045, mergée le 17/11 à 05:38 ; passage UPG-3 commencé le 16/11 20:30 : 2 personas, rien de perdu, 10 constats, d'abord la visite guidée sans « Ma journée » et les anciens objectifs « sport » et « cycle » convertis sans un mot).
 
 **Où en est Halcya**
 
