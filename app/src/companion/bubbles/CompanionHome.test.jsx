@@ -132,3 +132,27 @@ describe('CompanionHome — la première semaine', () => {
     expect(screen.queryByText(/avant vos premières analyses/)).toBeNull()
   })
 })
+
+describe('CompanionHome — la nuit et le jour 14', () => {
+  it('la nuit, les bulles restantes sont des lucioles toujours touchables, et rien ne presse', () => {
+    renderHome({ now: new Date(2026, 10, 16, 23, 10) })
+    const b = screen.getByRole('button', { name: /^Méditation, à faire/ })
+    expect(b.className).toContain('is-firefly')
+    expect(screen.getByText('Pilou dort. Le reste peut attendre demain.')).toBeInTheDocument()
+  })
+
+  it('le jour 14 : une grande fleur pêche et son étiquette, une seule fois', () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    const { rerenderWith } = renderHome({ askGut: true, gut: { daysLeft: 1 } })
+    rerenderWith({ gut: { daysLeft: 0 } })
+    act(() => { vi.advanceTimersByTime(700) })
+    expect(bus.last('milestone')).toEqual({ kind: 'day14' })
+    expect(bus.last('flower:grow')).toMatchObject({ theme: 'peche', scale: 2.1 })
+    expect(screen.getByRole('status')).toHaveTextContent('Confort digestif : premier score prêt')
+  })
+
+  it('le nom choisi est celui qu’on lit partout', () => {
+    renderHome({ name: 'Nuage' })
+    expect(screen.getByText('Nuage est tranquille · 4 bulles à faire')).toBeInTheDocument()
+  })
+})

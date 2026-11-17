@@ -77,6 +77,19 @@
         <receiver
             android:name=".PortionReminderReceiver"
             android:exported="false" />
+        <!-- Widget de Pilou (PilouWidget.java, étape 13 de la refonte « Compagnon ») : redessiné par l'app après
+             chaque saisie et par Android toutes les 30 min ; aucune donnée lue ailleurs que dans l'app. -->
+        <receiver
+            android:name=".PilouWidget"
+            android:exported="false"
+            android:label="@string/pilou_widget_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/pilou_widget_info" />
+        </receiver>
         <receiver
             android:name=".EveningNoteBootReceiver"
             android:exported="true">

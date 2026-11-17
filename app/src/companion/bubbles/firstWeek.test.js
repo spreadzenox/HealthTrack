@@ -69,3 +69,17 @@ describe('wellbeingDays', () => {
     expect(wellbeingDays(null)).toEqual({ noted: 0, todayNoted: false })
   })
 })
+
+describe('jour 14, confort digestif', () => {
+  it('une fois, pour qui a vu le délai courir', async () => {
+    const { digestionMilestone } = await import('./firstWeek')
+    const storage = mem()
+    expect(digestionMilestone(3, { storage })).toEqual({ celebrate: false, flower: false })
+    expect(digestionMilestone(0, { storage })).toEqual({ celebrate: true, flower: true })
+    expect(digestionMilestone(0, { storage })).toEqual({ celebrate: false, flower: true })
+  })
+  it('rien à fêter pour qui avait déjà son score avant la refonte', async () => {
+    const { digestionMilestone } = await import('./firstWeek')
+    expect(digestionMilestone(0, { storage: mem() })).toEqual({ celebrate: false, flower: false })
+  })
+})

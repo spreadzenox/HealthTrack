@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-16",
+  "kind": "nouveau",
+  "title": "Pilou sur votre écran d’accueil",
+  "variants": ["play", "sideload"],
+  "items": [
+    "Un widget « Ma journée » montre Pilou sur son îlot et ce qu’il vous reste à noter aujourd’hui.",
+    "Il suit l’heure : Pilou se réveille le matin, profite du soir et dort la nuit. Touchez-le pour ouvrir Ma journée."
+  ]
+}

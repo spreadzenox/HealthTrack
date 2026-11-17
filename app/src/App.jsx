@@ -30,6 +30,7 @@ const Act = lazy(() => import('./pages/Act'))
 const Trial = lazy(() => import('./pages/Trial'))
 const Licences = lazy(() => import('./pages/Licences'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
+const Studio = lazy(() => import('./companion/studio/Studio'))
 // Double numérique par photo (étape 15) : route absente tant que l'interrupteur de build est éteint (défaut)
 const PilouPhotoPage = lazy(() => import('./companion/photo/PilouPhotoPage'))
 
@@ -78,6 +79,7 @@ export default function App() {
             <Route path="agir" element={<Act />} />
             <Route path="agir/essai/:id" element={<Trial />} />
             <Route path="licences" element={<Licences />} />
+            <Route path="pilou/studio" element={<Studio />} />
             {PILOU_PHOTO && <Route path="pilou/photo" element={<PilouPhotoPage />} />}
             <Route path="connectors/withings/callback" element={<WithingsCallback />} />
             {/* Adresse inconnue (ancienne notification, lien périmé) : l'Accueil plutôt qu'une page blanche. */}

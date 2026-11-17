@@ -136,6 +136,8 @@
   --cmp-gold-edge: #e2b23c;
   --cmp-gold-ink: #3d2a00;
   --cmp-on-cta: #ffffff;
+  --cmp-night-top: #1c2452;
+  --cmp-night-bottom: #4a4a8c;
 }
 
 /* Thème sombre : fond encre, émeraude éclaircie, pastels assombris. */
