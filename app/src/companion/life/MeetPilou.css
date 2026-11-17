@@ -70,6 +70,7 @@
   background: var(--life-card);
   animation: meet-card 500ms cubic-bezier(.33, 1, .68, 1) both;
 }
+.meet-card { color: var(--text); }
 .meet-title { margin: 0; font-size: 1.45rem; font-weight: 900; line-height: 1.2; }
 .meet-lead { margin: 0; color: var(--text-muted); }
 .meet-field { position: relative; display: block; }
@@ -80,6 +81,7 @@
   border: 2px solid var(--mint-track);
   border-radius: 16px;
   background: var(--life-white);
+  color: var(--text);
   font-size: 1.15rem;
   font-weight: 800;
 }
