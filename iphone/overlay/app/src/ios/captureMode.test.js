@@ -999,4 +999,13 @@ describe('Tendances › Jour › veille et visite guidée sur Tendances (REFONTE
     await prepare({ name: 'vide-food', route: '/food', data: 'empty', theme: 'light' }, { localStorage, latestChangelogId: 'x', now })
     expect(JSON.parse(store.get('healthtrack_onboarding')).endedBy).toBe('capture')
   })
+
+  it('Pilou est noté rencontré même si un accueil vierge capturé avant a créé sa clé sans rencontre', async () => {
+    const store = new Map([['halcya_companion', JSON.stringify({ watch: true })]])
+    const localStorage = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, v) }
+    const now = Date.parse('2026-11-16T10:00:00Z')
+    await prepare({ name: 'demo-clair-ma-journee', route: '/journee', data: 'demo', theme: 'light' },
+      { localStorage, latestChangelogId: 'x', now, storage: { upsertEntries: async () => {} }, demoEntries: () => [] })
+    expect(JSON.parse(store.get('halcya_companion'))).toMatchObject({ watch: true, name: 'Pilou', metAt: '2026-11-16T10:00:00.000Z', ceremony7At: '2026-11-16T10:00:00.000Z' })
+  })
 })

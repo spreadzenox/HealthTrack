@@ -29,3 +29,20 @@ export function digestionDaysLeft(states, gut, now = new Date()) {
   const c = objectiveCard('digestion', states, now)
   return c.state === 'waiting' ? c.daysLeft : null
 }
+
+const RADIUS = [9, 15, 21, 27]
+
+/** Cairn (SPEC comprendre § 6.3) : galets empilés du plus gros (en bas) au plus petit ; familles sans lien : un petit galet pâle. */
+export function cairnStones(families = []) {
+  return [...families]
+    .filter((f) => f.state !== 'nodata')
+    .sort((a, b) => b.level - a.level)
+    .slice(0, 4)
+    .map((f) => ({ id: f.id, tone: f.tone, r: RADIUS[f.level] ?? RADIUS[0], quiet: !f.level }))
+    .reduce((acc, s, i) => {
+      const base = acc.length ? acc[acc.length - 1].top : 118
+      const cy = base - s.r * 0.72
+      return [...acc, { ...s, cx: 70 + (i % 2 ? 4 : -3), cy, top: cy - s.r * 0.62 }]
+    }, [])
+}
+

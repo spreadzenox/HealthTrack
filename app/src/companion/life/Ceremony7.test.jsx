@@ -69,3 +69,19 @@ describe('Pilou guide dans Objectifs', () => {
     expect(guideLine(undefined).expr).toBe('tranquille')
   })
 })
+
+describe('cairn des galets', async () => {
+  const { cairnStones } = await import('./guide')
+  it('le plus gros en bas, la taille suit la force du lien ; sans données : pas de galet', () => {
+    const stones = cairnStones([
+      { id: 'sleep', tone: 'night', state: 'net', level: 3 },
+      { id: 'nutrition', tone: 'peach', state: 'net', level: 1 },
+      { id: 'activity', tone: 'lilac', state: 'none', level: 0 },
+      { id: 'screen', tone: 'stone', state: 'nodata', level: 0 },
+    ])
+    expect(stones.map((s) => s.id)).toEqual(['sleep', 'nutrition', 'activity'])
+    expect(stones[0].r).toBeGreaterThan(stones[1].r)
+    expect(stones[0].cy).toBeGreaterThan(stones[1].cy)
+    expect(stones[2].quiet).toBe(true)
+  })
+})
