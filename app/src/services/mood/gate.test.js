@@ -122,6 +122,9 @@ describe('dérives lentes du visage (I121)', () => {
   })
 })
 
+// Simulations de 100 à 400 jeux : 1 à 5 s ici, jusqu'à 2,5 fois plus sur un runner de CI chargé (17/11).
+const SIMULATION_TIMEOUT = 30000
+
 describe('evaluateGate', () => {
   it(`reste candidate tant qu'il y a moins de ${GATE_MIN_DAYS} jours comparables, et les compte`, () => {
     const days = simulateDays({ seed: 1, nDays: 30, rho: () => 0.95 })
@@ -135,14 +138,14 @@ describe('evaluateGate', () => {
   it('sans aucun lien, ne s’ouvre presque jamais en 120 jours (≤ 3 % sur 200 jeux)', () => {
     const opened = share(200, (s) => evaluateGate(simulateDays({ seed: s * 7 + 1 })).periods.length > 0)
     expect(opened).toBeLessThanOrEqual(0.03)
-  })
+  }, SIMULATION_TIMEOUT)
 
   it('humeur et visage qui dérivent lentement sans lien : faux départs < 3 % en 120 jours (I121)', () => {
     for (const [phiMood, phiFace] of [[0.6, 0.6], [0.8, 0.95]]) {
       const opened = share(200, (s) => evaluateGate(simulateDays({ seed: s * 7 + 1, phiMood, phiFace })).periods.length > 0)
       expect(opened).toBeLessThan(0.03)
     }
-  }, 30000)
+  }, SIMULATION_TIMEOUT)
 
   it('note l’autocorrélation retenue (a) pour le diagnostic', () => {
     const g = evaluateGate(simulateDays({ seed: 5, phiMood: 0.8, phiFace: 0.95 }))
@@ -159,12 +162,12 @@ describe('evaluateGate', () => {
       })
       expect(opened).toBeGreaterThanOrEqual(0.8)
     }
-  })
+  }, SIMULATION_TIMEOUT)
 
   it('un lien net qui dure se referme rarement (≤ 15 %)', () => {
     const closed = share(200, (s) => evaluateGate(simulateDays({ seed: s * 7 + 1, rho: () => 0.7 })).closedAt != null)
     expect(closed).toBeLessThanOrEqual(0.15)
-  })
+  }, SIMULATION_TIMEOUT)
 
   it('se referme quand le lien disparaît, puis ne compte que les jours suivants', () => {
     let closed = 0
@@ -175,7 +178,7 @@ describe('evaluateGate', () => {
       if (g.state === 'candidate' && g.closedAt) expect(g.nDays).toBeLessThan(200 - 90)
     }
     expect(closed).toBeGreaterThanOrEqual(90)
-  })
+  }, SIMULATION_TIMEOUT)
 
   it('l’historique des regards est hebdomadaire et l’ouverture datée', () => {
     const g = evaluateGate(simulateDays({ seed: 8, rho: () => 0.8 }), { today: '2026-04-30' })
