@@ -361,8 +361,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       jours « comme d'habitude » marqués « pas tenu » ; export CSV demandé (persona Tout mesurer : proposition, pas
       une fonction à coder sans accord). « Gêne » qui ne reste pas cochée : traité par UPG-4 (#1045).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
-  l'intégrateur le 17/11 à 01:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
-  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Lots finis : PHOTO, MONDE, BULLES. En PR : #1065 et #1070 (SCÈNE 3 et 4, #1070 empilée sur #1065), #1067 (VIE 5), #1071 (PILOU 3), #1072 (STUDIO 4).
+  l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
+  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. En PR à 02:30 : #1071 (PILOU 3) et #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
   - ASSEMBLAGE (confié au lot SCÈNE par l'orchestrateur à 22:40, `claude/sprint-scene-3`) : fusion locale de main et
     des 7 PR → lint propre, 3 980 tests verts, 1 rouge (`bundleGuard.test.js` : `companion/CompanionScene.css` à
     importer dans `app/src/pageStyles.js`, une ligne, dans la PR d'assemblage ou #1056). Conflits connus et leur
@@ -395,6 +395,18 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     proposition) ; widget iPhone (WidgetKit, extension Xcode à créer) ; brancher la photo sur `saveFiche` du Studio ;
     course de test `AppRedirects.test.jsx` (appel GitHub de `UpdateBanner` après la fin de jsdom) corrigée dans #1050.
     Règle pour tous : ne pas lancer `getAnalysis(...)` depuis l'Accueil (check « Budget de lectures »).
+  - [ ] **POLISH-MEET-DARK** (premier run de code après 03:00, avant le reste) : relevé par le lot SCÈNE sur les captures
+    iPhone de #1070 (6bf72be) : en thème sombre, la carte de la rencontre (`companion/life/`) garde un fond clair sous un
+    texte clair (« Comment voulez-vous l'appeler ? », bulle « Bonjour ! ») : illisible. Partie avec la version du soir :
+    un utilisateur existant la voit une fois à la mise à jour. Aussi : capture iPhone « vide-accueil » blanche (à
+    vérifier) ; mode captures iPhone recouvert par la rencontre alors que `captureMode.js` sème `halcya_companion.metAt`
+    (défaut de l'outil, pas du produit). Captures avant/après en clair et sombre, Android et iPhone.
+  - [ ] **REFONTE-RESTES-SPRINT** (après POLISH-MEET-DARK, un sujet par run) : nom choisi dans l'étiquette de l'île
+    (`Dashboard.jsx` → `name` de `<CompanionHome>`, une ligne, décrit dans `sprint/LOT-VIE.md` 00:50) et dans le widget
+    (`world/widgetSync.js` → `pilouName()`) ; `growthAt` et `loadWorldContext()` branchés dans la scène ; poses du
+    widget re-rendues avec le module PILOU ; rituel du soir et lanternes du défi des 5 soirs (SPEC journée § 7) ;
+    première série `captures/main` d'après le sprint à regarder ; palier de qualité sur un vrai téléphone ; #1071 et
+    #1072 si elles sont encore ouvertes après 03:00 (leurs équipiers sont arrêtés : la routine les finit).
   - [ ] **POLISH-FLAKY-DASH** (après le sprint) : `Dashboard.test.jsx`, « Ma journée : une habitude suivie se note par oui ou non » a échoué une fois sur la CI de main (99c1de6, 17/11 00:00) puis est passé ; le lot VIE l'avait déjà dit « corrigé à la source » : chercher l'attente manquante (findBy plutôt que getBy après la réponse).
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
