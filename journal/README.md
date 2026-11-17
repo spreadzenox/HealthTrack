@@ -8,25 +8,57 @@
 > 1 à 6 et 7a faites des deux côtés ; une seule routine et un seul dépôt pour Android et l'iPhone, puis une seule PR
 > pour les deux apps ; mode polish ; chantier cycle commencé).
 
+**🚀 Sprint de la refonte, ce soir jusqu'à 03:00 (votre ordre du 16/11 vers 20:15)** — relevé de 02:30 : sept équipiers
+ont codé Pilou et son monde en parallèle (étapes 8 à 15). **Cinq lots finis sur sept : Scène, Bulles, Vie, Monde et
+Photo.** Sur main : #1047, #1048, #1053, #1062, #1056, #1060, #1050, #1057, #1058, #1052, #1066, puis **#1067 (Vie, 02:07 :
+le cairn des galets dans « Par famille »)** et **#1070 (Scène, 02:09 : l'assemblage, la nuit sur l'île, Pilou qui dort,
+images fixes avec le vrai Pilou ; release v777, APK 35,3 Mo)**. Tests de main verts. **#1071 (Pilou, 02:38 : petits effets dessinés des
+expressions, yeux fermés en trait) mergée.** **Une PR encore ouverte, tous ses checks verts sauf la build iPhone, en
+cours** : #1072 (Studio : vos réglages de Studio portés par le vrai Pilou, pièces 3D et visage peint). Son équipier la
+merge si la build iPhone finit avant 03:00 ; sinon elle reste en PR propre et le run suivant la reprend.
+**Ce soir, l'envoi Alpha (prévu 23:45, parti les nuits précédentes vers 03:10 à 03:40) emporte la refonte avec Pilou.**
+**Un défaut à corriger en premier après 03:00** (relevé par le lot Scène sur les captures iPhone) : en thème sombre, la
+carte de la rencontre de Pilou garde un fond clair sous un texte clair (« Comment voulez-vous l'appeler ? ») ; vous la
+verrez une fois, à la mise à jour. La capture iPhone « Accueil sans données » sort blanche : à vérifier.
+- **Scène (8)** : **lot fini.** #1053, #1062 et **#1070 mergées** (#1065 fermée, contenue dans #1070) : l'île en 3D en
+  tête de l'Accueil, sa lumière dorée et sa météo, les 7 cadeaux en 3D, la nuit (« Pilou dort. Le reste peut attendre
+  demain. »), Réglages › Mouvements de Pilou. Reste : la croissance de l'île au fil des semaines et le vrai lever et
+  coucher du soleil (fonctions de Monde écrites, pas branchées), le palier de qualité mesuré sur un vrai téléphone.
+- **Pilou (9)** **#1058 mergée** (00:58) : la figurine vernie, ses yeux, 12 expressions, sa montre à l'heure réelle.
+  **#1071 mergée** (02:38) : petits effets dessinés des expressions, yeux fermés en trait. Plus rien en PR.
+- **Bulles (10)** : **lot fini.** #1056 et #1066 : bulles, « Humeur du jour », fleurs, « Jour 3 sur 7 », 7 cadeaux, lucioles
+  la nuit, jour 14, bandeau au défilement. Restes : retour haptique (à décider : ajoute un module natif), îlot qui se
+  range en haut au défilement.
+- **Vie (11 et 12)** : **lot fini.** #1060 et #1067 : Pilou dans Ma journée, la rencontre et son nom (une seule fois pour
+  vous, sans refaire l'accueil), le jour 7, Pilou dans Objectifs et Données, le cairn des galets. Restes : rituel du soir
+  et lanternes du défi des 5 soirs ; le nom choisi dans l'étiquette de l'île (une ligne) ; la carte de la rencontre en
+  thème sombre (voir plus haut).
+- **Monde (13)** : **lot fini.** #1048 et #1057 : le widget Android « Ma journée » avec Pilou, Pilou dans les notifications
+  du soir (Android et iPhone). **Le widget n'existe que sur Android** pour l'instant.
+- **Studio (14)** **#1052 mergée** (01:22) : habiller Pilou à la main dans Réglages (Cheveux, Visage, Yeux, Lunettes,
+  Accessoires), fiche gardée sur le téléphone, dans l'export et l'import. #1072 (en PR, build iPhone en cours) : les
+  traits sur le vrai Pilou ; l'aperçu du Studio reste en 2D.
+- **Photo (15)** : **lot fini.** #1047 (relais) et #1050 (app) : **éteinte partout** jusqu'à vos déclarations (missions P49
+  et PI3 prêtes, arrêtées avant le bouton d'envoi).
+- Ce que le sprint aura livré et ce qui restera, lot par lot : en tête de ce résumé au premier run après 03:00.
+
 **🎯 Version propre de la refonte pour le dimanche 22/11 au soir (votre objectif du 15/11) : ce qui sera prêt, ce qui ne le sera pas**
 - **Prêt, sauf surprise** (étapes 1 à 7, sans Pilou) : 4 onglets et Réglages ; Ma journée et les habitudes ; l'accueil
   en 4 temps ; Objectifs (score, familles, défi de 10 jours, réintroduction, seuils de 6d) ; Données sur Tendances,
   avec le détail du jour qui reprend ce que faisait le Journal (7a faite le 15/11 ; 7b, deux onglets et la visite
   guidée, mergée le 16/11 ; 7c, le retrait du code du Journal, mergée le 16/11). À chaque étape : une base d'avant la refonte et une ancienne
   sauvegarde ouvertes sans perte, visite guidée à jour. La police Nunito et le fond crème (7d, mergée le 16/11 vers 12:50).
-- **Pas prêt le 22/11** : Pilou en 3D et son île (étapes 8 à 13), le double numérique (14 et 15).
+- **Pilou en 3D, son île et le double numérique (étapes 8 à 15)** : en sprint ce soir (voir plus haut) ; ce qui sera prêt
+  le 22/11 dépendra de ce qui sera mergé à 03:00.
 - **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs
   (outil du parcours « mise à jour » prêt le 16/11 ; l'essai en cours visible depuis l'Accueil, UPG-1, mergé le 16/11 à
-  18:00 ; le bandeau Nouveautés qui annonce la nouvelle navigation, UPG-2, mergé le 16/11 à 20:00). Passage des
-  personas commencé le 16/11 à 19:30 (2 personas sur 5 : une installation neuve, une mise à jour ; rien de perdu) ;
-  premier constat corrigé en PR (UPG-4 : votre réponse « Ma digestion » du soir reste cochée) ; restent 3 personas
-  et les constats UPG-5 à UPG-9 (dont : dire aux testeurs où sont passés Journal, Analyses, Agir et « Mon cycle »).
+  18:00 ; le bandeau Nouveautés qui annonce la nouvelle navigation, UPG-2, mergé, #1043 ; « Ma digestion » reste cochée, UPG-4, en PR #1045, verte, mergée après le sprint ; passage UPG-3 commencé le 16/11 20:30 : 2 personas, rien de perdu, 10 constats, d'abord la visite guidée sans « Ma journée » et les anciens objectifs « sport » et « cycle » convertis sans un mot).
 
 **Où en est Halcya**
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v762** (APK 34,8 Mo, 16/11 19:00 UTC, merge de #1043) ; v757 de #1039 en cours) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | **1107.1107 validée par Apple et chez « Testeurs Halcya »** (16/11 09:54 UTC) ; anciennes builds expirées ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | release **v777** (APK 35,3 Mo, 17/11 02:12, merge de l'assemblage de la Scène #1070 ; v766 au merge de la Scène #1053) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | **1107.1107 validée par Apple et chez « Testeurs Halcya »** (16/11 09:54 UTC) ; anciennes builds expirées ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -65,6 +97,13 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 17/11 02:30 — [Intégrateur du sprint](runs/2026-11-17-0230-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v777, APK 35,3 Mo). **#1067 (Vie) mergée à 02:07, #1070 (assemblage de la Scène) à 02:09 ; #1065 fermée. Cinq lots finis sur sept.** **#1071 (Pilou) mergée à 02:38.** #1072 (Studio) : checks verts sauf la build iPhone, en cours. Défaut relevé : carte de la rencontre illisible en thème sombre (premier correctif après 03:00). Alpha du soir pas encore parti. Journal seul. |
+| 17/11 01:30 — [Intégrateur du sprint](runs/2026-11-17-0130-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v774, APK 35,3 Mo). **#1052 (Studio) mergée à 01:22, #1066 (Bulles 2) à 01:30 : lots Bulles, Monde et Photo finis.** Un rouge isolé de Tests sur 99c1de6 (test de Ma journée instable), vert au commit suivant. 5 PR du sprint ouvertes (#1065, #1067, #1070, #1071, #1072). Alpha du soir pas encore parti (retard habituel du cron). Journal seul. |
+| 17/11 00:30 — [Intégrateur du sprint](runs/2026-11-17-0030-integrateur-sprint.md) | 📝 | Main vert (Tests, Build & Release v771). **#1050 (Photo, éteinte) mergée à 00:26 : lot Photo fini**, puis **#1057 (Monde : widget Android, notifications du soir)** à 00:40. puis **#1058 (Pilou figurine)** à 00:58. 4 PR du sprint ouvertes (#1052 Studio, #1065 Scène, #1066 Bulles, #1067 Vie). Envoi Alpha du soir pas encore parti à 00:30 (retard habituel du cron) ; examen bêta TestFlight au premier run où la build du soir est traitée. Journal seul. |
+| 16/11 23:30 — [Intégrateur du sprint](runs/2026-11-16-2330-integrateur-sprint.md) | 📝 | Main vert (v767). **#1062 (Scène 2 : cadeaux en 3D, météo de l'île) mergée** pendant le run, puis **#1056 (Bulles)** et **#1060 (Vie)**, Tests de main verts ; 4 PR du sprint attendent leur build iPhone. Assemblage local des 7 PR par le lot Scène : 3 980 tests verts, l'Accueil complet tient ; conflits entre lots identifiés et résolus sur le papier. Rien à faire de votre côté |
+| 16/11 22:30 — [Intégrateur du sprint](runs/2026-11-16-2230-integrateur-sprint.md) | 📝 | Main vert (v767). **Scène (#1053) mergée** : Pilou sur son île en tête de l'Accueil. 7 PR ouvertes (#1050, #1052, #1056, #1057, #1058, #1060, #1062) ; Vie réunie dans #1060. Widget de Pilou : Android seulement (noté dans PARITE). Rien à faire de votre côté |
+| 16/11 21:30 — [Intégrateur du sprint](runs/2026-11-16-2130-integrateur-sprint.md) | 📝 | Main vert. Sprint de la refonte en cours : #1047 (relais photo, éteint) et #1048 (Monde) mergées, 7 PR encore ouvertes (étapes 8 à 15) ; état par lot noté au BACKLOG, PRODUIT et PARITE. #1045 (« Ma digestion » reste cochée) verte, mergée après 03:00. Rien à faire de votre côté |
+| 16/11 20:30 — [« idées » : 2 personas, installation neuve et mise à jour](runs/2026-11-16-2030-idees-upg-3-personas.md) | 💡 | Passage des personas commencé (UPG-3) : une personne qui installe Halcya (jour 1) et un testeur de 45 jours qui reçoit la refonte. **Rien de perdu** à la mise à jour (essai, jours passés, export). 10 points à polir avant le 22/11, d'abord : la visite guidée ne présente pas « Ma journée » et parle encore d'« Agir » comme d'un onglet ; vos anciens objectifs « sport » et « cycle » sont convertis sans explication (et « Confort digestif » se retrouve coché) ; la page Nouveautés ne met pas la note de la nouvelle navigation en tête. Rien à faire de votre côté |
 | 16/11 19:30 — [#1043 mergée, personas, UPG-4](runs/2026-11-16-1930-merge-1043-personas-upg-4.md) | 🛠️ | **#1043 mergée** : un testeur qui arrive d'avant la refonte lit d'abord « Nouveaux onglets » dans le bandeau des Nouveautés (vu par la persona). **Passage des personas commencé** : installation neuve (Ventre sans technique, jour 1) et mise à jour (Ventre et données, jour 45, anciens objectifs ventre et cycle, essai en cours) : rien de perdu. Premier constat corrigé (PR, Android et iPhone) : le soir, votre réponse « Ma digestion » reste cochée. Rien à faire de votre côté |
 | 16/11 18:30 — [#1044 mergée, #1043 remise à jour](runs/2026-11-16-1830-merge-1044-upg-1.md) | 🛠️ | **#1044 mergée** : un essai en cours se voit de nouveau depuis l'Accueil (consigne et jour de l'essai, carte remontée sous le bien-être les jours « avec »), Android et iPhone, après 14 checks verts et les captures iPhone de l'Accueil (clair et sombre) ; release **v761** (34,8 Mo). #1043 (bandeau des Nouveautés qui annonce d'abord la nouvelle navigation) remise à jour sur main ; sa build iOS repart, à merger au run suivant. Rien à faire de votre côté |
 | 16/11 17:30 — [UPG-1 : l'essai en cours sur l'Accueil](runs/2026-11-16-1730-upg-1-essai-accueil.md) | 🛠️ | Un essai en cours se voit de nouveau depuis l'Accueil : la carte du bas dit sa consigne et le jour (« Dormir au moins 7 h 30 · jour 4 sur 10 · aujourd’hui, jour avec ») et remonte sous votre bien-être les jours « avec ». Android et iPhone dans la même PR (#1044), à merger après sa build iOS. #1042 (outil « mise à jour » des personas) mergée. Rien à faire de votre côté |

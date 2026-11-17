@@ -20,6 +20,8 @@
  *                                          (ex. le bilan du soir du ventre, proposé à partir de 18 h)
  *   npm run visual -- --lang=en            # app en anglais (VITE_I18N_EN=1, langue choisie « English », jalon 9) :
  *                                          compte par page les mots français restants (avertissement, pas un échec)
+ *   npm run visual -- --routes=/ --meet         # Pilou pas encore rencontré : la rencontre d'un utilisateur qui met à jour (lot VIE)
+ *   npm run visual -- --routes=/ --ceremony     # Pilou rencontré, jour 7 pas encore fêté : la cérémonie (données de démo)
  *   npm run visual -- --whats-new          # affiche le bandeau « Nouveautés »
  *   npm run visual -- --radar              # simule un début d'infection (« Radar forme » en alerte)
  *   npm run visual -- --radar=explained    # … avec « Voyage » noté chaque jour (« Probablement lié à… »)
@@ -813,7 +815,24 @@ async function main() {
           /* ignore */
         }
       }, ONBOARDING_AT[args.onboarding])
-    } else if (!args.onboarding) {
+    }
+    // Pilou déjà rencontré, cérémonie du jour 7 passée (lot VIE) : aucune surimpression sur les captures. --meet : la
+    // rencontre d'un utilisateur d'avant la refonte ; --ceremony : la cérémonie du jour 7 (avec des données de démo).
+    if (!args.meet) {
+      await context.addInitScript((ceremony) => {
+        try {
+          if (!location.pathname.startsWith('/bienvenue') && !localStorage.getItem('halcya_companion')) {
+            const at = new Date().toISOString()
+            localStorage.setItem('halcya_companion', JSON.stringify(ceremony
+              ? { name: 'Pilou', metAt: at, metBy: 'visual', ceremony7Checked: true }
+              : { name: 'Pilou', metAt: at, metBy: 'visual', ceremony7At: at, ceremony7By: 'visual' }))
+          }
+        } catch {
+          /* ignore */
+        }
+      }, !!args.ceremony)
+    }
+    if (!args.onboarding) {
       await context.addInitScript((goal) => {
         try {
           if (!location.pathname.startsWith('/bienvenue') && !localStorage.getItem('healthtrack_onboarding')) {

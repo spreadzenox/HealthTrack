@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import CompanionNameSetting from '../companion/life/CompanionNameSetting'
 import { APP_NAME } from '../config/brand'
 import { Link } from 'react-router-dom'
 import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
@@ -22,6 +23,8 @@ import { useEntitlement } from '../hooks/useEntitlement'
 import LineIcon from '../components/LineIcon'
 import FaceUnlockSetting from '../components/FaceUnlockSetting'
 import HabitsSetting from '../components/HabitsSetting'
+import StudioSetting from '../companion/studio/StudioSetting'
+import MotionSetting from '../companion/MotionSetting'
 import LanguageSetting from '../components/LanguageSetting'
 import { I18N_EN } from '../i18n/locale.js'
 import { installFingerprint, sendFeedback, FEEDBACK_MAX_LENGTH } from '../services/aiRelay'
@@ -200,6 +203,10 @@ export default function Settings() {
         </div>
       </div>
 
+      {/* Lot VIE (étape 12) : le nom du compagnon */}
+      <CompanionNameSetting />
+      <StudioSetting />
+
       {/* Jalon 9 : caché tant que l'anglais n'est pas complet (interrupteur de build VITE_I18N_EN) */}
       {I18N_EN && <LanguageSetting />}
 
@@ -234,6 +241,9 @@ export default function Settings() {
 
       {/* Refonte étape 4 : ce que la personne note par oui ou non dans Ma journée. */}
       <HabitsSetting />
+
+      {/* Refonte étape 8 : les mouvements de Pilou (mouvements réduits, brief § 7.7). */}
+      <MotionSetting />
 
       {FEATURES.billing && <SubscriptionBlock />}
 

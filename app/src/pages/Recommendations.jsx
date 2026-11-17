@@ -20,6 +20,9 @@
  * Retirés : l'historique, « Sur quelques semaines », « Autres liens repérés », « Bientôt » et l'analyse « dans les
  * heures ». Des liens statistiques, jamais une cause ni un diagnostic.
  */
+import PilouFigure from '../companion/life/PilouFigure'
+import PilouWaiting from '../companion/life/PilouWaiting'
+import Cairn from '../companion/life/Cairn'
 import SeeExample from '../components/SeeExample'
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
@@ -207,6 +210,8 @@ function Families({ outcome, families, base }) {
   return (
     <section className="reco-block" aria-labelledby={`reco-families-${outcome}`}>
       <h3 id={`reco-families-${outcome}`} className="reco-section-title">Par famille</h3>
+      {/* Lot VIE (étape 12) : le cairn des galets, la taille du galet = la force du lien (SPEC comprendre § 6.3) */}
+      <Cairn families={families} />
       <ul className="reco-families">
         {families.map((fam) => {
           // REFONTE-6c : une famille qui a des facteurs comparés ouvre son détail ; la carte entière est le lien
@@ -265,6 +270,8 @@ function FamilyDetail({ outcome, detail }) {
         <section className="reco-block" aria-labelledby="reco-family-pistes">
           <h3 id="reco-family-pistes" className="reco-section-title">{many ? 'Pistes à tester' : 'Piste à tester'}</h3>
           <ul className="reco-pistes">{detail.pistes.map((f) => <PisteCard key={f.key} f={f} />)}</ul>
+          {/* Lot VIE (étape 12) : Pilou attend discrètement à côté de la piste (SPEC comprendre § 6.5) */}
+          <PilouWaiting />
         </section>
       ) : (
         <section className="reco-block">
@@ -375,6 +382,7 @@ function HowWellbeing() {
       <button type="button" className="reco-how-link" aria-expanded={open} onClick={() => setOpen(!open)}>
         Comment est calculé votre bien-être ?
       </button>
+      {open && <PilouFigure size={64} expr="content" move="hop" className="reco-how-pilou" />}
       {open && (
         <p className="reco-how-text" data-testid="reco-how-wellbeing">
           Deux sources, réunies chaque jour : votre note et la lecture du visage, si vous l’utilisez. Un jour sans

@@ -1,0 +1,22 @@
+.wellbeing-mirror {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0 4px;
+  padding: 8px 14px 8px 8px;
+  border-radius: var(--radius-card);
+  background: var(--mint-bg);
+  color: var(--mint-text);
+}
+.wellbeing-mirror-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  font-weight: 700;
+}
+.wellbeing-mirror-word {
+  color: var(--mint-label);
+  font-size: 1.05rem;
+  font-weight: 900;
+}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import WellbeingMirror from '../companion/life/WellbeingMirror'
 import { createEntry, updateEntry, listEntries } from '../storage/localHealthStorage'
 import {
   BEHAVIOR_TAGS,
@@ -307,6 +308,8 @@ export default function WellbeingPrompt({ open = false, onClose, onSaved, entry,
           ))}
         </div>
         )}
+        {/* Lot VIE (étape 11) : le miroir, Pilou reflète le cran choisi (SPEC journée § 4) */}
+        {!reminderMode && selected != null && <WellbeingMirror choice={selected} />}
 
         {showDetails && (
           <div className="wellbeing-details">

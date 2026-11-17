@@ -31,6 +31,9 @@ import { getHabits } from '../settings/habits'
 import { CYCLE_TYPE, cycleVisible } from '../services/cycle'
 import { goalsOf } from '../settings/onboarding'
 import { TRIAL_TYPE, homeTrial } from '../services/trials'
+import { syncPilouWidget } from '../companion/world/widgetSync'
+import CompanionHome from '../companion/bubbles/CompanionHome'
+import { useFirstWeekInputs } from '../companion/bubbles/useFirstWeekInputs'
 
 /**
  * Refonte « Compagnon », étape 2 : l'ancien écran Aujourd'hui est rangé dans deux onglets. `view="home"` (Accueil) :
@@ -176,15 +179,28 @@ export default function Dashboard({ view = 'home' }) {
   const catchUp = day && !loading ? yesterdayCatchUp(entries, habits) : null
   const skipCatchUp = useCallback((dateKey) => { skipYesterday(dateKey); setSkipTick((t) => t + 1) }, [])
 
+  // Refonte étape 10 : l'îlot et ses bulles, la jauge d'humeur et la première semaine (companion/bubbles)
+  const firstWeekInputs = useFirstWeekInputs()
+
   const head = headerLine()
   // Refonte étape 1 : sans l'objectif digestion, on ne demande pas le ventre (sauf à qui le note déjà)
   const askGut = gutAsked(gutMode, entries)
+  // Étape 13 : le widget de Pilou (Android) suit ce qui reste à noter aujourd'hui
+  useEffect(() => {
+    if (!loading && !error) syncPilouWidget({ entries, askGut, habits })
+  }, [entries, askGut, habits, loading, error])
 
   return (
     <section className="dashboard">
       <header className="today-head">
         <h1 className="today-date">{day ? 'Ma journée' : head.date}</h1>
       </header>
+      {/* Refonte « Compagnon », étapes 8 et 10 : l'îlot (la scène 3D, montée par CompanionHome) et ses bulles. */}
+      {home && !loading && !error && (
+        <CompanionHome entries={entries} askGut={askGut} habits={habits}
+          wellbeing={firstWeekInputs.wellbeing} gut={firstWeekInputs.gut}
+          onWellbeing={() => { setWellbeingEntry(undefined); setWellbeingOpen(true) }} onHabit={answerHabit} />
+      )}
       {/* « Hier » : les habitudes de la veille restées sans réponse, en tête de liste (journee.SPEC § 10). */}
       {day && !error && <YesterdayHabits catchUp={catchUp} onAnswer={answerHabit} onSkip={skipCatchUp} />}
       {/* Refonte étape 3 : la checklist du jour, ce qu'il reste à noter et ce qui l'est déjà. */}

@@ -1,0 +1,56 @@
+/* Petit Pilou 2D (lot VIE). Animations : fonctions du temps en CSS, coupées par les mouvements réduits. */
+.pilou-figure {
+  display: inline-block;
+  flex: none;
+  line-height: 0;
+}
+.pilou-figure svg {
+  display: block;
+  overflow: visible;
+}
+.pilou-body {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: pilou-breathe 3.3s cubic-bezier(.37, 0, .63, 1) infinite;
+}
+.pilou-blink {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: pilou-blink 4.1s linear infinite;
+}
+.pilou-amber {
+  animation: pilou-glow 2.4s cubic-bezier(.37, 0, .63, 1) infinite;
+}
+.pilou-move-hop .pilou-body { animation: pilou-hop 700ms cubic-bezier(.34, 1.56, .64, 1) 1, pilou-breathe 3.3s cubic-bezier(.37, 0, .63, 1) 700ms infinite; }
+.pilou-move-eat .pilou-body { animation: pilou-munch 275ms cubic-bezier(.65, 0, .35, 1) 4, pilou-hop 650ms cubic-bezier(.34, 1.56, .64, 1) 1.1s 1, pilou-breathe 3.3s cubic-bezier(.37, 0, .63, 1) 1.8s infinite; }
+.pilou-move-party .pilou-body { animation: pilou-hop 400ms cubic-bezier(.34, 1.56, .64, 1) 160ms 2, pilou-breathe 3.3s cubic-bezier(.37, 0, .63, 1) 1s infinite; }
+.pilou-move-wave .pilou-arm-r { transform-box: fill-box; transform-origin: 0 0; animation: pilou-wave 400ms cubic-bezier(.37, 0, .63, 1) 4; }
+.pilou-move-shrug .pilou-body { animation: pilou-shrug 1.3s cubic-bezier(.65, 0, .35, 1) 1, pilou-breathe 3.3s cubic-bezier(.37, 0, .63, 1) 1.3s infinite; }
+.pilou-move-meditate .pilou-body { animation: pilou-float 4.4s cubic-bezier(.65, 0, .35, 1) 1, pilou-breathe 3.3s cubic-bezier(.37, 0, .63, 1) 4.4s infinite; }
+.pilou-move-rewind .pilou-body { animation: pilou-rewind 600ms cubic-bezier(.65, 0, .35, 1) 1, pilou-breathe 3.3s cubic-bezier(.37, 0, .63, 1) 600ms infinite; }
+.pilou-move-sleep .pilou-body { animation: pilou-breathe 4.2s cubic-bezier(.37, 0, .63, 1) infinite; }
+
+@keyframes pilou-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 0.982); } }
+@keyframes pilou-blink { 0%, 95%, 100% { transform: scaleY(1); } 96.5% { transform: scaleY(0.1); } }
+@keyframes pilou-glow { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
+@keyframes pilou-hop { 0% { transform: translateY(0) scale(1.04, 0.92); } 45% { transform: translateY(-14%) scale(0.96, 1.06); } 80% { transform: translateY(0) scale(1.05, 0.93); } 100% { transform: translateY(0) scale(1, 1); } }
+@keyframes pilou-munch { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.03, 0.97); } }
+@keyframes pilou-wave { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-38deg); } }
+@keyframes pilou-shrug { 0%, 100% { transform: rotate(0deg) scaleY(1); } 25%, 70% { transform: rotate(-8deg) scaleY(1.05); } }
+@keyframes pilou-float { 0%, 100% { transform: translateY(0); } 20%, 80% { transform: translateY(-12%); } 50% { transform: translateY(-14%); } }
+@keyframes pilou-rewind { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+
+/* Mouvements réduits (brief § 7.7) : plus de saut, de flottement ni de rotation ; les yeux restent vivants. */
+@media (prefers-reduced-motion: reduce) {
+  .pilou-figure .pilou-body,
+  .pilou-figure .pilou-arm-r,
+  .pilou-figure .pilou-amber { animation: none !important; }
+}
+:root[data-reduced-motion='on'] .pilou-figure .pilou-body,
+:root[data-reduced-motion='on'] .pilou-figure .pilou-arm-r,
+:root[data-reduced-motion='on'] .pilou-figure .pilou-amber { animation: none !important; }
+.pilou-figure { display: inline-flex; align-items: flex-end; justify-content: center; }
+.pilou-sprite { display: block; width: auto; max-width: none; height: 100%; object-fit: contain; }
+/* Il renifle l'assiette (SPEC journée § 3.1) : petits coups de tête toutes les 350 ms */
+.pilou-move-sniff .pilou-body { animation: pilou-sniff 350ms cubic-bezier(.33, 1, .68, 1) infinite; }
+@keyframes pilou-sniff { 0%, 100% { transform: rotate(0deg) scale(1, 1); } 40% { transform: rotate(6deg) scale(1.03, 0.97); } }

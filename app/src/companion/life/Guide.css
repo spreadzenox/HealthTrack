@@ -1,0 +1,27 @@
+/* Pilou guide discret (Objectifs) et petite tête (Données) — SPEC comprendre § 6.1 et § 8 */
+.pilou-guide {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+.pilou-guide-text {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+.pilou-peek {
+  position: relative;
+  z-index: 1;
+  height: 34px;
+  margin: -6px 0 -2px 18px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.pilou-waiting { display: flex; align-items: center; gap: 12px; margin: 10px 0 0; }
+.pilou-waiting-text { margin: 0; color: var(--text-muted); font-weight: 700; }
+.food-pilou-sniff .pilou-figure { margin: 0 auto; }
+.reco-how-pilou { display: block; margin: 6px 0 0; }
+.cairn { display: flex; align-items: flex-end; justify-content: center; gap: 10px; margin: 4px 0 12px; }

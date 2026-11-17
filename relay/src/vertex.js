@@ -91,7 +91,7 @@ export function createVertexClient({ project, locations, models, getToken, fetch
      * Génère une réponse JSON décodée.
      * @returns {Promise<{ parsed: object, model: string, location: string, spent: { model: string, usageMetadata: object }[] }>}
      */
-    async generateJson({ systemInstruction, parts, schema }) {
+    async generateJson({ systemInstruction, parts, schema, temperature = 0.2 }) {
       const order = [...candidates.slice(preferred), ...candidates.slice(0, preferred)]
       let lastError = null
       let billed = false
@@ -103,7 +103,7 @@ export function createVertexClient({ project, locations, models, getToken, fetch
           contents: [{ role: 'user', parts }],
           generationConfig: {
             responseMimeType: 'application/json',
-            temperature: 0.2,
+            temperature,
             ...(thinkingLevel ? { thinkingConfig: { thinkingLevel } } : {}),
             ...(withSchema ? { responseSchema: schema } : {}),
           },

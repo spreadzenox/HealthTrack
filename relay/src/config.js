@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { appAttestModeOf } from './attestroutes.js'
+import { PILOU_MONTHLY_CAP, pilouStyleEnabled } from './pilou.js'
 
 const list = (value, fallback) => {
   const items = String(value ?? '').split(',').map((s) => s.trim()).filter(Boolean)
@@ -120,6 +121,10 @@ export function loadConfig(env = process.env) {
     feedbackPerDay: int(env.FEEDBACK_DAILY_CAP, 5),
     feedbackGlobalPerDay: int(env.FEEDBACK_GLOBAL_DAILY_CAP, 200),
     feedbackPerMinute: int(env.FEEDBACK_PER_MINUTE_CAP, 20),
+    // Double numérique par photo (étape 15) : route « désactivée » tant que PILOU_STYLE=on n'est pas réglé (décision du
+    // propriétaire : rien d'actif avant ses déclarations Google Play et App Store) ; 3 analyses par mois au plus
+    pilouStyle: pilouStyleEnabled(env.PILOU_STYLE),
+    pilouMonthlyCap: Math.min(int(env.PILOU_MONTHLY_CAP, PILOU_MONTHLY_CAP), PILOU_MONTHLY_CAP),
     ingredientsPath: env.INGREDIENTS_PATH || DEFAULT_INGREDIENTS,
     // WebView Capacitor (https://localhost sur Android) et serveur de développement Vite
     allowedOrigins: list(env.ALLOWED_ORIGINS, ['https://localhost', 'http://localhost', 'capacitor://localhost', 'http://localhost:5173']),

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Banc d'essai de Pilou</title>
+    <style>
+      html, body { margin: 0; background: #FFF6EC; font: 15px/1.4 system-ui, sans-serif; color: #3A2B26; }
+      #vue { display: block; margin: 0 auto; touch-action: none; }
+      #etat { text-align: center; min-height: 1.4em; }
+      #outils { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; padding: 8px; }
+      #outils button { font: inherit; padding: 6px 10px; border-radius: 999px; border: 1px solid #C9B9A6; background: #fff; }
+      body.capture #outils, body.capture #etat { display: none; }
+      body.capture { background: transparent; }
+    </style>
+  </head>
+  <body>
+    <canvas id="vue"></canvas>
+    <p id="etat" aria-live="polite"></p>
+    <div id="outils"></div>
+    <script type="module" src="./banc.js"></script>
+  </body>
+</html>
