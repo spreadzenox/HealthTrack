@@ -1,9 +1,10 @@
 # Lot VIE — étapes 11 et 12 du brief (Compagnon 3 et 4)
 
-> **État (17/11 00:50)** — **Sur main** : étapes 11 et 12 entières (#1060). **En PR** : #1067, complément (cairn des
-> galets dans « Par famille », graine des captures iPhone) ; elle passe après PILOU, STUDIO et MONDE et reste en PR
-> propre si elle demande une résolution de conflit après 02:15. **Reste à faire** : rituel du soir et lanternes du
-> défi (SPEC journée § 7) ; le nom choisi dans l'étiquette de l'île (point 3 ci-dessous, pour l'assemblage).
+> **État final (17/11 02:10) : lot VIE livré, plus rien en PR.** **Sur main** : étapes 11 et 12 entières (#1060) et
+> leur complément (#1067 : cairn des galets dans « Par famille », graine des captures iPhone). **Reste à faire**
+> (hors sprint) : rituel du soir et lanternes du défi des 5 soirs (SPEC journée § 7) ; le nom choisi dans
+> l'étiquette de l'île de l'Accueil (`Dashboard.jsx` ne passe pas `name` à `<CompanionHome>` : correctif d'une ligne
+> décrit le 17/11 00:50 ci-dessous, fichier partagé laissé à l'assemblage).
 
 Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branches `claude/sprint-vie-<n>`.
 
@@ -108,4 +109,6 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/life/`. Branc
 
 ## PR
 - #1060 (étapes 11 et 12) : fusionnée le 17/11 vers 00:15.
+- #1067 (cairn, graine des captures iPhone) : toute verte (iOS compris, captures iPhone regardées : Ma journée en démo
+  montre bien la bannière et plus la rencontre), aucun fichier commun avec l'assemblage #1070 ; fusionnée le 17/11 vers 02:10.
 - #1051 (étape 11) et #1054 (étape 12a) : fermées, remplacées par la PR unique de `claude/sprint-vie-4`.
