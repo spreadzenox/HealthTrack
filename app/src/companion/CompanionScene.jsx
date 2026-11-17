@@ -13,7 +13,7 @@ import { bus, EVENTS } from './bus'
 import { useReducedMotion } from './motion'
 import { CAMERA, projectPoint } from './scene/camera'
 import { createFrameMeter, initialTier } from './scene/quality'
-import { moodWord, moodExpression, webglAvailable } from './mood'
+import { moodWord, restExpression, appOpenedReaction, webglAvailable } from './mood'
 import { createLoop } from './scene/loop'
 import { createGestureRecognizer } from './scene/gestures'
 import { GOLDEN } from './scene/light'
@@ -253,9 +253,12 @@ export default function CompanionScene({
         const P = () => live.pilou
         const poke = () => { lastEventAt = loop.time }
         let backTimer = null
+        // la nuit, le repos de Pilou est le sommeil : aucune réaction ne le laisse les yeux ouverts
+        let asleepNow = false
+        const rest = () => restExpression(asleepNow, bus.last(EVENTS.MOOD_CHANGED)?.value ?? 0)
         const backToMood = (ms) => {
           clearTimeout(backTimer)
-          backTimer = setTimeout(() => P().setExpression?.(moodExpression(bus.last(EVENTS.MOOD_CHANGED)?.value ?? 0)), ms)
+          backTimer = setTimeout(() => P().setExpression?.(rest()), ms)
         }
         const toWorld = ({ x, y }) => {
           const { width: w, height: h } = sizeRef.current
@@ -293,7 +296,7 @@ export default function CompanionScene({
             if (p?.kind === 'reading') P().setExpression?.('absorbe')
             poke()
           }),
-          bus.on(EVENTS.ACTIVITY_END, () => P().setExpression?.(moodExpression(bus.last(EVENTS.MOOD_CHANGED)?.value ?? 0))),
+          bus.on(EVENTS.ACTIVITY_END, () => P().setExpression?.(rest())),
           bus.on(EVENTS.GIFT_OPENED, () => { P().play?.('surpris'); P().lookAt?.({ x: 0.05, y: 0.1, z: 0.62 }); live.gifts.openBox(loop.time); setTimeout(() => P().lookAt?.('camera'), 3400); poke() }),
           bus.on(EVENTS.GIFT_PLACED, (p) => {
             // à l'ouverture (événement ancien rejoué) : tout est posé d'un coup ; sinon le nouveau cadeau arrive
@@ -309,16 +312,19 @@ export default function CompanionScene({
           bus.on(EVENTS.MILESTONE, () => { P().play?.('fier'); poke() }),
           bus.on(EVENTS.DAY_DONE, () => { P().setExpression?.('rayonnant'); poke() }),
           bus.on(EVENTS.APP_OPENED, (p) => {
-            if (p?.morning) P().play?.('reveil')
-            else { P().setExpression?.('salut'); backToMood(2500) }
+            const r = appOpenedReaction(p, asleepNow)
+            if (r?.play) P().play?.(r.play)
+            else if (r?.set) { P().setExpression?.(r.set); backToMood(2500) }
             poke()
           }),
           bus.on(EVENTS.WEATHER_CHANGED, (p) => { live.setWeather(p?.decor ?? null); poke() }, { replay: true }),
           bus.on(EVENTS.TIME_PHASE, (p) => {
             if (p?.light) live.applyLight(p.light)
-            const asleep = p?.light?.asleep ?? p?.phase === 'nuit'
-            if (asleep) P().setExpression?.('endormi')
-            else if (P().expression === 'endormi') P().setExpression?.(moodExpression(bus.last(EVENTS.MOOD_CHANGED)?.value ?? 0))
+            const asleep = Boolean(p?.light?.asleep ?? p?.phase === 'nuit')
+            const changed = asleep !== asleepNow
+            asleepNow = asleep
+            if (asleep) { clearTimeout(backTimer); P().setExpression?.('endormi') }
+            else if (changed) P().setExpression?.(rest())
           }, { replay: true }),
         ]
 

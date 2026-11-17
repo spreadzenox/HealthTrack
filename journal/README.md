@@ -11,13 +11,13 @@
 **🧸 Bilan du sprint (fini le 17/11 à 03:00), étape par étape. Rien n'a encore été mesuré sur un vrai téléphone.**
 - **8 Scène** : livrée (île 3D, lumière, météo, 7 cadeaux, la nuit). Reste : croissance de l'île et vrai lever/coucher
   du soleil (écrits, pas branchés), palier de qualité sur un vrai téléphone.
-- **9 Pilou** : livrée (figurine, 12 expressions, montre, effets dessinés). Reste : sur la capture iPhone de nuit,
-  « Pilou dort » mais ses yeux restent ouverts (vu aussi sur Android le 17/11 04:30 : à corriger).
+- **9 Pilou** : livrée (figurine, 12 expressions, montre, effets dessinés). **La nuit, Pilou dort vraiment** (#1081
+  mergée le 17/11 vers 07:35) : ouvrir l'app ne le réveille plus (il gardait les yeux ouverts sous « Pilou dort »), et il
+  se réveille au lever du jour, même si l'app est restée ouverte.
 - **10 Bulles** : livrée. Reste : retour haptique (à décider), îlot rangé en haut au défilement.
-- **11-12 Vie** : livrée. Reste : rituel du soir et lanternes ; votre nom choisi sur l'étiquette de l'île.
+- **11-12 Vie** : livrée. Reste : rituel du soir et lanternes. Votre nom choisi apparaît déjà sur l'étiquette de l'île.
   **La carte de la rencontre illisible en sombre est corrigée : #1079 mergée le 17/11 vers 04:40**, captures iPhone relues.
-  Votre nom choisi apparaît déjà sur l'étiquette de l'île.
-- **13 Monde** : livrée, widget Android seulement. Le widget prend votre nom choisi (en PR, 17/11 04:30). Reste : nouvelles
+- **13 Monde** : livrée, widget Android seulement. Le widget prend votre nom choisi (PR #1080). Reste : nouvelles
   poses dans le widget.
 - **14 Studio** : réglages à la main livrés ; **les traits sur le vrai Pilou (#1072) mergés le 17/11 vers 06:35** (pièces 3D et
   visage peint ; l'aperçu du Studio reste en 2D).
@@ -68,7 +68,7 @@ verrez une fois, à la mise à jour. La capture iPhone « Accueil sans données 
   le 22/11 dépendra de ce qui sera mergé à 03:00.
 - **Avant le 22/11** : passage complet des personas, installation neuve et mise à jour depuis la version des testeurs
   (outil du parcours « mise à jour » prêt le 16/11 ; l'essai en cours visible depuis l'Accueil, UPG-1, mergé le 16/11 à
-  18:00 ; le bandeau Nouveautés qui annonce la nouvelle navigation, UPG-2, mergé, #1043 ; « Ma digestion » reste cochée, UPG-4, en PR #1045, verte, mergée après le sprint ; passage UPG-3 commencé le 16/11 20:30 : 2 personas, rien de perdu, 10 constats, d'abord la visite guidée sans « Ma journée » et les anciens objectifs « sport » et « cycle » convertis sans un mot).
+  18:00 ; le bandeau Nouveautés qui annonce la nouvelle navigation, UPG-2, mergé, #1043 ; « Ma digestion » reste cochée, UPG-4, #1045, mergée le 17/11 à 05:38 ; passage UPG-3 commencé le 16/11 20:30 : 2 personas, rien de perdu, 10 constats, d'abord la visite guidée sans « Ma journée » et les anciens objectifs « sport » et « cycle » convertis sans un mot).
 
 **Où en est Halcya**
 
@@ -114,6 +114,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 | Run | Type | Résultat |
 |---|---|---|
 | 17/11 06:30 — [#1072 mergée, examen bêta iPhone](runs/2026-11-17-0630-merge-1072-beta.md) | 🛠️ | **#1072 mergée** (les traits du Studio sur le vrai Pilou ; 14 checks verts, captures iPhone de l'Accueil relues en clair et en sombre ; release v782, APK 35,4 Mo). #1080 (widget) et #1081 (Pilou dort) remises à jour sur main, CI relancée (build iPhone ≈ 1 h). **Alpha du soir parti le 17/11 à 05:48** (versionCode 101147, la rencontre en sombre), en examen chez Google. **Build iPhone 1148.1148 soumise à l'examen bêta** des « Testeurs Halcya ». Rien à faire de votre côté |
+| 17/11 05:30 — [Pilou dort vraiment la nuit](runs/2026-11-17-0530-pilou-dort.md) | 🛠️ | **POLISH-PILOU-DORT-YEUX** : la nuit, ouvrir l'app ne réveille plus Pilou (le « matin » commençait à minuit) et il se réveille au lever du jour même app ouverte. **#1045 (UPG-4) mergée** ; #1072, #1080 et #1081 remises à jour sur main, builds iPhone relancées (merge une par une). |
 | 17/11 04:30 — [#1079 mergée, widget avec votre nom](runs/2026-11-17-0430-merge-1079-widget-nom.md) | 🛠️ | **#1079 mergée** (la rencontre lisible en thème sombre ; 14 checks verts, captures iPhone relues ; release v780, APK 35,3 Mo). #1045 (« Ma digestion » reste cochée) remise à jour sur main, tests locaux verts, CI relancée. Le widget Android reprend le nom choisi (PR, CI en cours). #1072 (Studio) : build iPhone en cours. Envoi Alpha du soir pas encore parti à 04:45. Rien à faire de votre côté |
 | 17/11 03:30 — [Rencontre en thème sombre](runs/2026-11-17-0330-rencontre-sombre.md) | 🛠️ | **POLISH-MEET-DARK** : la carte de la rencontre de Pilou lisible en sombre (couleurs sombres du compagnon, test de contraste). Captures iPhone de main relues : défauts « vide-accueil » et surimpression déjà réglés par #1067. Bilan du sprint étape par étape en tête du résumé. PR #1079 en attente de sa build iPhone (merge au run suivant) ; #1072 remise à jour sur main (conflit de `visage.js` résolu), CI relancée. |
 | 17/11 02:30 — [Intégrateur du sprint](runs/2026-11-17-0230-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v777, APK 35,3 Mo). **#1067 (Vie) mergée à 02:07, #1070 (assemblage de la Scène) à 02:09 ; #1065 fermée. Cinq lots finis sur sept.** **#1071 (Pilou) mergée à 02:38.** #1072 (Studio) : checks verts sauf la build iPhone, en cours. Défaut relevé : carte de la rencontre illisible en thème sombre (premier correctif après 03:00). Alpha du soir pas encore parti. Journal seul. |
