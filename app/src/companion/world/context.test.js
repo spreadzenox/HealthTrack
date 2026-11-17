@@ -121,3 +121,42 @@ describe('sleepHabitsForDay (budget de lectures de l’Accueil)', async () => {
     resetWorldContextCache()
   })
 })
+
+describe('jours d’usage gardés pour la croissance (MONDE-3)', async () => {
+  const { usageDaysForDay, storedUsageDays, USAGE_DAYS_KEY } = await import('./context.js')
+  const { worldDayKey } = await import('./daylight.js')
+  const day1 = new Date(2026, 10, 17, 12, 0)
+  const day2 = new Date(2026, 10, 18, 12, 0)
+
+  it('le même jour, le décompte gardé suffit : aucune relecture des notes', async () => {
+    localStorage.setItem(USAGE_DAYS_KEY, JSON.stringify({ day: worldDayKey(day1), days: 12 }))
+    let calls = 0
+    const days = await usageDaysForDay({ now: day1, load: async () => { calls++; return { daysOfUse: 40 } } })
+    expect(days).toBe(12)
+    expect(calls).toBe(0)
+    localStorage.removeItem(USAGE_DAYS_KEY)
+  })
+
+  it('un nouveau jour, recompte une fois et garde le résultat', async () => {
+    localStorage.setItem(USAGE_DAYS_KEY, JSON.stringify({ day: worldDayKey(day1), days: 12 }))
+    const days = await usageDaysForDay({ now: day2, load: async () => ({ daysOfUse: 13 }) })
+    expect(days).toBe(13)
+    expect(storedUsageDays()).toEqual({ day: worldDayKey(day2), days: 13 })
+    localStorage.removeItem(USAGE_DAYS_KEY)
+  })
+
+  it('ne recule jamais : une lecture ratée ou des notes supprimées gardent l’îlot', async () => {
+    localStorage.setItem(USAGE_DAYS_KEY, JSON.stringify({ day: worldDayKey(day1), days: 30 }))
+    expect(await usageDaysForDay({ now: day2, load: async () => ({ daysOfUse: 3 }) })).toBe(30)
+    localStorage.setItem(USAGE_DAYS_KEY, JSON.stringify({ day: worldDayKey(day1), days: 30 }))
+    expect(await usageDaysForDay({ now: day2, load: async () => { throw new Error('x') } })).toBe(30)
+    expect(storedUsageDays().day).toBe(worldDayKey(day1))
+    localStorage.removeItem(USAGE_DAYS_KEY)
+  })
+
+  it('sans décompte gardé ni lecture possible : îlot de départ', async () => {
+    localStorage.removeItem(USAGE_DAYS_KEY)
+    expect(storedUsageDays()).toBe(null)
+    expect(await usageDaysForDay({ now: day1, load: async () => ({}) })).toBe(0)
+  })
+})

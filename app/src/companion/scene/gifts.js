@@ -228,6 +228,7 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
   let rm = reducedMotion
   let evening = 0
   let season = 'printemps-ete'
+  let shrubScale = 1
 
   function add(item, t) {
     if (!GIFT_ITEMS.includes(item) || placed.has(item)) return
@@ -287,6 +288,13 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
       season = next
       paintShrub(placed.get('arbuste')?.obj, season)
     },
+    /** L'arbuste grandit avec l'îlot (× 1 → × 1,45 à 90 jours d'usage, SPEC île § 8). */
+    setShrubScale(k) {
+      shrubScale = Math.max(1, Number(k) || 1)
+    },
+    get shrubScale() {
+      return shrubScale
+    },
     setEvening(v) {
       evening = Math.max(0, Math.min(1, v))
     },
@@ -319,7 +327,7 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
         if (ms != null && ms < 3000) moving = true
         const o = p.obj
         const base = o.userData.base
-        o.scale.setScalar(Math.max(0.001, a.k) * SIZE[p.item])
+        o.scale.setScalar(Math.max(0.001, a.k) * SIZE[p.item] * (p.item === 'arbuste' ? shrubScale : 1))
         o.position.y = base.y + (a.y || 0)
         if (p.item === 'arc-en-ciel') {
           const sh = rainbowShrink(ms, { reducedMotion: rm })

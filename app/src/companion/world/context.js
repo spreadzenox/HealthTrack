@@ -113,6 +113,55 @@ export function sleepHabitsForDay({ now = new Date(), load = loadSleepHabits } =
   return habitsCache.value
 }
 
+/** Dernier décompte des jours d'usage, gardé sur le téléphone : `{ day, days }` (jour de Pilou du décompte). */
+export const USAGE_DAYS_KEY = 'halcya.world.usageDays'
+
+function storage() {
+  try {
+    return typeof localStorage !== 'undefined' ? localStorage : null
+  } catch {
+    return null
+  }
+}
+
+/** Le dernier décompte gardé, sans rien lire dans les notes (ouverture de l'Accueil). null s'il n'y en a pas. */
+export function storedUsageDays() {
+  try {
+    const v = JSON.parse(storage()?.getItem(USAGE_DAYS_KEY) || 'null')
+    return v && Number.isFinite(v.days) && v.days >= 0 ? { day: String(v.day || ''), days: Math.floor(v.days) } : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Jours d'usage pour la croissance de l'îlot, recomptés au plus une fois par jour de Pilou : le même jour, le décompte
+ * gardé suffit ; un nouveau jour, `worldContextForDay` (partagé avec le widget Android) relit les notes, et le résultat
+ * est gardé. Le décompte ne recule jamais (une lecture ratée ou des notes supprimées ne font pas rétrécir l'îlot).
+ * Ne lève jamais.
+ */
+export async function usageDaysForDay({ now = new Date(), load = worldContextForDay } = {}) {
+  const stored = storedUsageDays()
+  const day = worldDayKey(now)
+  if (stored && stored.day === day) return stored.days
+  let counted = null
+  try {
+    const ctx = await load({ now })
+    counted = Number.isFinite(ctx?.daysOfUse) ? Math.floor(ctx.daysOfUse) : null
+  } catch {
+    counted = null
+  }
+  const days = Math.max(stored?.days ?? 0, counted ?? 0)
+  if (counted != null) {
+    try {
+      storage()?.setItem(USAGE_DAYS_KEY, JSON.stringify({ day, days }))
+    } catch {
+      /* stockage plein ou interdit : on recomptera demain */
+    }
+  }
+  return days
+}
+
 /** Pour les tests. */
 export function resetWorldContextCache() {
   dayCache = null

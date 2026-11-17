@@ -37,6 +37,18 @@ function skyStyle(light) {
 }
 
 
+/** Délai avant de recompter les jours d'usage : après l'ouverture de l'Accueil, jamais pendant. */
+export const USAGE_RECOUNT_DELAY_MS = 4000
+
+function hemisphereNow() {
+  try {
+    const lat = getWeatherSettings()?.location?.lat
+    return typeof lat === 'number' ? lat : 'nord'
+  } catch {
+    return 'nord'
+  }
+}
+
 /** Saison de l'îlot (SPEC île § 8) : selon la date et l'hémisphère de la position météo, si elle est connue. */
 function seasonNow(world, now) {
   if (typeof world?.seasonOf !== 'function') return null
@@ -135,6 +147,12 @@ export default function CompanionScene({
     // lever et coucher habituels, lus dans le sommeil une fois par jour (même calcul que le widget Android)
     const loadContext = worldModules['./world/context.js']
     const habits = { wake: null, bedtime: null }
+    // jours d'usage pour la croissance de l'îlot (MONDE-3) : le décompte gardé à l'ouverture, recompté plus tard
+    const usage = { days: null }
+    let usageTimer = null
+    // un seul chargement du module, partagé par les heures de sommeil et les jours d'usage
+    let ctxPromise = null
+    const context = () => (ctxPromise ||= loadContext ? loadContext() : Promise.reject(new Error('sans contexte')))
     load()
       .then((world) => {
         if (!alive || typeof world.lightAt !== 'function') return
@@ -142,16 +160,43 @@ export default function CompanionScene({
           const now = nowRef.current()
           const l = world.lightAt(now, habits)
           setLight((prev) => ({ ...prev, ...l, sky: { ...prev.sky, ...(l?.sky || {}) } }))
-          bus.emit(EVENTS.TIME_PHASE, { phase: l?.phase, light: l, season: seasonNow(world, now), at: Date.now() })
+          const season = seasonNow(world, now)
+          const growth = usage.days != null && typeof world.growthAt === 'function'
+            ? world.growthAt(usage.days, now, { hemisphere: hemisphereNow() })
+            : null
+          bus.emit(EVENTS.TIME_PHASE, { phase: l?.phase, light: l, season, growth, at: Date.now() })
         }
         tick()
         timer = setInterval(() => {
           refreshHabits()
+          refreshUsage()
           tick()
         }, 5 * 60 * 1000)
+        const setUsage = (days) => {
+          if (!alive || !Number.isFinite(days) || days === usage.days) return
+          usage.days = days
+          tick()
+        }
+        // relire les notes ne se fait qu'une fois par jour, et jamais pendant l'ouverture de l'Accueil (budget de lectures)
+        const refreshUsage = () => {
+          if (!loadContext) return
+          context()
+            .then((ctx) => ctx.usageDaysForDay({ now: nowRef.current() }))
+            .then(setUsage)
+            .catch(() => {})
+        }
+        if (loadContext) {
+          context()
+            .then((ctx) => {
+              const stored = ctx.storedUsageDays?.()
+              setUsage(stored ? stored.days : 0)
+              usageTimer = setTimeout(refreshUsage, USAGE_RECOUNT_DELAY_MS)
+            })
+            .catch(() => {})
+        }
         const refreshHabits = () => {
           if (!loadContext) return
-          loadContext()
+          context()
             .then((ctx) => ctx.sleepHabitsForDay({ now: nowRef.current() }))
             .then((c) => {
               if (!alive || !c) return
@@ -170,6 +215,7 @@ export default function CompanionScene({
     return () => {
       alive = false
       if (timer) clearInterval(timer)
+      if (usageTimer) clearTimeout(usageTimer)
     }
   }, [])
 
@@ -359,6 +405,7 @@ export default function CompanionScene({
           bus.on(EVENTS.TIME_PHASE, (p) => {
             if (p?.light) live.applyLight(p.light)
             if (p?.season && p.season !== live.season) { live.setSeason?.(p.season); poke() }
+            if (p?.growth && p.growth.days !== live.growthDays) { live.setGrowth?.(p.growth); poke() }
             const asleep = Boolean(p?.light?.asleep ?? p?.phase === 'nuit')
             const changed = asleep !== asleepNow
             asleepNow = asleep
