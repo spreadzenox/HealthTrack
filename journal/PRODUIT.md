@@ -387,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **17/11 07:30** — **#1081 (POLISH-PILOU-DORT-YEUX) mergée** (049bfdb) après 14 checks verts et ses captures iPhone de l'Accueil relues ; #1080 remise à jour sur main (conflits de journal), POLISH-FLAKY-DASH ajouté (test seul). Build iPhone 1148.1148 validée par Apple et en test chez « Testeurs Halcya » ; nettoyage des anciennes builds lancé.
 - **17/11 06:30** — **#1072 (STUDIO 4) mergée** (b0f634c) après 14 checks verts et ses captures iPhone de l'Accueil relues ; #1080 et #1081 remises à jour sur main. Alpha du soir : 101147 (1a290f6) sur la piste alpha le 17/11 à 05:48. Build iPhone 1148.1148 soumise à l'examen bêta.
 - **17/11 05:30** — **POLISH-PILOU-DORT-YEUX** : la nuit, ouvrir l'app ne réveille plus Pilou (le « matin » de `app:opened` commençait à minuit) et la figurine revient à l'humeur au lever du jour même app ouverte (`restExpression`, `appOpenedReaction`, test `sleep.test.js`). **#1045 (UPG-4) mergée à 05:38 (release v781, APK 35,3 Mo).** Suite : merger #1072, #1080, #1081 une par une.
 - **17/11 04:30** — **#1079 (POLISH-MEET-DARK) mergée** (1a290f6) après 14 checks verts et ses captures iPhone de l'Accueil relues (sombre, vide). **#1045 (UPG-4)** remise à jour deux fois sur main, tests locaux verts (3 996), CI relancée. Widget Android : le nom choisi pour le compagnon (PR « widget-nom », en attente de sa CI). #1072 (Studio) : build iPhone en cours.

@@ -188,8 +188,9 @@ describe('Dashboard', () => {
       listEntries.mockResolvedValue([answered])
       renderDashboard('day')
       const again = await screen.findByRole('region', { name: 'À noter aujourd’hui' })
-      fireEvent.click(within(again).getByRole('button', { name: 'Déjà noté (1)' }))
-      fireEvent.click(within(again).getByRole('button', { name: 'Méditation · oui, changer la réponse' }))
+      // La liste existe avant la réponse de listEntries : attendre la réponse déjà notée (POLISH-FLAKY-DASH).
+      fireEvent.click(await within(again).findByRole('button', { name: 'Déjà noté (1)' }))
+      fireEvent.click(await within(again).findByRole('button', { name: 'Méditation · oui, changer la réponse' }))
       await waitFor(() => expect(deleteEntry).toHaveBeenCalledWith(9))
     } finally {
       localStorage.removeItem('healthtrack_habits')
