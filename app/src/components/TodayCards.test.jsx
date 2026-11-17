@@ -155,6 +155,25 @@ describe('GutCard — bilan du soir (I170)', () => {
     expect(row.querySelectorAll('svg')).toHaveLength(2)
   })
 
+  it('UPG-4 : juste après le bilan du soir, le choix reste coché dans la même rangée', async () => {
+    const now = new Date()
+    now.setHours(20, 30, 0, 0)
+    let saved = []
+    const read = async () => saved
+    const { createEntry } = await import('../storage/localHealthStorage')
+    createEntry.mockImplementation(async (e) => {
+      saved = [{ ...e, at: now.toISOString() }]
+      return 1
+    })
+    wrap(<GutCard read={read} now={now} />)
+    await screen.findByText('Et votre digestion aujourd’hui, dans l’ensemble ?')
+    fireEvent.click(screen.getByRole('button', { name: 'Journée : Gêne' }))
+    expect(await screen.findByText('Bilan du jour : Gêne. Merci !')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Journée : Gêne' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Journée : Calme' })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.queryByRole('button', { name: 'Gêne' })).not.toBeInTheDocument()
+  })
+
   it('pas de question le matin ; une fois répondu, une ligne de remerciement', async () => {
     const morning = new Date()
     morning.setHours(9, 0, 0, 0)

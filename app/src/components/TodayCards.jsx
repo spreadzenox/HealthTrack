@@ -92,10 +92,12 @@ export function GutCard({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const [momentOpen, setMomentOpen] = useState(false)
+  // UPG-4 : le bilan du soir vient d'être noté ici : sa rangée reste, le choix coché (sinon rien ne montrait le geste)
+  const [dayJustNoted, setDayJustNoted] = useState(false)
   const summary = gutSummary(entries || [])
   const evening = gutEveningCheck(entries || [], now || new Date())
   // Le soir, une seule question à l'écran (POL-PLAY-12) : le bilan du jour ; la note d'un moment précis reste à un geste
-  const eveningFirst = Boolean(entries && evening.ask)
+  const eveningFirst = Boolean(entries && (evening.ask || (dayJustNoted && evening.done)))
   const showMoment = !eveningFirst || momentOpen
   // Jamais deux rangées Calme / Gêne / Douleur à la fois (POLISH-SIM-41) : la journée ou le moment, l'un puis l'autre
   const showDay = eveningFirst && !momentOpen
@@ -105,6 +107,7 @@ export function GutCard({
     setError(null)
     try {
       await createEntry({ type: GUT_TYPE, source: GUT_SOURCE, payload: scope ? { level, scope } : { level } })
+      if (scope) setDayJustNoted(true)
       window.dispatchEvent(new CustomEvent('health-entries-updated'))
     } catch (e) {
       setError(e?.message || 'Enregistrement impossible')
@@ -134,6 +137,7 @@ export function GutCard({
                 disabled={saving}
                 onClick={() => note(l.id, GUT_DAY_SCOPE)}
                 aria-label={`Journée : ${l.label}`}
+                aria-pressed={Boolean(evening.done) && evening.done.payload.level === l.id}
               >
                 <span className="gut-choice-radio" aria-hidden="true" />
                 <span className="choice-label">{l.label}</span>
