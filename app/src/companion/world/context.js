@@ -4,11 +4,11 @@
  * du moment (réglages météo de l'app). Le widget appelle `loadWorldContext()` (la scène, `sleepHabitsForDay()`) au changement de jour,
  * puis passe ces valeurs à `lightAt`, `weatherDecor` et `growthAt` (index.js).
  */
-import { listEntries } from '../../storage/localHealthStorage'
+import { listEntries, listEntryDays } from '../../storage/localHealthStorage'
 import { localDateKey } from '../../services/analysisEngine'
 import { computeSleepRegularity } from '../../services/sleepRegularity'
 import { getWeatherSettings } from '../../services/weatherSync'
-import { countUsageDays } from './growth.js'
+import { countUsageDays, GROWTH_FULL_DAYS } from './growth.js'
 import { worldDayKey } from './daylight.js'
 
 /** Ce que la personne note elle-même : un jour avec l'une de ces sources est un jour d'usage. */
@@ -135,12 +135,22 @@ export function storedUsageDays() {
 }
 
 /**
+ * Jours d'usage vus par l'îlot, lecture légère : une seule entrée par jour et par source notée (`listEntryDays`), et
+ * pas au-delà de 90 jours, où l'îlot a fini de grandir. Le widget garde son décompte exact (`loadWorldContext`).
+ * @returns {Promise<{ daysOfUse: number }>}
+ */
+export async function loadIslandUsageDays({ listDays = listEntryDays } = {}) {
+  const days = await listDays({ sources: MANUAL_SOURCES, max: GROWTH_FULL_DAYS })
+  return { daysOfUse: Math.min(GROWTH_FULL_DAYS, countUsageDays(days)) }
+}
+
+/**
  * Jours d'usage pour la croissance de l'îlot, recomptés au plus une fois par jour de Pilou : le même jour, le décompte
- * gardé suffit ; un nouveau jour, `worldContextForDay` (partagé avec le widget Android) relit les notes, et le résultat
- * est gardé. Le décompte ne recule jamais (une lecture ratée ou des notes supprimées ne font pas rétrécir l'îlot).
+ * gardé suffit ; un nouveau jour, `loadIslandUsageDays` relit un jour par source (jamais toutes les notes), et le
+ * résultat est gardé. Le décompte ne recule jamais (une lecture ratée ou des notes supprimées ne font pas rétrécir l'îlot).
  * Ne lève jamais.
  */
-export async function usageDaysForDay({ now = new Date(), load = worldContextForDay } = {}) {
+export async function usageDaysForDay({ now = new Date(), load = loadIslandUsageDays } = {}) {
   const stored = storedUsageDays()
   const day = worldDayKey(now)
   if (stored && stored.day === day) return stored.days

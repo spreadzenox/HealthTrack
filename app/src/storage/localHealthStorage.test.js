@@ -29,6 +29,7 @@ import {
   upsertEntries,
   getLatestEntryAt,
   getFirstEntryAt,
+  listEntryDays,
   exportToJson,
   importFromJson,
   parseBackup,
@@ -173,6 +174,35 @@ describe('getLatestEntryAt', () => {
     await createEntry({ type: 'steps', source: 'other', payload: {}, at: '2026-12-31T10:00:00Z' })
     const result = await getLatestEntryAt('hc_only')
     expect(result).toBeNull()
+  })
+})
+
+describe('listEntryDays (jours d’usage de l’îlot, MONDE-3)', () => {
+  const at = (d, h) => new Date(2026, 10, d, h, 0).toISOString()
+
+  it('jours distincts des sources demandées, du plus récent au plus ancien', async () => {
+    for (const h of [8, 12, 19]) await createEntry({ type: 'food', source: 'app_food', payload: {}, at: at(10, h) })
+    await createEntry({ type: 'food', source: 'app_food', payload: {}, at: at(12, 9) })
+    await createEntry({ type: 'gut', source: 'app_gut', payload: {}, at: at(12, 21) })
+    await createEntry({ type: 'gut', source: 'app_gut', payload: {}, at: at(14, 0) })
+    await createEntry({ type: 'steps', source: 'health_connect', payload: {}, at: at(15, 10) })
+    const days = await listEntryDays({ sources: ['app_food', 'app_gut'] })
+    expect(days).toEqual(['2026-11-14', '2026-11-12', '2026-11-10'])
+  })
+
+  it('lit une seule entrée par jour, et s’arrête à `max` jours par source', async () => {
+    for (let d = 1; d <= 6; d++) for (const h of [7, 9, 11, 13, 15]) {
+      await createEntry({ type: 'food', source: 'app_food', payload: {}, at: at(d, h) })
+    }
+    const cont = vi.spyOn(globalThis.IDBCursor.prototype, 'continue')
+    const days = await listEntryDays({ sources: ['app_food'], max: 4 })
+    expect(days).toEqual(['2026-11-06', '2026-11-05', '2026-11-04', '2026-11-03'])
+    expect(cont.mock.calls.length).toBe(3)
+    cont.mockRestore()
+  })
+
+  it('aucune source notée : aucun jour', async () => {
+    expect(await listEntryDays({ sources: ['app_food'] })).toEqual([])
   })
 })
 

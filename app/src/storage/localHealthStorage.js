@@ -163,6 +163,61 @@ export async function getLatestEntryAt(source) {
 }
 
 /**
+ * Jours (date locale `AAAA-MM-JJ`) où chacune de ces sources a au moins une entrée, du plus récent au plus ancien,
+ * `max` jours au plus par source. Lecture par sauts : une seule entrée lue par jour et par source (curseur à rebours
+ * sur [source, at] qui saute au jour d'avant), jamais toutes les notes. Sert à compter les jours d'usage de l'îlot.
+ * @param {{ sources: string[], max?: number }} opts
+ * @returns {Promise<string[]>} jours distincts, toutes sources confondues
+ */
+export async function listEntryDays({ sources = [], max = Infinity } = {}) {
+  const dayOf = (at) => {
+    const d = new Date(at)
+    if (Number.isNaN(d.getTime())) return null
+    const p = (n) => String(n).padStart(2, '0')
+    return { key: `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`, start: new Date(d.getFullYear(), d.getMonth(), d.getDate()) }
+  }
+  const days = new Set()
+  if (isExampleMode()) {
+    for (const source of sources) {
+      const own = new Set()
+      for (const e of readExample({ source, limit: Infinity })) {
+        const k = dayOf(e.at)?.key
+        if (k && own.size < max) own.add(k)
+      }
+      own.forEach((k) => days.add(k))
+    }
+    return [...days].sort().reverse()
+  }
+  const db = await openDB()
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly')
+    const index = tx.objectStore(STORE_NAME).index('source_at')
+    tx.onerror = () => reject(tx.error)
+    tx.oncomplete = () => resolve()
+    for (const source of sources) {
+      let found = 0
+      const req = index.openCursor(IDBKeyRange.bound([source, ''], [source, AT_MAX]), 'prev')
+      req.onsuccess = () => {
+        const cursor = req.result
+        if (!cursor) return
+        const at = cursor.key[1]
+        const day = dayOf(at)
+        if (day) {
+          days.add(day.key)
+          found++
+        }
+        if (found >= max) return
+        // Sauter au jour d'avant : la clé juste avant minuit (heure locale) du jour lu
+        const before = day ? new Date(day.start.getTime() - 1).toISOString() : null
+        if (before && before < at) cursor.continue([source, before])
+        else cursor.continue()
+      }
+    }
+  })
+  return [...days].sort().reverse()
+}
+
+/**
  * Plus ancienne date `at` d'un type (index [type, at], une seule entrée lue), ou null. Sert à borner la période
  * proposée par le rapport médecin aux jours d'usage (POLISH-SIM-12).
  * @param {string} type
