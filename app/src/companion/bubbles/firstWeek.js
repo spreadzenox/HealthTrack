@@ -107,3 +107,48 @@ export function wellbeingDays(states, now = new Date()) {
 export function markReadySeen({ storage = globalThis.localStorage } = {}) {
   write(storage, { ...read(storage), seen: true })
 }
+
+const GUT_KEY = 'halcya.companion.digestionReady'
+
+/** La grande fleur pêche du premier score du confort digestif (ile.SPEC § 7), près des galets. */
+export const DIGESTION_FLOWER = Object.freeze({ id: 'digestion-premier-score', theme: 'peche', angleDeg: 70, radius: 0.8, scale: 2.1 })
+export const DIGESTION_READY_TEXT = 'Confort digestif : premier score prêt'
+
+/**
+ * Jour 14 (confort digestif) : pas de seconde cérémonie, une grande fleur et une étiquette, une seule fois, pour qui a
+ * vu le délai courir (un utilisateur d'avant la refonte déjà au score n'a rien à fêter).
+ * @returns {{ celebrate: boolean, flower: boolean }} `celebrate` : à fêter maintenant ; `flower` : la fleur est sur l'îlot
+ */
+export function digestionMilestone(daysLeft, { storage = globalThis.localStorage } = {}) {
+  let saved = {}
+  try {
+    saved = JSON.parse(storage?.getItem(GUT_KEY) ?? '{}') || {}
+  } catch {
+    saved = {}
+  }
+  const save = (v) => {
+    try {
+      storage?.setItem(GUT_KEY, JSON.stringify(v))
+    } catch {
+      // sans stockage, rien de grave
+    }
+  }
+  if (!Number.isFinite(daysLeft)) return { celebrate: false, flower: Boolean(saved.done) }
+  if (daysLeft > 0) {
+    if (!saved.waited) save({ ...saved, waited: true })
+    return { celebrate: false, flower: Boolean(saved.done) }
+  }
+  if (saved.done) return { celebrate: false, flower: true }
+  if (!saved.waited) return { celebrate: false, flower: false }
+  save({ ...saved, done: true })
+  return { celebrate: true, flower: true }
+}
+
+/** La grande fleur est-elle déjà sur l'îlot ? (lecture seule) */
+export function digestionFlowerShown({ storage = globalThis.localStorage } = {}) {
+  try {
+    return Boolean(JSON.parse(storage?.getItem(GUT_KEY) ?? '{}')?.done)
+  } catch {
+    return false
+  }
+}
