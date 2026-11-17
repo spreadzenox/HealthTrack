@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-17",
+  "kind": "correctif",
+  "title": "Le widget appelle votre compagnon par son nom",
+  "variants": ["play", "sideload"],
+  "items": [
+    "Le widget « Ma journée » de l’écran d’accueil du téléphone affichait toujours « Pilou ». Il reprend le nom que vous avez choisi."
+  ]
+}

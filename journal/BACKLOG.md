@@ -401,10 +401,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     un utilisateur existant la voit une fois à la mise à jour. Aussi : capture iPhone « vide-accueil » blanche (à
     vérifier) ; mode captures iPhone recouvert par la rencontre alors que `captureMode.js` sème `halcya_companion.metAt`
     (défaut de l'outil, pas du produit). Captures avant/après en clair et sombre, Android et iPhone.
-  - [ ] **POLISH-PILOU-DORT-YEUX** (vu le 17/11 03:30 sur captures/main, iPhone, Accueil vers 01:50) : « Pilou dort. » mais la figurine garde les yeux ouverts sur l'île ; vérifier que la scène 3D reçoit l'expression Endormi (yeux fermés en trait, #1071) la nuit.
-  - [ ] **REFONTE-RESTES-SPRINT** (après POLISH-MEET-DARK, un sujet par run) : nom choisi dans l'étiquette de l'île
-    (`Dashboard.jsx` → `name` de `<CompanionHome>`, une ligne, décrit dans `sprint/LOT-VIE.md` 00:50) et dans le widget
-    (`world/widgetSync.js` → `pilouName()`) ; `growthAt` et `loadWorldContext()` branchés dans la scène ; poses du
+  - [ ] **POLISH-PILOU-DORT-YEUX** (vu le 17/11 03:30 sur captures/main, iPhone, Accueil vers 01:50 ; revu le 17/11 04:30 en local sur Android web, `npm run visual --routes=/` à 04:35 : yeux ouverts aussi) : « Pilou dort. » mais la figurine garde les yeux ouverts sur l'île ; vérifier que la scène 3D reçoit l'expression Endormi (yeux fermés en trait, #1071) la nuit.
+  - [ ] **REFONTE-RESTES-SPRINT** (après POLISH-MEET-DARK, un sujet par run) : ~~nom choisi dans l'étiquette de l'île~~
+    (déjà fait : `CompanionHome` lit `useCompanionNameSafe()` sans prop, vérifié le 17/11 04:30) ; ~~nom choisi dans le widget~~
+    (17/11 04:30, PR « widget-nom » : `syncPilouWidget` envoie `companionNameNow()`, test rouge puis vert) ; `growthAt` et `loadWorldContext()` branchés dans la scène ; poses du
     widget re-rendues avec le module PILOU ; rituel du soir et lanternes du défi des 5 soirs (SPEC journée § 7) ;
     première série `captures/main` d'après le sprint à regarder ; palier de qualité sur un vrai téléphone ; #1072 si
     elle est encore ouverte après 03:00 (son équipier est arrêté : la routine la finit).

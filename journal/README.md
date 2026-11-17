@@ -12,11 +12,13 @@
 - **8 Scène** : livrée (île 3D, lumière, météo, 7 cadeaux, la nuit). Reste : croissance de l'île et vrai lever/coucher
   du soleil (écrits, pas branchés), palier de qualité sur un vrai téléphone.
 - **9 Pilou** : livrée (figurine, 12 expressions, montre, effets dessinés). Reste : sur la capture iPhone de nuit,
-  « Pilou dort » mais ses yeux restent ouverts (à vérifier).
+  « Pilou dort » mais ses yeux restent ouverts (vu aussi sur Android le 17/11 04:30 : à corriger).
 - **10 Bulles** : livrée. Reste : retour haptique (à décider), îlot rangé en haut au défilement.
 - **11-12 Vie** : livrée. Reste : rituel du soir et lanternes ; votre nom choisi sur l'étiquette de l'île.
-  **La carte de la rencontre illisible en sombre est corrigée (17/11 03:30, PR #1079)**, mergée dès que sa build iPhone est verte.
-- **13 Monde** : livrée, widget Android seulement. Reste : nom choisi et nouvelles poses dans le widget.
+  **La carte de la rencontre illisible en sombre est corrigée : #1079 mergée le 17/11 vers 04:40**, captures iPhone relues.
+  Votre nom choisi apparaît déjà sur l'étiquette de l'île.
+- **13 Monde** : livrée, widget Android seulement. Le widget prend votre nom choisi (en PR, 17/11 04:30). Reste : nouvelles
+  poses dans le widget.
 - **14 Studio** : réglages à la main livrés ; les traits sur le vrai Pilou (#1072) remis à jour sur main, build iPhone relancée.
 - **15 Photo** : écrite, **éteinte partout** jusqu'à vos déclarations (missions P49 et PI3).
 - Captures iPhone de main (9b785e3) relues : l'Accueil vierge n'est plus blanc, la rencontre ne recouvre plus rien.
@@ -110,6 +112,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 17/11 04:30 — [#1079 mergée, widget avec votre nom](runs/2026-11-17-0430-merge-1079-widget-nom.md) | 🛠️ | **#1079 mergée** (la rencontre lisible en thème sombre ; 14 checks verts, captures iPhone relues). #1045 (« Ma digestion » reste cochée) remise à jour sur main, tests locaux verts, CI relancée. Le widget Android reprend le nom choisi (PR, CI en cours). #1072 (Studio) : build iPhone en cours. Envoi Alpha du soir pas encore parti à 04:45. Rien à faire de votre côté |
 | 17/11 03:30 — [Rencontre en thème sombre](runs/2026-11-17-0330-rencontre-sombre.md) | 🛠️ | **POLISH-MEET-DARK** : la carte de la rencontre de Pilou lisible en sombre (couleurs sombres du compagnon, test de contraste). Captures iPhone de main relues : défauts « vide-accueil » et surimpression déjà réglés par #1067. Bilan du sprint étape par étape en tête du résumé. PR #1079 en attente de sa build iPhone (merge au run suivant) ; #1072 remise à jour sur main (conflit de `visage.js` résolu), CI relancée. |
 | 17/11 02:30 — [Intégrateur du sprint](runs/2026-11-17-0230-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v777, APK 35,3 Mo). **#1067 (Vie) mergée à 02:07, #1070 (assemblage de la Scène) à 02:09 ; #1065 fermée. Cinq lots finis sur sept.** **#1071 (Pilou) mergée à 02:38.** #1072 (Studio) : checks verts sauf la build iPhone, en cours. Défaut relevé : carte de la rencontre illisible en thème sombre (premier correctif après 03:00). Alpha du soir pas encore parti. Journal seul. |
 | 17/11 01:30 — [Intégrateur du sprint](runs/2026-11-17-0130-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v774, APK 35,3 Mo). **#1052 (Studio) mergée à 01:22, #1066 (Bulles 2) à 01:30 : lots Bulles, Monde et Photo finis.** Un rouge isolé de Tests sur 99c1de6 (test de Ma journée instable), vert au commit suivant. 5 PR du sprint ouvertes (#1065, #1067, #1070, #1071, #1072). Alpha du soir pas encore parti (retard habituel du cron). Journal seul. |

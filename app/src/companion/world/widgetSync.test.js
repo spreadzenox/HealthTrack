@@ -38,6 +38,17 @@ describe('synchronisation', () => {
     expect(plugin.update.mock.calls[0][0].state.remaining).toEqual(['Repas', 'Bien-être'])
   })
 
+  it('porte le nom choisi pour le compagnon (Réglages ou rencontre), « Pilou » sinon', async () => {
+    const plugin = { update: vi.fn(async () => {}) }
+    const loadContext = async () => ({})
+    localStorage.setItem('halcya_companion', JSON.stringify({ name: 'Noisette' }))
+    await syncPilouWidget({ entries: [], now, plugin, loadContext })
+    expect(plugin.update.mock.calls[0][0].state.name).toBe('Noisette')
+    localStorage.removeItem('halcya_companion')
+    await syncPilouWidget({ entries: [], now, plugin, loadContext })
+    expect(plugin.update.mock.calls[1][0].state.name).toBe('Pilou')
+  })
+
   it('sans plugin (iPhone, navigateur) : rien ; une erreur ne remonte jamais', async () => {
     expect(await syncPilouWidget({ entries: [], now, plugin: null })).toBe(false)
     const broken = { update: async () => { throw new Error('x') } }
