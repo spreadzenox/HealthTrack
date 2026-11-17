@@ -440,6 +440,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     widget re-rendues avec le module PILOU ; rituel du soir et lanternes du défi des 5 soirs (SPEC journée § 7) ;
     première série `captures/main` d'après le sprint à regarder ; palier de qualité sur un vrai téléphone ; #1072 si
     elle est encore ouverte après 03:00 (son équipier est arrêté : la routine la finit).
+  - [x] **CI-GATE-TIMEOUT** (17/11 11:30) : « Tests » de main rouge sur 9c9e09e, 4 simulations d'`evaluateGate` (`gate.test.js`) au-delà du délai de 5 s sur un runner chargé (1 à 2 s en local) → délai de 30 s (`SIMULATION_TIMEOUT`) pour les cinq simulations, assertions inchangées.
   - [x] **POLISH-FLAKY-DASH** (après le sprint ; **fait le 17/11 07:30** dans #1080 : « Déjà noté (1) » attendu par `findByRole`, la liste s'affiche avant la réponse de `listEntries`) : `Dashboard.test.jsx`, « Ma journée : une habitude suivie se note par oui ou non » a échoué une fois sur la CI de main (99c1de6, 17/11 00:00) puis est passé ; le lot VIE l'avait déjà dit « corrigé à la source » : chercher l'attente manquante (findBy plutôt que getBy après la réponse).
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
