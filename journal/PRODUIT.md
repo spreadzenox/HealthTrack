@@ -387,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **17/11 09:30** — MONDE-1 : l'île de l'Accueil s'endort et se réveille aux heures de sommeil habituelles (même cache du jour que le widget Android), heures par défaut 7 h / 22 h 30 sans 7 nuits lisibles. #1080 : job émulateur API 35 annulé et relancé.
 - **17/11 08:30** — Run « idées » : restes du sprint découpés en MONDE-1 à MONDE-4 (`maquettes/compagnon/DECOUPAGE-RESTES-SPRINT.md`) ; défaut repéré : l'île s'endort à 22 h 30 fixe, le widget à l'heure de sommeil réelle. #1080 : job émulateur API 35 bloqué (CI-EMU-TIMEOUT au BACKLOG), non mergée.
 - **17/11 05:30** — **POLISH-PILOU-DORT-YEUX** : la nuit, ouvrir l'app ne réveille plus Pilou (le « matin » de `app:opened` commençait à minuit) et la figurine revient à l'humeur au lever du jour même app ouverte (`restExpression`, `appOpenedReaction`, test `sleep.test.js`). **#1045 (UPG-4) mergée à 05:38 (release v781, APK 35,3 Mo).** Suite : merger #1072, #1080, #1081 une par une.
 - **17/11 03:30** — **POLISH-MEET-DARK** : la carte de la rencontre de Pilou et ses bulles ont leurs couleurs sombres (`life.tokens.css`, test de contraste ≥ 4,5:1 en clair et en sombre) ; captures iPhone de main relues : « vide-accueil » n'est plus blanche et la rencontre ne recouvre plus l'Accueil (corrigé par #1067). Suite : #1072, #1045, REFONTE-RESTES-SPRINT.

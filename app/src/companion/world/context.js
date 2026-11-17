@@ -9,6 +9,7 @@ import { localDateKey } from '../../services/analysisEngine'
 import { computeSleepRegularity } from '../../services/sleepRegularity'
 import { getWeatherSettings } from '../../services/weatherSync'
 import { countUsageDays } from './growth.js'
+import { worldDayKey } from './daylight.js'
 
 /** Ce que la personne note elle-même : un jour avec l'une de ces sources est un jour d'usage. */
 export const MANUAL_SOURCES = Object.freeze([
@@ -72,4 +73,24 @@ export async function loadWorldContext({ now = new Date(), list = listEntries, w
     hemisphere: typeof lat === 'number' && lat < 0 ? 'sud' : 'nord',
     weather: settings.enabled ? settings.current || null : null,
   }
+}
+
+let dayCache = null
+
+/**
+ * Le contexte du monde pour le jour de Pilou en cours (il change à 4 h), lu une seule fois par jour et partagé par
+ * la scène de l'Accueil et le widget Android : les deux s'endorment et se réveillent donc à la même heure.
+ * Ne lève jamais (voir `loadWorldContext`).
+ */
+export function worldContextForDay({ now = new Date(), load = loadWorldContext } = {}) {
+  const day = worldDayKey(now)
+  if (!dayCache || dayCache.day !== day) {
+    dayCache = { day, value: Promise.resolve().then(() => load({ now })).catch(() => ({})) }
+  }
+  return dayCache.value
+}
+
+/** Pour les tests. */
+export function resetWorldContextCache() {
+  dayCache = null
 }

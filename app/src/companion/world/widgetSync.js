@@ -8,7 +8,7 @@ import { registerPlugin } from '@capacitor/core'
 import { dayChecklist } from '../../services/dayChecklist'
 import { localDateKey } from '../../services/analysisEngine'
 import { worldDayKey } from './daylight.js'
-import { loadWorldContext } from './context.js'
+import { loadWorldContext, worldContextForDay, resetWorldContextCache } from './context.js'
 
 const NativePilouWidget = registerPlugin('PilouWidget')
 
@@ -48,15 +48,12 @@ export function widgetDayState(entries, { now = new Date(), askGut = false, habi
   }
 }
 
-let contextCache = null
-
 /** Envoie l'état du jour au widget ; ne lève jamais (un widget pas à jour ne doit rien casser). */
 export async function syncPilouWidget({ entries, askGut = false, habits = [], now = new Date(), plugin = pilouWidgetPlugin(), loadContext = loadWorldContext } = {}) {
   if (!plugin?.update) return false
   try {
-    const day = worldDayKey(now)
-    if (!contextCache || contextCache.day !== day) contextCache = { day, value: await loadContext({ now }) }
-    await plugin.update({ state: widgetDayState(entries, { now, askGut, habits, context: contextCache.value }) })
+    const context = await worldContextForDay({ now, load: loadContext })
+    await plugin.update({ state: widgetDayState(entries, { now, askGut, habits, context }) })
     return true
   } catch {
     return false
@@ -75,5 +72,5 @@ export async function takePilouWidgetOpen(plugin = pilouWidgetPlugin()) {
 
 /** Pour les tests. */
 export function resetWidgetContextCache() {
-  contextCache = null
+  resetWorldContextCache()
 }
