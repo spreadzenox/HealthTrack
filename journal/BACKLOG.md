@@ -450,7 +450,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] **REFONTE-13 — Compagnon 5** : le cycle du jour sur la lumière dorée, la météo sur l'île, la croissance au fil
   des semaines, le widget et les notifications (images pré-rendues).
 - [ ] **REFONTE-14 — Double numérique a, Studio Pilou à la main** : rebrancher `traits.js` sur le rendu figurine
-  (première chose à vérifier), fiche locale, export, « Surprenez-moi », retour au Pilou d'origine.
+  (première chose à vérifier), fiche locale, export, « Surprenez-moi », retour au Pilou d'origine. Traits sur le vrai
+  Pilou mergés le 17/11 (#1072) ; reste l'aperçu 3D dans le Studio (question ouverte).
 - [ ] **REFONTE-15 — Double numérique b, la photo** : route du relais `POST /v1/pilou/style` (schéma imposé, aucun
   stockage, 3 par mois), information et consentement séparés, capture en mémoire, effacement, « À vérifier » ; brief
   § 9 à la lettre. **N'entre dans aucune version envoyée aux testeurs tant que le propriétaire n'a pas envoyé les
