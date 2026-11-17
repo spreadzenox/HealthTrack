@@ -23,6 +23,7 @@ import { useEntitlement } from '../hooks/useEntitlement'
 import LineIcon from '../components/LineIcon'
 import FaceUnlockSetting from '../components/FaceUnlockSetting'
 import HabitsSetting from '../components/HabitsSetting'
+import StudioSetting from '../companion/studio/StudioSetting'
 import MotionSetting from '../companion/MotionSetting'
 import LanguageSetting from '../components/LanguageSetting'
 import { I18N_EN } from '../i18n/locale.js'
@@ -204,6 +205,7 @@ export default function Settings() {
 
       {/* Lot VIE (étape 12) : le nom du compagnon */}
       <CompanionNameSetting />
+      <StudioSetting />
 
       {/* Jalon 9 : caché tant que l'anglais n'est pas complet (interrupteur de build VITE_I18N_EN) */}
       {I18N_EN && <LanguageSetting />}
