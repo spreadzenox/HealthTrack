@@ -393,6 +393,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **17/11 20:30** — Run « idées » : rituel du soir, lanternes du défi et poses du widget découpés en LANT-1 à 4 et WIDGET-POSES (`maquettes/compagnon/DECOUPAGE-RITUEL-LANTERNES.md`) ; 5 lanternes = les 5 jours « avec » du tirage au sort gardé le 15/11. GitHub Actions toujours bloqué (P50) : rien mergé.
 - **17/11 17:30** — **#1088 (MONDE-3) mergée** (93f4a47) : l'îlot grandit avec les jours d'usage (× 1,3 en largeur, arbuste × 1,45 à 90 jours), recompte léger des jours (budget de lectures de l'Accueil respecté). 14 checks verts, captures iPhone de l'Accueil relues. Suite : MONDE-4.
 - **17/11 12:30** — MONDE-2 : l'îlot et l'arbuste prennent la couleur de la saison (automne : herbe dorée ; hiver : neige ; fin d'hiver : amandier en fleur), hémisphère d'après la position météo. Palier image fixe inchangé.
 - **17/11 09:30** — MONDE-1 : l'île de l'Accueil s'endort et se réveille aux heures de sommeil habituelles (même cache du jour que le widget Android), heures par défaut 7 h / 22 h 30 sans 7 nuits lisibles. #1080 : job émulateur API 35 annulé et relancé.
