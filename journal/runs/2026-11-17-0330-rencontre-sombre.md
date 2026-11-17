@@ -20,6 +20,16 @@
   surimpression (graine `metAt` de `captureMode.js`, corrigée par #1067). Vu : la nuit, « Pilou dort » mais yeux
   ouverts sur l'île → POLISH-PILOU-DORT-YEUX au BACKLOG.
 
+## Vérifications
+- Local : `npm run test` vert (TEST EXIT 0), `npm run build` vert, `npm run lint` sans erreur, nouveau test lint propre.
+- PR #1079 ouverte à 03:36 ; la build iOS simulateur (≈ 1 h) finit après le budget du run : **non mergée par ce run**,
+  le run suivant la merge si tous ses checks sont verts et ses captures iPhone de l'Accueil relues.
+
+## #1072 (Studio, sprint)
+- En conflit avec main (`pilou/visage.js`, après #1071). Mise à jour sur main (9462958) : le peintre du Studio et les
+  cils des yeux fermés cohabitent ; 302 tests du compagnon verts. Sa CI repart (build iOS ≈ 1 h) : le run suivant la
+  merge si tout est vert, après #1079.
+
 ## Livraison continue
 - « Play — Alpha » du soir pas encore parti à 03:40 (dernier : 16/11 03:24) : s'il part après ce merge, il emporte le
   correctif.
