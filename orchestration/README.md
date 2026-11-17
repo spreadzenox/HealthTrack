@@ -159,9 +159,12 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
   données, du tutoriel de départ » (lu comme le dimanche 22/11 ; à lui faire confirmer). À suivre
   dans les bilans : l'étape en cours (tête du résumé), et à l'étape 15 l'envoi d'un selfie au relais, seule sortie
   nouvelle du téléphone, qui n'entre dans aucune version avant ses déclarations.
-- **Sprint du 16/11 au 17/11 03:00** (ordre du propriétaire : finir la refonte avec une équipe en parallèle) : sept
-  sessions, une par lot (`journal/sprint/SPRINT.md`), lancées et suivies par l'orchestrateur ; le run horaire est
-  l'intégrateur et tient seul le journal. Après 03:00, retirer le bloc SPRINT des instructions et faire le point.
+- **Sprint du 16 au 17/11** (ordre du propriétaire : finir la refonte avec une équipe en parallèle) : fait. Sept
+  sessions, une par lot (`journal/sprint/SPRINT.md`, états dans `journal/sprint/LOT-*.md`) ; les PR principales des
+  étapes 8 à 15 sont sur `main`, l'étape 15 éteinte. Ce qui reste est dans le bloc « APRÈS LE SPRINT » des
+  instructions. Leçons : chaque PR qui touche l'app coûte une heure de build iOS et cinq seulement tournent à la fois ;
+  une PR en conflit ne reçoit aucun check, son auteur peut attendre pour rien ; les merges en parallèle annulent les
+  builds de `main` les uns après les autres ; l'orchestrateur ne peut pas mettre le relais en pause.
 - **Testeurs.** J = 08/11. Relance du septième jour vers le 15/11. Demande d'accès à la production (P30) au
   quatorzième jour.
 - **Maquettes PROP-SIM** (propositions issues des simulations) : les montrer au propriétaire quand la routine en
