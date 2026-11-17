@@ -139,12 +139,13 @@ export function createPilou(THREE, options = {}) {
   body.add(bodyMesh)
 
   let lastFace = ''
+  let peintreTraits = null, clePeintre = '' // traits peints du double numérique (lot STUDIO)
   function paintFace(F) {
     if (!faceCtx) return
-    const k = faceKey(F)
+    const k = faceKey(F) + clePeintre
     if (k === lastFace) return
     lastFace = k
-    drawVisage(faceCtx, FACE_S, F)
+    drawVisage(faceCtx, FACE_S, F, peintreTraits)
     faceTex.needsUpdate = true
   }
 
@@ -769,6 +770,7 @@ export function createPilou(THREE, options = {}) {
     /** Lumière principale (direction vers la lumière, repère du monde) : caustique de l'iris et du point ambre. */
     setLumiere(dir) { lumiereFixee = !!dir; if (dir) keyDir.copy(dir).normalize() },
     /** Couleur de l'iris (fiche du double numérique, brief § 7.4). */
+    setPeintre(T, cle = '') { peintreTraits = T || null; clePeintre = T ? cle : ''; lastFace = '' },
     setIris(hex) { paintIris(hex || IRIS_DEFAUT) },
     /** Équilibre des blancs de la peinture (la scène peut l'ajuster à sa lumière ; test du menthe). */
     setBalance(rgb) { balU.value.set(...rgb) },
