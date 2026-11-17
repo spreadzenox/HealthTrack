@@ -11,6 +11,12 @@
 - Vérifié sur ce commit (main avec les huit lots + assemblage) : 3 992 tests verts, lint propre ; Accueil en clair,
   sombre, historique vide et la nuit : un seul îlot, vrai Pilou, bulles, jauge, cadeau du jour, « Pilou dort. Le reste
   peut attendre demain. » la nuit, aucune erreur JS (`journal/runs/captures/2026-11-17-sprint-scene-assemblage-final.png`).
+- **Captures iPhone de #1070 (commit 6bf72be, build iOS vert)** : l'Accueil des captures est recouvert par la
+  rencontre de VIE (« Passer », « Comment voulez-vous l'appeler ? »), alors que `captureMode.js` sème bien
+  `halcya_companion.metAt` : défaut du mode captures iPhone, pas du produit (un utilisateur existant doit rencontrer
+  Pilou une fois). **Défaut réel, lot VIE** : en thème sombre, la carte de la rencontre garde un fond clair avec un
+  texte clair (« Comment voulez-vous l'appeler ? », bulle « Bonjour ! ») : illisible. La capture « vide-accueil »
+  iPhone est blanche. Les trois sont à reprendre par VIE / le run suivant (pas de build complet possible avant 02:45).
 - **Laissé écrit, pas branché** (un build complet de plus ne tient plus avant 02:45) — à faire par les runs suivants :
   `growthAt` (croissance de l'île au fil des semaines) et `loadWorldContext()` (lever et coucher réels, jours d'usage)
   du lot MONDE dans la scène ; poses du widget re-rendues avec le vrai Pilou ; nom choisi (`pilouName()`) dans le
