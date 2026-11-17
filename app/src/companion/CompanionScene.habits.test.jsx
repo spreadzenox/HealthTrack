@@ -5,8 +5,8 @@ import { bus, EVENTS } from './bus'
 // Couché vers 0 h 15, levé vers 9 h (MONDE-1) : l'île suit ces heures-là, comme le widget Android.
 vi.mock('./world/context.js', async (importOriginal) => {
   const real = await importOriginal()
-  const load = async () => ({ daysOfUse: 20, wake: 9 * 60, bedtime: 15, hemisphere: 'nord', weather: null })
-  return { ...real, worldContextForDay: ({ now } = {}) => real.worldContextForDay({ now, load }) }
+  const load = async () => ({ wake: 9 * 60, bedtime: 15 })
+  return { ...real, sleepHabitsForDay: ({ now } = {}) => real.sleepHabitsForDay({ now, load }) }
 })
 
 const { default: CompanionScene } = await import('./CompanionScene')

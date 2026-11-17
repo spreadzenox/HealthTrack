@@ -94,3 +94,30 @@ describe('travail de nuit (MONDE-1)', () => {
     expect(lightAt(new Date(2026, 10, 17, 2, 0), opts).asleep).toBe(false)
   })
 })
+
+describe('sleepHabitsForDay (budget de lectures de l’Accueil)', async () => {
+  const { sleepHabitsForDay, loadSleepHabits, resetWorldContextCache } = await import('./context.js')
+  it('ne lit que le sommeil des 35 dernières nuits, jamais les notes', async () => {
+    const calls = []
+    const list = async (q) => {
+      calls.push(q)
+      return []
+    }
+    expect(await loadSleepHabits({ now: new Date(2026, 10, 17, 12, 0), list })).toEqual({ wake: null, bedtime: null })
+    expect(calls).toHaveLength(1)
+    expect(calls[0].type).toBe('sleep')
+    expect(calls[0].source).toBeUndefined()
+  })
+
+  it('lit une fois par jour de Pilou ; une erreur rend les heures par défaut', async () => {
+    resetWorldContextCache()
+    const load = vi.fn(async () => ({ wake: 480, bedtime: 1380 }))
+    await sleepHabitsForDay({ now: new Date(2026, 10, 17, 23, 0), load })
+    await sleepHabitsForDay({ now: new Date(2026, 10, 18, 3, 0), load })
+    expect(load).toHaveBeenCalledTimes(1)
+    resetWorldContextCache()
+    const v = await sleepHabitsForDay({ now: new Date(2026, 10, 17, 12, 0), load: async () => { throw new Error('x') } })
+    expect(v).toEqual({ wake: null, bedtime: null })
+    resetWorldContextCache()
+  })
+})

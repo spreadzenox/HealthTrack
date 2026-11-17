@@ -119,7 +119,7 @@ export default function CompanionScene({
     }
     let alive = true
     let timer = null
-    // lever et coucher habituels, lus dans le sommeil une fois par jour (le même cache que le widget Android)
+    // lever et coucher habituels, lus dans le sommeil une fois par jour (même calcul que le widget Android)
     const loadContext = worldModules['./world/context.js']
     const habits = { wake: null, bedtime: null }
     load()
@@ -138,7 +138,7 @@ export default function CompanionScene({
         const refreshHabits = () => {
           if (!loadContext) return
           loadContext()
-            .then((ctx) => ctx.worldContextForDay({ now: nowRef.current() }))
+            .then((ctx) => ctx.sleepHabitsForDay({ now: nowRef.current() }))
             .then((c) => {
               if (!alive || !c) return
               const wake = Number.isFinite(c.wake) ? c.wake : null
