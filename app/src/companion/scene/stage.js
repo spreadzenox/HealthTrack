@@ -51,7 +51,7 @@ function buildEnvironment(renderer, light, size) {
  * @param {HTMLCanvasElement} canvas
  * @param {{ width: number, height: number, tier: 'haut'|'moyen', reducedMotion: boolean, createPilou?: Function, light?: object }} opts
  */
-export function createStage(canvas, { width, height, tier = 'haut', reducedMotion = false, createPilou, light: initialLight } = {}) {
+export function createStage(canvas, { width, height, tier = 'haut', reducedMotion = false, createPilou, light: initialLight, season } = {}) {
   const settings = TIER_SETTINGS[tier] || TIER_SETTINGS.moyen
   const dpr = pixelRatioFor(tier, typeof window !== 'undefined' ? window.devicePixelRatio : 1)
   const renderer = new THREE.WebGLRenderer({
@@ -111,7 +111,7 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
 
   const world = new THREE.Group()
   scene.add(world)
-  const island = createIsland({ quality: tier, tufts: settings.tufts })
+  const island = createIsland({ quality: tier, tufts: settings.tufts, season })
   world.add(island.group)
   const flowers = createFlowerBed({ topY: island.topY, reducedMotion })
   world.add(flowers.group)
@@ -126,6 +126,7 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
   }
   attachAmber()
   gifts = createGifts({ topY: island.topY, pilou: () => pilou, reducedMotion })
+  gifts.setSeason(island.season)
   world.add(gifts.group)
   const weather = createWeatherFx()
   weather.setReducedMotion(reducedMotion)
@@ -192,6 +193,14 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
     flowers,
     gifts,
     /** Décor météo (sortie de `weatherDecor`) : particules et accessoire de Pilou. */
+    /** Saison de l'îlot (sortie de `seasonOf`) : herbe, neige et feuillage de l'arbuste (SPEC île § 8). */
+    setSeason(next) {
+      island.setSeason(next)
+      gifts.setSeason(island.season)
+    },
+    get season() {
+      return island.season
+    },
     setWeather(decor) {
       weather.set(decor)
       for (const acc of ['parapluie', 'eventail']) pilou.setAccessory?.(acc, decor?.accessory === acc)

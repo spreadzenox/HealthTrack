@@ -36,6 +36,19 @@ function skyStyle(light) {
   }
 }
 
+
+/** Saison de l'îlot (SPEC île § 8) : selon la date et l'hémisphère de la position météo, si elle est connue. */
+function seasonNow(world, now) {
+  if (typeof world?.seasonOf !== 'function') return null
+  let lat = null
+  try {
+    lat = getWeatherSettings()?.location?.lat ?? null
+  } catch {
+    lat = null
+  }
+  return world.seasonOf(now, typeof lat === 'number' ? lat : 'nord')
+}
+
 export default function CompanionScene({
   height = 320,
   mood: moodProp,
@@ -126,9 +139,10 @@ export default function CompanionScene({
       .then((world) => {
         if (!alive || typeof world.lightAt !== 'function') return
         const tick = () => {
-          const l = world.lightAt(nowRef.current(), habits)
+          const now = nowRef.current()
+          const l = world.lightAt(now, habits)
           setLight((prev) => ({ ...prev, ...l, sky: { ...prev.sky, ...(l?.sky || {}) } }))
-          bus.emit(EVENTS.TIME_PHASE, { phase: l?.phase, light: l, at: Date.now() })
+          bus.emit(EVENTS.TIME_PHASE, { phase: l?.phase, light: l, season: seasonNow(world, now), at: Date.now() })
         }
         tick()
         timer = setInterval(() => {
@@ -210,6 +224,8 @@ export default function CompanionScene({
             tier,
             reducedMotion,
             light,
+            // la saison déjà connue : un îlot reconstruit (changement de palier) garde ses couleurs
+            season: bus.last(EVENTS.TIME_PHASE)?.season ?? undefined,
             createPilou: typeof pilouMod?.createPilou === 'function' ? pilouMod.createPilou : undefined,
           })
         } catch (err) {
@@ -342,6 +358,7 @@ export default function CompanionScene({
           bus.on(EVENTS.WEATHER_CHANGED, (p) => { live.setWeather(p?.decor ?? null); poke() }, { replay: true }),
           bus.on(EVENTS.TIME_PHASE, (p) => {
             if (p?.light) live.applyLight(p.light)
+            if (p?.season && p.season !== live.season) { live.setSeason?.(p.season); poke() }
             const asleep = Boolean(p?.light?.asleep ?? p?.phase === 'nuit')
             const changed = asleep !== asleepNow
             asleepNow = asleep

@@ -19,7 +19,7 @@
   **La carte de la rencontre illisible en sombre est corrigée : #1079 mergée le 17/11 vers 04:40**, captures iPhone relues.
 - **13 Monde** : livrée, widget Android seulement. Le widget prend votre nom choisi (PR #1080). Reste : nouvelles
   poses dans le widget, et le monde branché dans l'île (découpé le 17/11 en 4 runs : lever et coucher à vos heures,
-  saison, croissance, îlot voisin et mare). **Lever et coucher à vos heures sur l'île : fait (17/11 09:30, MONDE-1)**.
+  saison, croissance, îlot voisin et mare). **Lever et coucher à vos heures sur l'île : fait (17/11 09:30, MONDE-1)**. **La saison sur l'îlot : faite (17/11 12:30, MONDE-2, en PR)** : herbe dorée en ce moment.
 - **14 Studio** : réglages à la main livrés ; **les traits sur le vrai Pilou (#1072) mergés le 17/11 vers 06:35** (pièces 3D et
   visage peint ; l'aperçu du Studio reste en 2D).
 - **15 Photo** : écrite, **éteinte partout** jusqu'à vos déclarations (missions P49 et PI3).
@@ -114,6 +114,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 17/11 12:30 — [L'îlot suit les saisons](runs/2026-11-17-1230-monde-2.md) | 🛠️ | **MONDE-2** : l'herbe de l'îlot et l'arbuste prennent la couleur de la saison (aujourd'hui l'automne : herbe dorée, arbuste orangé ; neige en hiver ; amandier en fleur fin janvier), selon l'hémisphère de votre position météo. En PR, après #1083 (MONDE-1, attend sa build iPhone). Rien à faire de votre côté |
 | 17/11 11:30 — [Main rouge : délais des simulations](runs/2026-11-17-1130-gate-timeout.md) | 🛠️ | **CI-GATE-TIMEOUT** : les tests de main étaient rouges sur 9c9e09e (4 simulations du bien-être plus lentes que 5 s sur un runner chargé, sans régression du code). Délai porté à 30 s pour ces simulations (#1085). #1080 mergée : **le widget Android affiche le nom que vous avez choisi pour votre compagnon**. MONDE-1 (#1083) remise à jour, mergée après sa build iPhone. Rien à faire de votre côté |
 | 17/11 10:30 — [Accueil léger, PR finies](runs/2026-11-17-1030-monde-1-budget.md) | 🛠️ | #1084 mergée (un émulateur Android bloqué échoue en 30 min au lieu de retenir une PR 6 h). #1083 (Pilou à vos heures) corrigée avant merge : l'Accueil lisait 3 fois trop de données au démarrage, il ne lit plus que vos nuits. #1080 (widget avec votre nom) remise à jour, build iPhone relancée. Rien à faire de votre côté |
 | 17/11 09:30 — [Pilou se couche à vos heures](runs/2026-11-17-0930-monde-1.md) | 🛠️ | **MONDE-1** : après 7 nuits de sommeil lisibles, l'île de l'Accueil endort et réveille Pilou à vos heures habituelles, exactement comme le widget Android (même lecture du jour). #1080 : l'émulateur bloqué depuis 2 h a été annulé puis relancé. Rien à faire de votre côté |
