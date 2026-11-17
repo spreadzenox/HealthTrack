@@ -1,7 +1,21 @@
 # Lot STUDIO — étape 14 du brief (double numérique a, Studio Pilou à la main)
 
-Équipier du sprint du 16/11 (consignes : `journal/sprint/SPRINT.md` de la branche de l'orchestrateur). Branches
-`claude/sprint-studio-<n>`, PR « [Sprint STUDIO] … ». Dossier : `app/src/companion/studio/`.
+## État au 17/11 02:05
+- **Sur main** : #1052 mergée à 01:22 (fiche de traits, export et import, écran Studio Pilou, aperçu 2D, pièces 3D,
+  Nouveautés). Build iOS vert sur son dernier commit (33a59b01), captures iPhone regardées ; « Tests » de main vert.
+- **En PR** : #1072 (`claude/sprint-studio-4`) — les traits sur le vrai Pilou :
+  - `studio/pourPilou.js` : `equiperPilou` pose les pièces 3D sur `kit.body` en vinyle satiné, garde le
+    `setTraits` de PILOU (iris), ne casse jamais Pilou ;
+  - dossier PILOU (branchement minimal) : `index.js` renvoie `equiperPilou(THREE, api)` pour la figurine ;
+    `drawVisage(ctx, S, F, T)` avec peintre facultatif ; `createPilou.js` expose `setPeintre(T, cle)` ;
+  - `studio/pieces.js` : sans toile 2D (Android 12L), couleurs unies au lieu d'une erreur (+ test).
+  - Vérifié : 423 tests du compagnon, du stockage et de Réglages ; rendu du vrai Pilou avec 8 fiches
+    (`journal/runs/captures/2026-11-16-sprint-studio-pilou-traits-peints.png`) ; visual Accueil et Studio.
+  - Conflit avec main (mes fichiers, après le merge de #1052) résolu à 02:05 en gardant la version de #1072.
+- **Pour la routine, si #1072 n'est pas mergée à 03:00** : attendre tous les checks verts (build iOS compris),
+  regarder sur les captures iPhone l'Accueil (Pilou figurine inchangé sans fiche) ; avec une fiche (Studio,
+  « Surprenez-moi », Valider), Pilou de l'Accueil doit porter cheveux, lunettes et traits peints. Puis merger.
+- **Reste hors PR** : aperçu 3D dans le Studio (question restée sans réponse : l'aperçu reste peint en 2D).
 
 ## Où j'en suis
 - 16/11 20:45 — règles, brief, PILOU-DOUBLE.md, specs/double.SPEC.md et double/traits.js lus. Branche
@@ -21,6 +35,14 @@
   avec VIE ; App.jsx et pageStyles.js avec PHOTO et VIE) ; le Studio lit le nom choisi (`companionName` de VIE).
   Builds iOS verts sur b546c729 et 8821608c ; dernier push 00:40, je ne touche plus à la branche avant le merge.
   Suite : PR `claude/sprint-studio-3` (`equiperPilou`) dès que PILOU #1058 est sur main, avant 02:15.
+
+- 17/11 01:00 — branche `claude/sprint-studio-4` (= studio-1 + `claude/sprint-pilou-1` c30faa30) : `equiperPilou`
+  appelé par `pilou/index.js` (figurine seulement ; le repli simple n'est pas touché), crochet facultatif `T` dans
+  `drawVisage` et `setPeintre` dans `createPilou.js` (branchement minimal dans le dossier PILOU) : les traits peints
+  (sourcils, moustache, barbe courte, taches, grain de beauté, piercing) et les pièces 3D sont sur le vrai Pilou.
+  Robuste sans toile 2D (Android 12L) : couleurs unies, et `equiperPilou` ne casse jamais Pilou. 281 tests du
+  compagnon verts ; capture `journal/runs/captures/2026-11-16-sprint-studio-pilou-traits-peints.png`.
+  PR dès que PILOU #1058 est sur main (avant 02:15).
 
 ## Plan
 1. **Fiche et traits, sans 3D** (`studio/traits.js`, `studio/fiche.js`) : schéma de PILOU-DOUBLE.md § 4, libellés,

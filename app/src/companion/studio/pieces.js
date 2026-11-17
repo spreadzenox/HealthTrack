@@ -259,20 +259,20 @@ export function creerPieces(kitBrut) {
   }
 
   function texEcaille() {
-    const c = document.createElement('canvas'); c.width = 256; c.height = 32; const x = c.getContext('2d'), r = rng(31);
+    const c = document.createElement('canvas'); c.width = 256; c.height = 32; const x = c.getContext('2d'), r = rng(31); if (!x) return null; // pas de toile 2D (certains Android) : couleurs unies
     x.fillStyle = '#8A5530'; x.fillRect(0, 0, 256, 32);
     for (let i = 0; i < 60; i++) { x.fillStyle = r() < .5 ? 'rgba(52,28,16,.75)' : 'rgba(214,150,80,.7)'; x.beginPath(); x.ellipse(r() * 256, r() * 32, 4 + r() * 10, 3 + r() * 6, r() * 3, 0, Math.PI * 2); x.fill(); }
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 1); return t;
   }
   function texReflet() { // verre : léger voile + une bande de reflet qu'on fait glisser (uv.x)
-    const c = document.createElement('canvas'); c.width = 256; c.height = 64; const x = c.getContext('2d');
+    const c = document.createElement('canvas'); c.width = 256; c.height = 64; const x = c.getContext('2d'); if (!x) return null; // pas de toile 2D (certains Android) : couleurs unies
     const g = x.createLinearGradient(0, 0, 256, 0);
     g.addColorStop(0, 'rgba(255,255,255,.08)'); g.addColorStop(.42, 'rgba(255,255,255,.1)'); g.addColorStop(.47, 'rgba(255,255,255,.75)'); g.addColorStop(.53, 'rgba(255,255,255,.75)'); g.addColorStop(.56, 'rgba(255,255,255,.12)'); g.addColorStop(.62, 'rgba(255,255,255,.45)'); g.addColorStop(.65, 'rgba(255,255,255,.1)'); g.addColorStop(1, 'rgba(255,255,255,.08)');
     x.fillStyle = g; x.fillRect(0, 0, 256, 64);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.ClampToEdgeWrapping; return t;
   }
   function texFoulard(col) {
-    const c = document.createElement('canvas'); c.width = 256; c.height = 128; const x = c.getContext('2d');
+    const c = document.createElement('canvas'); c.width = 256; c.height = 128; const x = c.getContext('2d'); if (!x) return null; // pas de toile 2D (certains Android) : couleurs unies
     x.fillStyle = col; x.fillRect(0, 0, 256, 128); x.fillStyle = 'rgba(255,248,235,.55)';
     for (let j = 0; j < 8; j++) for (let i = 0; i < 16; i++) { x.beginPath(); x.arc(i * 16 + (j % 2) * 8 + 4, j * 16 + 8, 2.6, 0, Math.PI * 2); x.fill(); }
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(4, 3); return t;
@@ -365,7 +365,7 @@ export function creerPieces(kitBrut) {
   }
 
   /* ----- lunettes ----- */
-  const matVerre = new THREE.MeshBasicMaterial({ map: texReflet(), transparent: true, depthWrite: false, side: THREE.DoubleSide });
+  const texVerre = texReflet(), matVerre = new THREE.MeshBasicMaterial({ map: texVerre, color: 0xffffff, opacity: texVerre ? 1 : 0.15, transparent: true, depthWrite: false, side: THREE.DoubleSide });
   let ecaille = null;
   function construireLunettes() {
     vider('lunettes'); if (!fiche || fiche.lunettes.type === 'aucune') return;
@@ -373,7 +373,7 @@ export function creerPieces(kitBrut) {
     const gap = .052, ey = .9 + M.dy;
     const sur = (x, y, o = gap) => new THREE.Vector3(...surface(x, y, o).p);
     let mat;
-    if (col === 'ecaille') { ecaille = ecaille || texEcaille(); mat = toon('#ffffff', { map: ecaille }); }
+    if (col === 'ecaille') { ecaille = ecaille || texEcaille(); mat = ecaille ? toon('#ffffff', { map: ecaille }) : toon(PAL_MONTURE.ecaille[0]); }
     else mat = toon(PAL_MONTURE[col][0], col === 'transparent' ? { transparent: true, opacity: .8 } : {});
     const obj = new THREE.Group(), drop = new THREE.Group(); obj.add(drop);
     const R = M.r;
@@ -408,8 +408,8 @@ export function creerPieces(kitBrut) {
     // apparition : descend de 0,55 avec la courbe « rebond », petit balancement, puis le reflet balaie le verre
     const e = pop(clamp(a)), fall = (1 - e) * .55;
     p.drop.position.set(0, fall, (1 - e) * .08); p.drop.rotation.z = (1 - e) * .25 * Math.sin(a * 9);
-    matVerre.map.offset.x = lerp(.55, -.6, clamp((rv.reflet ?? 1)));
-    matVerre.opacity = Math.min(1, a * 2);
+    if (matVerre.map) matVerre.map.offset.x = lerp(.55, -.6, clamp((rv.reflet ?? 1)));
+    matVerre.opacity = Math.min(1, a * 2) * (matVerre.map ? 1 : 0.15);
   }
 
   /* ----- boucles d'oreilles (et l'oreille est un point, Pilou n'a pas d'oreilles) ----- */
