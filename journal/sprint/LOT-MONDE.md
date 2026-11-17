@@ -2,7 +2,52 @@
 
 Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Branches `claude/sprint-monde-<n>`.
 
-## Où j'en suis (16/11, 20:50)
+## En tête (17/11, 00:45) : ce qui est sur main, ce qui reste
+
+**Sur main** :
+- **#1048** (16/11 21:38, tous les checks verts, build iOS compris) : fonctions pures du monde (`lightAt`,
+  `weatherDecor`, `growthAt`, `worldState`, état du widget) à la forme du contrat de SCÈNE ; météo du moment lue avec
+  la lecture Open-Meteo existante (`weatherSync` › `current`).
+- **#1057** (17/11 00:41) : widget Android « Ma journée » (six poses pré-rendues, règle Java testée), Pilou dans les
+  notifications du soir (Android et iPhone), `world/context.js`, lumière alignée sur `GOLDEN` de la scène.
+  **Mergé sous la règle de la dernière vague, build iOS du commit précédent (38090a6) : vert** ; les commits suivants ne
+  faisaient que résoudre des conflits d'imports (`Dashboard.jsx` avec SCÈNE puis BULLES, `Layout.jsx` avec VIE), contenu
+  propre de la PR identique ligne pour ligne. Après le merge, je surveille Tests et le build iOS de main.
+
+**Rien en PR.** Ce qui reste à faire (pour l'intégrateur et les runs suivants) :
+- **Scène** : elle appelle déjà `lightAt(now)` ; elle n'utilise pas encore `weatherDecor` ni `growthAt` (météo et
+  croissance sur l'îlot), ni `loadWorldContext()` (lever et coucher réels, jours d'usage) : c'est le dossier de SCÈNE.
+- **Poses du widget** à re-rendre avec le module PILOU quand il sera sur main (`app/scripts/companion/render-widget-poses.mjs`
+  prend aujourd'hui le kit).
+- **Nom choisi pour Pilou** dans le widget (`widgetSync.js` envoie « Pilou » ; brancher `pilouName()` du lot VIE).
+- **Widget iPhone** : extension WidgetKit (identifiant et App Group chez Apple : geste du propriétaire) ; ligne de
+  PARITE.md : « Widget de Pilou | `PilouWidget` (App Widget) | WidgetKit | ⛔ pas encore | extension Xcode et App Group à
+  créer ; l'app n'y fait rien (`pilouWidgetPlugin()` nul hors Android) ». Notifications du soir avec Pilou : ✅ des deux
+  côtés.
+- **Notification de repas** (SPEC journée § 9) : texte prêt (`mealNotification`), fonction nouvelle, proposée seulement.
+- **Course de test préexistante**, vue sur #1057 : `AppRedirects.test.jsx` laisse `UpdateBanner` appeler la vraie API
+  GitHub ; si la réponse arrive après la fin de jsdom, `setRelease` lève « window is not defined » (job rouge alors que
+  tous les tests passent). Correctif proposé : drapeau `alive` dans `check` de `UpdateBanner.jsx`, ou
+  `vi.mock('./services/updateCheck')` dans ce test. Hors du lot MONDE, non fait.
+- **Règle du propriétaire (16/11 22:01)** appliquée depuis : plus de ligne d'attribution ni de lien de session dans mes
+  commits, PR et commentaires ; corps de #1057 et #1055 et mon commentaire nettoyés ; message de squash de #1057 écrit
+  à la main. Les commits déjà poussés avant la règle n'ont pas été réécrits (interdit).
+
+## Où j'en suis (16/11, 21:40)
+
+**#1048 mergée** (21:38, tous les checks verts, build iOS compris). Le reste (anciennes branches 2 et 3) est réuni
+dans une seule PR depuis `claude/sprint-monde-3`, mise à jour sur main.
+
+## Avant (16/11, 21:25)
+
+**Consigne de l'orchestrateur de 21:20 appliquée** : #1055 et #1057 (empilées sur #1048) fermées, branches gardées,
+leurs builds iOS et émulateurs annulés. Seule #1048 reste ouverte. Après son merge, je rouvre **une seule** PR depuis
+`claude/sprint-monde-3`, qui contient tout le reste (sprint-monde-2 compris). (Message direct à l'orchestrateur refusé
+par la plateforme : réponse écrite ici.)
+
+## Historique (16/11, 21:05)
+
+**PR 2 — `claude/sprint-monde-2`** (partie de la 1) : le widget Android et les entrées réelles du monde. Voir plus bas.
 
 **PR #1048** ouverte (`claude/sprint-monde-1`). Alignée sur le contrat de SCÈNE du 16/11 20:45 (§ 5) : `lightAt`,
 `weatherDecor` et `growthAt` rendent exactement la forme écrite au contrat ; mes champs en plus sont des ajouts.
@@ -42,11 +87,51 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Bran
 - Phase : `lightAt().phase` ∈ aube, matin, midi, soir, nuit ; « nuit » suit le coucher habituel (Pilou s'endort),
   pas seulement le ciel.
 
+**PR 2 — `claude/sprint-monde-2`** :
+- `context.js` : `loadWorldContext()` → `{ daysOfUse, wake, bedtime, hemisphere, weather }` lu sur le téléphone : jours
+  où quelque chose a été noté à la main (sources `app_*` et `manual` ; les mesures automatiques ne comptent pas),
+  lever et coucher habituels d'après le sommeil (`computeSleepRegularity`), hémisphère d'après la position météo,
+  météo du moment. **Pour SCÈNE** : à appeler à l'ouverture et au changement de jour, puis passer `wake`/`bedtime` à
+  `lightAt`, `daysOfUse`/`hemisphere` à `growthAt`, `weather` à `weatherDecor`.
+- **Widget Android « Ma journée »** (specs/journee.SPEC.md § 9) : `PilouWidget.java` (App Widget 4 × 2, fond crème),
+  règle en Java pur `pilou/PilouWidgetRule.java` (même règle que `world/widget.js`, 7 tests JUnit ajoutés au job
+  « Protocole montre (Java) » : `scripts/java-protocol-test.sh` prend le paquet `pilou`), `PilouWidgetPlugin.java`
+  (`update`, `takeOpen`), `world/widgetSync.js` appelé par l'Accueil et Ma journée après chaque saisie (mêmes lignes
+  que la checklist), toucher → Ma journée (`Layout.jsx`, comme le rappel de portion). Redessiné par Android toutes les
+  30 min (soir, nuit, changement de jour à 4 h : toutes les bulles du jour reviennent, rien ne s'accumule). La nuit,
+  s'il reste des choses : « Le reste peut attendre demain », sans compte.
+- **Six poses pré-rendues** (`res/drawable-nodpi/pilou_pose_*.webp`, 288 px, ≈ 6 Ko chacune) : rendues depuis le code
+  du kit (`rendu/figurine`) par `app/scripts/companion/render-widget-poses.mjs` (reproductible au bit près), soir
+  orangé et nuit bleutée comme le cycle du jour. Les yeux sont ceux de la figurine du kit : **à re-rendre avec le
+  module du lot PILOU** quand il sera sur main (le script le dit en tête).
+- Capture de la mise en page (même XML, mêmes images) : `journal/runs/captures/2026-11-16-sprint-monde-widget.png`.
+- Nouveautés : `2026-11-16-2100-widget-pilou.json` (`variants: ["play", "sideload"]`).
+- Correctif iPhone 18 (contexte de `Layout.jsx`) : vérifié, il s'applique toujours.
+
+**PR 3 — `claude/sprint-monde-3`** (partie de la 2) : Pilou dans les notifications du soir.
+- Android : `PilouNotice.java` ; `setLargeIcon` pose « soir » sur la note du soir et le bilan de la digestion, pose
+  « content » sur leur « Noté » éphémère (Pilou réagit au fait de noter). Rien d'autre ne change.
+- iPhone : `EveningPlugins.swift` joint la pose « soir » (`UNNotificationAttachment`, copie d'un JPEG du site de l'app :
+  `iphone/overlay/app/public/companion/pilou_pose_*.jpg`, 12 Ko) aux deux notifications du soir. Pas de nouveau
+  fichier Swift, donc pas de modification du projet Xcode.
+- Nouveautés : `2026-11-16-2115-pilou-notifications.json` (toutes les variantes).
+- **Lumière à l'échelle de la scène** : SCÈNE a réglé son heure dorée (`GOLDEN` de `scene/light.js` : soleil 2,6,
+  appoint 1,35, hémisphère `#FFF1E4`/`#9DB87A` à 0,8, ambre 0,55). `lightAt` à 15 h 30 rend désormais exactement
+  `GOLDEN` (testé sur une copie) et les autres heures à la même échelle (`SCENE_SCALE`). Clé d'avant l'aube à 6 h 05
+  (violet → rose) : le passage nuit → aube ne passe plus par un gris terne. Planche :
+  `journal/runs/captures/2026-11-16-sprint-monde-cycle-du-jour.png`. Si SCÈNE retouche `GOLDEN`, recopier ses valeurs
+  dans la clé `apres-midi` de `world/daylight.js` et dans le test.
+
 ## Parité iPhone (pour PARITE.md)
-- Fonctions pures et météo : code partagé, identiques sur iPhone.
-- Widget : WidgetKit (extension Xcode) côté iPhone, App Widget côté Android ; à décider selon le temps restant.
+- Notifications du soir avec Pilou : ✅ des deux côtés (PR 3).
+- Fonctions pures, météo du moment, contexte du monde : code partagé, identiques sur iPhone.
+- **Widget : Android seulement pour l'instant.** Sur iPhone il faut une extension WidgetKit (cible Xcode, App Group
+  pour partager l'état) : ligne à ajouter dans PARITE.md « Widget de Pilou | `PilouWidget` (App Widget) | WidgetKit |
+  ⛔ pas encore | extension Xcode à créer ; d'ici là l'app ne fait rien (`pilouWidgetPlugin()` est nul hors Android) ».
+  La note de Nouveautés est réservée à play et sideload.
 
 ## Ce qui reste
-- PR 2 : brancher sur la scène par le contrat dès qu'il est là ; jours d'usage et lever/coucher lus dans les données.
-- PR 3 : images pré-rendues (6 poses) dès que les lots SCÈNE et PILOU les permettent ; widget Android ; vignette des
-  notifications.
+- Notification de repas de la SPEC journée § 9 (« Pilou garde une place pour votre déjeuner ») : texte prêt
+  (`mealNotification`), mais c'est une fonction nouvelle (réglage, alarmes) : proposée, pas codée dans ce sprint.
+- Re-rendre les poses avec le module PILOU ; nom choisi pour Pilou (lot VIE, `pilouName()`) dans le widget.
+- Widget iPhone (WidgetKit) si le temps le permet.

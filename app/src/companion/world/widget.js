@@ -16,6 +16,7 @@ export const WIDGET_POSES = Object.freeze({
   fete: 'fait la fête',
 })
 
+export const NIGHT_TITLE = 'Le reste peut attendre demain'
 const WEEKDAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
 /** Une heure après le lever, Pilou finit de se réveiller. */
 const WAKING_MINUTES = 60
@@ -60,9 +61,12 @@ export function dayText(now, usageDay = null) {
  * `bubbles` : les choses qui restent à noter aujourd'hui, dans l'ordre de l'Accueil.
  */
 export function widgetState({ now = new Date(), name = 'Pilou', bubbles = [], usageDay = null, lastMealAt = null, wakeMinute, bedMinute } = {}) {
-  const list = (bubbles || []).filter((b) => b && b.label)
+  let list = (bubbles || []).filter((b) => b && b.label)
   const pose = widgetPose({ now, remaining: list.length, lastMealAt, wakeMinute, bedMinute })
-  const title = remainingText(list.length)
+  // la nuit, Pilou dort : pas de compte de ce qui reste, il attendra demain (specs/ile.SPEC.md § 5)
+  const night = pose === 'dort' && list.length > 0
+  const title = night ? NIGHT_TITLE : remainingText(list.length)
+  if (night) list = []
   const day = dayText(now, usageDay)
   const shown = list.slice(0, MAX_BUBBLES).map(({ label, theme }) => ({ label, theme: theme || null }))
   const who = String(name || 'Pilou').trim() || 'Pilou'
