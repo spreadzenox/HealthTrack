@@ -2,6 +2,37 @@
 
 Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Branches `claude/sprint-monde-<n>`.
 
+## En tête (17/11, 00:45) : ce qui est sur main, ce qui reste
+
+**Sur main** :
+- **#1048** (16/11 21:38, tous les checks verts, build iOS compris) : fonctions pures du monde (`lightAt`,
+  `weatherDecor`, `growthAt`, `worldState`, état du widget) à la forme du contrat de SCÈNE ; météo du moment lue avec
+  la lecture Open-Meteo existante (`weatherSync` › `current`).
+- **#1057** (17/11 00:41) : widget Android « Ma journée » (six poses pré-rendues, règle Java testée), Pilou dans les
+  notifications du soir (Android et iPhone), `world/context.js`, lumière alignée sur `GOLDEN` de la scène.
+  **Mergé sous la règle de la dernière vague, build iOS du commit précédent (38090a6) : vert** ; les commits suivants ne
+  faisaient que résoudre des conflits d'imports (`Dashboard.jsx` avec SCÈNE puis BULLES, `Layout.jsx` avec VIE), contenu
+  propre de la PR identique ligne pour ligne. Après le merge, je surveille Tests et le build iOS de main.
+
+**Rien en PR.** Ce qui reste à faire (pour l'intégrateur et les runs suivants) :
+- **Scène** : elle appelle déjà `lightAt(now)` ; elle n'utilise pas encore `weatherDecor` ni `growthAt` (météo et
+  croissance sur l'îlot), ni `loadWorldContext()` (lever et coucher réels, jours d'usage) : c'est le dossier de SCÈNE.
+- **Poses du widget** à re-rendre avec le module PILOU quand il sera sur main (`app/scripts/companion/render-widget-poses.mjs`
+  prend aujourd'hui le kit).
+- **Nom choisi pour Pilou** dans le widget (`widgetSync.js` envoie « Pilou » ; brancher `pilouName()` du lot VIE).
+- **Widget iPhone** : extension WidgetKit (identifiant et App Group chez Apple : geste du propriétaire) ; ligne de
+  PARITE.md : « Widget de Pilou | `PilouWidget` (App Widget) | WidgetKit | ⛔ pas encore | extension Xcode et App Group à
+  créer ; l'app n'y fait rien (`pilouWidgetPlugin()` nul hors Android) ». Notifications du soir avec Pilou : ✅ des deux
+  côtés.
+- **Notification de repas** (SPEC journée § 9) : texte prêt (`mealNotification`), fonction nouvelle, proposée seulement.
+- **Course de test préexistante**, vue sur #1057 : `AppRedirects.test.jsx` laisse `UpdateBanner` appeler la vraie API
+  GitHub ; si la réponse arrive après la fin de jsdom, `setRelease` lève « window is not defined » (job rouge alors que
+  tous les tests passent). Correctif proposé : drapeau `alive` dans `check` de `UpdateBanner.jsx`, ou
+  `vi.mock('./services/updateCheck')` dans ce test. Hors du lot MONDE, non fait.
+- **Règle du propriétaire (16/11 22:01)** appliquée depuis : plus de ligne d'attribution ni de lien de session dans mes
+  commits, PR et commentaires ; corps de #1057 et #1055 et mon commentaire nettoyés ; message de squash de #1057 écrit
+  à la main. Les commits déjà poussés avant la règle n'ont pas été réécrits (interdit).
+
 ## Où j'en suis (16/11, 21:40)
 
 **#1048 mergée** (21:38, tous les checks verts, build iOS compris). Le reste (anciennes branches 2 et 3) est réuni
