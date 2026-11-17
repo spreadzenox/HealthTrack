@@ -207,13 +207,14 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
       return island.season
     },
     /**
-     * Croissance de l'îlot (sortie de `growthAt`) : îlot plus large et plus haut, arbuste plus grand, îlot voisin
+     * Croissance de l'îlot (sortie de `growthAt`) : îlot plus large et plus haut, arbuste plus grand puis petit arbre (45 jours), îlot voisin
      * (mois 1 : il arrive sous les yeux s'il apparaît Accueil ouvert, il est déjà là sinon), mare (mois 3) ; caméra fixe.
      */
     setGrowth(growth) {
       if (!growth) return
       island.setGrowth(growth)
       gifts.setShrubScale(growth.shrubScale)
+      gifts.setTree(growth.tree)
       if (growth.neighbourIsland ?? growth.neighbor) neighbour.show(growthDays != null)
       growthDays = Number(growth.days) || 0
     },
