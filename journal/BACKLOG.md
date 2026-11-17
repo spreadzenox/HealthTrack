@@ -361,8 +361,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       jours « comme d'habitude » marqués « pas tenu » ; export CSV demandé (persona Tout mesurer : proposition, pas
       une fonction à coder sans accord). « Gêne » qui ne reste pas cochée : traité par UPG-4 (#1045).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
-  l'intégrateur le 17/11 à 00:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
-  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), Tests de main verts après chacun (v771) ; le reste en PR : #1052, #1065, #1066, #1067.
+  l'intégrateur le 17/11 à 01:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
+  #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Lots finis : PHOTO, MONDE, BULLES. En PR : #1065 et #1070 (SCÈNE 3 et 4, #1070 empilée sur #1065), #1067 (VIE 5), #1071 (PILOU 3), #1072 (STUDIO 4).
   - ASSEMBLAGE (confié au lot SCÈNE par l'orchestrateur à 22:40, `claude/sprint-scene-3`) : fusion locale de main et
     des 7 PR → lint propre, 3 980 tests verts, 1 rouge (`bundleGuard.test.js` : `companion/CompanionScene.css` à
     importer dans `app/src/pageStyles.js`, une ligne, dans la PR d'assemblage ou #1056). Conflits connus et leur
@@ -372,22 +372,22 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - SCÈNE (8) : **#1053 mergée** (0825540, 22:02 ; contrat `companion/CONTRAT.md` et `bus.js`, three.js r187 MIT,
     île, lumière, paliers, pause, image fixe de repli, interrupteur `halcya.companion.scene` ; v766, APK 35,0 Mo).
     #1062 : 7 cadeaux en 3D, cérémonie de la boîte, météo de l'île, Réglages › Mouvements de Pilou, étiquette lisible
-    en sombre (mergée, f135f54). #1065 (branche 3, en PR) : Pilou dort la nuit, image fixe de nuit, ambre et lune, lanterne (`lightAt` de MONDE). À relever : palier et temps
-    d'image sur le job Android 9 et le simulateur iPhone (`data-quality` de `.companion-scene`).
+    en sombre (mergée, f135f54). #1065 (branche 3, en PR) : Pilou dort la nuit, image fixe de nuit, ambre et lune, lanterne (`lightAt` de MONDE). #1070 (branche 4, assemblage, en PR, après #1065) : images fixes refaites avec le Pilou de PILOU, « Pilou dort. Le reste peut attendre demain. » la nuit. Vérifié par le lot (00:50) : mise à jour depuis une version d'avant la refonte → rencontre une seule fois, pas de fête des 7 jours pour un utilisateur ancien. Écart de style non bloquant : la rencontre montre Pilou en image sur un îlot 2D. Captures de main du sprint : aucune série (chaque build iOS de main annulée par le merge suivant) ; la série viendra du dernier merge. Palier et temps
+    d'image sur le job Android 9 et le simulateur iPhone : non relevés (aucun job n'écrit `data-quality` ni `scene:quality`), à mesurer sur un vrai téléphone.
   - PILOU (9) : **#1058 mergée** (00:58 ; corps verni, yeux de la créature, 12 expressions, ΔE menthe 2,8 moyen / 3,8 max dans la scène,
-    9 050 triangles) ; petits Pilou pré-rendus (12 × 218×240 webp, `pilouSprite`) pour VIE et MONDE. Branche 2 : petits
+    9 050 triangles) ; petits Pilou pré-rendus (12 × 218×240 webp, `pilouSprite`) pour VIE et MONDE. #1071 (branche 3, en PR) : petits
     effets des expressions, yeux fermés en trait.
   - BULLES (10) : **#1056 mergée** (23:52 ; la scène est importée directement, son CSS reste chargé d'emblée ; bulles-boutons, Humeur du jour à plancher, fleurs, « Jour N sur 7 », 7 cadeaux) ; branche 2 :
-    #1066 (en PR) : lucioles la nuit, jour 14, bandeau au défilement. Résolution convenue avec SCÈNE dans `Dashboard.jsx` : garder
+    **#1066 mergée** (01:30) : lucioles la nuit, jour 14, bandeau au défilement, nom choisi. **Lot fini** (#1073 : fichier de lot seul). Résolution convenue avec SCÈNE dans `Dashboard.jsx` : garder
     `<CompanionHome …>` seule (elle monte la scène).
   - VIE (11, 12) : **#1060 mergée** (00:16) (réunit #1051 et #1054, fermées : Ma journée, rencontre et nom, cérémonie du jour 7, Pilou
     dans Objectifs et Données, assiette reniflée ; bloc `companion` dans l'export et l'import, testé sur base ancienne) ;
     remise à jour sur main à 23:10 (contrat pris de main ; test instable de Dashboard corrigé à la source ;
     `pilouName()` ajouté pour l'étiquette de la scène). #1067 (branche 5, en PR) : cairn des galets dans « Par famille », graine des captures iPhone.
   - MONDE (13) : **#1048 et #1057 mergées** (#1057 à 00:40, réunit #1055, fermée : widget Android « Ma journée », Pilou dans les
-    notifications du soir Android et iPhone, lumière à l'échelle de la scène).
-  - STUDIO (14) : #1052 (fiche de traits locale, export et import, écran derrière l'interrupteur du compagnon, pièces 3D
-    et `brancherTraits` joints) ; branche 3 : `equiperPilou` après #1058.
+    notifications du soir Android et iPhone, lumière à l'échelle de la scène). **Lot fini.** Restes : la scène n'utilise pas encore `weatherDecor`, `growthAt` ni `loadWorldContext()` ; poses du widget à re-rendre avec le module PILOU ; nom choisi dans le widget (`pilouName()`).
+  - STUDIO (14) : **#1052 mergée** (01:22 ; fiche de traits locale, export et import avec le bloc `companion` de VIE, écran derrière l'interrupteur du compagnon, aperçu peint en 2D, pièces 3D
+    et `brancherTraits`). #1072 (branche 4, en PR) : `equiperPilou` et visage peint sur le vrai Pilou. Question restée ouverte : aperçu 3D dans le Studio.
   - PHOTO (15) : **#1047 mergée** (relais, route éteinte, `503 disabled`) et **#1050 mergée** (00:26, app, interrupteur de build éteint
     partout) : **lot fini**. Missions P49 (Play) et PI3 (App Store) préparées, arrêtées avant l'envoi.
   - Restes notés par les lots, hors sprint : retour haptique des bulles (`@capacitor/haptics` absent, touche les
@@ -395,6 +395,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     proposition) ; widget iPhone (WidgetKit, extension Xcode à créer) ; brancher la photo sur `saveFiche` du Studio ;
     course de test `AppRedirects.test.jsx` (appel GitHub de `UpdateBanner` après la fin de jsdom) corrigée dans #1050.
     Règle pour tous : ne pas lancer `getAnalysis(...)` depuis l'Accueil (check « Budget de lectures »).
+  - [ ] **POLISH-FLAKY-DASH** (après le sprint) : `Dashboard.test.jsx`, « Ma journée : une habitude suivie se note par oui ou non » a échoué une fois sur la CI de main (99c1de6, 17/11 00:00) puis est passé ; le lot VIE l'avait déjà dit « corrigé à la source » : chercher l'attente manquante (findBy plutôt que getBy après la réponse).
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.
