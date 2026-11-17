@@ -1,0 +1,464 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=73903A6E-DECF-4552-ADBB-B4B1F348F51F "-only-testing:HalcyaUITests/DonneesUITests/testEnregistrerLaSauvegardeDansFichiers"
+
+2026-11-17 00:57:44.325 xcodebuild[63966:173742] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-17 00:57:44.359 xcodebuild[63966:173742] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:73903A6E-DECF-4552-ADBB-B4B1F348F51F, OS:26.2, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:73903A6E-DECF-4552-ADBB-B4B1F348F51F, OS:26.2, name:iPhone 16e }
+2026-11-17 00:57:50.819 xcodebuild[63966:173742] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-17 00:57:57.384696+0000 HalcyaUITests-Runner[64704:175585] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-17 00:58:01.457.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-17 00:58:01.465.
+Test Suite 'DonneesUITests' started at 2026-11-17 00:58:01.466.
+Test Case '-[HalcyaUITests.DonneesUITests testEnregistrerLaSauvegardeDansFichiers]' started.
+    t =     0.01s Start Test at 2026-11-17 00:58:01.475
+    t =     0.88s Set Up
+    t =     0.88s Open fr.jpesquet.sante
+    t =     0.88s     Activate fr.jpesquet.sante
+    t =     1.06s         Wait for fr.jpesquet.sante to idle
+    t =     1.12s Waiting 1.0s for "Annuler" Button to exist
+    t =     2.13s     Checking `Expect predicate `existsNoRetry == 1` for object "Annuler" Button`
+    t =     2.13s         Checking existence of `"Annuler" Button`
+    t =     2.32s         Capturing element debug description
+    t =     2.32s     Checking existence of `"Annuler" Button`
+    t =     2.39s Collecting debug information to assist test failure triage
+    t =     2.39s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =     2.53s Waiting 30.0s for Any (First Match) to exist
+    t =     3.55s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.55s         Checking existence of `Any (First Match)`
+    t =     3.62s Checking existence of `Any (First Match)`
+    t =     3.68s Tap Any (First Match)
+    t =     3.68s     Wait for fr.jpesquet.sante to idle
+    t =     3.69s     Find the Any (First Match)
+    t =     3.75s     Check for interrupting elements affecting "Télécharger la sauvegarde" Button
+    t =     3.90s     Synthesize event
+    t =     4.26s     Wait for fr.jpesquet.sante to idle
+    t =     4.27s Waiting 1.0s for "ActivityListView" Other to exist
+    t =     5.27s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =     5.28s         Checking existence of `"ActivityListView" Other`
+    t =     5.41s         Capturing element debug description
+    t =     5.41s     Checking existence of `"ActivityListView" Other`
+    t =     5.48s Collecting debug information to assist test failure triage
+    t =     5.48s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =     5.63s Checking existence of `Any (First Match)`
+    t =     5.74s Waiting 1.0s for "ActivityListView" Other to exist
+    t =     6.75s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =     6.75s         Checking existence of `"ActivityListView" Other`
+    t =     6.84s         Capturing element debug description
+    t =     6.84s     Checking existence of `"ActivityListView" Other`
+    t =     6.93s Collecting debug information to assist test failure triage
+    t =     6.93s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =     7.05s Checking existence of `Any (First Match)`
+    t =     7.13s Waiting 1.0s for "ActivityListView" Other to exist
+    t =     8.14s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =     8.14s         Checking existence of `"ActivityListView" Other`
+    t =     8.22s         Capturing element debug description
+    t =     8.22s     Checking existence of `"ActivityListView" Other`
+    t =     8.28s Collecting debug information to assist test failure triage
+    t =     8.28s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =     8.40s Checking existence of `Any (First Match)`
+    t =     8.47s Waiting 1.0s for "ActivityListView" Other to exist
+    t =     9.47s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =     9.47s         Checking existence of `"ActivityListView" Other`
+    t =     9.58s         Capturing element debug description
+    t =     9.58s     Checking existence of `"ActivityListView" Other`
+    t =     9.63s Collecting debug information to assist test failure triage
+    t =     9.63s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =     9.77s Checking existence of `Any (First Match)`
+    t =     9.87s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    10.87s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    10.87s         Checking existence of `"ActivityListView" Other`
+    t =    10.97s         Capturing element debug description
+    t =    10.97s     Checking existence of `"ActivityListView" Other`
+    t =    11.09s Collecting debug information to assist test failure triage
+    t =    11.09s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    11.28s Checking existence of `Any (First Match)`
+    t =    11.38s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    12.38s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    12.39s         Checking existence of `"ActivityListView" Other`
+    t =    12.50s         Capturing element debug description
+    t =    12.50s     Checking existence of `"ActivityListView" Other`
+    t =    12.58s Collecting debug information to assist test failure triage
+    t =    12.58s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    12.73s Checking existence of `Any (First Match)`
+    t =    12.85s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    13.85s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    13.85s         Checking existence of `"ActivityListView" Other`
+    t =    13.92s         Capturing element debug description
+    t =    13.92s     Checking existence of `"ActivityListView" Other`
+    t =    13.98s Collecting debug information to assist test failure triage
+    t =    13.99s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    14.07s Checking existence of `Any (First Match)`
+    t =    14.12s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    15.13s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    15.13s         Checking existence of `"ActivityListView" Other`
+    t =    15.22s         Capturing element debug description
+    t =    15.23s     Checking existence of `"ActivityListView" Other`
+    t =    15.30s Collecting debug information to assist test failure triage
+    t =    15.30s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    15.40s Checking existence of `Any (First Match)`
+Feuille de partage absente 8 s après le toucher 1
+    t =    15.49s Checking existence of `"Télécharger la sauvegarde" Button`
+    t =    15.55s Tap "Télécharger la sauvegarde" Button
+    t =    15.55s     Wait for fr.jpesquet.sante to idle
+    t =    15.55s     Find the "Télécharger la sauvegarde" Button
+    t =    15.62s     Check for interrupting elements affecting "Télécharger la sauvegarde" Button
+    t =    15.76s     Synthesize event
+    t =    16.11s     Wait for fr.jpesquet.sante to idle
+    t =    16.11s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    17.12s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    17.12s         Checking existence of `"ActivityListView" Other`
+    t =    17.20s         Capturing element debug description
+    t =    17.20s     Checking existence of `"ActivityListView" Other`
+    t =    17.27s Collecting debug information to assist test failure triage
+    t =    17.27s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    17.39s Checking existence of `Any (First Match)`
+    t =    17.45s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    18.45s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    18.45s         Checking existence of `"ActivityListView" Other`
+    t =    18.53s         Capturing element debug description
+    t =    18.53s     Checking existence of `"ActivityListView" Other`
+    t =    18.61s Collecting debug information to assist test failure triage
+    t =    18.61s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    18.75s Checking existence of `Any (First Match)`
+    t =    18.82s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    19.83s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    19.83s         Checking existence of `"ActivityListView" Other`
+    t =    19.90s         Capturing element debug description
+    t =    19.90s     Checking existence of `"ActivityListView" Other`
+    t =    19.97s Collecting debug information to assist test failure triage
+    t =    19.97s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    20.09s Checking existence of `Any (First Match)`
+    t =    20.17s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    21.17s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    21.17s         Checking existence of `"ActivityListView" Other`
+    t =    21.27s         Capturing element debug description
+    t =    21.27s     Checking existence of `"ActivityListView" Other`
+    t =    21.37s Collecting debug information to assist test failure triage
+    t =    21.37s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    21.53s Checking existence of `Any (First Match)`
+    t =    21.64s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    22.65s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    22.65s         Checking existence of `"ActivityListView" Other`
+    t =    22.72s         Capturing element debug description
+    t =    22.73s     Checking existence of `"ActivityListView" Other`
+    t =    22.80s Collecting debug information to assist test failure triage
+    t =    22.81s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    22.95s Checking existence of `Any (First Match)`
+    t =    23.06s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    24.07s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    24.07s         Checking existence of `"ActivityListView" Other`
+    t =    24.14s         Capturing element debug description
+    t =    24.14s     Checking existence of `"ActivityListView" Other`
+    t =    24.21s Collecting debug information to assist test failure triage
+    t =    24.21s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    24.33s Checking existence of `Any (First Match)`
+    t =    24.43s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    25.43s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    25.44s         Checking existence of `"ActivityListView" Other`
+    t =    25.51s         Capturing element debug description
+    t =    25.51s     Checking existence of `"ActivityListView" Other`
+    t =    25.58s Collecting debug information to assist test failure triage
+    t =    25.58s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    25.83s Checking existence of `Any (First Match)`
+    t =    25.95s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    26.97s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    26.98s         Checking existence of `"ActivityListView" Other`
+    t =    27.12s         Capturing element debug description
+    t =    27.12s     Checking existence of `"ActivityListView" Other`
+    t =    27.25s Collecting debug information to assist test failure triage
+    t =    27.26s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    27.46s Checking existence of `Any (First Match)`
+Feuille de partage absente 8 s après le toucher 2
+    t =    27.56s Checking existence of `"Télécharger la sauvegarde" Button`
+    t =    27.65s Tap "Télécharger la sauvegarde" Button
+    t =    27.65s     Wait for fr.jpesquet.sante to idle
+    t =    27.66s     Find the "Télécharger la sauvegarde" Button
+    t =    27.76s     Check for interrupting elements affecting "Télécharger la sauvegarde" Button
+    t =    27.94s     Synthesize event
+    t =    28.29s     Wait for fr.jpesquet.sante to idle
+    t =    28.30s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    29.31s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    29.32s         Checking existence of `"ActivityListView" Other`
+    t =    29.44s         Capturing element debug description
+    t =    29.44s     Checking existence of `"ActivityListView" Other`
+    t =    29.62s Collecting debug information to assist test failure triage
+    t =    29.62s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    29.80s Checking existence of `Any (First Match)`
+    t =    29.88s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    30.89s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    30.89s         Checking existence of `"ActivityListView" Other`
+    t =    31.00s         Capturing element debug description
+    t =    31.00s     Checking existence of `"ActivityListView" Other`
+    t =    31.15s Collecting debug information to assist test failure triage
+    t =    31.15s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    31.29s Checking existence of `Any (First Match)`
+    t =    31.36s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    32.37s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    32.37s         Checking existence of `"ActivityListView" Other`
+    t =    32.48s         Capturing element debug description
+    t =    32.48s     Checking existence of `"ActivityListView" Other`
+    t =    32.56s Collecting debug information to assist test failure triage
+    t =    32.56s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    32.67s Checking existence of `Any (First Match)`
+    t =    32.74s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    33.75s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    33.75s         Checking existence of `"ActivityListView" Other`
+    t =    33.85s         Capturing element debug description
+    t =    33.85s     Checking existence of `"ActivityListView" Other`
+    t =    33.94s Collecting debug information to assist test failure triage
+    t =    33.94s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    34.13s Checking existence of `Any (First Match)`
+    t =    34.23s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    35.24s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    35.24s         Checking existence of `"ActivityListView" Other`
+    t =    35.35s         Capturing element debug description
+    t =    35.35s     Checking existence of `"ActivityListView" Other`
+    t =    35.52s Collecting debug information to assist test failure triage
+    t =    35.52s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    35.82s Checking existence of `Any (First Match)`
+    t =    35.90s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    36.91s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    36.91s         Checking existence of `"ActivityListView" Other`
+    t =    36.98s         Capturing element debug description
+    t =    36.98s     Checking existence of `"ActivityListView" Other`
+    t =    37.06s Collecting debug information to assist test failure triage
+    t =    37.06s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    37.18s Checking existence of `Any (First Match)`
+    t =    37.23s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    38.24s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    38.24s         Checking existence of `"ActivityListView" Other`
+    t =    38.38s         Capturing element debug description
+    t =    38.38s     Checking existence of `"ActivityListView" Other`
+    t =    38.47s Collecting debug information to assist test failure triage
+    t =    38.48s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    38.60s Checking existence of `Any (First Match)`
+    t =    38.70s Waiting 1.0s for "ActivityListView" Other to exist
+    t =    39.70s     Checking `Expect predicate `existsNoRetry == 1` for object "ActivityListView" Other`
+    t =    39.70s         Checking existence of `"ActivityListView" Other`
+    t =    39.80s         Capturing element debug description
+    t =    39.80s     Checking existence of `"ActivityListView" Other`
+    t =    39.90s Collecting debug information to assist test failure triage
+    t =    39.91s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    40.05s Checking existence of `Any (First Match)`
+Feuille de partage absente 8 s après le toucher 3
+    t =    40.14s Waiting 2.0s for Any (First Match) to exist
+    t =    41.20s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    41.20s         Checking existence of `Any (First Match)`
+    t =    41.29s         Capturing element debug description
+    t =    42.15s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    42.15s         Checking existence of `Any (First Match)`
+    t =    42.21s         Capturing element debug description
+    t =    42.21s     Checking existence of `Any (First Match)`
+    t =    42.30s Collecting debug information to assist test failure triage
+    t =    42.30s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    42.52s Checking existence of `Any (First Match)`
+    t =    42.59s Waiting 2.0s for Any (First Match) to exist
+    t =    43.62s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    43.62s         Checking existence of `Any (First Match)`
+    t =    43.70s         Capturing element debug description
+    t =    44.60s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    44.60s         Checking existence of `Any (First Match)`
+    t =    44.72s         Capturing element debug description
+    t =    44.72s     Checking existence of `Any (First Match)`
+    t =    44.80s Collecting debug information to assist test failure triage
+    t =    44.80s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    45.00s Checking existence of `Any (First Match)`
+    t =    45.10s Waiting 2.0s for Any (First Match) to exist
+    t =    46.12s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    46.12s         Checking existence of `Any (First Match)`
+    t =    46.17s         Capturing element debug description
+    t =    47.10s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    47.11s         Checking existence of `Any (First Match)`
+    t =    47.19s         Capturing element debug description
+    t =    47.19s     Checking existence of `Any (First Match)`
+    t =    47.27s Collecting debug information to assist test failure triage
+    t =    47.27s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    47.37s Checking existence of `Any (First Match)`
+    t =    47.43s Waiting 2.0s for Any (First Match) to exist
+    t =    48.48s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    48.49s         Checking existence of `Any (First Match)`
+    t =    48.58s         Capturing element debug description
+    t =    49.44s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    49.44s         Checking existence of `Any (First Match)`
+    t =    49.54s         Capturing element debug description
+    t =    49.54s     Checking existence of `Any (First Match)`
+    t =    49.63s Collecting debug information to assist test failure triage
+    t =    49.63s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    49.77s Checking existence of `Any (First Match)`
+    t =    49.83s Waiting 2.0s for Any (First Match) to exist
+    t =    50.85s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    50.86s         Checking existence of `Any (First Match)`
+    t =    50.93s         Capturing element debug description
+    t =    51.84s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    51.84s         Checking existence of `Any (First Match)`
+    t =    51.93s         Capturing element debug description
+    t =    51.93s     Checking existence of `Any (First Match)`
+    t =    52.04s Collecting debug information to assist test failure triage
+    t =    52.04s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    52.19s Checking existence of `Any (First Match)`
+    t =    52.25s Waiting 2.0s for Any (First Match) to exist
+    t =    53.28s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    53.29s         Checking existence of `Any (First Match)`
+    t =    53.34s         Capturing element debug description
+    t =    54.25s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    54.25s         Checking existence of `Any (First Match)`
+    t =    54.33s         Capturing element debug description
+    t =    54.34s     Checking existence of `Any (First Match)`
+    t =    54.41s Collecting debug information to assist test failure triage
+    t =    54.42s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    54.51s Checking existence of `Any (First Match)`
+    t =    54.58s Waiting 2.0s for Any (First Match) to exist
+    t =    55.64s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    55.64s         Checking existence of `Any (First Match)`
+    t =    55.79s         Capturing element debug description
+    t =    56.58s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    56.59s         Checking existence of `Any (First Match)`
+    t =    56.72s         Capturing element debug description
+    t =    56.72s     Checking existence of `Any (First Match)`
+    t =    56.83s Collecting debug information to assist test failure triage
+    t =    56.83s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    56.98s Checking existence of `Any (First Match)`
+    t =    57.09s Waiting 2.0s for Any (First Match) to exist
+    t =    58.11s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    58.11s         Checking existence of `Any (First Match)`
+    t =    58.23s         Capturing element debug description
+    t =    59.10s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    59.10s         Checking existence of `Any (First Match)`
+    t =    59.19s         Capturing element debug description
+    t =    59.19s     Checking existence of `Any (First Match)`
+    t =    59.29s Collecting debug information to assist test failure triage
+    t =    59.29s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    59.47s Checking existence of `Any (First Match)`
+    t =    59.58s Waiting 2.0s for Any (First Match) to exist
+    t =    60.62s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    60.62s         Checking existence of `Any (First Match)`
+    t =    60.72s         Capturing element debug description
+    t =    61.59s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    61.59s         Checking existence of `Any (First Match)`
+    t =    61.65s         Capturing element debug description
+    t =    61.65s     Checking existence of `Any (First Match)`
+    t =    61.74s Collecting debug information to assist test failure triage
+    t =    61.74s     Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    61.84s Checking existence of `Any (First Match)`
+    t =    61.90s Requesting snapshot of accessibility hierarchy for app with pid 26263
+    t =    62.71s Requesting snapshot of accessibility hierarchy for app with pid 26263
+Attributes: Application, 0x10215dd20, pid: 26263, label: 'Halcya'
+Element subtree:
+ →Application, 0x10215dd20, pid: 26263, label: 'Halcya'
+    Window (Main), 0x10205c950, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x102054df0, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x10205aa50, {{0.0, 0.0}, {390.0, 844.0}}
+          WebView, 0x10204ff30, {{0.0, 0.0}, {390.0, 844.0}}
+            WebView, 0x102068360, {{0.0, 0.0}, {390.0, 844.0}}
+              WebView, 0x10205f290, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x10205b120, {{0.0, 0.0}, {390.0, 844.0}}
+                  Other, 0x1020532b0, {{0.0, 0.0}, {390.0, 844.0}}
+                    Other, 0x1020543c0, {{0.0, 0.0}, {390.0, 844.0}}
+                      Other, 0x102042b80, {{0.0, 0.0}, {390.0, 1320.0}}, label: 'Halcya – ventre et bien-être', Focused
+                        Other, 0x102053630, {{16.0, 47.0}, {358.0, 70.0}}, label: 'bannière', Focused
+                          Other, 0x10206abf0, {{58.0, 69.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                            StaticText, 0x10203ce20, {{58.0, 69.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                          Link, 0x10206a8a0, {{330.0, 61.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                        Other, 0x102044b00, {{16.0, 117.0}, {358.0, 1097.0}}, label: 'principal', Focused
+                          Other, 0x10205cca0, {{16.0, 117.0}, {358.0, 29.0}}, label: 'Vos données', value: 2, Focused
+                            StaticText, 0x10204f520, {{16.0, 117.0}, {119.0, 29.0}}, label: 'Vos données', value: Vos données, Focused
+                          Other, 0x10206b2a0, {{16.0, 154.0}, {358.0, 110.0}}, Focused
+                            StaticText, 0x10205f630, {{16.0, 154.0}, {336.0, 44.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                            StaticText, 0x102067c80, {{16.0, 176.0}, {356.0, 88.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                          Other, 0x10203caa0, {{32.0, 296.0}, {326.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                            StaticText, 0x1020447a0, {{32.0, 296.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                          Other, 0x10205e850, {{32.0, 330.0}, {326.0, 21.0}}, Focused
+                            StaticText, 0x102039760, {{32.0, 330.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                          Other, 0x10205bb30, {{32.0, 359.0}, {326.0, 19.0}}, Focused
+                            StaticText, 0x10204a1a0, {{32.0, 359.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                            StaticText, 0x102055170, {{41.0, 360.0}, {3.0, 18.0}}, value:  , Focused
+                            StaticText, 0x10205a3a0, {{43.0, 359.0}, {24.0, 18.0}}, label: '253', value: 253, Focused
+                            StaticText, 0x1020466e0, {{66.0, 360.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                            StaticText, 0x10205a020, {{112.0, 360.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                          Button, 0x102064c40, {{32.0, 390.0}, {326.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                          Other, 0x1020595c0, {{16.0, 482.0}, {358.0, 212.0}}, label: 'article', Focused
+                            StaticText, 0x102066e70, {{34.0, 498.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                            Other, 0x102045ff0, {{34.0, 528.0}, {322.0, 61.0}}, Focused
+                              StaticText, 0x10204a520, {{34.0, 528.0}, {318.0, 61.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                            StaticText, 0x102037110, {{42.0, 598.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                            Link, 0x102042160, {{156.0, 640.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                              StaticText, 0x102043d30, {{156.0, 640.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                          Other, 0x102065d80, {{32.0, 734.0}, {326.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                            StaticText, 0x1020502a0, {{32.0, 734.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                          Other, 0x102063ae0, {{32.0, 768.0}, {326.0, 41.0}}, Focused
+                            StaticText, 0x102055850, {{32.0, 768.0}, {312.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                          Button, 0x102058170, {{16.0, 718.0}, {358.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                          Button, 0x102054060, {{32.0, 821.0}, {326.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                          Button, 0x10205ef20, {{32.0, 885.0}, {326.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                          Other, 0x1020656a0, {{32.0, 1015.0}, {326.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                            StaticText, 0x1020439c0, {{32.0, 1015.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                          Other, 0x102055f10, {{32.0, 1049.0}, {326.0, 61.0}}, Focused
+                            StaticText, 0x102069b20, {{32.0, 1049.0}, {326.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                          Button, 0x102044440, {{32.0, 1122.0}, {326.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                        Other, 0x102047f00, {{0.0, 747.0}, {390.0, 97.0}}, label: 'Principal, navigation', Focused
+                          Link, 0x10204a870, {{35.0, 787.0}, {39.0, 17.0}}, label: 'Accueil', Focused
+                            StaticText, 0x10204d9a0, {{35.0, 787.0}, {39.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                          Link, 0x10203c030, {{119.0, 787.0}, {59.0, 17.0}}, label: 'Ma journée', Focused
+                            StaticText, 0x1020565f0, {{119.0, 787.0}, {59.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                          Link, 0x10204abd0, {{218.0, 787.0}, {47.0, 17.0}}, label: 'Objectifs', Focused
+                            StaticText, 0x1020554e0, {{218.0, 787.0}, {47.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                          Link, 0x102039ad0, {{312.0, 787.0}, {47.0, 17.0}}, label: 'Données', Focused
+                            StaticText, 0x10203d8d0, {{312.0, 787.0}, {47.0, 17.0}}, label: 'Données', value: Données, Focused
+                        Other, 0x10205da90, {{0.0, 0.0}, {390.0, 844.0}}, label: 'La rencontre, boîte de dialogue web', Focused
+                          Other, 0x102036320, {{16.0, 63.0}, {358.0, 260.0}}, Focused
+                            Other, 0x102054710, {{131.0, 151.0}, {128.0, 134.0}}, Focused
+                            Other, 0x102061210, {{259.0, 81.0}, {100.0, 40.0}}, label: 'état de l’application', Focused
+                              StaticText, 0x102048260, {{273.0, 89.0}, {71.0, 23.0}}, label: 'Bonjour !', value: Bonjour !, Focused
+                          Other, 0x102054a70, {{16.0, 339.0}, {358.0, 284.0}}, label: 'formulaire', Focused
+                            Other, 0x102058850, {{36.0, 358.0}, {318.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: 1, Focused
+                              StaticText, 0x10205c5b0, {{36.0, 358.0}, {197.0, 60.0}}, label: 'Comment voulez-vous l’appeler ?', value: Comment voulez-vou..., Focused
+                            Other, 0x102069e70, {{36.0, 427.0}, {318.0, 46.0}}, Focused
+                              StaticText, 0x102044e70, {{36.0, 427.0}, {278.0, 46.0}}, label: 'C’est vous qui choisissez. Vous pourrez changer son nom dans Réglages.', value: C’est vous qui cho..., Focused
+                            Other, 0x102059260, {{36.0, 485.0}, {318.0, 52.0}}, Focused
+                              StaticText, 0x10205cff0, {{36.0, 485.0}, {64.0, 23.0}}, label: 'Son nom', value: Son nom, Focused
+                              TextField, 0x1020686b0, {{36.0, 485.0}, {318.0, 52.0}}, label: 'Son nom', placeholderValue: 'Son nom…', value: Pilou, Focused
+                            Button, 0x1020671f0, {{36.0, 549.0}, {318.0, 52.0}}, label: 'Valider', Focused
+              Other, 0x102067550, {{357.0, 47.3}, {30.0, 749.3}}, label: 'Barre de défilement verticale, 2 pages', value: 0 %
+                Other, 0x10204d600, {{384.0, 50.3}, {3.0, 475.3}}
+              Other, 0x102052160, {{47.3, 811.0}, {295.3, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x102049350, {{50.3, 838.0}, {289.3, 3.0}}
+              Other, 0x102060ec0, {{357.0, 47.3}, {30.0, 749.3}}, label: 'Barre de défilement verticale, 2 pages', value: 0 %
+                Other, 0x102067ff0, {{384.0, 50.3}, {3.0, 475.3}}
+              Other, 0x102060b40, {{47.3, 811.0}, {295.3, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x10206a1f0, {{50.3, 838.0}, {289.3, 3.0}}
+    Window, 0x1020618f0, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x10205add0, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x10203dfd0, {{0.0, 0.0}, {390.0, 844.0}}
+Path to element:
+ →Application, 0x10215dd20, pid: 26263, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x10165f400, pid: 26263, label: 'Halcya'
+  }
+
+/Users/runner/work/HealthTrack/HealthTrack/iphone/uitests/HalcyaUITests/SanteUITests.swift:313: error: -[HalcyaUITests.DonneesUITests testEnregistrerLaSauvegardeDansFichiers] : failed - feuille de partage sans « Enregistrer dans Fichiers »
+    t =    63.07s Tear Down
+Test Case '-[HalcyaUITests.DonneesUITests testEnregistrerLaSauvegardeDansFichiers]' failed (63.339 seconds).
+Test Suite 'DonneesUITests' failed at 2026-11-17 00:59:04.813.
+	 Executed 1 test, with 1 failure (0 unexpected) in 63.339 (63.347) seconds
+Test Suite 'HalcyaUITests.xctest' failed at 2026-11-17 00:59:04.815.
+	 Executed 1 test, with 1 failure (0 unexpected) in 63.339 (63.349) seconds
+Test Suite 'Selected tests' failed at 2026-11-17 00:59:04.816.
+	 Executed 1 test, with 1 failure (0 unexpected) in 63.339 (63.359) seconds
+2026-11-17 00:59:57.942 xcodebuild[63966:173742] [MT] IDETestOperationsObserverDebug: 127.111 elapsed -- Testing started completed.
+2026-11-17 00:59:57.944 xcodebuild[63966:173742] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-17 00:59:57.945 xcodebuild[63966:173742] [MT] IDETestOperationsObserverDebug: 127.111 sec, +127.111 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-adqintdmjywlsnacuyfjehnczecc/Logs/Test/Test-HalcyaUITests-2026.11.17_00-57-44-+0000.xcresult
+
+Failing tests:
+	DonneesUITests.testEnregistrerLaSauvegardeDansFichiers()
+
+** TEST EXECUTE FAILED **
+
+Testing started

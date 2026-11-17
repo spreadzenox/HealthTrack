@@ -1,0 +1,553 @@
+2026-11-17 01:31:01.901 App[30669:348070] DiskCookieStorage changing policy from 2 to 0, cookie file: file:///Users/runner/Library/Developer/CoreSimulator/Devices/73903A6E-DECF-4552-ADBB-B4B1F348F51F/data/Containers/Data/Application/D5349A98-009D-4540-B52F-D889A6E1AAA5/Library/Cookies/fr.jpesquet.sante.binarycookies
+⚡️  Loading app at capacitor://localhost...
+⚡️  WebView loaded
+⚡️  To Native ->  BackupMarker marker 53825795
+⚡️  To Native ->  SystemBars setStyle 53825796
+⚡️  TO JS {"id":"5e64d95f-633a-4742-a2d2-17ff4ad703e7"}
+⚡️  [warn] - Capacitor plugin "SystemBars" already registered. Cannot register plugins twice.
+⚡️  TO JS undefined
+⚡️  To Native ->  PortionReminder takeOpen 53825797
+⚡️  TO JS {"open":false}
+⚡️  To Native ->  FaceSense list 53825798
+⚡️  To Native ->  EveningNote list 53825799
+⚡️  TO JS {"notes":[]}
+⚡️  To Native ->  GutEvening list 53825800
+⚡️  TO JS {"notes":[]}
+⚡️  TO JS {"bursts":[]}
+⚡️  To Native ->  PortionReminder schedule 53825801
+⚡️  To Native ->  GutEvening configure 53825802
+⚡️  To Native ->  AppStoreBilling addListener 53825803
+⚡️  To Native ->  AppStoreBilling queryPurchases 53825804
+⚡️  TO JS {"count":0,"notifications":false}
+⚡️  TO JS {"answers":0,"nextAt":0,"minuteOfDay":1200,"pending":0,"notifications":false,"enabled":false,"noteDay":null}
+⚡️  TO JS {"purchases":[]}
+⚡️  To Native ->  EveningNote configure 53825805
+⚡️  TO JS {"enabled":false,"nextAt":0,"notifications":false,"answers":0,"pending":0,"noteDay":null,"minuteOfDay":1260}
+⚡️  To Native ->  AppStoreBilling removeListener 53825806
+⚡️  To Native ->  App addListener 53825807
+⚡️  To Native ->  Filesystem readdir 53825808
+⚡️  TO JS {"files":[]}
+⚡️  To Native ->  Filesystem readdir 53825809
+⚡️  TO JS {"files":[{"ctime":1794879053918,"size":128,"type":"directory","mtime":1794879054240,"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-
+⚡️  [log] - [capture] page vierge-onboarding
+⚡️  To Native ->  Filesystem writeFile 53825810
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/capture\/ready.txt"}
+⚡️  To Native ->  Filesystem readFile 53825811
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825812
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825813
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825814
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825815
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825816
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825817
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825818
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825819
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825820
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825821
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825822
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825823
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825824
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825825
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825826
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825827
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825828
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825829
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825830
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem writeFile 53825831
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/Copie%20de%20secours\/Halcya-copie-de-secours.json"}
+⚡️  To Native ->  Filesystem readdir 53825832
+⚡️  TO JS {"files":[{"name":"capture","size":160,"type":"directory","ctime":1794879053918,"mtime":1794879080085,"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5
+⚡️  To Native ->  Filesystem readFile 53825833
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825834
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825835
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825836
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825837
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825838
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825839
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825840
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825841
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825842
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825843
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825844
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825845
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825846
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825847
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825848
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825849
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825850
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825851
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825852
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825853
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825854
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825855
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825856
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825857
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825858
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825859
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825860
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825861
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825862
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825863
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825864
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825865
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825866
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825867
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825868
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825869
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825870
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825871
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825872
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825873
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825874
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825875
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825876
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825877
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825878
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825879
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825880
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825881
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825882
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825883
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825884
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825885
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825886
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825887
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825888
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825889
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825890
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825891
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825892
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825893
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825894
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825895
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825896
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825897
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825898
+⚡️  TO JS {"data":""}
+⚡️  To Native ->  Filesystem readFile 53825899
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  WebView loaded
+⚡️  To Native ->  BackupMarker marker 4438473
+⚡️  To Native ->  SystemBars setStyle 4438474
+⚡️  TO JS {"id":"5e64d95f-633a-4742-a2d2-17ff4ad703e7"}
+⚡️  [warn] - Capacitor plugin "SystemBars" already registered. Cannot register plugins twice.
+⚡️  TO JS undefined
+⚡️  To Native ->  PortionReminder takeOpen 4438475
+⚡️  TO JS {"open":false}
+⚡️  To Native ->  FaceSense list 4438476
+⚡️  To Native ->  EveningNote list 4438477
+⚡️  To Native ->  GutEvening list 4438478
+⚡️  TO JS {"notes":[]}
+⚡️  To Native ->  ⚡️  TO JS {"notes":[]}
+PortionReminder schedule 4438479
+⚡️  TO JS {"bursts":[]}
+⚡️  TO JS {"notifications":false,"count":0}
+⚡️  To Native ->  App addListener 4438480
+⚡️  To Native ->  GutEvening configure 4438481
+⚡️  TO JS {"nextAt":0,"notifications":false,"answers":0,"noteDay":null,"enabled":false,"minuteOfDay":1200,"pending":0}
+⚡️  To Native ->  AppStoreBilling addListener 4438482
+⚡️  To Native ->  AppStoreBilling queryPurchases 4438483
+⚡️  TO JS {"purchases":[]}
+⚡️  To Native ->  EveningNote configure 4438484
+⚡️  TO JS {"minuteOfDay":1290,"enabled":false,"nextAt":0,"notifications":false,"pending":0,"noteDay":"2026-11-16","answers":0}
+⚡️  To Native ->  GutEvening configure 4438485
+⚡️  To Native ->  PortionReminder schedule 4438486
+⚡️  TO JS {"noteDay":null,"notifications":false,"answers":0,"enabled":false,"nextAt":0,"pending":0,"minuteOfDay":1200}
+⚡️  TO JS {"notifications":false,"count":0}
+⚡️  To Native ->  EveningNote configure 4438487
+⚡️  TO JS {"enabled":false,"nextAt":0,"notifications":false,"pending":0,"noteDay":"2026-11-16","answers":0,"minuteOfDay":1290}
+⚡️  To Native ->  App addListener 4438488
+⚡️  To Native ->  App addListener 4438489
+⚡️  [log] - [capture] page demo-clair-accueil
+⚡️  To Native ->  Filesystem writeFile 4438490
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/capture\/ready.txt"}
+⚡️  To Native ->  Filesystem readFile 4438491
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  App removeListener 4438492
+⚡️  To Native ->  App removeListener 4438493
+⚡️  To Native ->  Filesystem writeFile 4438494
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/Copie%20de%20secours\/Halcya-copie-de-secours.json"}
+⚡️  To Native ->  Filesystem readdir 4438495
+⚡️  TO JS {"files":[{"type":"directory","name":"capture","ctime":1794879053918,"size":160,"mtime":1794879080085,"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5
+⚡️  To Native ->  Filesystem readFile 4438496
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438497
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438498
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438499
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438500
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438501
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438502
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438503
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438504
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438505
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438506
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438507
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438508
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438509
+⚡️  TO JS {"data":"vierge-onboarding"}
+⚡️  To Native ->  Filesystem readFile 4438510
+⚡️  TO JS {"data":"demo-clair-accueil"}
+⚡️  WebView loaded
+⚡️  To Native ->  BackupMarker marker 12931182
+⚡️  To Native ->  SystemBars setStyle 12931183
+⚡️  TO JS {"id":"5e64d95f-633a-4742-a2d2-17ff4ad703e7"}
+⚡️  [warn] - Capacitor plugin "SystemBars" already registered. Cannot register plugins twice.
+⚡️  TO JS undefined
+⚡️  To Native ->  App addListener 12931184
+⚡️  To Native ->  PortionReminder takeOpen 12931185
+⚡️  To Native ->  FaceSense list 12931186
+⚡️  To Native ->  EveningNote list 12931187
+⚡️  TO JS {"open":false}
+⚡️  To Native ->  GutEvening list 12931188
+⚡️  To Native ->  PortionReminder schedule 12931189
+⚡️  TO JS {"notes":[]}
+⚡️  TO JS {"notes":[]}
+⚡️  TO JS {"bursts":[]}
+⚡️  TO JS {"notifications":false,"count":0}
+⚡️  To Native ->  GutEvening configure 12931190
+⚡️  To Native ->  AppStoreBilling addListener 12931191
+⚡️  To Native ->  AppStoreBilling queryPurchases 12931192
+⚡️  TO JS {"noteDay":null,"notifications":false,"minuteOfDay":1200,"enabled":false,"pending":0,"answers":0,"nextAt":0}
+⚡️  TO JS {"purchases":[]}
+⚡️  To Native ->  EveningNote configure 12931193
+⚡️  TO JS {"answers":0,"minuteOfDay":1290,"nextAt":0,"notifications":false,"noteDay":"2026-11-16","enabled":false,"pending":0}
+⚡️  To Native ->  GutEvening status 12931194
+⚡️  TO JS {"noteDay":null,"notifications":false,"minuteOfDay":1200,"enabled":false,"pending":0,"answers":0,"nextAt":0}
+⚡️  [log] - [capture] page demo-clair-ma-journee
+⚡️  To Native ->  Filesystem writeFile 12931195
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/capture\/ready.txt"}
+⚡️  To Native ->  Filesystem readFile 12931196
+⚡️  TO JS {"data":"demo-clair-accueil"}
+⚡️  To Native ->  Filesystem readFile 12931197
+⚡️  TO JS {"data":"demo-clair-accueil"}
+⚡️  To Native ->  Filesystem readFile 12931198
+⚡️  TO JS {"data":"demo-clair-accueil"}
+⚡️  To Native ->  Filesystem readFile 12931199
+⚡️  TO JS {"data":"demo-clair-accueil"}
+⚡️  To Native ->  Filesystem readFile 12931200
+⚡️  TO JS {"data":"demo-clair-accueil"}
+⚡️  To Native ->  Filesystem readFile 12931201
+⚡️  TO JS {"data":"demo-clair-accueil"}
+⚡️  To Native ->  Filesystem readFile 12931202
+⚡️  TO JS {"data":"demo-clair-accueil"}
+⚡️  To Native ->  Filesystem readFile 12931203
+⚡️  TO JS {"data":"demo-clair-ma-journee"}
+⚡️  WebView loaded
+⚡️  To Native ->  BackupMarker marker 33320954
+⚡️  To Native ->  SystemBars setStyle 33320955
+⚡️  TO JS {"id":"5e64d95f-633a-4742-a2d2-17ff4ad703e7"}
+⚡️  [warn] - Capacitor plugin "SystemBars" already registered. Cannot register plugins twice.
+⚡️  TO JS undefined
+⚡️  To Native ->  App addListener 33320956
+⚡️  To Native ->  PortionReminder takeOpen 33320957
+⚡️  To Native ->  FaceSense list 33320958
+⚡️  To Native ->  EveningNote list 33320959
+⚡️  TO JS {"open":false}
+⚡️  TO JS {"notes":[]}
+⚡️  To Native ->  GutEvening list 33320960
+⚡️  TO JS {"bursts":[]}
+⚡️  TO JS {"notes":[]}
+⚡️  To Native ->  PortionReminder schedule 33320961
+⚡️  TO JS {"notifications":false,"count":0}
+⚡️  To Native ->  GutEvening configure 33320962
+⚡️  To Native ->  AppStoreBilling addListener 33320963
+⚡️  To Native ->  AppStoreBilling queryPurchases 33320964
+⚡️  TO JS {"minuteOfDay":1200,"notifications":false,"pending":0,"answers":0,"noteDay":null,"enabled":false,"nextAt":0}
+⚡️  TO JS {"purchases":[]}
+⚡️  To Native ->  EveningNote configure 33320965
+⚡️  TO JS {"notifications":false,"noteDay":"2026-11-16","enabled":false,"minuteOfDay":1290,"pending":0,"nextAt":0,"answers":0}
+⚡️  To Native ->  Filesystem writeFile 33320966
+⚡️  [log] - [capture] page demo-clair-tendances
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/capture\/ready.txt"}
+⚡️  To Native ->  Filesystem readFile 33320967
+⚡️  TO JS {"data":"demo-clair-ma-journee"}
+⚡️  To Native ->  Filesystem readFile 33320968
+⚡️  TO JS {"data":"demo-clair-ma-journee"}
+⚡️  To Native ->  Filesystem readFile 33320969
+⚡️  TO JS {"data":"demo-clair-ma-journee"}
+⚡️  To Native ->  Filesystem readFile 33320970
+⚡️  TO JS {"data":"demo-clair-ma-journee"}
+⚡️  To Native ->  Filesystem readFile 33320971
+⚡️  TO JS {"data":"demo-clair-ma-journee"}
+⚡️  To Native ->  Filesystem readFile 33320972
+⚡️  TO JS {"data":"demo-clair-tendances"}
+⚡️  WebView loaded
+⚡️  To Native ->  BackupMarker marker 122343302
+⚡️  To Native ->  SystemBars setStyle 122343303
+⚡️  TO JS {"id":"5e64d95f-633a-4742-a2d2-17ff4ad703e7"}
+⚡️  [warn] - Capacitor plugin "SystemBars" already registered. Cannot register plugins twice.
+⚡️  TO JS undefined
+⚡️  To Native ->  App addListener 122343304
+⚡️  To Native ->  PortionReminder takeOpen 122343305
+⚡️  TO JS {"open":false}
+⚡️  To Native ->  FaceSense list 122343306
+⚡️  TO JS {"bursts":[]}
+⚡️  To Native ->  EveningNote list 122343307
+⚡️  TO JS {"notes":[]}
+⚡️  To Native ->  GutEvening list 122343308
+⚡️  TO JS {"notes":[]}
+⚡️  To Native ->  PortionReminder schedule 122343309
+⚡️  To Native ->  AppStoreBilling addListener 122343310
+⚡️  To Native ->  AppStoreBilling queryPurchases 122343311
+⚡️  TO JS {"count":0,"notifications":false}
+⚡️  To Native ->  GutEvening configure 122343312
+⚡️  TO JS {"purchases":[]}
+⚡️  TO JS {"noteDay":null,"notifications":false,"minuteOfDay":1200,"enabled":false,"pending":0,"answers":0,"nextAt":0}
+⚡️  To Native ->  EveningNote configure 122343313
+⚡️  TO JS {"noteDay":"2026-11-16","notifications":false,"minuteOfDay":1290,"enabled":false,"pending":0,"answers":0,"nextAt":0}
+⚡️  To Native ->  Filesystem writeFile 122343314
+⚡️  [log] - [capture] page demo-clair-recommendations
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/capture\/ready.txt"}
+⚡️  To Native ->  Filesystem readFile 122343315
+⚡️  TO JS {"data":"demo-clair-tendances"}
+⚡️  To Native ->  Filesystem readFile 122343316
+⚡️  TO JS {"data":"demo-clair-tendances"}
+⚡️  To Native ->  Filesystem readFile 122343317
+⚡️  TO JS {"data":"demo-clair-tendances"}
+⚡️  To Native ->  Filesystem readFile 122343318
+⚡️  TO JS {"data":"demo-clair-tendances"}
+⚡️  To Native ->  Filesystem readFile 122343319
+⚡️  TO JS {"data":"demo-clair-tendances"}
+⚡️  To Native ->  Filesystem readFile 122343320
+⚡️  TO JS {"data":"demo-clair-tendances"}
+⚡️  To Native ->  Filesystem readFile 122343321
+⚡️  TO JS {"data":"demo-clair-recommendations"}
+⚡️  WebView loaded
+⚡️  To Native ->  BackupMarker marker 13682203
+⚡️  To Native ->  SystemBars setStyle 13682204
+⚡️  TO JS {"id":"5e64d95f-633a-4742-a2d2-17ff4ad703e7"}
+⚡️  [warn] - Capacitor plugin "SystemBars" already registered. Cannot register plugins twice.
+⚡️  TO JS undefined
+⚡️  To Native ->  App addListener 13682205
+⚡️  To Native ->  PortionReminder takeOpen 13682206
+⚡️  TO JS {"open":false}
+⚡️  To Native ->  FaceSense list 13682207
+⚡️  To Native ->  EveningNote list 13682208
+⚡️  TO JS {"notes":[]}
+⚡️  TO JS {"bursts":[]}
+⚡️  To Native ->  GutEvening list 13682209
+⚡️  To Native ->  ⚡️  TO JS PortionReminder {"notes":[]}
+schedule 13682210
+⚡️  TO JS {"notifications":false,"count":0}
+⚡️  To Native ->  GutEvening configure 13682211
+⚡️  To Native ->  AppStoreBilling addListener 13682212
+⚡️  To Native ->  AppStoreBilling queryPurchases 13682213
+⚡️  TO JS {"minuteOfDay":1200,"notifications":false,"pending":0,"answers":0,"noteDay":null,"enabled":false,"nextAt":0}
+⚡️  TO JS ⚡️  To Native ->  {"purchases":[]}
+EveningNote configure 13682214
+⚡️  TO JS {"noteDay":"2026-11-16","notifications":false,"minuteOfDay":1290,"enabled":false,"pending":0,"answers":0,"nextAt":0}
+⚡️  To Native ->  Filesystem writeFile 13682215
+⚡️  [log] - [capture] page demo-clair-agir
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/capture\/ready.txt"}
+⚡️  To Native ->  Filesystem readFile 13682216
+⚡️  TO JS {"data":"demo-clair-recommendations"}
+⚡️  To Native ->  Filesystem readFile 13682217
+⚡️  TO JS {"data":"demo-clair-recommendations"}
+⚡️  To Native ->  Filesystem readFile 13682218
+⚡️  TO JS {"data":"demo-clair-recommendations"}
+⚡️  To Native ->  Filesystem readFile 13682219
+⚡️  TO JS {"data":"demo-clair-recommendations"}
+⚡️  To Native ->  Filesystem readFile 13682220
+⚡️  TO JS {"data":"demo-clair-recommendations"}
+⚡️  To Native ->  Filesystem readFile 13682221
+⚡️  TO JS {"data":"demo-clair-recommendations"}
+⚡️  To Native ->  Filesystem readFile 13682222
+⚡️  TO JS {"data":"demo-clair-agir"}
+⚡️  WebView loaded
+⚡️  To Native ->  BackupMarker marker 79560476
+⚡️  To Native ->  SystemBars setStyle 79560477
+⚡️  TO JS {"id":"5e64d95f-633a-4742-a2d2-17ff4ad703e7"}
+⚡️  [warn] - Capacitor plugin "SystemBars" already registered. Cannot register plugins twice.
+⚡️  TO JS undefined
+⚡️  To Native ->  App addListener 79560478
+⚡️  To Native ->  PortionReminder takeOpen 79560479
+⚡️  TO JS {"open":false}
+⚡️  To Native ->  FaceSense list 79560480
+⚡️  To Native ->  EveningNote list 79560481
+⚡️  To Native ->  GutEvening list 79560482
+⚡️  To Native ->  PortionReminder schedule 79560483
+⚡️  TO JS {"notes":[]}
+⚡️  TO JS {"notes":[]}
+⚡️  TO JS {"bursts":[]}
+⚡️  TO JS {"count":0,"notifications":false}
+⚡️  To Native ->  GutEvening configure 79560484
+⚡️  To Native ->  AppStoreBilling addListener 79560485
+⚡️  To Native ->  AppStoreBilling queryPurchases 79560486
+⚡️  TO JS {"pending":0,"nextAt":0,"notifications":false,"minuteOfDay":1200,"noteDay":null,"answers":0,"enabled":false}
+⚡️  TO JS ⚡️  To Native ->  {"purchases":[]}
+EveningNote configure 79560487
+⚡️  TO JS {"pending":0,"nextAt":0,"enabled":false,"answers":0,"noteDay":"2026-11-16","minuteOfDay":1290,"notifications":false}
+⚡️  To Native ->  FaceSense list 79560488
+⚡️  TO JS {"bursts":[]}
+⚡️  To Native ->  FaceSense status 79560489
+⚡️  To Native ->  EveningNote status 79560490
+⚡️  TO JS {"pending":0,"nextAt":0,"enabled":false,"answers":0,"noteDay":"2026-11-16","minuteOfDay":1290,"notifications":false}
+⚡️  TO JS {"running":false,"unlock":false,"batteryExempt":true,"model":"arm64","rejected":{},"unlockAvailable":false,"sdk":26,"affectModel":false,"permission":true,"outcomes":{},"manufacturer":"Apple","pending":0,"models":true,"enabled":false,"release":"26.2","mode"
+⚡️  To Native ->  Filesystem writeFile 79560491
+⚡️  [log] - [capture] page demo-clair-connectors
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/capture\/ready.txt"}
+⚡️  To Native ->  Filesystem readFile 79560492
+⚡️  TO JS {"data":"demo-clair-agir"}
+⚡️  To Native ->  Filesystem readFile 79560493
+⚡️  TO JS {"data":"demo-clair-agir"}
+⚡️  To Native ->  Filesystem readFile 79560494
+⚡️  TO JS {"data":"demo-clair-agir"}
+⚡️  To Native ->  Filesystem readFile 79560495
+⚡️  TO JS {"data":"demo-clair-agir"}
+⚡️  To Native ->  Filesystem readFile 79560496
+⚡️  TO JS {"data":"demo-clair-agir"}
+⚡️  To Native ->  Filesystem readFile 79560497
+⚡️  TO JS {"data":"demo-clair-connectors"}
+⚡️  WebView loaded
+⚡️  To Native ->  BackupMarker marker 85069512
+⚡️  To Native ->  SystemBars setStyle 85069513
+⚡️  TO JS {"id":"5e64d95f-633a-4742-a2d2-17ff4ad703e7"}
+⚡️  [warn] - Capacitor plugin "SystemBars" already registered. Cannot register plugins twice.
+⚡️  TO JS undefined
+⚡️  To Native ->  App addListener 85069514
+⚡️  To Native ->  PortionReminder takeOpen 85069515
+⚡️  To Native ->  FaceSense list 85069516
+⚡️  To Native ->  ⚡️  TO JS EveningNote {"open":false}
+list 85069517
+⚡️  To Native ->  GutEvening list 85069518
+⚡️  TO JS {"notes":[]}
+⚡️  TO JS {"notes":[]}
+⚡️  To Native ->  PortionReminder schedule 85069519
+⚡️  TO JS {"bursts":[]}
+⚡️  TO JS {"count":0,"notifications":false}
+⚡️  To Native ->  GutEvening configure 85069520
+⚡️  TO JS {"minuteOfDay":1200,"notifications":false,"pending":0,"answers":0,"noteDay":null,"enabled":false,"nextAt":0}
+⚡️  To Native ->  AppStoreBilling addListener 85069521
+⚡️  To Native ->  AppStoreBilling queryPurchases 85069522
+⚡️  TO JS {"purchases":[]}
+⚡️  To Native ->  EveningNote configure 85069523
+⚡️  TO JS {"enabled":false,"nextAt":0,"noteDay":"2026-11-16","minuteOfDay":1290,"notifications":false,"pending":0,"answers":0}
+⚡️  To Native ->  GutEvening status 85069524
+⚡️  To Native ->  FaceSense status 85069525
+⚡️  To Native ->  AppStoreBilling queryPurchases 85069526
+⚡️  TO JS {"permission":true,"sdk":26,"affectDownloading":false,"release":"26.2","unlockAvailable":false,"unlock":false,"manufacturer":"Apple","affectModel":false,"models":true,"affectModel2":false,"mode":"app_open","outcomes":{},"enabled":false,"rejected":{},"batte
+⚡️  TO JS {"pending":0,"enabled":false,"nextAt":0,"minuteOfDay":1200,"answers":0,"noteDay":null,"notifications":false}
+⚡️  TO JS {"purchases":[]}
+⚡️  To Native ->  ⚡️  [log] - [capture] page demo-clair-settings
+Filesystem writeFile 85069527
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/capture\/ready.txt"}
+⚡️  To Native ->  Filesystem readFile 85069528
+⚡️  TO JS {"data":"demo-clair-connectors"}
+⚡️  To Native ->  Filesystem readFile 85069529
+⚡️  TO JS {"data":"demo-clair-connectors"}
+⚡️  To Native ->  Filesystem readFile 85069530
+⚡️  TO JS {"data":"demo-clair-connectors"}
+⚡️  To Native ->  Filesystem readFile 85069531
+⚡️  TO JS {"data":"demo-clair-connectors"}
+⚡️  To Native ->  Filesystem readFile 85069532
+⚡️  TO JS {"data":"demo-clair-connectors"}
+⚡️  To Native ->  Filesystem readFile 85069533
+⚡️  TO JS {"data":"demo-clair-connectors"}
+⚡️  To Native ->  Filesystem readFile 85069534
+⚡️  TO JS {"data":"demo-clair-connectors"}
+⚡️  To Native ->  Filesystem readFile 85069535
+⚡️  TO JS {"data":"demo-clair-settings"}
+⚡️  [log] - [capture] fin
+⚡️  To Native ->  Filesystem writeFile 85069536
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/capture\/ready.txt"}
+⚡️  To Native ->  Filesystem writeFile 85069537
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/Copie%20de%20secours\/Halcya-copie-de-secours.json"}
+⚡️  To Native ->  Filesystem readdir 85069538
+⚡️  TO JS {"files":[{"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/73903A6E-DECF-4552-ADBB-B4B1F348F51F\/data\/Containers\/Data\/Application\/D5349A98-009D-4540-B52F-D889A6E1AAA5\/Documents\/capture\/","name":"capture","size":160,"ctim
+fr.jpesquet.sante: 30669
