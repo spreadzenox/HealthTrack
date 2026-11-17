@@ -8,6 +8,19 @@
 > 1 à 6 et 7a faites des deux côtés ; une seule routine et un seul dépôt pour Android et l'iPhone, puis une seule PR
 > pour les deux apps ; mode polish ; chantier cycle commencé).
 
+**🧸 Bilan du sprint (fini le 17/11 à 03:00), étape par étape. Rien n'a encore été mesuré sur un vrai téléphone.**
+- **8 Scène** : livrée (île 3D, lumière, météo, 7 cadeaux, la nuit). Reste : croissance de l'île et vrai lever/coucher
+  du soleil (écrits, pas branchés), palier de qualité sur un vrai téléphone.
+- **9 Pilou** : livrée (figurine, 12 expressions, montre, effets dessinés). Reste : sur la capture iPhone de nuit,
+  « Pilou dort » mais ses yeux restent ouverts (à vérifier).
+- **10 Bulles** : livrée. Reste : retour haptique (à décider), îlot rangé en haut au défilement.
+- **11-12 Vie** : livrée. Reste : rituel du soir et lanternes ; votre nom choisi sur l'étiquette de l'île.
+  **La carte de la rencontre illisible en sombre est corrigée (17/11 03:30)**, avant l'envoi Alpha de cette nuit.
+- **13 Monde** : livrée, widget Android seulement. Reste : nom choisi et nouvelles poses dans le widget.
+- **14 Studio** : réglages à la main livrés ; les traits sur le vrai Pilou (#1072) attendent leur build iPhone.
+- **15 Photo** : écrite, **éteinte partout** jusqu'à vos déclarations (missions P49 et PI3).
+- Captures iPhone de main (9b785e3) relues : l'Accueil vierge n'est plus blanc, la rencontre ne recouvre plus rien.
+
 **🚀 Sprint de la refonte, ce soir jusqu'à 03:00 (votre ordre du 16/11 vers 20:15)** — relevé de 02:30 : sept équipiers
 ont codé Pilou et son monde en parallèle (étapes 8 à 15). **Cinq lots finis sur sept : Scène, Bulles, Vie, Monde et
 Photo.** Sur main : #1047, #1048, #1053, #1062, #1056, #1060, #1050, #1057, #1058, #1052, #1066, puis **#1067 (Vie, 02:07 :
@@ -97,6 +110,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 17/11 03:30 — [Rencontre en thème sombre](runs/2026-11-17-0330-rencontre-sombre.md) | 🛠️ | **POLISH-MEET-DARK** : la carte de la rencontre de Pilou lisible en sombre (couleurs sombres du compagnon, test de contraste). Captures iPhone de main relues : défauts « vide-accueil » et surimpression déjà réglés par #1067. Bilan du sprint étape par étape en tête du résumé. |
 | 17/11 02:30 — [Intégrateur du sprint](runs/2026-11-17-0230-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v777, APK 35,3 Mo). **#1067 (Vie) mergée à 02:07, #1070 (assemblage de la Scène) à 02:09 ; #1065 fermée. Cinq lots finis sur sept.** **#1071 (Pilou) mergée à 02:38.** #1072 (Studio) : checks verts sauf la build iPhone, en cours. Défaut relevé : carte de la rencontre illisible en thème sombre (premier correctif après 03:00). Alpha du soir pas encore parti. Journal seul. |
 | 17/11 01:30 — [Intégrateur du sprint](runs/2026-11-17-0130-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v774, APK 35,3 Mo). **#1052 (Studio) mergée à 01:22, #1066 (Bulles 2) à 01:30 : lots Bulles, Monde et Photo finis.** Un rouge isolé de Tests sur 99c1de6 (test de Ma journée instable), vert au commit suivant. 5 PR du sprint ouvertes (#1065, #1067, #1070, #1071, #1072). Alpha du soir pas encore parti (retard habituel du cron). Journal seul. |
 | 17/11 00:30 — [Intégrateur du sprint](runs/2026-11-17-0030-integrateur-sprint.md) | 📝 | Main vert (Tests, Build & Release v771). **#1050 (Photo, éteinte) mergée à 00:26 : lot Photo fini**, puis **#1057 (Monde : widget Android, notifications du soir)** à 00:40. puis **#1058 (Pilou figurine)** à 00:58. 4 PR du sprint ouvertes (#1052 Studio, #1065 Scène, #1066 Bulles, #1067 Vie). Envoi Alpha du soir pas encore parti à 00:30 (retard habituel du cron) ; examen bêta TestFlight au premier run où la build du soir est traitée. Journal seul. |
