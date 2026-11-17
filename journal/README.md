@@ -17,7 +17,9 @@
 - **10 Bulles** : livrée. Reste : retour haptique (à décider), îlot rangé en haut au défilement.
 - **11-12 Vie** : livrée. Reste : rituel du soir et lanternes ; votre nom choisi sur l'étiquette de l'île.
   **La carte de la rencontre illisible en sombre est corrigée (17/11 03:30, PR #1079, sur main depuis 04:41)**.
-- **13 Monde** : livrée, widget Android seulement. Reste : nom choisi et nouvelles poses dans le widget.
+- **13 Monde** : livrée, widget Android seulement. Le nom choisi dans le widget attend son merge (#1080 : un émulateur
+  Android bloqué le 17/11 au matin). Reste : nouvelles poses dans le widget, et le monde branché dans l'île (découpé le
+  17/11 en 4 runs : lever et coucher à vos heures, saison, croissance, îlot voisin et mare).
 - **14 Studio** : réglages à la main livrés ; les traits sur le vrai Pilou (#1072) remis à jour sur main, build iPhone relancée.
 - **15 Photo** : écrite, **éteinte partout** jusqu'à vos déclarations (missions P49 et PI3).
 - Captures iPhone de main (9b785e3) relues : l'Accueil vierge n'est plus blanc, la rencontre ne recouvre plus rien.
@@ -111,6 +113,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 17/11 08:30 — [Idées : le monde de Pilou à brancher](runs/2026-11-17-0830-idees-monde.md) | 💡 | Restes du sprint découpés en 4 runs de code (MONDE-1 à 4 : lever et coucher à vos heures, saison sur l'îlot, croissance, îlot voisin et mare). Défaut repéré : la nuit, l'île et le widget Android ne s'endorment pas à la même heure (l'île à 22 h 30 fixe). #1080 (widget avec votre nom) non mergée : un émulateur Android est bloqué depuis plus de 50 min. Rien à faire de votre côté |
 | 17/11 05:30 — [Pilou dort vraiment la nuit](runs/2026-11-17-0530-pilou-dort.md) | 🛠️ | **POLISH-PILOU-DORT-YEUX** : la nuit, ouvrir l'app ne réveille plus Pilou (le « matin » commençait à minuit) et il se réveille au lever du jour même app ouverte. **#1045 (UPG-4) mergée** ; #1072, #1080 et #1081 remises à jour sur main, builds iPhone relancées (merge une par une). |
 | 17/11 03:30 — [Rencontre en thème sombre](runs/2026-11-17-0330-rencontre-sombre.md) | 🛠️ | **POLISH-MEET-DARK** : la carte de la rencontre de Pilou lisible en sombre (couleurs sombres du compagnon, test de contraste). Captures iPhone de main relues : défauts « vide-accueil » et surimpression déjà réglés par #1067. Bilan du sprint étape par étape en tête du résumé. PR #1079 en attente de sa build iPhone (merge au run suivant) ; #1072 remise à jour sur main (conflit de `visage.js` résolu), CI relancée. |
 | 17/11 02:30 — [Intégrateur du sprint](runs/2026-11-17-0230-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v777, APK 35,3 Mo). **#1067 (Vie) mergée à 02:07, #1070 (assemblage de la Scène) à 02:09 ; #1065 fermée. Cinq lots finis sur sept.** **#1071 (Pilou) mergée à 02:38.** #1072 (Studio) : checks verts sauf la build iPhone, en cours. Défaut relevé : carte de la rencontre illisible en thème sombre (premier correctif après 03:00). Alpha du soir pas encore parti. Journal seul. |
