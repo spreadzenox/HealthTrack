@@ -8,27 +8,37 @@
 > 1 à 6 et 7a faites des deux côtés ; une seule routine et un seul dépôt pour Android et l'iPhone, puis une seule PR
 > pour les deux apps ; mode polish ; chantier cycle commencé).
 
-**🚀 Sprint de la refonte, ce soir jusqu'à 03:00 (votre ordre du 16/11 vers 20:15)** — relevé de 00:30 : sept équipiers
+**🚀 Sprint de la refonte, ce soir jusqu'à 03:00 (votre ordre du 16/11 vers 20:15)** — relevé de 01:30 : sept équipiers
 codent Pilou et son monde en parallèle (étapes 8 à 15). **Sur main : #1047 (relais de la photo, éteint), #1048 (Monde)
-et #1053 (Scène, 22:02 : Pilou sur son île en tête de l'Accueil, v767, APK 35,0 Mo), puis #1062 (Scène 2, 23:31 : les
-7 cadeaux en 3D, la météo sur l'île, Réglages › Mouvements de Pilou) et #1056 (Bulles, 23:52 : ce qu'il reste à noter en bulles autour de Pilou, « Humeur du
-jour », fleurs, « Jour 3 sur 7 », 7 cadeaux) et #1060 (Vie, 00:16 : Pilou dans Ma journée, la rencontre et son nom, le jour 7), puis #1050 (Photo, 00:26, éteinte) et #1057 (Monde, 00:40 : le widget Android et Pilou dans les notifications du soir) et #1058 (Pilou, 00:58 : la figurine vernie remplace le Pilou simple).**
-Tests de main verts après chacun (release v771). 4 PR du sprint encore ouvertes (#1052, #1065, #1066, #1067) attendent leur build iPhone (près d'une heure chacune ; deux redémarrages du conteneur de VIE ont coûté
-≈ 1 h). **Nouveau à 22:40 : l'assemblage** — le lot Scène a fusionné en local main et les 7 PR ouvertes : 3 980 tests
-verts, 1 rouge (corrigé d'une ligne), et l'Accueil complet tient (vrai Pilou, bulles, Humeur du jour, ciel jour, soir et
-nuit avec Pilou endormi, cadeaux, thème sombre lisible). Les conflits entre lots sont identifiés et leur résolution
-écrite (Vie × Studio dans la sauvegarde : on garde les deux).
+et #1053 (Scène, 22:02 : Pilou sur son île en tête de l'Accueil), #1062 (Scène 2, 23:31 : les 7 cadeaux en 3D, la météo
+sur l'île, Réglages › Mouvements de Pilou), #1056 (Bulles, 23:52 : ce qu'il reste à noter en bulles autour de Pilou,
+« Humeur du jour », fleurs, « Jour 3 sur 7 », 7 cadeaux), #1060 (Vie, 00:16 : Pilou dans Ma journée, la rencontre et son
+nom, le jour 7), #1050 (Photo, 00:26, éteinte), #1057 (Monde, 00:40 : le widget Android et Pilou dans les notifications du
+soir), #1058 (Pilou, 00:58 : la figurine vernie remplace le Pilou simple), puis #1052 (Studio, 01:22 : habiller Pilou à
+la main dans Réglages, release v774, APK 35,3 Mo) et #1066 (Bulles 2, 01:30 : la nuit en lucioles, le jour 14, le
+bandeau au défilement).** Tests de main verts (un rouge isolé sur #1058, test de Ma journée instable, vert au commit
+suivant). **Trois lots finis : Photo, Monde et Bulles.** 5 PR du sprint encore ouvertes, chacune attend sa build iPhone
+(près d'une heure) : #1065 et #1070 (Scène : la nuit, l'assemblage avec le vrai Pilou dans l'image fixe), #1071 (Pilou :
+effets des expressions), #1072 (Studio : les traits sur le vrai Pilou), #1067 (Vie : cairn des galets) ; ce qui ne sera
+pas mergé à 03:00 reste en PR propre. L'assemblage (Scène, 22:45 puis 00:50) tient : Accueil complet, et **la mise à jour
+depuis une version d'avant la refonte vous fait rencontrer Pilou une seule fois, sans refaire l'accueil ni la fête des
+7 jours**.
 - **Scène (8)** : **#1053 et #1062 mergées**. #1062 : les 7 cadeaux en 3D, la météo sur l'île, Réglages › Mouvements de Pilou,
-  l'étiquette lisible en thème sombre. #1065 (en PR) : l'île de nuit, Pilou endormi, image fixe de nuit ; puis les images fixes refaites avec le vrai Pilou.
+  l'étiquette lisible en thème sombre. En PR : #1065 (l'île de nuit, Pilou endormi, image fixe de nuit) puis #1070, empilée
+  dessus (images fixes refaites avec le vrai Pilou, « Pilou dort. Le reste peut attendre demain. » la nuit).
 - **Pilou (9)** **#1058 mergée** (00:58) : la figurine vernie, ses yeux, 12 expressions, sa montre à l'heure réelle.
+  #1071 (en PR) : petits effets dessinés des expressions, yeux fermés en trait.
 - **Bulles (10)** **#1056 mergée** (23:52) : bulles, « Humeur du jour »,
-  fleurs, « Jour 3 sur 7 », 7 cadeaux. #1066 (en PR) : la nuit en lucioles, le jour 14, le bandeau au défilement.
+  fleurs, « Jour 3 sur 7 », 7 cadeaux. **#1066 mergée** (01:30) : la nuit en lucioles, le jour 14, le bandeau au défilement.
+  **Lot fini.** Restes : retour haptique (à décider : ajoute un module natif), îlot qui se range en haut au défilement.
 - **Vie (11 et 12)** **#1060 mergée** (17/11 00:16) : Pilou
   dans Ma journée, la rencontre et son nom (une seule fois pour vous, sans refaire l'accueil), le jour 7, Pilou dans
   Objectifs et Données. #1067 (en PR) : le cairn des galets dans « Par famille ».
 - **Monde (13)** : #1048 et **#1057 mergées** (00:40) : le widget Android « Ma journée » avec Pilou,
-  Pilou dans les notifications du soir (Android et iPhone). **Le widget n'existe que sur Android** pour l'instant.
-- **Studio (14)** #1052 : habiller Pilou à la main dans Réglages (pièces 3D jointes), caché tant que Pilou n'est pas là.
+  Pilou dans les notifications du soir (Android et iPhone). **Le widget n'existe que sur Android** pour l'instant. **Lot fini.**
+- **Studio (14)** **#1052 mergée** (01:22) : habiller Pilou à la main dans Réglages (Cheveux, Visage, Yeux, Lunettes,
+  Accessoires), fiche gardée sur le téléphone, dans l'export et l'import. #1072 (en PR) : les traits sur le vrai Pilou
+  (pièces 3D, visage peint) ; l'aperçu du Studio reste en 2D.
 - **Photo (15)** #1047 (relais) et **#1050 (app, mergée à 00:26)** : **éteinte partout** jusqu'à vos déclarations (missions P49 et
   PI3 prêtes, arrêtées avant le bouton d'envoi). **Lot fini.**
 - Ce que le sprint aura livré et ce qui restera, lot par lot : en tête de ce résumé au premier run après 03:00.
@@ -49,7 +59,7 @@ nuit avec Pilou endormi, cadeaux, thème sombre lisible). Les conflits entre lot
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v771** (APK 35,1 Mo, 17/11 00:28, merge de la Photo #1050 ; v766 au merge de la Scène #1053) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | **1107.1107 validée par Apple et chez « Testeurs Halcya »** (16/11 09:54 UTC) ; anciennes builds expirées ; **844.344 reste attachée à la version 844 pour votre soumission** |
+| Dernière version | release **v774** (APK 35,3 Mo, 17/11 01:24, merge du Studio #1052 ; v766 au merge de la Scène #1053) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part souvent avec 3 à 4 h de retard) | **1107.1107 validée par Apple et chez « Testeurs Halcya »** (16/11 09:54 UTC) ; anciennes builds expirées ; **844.344 reste attachée à la version 844 pour votre soumission** |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 fonctions vérifiées sur 47 faisables, [`PARITE.md`](../iphone/journal/PARITE.md)) |
 
@@ -88,6 +98,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 17/11 01:30 — [Intégrateur du sprint](runs/2026-11-17-0130-integrateur-sprint.md) | 📝 | Main vert (Tests ; Build & Release v774, APK 35,3 Mo). **#1052 (Studio) mergée à 01:22, #1066 (Bulles 2) à 01:30 : lots Bulles, Monde et Photo finis.** Un rouge isolé de Tests sur 99c1de6 (test de Ma journée instable), vert au commit suivant. 5 PR du sprint ouvertes (#1065, #1067, #1070, #1071, #1072). Alpha du soir pas encore parti (retard habituel du cron). Journal seul. |
 | 17/11 00:30 — [Intégrateur du sprint](runs/2026-11-17-0030-integrateur-sprint.md) | 📝 | Main vert (Tests, Build & Release v771). **#1050 (Photo, éteinte) mergée à 00:26 : lot Photo fini**, puis **#1057 (Monde : widget Android, notifications du soir)** à 00:40. puis **#1058 (Pilou figurine)** à 00:58. 4 PR du sprint ouvertes (#1052 Studio, #1065 Scène, #1066 Bulles, #1067 Vie). Envoi Alpha du soir pas encore parti à 00:30 (retard habituel du cron) ; examen bêta TestFlight au premier run où la build du soir est traitée. Journal seul. |
 | 16/11 23:30 — [Intégrateur du sprint](runs/2026-11-16-2330-integrateur-sprint.md) | 📝 | Main vert (v767). **#1062 (Scène 2 : cadeaux en 3D, météo de l'île) mergée** pendant le run, puis **#1056 (Bulles)** et **#1060 (Vie)**, Tests de main verts ; 4 PR du sprint attendent leur build iPhone. Assemblage local des 7 PR par le lot Scène : 3 980 tests verts, l'Accueil complet tient ; conflits entre lots identifiés et résolus sur le papier. Rien à faire de votre côté |
 | 16/11 22:30 — [Intégrateur du sprint](runs/2026-11-16-2230-integrateur-sprint.md) | 📝 | Main vert (v767). **Scène (#1053) mergée** : Pilou sur son île en tête de l'Accueil. 7 PR ouvertes (#1050, #1052, #1056, #1057, #1058, #1060, #1062) ; Vie réunie dans #1060. Widget de Pilou : Android seulement (noté dans PARITE). Rien à faire de votre côté |
