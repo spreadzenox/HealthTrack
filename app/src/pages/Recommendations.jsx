@@ -22,6 +22,7 @@
  */
 import PilouFigure from '../companion/life/PilouFigure'
 import PilouWaiting from '../companion/life/PilouWaiting'
+import Cairn from '../companion/life/Cairn'
 import SeeExample from '../components/SeeExample'
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
@@ -209,6 +210,8 @@ function Families({ outcome, families, base }) {
   return (
     <section className="reco-block" aria-labelledby={`reco-families-${outcome}`}>
       <h3 id={`reco-families-${outcome}`} className="reco-section-title">Par famille</h3>
+      {/* Lot VIE (étape 12) : le cairn des galets, la taille du galet = la force du lien (SPEC comprendre § 6.3) */}
+      <Cairn families={families} />
       <ul className="reco-families">
         {families.map((fam) => {
           // REFONTE-6c : une famille qui a des facteurs comparés ouvre son détail ; la carte entière est le lien

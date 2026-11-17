@@ -9,6 +9,7 @@ import { makeMatiere, rngF } from './matiere.js'
 import { drawVisage, faceKey } from './visage.js'
 import { createAnimateur } from './animateur.js'
 import { HAPTIQUE } from './gestes.js'
+import { createEffets } from './effets.js'
 
 // Paliers de qualité (brief § 7.9) : « haut » ≤ 10 000 triangles ; « moyen » sans sheen, moins de segments.
 // Le palier « bas » n'a pas de 3D : images pré-rendues (images/).
@@ -303,7 +304,7 @@ export function createPilou(THREE, options = {}) {
     const q4 = NJ / 4
     const elTop = Math.atan2(pts[q4].y, pts[q4].z)
     const elBot = Math.atan2(pts[3 * q4].y, pts[3 * q4].z)
-    return { s, g, sc, U, lidT, lidB, elTop, elBot, ball }
+    return { s, g, sc, U, lidT, lidB, elTop, elBot, ball, base: g.position.clone(), fwd }
   })
 
   /* ---------- bras (ressort de traîne) ---------- */
@@ -577,6 +578,8 @@ export function createPilou(THREE, options = {}) {
   anchors.handRight.position.set(0, -0.3, 0); arms[1].pv.add(anchors.handRight)
   bead.add(anchors.antennaTip)
 
+  const effets = createEffets(THREE, M, root)
+
   /* ---------- ombre de contact (une tache, pas d'ombre portée) ---------- */
   let contact = null
   if (ombre) {
@@ -626,6 +629,8 @@ export function createPilou(THREE, options = {}) {
     }
     setAccessoires(Pz)
     if (acc.parapluie) arms[1].pv.rotation.set(-0.3, 0, 2.3)
+    const ferme = sstep(0.6, 0.97, clamp(Pz.f.lidTop))
+    Pz.f.ferme = Math.round(ferme * 20) / 20
     paintFace(Pz.f)
     root.updateMatrixWorld(true)
     for (const e of eyes) {
@@ -644,7 +649,10 @@ export function createPilou(THREE, options = {}) {
       e.U.uLidT.value = eT
       e.U.uLidB.value = eB
       // taille des yeux (surpris, curieux)
-      e.sc.scale.set(EX * F.es * F.esx, EY * F.es * F.esy, EZ)
+      // un œil fermé s'aplatit un peu : la paupière se lit comme un trait « ‿ », pas comme une bulle
+      const cl = sstep(0.6, 0.97, lt)
+      e.sc.scale.set(EX * F.es * F.esx, EY * F.es * F.esy, EZ * (1 - 0.5 * cl))
+      e.g.position.copy(e.base).addScaledVector(e.fwd, -0.05 * cl)
     }
     // yeux et point ambre : la partie qui dépend de la caméra se fait au rendu (onBeforeRender), la scène n'a
     // donc pas à nous passer sa caméra ; si on nous la passe, on la prend tout de suite.
@@ -710,6 +718,7 @@ export function createPilou(THREE, options = {}) {
       τLast = τ
       P = anim.poseAt(τ)
       apply(P, τ, camera)
+      effets.update(anim.effets(τ), τ, P.lift)
       return anim.etat(τ)
     },
     pose: () => P,
@@ -786,6 +795,7 @@ export function createPilou(THREE, options = {}) {
     },
     dispose() {
       antMesh.geometry.dispose()
+      effets.dispose()
       for (const d of disposables) d.dispose?.()
       M.dispose()
       root.removeFromParent()

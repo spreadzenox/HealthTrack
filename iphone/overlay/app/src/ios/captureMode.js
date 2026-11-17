@@ -175,9 +175,13 @@ export async function prepare(step, { storage, demoEntries, latestChangelogId, l
     if (!step.onboarding) localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, endedBy: 'capture', goal: null }))
     if (latestChangelogId) localStorage.setItem('healthtrack-whats-new-last-seen', latestChangelogId)
     // Pilou déjà rencontré, cérémonie du jour 7 passée (lot VIE) : aucune surimpression sur les captures
-    if (!localStorage.getItem('halcya_companion')) {
+    // (un accueil vierge capturé avant a pu créer la clé sans rencontre : on regarde metAt, pas la clé)
+    let companion = {}
+    try { companion = JSON.parse(localStorage.getItem('halcya_companion') || '{}') || {} } catch { companion = {} }
+    if (!companion.metAt || !companion.ceremony7At) {
       const at = new Date(now).toISOString()
-      localStorage.setItem('halcya_companion', JSON.stringify({ name: 'Pilou', metAt: at, metBy: 'capture', ceremony7At: at, ceremony7By: 'capture' }))
+      localStorage.setItem('halcya_companion', JSON.stringify({ name: 'Pilou', ...companion, metAt: companion.metAt || at,
+        metBy: companion.metBy || 'capture', ceremony7At: companion.ceremony7At || at, ceremony7By: companion.ceremony7By || 'capture' }))
     }
   }
   if (step.data === 'empty') onboarded()

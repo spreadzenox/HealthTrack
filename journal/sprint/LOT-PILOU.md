@@ -1,5 +1,10 @@
 # Lot PILOU (étape 9 du brief : Compagnon 1b)
 
+> **17/11 01:05 — `createPilou` est sur main** (#1058, mergée en squash à 01:02, tous les checks verts, build iOS
+> compris ; capture iPhone de l'Accueil regardée : la figurine sur son île, « Pilou est tranquille »). STUDIO et
+> l'assemblage de SCÈNE peuvent s'y brancher (`kit.body`, `kit.vinyl`, `anchors`, `setTraits`).
+> En PR : `claude/sprint-pilou-3` (effets dessinés des expressions, yeux fermés en trait), partie de main.
+
 ## Où j'en suis
 - 16/11 ≈ 21:00 — **Module livré sur `claude/sprint-pilou-1`** (parti de `claude/sprint-scene-1`, qui porte three.js et
   la scène) : `app/src/companion/pilou/index.js` exporte `createPilou(THREE, options)` à l'API du CONTRAT § 3. La scène

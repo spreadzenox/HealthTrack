@@ -4,7 +4,7 @@
 // un paramètre change (clé de cache).
 import { clamp, lerp, sstep, FS, FY, mouthPath, PAL } from './forme.js'
 
-const KEYS = ['blush', 'hatch', 'brow', 'mw', 'mU', 'mL', 'mA', 'mx', 'my', 'mSkew', 'tongue', 'fx', 'fy']
+const KEYS = ['ferme', 'blush', 'hatch', 'brow', 'mw', 'mU', 'mL', 'mA', 'mx', 'my', 'mSkew', 'tongue', 'fx', 'fy']
 const BROW = ['browY', 'browA', 'browYL', 'browYR', 'lookX', 'lookY', 'es', 'esy']
 export function faceKey(F) {
   let k = ''
@@ -29,6 +29,7 @@ export function drawVisage(ctx, S, F, T = null) {
   if (T) T.peindre(ctx, X, Y, k, F, 'peau')
   if (T && T.aSourcils()) T.peindre(ctx, X, Y, k, F, 'sourcils')
   else if (F.brow > 0.01) for (const s of [-1, 1]) brow(ctx, X, Y, k, s, F)
+  if (F.ferme > 0.01) for (const s of [-1, 1]) cils(ctx, X, Y, k, s, F)
   mouth(ctx, X, Y, k, F)
   if (T) T.peindre(ctx, X, Y, k, F, 'dessus')
 }
@@ -70,6 +71,18 @@ function cheek(c, X, Y, k, s, F) {
     }
     c.restore()
   }
+}
+
+// yeux fermés : le trait « ‿ » de la planche, qui suit le bas de l'œil (l'œil 3D s'enfonce sous la paupière)
+function cils(c, X, Y, k, s, F) {
+  const rx = 0.078 * F.es, ry = 0.098 * F.es
+  const cx = s * 0.2, cy = 0.9
+  c.strokeStyle = `rgba(43,35,32,${clamp(F.ferme)})`
+  c.lineWidth = 0.024 * k
+  c.beginPath()
+  c.moveTo(X(cx - rx * 0.95), Y(cy - ry * 0.15))
+  c.quadraticCurveTo(X(cx), Y(cy - ry * 1.05), X(cx + rx * 0.95), Y(cy - ry * 0.15))
+  c.stroke()
 }
 
 // sourcils : seulement curieux et surpris ; jamais relevés au centre (= tristesse)

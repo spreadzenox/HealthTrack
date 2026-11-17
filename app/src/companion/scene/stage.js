@@ -78,6 +78,7 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
   const sun = new THREE.DirectionalLight()
   const fill = new THREE.DirectionalLight()
   const hemi = new THREE.HemisphereLight()
+  const amber = new THREE.PointLight('#FFB45A', 0.4, 3.2, 1.6)
   scene.add(sun, fill, hemi)
   fill.position.set(0.55, 0.5, 0.67).multiplyScalar(8)
 
@@ -85,7 +86,7 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
   let light = normalizeLight(initialLight || GOLDEN)
   function applyLight(next) {
     light = normalizeLight(next)
-    gifts?.setEvening(light.phase === 'soir' || light.phase === 'nuit' ? 1 : 0)
+    gifts?.setEvening(light.lantern ?? (light.phase === 'soir' || light.phase === 'nuit') ? 1 : 0)
     sun.color.set(light.sun.color)
     sun.intensity = light.sun.intensity
     sun.position.set(...directionOf(light.sun.elevationDeg, light.sun.azimuthDeg)).multiplyScalar(8)
@@ -93,7 +94,15 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
     fill.intensity = light.fill.intensity
     hemi.color.set(light.hemi.sky)
     hemi.groundColor.set(light.hemi.ground)
-    hemi.intensity = light.hemi.intensity
+    // la nuit reste lisible : plancher de lumière ambiante, le point ambre devient la lumière principale (§ 7.5)
+    hemi.intensity = Math.max(0.55, light.hemi.intensity)
+    const night = light.night ?? light.phase === 'nuit'
+    amber.intensity = night ? 2.4 : 0.25 + 0.3 * (light.ambreGlow ?? 0.5)
+    if (night) {
+      // clair de lune bleuté : Pilou reste lisible, jamais une silhouette noire
+      hemi.color.lerp(new THREE.Color('#A9B4F0'), 0.6)
+      hemi.intensity = Math.max(hemi.intensity, 1.0)
+    }
     if (scene.environment) scene.environment.dispose()
     scene.environment = buildEnvironment(renderer, light, settings.envSize)
     scene.environmentIntensity = 0.6
@@ -111,12 +120,17 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
   let pilou = make(THREE, { quality: tier, reducedMotion, seed: 3, envMap: scene.environment, traits: null, now: () => new Date() })
   world.add(pilou.object3d)
   pilou.object3d.position.z = 0.02
+  const attachAmber = () => {
+    const tip = pilou.anchors?.antennaTip
+    if (tip) { tip.add(amber); amber.position.set(0, 0.04, 0.06) } else { world.add(amber); amber.position.set(0.15, 1.4, 0.2) }
+  }
+  attachAmber()
   gifts = createGifts({ topY: island.topY, pilou: () => pilou, reducedMotion })
   world.add(gifts.group)
   const weather = createWeatherFx()
   weather.setReducedMotion(reducedMotion)
   scene.add(weather.group)
-  gifts.setEvening(light.phase === 'soir' || light.phase === 'nuit' ? 1 : 0)
+  gifts.setEvening(light.lantern ?? (light.phase === 'soir' || light.phase === 'nuit') ? 1 : 0)
 
   // poussières lentes dans la lumière (palier haut seulement)
   let dust = null
@@ -163,9 +177,11 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
     swapPilou(factory) {
       const next = factory(THREE, { quality: tier, reducedMotion: rm, seed: 3, envMap: scene.environment, traits: null, now: () => new Date() })
       world.remove(pilou.object3d)
+      amber.removeFromParent()
       pilou.dispose?.()
       pilou = next
       world.add(pilou.object3d)
+      attachAmber()
       pilou.object3d.position.z = 0.02
       if (gifts.has('echarpe')) pilou.setAccessory?.('echarpe', true)
     },
