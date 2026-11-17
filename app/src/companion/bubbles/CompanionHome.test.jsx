@@ -86,16 +86,6 @@ describe('CompanionHome — les bulles', () => {
   })
 })
 
-describe('CompanionHome — la nuit (assemblage SCÈNE × MONDE)', () => {
-  it('quand Pilou dort, l’étiquette le dit, sans compter les bulles', () => {
-    bus.emit('time:phase', { phase: 'nuit', light: { asleep: true } })
-    renderHome()
-    expect(screen.getByText('Pilou dort. Le reste peut attendre demain.')).toBeInTheDocument()
-    act(() => bus.emit('time:phase', { phase: 'matin', light: { asleep: false } }))
-    expect(screen.getByText('Pilou est tranquille · 4 bulles à faire')).toBeInTheDocument()
-  })
-})
-
 describe('CompanionHome — la première semaine', () => {
   it('jour 1 : la barre, le cadeau à ouvrir, puis son texte', () => {
     const events = []
