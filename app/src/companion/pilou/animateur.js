@@ -216,6 +216,41 @@ export function createAnimateur({ seed = 7, reduit = false, nom = 'Pilou' } = {}
       } else P.armLag = 0
       return P
     },
+    /**
+     * Les petits effets dessinés des expressions (SPEC § 8) : { etincelles, anneaux, z, coeurs, traits } → poids
+     * 0…1 et âge u (ms). Supprimés en mouvements réduits (rien ne monte ni ne tourne), sauf un cœur fixe pendant
+     * un câlin.
+     */
+    effets(τ) {
+      settle(τ)
+      const out = {}
+      const top = layers[layers.length - 1]
+      const w = E.douce(seg(τ, top.t, top.t + Math.max(1, top.d)))
+      const u = τ - top.t
+      const e = top.kind === 'humeur' ? null : top.e
+      if (e === 'rayonnant') out.etincelles = { w, u }
+      else if (top.kind === 'humeur') {
+        const m = moodAt(τ)
+        if (m > 0.6) out.etincelles = { w: sstep(0.6, 1, m) * 0.7, u: τ }
+      }
+      if (e === 'concentre') out.anneaux = { w, u }
+      if (e === 'endormi') out.z = { w, u }
+      if (e === 'reconfortant') out.coeurs = { w: sstep(1200, 1500, u) * (1 - sstep(3400, 3800, u)), u: u - 1200 }
+      if (e === 'surpris') out.traits = { w: 1 - sstep(400, 600, u), u }
+      for (const r of reactions) {
+        const ur = τ - r.t
+        if (r.kind === 'appui' && ur > 350) {
+          const fin = r.open ? 1 : 1 - sstep(r.dur, r.dur + 520, ur)
+          if (fin > 0) out.coeurs = { w: Math.max(out.coeurs?.w ?? 0, sstep(350, 600, ur) * fin), u: ur - 350 }
+        }
+      }
+      if (reduced) {
+        const c = out.coeurs
+        return c && c.w > 0 ? { coeurs: { w: c.w, u: 0, fixe: true } } : {}
+      }
+      for (const k of Object.keys(out)) if (!(out[k].w > 0.001)) delete out[k]
+      return out
+    },
     _layers: () => layers.length,
   }
 
