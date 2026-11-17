@@ -4,6 +4,11 @@ Sprint du 16/11 20:20 au 17/11 03:00. Dossier : `app/src/companion/world/`. Bran
 
 ## En tête (17/11, 00:45) : ce qui est sur main, ce qui reste
 
+**Lot fini (17/11, 02:45).** Dernière vérification : Tests de main verts (01:28). Aucun build iOS de main n'a pu aller
+au bout depuis #1057 : chaque merge annulait le précédent. Le premier qui contient #1057 et devrait finir est le run
+43997067408 (« iOS — build simulateur », lancé à 02:38, fin vers 03:40) : **à regarder par l'intégrateur**, avec ses
+captures (Ma journée, Nouveautés). Le build iOS de la PR #1057 sur 38090a6 était vert, Swift compris.
+
 **Sur main** :
 - **#1048** (16/11 21:38, tous les checks verts, build iOS compris) : fonctions pures du monde (`lightAt`,
   `weatherDecor`, `growthAt`, `worldState`, état du widget) à la forme du contrat de SCÈNE ; météo du moment lue avec
