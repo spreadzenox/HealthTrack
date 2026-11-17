@@ -13,7 +13,9 @@ export function faceKey(F) {
   return k
 }
 
-export function drawVisage(ctx, S, F) {
+// T (facultatif) : le peintre des traits du double numérique (lot STUDIO, studio/peintre.js) : barbe peinte sous
+// les joues, taches et grain de beauté, sourcils de la personne, moustache et piercing par-dessus.
+export function drawVisage(ctx, S, F, T = null) {
   const k = S / (2 * FS)
   const X = (x) => (x / (2 * FS) + 0.5) * S
   const Y = (y) => (0.5 - (y - FY) / (2 * FS)) * S
@@ -22,10 +24,14 @@ export function drawVisage(ctx, S, F) {
   ctx.translate(F.fx * k, -F.fy * k)
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
+  if (T) T.peindre(ctx, X, Y, k, F, 'sous')
   for (const s of [-1, 1]) cheek(ctx, X, Y, k, s, F)
-  if (F.brow > 0.01) for (const s of [-1, 1]) brow(ctx, X, Y, k, s, F)
+  if (T) T.peindre(ctx, X, Y, k, F, 'peau')
+  if (T && T.aSourcils()) T.peindre(ctx, X, Y, k, F, 'sourcils')
+  else if (F.brow > 0.01) for (const s of [-1, 1]) brow(ctx, X, Y, k, s, F)
   if (F.ferme > 0.01) for (const s of [-1, 1]) cils(ctx, X, Y, k, s, F)
   mouth(ctx, X, Y, k, F)
+  if (T) T.peindre(ctx, X, Y, k, F, 'dessus')
 }
 
 // joues : deux voiles d'aérographe un peu décalés (le geste de la main n'est jamais parfait)

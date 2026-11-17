@@ -5,6 +5,7 @@
 import { createPilou as construire, IRIS_DEFAUT } from './createPilou.js'
 import { HAUTEUR_TOTALE, H, BY } from './forme.js'
 import { HAPTIQUE } from './gestes.js'
+import { equiperPilou } from '../studio/pourPilou.js'
 import { createPlaceholderPilou } from '../scene/placeholderPilou.js'
 
 export { EXPRESSIONS as TEXTES_PILOU, texteHumeur, DOUZE } from './animateur.js'
@@ -104,6 +105,8 @@ function createPilouFigurine(THREE, options = {}) {
     setTraits(f) { fiche = f || null; p.setIris(irisDeFiche(fiche)) },
     get traits() { return fiche },
     setAccessory(name, on) { p.setAccessoire(name, on) },
+    /** Peintre des traits du visage (lot STUDIO) ; `cle` change quand la fiche change. */
+    setPeintre(T, cle) { p.setPeintre?.(T, cle) },
     anchors: p.anchors,
     kit: p.kit,
     /** Vrai si le point (coordonnées normalisées −1…1) touche Pilou : la silhouette, ou sa boîte élargie. */
@@ -130,7 +133,8 @@ function createPilouFigurine(THREE, options = {}) {
     stats() { const s = p.stats(); return { triangles: s.triangles, drawCalls: s.dessins } },
     dispose() { p.dispose(); object3d.removeFromParent() },
   }
-  return api
+  // traits du double numérique (lot STUDIO) : pièces 3D sur kit.body et peinture du visage
+  return equiperPilou(THREE, api)
 }
 
 const METHODES = ['update', 'etat', 'setNom', 'setExpression', 'play', 'setMood', 'nouvelleJournee', 'lookAt', 'react', 'jump',
