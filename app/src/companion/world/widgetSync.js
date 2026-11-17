@@ -9,6 +9,7 @@ import { dayChecklist } from '../../services/dayChecklist'
 import { localDateKey } from '../../services/analysisEngine'
 import { worldDayKey } from './daylight.js'
 import { loadWorldContext, worldContextForDay, resetWorldContextCache } from './context.js'
+import { companionNameNow } from '../bubbles/name.js'
 
 const NativePilouWidget = registerPlugin('PilouWidget')
 
@@ -48,12 +49,15 @@ export function widgetDayState(entries, { now = new Date(), askGut = false, habi
   }
 }
 
-/** Envoie l'état du jour au widget ; ne lève jamais (un widget pas à jour ne doit rien casser). */
-export async function syncPilouWidget({ entries, askGut = false, habits = [], now = new Date(), plugin = pilouWidgetPlugin(), loadContext = loadWorldContext } = {}) {
+/**
+ * Envoie l'état du jour au widget, avec le nom choisi pour le compagnon (« Pilou » sinon) ; ne lève jamais (un
+ * widget pas à jour ne doit rien casser).
+ */
+export async function syncPilouWidget({ entries, askGut = false, habits = [], now = new Date(), plugin = pilouWidgetPlugin(), loadContext = loadWorldContext, name = companionNameNow() } = {}) {
   if (!plugin?.update) return false
   try {
     const context = await worldContextForDay({ now, load: loadContext })
-    await plugin.update({ state: widgetDayState(entries, { now, askGut, habits, context }) })
+    await plugin.update({ state: widgetDayState(entries, { now, askGut, habits, context, name }) })
     return true
   } catch {
     return false

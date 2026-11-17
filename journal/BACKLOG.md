@@ -434,13 +434,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [x] **MONDE-1** (fait le 17/11 09:30 : `worldContextForDay()` dans `world/context.js` pour le widget ; 10:30 : la scène lit seulement le sommeil via `sleepHabitsForDay()`, même calcul, car le contexte complet faisait lire 4 724 enregistrements à l'Accueil au lieu de ≤ 1 500 (« Budget de lectures » rouge) ; tests coucher 0 h 15, lever 9 h, travail de nuit) (17/11 08:30) : lever et coucher réels dans la scène : `CompanionScene.jsx` passe `{ wake, bedtime }` de `loadWorldContext()` à `lightAt` (aujourd'hui `lightAt(now)` seul : l'île endort Pilou à 22 h 30 fixe alors que le widget suit le sommeil réel), avec un cache du jour commun au widget et à la scène ; tests « coucher à 0 h 15 » et « travail de nuit ». Détail : [`DECOUPAGE-RESTES-SPRINT.md`](maquettes/compagnon/DECOUPAGE-RESTES-SPRINT.md) § 2.
   - [ ] **MONDE-2** : la saison sur l'îlot (automne le 17/11 : herbe dorée), `island.setSeason`. **MONDE-3** : croissance (échelle, caméra qui garde Pilou à la même taille, arbre) ; trancher d'abord l'unité des « touffes » (14 → 42 fleuries ≠ 600 brins). **MONDE-4** : îlot voisin (30 j), mare (90 j), la nouvelle dite une fois à l'ouverture. Ensemble, ils soldent « `growthAt` et `loadWorldContext()` branchés dans la scène » de REFONTE-RESTES-SPRINT.
   - [x] **CI-EMU-TIMEOUT** (PR #1084 le 17/11 09:30, mergée à 10:35, `timeout-minutes: 30` sur API 34, 35, 36) (17/11 08:30) : le job « HealthTrack sur Samsung A56 (API 35) » n'a pas de `timeout-minutes` ; sur #1080 (56541bb) il est resté bloqué plus de 50 min à « Lancer l'émulateur » (≈ 10 min d'habitude), ce qui retient le merge jusqu'au délai de GitHub (6 h). Ajouter `timeout-minutes: 30` à ce job (comme API 32), dans une PR à part.
-  - [ ] **REFONTE-RESTES-SPRINT** (après POLISH-MEET-DARK, un sujet par run) : nom choisi dans l'étiquette de l'île
-    (`Dashboard.jsx` → `name` de `<CompanionHome>`, une ligne, décrit dans `sprint/LOT-VIE.md` 00:50) et dans le widget
-    (`world/widgetSync.js` → `pilouName()`) ; `growthAt` et `loadWorldContext()` branchés dans la scène ; poses du
+  - [ ] **REFONTE-RESTES-SPRINT** (après POLISH-MEET-DARK, un sujet par run) : ~~nom choisi dans l'étiquette de l'île~~
+    (déjà fait : `CompanionHome` lit `useCompanionNameSafe()` sans prop, vérifié le 17/11 04:30) ; ~~nom choisi dans le widget~~
+    (17/11 04:30, PR « widget-nom » : `syncPilouWidget` envoie `companionNameNow()`, test rouge puis vert) ; `growthAt` et `loadWorldContext()` branchés dans la scène ; poses du
     widget re-rendues avec le module PILOU ; rituel du soir et lanternes du défi des 5 soirs (SPEC journée § 7) ;
     première série `captures/main` d'après le sprint à regarder ; palier de qualité sur un vrai téléphone ; #1072 si
     elle est encore ouverte après 03:00 (son équipier est arrêté : la routine la finit).
-  - [ ] **POLISH-FLAKY-DASH** (après le sprint) : `Dashboard.test.jsx`, « Ma journée : une habitude suivie se note par oui ou non » a échoué une fois sur la CI de main (99c1de6, 17/11 00:00) puis est passé ; le lot VIE l'avait déjà dit « corrigé à la source » : chercher l'attente manquante (findBy plutôt que getBy après la réponse).
+  - [x] **CI-GATE-TIMEOUT** (17/11 11:30) : « Tests » de main rouge sur 9c9e09e, 4 simulations d'`evaluateGate` (`gate.test.js`) au-delà du délai de 5 s sur un runner chargé (1 à 2 s en local) → délai de 30 s (`SIMULATION_TIMEOUT`) pour les cinq simulations, assertions inchangées.
+  - [x] **POLISH-FLAKY-DASH** (après le sprint ; **fait le 17/11 07:30** dans #1080 : « Déjà noté (1) » attendu par `findByRole`, la liste s'affiche avant la réponse de `listEntries`) : `Dashboard.test.jsx`, « Ma journée : une habitude suivie se note par oui ou non » a échoué une fois sur la CI de main (99c1de6, 17/11 00:00) puis est passé ; le lot VIE l'avait déjà dit « corrigé à la source » : chercher l'attente manquante (findBy plutôt que getBy après la réponse).
 - [ ] **REFONTE-8 — Compagnon 1a, la scène** : three.js (paquet npm, r187) dans le build Android et iPhone, canevas
   de l'Accueil, île (§ 7.6), lumière (§ 7.5), paliers de qualité et mesure du temps d'image (§ 7.9), pause hors
   écran, repli image fixe ; Pilou encore simple.
@@ -455,7 +456,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] **REFONTE-13 — Compagnon 5** : le cycle du jour sur la lumière dorée, la météo sur l'île, la croissance au fil
   des semaines, le widget et les notifications (images pré-rendues).
 - [ ] **REFONTE-14 — Double numérique a, Studio Pilou à la main** : rebrancher `traits.js` sur le rendu figurine
-  (première chose à vérifier), fiche locale, export, « Surprenez-moi », retour au Pilou d'origine.
+  (première chose à vérifier), fiche locale, export, « Surprenez-moi », retour au Pilou d'origine. Traits sur le vrai
+  Pilou mergés le 17/11 (#1072) ; reste l'aperçu 3D dans le Studio (question ouverte).
 - [ ] **REFONTE-15 — Double numérique b, la photo** : route du relais `POST /v1/pilou/style` (schéma imposé, aucun
   stockage, 3 par mois), information et consentement séparés, capture en mémoire, effacement, « À vérifier » ; brief
   § 9 à la lettre. **N'entre dans aucune version envoyée aux testeurs tant que le propriétaire n'a pas envoyé les
