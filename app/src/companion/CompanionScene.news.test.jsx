@@ -52,3 +52,22 @@ describe("la nouvelle de l'îlot à l'ouverture (MONDE-4b)", () => {
     expect(JSON.parse(localStorage.getItem(WORLD_SEEN_KEY)).tree).toBe(false)
   })
 })
+
+describe("l'image fixe suit l'îlot (palier bas, MONDE-4b)", () => {
+  it('à 60 jours en automne : îlot voisin, herbe dorée ; la nuit : Pilou qui dort', async () => {
+    const now = new Date(2026, 10, 17, 12, 0)
+    localStorage.setItem(USAGE_DAYS_KEY, JSON.stringify({ day: worldDayKey(now), days: 60 }))
+    const day = render(<CompanionScene now={() => now} />)
+    await vi.waitFor(() => expect(day.container.querySelector('img.companion-scene__still').getAttribute('src')).toMatch(/j30-automne/))
+    cleanup()
+    const night = new Date(2026, 10, 17, 2, 0)
+    const n = render(<CompanionScene now={() => night} />)
+    await vi.waitFor(() => expect(n.container.querySelector('img.companion-scene__still').getAttribute('src')).toMatch(/nuit/))
+  })
+
+  it('avant de connaître les jours d’usage : l’îlot nu de la saison', async () => {
+    const now = new Date(2027, 0, 10, 12, 0)
+    const { container } = render(<CompanionScene now={() => now} />)
+    await vi.waitFor(() => expect(container.querySelector('img.companion-scene__still').getAttribute('src')).toMatch(/j0-hiver/))
+  })
+})
