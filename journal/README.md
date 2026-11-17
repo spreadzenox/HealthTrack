@@ -18,7 +18,8 @@
 - **11-12 Vie** : livrée. Reste : rituel du soir et lanternes. Votre nom choisi apparaît déjà sur l'étiquette de l'île.
   **La carte de la rencontre illisible en sombre est corrigée : #1079 mergée le 17/11 vers 04:40**, captures iPhone relues.
 - **13 Monde** : livrée, widget Android seulement. Le widget prend votre nom choisi (PR #1080). Reste : nouvelles
-  poses dans le widget.
+  poses dans le widget, et le monde branché dans l'île (découpé le 17/11 en 4 runs : lever et coucher à vos heures,
+  saison, croissance, îlot voisin et mare).
 - **14 Studio** : réglages à la main livrés ; **les traits sur le vrai Pilou (#1072) mergés le 17/11 vers 06:35** (pièces 3D et
   visage peint ; l'aperçu du Studio reste en 2D).
 - **15 Photo** : écrite, **éteinte partout** jusqu'à vos déclarations (missions P49 et PI3).
@@ -113,6 +114,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 17/11 08:30 — [Idées : le monde de Pilou à brancher](runs/2026-11-17-0830-idees-monde.md) | 💡 | Restes du sprint découpés en 4 runs de code (MONDE-1 à 4 : lever et coucher à vos heures, saison sur l'îlot, croissance, îlot voisin et mare). Défaut repéré : la nuit, l'île et le widget Android ne s'endorment pas à la même heure (l'île à 22 h 30 fixe). #1080 (widget avec votre nom) non mergée : un émulateur Android est bloqué depuis plus de 50 min. Rien à faire de votre côté |
 | 17/11 07:30 — [#1081 mergée, builds TestFlight nettoyées](runs/2026-11-17-0730-merge-1081-expire.md) | 🛠️ | **#1081 mergée** (Pilou dort vraiment la nuit ; 14 checks verts, captures iPhone de l'Accueil relues en clair et en sombre). #1080 (widget avec votre nom) remise à jour sur main, build iPhone relancée ; un test instable de Ma journée corrigé. **La build iPhone 1148.1148 est validée par Apple et chez « Testeurs Halcya »** ; 19 anciennes builds expirées (844.344 gardée) ; release v783 (APK 35,4 Mo). Rien à faire de votre côté |
 | 17/11 06:30 — [#1072 mergée, examen bêta iPhone](runs/2026-11-17-0630-merge-1072-beta.md) | 🛠️ | **#1072 mergée** (les traits du Studio sur le vrai Pilou ; 14 checks verts, captures iPhone de l'Accueil relues en clair et en sombre ; release v782, APK 35,4 Mo). #1080 (widget) et #1081 (Pilou dort) remises à jour sur main, CI relancée (build iPhone ≈ 1 h). **Alpha du soir parti le 17/11 à 05:48** (versionCode 101147, la rencontre en sombre), en examen chez Google. **Build iPhone 1148.1148 soumise à l'examen bêta** des « Testeurs Halcya ». Rien à faire de votre côté |
 | 17/11 05:30 — [Pilou dort vraiment la nuit](runs/2026-11-17-0530-pilou-dort.md) | 🛠️ | **POLISH-PILOU-DORT-YEUX** : la nuit, ouvrir l'app ne réveille plus Pilou (le « matin » commençait à minuit) et il se réveille au lever du jour même app ouverte. **#1045 (UPG-4) mergée** ; #1072, #1080 et #1081 remises à jour sur main, builds iPhone relancées (merge une par une). |
