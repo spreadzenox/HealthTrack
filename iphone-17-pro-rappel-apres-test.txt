@@ -1,0 +1,82 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=5AB3DACF-C352-49D1-BF9A-3C0104FA4ED3 "-only-testing:HalcyaUITests/NotificationsUITests/testToucherLeRappelDePortion"
+
+2026-11-17 11:28:30.447 xcodebuild[12110:294744] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-17 11:28:30.491 xcodebuild[12110:294744] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:5AB3DACF-C352-49D1-BF9A-3C0104FA4ED3, OS:26.2, name:iPhone 17 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:5AB3DACF-C352-49D1-BF9A-3C0104FA4ED3, OS:26.2, name:iPhone 17 Pro }
+2026-11-17 11:28:37.170 xcodebuild[12110:294744] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-17 11:28:45.443907+0000 HalcyaUITests-Runner[13245:297531] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-17 11:28:48.527.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-17 11:28:48.530.
+Test Suite 'NotificationsUITests' started at 2026-11-17 11:28:48.531.
+Test Case '-[HalcyaUITests.NotificationsUITests testToucherLeRappelDePortion]' started.
+    t =     0.01s Start Test at 2026-11-17 11:28:48.540
+    t =     0.15s Set Up
+    t =     0.15s Pressing Home button
+    t =     0.75s Waiting 90.0s for Any (First Match) to exist
+    t =     1.81s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     1.81s         Checking existence of `Any (First Match)`
+    t =     2.69s         Capturing element debug description
+    t =     3.77s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.78s         Checking existence of `Any (First Match)`
+    t =     4.01s         Capturing element debug description
+    t =     4.76s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     4.76s         Checking existence of `Any (First Match)`
+    t =     4.91s         Capturing element debug description
+    t =     5.83s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     5.83s         Checking existence of `Any (First Match)`
+    t =     5.95s         Capturing element debug description
+    t =     6.78s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     6.78s         Checking existence of `Any (First Match)`
+    t =     6.93s         Capturing element debug description
+    t =     7.78s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     7.78s         Checking existence of `Any (First Match)`
+    t =     7.93s         Capturing element debug description
+    t =     8.78s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     8.78s         Checking existence of `Any (First Match)`
+    t =     8.86s         Capturing element debug description
+    t =     9.81s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     9.81s         Checking existence of `Any (First Match)`
+    t =     9.95s         Capturing element debug description
+    t =    10.78s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    10.79s         Checking existence of `Any (First Match)`
+    t =    10.93s         Capturing element debug description
+    t =    11.81s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    11.82s         Checking existence of `Any (First Match)`
+    t =    12.00s         Capturing element debug description
+    t =    12.81s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    12.81s         Checking existence of `Any (First Match)`
+    t =    12.98s         Capturing element debug description
+    t =    13.81s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    13.81s         Checking existence of `Any (First Match)`
+    t =    13.99s         Capturing element debug description
+    t =    14.83s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    14.83s         Checking existence of `Any (First Match)`
+    t =    14.97s Tap Any (First Match)
+    t =    14.97s     Wait for com.apple.springboard to idle
+    t =    16.01s     Find the Any (First Match)
+    t =    16.10s     Check for interrupting elements affecting "NotificationShortLookView" BannerNotification
+    t =    16.29s     Synthesize event
+    t =    16.61s     Wait for com.apple.springboard to idle
+    t =    18.16s Wait for fr.jpesquet.sante to become Running Foreground
+    t =    18.16s Tear Down
+Test Case '-[HalcyaUITests.NotificationsUITests testToucherLeRappelDePortion]' passed (18.737 seconds).
+Test Suite 'NotificationsUITests' passed at 2026-11-17 11:29:07.279.
+	 Executed 1 test, with 0 failures (0 unexpected) in 18.737 (18.748) seconds
+Test Suite 'HalcyaUITests.xctest' passed at 2026-11-17 11:29:07.280.
+	 Executed 1 test, with 0 failures (0 unexpected) in 18.737 (18.750) seconds
+Test Suite 'Selected tests' passed at 2026-11-17 11:29:07.281.
+	 Executed 1 test, with 0 failures (0 unexpected) in 18.737 (18.755) seconds
+2026-11-17 11:29:08.129 xcodebuild[12110:294744] [MT] IDETestOperationsObserverDebug: 30.935 elapsed -- Testing started completed.
+2026-11-17 11:29:08.129 xcodebuild[12110:294744] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-17 11:29:08.129 xcodebuild[12110:294744] [MT] IDETestOperationsObserverDebug: 30.935 sec, +30.935 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-fckfihywfpnidxggxheuemdlbjfn/Logs/Test/Test-HalcyaUITests-2026.11.17_11-28-30-+0000.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
