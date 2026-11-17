@@ -149,6 +149,7 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
   }
 
   let rm = reducedMotion
+  let growthDays = null
   const v = new THREE.Vector3()
 
   function render(t) {
@@ -200,6 +201,16 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
     },
     get season() {
       return island.season
+    },
+    /** Croissance de l'îlot (sortie de `growthAt`) : îlot plus large et plus haut, arbuste plus grand ; caméra fixe. */
+    setGrowth(growth) {
+      if (!growth) return
+      island.setGrowth(growth)
+      gifts.setShrubScale(growth.shrubScale)
+      growthDays = Number(growth.days) || 0
+    },
+    get growthDays() {
+      return growthDays
     },
     setWeather(decor) {
       weather.set(decor)

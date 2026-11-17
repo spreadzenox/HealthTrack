@@ -21,6 +21,10 @@ if (Q.get('soir') === '1') stage.applyLight({ phase: 'soir', sun: { color: '#FF9
 if (Q.get('pluie') === '1') stage.setWeather({ effect: 'pluie', particles: { kind: 'pluie', count: 40 } })
 if (Q.get('neige') === '1') stage.setWeather({ effect: 'neige', particles: { kind: 'neige', count: 30 }, accessory: 'echarpe' })
 if (Q.get('saison')) stage.setSeason(Q.get('saison'))
+if (Q.get('jours')) {
+  const { growthAt } = await import('../world/growth.js')
+  stage.setGrowth(growthAt(+Q.get('jours')))
+}
 if (Q.get('box')) stage.gifts.openBox(0)
 if (Q.get('heure')) {
   const { lightAt } = await import('../world/index.js')

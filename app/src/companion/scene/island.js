@@ -284,6 +284,19 @@ export function createIsland({ quality = 'haut', tufts = 600, seed = 7, season =
       tuftTone.forEach((tone, i) => tuftMesh.setColorAt(i, tones[tone % tones.length]))
       if (tuftMesh.instanceColor) tuftMesh.instanceColor.needsUpdate = true
     },
+    /**
+     * Croissance de l'îlot (sortie de `growthAt`, SPEC île § 8) : largeur × `islandScaleXZ`, hauteur × `islandScaleY`.
+     * Le dessus reste à la même hauteur (y ≈ 0) : Pilou ne bouge pas, la caméra non plus. Les brins d'herbe gardent leur
+     * nombre et grandissent avec l'îlot. Jamais en dessous de l'îlot de départ (rien ne recule).
+     */
+    setGrowth(growth) {
+      const xz = Math.max(1, Number(growth?.islandScaleXZ) || 1)
+      const y = Math.max(1, Number(growth?.islandScaleY) || 1)
+      group.scale.set(xz, y, xz)
+    },
+    get growthScale() {
+      return { xz: group.scale.x, y: group.scale.y }
+    },
     /** Hauteur du dessus de l'île en (x, z). */
     topY(x, z) {
       const rr = Math.hypot(x, z)
