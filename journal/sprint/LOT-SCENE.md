@@ -1,6 +1,18 @@
 # Lot SCÈNE (étape 8 du brief : Compagnon 1a, et le socle commun)
 
-## EN TÊTE — 17/11 01:45
+## EN TÊTE — 17/11 02:12 : LOT FINI
+- **Sur main** : #1053 (étape 8 : contrat, bus, scène three.js, île, lumière dorée, paliers mesurés, pause, image
+  fixe), #1062 (cadeaux en 3D et cérémonie, météo de l'île, Mouvements de Pilou, étiquette lisible en sombre), #1070
+  (assemblage : la nuit lisible, Pilou dort, images fixes avec le Pilou de PILOU), **mergée à 02:09 sous la règle de
+  la dernière vague** (build iOS du commit précédent 6bf72be : vert ; le dernier commit ne résolvait qu'un conflit de
+  `pageStyles.js` et le journal ; checks rapides, APK et émulateurs Android du nouveau commit : verts). #1065 fermée
+  (contenue dans #1070).
+- **Plus rien en PR** (sauf cette mise à jour du journal).
+- **Reste à faire** (runs suivants) : voir « Laissé écrit, pas branché » et les défauts du lot VIE relevés sur les
+  captures iPhone ci-dessous ; mesure du palier sur un vrai téléphone ; regarder la première série de `captures/main`
+  produite après la nuit (aucune n'a abouti pendant le sprint : builds iOS de main annulés de merge en merge).
+
+## État du 17/11 01:45
 - **Sur main** : #1053 (étape 8 : contrat, scène, île, lumière, paliers, image fixe), #1062 (cadeaux en 3D, météo de
   l'île, Mouvements de Pilou, étiquette lisible en sombre).
 - **Assemblage #1070** (`claude/sprint-scene-4`) : contient #1065 (la nuit : point ambre, clair de lune, Pilou dort,
