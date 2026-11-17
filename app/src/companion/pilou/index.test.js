@@ -23,7 +23,9 @@ describe('Pilou — module 3D (contrat § 3)', () => {
     const b = new THREE.Box3().setFromObject(p.kit.body)
     expect(b.min.y * ECHELLE).toBeGreaterThan(0.03)
     expect(p.object3d.children[0].scale.x).toBeCloseTo(1.24 / 1.44)
-    const all = new THREE.Box3().setFromObject(p.object3d)
+    const all = new THREE.Box3()
+    p.object3d.updateMatrixWorld(true)
+    p.object3d.traverseVisible((o) => { if (o.isMesh) all.expandByObject(o) })
     expect(all.min.y).toBeGreaterThanOrEqual(-0.05) // pieds plats, un peu enfoncés dans l'herbe
     expect(all.max.y / 1.24).toBeGreaterThan(1.15)
     expect(all.max.y / 1.24).toBeLessThan(1.35)
