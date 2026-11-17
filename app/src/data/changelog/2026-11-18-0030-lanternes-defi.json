@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-18",
+  "kind": "amélioration",
+  "title": "Les lanternes du défi",
+  "items": [
+    "Sur la page d’un défi, une lanterne par jour avec : elle s’allume quand le jour est tenu. Un jour pas tenu laisse sa lanterne éteinte, le défi continue."
+  ]
+}

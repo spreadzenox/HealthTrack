@@ -112,6 +112,18 @@ describe('Un essai (ORG-8)', () => {
     expect(screen.queryByText(/n’annule rien/)).toBeNull()
   })
 
+  it('LANT-1 : les lanternes des jours avec, allumées quand le jour est tenu', async () => {
+    renderTrial(new Date(2026, 10, 5, 10), { schedule: payload.schedule.slice(0, 10), answers: { '2026-11-01': true, '2026-11-03': false } })
+    const row = await screen.findByRole('list', { name: 'Lanternes des jours avec' })
+    const items = row.querySelectorAll('li')
+    expect(items).toHaveLength(5)
+    expect([...items].map((li) => li.className)).toEqual([
+      'trial-lantern is-lit', 'trial-lantern is-out', 'trial-lantern is-pending', 'trial-lantern is-pending', 'trial-lantern is-pending',
+    ])
+    expect(items[0]).toHaveAccessibleName('1 novembre : tenu')
+    expect(items[1]).toHaveAccessibleName('3 novembre : pas tenu')
+  })
+
   it('REFONTE-6c-2 : un jour avec manqué est dit sans reproche', async () => {
     renderTrial(new Date(2026, 10, 5, 10), { schedule: payload.schedule.slice(0, 10), answers: { '2026-11-03': false } })
     expect(await screen.findByText(line('1 jour avec tenu sur 5'))).toBeInTheDocument()

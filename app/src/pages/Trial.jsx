@@ -9,11 +9,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { readTrialsData, saveTrial } from '../services/trialsData'
-import { bilanWords, instruction, trialStatus, RESULT_MIN_EACH } from '../services/trials'
+import { bilanWords, instruction, lanterns, trialStatus, RESULT_MIN_EACH } from '../services/trials'
 import { THEME_TONE } from '../services/resultsView'
 import { toDisplay } from '../services/mood/wellbeingScale'
 import { appLocale } from '../i18n/locale.js'
 import TrialDots from '../components/TrialDots'
+import TrialLanterns from '../components/TrialLanterns'
 import { getAnalysis } from '../services/analysisRunner'
 import { crossingChanges } from '../services/method/changes'
 
@@ -156,6 +157,7 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
           <p className="trial-instruction">
             {s.todayDay?.with ? 'Aujourd’hui, jour avec.' : 'Aujourd’hui, jour sans : comme d’habitude.'}
           </p>
+          <TrialLanterns items={lanterns(s)} />
           <p className="act-card-detail trial-kept">
             <span className="mono">{s.kept}</span> {s.kept > 1 ? 'jours avec tenus' : 'jour avec tenu'} sur <span className="mono">{s.goal}</span>
           </p>
