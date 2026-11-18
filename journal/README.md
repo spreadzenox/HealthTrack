@@ -8,6 +8,8 @@
 > 1 à 6 et 7a faites des deux côtés ; une seule routine et un seul dépôt pour Android et l'iPhone, puis une seule PR
 > pour les deux apps ; mode polish ; chantier cycle commencé).
 
+**⛔ 18/11 09:30 : GitHub Actions est bloqué depuis le 17/11 vers 18:40 (« your account is locked due to a billing issue »).** Plus aucun test, merge, envoi Alpha ni TestFlight tant que la facturation du compte GitHub n'est pas réglée : c'est votre geste, mission [P50](missions/P50.md) (sur la branche de #1091). Sept PR prêtes attendent (#1090 à #1096) et une huitième, #1097 ou suivante (NUIT-ETIQUETTE).
+
 **🧸 Bilan du sprint (fini le 17/11 à 03:00), étape par étape. Rien n'a encore été mesuré sur un vrai téléphone.**
 - **8 Scène** : livrée (île 3D, lumière, météo, 7 cadeaux, la nuit). Reste : croissance de l'île et vrai lever/coucher
   du soleil (écrits, pas branchés), palier de qualité sur un vrai téléphone.
@@ -114,6 +116,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 18/11 09:30 — [NUIT-ETIQUETTE](runs/2026-11-18-0930-nuit-etiquette.md) | 🛠️ | **GitHub Actions toujours bloqué** (mission [P50](missions/P50.md), votre geste ; sonde refusée vers 08:31 UTC) : rien de mergé, pas de soumission TestFlight. Correctif prêt en PR : le soir, avant votre heure de coucher, l'image fixe de l'îlot montrait Pilou endormi alors que le texte disait « Pilou est tranquille » ; elle suit maintenant votre heure de coucher. 4 065 tests verts, captures relues à 22:00, 23:30 et 02:00. Rien d'autre à faire de votre côté |
 | 17/11 23:30 — [L'image fixe suit l'îlot](runs/2026-11-17-2330-image-fixe-ilot.md) | 🛠️ | **GitHub Actions toujours bloqué** (sonde à 23:31 refusée : « account is locked due to a billing issue », P50) : aucun merge, **pas d'envoi Alpha ce soir** ni de build TestFlight. Fait en local (PR empilée sur #1092) : sur les téléphones lents, l'image fixe de l'îlot suit la saison et la croissance (îlot voisin, mare), Pilou y dort la nuit ; 4 064 tests verts, build, capture de l'Accueil relue. MONDE-4b complète. |
 | 17/11 22:30 — [La nouvelle de l'îlot](runs/2026-11-17-2230-nouvelle-ilot.md) | 🛠️ | **GitHub Actions toujours bloqué** (sonde à 22:31 refusée : « account is locked due to a billing issue ») : aucun merge, **pas d'envoi Alpha ce soir**. En local, dans la PR #1092 : **quand une mare, un îlot voisin, le petit arbre ou une nouvelle saison arrive, l'étiquette de l'île vous le dit une fois et Pilou fait un petit saut** (jamais la nuit). Reste à MONDE-4b : l'image fixe du palier bas. |
 | 17/11 21:30 — [Le petit arbre](runs/2026-11-17-2130-petit-arbre.md) | 🛠️ | **GitHub Actions toujours bloqué** (relance sondée à 21:31 : « account is locked due to a billing issue ») : aucun merge possible, **pas d'envoi Alpha ce soir** ni de build TestFlight. Travail avancé en local : **après 45 jours où vous notez quelque chose, l'arbuste du premier jour devient un petit arbre** (tronc, deux branches, couronne ronde ; feuillage des saisons). 4 050 tests verts, build, rendus relus à 30, 45 et 90 jours, en hiver, en fin d'hiver et un soir d'automne. PR empilée sur MONDE-4a (#1090), à merger après elle. **À faire de votre côté : régler la facturation GitHub (mission P50)** |

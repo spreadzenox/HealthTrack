@@ -1,0 +1,38 @@
+# Run 18/11 09:30 — NUIT-ETIQUETTE : l'image fixe ne montre plus Pilou endormi avant son coucher
+
+**Type** : code (correctif d'un défaut visible ; Actions bloqué, PR empilée)  ·  **Android** : main vert sur 0bc5c27 ;
+**GitHub Actions toujours bloqué** (facturation du compte, P50 ; sonde refusée vers 08:31 UTC)  ·  **TestFlight** :
+inchangé chez « Testeurs Halcya » (1148.1148), soumission bêta impossible  ·  **Parité** : 70 % (33/47), inchangée
+(code partagé ; aucun correctif `iphone/patches/` ne touche `companion/`)
+
+## Contexte
+- Empreinte des instructions conforme (4fa797bd…), les quatre fichiers lus en entier. 09:30 heure de Paris : run de code.
+- PR ouvertes de la routine : #1090 → #1092 → #1093, #1091, #1094 → #1095, #1096 ; #51 (cursor) : pas à nous.
+- **Sonde** : relance des jobs échoués de « Tests » de #1096 (run 44259881673) : refusés aussitôt, « The job was not
+  started because your account is locked due to a billing issue ». Aucun merge possible.
+
+## Cause de NUIT-ETIQUETTE (relevé au run de 08:30)
+L'étiquette et Pilou suivent l'heure de coucher (`light.asleep`, `dayPhase`), mais l'image fixe (palier bas, et attente
+du premier rendu) prenait l'image de nuit dès que le ciel était étoilé (`light.night`, étoiles ≥ 0,5, dès ≈ 20 h). Entre
+la tombée de la nuit et le coucher, l'image montrait Pilou endormi sous « Pilou est tranquille ». Ce code est réécrit par
+#1093 (images fixes par saison) : le correctif est empilé sur sa branche.
+
+## Fait (branche `claude/nuit-etiquette`, empilée sur #1093)
+- Test rouge d'abord (`CompanionScene.news.test.jsx`) : à 22 h, coucher par défaut à 22 h 30, l'image est `j30-automne` et
+  rien ne dit « dort ». Reçu avant correctif : `stills/nuit.webp`.
+- `CompanionScene.jsx` : `stillKey({ ...look, night: asleep })`. `CONTRAT.md` § 3 à jour.
+- Nouveautés : `2026-11-18-0930-nuit-etiquette.json`.
+
+## Vérifications
+- `npm run test` : 366 fichiers, **4 065 verts** ; `npm run build` ; eslint des fichiers touchés propre.
+- `npm run visual -- --routes=/ --now=…` (outil de #1096, copié le temps du contrôle, non commité) : 22:00 et 23:30 →
+  Pilou éveillé sur l'îlot d'automne, ciel étoilé, étiquette cohérente (« Un îlot voisin est apparu ») ; 02:00 → Pilou
+  endormi, « Pilou dort. Le reste peut attendre demain. ». Aucune erreur JS.
+- Reste visible : entre 20 h et le coucher, l'îlot de l'image fixe est éclairé de jour sous un ciel de nuit. Une image
+  « soir » (lanterne, îlot sombre, Pilou éveillé) ferait mieux : rangée au BACKLOG (STILL-SOIR).
+- Checks de la PR : impossibles tant que les Actions sont bloquées. **Pas mergée.**
+
+## Suite
+- Dès « P50 fait » : ordre de merge #1090, #1092, #1093, cette PR, #1091, #1094, #1095, #1096 (journaux en conflit :
+  garder toutes les lignes). Captures iPhone de l'Accueil à relire.
+- Tant que le blocage dure : runs courts.
