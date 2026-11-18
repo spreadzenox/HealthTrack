@@ -21,6 +21,14 @@
     attachée, rien ne change. Tests mis à jour ; les 7 suites de `iphone/scripts` vertes.
 - Pas de build iOS sur la PR (scripts `store-*` exclus du filtre de chemins) : aucun code de l'app touché.
 
+- **#1107 mergée** (bb7117d, squash) : 13 checks verts ; le job émulateur Android 16 bloqué 30 min (coupé) a été
+  relancé une fois et est passé.
+- **Relevé seul lancé sur main** (« App Store — préparer la soumission », run 44400224159, vert) : versions iOS :
+  **844 (PREPARE_FOR_SUBMISSION)** ; publication **MANUAL** ; build attachée **844.344** ; notes pour l'examen
+  **3 708 caractères, différentes de `notes-examen.md`** (l'ancien texte d'avant la refonte) ; compte de démonstration
+  non requis. Rien n'a été modifié ni soumis. L'outil voit donc bien la version : la préparation (`--preparer --build`)
+  attend la build de la refonte choisie.
+
 ## État
 - TestFlight : **1148.1148** chez « Testeurs Halcya ». Build iPhone du soir (cron 21:20) pas encore partie à 21:40 :
   le cron de GitHub part souvent en retard ; le run suivant vérifie la build et l'envoi TestFlight.
@@ -28,7 +36,6 @@
 - Aucune note de Nouveautés (rien de visible dans l'app).
 
 ## Suite proposée
-1. Après le merge : lancer « App Store — préparer la soumission » sur main **sans option** (relevé seul) et noter
-   l'état réel de la version 844 (R18-SOUMISSION-b).
+1. Relevé fait (ci-dessus).
 2. Build iPhone du soir et TestFlight ; soumission bêta et expiration après l'Alpha de 23:45.
 3. Le 21/11 ou le 22/11 : `--preparer --build <N>` avec la build de la refonte validée, puis « 👉 PI2 prête ».
