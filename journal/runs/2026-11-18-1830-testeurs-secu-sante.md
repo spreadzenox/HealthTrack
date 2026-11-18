@@ -26,6 +26,12 @@
   HEALTH, USER_GENERATED_CONTENT, DEVICE_ID.
 - Aucun écran touché par ce run (pas de capture à relire hors #1102).
 
+## Merge
+- **#1102 mergée** (e35c665, squash) : 15 checks verts (Vitest, APK, 4 émulateurs, relais, build iPhone avec un seul
+  iPhone, 0 erreur JS). Captures iPhone relues : Accueil démo clair et sombre (îlot élargi, herbe dorée, bulles,
+  étiquette « Pilou est tranquille »), Agir. #1090 à #1097 fermées.
+- Cette PR-ci (journal, déclaration Play, script App Store) : en brouillon, puis prête ; merge si ses checks passent.
+
 ## Suite proposée
 1. Lancer « Abonnements App Store — création » sur main, lire le relevé des prix (R18-GOLD-PRIX) et corriger par l'API.
 2. Vérifier le build iPhone du soir (21:20) et l'envoi TestFlight, puis la soumission bêta après l'Alpha.
