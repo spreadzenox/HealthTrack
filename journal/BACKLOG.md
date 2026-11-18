@@ -25,7 +25,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 
 ## 💸 CI économe (décision du propriétaire du 18/11 : « il faut pas overkill la CI », au plus 3 h de Mac par jour)
 
-- [ ] **CI-ECO** (#1101, 18/11 17:30) : (1) job macOS de `ios-build.yml` sauté sur une PR en brouillon (vérifié sur #1101) ; (2) build iOS de main et TestFlight une fois par soir (21:20 Paris), sautés sans changement (`iphone/scripts/main-changed.sh`) ; (3) un seul iPhone capturé sur une PR, sans grand texte. À cocher au merge, puis vérifier le premier soir (build fait ou sauté à bon escient).
+- [x] **CI-ECO** (#1101, mergée le 18/11 vers 18:18 ; build de PR 39 min au lieu d'environ 60) : (1) job macOS de `ios-build.yml` sauté sur une PR en brouillon (vérifié sur #1101) ; (2) build iOS de main et TestFlight une fois par soir (21:20 Paris), sautés sans changement (`iphone/scripts/main-changed.sh`) ; (3) un seul iPhone capturé sur une PR, sans grand texte. À cocher au merge, puis vérifier le premier soir (build fait ou sauté à bon escient).
 - [ ] **CI-ECO-PILE** : #1090 à #1097 regroupées dans `claude/pile-1090-1097` (4 080 tests verts) ; merger après #1101, fermer les huit PR d'origine.
 - [ ] **CI-ECO-HEURES** : chaque dimanche, heures de Mac de la semaine (durées des jobs macos-latest) dans le résumé.
 - Règles de travail : PR ouvertes en brouillon, passées « prêtes » une fois finies, puis seulement les pushes qui les débloquent ; au plus deux PR ouvertes qui lancent un build iOS.
