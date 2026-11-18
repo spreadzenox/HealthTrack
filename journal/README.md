@@ -8,7 +8,7 @@
 > 1 à 6 et 7a faites des deux côtés ; une seule routine et un seul dépôt pour Android et l'iPhone, puis une seule PR
 > pour les deux apps ; mode polish ; chantier cycle commencé).
 
-**⛔ 18/11 14:30 : GitHub Actions est toujours bloqué depuis le 17/11 vers 18:40 (« your account is locked due to a billing issue »).** Plus aucun test, merge, envoi Alpha ni TestFlight tant que la facturation du compte GitHub n'est pas réglée : c'est votre geste, mission [P50](missions/P50.md) (sur la branche de #1091). Sept PR prêtes attendent (#1090 à #1096) et une huitième, #1097 (NUIT-ETIQUETTE). Les huit vérifiées ensemble en local le 18/11 à 10:30 : aucun conflit de code, 4 080 tests verts.
+**⛔ 18/11 15:30 : GitHub Actions est toujours bloqué depuis le 17/11 vers 18:40 (« your account is locked due to a billing issue »).** Plus aucun test, merge, envoi Alpha ni TestFlight tant que la facturation du compte GitHub n'est pas réglée : c'est votre geste, mission [P50](missions/P50.md) (sur la branche de #1091). Sept PR prêtes attendent (#1090 à #1096) et une huitième, #1097 (NUIT-ETIQUETTE). Les huit vérifiées ensemble en local le 18/11 à 10:30 : aucun conflit de code, 4 080 tests verts.
 
 **🧸 Bilan du sprint (fini le 17/11 à 03:00), étape par étape. Rien n'a encore été mesuré sur un vrai téléphone.**
 - **8 Scène** : livrée (île 3D, lumière, météo, 7 cadeaux, la nuit). Reste : croissance de l'île et vrai lever/coucher
@@ -116,6 +116,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 18/11 15:30 — [Toujours bloqué](runs/2026-11-18-1530-toujours-bloque.md) | 🛠️ | **GitHub Actions toujours bloqué** (sonde refusée à 14:31 UTC : « account is locked due to a billing issue », environ 21 h de blocage) : rien de mergé, pas de soumission TestFlight. Les huit PR prêtes attendent la mission [P50](missions/P50.md), votre geste. Run court. |
 | 18/11 14:30 — [Toujours bloqué](runs/2026-11-18-1430-toujours-bloque.md) | 🛠️ | **GitHub Actions toujours bloqué** (sonde refusée à 13:31 UTC : « account is locked due to a billing issue », environ 20 h de blocage) : rien de mergé, pas de soumission TestFlight. Les huit PR prêtes attendent la mission [P50](missions/P50.md), votre geste. Run court. |
 | 18/11 13:30 — [Toujours bloqué](runs/2026-11-18-1330-toujours-bloque.md) | 🛠️ | **GitHub Actions toujours bloqué** (sonde refusée à 12:30 UTC : « account is locked due to a billing issue ») : rien de mergé, pas de soumission TestFlight. Les huit PR prêtes attendent la mission [P50](missions/P50.md), votre geste. Run court. |
 | 18/11 12:30 — [Toujours bloqué](runs/2026-11-18-1230-toujours-bloque.md) | 🛠️ | **GitHub Actions toujours bloqué** (sonde refusée à 11:33 UTC : « account is locked due to a billing issue ») : rien de mergé, pas de soumission TestFlight. Les huit PR prêtes attendent la mission [P50](missions/P50.md), votre geste. Run court. |
