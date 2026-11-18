@@ -7,13 +7,15 @@
  * Des liens vérifiés chez vous, jamais une cause générale.
  */
 import { useCallback, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { readTrialsData, saveTrial } from '../services/trialsData'
-import { bilanWords, instruction, trialStatus, RESULT_MIN_EACH } from '../services/trials'
+import { bilanWords, instruction, lanterns, pilouSays, trialStatus, RESULT_MIN_EACH } from '../services/trials'
 import { THEME_TONE } from '../services/resultsView'
 import { toDisplay } from '../services/mood/wellbeingScale'
 import { appLocale } from '../i18n/locale.js'
 import TrialDots from '../components/TrialDots'
+import TrialLanterns from '../components/TrialLanterns'
+import PilouFigure from '../companion/life/PilouFigure'
 import { getAnalysis } from '../services/analysisRunner'
 import { crossingChanges } from '../services/method/changes'
 
@@ -102,6 +104,8 @@ function diffSentence(result, scaleDelta) {
 
 export default function Trial({ read = readTrialsData, readTrialChanges = readChanges, now }) {
   const { id } = useParams()
+  // LANT-2 : « Commencer » (Agir) arrive ici avec started ; un retour sur la page ne refait pas le saut
+  const started = useLocation().state?.started === true
   const [state, setState] = useState(undefined)
   const [changes, setChanges] = useState(null)
   useEffect(() => {
@@ -146,16 +150,25 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
   const keep = () => saveTrial(entry.id, { ...t, kept: true, endedAt: t.endedAt ?? at.toISOString() })
   const stop = () => saveTrial(entry.id, { ...t, endedAt: at.toISOString() })
   const bilan = bilanWords(s)
+  const pilou = pilouSays(s, { started })
+  const pilouRow = (
+    <div className={`trial-pilou${pilou.text ? ' has-text' : ''}`}>
+      <PilouFigure size={80} expr={pilou.expr} move={pilou.move} />
+      {pilou.text && <p className="trial-pilou-says" role="status">{pilou.text}</p>}
+    </div>
+  )
   return (
     <section className="act-page trial-page" data-tone={THEME_TONE[t.factor.theme] ?? 'stone'}>
       <p className="act-back"><Link to="/agir">← Agir</Link></p>
       <h1 className="page-title">{instruction(t, true)}</h1>
       {!s.done && (
         <article className="today-card trial-today">
+          {pilouRow}
           <p className="trial-day">Jour <span className="mono">{s.dayIndex}</span> sur <span className="mono">{s.total}</span></p>
           <p className="trial-instruction">
             {s.todayDay?.with ? 'Aujourd’hui, jour avec.' : 'Aujourd’hui, jour sans : comme d’habitude.'}
           </p>
+          <TrialLanterns items={lanterns(s)} />
           <p className="act-card-detail trial-kept">
             <span className="mono">{s.kept}</span> {s.kept > 1 ? 'jours avec tenus' : 'jour avec tenu'} sur <span className="mono">{s.goal}</span>
           </p>
@@ -173,6 +186,7 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
         </article>
       )}
       <article className="today-card trial-result" aria-label="Résultat">
+        {s.done && pilouRow}
         <h2 className="act-section-title">
           {bilan ? bilan.title : 'Résultat en cours'}
         </h2>

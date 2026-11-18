@@ -19,9 +19,14 @@ import { createGestureRecognizer } from './scene/gestures'
 import { GOLDEN } from './scene/light'
 import { weatherNow } from './scene/weatherNow'
 import { getWeatherSettings } from '../services/weatherSync'
-import fallbackUrl from './scene/fallback.webp'
-import fallbackNightUrl from './scene/fallback-nuit.webp'
+import { stillKey } from './scene/stills.js'
 import './CompanionScene.css'
+
+// images fixes de l'îlot (palier bas et attente du premier rendu) : étape de croissance × saison, et la nuit
+const STILLS = Object.fromEntries(
+  Object.entries(import.meta.glob('./scene/stills/*.webp', { eager: true, import: 'default', query: '?url' }))
+    .map(([file, url]) => [file.replace('./scene/stills/', '').replace('.webp', ''), url]),
+)
 
 const pilouModules = import.meta.glob('./pilou/index.js')
 const worldModules = import.meta.glob(['./world/index.js', './world/context.js'])
@@ -39,6 +44,9 @@ function skyStyle(light) {
 
 /** Délai avant de recompter les jours d'usage : après l'ouverture de l'Accueil, jamais pendant. */
 export const USAGE_RECOUNT_DELAY_MS = 4000
+
+/** Durée de la nouvelle de l'îlot dans l'étiquette. */
+export const WORLD_NEWS_MS = 6000
 
 function hemisphereNow() {
   try {
@@ -92,6 +100,8 @@ export default function CompanionScene({
   )
   const [ready, setReady] = useState(false)
   const [light, setLight] = useState(GOLDEN)
+  // ce que l'image fixe montre de l'îlot : jours d'usage et saison
+  const [look, setLook] = useState({ days: null, season: null })
   const [busMood, setBusMood] = useState(() => bus.last(EVENTS.MOOD_CHANGED)?.value ?? 0)
   const mood = moodProp ?? busMood
   const nowRef = useRef(now)
@@ -164,7 +174,17 @@ export default function CompanionScene({
           const growth = usage.days != null && typeof world.growthAt === 'function'
             ? world.growthAt(usage.days, now, { hemisphere: hemisphereNow() })
             : null
+          setLook((prev) => (prev.days === usage.days && prev.season === season ? prev : { days: usage.days, season }))
           bus.emit(EVENTS.TIME_PHASE, { phase: l?.phase, light: l, season, growth, at: Date.now() })
+          // ce qui est nouveau sur l'îlot, dit une fois ; la nuit, Pilou dort : la nouvelle attend son réveil
+          if (growth && !l?.asleep && loadContext) {
+            context()
+              .then((ctx) => {
+                const text = alive ? ctx.takeWorldNews?.({ growth, season }) : null
+                if (text) bus.emit(EVENTS.WORLD_NEWS, { text, at: Date.now() })
+              })
+              .catch(() => {})
+          }
         }
         tick()
         timer = setInterval(() => {
@@ -217,6 +237,19 @@ export default function CompanionScene({
       if (timer) clearInterval(timer)
       if (usageTimer) clearTimeout(usageTimer)
     }
+  }, [])
+
+  // la nouvelle de l'îlot (MONDE-4b) : l'étiquette la dit quelques secondes à la place de l'humeur
+  const [news, setNews] = useState(null)
+  useEffect(() => {
+    let timer = null
+    const off = bus.on(EVENTS.WORLD_NEWS, (p) => {
+      if (!p?.text) return
+      setNews(p.text)
+      clearTimeout(timer)
+      timer = setTimeout(() => setNews(null), WORLD_NEWS_MS)
+    })
+    return () => { off?.(); clearTimeout(timer) }
   }, [])
 
   // la météo réelle (déjà gardée par Halcya) → `weather:changed`, à l'ouverture puis toutes les 30 min
@@ -394,6 +427,7 @@ export default function CompanionScene({
             poke()
           }, { replay: true }),
           bus.on(EVENTS.MILESTONE, () => { P().play?.('fier'); poke() }),
+          bus.on(EVENTS.WORLD_NEWS, () => { if (!asleepNow) P().jump?.({ height: 0.15 }); poke() }),
           bus.on(EVENTS.DAY_DONE, () => { P().setExpression?.('rayonnant'); poke() }),
           bus.on(EVENTS.APP_OPENED, (p) => {
             const r = appOpenedReaction(p, asleepNow)
@@ -481,9 +515,10 @@ export default function CompanionScene({
     live.setReducedMotion(reducedMotion)
   }, [reducedMotion])
 
-  // la nuit (heure de coucher, lot MONDE), Pilou dort : l'étiquette le dit (SPEC île § 5)
+  // la nuit (heure de coucher, lot MONDE), Pilou dort : l'étiquette le dit (SPEC île § 5) ; l'image fixe aussi,
+  // pas dès que le ciel est sombre : à 22 h, il veille encore si l'on se couche plus tard (NUIT-ETIQUETTE)
   const asleep = Boolean(light.asleep)
-  const text = label || [asleep ? `${name} dort` : `${name} est ${moodWord(mood)}`, weatherLabel].filter(Boolean).join(' · ')
+  const text = (!asleep && news) || label || [asleep ? `${name} dort` : `${name} est ${moodWord(mood)}`, weatherLabel].filter(Boolean).join(' · ')
   const showFallback = tier === 'bas' || !ready
 
   return (
@@ -496,7 +531,7 @@ export default function CompanionScene({
     >
       <div className="companion-scene__frame" style={{ maxWidth: MAX_WIDTH, height }}>
         {showFallback && (
-          <img className="companion-scene__still" src={light.night || light.phase === 'nuit' ? fallbackNightUrl : fallbackUrl} alt="" aria-hidden="true" draggable="false" />
+          <img className="companion-scene__still" src={STILLS[stillKey({ ...look, night: asleep })]} alt="" aria-hidden="true" draggable="false" />
         )}
         {tier !== 'bas' && (
           <canvas

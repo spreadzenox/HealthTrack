@@ -56,18 +56,51 @@ function paintShrub(obj, season) {
 
 function buildShrub() {
   const g = new THREE.Group()
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.035, 0.22, 6), glaze('#8A5D3E', { clearcoat: 0.4 }))
-  trunk.position.y = 0.11
-  g.add(trunk)
   const leaf = glaze(SHRUB_LEAVES['printemps-ete'][0])
   const leaf2 = glaze(SHRUB_LEAVES['printemps-ete'][1])
   g.userData.leaves = [leaf, leaf2]
-  for (const [x, y, z, r, m] of [[0, 0.3, 0, 0.13, leaf], [0.09, 0.25, 0.04, 0.09, leaf2], [-0.08, 0.26, 0.03, 0.095, leaf2], [0.02, 0.38, -0.02, 0.085, leaf]]) {
-    const b = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 1), m)
-    b.position.set(x, y, z)
-    g.add(b)
+  const bark = glaze('#8A5D3E', { clearcoat: 0.4 })
+  const crown = (parent, blobs) => {
+    for (const [x, y, z, r, m] of blobs) {
+      const b = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 1), m)
+      b.name = 'feuillage'
+      b.position.set(x, y, z)
+      parent.add(b)
+    }
   }
+
+  const bush = new THREE.Group()
+  bush.name = 'buisson'
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.035, 0.22, 6), bark)
+  trunk.position.y = 0.11
+  bush.add(trunk)
+  crown(bush, [[0, 0.3, 0, 0.13, leaf], [0.09, 0.25, 0.04, 0.09, leaf2], [-0.08, 0.26, 0.03, 0.095, leaf2], [0.02, 0.38, -0.02, 0.085, leaf]])
+
+  // le petit arbre (MONDE-4b, SPEC île § 8) : un vrai tronc qui se divise en deux branches, une couronne ronde plus haut
+  const tree = new THREE.Group()
+  tree.name = 'arbre'
+  const bole = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.045, 0.34, 7), bark)
+  bole.position.y = 0.17
+  tree.add(bole)
+  for (const [s, h] of [[-1, 0.13], [1, 0.11]]) {
+    const branch = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.02, h, 5), bark)
+    branch.position.set(s * 0.04, 0.3 + h * 0.35, 0)
+    branch.rotation.z = -s * 0.6
+    tree.add(branch)
+  }
+  crown(tree, [
+    [0, 0.46, 0, 0.15, leaf], [0.12, 0.41, 0.03, 0.105, leaf2], [-0.12, 0.42, 0.02, 0.11, leaf2],
+    [0.03, 0.4, 0.1, 0.1, leaf], [-0.02, 0.56, -0.02, 0.095, leaf],
+  ])
+  tree.visible = false
+  g.add(bush, tree)
   return g
+}
+
+function setTreeShape(obj, tree) {
+  if (!obj) return
+  obj.getObjectByName('buisson').visible = !tree
+  obj.getObjectByName('arbre').visible = tree
 }
 
 function buildLantern() {
@@ -229,6 +262,7 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
   let evening = 0
   let season = 'printemps-ete'
   let shrubScale = 1
+  let tree = false
 
   function add(item, t) {
     if (!GIFT_ITEMS.includes(item) || placed.has(item)) return
@@ -238,7 +272,10 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
       return
     }
     const obj = BUILDERS[item]()
-    if (item === 'arbuste') paintShrub(obj, season)
+    if (item === 'arbuste') {
+      paintShrub(obj, season)
+      setTreeShape(obj, tree)
+    }
     const place = GIFT_PLACES[item]
     if (place) {
       const x = place[0] * ISLAND.R * 0.92, z = place[1] * ISLAND.R * 0.92
@@ -294,6 +331,14 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
     },
     get shrubScale() {
       return shrubScale
+    },
+    /** Passé la moitié de la croissance (`growthAt().tree`), l'arbuste du J1 prend la forme d'un petit arbre. */
+    setTree(v) {
+      tree = Boolean(v)
+      setTreeShape(placed.get('arbuste')?.obj, tree)
+    },
+    get isTree() {
+      return tree
     },
     setEvening(v) {
       evening = Math.max(0, Math.min(1, v))

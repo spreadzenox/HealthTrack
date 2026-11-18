@@ -216,6 +216,29 @@ button.act-card-action {
   color: var(--tone-text, var(--text));
 }
 
+/* LANT-2 : Pilou (80 px) dans la carte du jour et au bilan ; seul, il se tient à droite du jour ; avec sa phrase,
+   il prend la ligne. */
+.trial-pilou {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.trial-pilou:not(.has-text) {
+  float: right;
+  margin: -6px -4px 0 8px;
+}
+.trial-pilou.has-text { margin: 0 0 10px; }
+.trial-pilou-says {
+  margin: 0;
+  font-weight: 800;
+  line-height: 1.3;
+}
+.trial-today::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
 .trial-day {
   margin: 0;
   font-size: 0.85rem;
@@ -375,4 +398,66 @@ button.act-card-action {
 
 .trial-kept {
   margin-top: 6px;
+}
+
+/* LANT-1 : les lanternes du défi, une par jour « avec ». Ambre de Pilou (graphique seulement, jamais du texte). */
+.trial-lanterns {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trial-lantern svg {
+  display: block;
+  width: 26px;
+  height: 34px;
+  overflow: visible;
+}
+
+.trial-lantern-hook {
+  stroke: var(--tone-label, var(--text-muted));
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  fill: none;
+}
+
+.trial-lantern-cap,
+.trial-lantern-base {
+  fill: var(--tone-label, var(--text-muted));
+}
+
+.trial-lantern-body {
+  fill: none;
+  stroke: var(--tone-label, var(--text-muted));
+  stroke-width: 1.5;
+  stroke-dasharray: 3 2.5;
+}
+
+.trial-lantern.is-out .trial-lantern-body {
+  fill: var(--tone-track, var(--color-border));
+  stroke-dasharray: none;
+}
+
+.trial-lantern.is-lit .trial-lantern-body {
+  fill: var(--accent-amber);
+  stroke: var(--tone-label, var(--text-muted));
+  stroke-dasharray: none;
+}
+
+.trial-lantern-halo {
+  fill: var(--accent-amber);
+  opacity: 0.3;
+  transform-origin: 12px 18px;
+  animation: trial-lantern-breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes trial-lantern-breathe {
+  0%, 100% { transform: scale(0.92); }
+  50% { transform: scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trial-lantern-halo { animation: none; }
 }

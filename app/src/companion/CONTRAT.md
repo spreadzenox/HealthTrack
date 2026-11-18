@@ -98,7 +98,9 @@ PILOU peut aussi écouter le bus lui-même pour ses détails propres, sans doubl
 
 **Images pré-rendues** (lots VIE et MONDE) : PILOU les pose dans `app/src/companion/pilou/sprites/`
 (`<expression>.webp`, ≈ 240 px de haut, fond transparent) et exporte `pilouSprite(expression)` → URL depuis
-`app/src/companion/pilou/sprites.js`. En attendant : `app/src/companion/scene/fallback.webp` (image fixe de la scène).
+`app/src/companion/pilou/sprites.js`. En attendant : `app/src/companion/scene/fallback.webp` (image fixe de la scène). Image fixe
+de l'Accueil (palier bas) : `scene/stills/` (croissance × saison, et la nuit quand Pilou dort : `light.asleep`, pas le ciel seul), choisie par `scene/stills.js`, rendue par
+`scripts/companion/render-scene-stills.mjs`.
 
 ## 4. Les événements du bus
 
@@ -129,6 +131,7 @@ sans donnée de santé brute au-delà de ce qui est écrit ici, sans contenu de 
 | `pilou:touched` | SCÈNE | `{ gesture, x, y }` | relayé à `react` ; VIE peut afficher un texte |
 | `time:phase` | SCÈNE | `{ phase, light, season, at }` | émis à l'ouverture puis toutes les 5 min ; `phase` ∈ `aube`, `matin`, `midi`, `soir`, `nuit` ; `light` = sortie de `lightAt` ; `season` = sortie de `seasonOf` (hémisphère de la position météo), l'îlot et l'arbuste en prennent les couleurs |
 | `weather:changed` | SCÈNE (lit la météo de l'app) | `{ weather, decor }` | `weather` = `{ tempC, precipMmH, windKmH, code }`, `decor` = sortie de `weatherDecor` ; l'étiquette dit la météo |
+| `world:news` | SCÈNE | `{ text, at }` | ce qui est nouveau sur l'îlot depuis la dernière visite (`takeWorldNews` : mare, îlot voisin, petit arbre, saison), dit une fois, jamais la nuit ; l'étiquette le dit 6 s et Pilou fait un petit saut |
 | `traits:changed` | STUDIO / PHOTO | `{ fiche }` | fiche au schéma de `PILOU-DOUBLE.md` (§ 5), ou `null` = Pilou d'origine |
 | `scene:ready` | SCÈNE | `{ quality, frameMs }` | premier rendu fait |
 | `scene:quality` | SCÈNE | `{ quality, frameMs, reason }` | changement de palier (`reason` ∈ `mesure`, `webgl`, `force`, `erreur`) |

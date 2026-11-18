@@ -12,8 +12,8 @@ const payload = { ...createTrial(sleep, { now: new Date(2026, 10, 1, 9) }), sche
 
 const line = (text) => (_, el) => el.tagName === 'P' && el.textContent.trim().replace(/\s+/g, ' ') === text
 
-const renderTrial = (now, extra = {}, changes = null, wellbeing = new Map([['2026-11-02', 3.5], ['2026-11-03', 2]])) => render(
-  <MemoryRouter initialEntries={['/agir/essai/7']}>
+const renderTrial = (now, extra = {}, changes = null, wellbeing = new Map([['2026-11-02', 3.5], ['2026-11-03', 2]]), state) => render(
+  <MemoryRouter initialEntries={[{ pathname: '/agir/essai/7', state }]}>
     <Routes>
       <Route path="/agir/essai/:id" element={<Trial now={now} readTrialChanges={async () => changes} read={async () => ({
         trials: [{ id: 7, type: 'trial', payload: { ...payload, ...extra } }],
@@ -112,6 +112,18 @@ describe('Un essai (ORG-8)', () => {
     expect(screen.queryByText(/n’annule rien/)).toBeNull()
   })
 
+  it('LANT-1 : les lanternes des jours avec, allumées quand le jour est tenu', async () => {
+    renderTrial(new Date(2026, 10, 5, 10), { schedule: payload.schedule.slice(0, 10), answers: { '2026-11-01': true, '2026-11-03': false } })
+    const row = await screen.findByRole('list', { name: 'Lanternes des jours avec' })
+    const items = row.querySelectorAll('li')
+    expect(items).toHaveLength(5)
+    expect([...items].map((li) => li.className)).toEqual([
+      'trial-lantern is-lit', 'trial-lantern is-out', 'trial-lantern is-pending', 'trial-lantern is-pending', 'trial-lantern is-pending',
+    ])
+    expect(items[0]).toHaveAccessibleName('1 novembre : tenu')
+    expect(items[1]).toHaveAccessibleName('3 novembre : pas tenu')
+  })
+
   it('REFONTE-6c-2 : un jour avec manqué est dit sans reproche', async () => {
     renderTrial(new Date(2026, 10, 5, 10), { schedule: payload.schedule.slice(0, 10), answers: { '2026-11-03': false } })
     expect(await screen.findByText(line('1 jour avec tenu sur 5'))).toBeInTheDocument()
@@ -123,7 +135,7 @@ describe('Un essai (ORG-8)', () => {
     for (let d = 2; d <= 11; d += 1) wellbeing.set(`2026-11-${String(d).padStart(2, '0')}`, (d % 2 === 0 ? 4 : 2.5) + (d % 4) * 0.05)
     renderTrial(new Date(2026, 10, 12, 10), { schedule: payload.schedule.slice(0, 10) }, null, wellbeing)
     expect(await screen.findByRole('heading', { name: 'Plutôt oui' })).toBeInTheDocument()
-    expect(screen.getByText('À confirmer sur plus de jours : 5 jours avec, c’est encore peu.')).toBeInTheDocument()
+    expect(screen.getByText('À confirmer sur plus de jours : 5 lendemains mesurés, c’est encore peu.')).toBeInTheDocument()
     expect(screen.queryByText(/Vérifié/)).toBeNull()
     expect(screen.queryByText(/^Jour \d+ sur/)).toBeNull()
   })
@@ -140,4 +152,28 @@ describe('Un essai (ORG-8)', () => {
     renderTrial(new Date(2026, 10, 9, 10), {}, { wellbeing: [{ date: '2026-11-06', before: 3, after: 2 }] })
     expect(await screen.findByRole('note')).toHaveTextContent('Votre bien-être a changé de niveau pendant l’essai')
   })
+
+  it('LANT-2 : juste après « Commencer », Pilou saute et annonce les lanternes ; ensuite il attend sans rien dire', async () => {
+    const ten = { schedule: payload.schedule.slice(0, 10) }
+    const { container, unmount } = renderTrial(new Date(2026, 10, 1, 10), ten, null, undefined, { started: true })
+    expect(await screen.findByText('C’est parti ! Chaque jour avec tenu allume une lanterne.')).toBeInTheDocument()
+    expect(container.querySelector('.trial-today .pilou-figure')).toHaveClass('pilou-move-hop')
+    unmount()
+    const again = renderTrial(new Date(2026, 10, 3, 10), ten)
+    await screen.findByText(line('Jour 3 sur 10'))
+    expect(again.container.querySelector('.trial-today .pilou-figure')).toHaveClass('pilou-move-none')
+    expect(screen.queryByText(/C’est parti/)).toBeNull()
+  })
+
+  it('LANT-2 : au bilan, Pilou hoche la tête et salue l’effort, sans fête', async () => {
+    const wellbeing = new Map()
+    for (let d = 2; d <= 11; d += 1) wellbeing.set(`2026-11-${String(d).padStart(2, '0')}`, (d % 2 === 0 ? 4 : 2.5) + (d % 4) * 0.05)
+    const { container } = renderTrial(new Date(2026, 10, 12, 10), { schedule: payload.schedule.slice(0, 10) }, null, wellbeing)
+    await screen.findByRole('heading', { name: 'Plutôt oui' })
+    const card = container.querySelector('.trial-result')
+    expect(card.querySelector('.pilou-figure')).toHaveClass('pilou-move-nod')
+    expect(card).toHaveTextContent(/Bravo pour (vos \d jours|votre jour) avec\./)
+    expect(card.querySelector('.confetti, .pilou-move-party')).toBeNull()
+  })
 })
+

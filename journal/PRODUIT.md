@@ -264,6 +264,12 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 4. Actions du propriétaire (jamais faites par la routine) — la plus débloquante d'abord
 
+> **🔴 P50 (17/11, 19:30) — la plus débloquante : le compte GitHub est bloqué pour un problème de facturation.**
+> Depuis le 17/11 vers 18:40, chaque job GitHub Actions échoue sans démarrer (« The job was not started because your
+> account is locked due to a billing issue »). Tant que ce n'est pas réglé : aucun test de PR, donc aucun merge ; aucune
+> release, aucun envoi Alpha ni TestFlight. Voie b jusqu'à l'écran de paiement, c pour le paiement :
+> [`missions/P50.md`](missions/P50.md) (https://github.com/settings/billing).
+
 > **Décision du propriétaire du 13/11 vers 19:05 — un seul dépôt, une seule routine (« go bascule ») : faite.** La
 > version iPhone vit dans `iphone/` (#945, #950) ; cette routine fait Android (Google Play) et l'iPhone (App Store,
 > TestFlight). Un produit, deux magasins : une fonction n'est livrée que des deux côtés, ou avec une ligne de
@@ -387,6 +393,18 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **18/11 17:30** — CI-ECO (#1101, décision du 18/11 : au plus 3 h de Mac par jour) et PR regroupée de #1090 à #1097 (un seul build iPhone). GitHub Actions débloqué vers 16:10 (P50 soldée).
+- **18/11 10:30** — Pile des huit PR en attente (#1090 à #1097) fusionnée en local dans l'ordre de merge prévu : aucun conflit de code, 4 080 tests verts, build et Accueil relus. GitHub Actions toujours bloqué (P50) : rien de mergé.
+- **18/11 09:30** — NUIT-ETIQUETTE (PR empilée sur #1093) : l'image fixe de l'îlot ne montre plus Pilou endormi dès la tombée de la nuit, elle suit l'heure de coucher comme l'étiquette. GitHub Actions toujours bloqué (P50) : rien de mergé.
+- **18/11 07:30** — Actions toujours bloqué (P50) : sonde refusée vers 06:31 UTC. Rien de neuf à merger.
+- **18/11 06:30** — Actions toujours bloqué (P50) : sonde refusée vers 05:31 UTC. Rien de neuf à merger.
+- **18/11 05:30** — Actions toujours bloqué (P50) : sonde refusée ; le cron Alpha de 23:45 (parti à 03:53 UTC) a échoué sans démarrer, pas d'envoi Alpha cette nuit. Rien de neuf à merger.
+- **18/11 03:30** — Actions toujours bloqué (P50). Les six PR en attente (#1090 à #1095) fusionnées ensemble en local : aucun conflit de code (journal seulement), 4 072 tests verts, build, budget de lectures et captures sans erreur ; îlot voisin vu à 76 jours avec l'horloge figée à 14:00. Lien de session retiré du corps de #1093.
+- **17/11 23:30** — MONDE-4b, fin (PR empilée sur #1092) : l'image fixe des téléphones lents suit l'îlot (13 images : croissance 0, 30, 90 jours × 4 saisons, et la nuit avec Pilou endormi ; environ 290 Ko), rendues par un script depuis le banc de la scène. GitHub Actions toujours bloqué (P50) : rien de mergé, pas d'envoi Alpha ce soir.
+- **17/11 22:30** — MONDE-4b, 2e partie (même PR #1092) : la nouvelle de l'îlot (mare, îlot voisin, petit arbre, saison) dite une fois dans l'étiquette de l'Accueil, avec un petit saut de Pilou ; jamais la nuit. GitHub Actions toujours bloqué (P50) : rien de mergé.
+- **17/11 21:30** — MONDE-4b, 1re partie (PR empilée sur MONDE-4a) : l'arbuste du J1 devient un petit arbre à 45 jours d'usage (`growthAt().tree`, g ≥ 0,5), même feuillage de saison ; Android et iPhone par le même code. GitHub Actions toujours bloqué (P50) : rien de mergé. Restent : nouvelle dite une fois, image fixe du palier bas.
+- **17/11 20:30** — Run « idées » : rituel du soir, lanternes du défi et poses du widget découpés en LANT-1 à 4 et WIDGET-POSES (`maquettes/compagnon/DECOUPAGE-RITUEL-LANTERNES.md`) ; 5 lanternes = les 5 jours « avec » du tirage au sort gardé le 15/11. GitHub Actions toujours bloqué (P50) : rien mergé.
+- **17/11 18:30** — MONDE-4a (PR) : l'îlot voisin flotte à droite après 30 jours d'usage, une mare bordée de roseaux s'ouvre à gauche de Pilou après 90 jours (glace l'hiver) ; Android et iPhone par le même code. Restent MONDE-4b : petit arbre, nouvelle dite une fois, image fixe du palier bas.
 - **17/11 17:30** — **#1088 (MONDE-3) mergée** (93f4a47) : l'îlot grandit avec les jours d'usage (× 1,3 en largeur, arbuste × 1,45 à 90 jours), recompte léger des jours (budget de lectures de l'Accueil respecté). 14 checks verts, captures iPhone de l'Accueil relues. Suite : MONDE-4.
 - **17/11 12:30** — MONDE-2 : l'îlot et l'arbuste prennent la couleur de la saison (automne : herbe dorée ; hiver : neige ; fin d'hiver : amandier en fleur), hémisphère d'après la position météo. Palier image fixe inchangé.
 - **17/11 09:30** — MONDE-1 : l'île de l'Accueil s'endort et se réveille aux heures de sommeil habituelles (même cache du jour que le widget Android), heures par défaut 7 h / 22 h 30 sans 7 nuits lisibles. #1080 : job émulateur API 35 annulé et relancé.

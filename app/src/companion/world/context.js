@@ -8,7 +8,7 @@ import { listEntries, listEntryDays } from '../../storage/localHealthStorage'
 import { localDateKey } from '../../services/analysisEngine'
 import { computeSleepRegularity } from '../../services/sleepRegularity'
 import { getWeatherSettings } from '../../services/weatherSync'
-import { countUsageDays, GROWTH_FULL_DAYS } from './growth.js'
+import { countUsageDays, GROWTH_FULL_DAYS, worldNews } from './growth.js'
 import { worldDayKey } from './daylight.js'
 
 /** Ce que la personne note elle-même : un jour avec l'une de ces sources est un jour d'usage. */
@@ -176,4 +176,41 @@ export async function usageDaysForDay({ now = new Date(), load = loadIslandUsage
 export function resetWorldContextCache() {
   dayCache = null
   habitsCache = null
+}
+
+/** Ce que l'îlot montrait à la dernière nouvelle : `{ pond, neighbour, tree, season }`, pour ne la dire qu'une fois. */
+export const WORLD_SEEN_KEY = 'halcya.world.seen'
+
+/**
+ * La nouvelle de l'îlot depuis la dernière visite (`worldNews` : mare, îlot voisin, petit arbre ou saison), dite une
+ * seule fois : l'état vu est gardé sur le téléphone. Première visite ou état gardé illisible : rien n'est annoncé.
+ * @param {{ growth: object|null, season?: string|null }} current
+ * @returns {string|null}
+ */
+export function takeWorldNews(current) {
+  const g = current?.growth
+  if (!g) return null
+  const seen = {
+    pond: Boolean(g.pond),
+    neighbour: Boolean(g.neighbourIsland ?? g.neighbor),
+    tree: Boolean(g.tree),
+    season: current.season ?? g.season ?? null,
+  }
+  const store = storage()
+  let previous = null
+  try {
+    previous = JSON.parse(store?.getItem(WORLD_SEEN_KEY) || 'null')
+  } catch {
+    previous = null
+  }
+  try {
+    store?.setItem(WORLD_SEEN_KEY, JSON.stringify(seen))
+  } catch {
+    // stockage plein ou refusé : la nouvelle reviendra, sans conséquence
+  }
+  if (!previous || typeof previous !== 'object') return null
+  return worldNews(
+    { growth: { pond: previous.pond, neighbourIsland: previous.neighbour, tree: previous.tree }, season: previous.season },
+    { growth: { pond: seen.pond, neighbourIsland: seen.neighbour, tree: seen.tree }, season: seen.season },
+  )
 }

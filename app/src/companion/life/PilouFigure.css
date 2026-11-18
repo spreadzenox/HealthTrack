@@ -28,6 +28,7 @@
 .pilou-move-shrug .pilou-body { animation: pilou-shrug 1.3s cubic-bezier(.65, 0, .35, 1) 1, pilou-breathe 3.3s cubic-bezier(.37, 0, .63, 1) 1.3s infinite; }
 .pilou-move-meditate .pilou-body { animation: pilou-float 4.4s cubic-bezier(.65, 0, .35, 1) 1, pilou-breathe 3.3s cubic-bezier(.37, 0, .63, 1) 4.4s infinite; }
 .pilou-move-rewind .pilou-body { animation: pilou-rewind 600ms cubic-bezier(.65, 0, .35, 1) 1, pilou-breathe 3.3s cubic-bezier(.37, 0, .63, 1) 600ms infinite; }
+.pilou-move-nod .pilou-body { animation: pilou-nod 420ms cubic-bezier(.65, 0, .35, 1) 300ms 2, pilou-breathe 3.3s cubic-bezier(.37, 0, .63, 1) 1.14s infinite; }
 .pilou-move-sleep .pilou-body { animation: pilou-breathe 4.2s cubic-bezier(.37, 0, .63, 1) infinite; }
 
 @keyframes pilou-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 0.982); } }
@@ -38,6 +39,8 @@
 @keyframes pilou-wave { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-38deg); } }
 @keyframes pilou-shrug { 0%, 100% { transform: rotate(0deg) scaleY(1); } 25%, 70% { transform: rotate(-8deg) scaleY(1.05); } }
 @keyframes pilou-float { 0%, 100% { transform: translateY(0); } 20%, 80% { transform: translateY(-12%); } 50% { transform: translateY(-14%); } }
+/* Deux signes de tête (bilan du défi, SPEC comprendre § 7) : il s'incline vers l'avant et revient */
+@keyframes pilou-nod { 0%, 100% { transform: translateY(0) scale(1, 1); } 45% { transform: translateY(3%) scale(1.03, 0.94); } }
 @keyframes pilou-rewind { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
 
 /* Mouvements réduits (brief § 7.7) : plus de saut, de flottement ni de rotation ; les yeux restent vivants. */

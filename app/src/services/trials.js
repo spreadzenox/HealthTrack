@@ -175,6 +175,33 @@ export function trialStatus(trial, { summaries = new Map(), outcome = new Map(),
 }
 
 /**
+ * LANT-1 : une lanterne par jour « avec », dans l'ordre du calendrier (5 pour un défi de 10 jours, 7 pour un ancien
+ * essai de 14). Allumée quand le jour est tenu, éteinte quand il ne l'a pas été (rien ne repart à zéro), en attente
+ * tant que le jour n'est pas passé ou que la tenue est inconnue. Les jours « sans » n'ont pas de lanterne.
+ */
+export function lanterns(status) {
+  return status.calendar
+    .filter((d) => d.with)
+    .map((d) => ({ date: d.date, state: d.held === true ? 'lit' : d.held === false ? 'out' : 'pending' }))
+}
+
+/**
+ * LANT-2 (specs/comprendre.SPEC.md § 6.5 et § 7) : Pilou sur la page du défi. Juste après « Commencer », un saut et la
+ * promesse des lanternes ; en cours, il attend sans bulle ; au bilan, deux signes de tête et un mot qui salue l'effort,
+ * le même quel que soit le résultat (ni fête, ni tristesse).
+ * @returns {{ expr: string, move: string, text: string | null }}
+ */
+export function pilouSays(status, { started = false } = {}) {
+  if (status?.done) {
+    const k = status.kept ?? 0
+    const text = k > 1 ? `Bravo pour vos ${k} jours avec.` : k === 1 ? 'Bravo pour votre jour avec.' : 'Merci d’avoir essayé.'
+    return { expr: 'content', move: 'nod', text }
+  }
+  if (started) return { expr: 'content', move: 'hop', text: 'C’est parti ! Chaque jour avec tenu allume une lanterne.' }
+  return { expr: 'tranquille', move: 'none', text: null }
+}
+
+/**
  * UPG-1 : l'essai en cours, pour la carte Agir de l'Accueil (Agir n'a plus d'onglet depuis la refonte). `rows` : les
  * entrées « trial » ; seule la date compte (la tenue n'y figure pas). Le plus avancé s'il y en a plusieurs ; null sinon.
  */
@@ -201,10 +228,11 @@ const BILAN_TITLES = { yes: 'Plutôt oui', no: 'Plutôt non', none: 'Pas de diff
 /** Le bilan d'un essai fini, en mots : un titre, et la réserve qui va avec (ou null). */
 export function bilanWords(status) {
   if (!status?.bilan) return null
+  // Lendemains des jours avec dont le résultat est mesuré (la bulle de Pilou, elle, compte les jours tenus)
   const n = status.result.with.length
   const note = status.bilan === 'too_few'
     ? 'Vous pouvez réessayer quand vous voulez.'
-    : status.confirm ? `À confirmer sur plus de jours : ${n} jours avec, c’est encore peu.` : null
+    : status.confirm ? `À confirmer sur plus de jours : ${n} lendemains mesurés, c’est encore peu.` : null
   return { title: BILAN_TITLES[status.bilan], note }
 }
 
