@@ -8,7 +8,7 @@ import assert from 'node:assert/strict'
 import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { SUBSCRIPTIONS, LIMITS, TERRITORY, TERRITORIES, GROUP, NOTIFICATIONS, bodies, pricePointFor, currentPrices, ensureSubscriptions, readReviewScreenshot, notificationsPlan, diagnose, appTerritories } from './store-subscriptions.mjs'
+import { SUBSCRIPTIONS, LIMITS, TERRITORY, TERRITORIES, GROUP, NOTIFICATIONS, bodies, pricePointFor, currentPrices, priceDetails, ensureSubscriptions, readReviewScreenshot, notificationsPlan, diagnose, appTerritories } from './store-subscriptions.mjs'
 
 const root = new URL('..', import.meta.url)
 const read = (path) => readFileSync(new URL(path, root), 'utf8')
@@ -85,6 +85,19 @@ test('currentPrices : prix clients en place lus dans les paliers inclus', () => 
   }
   assert.deepEqual(currentPrices(res), ['4.99'])
   assert.deepEqual(currentPrices({ data: [] }), [])
+})
+
+test('priceDetails : chaque prix avec sa date de début (R18-GOLD-PRIX), pour trouver un prix qui ne vaut pas encore', () => {
+  const res = {
+    data: [
+      { id: 'p1', attributes: { startDate: null, preserved: false }, relationships: { subscriptionPricePoint: { data: { id: 'pp1' } } } },
+      { id: 'p2', attributes: { startDate: '2026-12-01', preserved: true }, relationships: { subscriptionPricePoint: { data: { id: 'pp2' } } } },
+      { id: 'p3', relationships: { subscriptionPricePoint: { data: { id: 'absent' } } } },
+    ],
+    included: [{ type: 'subscriptionPricePoints', id: 'pp1', attributes: { customerPrice: '9.99' } }, { type: 'subscriptionPricePoints', id: 'pp2', attributes: { customerPrice: '12.99' } }],
+  }
+  assert.deepEqual(priceDetails(res), ['9.99 sans date', '12.99 dès 2026-12-01 (gardé)', '? sans date'])
+  assert.deepEqual(priceDetails({ data: [] }), [])
 })
 
 /** App Store Connect simulé : juste ce que le script lit et crée. */
@@ -356,7 +369,7 @@ test('diagnose : relevé sans écriture de chaque pièce exigée par Apple', asy
   blank.db.appPrice = { data: { relationships: { baseTerritory: { data: { id: 'FRA' } } } } }
   const blankLines = await diagnose({ token: 't', fetchImpl: blank.fetchImpl })
   assert.match(blankLines[0], /; disponibilité de l'app non réglée \(« Prix et disponibilité » vide\) ; prix de l'app réglé \(territoire de base FRA\)$/)
-  assert.match(lines[2], /^halcya_gold_mensuel : état MISSING_METADATA ; noms fr-FR .* ; capture absente ; prix FRA 9\.99, BEL 9\.99, LUX 9\.99, CHE 9\.90, CAN 12\.99 ; territoires FRA, BEL, LUX, CHE, CAN ; note pour l'examen absente ; formules aucune ; versions 1 PREPARE_FOR_SUBMISSION$/)
+  assert.match(lines[2], /^halcya_gold_mensuel : état MISSING_METADATA ; noms fr-FR .* ; capture absente ; prix FRA 9\.99 sans date, BEL 9\.99 sans date, LUX 9\.99 sans date, CHE 9\.90 sans date, CAN 12\.99 sans date ; territoires FRA, BEL, LUX, CHE, CAN ; note pour l'examen absente ; formules aucune ; versions 1 PREPARE_FOR_SUBMISSION$/)
   // Une pièce que l'API ne sait pas lire n'interrompt pas le relevé
   const broken = fakeAsc()
   await ensureSubscriptions({ token: 't', fetchImpl: broken.fetchImpl })

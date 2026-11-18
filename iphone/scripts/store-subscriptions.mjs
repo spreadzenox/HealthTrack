@@ -146,6 +146,20 @@ export function currentPrices(response) {
   return [...new Set(out)]
 }
 
+/**
+ * Relevé détaillé des prix d'un pays (R18-GOLD-PRIX, 18/11 : Apple refuse « Add for Review » de Gold avec « You must add
+ * a subscription price » alors que des prix s'affichent) : chaque prix avec sa date de début (« sans date » = en
+ * vigueur depuis la création ; une date future = pas encore valable) et s'il garde l'ancien prix des abonnés.
+ */
+export function priceDetails(response) {
+  const byId = new Map((response?.included || []).filter((x) => x.type === 'subscriptionPricePoints').map((x) => [x.id, x.attributes?.customerPrice]))
+  return (response?.data || []).map((p) => {
+    const price = byId.get(p.relationships?.subscriptionPricePoint?.data?.id) ?? '?'
+    const start = p.attributes?.startDate ? `dès ${p.attributes.startDate}` : 'sans date'
+    return `${price} ${start}${p.attributes?.preserved ? ' (gardé)' : ''}`
+  })
+}
+
 /** Client de l'API : erreurs lisibles (sans la clé), statut HTTP gardé, pages suivies jusqu'au bout. */
 export function client(token, fetchImpl = fetch) {
   async function api(method, path, body) {
@@ -413,7 +427,7 @@ export async function diagnose({ token, fetchImpl = fetch }) {
     const byTerritory = []
     for (const territory of TERRITORIES) {
       const prices = await api('GET', `/v1/subscriptions/${id}/prices?filter[territory]=${territory}&include=subscriptionPricePoint&limit=50`)
-      byTerritory.push(`${territory} ${currentPrices(prices).join(' / ') || 'aucun'}`)
+      byTerritory.push(`${territory} ${priceDetails(prices).join(' / ') || 'aucun'}`)
     }
     parts.push(`prix ${byTerritory.join(', ')}`)
     let availability = null
@@ -458,10 +472,10 @@ async function main() {
   const { drift, states } = await ensureSubscriptions({ token, log, reviewScreenshot })
   for (const d of drift) console.log(`::warning::${d}`)
   const missing = Object.entries(states).filter(([, st]) => st === 'MISSING_METADATA').map(([id]) => id)
-  if (missing.length) {
-    console.log(`Encore « métadonnées manquantes » chez Apple : ${missing.join(', ')} ; relevé, sans écriture :`)
-    for (const line of await diagnose({ token })) console.log(`  ${line}`)
-  }
+  if (missing.length) console.log(`Encore « métadonnées manquantes » chez Apple : ${missing.join(', ')}`)
+  // Relevé toujours imprimé (R18-GOLD-PRIX, 18/11) : un abonnement peut être « prêt » ici et refusé à l'examen
+  console.log('Relevé, sans écriture :')
+  for (const line of await diagnose({ token })) console.log(`  ${line}`)
   console.log('Rien n\'a été soumis à l\'examen d\'Apple : la première soumission des abonnements se fait avec une version de l\'app, par le propriétaire.')
 }
 
