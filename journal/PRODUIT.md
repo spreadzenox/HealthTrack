@@ -393,6 +393,8 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **18/11 10:30** — Pile des huit PR en attente (#1090 à #1097) fusionnée en local dans l'ordre de merge prévu : aucun conflit de code, 4 080 tests verts, build et Accueil relus. GitHub Actions toujours bloqué (P50) : rien de mergé.
+- **18/11 09:30** — NUIT-ETIQUETTE (PR empilée sur #1093) : l'image fixe de l'îlot ne montre plus Pilou endormi dès la tombée de la nuit, elle suit l'heure de coucher comme l'étiquette. GitHub Actions toujours bloqué (P50) : rien de mergé.
 - **18/11 07:30** — Actions toujours bloqué (P50) : sonde refusée vers 06:31 UTC. Rien de neuf à merger.
 - **18/11 06:30** — Actions toujours bloqué (P50) : sonde refusée vers 05:31 UTC. Rien de neuf à merger.
 - **18/11 05:30** — Actions toujours bloqué (P50) : sonde refusée ; le cron Alpha de 23:45 (parti à 03:53 UTC) a échoué sans démarrer, pas d'envoi Alpha cette nuit. Rien de neuf à merger.

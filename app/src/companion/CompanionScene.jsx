@@ -515,7 +515,8 @@ export default function CompanionScene({
     live.setReducedMotion(reducedMotion)
   }, [reducedMotion])
 
-  // la nuit (heure de coucher, lot MONDE), Pilou dort : l'étiquette le dit (SPEC île § 5)
+  // la nuit (heure de coucher, lot MONDE), Pilou dort : l'étiquette le dit (SPEC île § 5) ; l'image fixe aussi,
+  // pas dès que le ciel est sombre : à 22 h, il veille encore si l'on se couche plus tard (NUIT-ETIQUETTE)
   const asleep = Boolean(light.asleep)
   const text = (!asleep && news) || label || [asleep ? `${name} dort` : `${name} est ${moodWord(mood)}`, weatherLabel].filter(Boolean).join(' · ')
   const showFallback = tier === 'bas' || !ready
@@ -530,7 +531,7 @@ export default function CompanionScene({
     >
       <div className="companion-scene__frame" style={{ maxWidth: MAX_WIDTH, height }}>
         {showFallback && (
-          <img className="companion-scene__still" src={STILLS[stillKey({ ...look, night: light.night || light.phase === 'nuit' })]} alt="" aria-hidden="true" draggable="false" />
+          <img className="companion-scene__still" src={STILLS[stillKey({ ...look, night: asleep })]} alt="" aria-hidden="true" draggable="false" />
         )}
         {tier !== 'bas' && (
           <canvas

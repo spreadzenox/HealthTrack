@@ -65,6 +65,15 @@ describe("l'image fixe suit l'îlot (palier bas, MONDE-4b)", () => {
     await vi.waitFor(() => expect(n.container.querySelector('img.companion-scene__still').getAttribute('src')).toMatch(/nuit/))
   })
 
+  it('ciel sombre avant le coucher : Pilou veille, l’image ne le montre pas endormi (NUIT-ETIQUETTE)', async () => {
+    // 22 h : étoiles au ciel, coucher par défaut à 22 h 30 → « soir », Pilou veille à la lanterne
+    const evening = new Date(2026, 10, 17, 22, 0)
+    localStorage.setItem(USAGE_DAYS_KEY, JSON.stringify({ day: worldDayKey(evening), days: 60 }))
+    const { container } = render(<CompanionScene now={() => evening} />)
+    await vi.waitFor(() => expect(container.querySelector('img.companion-scene__still').getAttribute('src')).toMatch(/j30-automne/))
+    expect(screen.queryByText(/dort/)).toBeNull()
+  })
+
   it('avant de connaître les jours d’usage : l’îlot nu de la saison', async () => {
     const now = new Date(2027, 0, 10, 12, 0)
     const { container } = render(<CompanionScene now={() => now} />)
