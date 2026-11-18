@@ -165,6 +165,12 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
   instructions. Leçons : chaque PR qui touche l'app coûte une heure de build iOS et cinq seulement tournent à la fois ;
   une PR en conflit ne reçoit aucun check, son auteur peut attendre pour rien ; les merges en parallèle annulent les
   builds de `main` les uns après les autres ; l'orchestrateur ne peut pas mettre le relais en pause.
+- **CI et compte GitHub** : du 17/11 18:40 au 18/11 16:10, le compte GitHub du propriétaire a été verrouillé
+  (« account is locked due to a billing issue ») alors que rien n'était dû ; levé quand il a ajouté une carte (et pris
+  GitHub Pro, son choix). Les budgets à 0 $ avec blocage, déjà en place sur tous les produits, empêchent tout
+  prélèvement d'usage. Depuis, règle « CI ÉCONOME » dans les instructions : au plus 3 heures de Mac par jour en moyenne.
+  Si le verrou revient : page Billing › Overview, bandeau en bas du plan ; texte de ticket au support dans la
+  conversation d'orchestration du 18/11.
 - **Testeurs.** J = 08/11. Relance du septième jour vers le 15/11. Demande d'accès à la production (P30) au
   quatorzième jour.
 - **Maquettes PROP-SIM** (propositions issues des simulations) : les montrer au propriétaire quand la routine en
