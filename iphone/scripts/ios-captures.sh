@@ -29,6 +29,9 @@ if [ -n "${CAPTURE_DEVICES:-}" ]; then
   IFS=',' read -ra WANTED <<< "$CAPTURE_DEVICES"
   SMALL="$(pick "${WANTED[@]}" || true)"; LARGE=""
 fi
+# CI économe (18/11) : sur une PR, CAPTURE_SINGLE=1 garde le seul petit iPhone (toutes les pages, tests d'interface
+# compris), sans le grand iPhone ni le passage en grand texte : environ trois fois moins de minutes Mac. Main garde tout.
+if [ -n "${CAPTURE_SINGLE:-}" ] && [ -z "${CAPTURE_DEVICES:-}" ] && [ -n "$SMALL" ]; then LARGE=""; fi
 [ -n "$SMALL$LARGE" ] || { echo "::error::Aucun simulateur iPhone disponible"; xcrun simctl list devices available; exit 1; }
 
 # Tests d'interface du dépôt (uitests/, fichier .xctestrun) lancés sur certaines pages, avant l'accusé : chacun suivi
@@ -150,7 +153,7 @@ run_device() { # <udid> <nom> [taille du texte d'iOS, pour le passage en grand t
 [ -z "$LARGE" ] || run_device "${LARGE%% *}" "${LARGE#* }"
 # Taille du texte d'iOS en très grand (« extra-extra-extra-large », la plus grande hors accessibilité : texte × 1,35),
 # sur le petit iPhone (390 points, comme l'iPhone 12) : quelques pages, hors captures de la fiche
-[ -n "${CAPTURE_DEVICES:-}" ] || [ -z "$SMALL" ] || run_device "${SMALL%% *}" "${SMALL#* }" extra-extra-extra-large
+[ -n "${CAPTURE_DEVICES:-}${CAPTURE_SINGLE:-}" ] || [ -z "$SMALL" ] || run_device "${SMALL%% *}" "${SMALL#* }" extra-extra-extra-large
 
 # Erreurs JavaScript relayées par Capacitor (« ⚡️  [error] - … ») et exceptions non rattrapées
 grep -hE "\[error\]|Unhandled|TypeError|ReferenceError|SyntaxError|JS ERROR" "$OUT"/*-console.txt > "$OUT/js-errors.txt" || true
