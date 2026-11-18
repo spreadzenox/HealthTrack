@@ -19,9 +19,14 @@ import { createGestureRecognizer } from './scene/gestures'
 import { GOLDEN } from './scene/light'
 import { weatherNow } from './scene/weatherNow'
 import { getWeatherSettings } from '../services/weatherSync'
-import fallbackUrl from './scene/fallback.webp'
-import fallbackNightUrl from './scene/fallback-nuit.webp'
+import { stillKey } from './scene/stills.js'
 import './CompanionScene.css'
+
+// images fixes de l'îlot (palier bas et attente du premier rendu) : étape de croissance × saison, et la nuit
+const STILLS = Object.fromEntries(
+  Object.entries(import.meta.glob('./scene/stills/*.webp', { eager: true, import: 'default', query: '?url' }))
+    .map(([file, url]) => [file.replace('./scene/stills/', '').replace('.webp', ''), url]),
+)
 
 const pilouModules = import.meta.glob('./pilou/index.js')
 const worldModules = import.meta.glob(['./world/index.js', './world/context.js'])
@@ -95,6 +100,8 @@ export default function CompanionScene({
   )
   const [ready, setReady] = useState(false)
   const [light, setLight] = useState(GOLDEN)
+  // ce que l'image fixe montre de l'îlot : jours d'usage et saison
+  const [look, setLook] = useState({ days: null, season: null })
   const [busMood, setBusMood] = useState(() => bus.last(EVENTS.MOOD_CHANGED)?.value ?? 0)
   const mood = moodProp ?? busMood
   const nowRef = useRef(now)
@@ -167,6 +174,7 @@ export default function CompanionScene({
           const growth = usage.days != null && typeof world.growthAt === 'function'
             ? world.growthAt(usage.days, now, { hemisphere: hemisphereNow() })
             : null
+          setLook((prev) => (prev.days === usage.days && prev.season === season ? prev : { days: usage.days, season }))
           bus.emit(EVENTS.TIME_PHASE, { phase: l?.phase, light: l, season, growth, at: Date.now() })
           // ce qui est nouveau sur l'îlot, dit une fois ; la nuit, Pilou dort : la nouvelle attend son réveil
           if (growth && !l?.asleep && loadContext) {
@@ -522,7 +530,7 @@ export default function CompanionScene({
     >
       <div className="companion-scene__frame" style={{ maxWidth: MAX_WIDTH, height }}>
         {showFallback && (
-          <img className="companion-scene__still" src={light.night || light.phase === 'nuit' ? fallbackNightUrl : fallbackUrl} alt="" aria-hidden="true" draggable="false" />
+          <img className="companion-scene__still" src={STILLS[stillKey({ ...look, night: light.night || light.phase === 'nuit' })]} alt="" aria-hidden="true" draggable="false" />
         )}
         {tier !== 'bas' && (
           <canvas

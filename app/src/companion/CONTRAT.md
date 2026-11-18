@@ -98,7 +98,9 @@ PILOU peut aussi écouter le bus lui-même pour ses détails propres, sans doubl
 
 **Images pré-rendues** (lots VIE et MONDE) : PILOU les pose dans `app/src/companion/pilou/sprites/`
 (`<expression>.webp`, ≈ 240 px de haut, fond transparent) et exporte `pilouSprite(expression)` → URL depuis
-`app/src/companion/pilou/sprites.js`. En attendant : `app/src/companion/scene/fallback.webp` (image fixe de la scène).
+`app/src/companion/pilou/sprites.js`. En attendant : `app/src/companion/scene/fallback.webp` (image fixe de la scène). Image fixe
+de l'Accueil (palier bas) : `scene/stills/` (croissance × saison, et la nuit), choisie par `scene/stills.js`, rendue par
+`scripts/companion/render-scene-stills.mjs`.
 
 ## 4. Les événements du bus
 
