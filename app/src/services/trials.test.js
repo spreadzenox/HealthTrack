@@ -66,7 +66,9 @@ describe('Essais (ORG-8)', () => {
     it('fini, mieux les lendemains des jours avec : « Plutôt oui », à confirmer', () => {
       const s = trialStatus(ten, { outcome: series(4, 2.5), now: END })
       expect(s).toMatchObject({ done: true, bilan: 'yes', confirm: true })
-      expect(bilanWords(s)).toEqual({ title: 'Plutôt oui', note: 'À confirmer sur plus de jours : 5 jours avec, c’est encore peu.' })
+      expect(bilanWords(s)).toEqual({ title: 'Plutôt oui', note: 'À confirmer sur plus de jours : 5 lendemains mesurés, c’est encore peu.' })
+      // LANT-2 : la réserve compte les lendemains mesurés, la bulle de Pilou les jours tenus : deux mots différents
+      expect(bilanWords(s).note).not.toMatch(/jours avec/)
     })
 
     it('fini, moins bien les lendemains des jours avec : « Plutôt non », jamais « vérifié »', () => {

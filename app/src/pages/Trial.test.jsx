@@ -135,7 +135,7 @@ describe('Un essai (ORG-8)', () => {
     for (let d = 2; d <= 11; d += 1) wellbeing.set(`2026-11-${String(d).padStart(2, '0')}`, (d % 2 === 0 ? 4 : 2.5) + (d % 4) * 0.05)
     renderTrial(new Date(2026, 10, 12, 10), { schedule: payload.schedule.slice(0, 10) }, null, wellbeing)
     expect(await screen.findByRole('heading', { name: 'Plutôt oui' })).toBeInTheDocument()
-    expect(screen.getByText('À confirmer sur plus de jours : 5 jours avec, c’est encore peu.')).toBeInTheDocument()
+    expect(screen.getByText('À confirmer sur plus de jours : 5 lendemains mesurés, c’est encore peu.')).toBeInTheDocument()
     expect(screen.queryByText(/Vérifié/)).toBeNull()
     expect(screen.queryByText(/^Jour \d+ sur/)).toBeNull()
   })
