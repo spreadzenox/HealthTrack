@@ -64,16 +64,22 @@ export const DATA_SAFETY_ANSWERS = [
   { question: 'PSL_DATA_TYPES_APP_ACTIVITY', response: 'PSL_USER_GENERATED_CONTENT', value: true, why: 'Description écrite d’un repas envoyée au relais Halcya (analyse par Gemini sur Vertex AI, UE) quand la personne lance l’analyse ; texte de « Votre avis » envoyé au relais quand la personne touche « Envoyer » (gardé 90 jours, AVIS-RELAIS-2).' },
   ...collectedForFunctionality('PSL_USER_GENERATED_CONTENT', 'Envoyés à notre relais (et la description à Vertex AI, prestataire d’analyse) : collectés, pas partagés.'),
 
+  // SECU-SANTE (18/11) : la photo des selles (SELLES-PHOTO-2) dit quelque chose de la digestion ; Apple la déclare
+  // en « Health » depuis le 05/11 (décision du propriétaire), Google l'aligne en « Infos de santé ».
+  { question: 'PSL_DATA_TYPES_HEALTH_AND_FITNESS', response: 'PSL_HEALTH', value: true, why: 'Photo des selles (réduite, sans métadonnées) envoyée au relais Halcya (estimation de la forme par Gemini sur Vertex AI, UE) quand la personne la lance, après un accord ; effacée juste après ; seul un type de Bristol revient.' },
+  ...collectedForFunctionality('PSL_HEALTH', 'Envoyée à notre relais et à Vertex AI, prestataire d’analyse : collectée, pas partagée.'),
+
   ...installIdAnswers,
   ...purchaseAnswers,
 ]
 
 /**
- * Types de données déclarés : la liste attendue, vérifiée par les tests. Absents exprès : santé et forme
+ * Types de données déclarés : la liste attendue, vérifiée par les tests. Santé : seulement la photo des selles
+ * (SECU-SANTE, 18/11). Absents exprès : forme et le reste de la santé
  * (Health Connect, montre, ventre, sommeil restent sur le téléphone et ne partent jamais à l'IA), photos du
  * visage (aucune image gardée ni envoyée), applis installées / temps d'écran (sur le téléphone), plantages
  * et diagnostics (aucun outil de suivi). Seul identifiant : l'identifiant aléatoire d'installation envoyé avec une
  * analyse IA ou une vérification d'abonnement (aucun identifiant publicitaire ni du téléphone). Achats : le jeton de
  * l'abonnement Google Play, revérifié par le relais.
  */
-export const DECLARED_DATA_TYPES = ['PSL_PURCHASE_HISTORY', 'PSL_APPROX_LOCATION', 'PSL_PHOTOS', 'PSL_USER_GENERATED_CONTENT', 'PSL_DEVICE_ID']
+export const DECLARED_DATA_TYPES = ['PSL_PURCHASE_HISTORY', 'PSL_APPROX_LOCATION', 'PSL_PHOTOS', 'PSL_HEALTH', 'PSL_USER_GENERATED_CONTENT', 'PSL_DEVICE_ID']

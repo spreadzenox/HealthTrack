@@ -106,10 +106,18 @@ describe('déclaration de Halcya (variante play)', () => {
     expect(validateDataSafety(rows)).toEqual([])
   })
 
-  it('déclare exactement les données qui quittent le téléphone, aucune donnée de santé', () => {
+  it('déclare exactement les données qui quittent le téléphone : « Santé » pour la photo des selles, rien en forme', () => {
     expect(declaredTypes(rows)).toEqual(DECLARED_DATA_TYPES)
-    expect(declaredTypes(rows)).not.toContain('PSL_HEALTH')
+    // SECU-SANTE (18/11) : la photo des selles part au relais (SELLES-PHOTO-2) ; alignée sur « Health » d'Apple.
+    expect(declaredTypes(rows)).toContain('PSL_HEALTH')
     expect(declaredTypes(rows)).not.toContain('PSL_FITNESS')
+  })
+
+  it('la photo des selles est facultative, pour le fonctionnement, collectée et pas partagée', () => {
+    const yes = (q, r) => rows.some((row) => row[0] === `PSL_DATA_USAGE_RESPONSES:PSL_HEALTH:${q}` && row[1] === r && row[2] === 'true')
+    expect(yes('PSL_DATA_USAGE_COLLECTION_AND_SHARING', 'PSL_DATA_USAGE_ONLY_COLLECTED')).toBe(true)
+    expect(yes('DATA_USAGE_USER_CONTROL', 'PSL_DATA_USAGE_USER_CONTROL_OPTIONAL')).toBe(true)
+    expect(yes('DATA_USAGE_COLLECTION_PURPOSE', 'PSL_APP_FUNCTIONALITY')).toBe(true)
   })
 
   it('ne déclare aucun partage, aucune publicité, aucune mesure d’audience', () => {

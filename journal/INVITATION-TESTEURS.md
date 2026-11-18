@@ -1,14 +1,88 @@
-# Invitation des testeurs du test fermé (prête pour la version candidate)
+# Invitation des testeurs du test fermé
 
-> Préparé le 24/10 15:30 (BACKLOG « 6f »). À envoyer **seulement** quand le résumé de la semaine affiche
-> « 👉 Version candidate prête : vous pouvez inviter les testeurs ». Ne rien envoyer avant.
+> Mis à jour le 18/11 (run de 18:30) après le constat du propriétaire : **4 testeurs inscrits sur les 12 exigés**,
+> bouton d'accès à la production grisé, sans décompte. Il en faut **au moins 8 de plus ; visez 11 de plus (15 au
+> total)** : un testeur qui quitte en route remet le compteur des 14 jours à zéro. Textes réécrits pour la refonte
+> « Compagnon » (Pilou, 4 onglets). Historique de la préparation en bas de ce fichier (§ 1 et suivants).
+
+## 0. Recruter (18/11) : ce qu'il reste à faire, dans l'ordre
+
+**Règle de Google (aide officielle answer/14151465, relue le 31/10)** : 12 testeurs inscrits **sans interruption
+pendant au moins 14 jours**, encore inscrits le jour de la demande. Le décompte part du jour où le 12ᵉ s'inscrit.
+Exemple : 12ᵉ inscrit le dimanche 22/11 → demande d'accès à la production possible le dimanche 6/12 au plus tôt.
+
+**⚠️ Date de fin de Gold offert** : `until` vaut aujourd'hui le **2 décembre inclus**. Si le 12ᵉ testeur s'inscrit
+après le 18/11, le test finira après cette date et les testeurs reverront le paywall en plein test. Dites « prolonge
+Gold jusqu'au <date> » dans une consigne (proposition : jour du 12ᵉ inscrit + 14 jours + 10 jours de marge) ;
+la routine ne change pas cette date sans vous.
+
+**Qui peut compter** : une personne avec un téléphone **Android 8 ou plus récent** et un compte Gmail. Les testeurs
+iPhone (TestFlight) ne comptent pas pour Google : invitez-les à part, avec le lien public TestFlight que vous seul
+gardez (il n'est volontairement pas dans le dépôt).
+
+**Les 3 liens à donner, toujours dans cet ordre** (le 2 ne marche qu'après le 1, avec le même compte Gmail) :
+1. Groupe des testeurs : https://groups.google.com/g/halcya-testeurs
+2. Accepter le test : https://play.google.com/apps/testing/fr.jpesquet.sante
+3. Installer : https://play.google.com/store/apps/details?id=fr.jpesquet.sante
+
+**Canaux, du plus sûr au moins sûr** (les proches restent inscrits ; des inconnus partent plus souvent) :
+1. **Les 4 déjà inscrits** : message A (rester inscrits, et chacun propose l'app à une personne).
+2. **Proches avec un Android** (famille, amis, collègues) : message B par SMS ou WhatsApp, un par un ; un message
+   personnel marche bien mieux qu'un envoi groupé. Avec 8 à 10 envois personnels, l'objectif est souvent atteint.
+3. **Un groupe WhatsApp ou Slack d'amis ou de travail** : message C.
+4. **Communautés en ligne** (seulement si 1 à 3 ne suffisent pas) : message D, sur un forum ou un groupe où vous
+   êtes déjà membre et où les règles autorisent ce genre de post (lisez-les avant). Pistes : groupes Facebook ou
+   forums sur le SII et le confort digestif, sous-forums Reddit francophones sur la santé connectée ou les apps
+   Android. Il existe aussi des sous-forums et des groupes d'« échange de testeurs » entre développeurs qui ont la
+   même obligation : ça remplit vite, mais l'usage est souvent faible et le formulaire de production demande si
+   les testeurs ont vraiment utilisé l'app ; à garder en dernier recours.
+
+Les inscrits se lisent dans la Play Console (Tableau de bord, bloc du test fermé). Chaque fois que vous le regardez,
+dites le nombre dans une consigne : la routine le note à chaque bilan.
+
+### Message A — aux 4 testeurs déjà inscrits (e-mail au groupe `halcya-testeurs@googlegroups.com`)
+
+> Bonjour à tous, merci d'avoir installé Halcya ! Google exige 12 testeurs inscrits pendant 14 jours avant la
+> sortie, et nous sommes 4. Deux petites choses :
+> 1. Restez inscrits au groupe et au test, et gardez l'app : si quelqu'un part, le compteur repart à zéro.
+> 2. Si vous connaissez une personne avec un téléphone Android qui pourrait tester, transférez-lui ce message avec
+>    les 3 liens ci-dessous (dans cet ordre, avec son compte Gmail) :
+>    - https://groups.google.com/g/halcya-testeurs
+>    - https://play.google.com/apps/testing/fr.jpesquet.sante
+>    - https://play.google.com/store/apps/details?id=fr.jpesquet.sante
 >
-> **Relu le 31/10 08:33 contre la version 402** (run « idées ») : chaque chemin cité existe tel quel dans l'app ;
-> chemins précisés (« Votre avis » et « Données » sont derrière la roue dentée « Réglages », en haut à droite) ;
-> missions du ventre et de la réintroduction réservées à l'objectif « Mon ventre » (ailleurs, elles ne s'affichent
-> pas) ; prérequis ajouté (Android 8 ou plus récent, pas d'iPhone). Règle de Google relue le même jour sur l'aide
-> officielle (answer/14151465) : toujours **12 testeurs inscrits sans interruption pendant au moins 14 jours**, et
-> encore inscrits le jour de la demande ; un testeur qui quitte puis revient ne compte pas.
+> La mise à jour de cette semaine change beaucoup l'app : un petit compagnon, Pilou, vous accompagne sur l'écran
+> d'accueil, et tout tient en 4 onglets. Si quelque chose vous gêne, même en une phrase, répondez-moi. Merci !
+
+### Message B — à un proche, par SMS ou WhatsApp (court, à personnaliser)
+
+> Salut ! Je lance une app Android, Halcya : on note ses repas et son bien-être, et elle cherche ce qui va avec tes
+> bons et mauvais jours (ventre, sommeil, énergie). Tes données restent sur ton téléphone. Google m'oblige à avoir
+> 12 testeurs pendant 14 jours avant la sortie : tu veux bien m'aider ? C'est gratuit, 5 minutes, avec le compte
+> Gmail de ton téléphone Android, dans cet ordre :
+> 1) https://groups.google.com/g/halcya-testeurs (Rejoindre le groupe)
+> 2) https://play.google.com/apps/testing/fr.jpesquet.sante (Devenir testeur)
+> 3) https://play.google.com/store/apps/details?id=fr.jpesquet.sante (Installer)
+> Ensuite garde-la 14 jours et ouvre-la de temps en temps. Merci !
+
+### Message C — groupe d'amis ou de travail
+
+> Petit coup de main demandé 🙏 Je sors une app Android, Halcya (repas, ventre, sommeil, bien-être, avec un petit
+> compagnon qui vous accompagne). Google exige 12 testeurs pendant 14 jours avant la sortie et il m'en manque
+> quelques-uns. Gratuit, 5 minutes, téléphone Android (8 ou plus récent) et compte Gmail. Si vous êtes partants,
+> dites-le ici et je vous envoie les 3 liens.
+
+### Message D — communauté en ligne (titre, puis texte)
+
+> **Cherche quelques testeurs Android pour une app de suivi digestion et bien-être (gratuite pendant le test)**
+>
+> Bonjour, je développe seul Halcya, une app Android en français pour comprendre ce qui va avec ses bons et mauvais
+> jours de ventre et de bien-être : repas en photo, note du ventre le soir, sommeil et pas lus dans Health Connect.
+> Les données restent sur le téléphone ; l'analyse d'une photo de repas passe par un serveur en Europe qui ne garde
+> rien. Ce n'est pas un dispositif médical et elle ne donne aucun diagnostic.
+> Google me demande 12 testeurs pendant 14 jours avant la sortie publique. L'abonnement est offert pendant le test,
+> aucune carte n'est demandée. Il faut un Android 8 ou plus récent ; je vous envoie les liens en message privé.
+> Vos retours, même courts, m'aident beaucoup. Merci !
 
 ## 1. Le jour où la version candidate part en alpha (fait par Claude, via la CI)
 
@@ -83,23 +157,25 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 > Bonjour,
 >
 > Je lance **Halcya**, une app Android qui aide à comprendre ce qui va avec vos bons et mauvais jours (ventre,
-> sommeil, énergie, bien-être), en gardant vos données sur votre téléphone. Avant sa sortie publique, Google
+> sommeil, énergie, bien-être), en gardant vos données sur votre téléphone. Un petit compagnon, Pilou, vous y
+> accompagne : vous notez vos repas et votre journée, il cherche ce qui joue sur vos objectifs. Avant sa sortie publique, Google
 > m'impose un test fermé de **14 jours avec au moins 12 personnes** : pouvez-vous m'aider ?
 >
 > **Gold (le premium) est offert pendant le test (jusqu'au 2 décembre inclus) : vous n'avez rien à payer**, aucune carte
 > bancaire n'est demandée.
 >
-> Il faut un téléphone **Android 8 ou plus récent** (l'app n'existe pas encore sur iPhone).
+> Il faut un téléphone **Android 8 ou plus récent** (sur iPhone, le test passe par TestFlight : demandez-moi le
+> lien).
 >
 > Ce qu'il faut faire (5 minutes, avec le compte Gmail de votre téléphone Android) :
 > 1. Rejoindre le groupe des testeurs : https://groups.google.com/g/halcya-testeurs
 > 2. Accepter le test : https://play.google.com/apps/testing/fr.jpesquet.sante
 > 3. Installer l'app depuis le Play Store : https://play.google.com/store/apps/details?id=fr.jpesquet.sante
 > 4. **Garder l'app installée pendant 14 jours, sans quitter le groupe ni le test**, et **l'ouvrir au moins tous les
->    2 ou 3 jours** (une photo de repas, une note du ventre, ce que vous voulez) : Google vérifie que l'app est
->    vraiment utilisée. Vos retours, même courts, me sont précieux : dans l'app, roue dentée en haut à droite →
->    Paramètres → « Votre avis » (ou directement, sur la page Halcya du Play Store, « Envoyer des commentaires privés
->    au développeur »).
+>    2 ou 3 jours** (une photo de repas dans « Ma journée », une note du ventre, ce que vous voulez) : Google
+>    vérifie que l'app est vraiment utilisée. Vos retours, même courts, me sont précieux : dans l'app, roue dentée
+>    en haut à droite → Paramètres → « Votre avis » (ou, sur la page Halcya du Play Store, « Envoyer des
+>    commentaires privés au développeur »).
 >
 > Astuces :
 > - L'app ne sort pas dans la recherche du Play Store tant qu'elle est en test : passez par le lien ci-dessus, ou
@@ -130,27 +206,25 @@ le plus sûr est de retester l'abonnement **après** la fin du test fermé, ou s
 **Jour 1 (avec l'invitation)** — rien à ajouter : installation, onboarding, et si vous le voulez la lecture du
 visage et Health Connect (les deux restent facultatifs).
 
-**Jour 3** :
-> Petite mission Halcya (2 min) : photographiez votre prochain repas avec « Photo du repas » sur l'écran
-> Aujourd'hui, corrigez un ingrédient si besoin, puis enregistrez. Le soir, si vous avez choisi « Mon ventre » au
-> démarrage, répondez sur le même écran à « Et votre ventre aujourd'hui, dans l'ensemble ? ». Si quelque chose vous
-> paraît bizarre : roue dentée en haut à droite → Paramètres → « Votre avis ».
+**Jour 3** (réécrit le 18/11 pour la refonte « Compagnon ») :
+> Petite mission Halcya (2 min) : dans l'onglet **Ma journée**, photographiez votre prochain repas, corrigez un
+> ingrédient si besoin, puis enregistrez (Pilou aime ça). Le soir, si vous suivez la digestion, répondez à la
+> question sur votre ventre. Si quelque chose vous paraît bizarre : roue dentée en haut à droite → Paramètres →
+> « Votre avis ».
 
 **Jour 7** : le rappel ci-dessus (« Rappel du jour 7 »), avec en plus :
-> Mission de la semaine : allez voir l'onglet **Journal** (vos derniers jours, Tendances) et l'onglet **Sources**.
-> Dites-moi en une phrase ce qui vous a paru clair ou confus.
+> Mission de la semaine : ouvrez l'onglet **Objectifs** (vos premiers résultats bien-être arrivent après 7 jours de
+> notes) et l'onglet **Données** (Tendances). Dites-moi en une phrase ce qui vous a paru clair ou confus.
 
 **Jour 10** :
-> Dernière mission (3 min) : si vous avez choisi « Mon ventre », ouvrez dans **Analyses** « Tester un groupe
-> FODMAP » (sans forcément le commencer) et regardez ce qui est proposé. Puis, pour tout le monde : roue dentée en
-> haut à droite → **Données** → « Rapport PDF pour mon médecin » ou « Télécharger la sauvegarde ». Et dites-moi :
-> recommanderiez-vous l'app à quelqu'un ? Pourquoi (pas) ?
+> Dernière mission (3 min) : dans **Objectifs**, touchez un objectif pour voir ce qui l'influence et la piste à
+> tester en défi de 5 soirs (sans forcément le lancer). Puis : roue dentée en haut à droite → **Sauvegarde** →
+> « Télécharger la sauvegarde ». Et dites-moi : recommanderiez-vous l'app à quelqu'un ? Pourquoi (pas) ?
 
-> Note (31/10) : la carte « Tester un groupe FODMAP », le bilan du soir du ventre et la carte « Votre ventre » ne
-> s'affichent qu'avec l'objectif « Mon ventre » (choisi au démarrage ou dans Paramètres → « Ce qui vous amène ») ;
-> c'est voulu (retour du 24/10, point 4). Si le formulaire de production doit dire que « la plupart » des fonctions
-> ont été utilisées, glissez dans le message du jour 3 : « si vous ne l'avez pas choisi, vous pouvez passer à
-> “Mon ventre” dans Paramètres → Ce qui vous amène, le temps du test ».
+> Note (18/11) : la question du ventre le soir et la « Réintroduction guidée » ne s'affichent qu'avec l'objectif
+> digestion (Paramètres → « Vos objectifs »). Si le formulaire de production doit dire que « la plupart » des
+> fonctions ont été utilisées, glissez dans le message du jour 3 : « vous pouvez ajouter l'objectif digestion dans
+> Paramètres → Vos objectifs, le temps du test ».
 
 **Retours des testeurs → la routine (ajouté le 04/11 08:35, `IDEES.md` I215)** : aucune API ne donne les
 commentaires d'un test fermé (l'API des avis ne lit que la production). Aux jours 4, 8 et 11, collez dans une
@@ -162,8 +236,9 @@ Le run suivant range chaque retour (bug, texte confus, idée), corrige par impac
 pendant le test fermé » (`PRODUIT.md` §5), qui sert à la question 9 ci-dessous. Au jour 12, ajoutez ce que dit le
 rapport de pré-lancement (Tester → Rapport de pré-lancement → dernière version Alpha).
 
-Honnêteté à garder en tête : en 14 jours, personne ne verra de « piste » (il faut 21 jours de repas ou 28 jours de
-notes du ventre) ni de résultat de réintroduction (3 jours de ventre calme, puis 3 jours de test). C'est normal et
+Honnêteté à garder en tête (mis à jour le 18/11, refonte) : les premières analyses du bien-être arrivent après
+7 jours de notes, celles de la digestion après 14 jours ; un testeur assidu en verra donc une partie, mais pas de
+résultat de réintroduction (3 jours de ventre calme, puis 3 jours de test). C'est normal et
 c'est dit dans le formulaire (question 3 ci-dessous) : on préfère attendre plutôt que de montrer de faux suspects.
 
 ## 5. Formulaire d'accès à la production (P30) — brouillon, à compléter au jour 12

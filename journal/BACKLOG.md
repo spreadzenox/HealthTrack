@@ -23,6 +23,13 @@ données », local-first :
 
 Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`** (numéros I1…).
 
+## 🍎 Retours du propriétaire du 18/11 (App Store, abonnements, testeurs, Sécurité des données)
+
+- [ ] **R18-TESTEURS** : 4 inscrits sur 12 au test fermé. **Kit prêt le 18/11 18:30** (`INVITATION-TESTEURS.md` § 0 : messages A à D, 3 liens, canaux ; § 3 et missions des jours 3, 7, 10 réécrits pour la refonte ; P12 à jour). Reste : le nombre d'inscrits à chaque bilan ; prolonger `until` (2/12) sur demande du propriétaire si le 12ᵉ s'inscrit après le 18/11.
+- [x] **SECU-SANTE** (18/11 18:30) : Apple a raison (« Health », décision du 05/11) : la photo des selles (SELLES-PHOTO-2) part au relais et dit quelque chose de la digestion. Google alignée : `PSL_HEALTH` (Infos de santé) collectée, facultative, pour le fonctionnement, pas partagée ; `answers.mjs`, `data-safety.csv` régénéré, 2 tests. **Envoi** : geste du propriétaire, workflow « Play — sécurité des données » sur main (repli : import du CSV dans la Play Console).
+- [ ] **R18-GOLD-PRIX** : « You must add a subscription price » sur halcya_gold_mensuel ; cause à chercher par l'API App Store Connect en lecture (prix de base, dates de début, territoires), puis corriger par l'API ; vérifier les deux autres abonnements ; laisser non configurée « Monthly with a 12-Month Commitment ».
+- [ ] **R18-SOUMISSION** : version 844 avec une build de la refonte (numéro de `testflight-version.json`), notes pour l'examen revues, PI2 réécrite (« Submit for Review » seul) ; objectif 22/11.
+
 ## 💸 CI économe (décision du propriétaire du 18/11 : « il faut pas overkill la CI », au plus 3 h de Mac par jour)
 
 - [x] **CI-ECO** (#1101, mergée le 18/11 vers 18:18 ; build de PR 39 min au lieu d'environ 60) : (1) job macOS de `ios-build.yml` sauté sur une PR en brouillon (vérifié sur #1101) ; (2) build iOS de main et TestFlight une fois par soir (21:20 Paris), sautés sans changement (`iphone/scripts/main-changed.sh`) ; (3) un seul iPhone capturé sur une PR, sans grand texte. À cocher au merge, puis vérifier le premier soir (build fait ou sauté à bon escient).
