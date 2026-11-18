@@ -11,11 +11,12 @@ name: iOS — TestFlight
 # TestFlight sans geste de personne, comme Android vers Alpha. Toute PR passe ses vérifications (dont la build iOS et les
 # captures) avant son merge sur main ; le journal, la fiche et le site n'envoient rien. Les testeurs internes la
 # reçoivent ; l'App Store reste le clic du propriétaire, jamais automatisé.
+# CI économe (décision du propriétaire du 18/11) : un envoi par soir au lieu d'un par merge, à 21:20 à Paris (traité par
+# Apple avant l'Alpha de 23:45 et la soumission bêta du lendemain), sauté si le code embarqué n'a pas changé depuis le
+# dernier envoi réussi ; le lancement manuel reste possible.
 on:
-  push:
-    branches: [main]
-    # app/ compris depuis le 15/11 : upstream.json suit HEAD, le code partagé part sur TestFlight au merge qui le change
-    paths: ["app/**", "!app/android/**", "!app/store/**", "!app/**.md", "iphone/upstream.json", "iphone/patches/**", "iphone/overlay/**", "iphone/ios/**", "iphone/scripts/upstream.sh", "iphone/scripts/version.sh", "iphone/scripts/face-models.sh"]
+  schedule:
+    - cron: "20 20 * * *" # 21:20 à Paris (heure d'hiver)
   workflow_dispatch:
 
 permissions:
@@ -36,18 +37,31 @@ jobs:
     name: Publication iOS activée ?
     runs-on: ubuntu-latest
     timeout-minutes: 2
+    permissions:
+      actions: read
+      contents: read
     outputs:
       publication: ${{ steps.garde.outputs.publication }}
+      changed: ${{ steps.diff.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: iphone/fusion
+          fetch-depth: 0 # comparaison avec le dernier envoi réussi (scripts/main-changed.sh)
+          filter: blob:none
       - id: garde
         run: fusion/garde.sh
+      - id: diff
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          scripts/main-changed.sh ios-testflight.yml ":(top)app" ":(top,exclude)app/android" ":(top,exclude)app/store" \
+            ":(top,exclude,glob)app/**/*.md" ":(top)iphone/upstream.json" ":(top)iphone/patches" ":(top)iphone/overlay" \
+            ":(top)iphone/ios" ":(top)iphone/scripts/upstream.sh" ":(top)iphone/scripts/version.sh" ":(top)iphone/scripts/face-models.sh" \
+            ":(top)iphone/testflight-version.json"
   testflight:
     name: Archive signée et envoi sur TestFlight
     needs: garde
-    if: needs.garde.outputs.publication == 'oui'
+    if: needs.garde.outputs.publication == 'oui' && needs.garde.outputs.changed == 'oui'
     runs-on: macos-latest
     timeout-minutes: 60
     environment: appstore
