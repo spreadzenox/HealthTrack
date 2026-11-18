@@ -21,7 +21,7 @@ aucun correctif `iphone/patches/` ne touche `trials.js` ni `Trial.jsx`)
 - Nouveautés : une ligne ajoutée à `2026-11-18-0130-pilou-defi.json` (même PR).
 
 ## Vérifications
-- `npm run test` : voir le résultat noté ci-dessous ; les deux fichiers touchés : 31 tests verts.
+- `npm run test` : 362 fichiers verts (3 ignorés), aucun échec ; les deux fichiers touchés : 31 tests verts. `npm run build` et eslint des fichiers touchés propres.
 - Pas de nouvelle capture : seul le texte de la réserve change (déjà relue en sombre au run de 01:30).
 - Checks de la PR : impossibles tant que les Actions sont bloquées. **Pas mergée.**
 
