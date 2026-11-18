@@ -322,10 +322,13 @@ Règles des adaptations :
 - **Version de la fiche App Store** : elle porte le même numéro que les builds (une version n'accepte que des builds
   de même numéro). Après chaque envoi TestFlight d'une nouvelle version, lancer `store-push.yml` sans « captures » :
   il renomme la version « Prête à soumettre » et dit l'état des captures chez Apple (31/10, #129, #132).
-- **Livraison continue** (décision du propriétaire du 04/11, 19:45) : `testflight.yml` part seul à chaque merge sur
-  `main` qui change l'app (`upstream.json`, `patches/`, `overlay/`, `ios/`, scripts de préparation) ; le journal, la
-  fiche et le site n'envoient rien. Ne plus le lancer à la main après un tel merge (deux builds du même commit) ;
-  relever « Version X, build Y » dans le run déclenché par le commit de merge.
+- **Livraison continue, une fois par soir** (décisions du propriétaire du 04/11 et du 18/11, « il faut pas overkill la
+  CI ») : `ios-testflight.yml` et le build simulateur de `main` (`ios-build.yml`, captures sur `captures/main`) partent
+  chaque soir à 21:20 (Paris, 20:20 UTC), et sont sautés si le code concerné n'a pas changé depuis leur dernier succès
+  (`scripts/main-changed.sh`). Un lancement manuel reste possible (un seul, s'il presse). Sur une PR, le job macOS ne
+  tourne pas en brouillon : ouvrir la PR en brouillon, la passer « prête » une fois finie (un build, un seul iPhone
+  capturé, sans grand texte), puis ne pousser que ce qui la débloque ; au plus deux PR qui lancent un build iOS à la
+  fois. Cible : 3 heures de Mac par jour en moyenne au plus.
 - **Expiration des builds** (décision du propriétaire du 09/11 vers 11:00) : après chaque build arrivée sur TestFlight,
   `store-beta-expire.yml` avec « nettoyage » (d'abord « essai » en cas de doute), puis `store-push.yml`. Restent : la
   build de la version de l'App Store (844.344), la dernière distribuée au groupe externe jusqu'à ce que sa remplaçante

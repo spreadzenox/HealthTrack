@@ -7,13 +7,16 @@
 # runs dépassés d'une même PR annulés).
 name: iOS — build simulateur
 
+# CI économe (décision du propriétaire du 18/11, au plus 3 heures de Mac par jour) : sur une PR, le job macOS ne tourne
+# pas tant qu'elle est en brouillon (un seul build, quand elle est prête) et capture un seul iPhone ; sur main, un build
+# par soir (21:20 à Paris, avant l'Alpha de 23:45), sauté si rien de concerné n'a changé (scripts/main-changed.sh).
 on:
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
     paths: ["iphone/**", "app/**", "relay/**", ".github/workflows/ios-build.yml", "!app/android/**", "!app/store/**", "!app/**.md", "!iphone/journal/**", "!iphone/**.md", "!iphone/store/**", "!iphone/site/**", "!iphone/scripts/site.mjs", "!iphone/scripts/store-*.mjs", "!iphone/fusion/**"]
-  push:
-    branches: [main]
-    paths: ["iphone/**", "app/**", "relay/**", ".github/workflows/ios-build.yml", "!app/android/**", "!app/store/**", "!app/**.md", "!iphone/journal/**", "!iphone/**.md", "!iphone/store/**", "!iphone/site/**", "!iphone/scripts/site.mjs", "!iphone/scripts/store-*.mjs", "!iphone/fusion/**"]
+  schedule:
+    - cron: "20 20 * * *" # 21:20 à Paris (heure d'hiver) : une heure de build, fini avant l'Alpha de 23:45
   workflow_dispatch:
     inputs:
       devices:
@@ -57,8 +60,38 @@ jobs:
         working-directory: iphone/upstream/app
         run: npm run lint
 
+  # Build du soir sur main : sauté si rien de concerné n'a changé depuis le dernier build réussi
+  quotidien:
+    name: Code iOS changé depuis le dernier build ?
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        if: github.event_name == 'schedule'
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - id: diff
+        working-directory: ${{ github.workspace }} # sans checkout (PR), le dossier iphone/ n'existe pas
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != schedule ]; then echo "changed=oui" >> "$GITHUB_OUTPUT"; exit 0; fi
+          iphone/scripts/main-changed.sh ios-build.yml ":(top)iphone" ":(top)app" ":(top)relay" ":(top).github/workflows/ios-build.yml" \
+            ":(top,exclude)app/android" ":(top,exclude)app/store" ":(top,exclude,glob)app/**/*.md" ":(top,exclude)iphone/journal" \
+            ":(top,exclude,glob)iphone/**/*.md" ":(top,exclude)iphone/store" ":(top,exclude)iphone/site" ":(top,exclude)iphone/fusion"
+
   ios:
     name: Build iOS (simulateur) et captures
+    # Brouillon : pas de build macOS (il part au passage en « prête ») ; soir sans changement : sauté
+    needs: quotidien
+    if: needs.quotidien.outputs.changed == 'oui'
     runs-on: macos-latest
     # 90 min : sur un runner lent (5/11, #303), les captures ont pris 60 min au lieu de 40 et le test d'achat a été
     # coupé à 70 min alors que tout le reste était bon
@@ -195,6 +228,8 @@ jobs:
       - name: Captures sur simulateur
         env:
           CAPTURE_DEVICES: ${{ inputs.devices }}
+          # PR : un seul iPhone (390 points, comme l'iPhone 12 de test), sans passage en grand texte ; main : les trois
+          CAPTURE_SINGLE: ${{ github.event_name == 'pull_request' && '1' || '' }}
         run: scripts/ios-captures.sh "$RUNNER_TEMP/dd/Build/Products/Debug-iphonesimulator/App.app" captures "${XCTESTRUN:-}"
       # Achat d'essai de l'abonnement App Store (I6), sans compte Apple : StoreKit Test (ios/App/AppTests/Halcya.storekit)
       # dans une cible de tests unitaires hébergée par l'app. Encore à l'essai : n'arrête ni les captures ni la CI.
