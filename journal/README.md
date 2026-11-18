@@ -8,6 +8,8 @@
 > 1 à 6 et 7a faites des deux côtés ; une seule routine et un seul dépôt pour Android et l'iPhone, puis une seule PR
 > pour les deux apps ; mode polish ; chantier cycle commencé).
 
+**⛔ 18/11 08:30 : GitHub Actions est bloqué depuis le 17/11 vers 18:40 (« your account is locked due to a billing issue »).** Plus aucun test, merge, envoi Alpha ni TestFlight tant que la facturation du compte GitHub n'est pas réglée : c'est votre geste, mission [P50](missions/P50.md) (sur la branche de #1091). Six PR prêtes attendent (#1090 à #1095).
+
 **🧸 Bilan du sprint (fini le 17/11 à 03:00), étape par étape. Rien n'a encore été mesuré sur un vrai téléphone.**
 - **8 Scène** : livrée (île 3D, lumière, météo, 7 cadeaux, la nuit). Reste : croissance de l'île et vrai lever/coucher
   du soleil (écrits, pas branchés), palier de qualité sur un vrai téléphone.
@@ -114,6 +116,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 18/11 08:30 — [idées : horloge des captures](runs/2026-11-18-0830-visual-now.md) | 💡 | **GitHub Actions toujours bloqué** (facturation du compte : mission [P50](missions/P50.md), votre geste débloque tout ; sonde refusée vers 07:33 UTC). Pas d'envoi Alpha cette nuit, pas de soumission TestFlight ; six PR (#1090 à #1095) attendent. En attendant, outillage : les captures peuvent choisir leur heure (`--now=14:00`, `--usage-days=76`), pour voir l'Accueil de jour et l'îlot grandi quelle que soit l'heure du run. Rien d'autre à faire de votre côté |
 | 17/11 17:30 — [MONDE-3 mergée](runs/2026-11-17-1730-merge-1088.md) | 🛠️ | **#1088 mergée** : l'îlot de Pilou grandit avec les jours où vous notez quelque chose (14 checks verts, build iPhone comprise ; captures iPhone de l'Accueil relues en clair, en sombre et sans données). Sur le simulateur et dans Chromium l'Accueil sort en image fixe : la croissance se voit sur votre téléphone, à l'usage. Release v789 (APK 35,4 Mo). Après le merge, deux pannes extérieures (Maven Central saturé pour l'émulateur, App Store Connect pour TestFlight) : jobs relancés. Prochain : MONDE-4 (îlot voisin, mare, petit arbre). Rien à faire de votre côté |
 | 17/11 16:30 — [MONDE-3 : budget de lectures](runs/2026-11-17-1630-monde-3-budget.md) | 🛠️ | #1088 était rouge : le premier décompte des jours d'usage relisait toutes vos notes (4 761 lectures pour l'Accueil, plafond 1 500). Il lit maintenant une note par jour et par type de note, sur 90 jours au plus : 1 004 lectures. Rien ne change à l'écran. 4 039 tests verts. Merge quand la build iPhone est verte. Rien à faire de votre côté |
 | 17/11 15:30 — [MONDE-3 en PR #1088](runs/2026-11-17-1530-monde-3.md) | 🛠️ | **L'îlot grandit avec vous** : plus large et plus haut, l'arbuste plus grand, jusqu'à 90 jours de notes ; Pilou garde sa taille et l'îlot adulte tient dans le cadre (banc relu à 0, 30 et 90 jours). Le décompte des jours n'est relu qu'une fois par jour, après l'ouverture de l'Accueil. 4 034 tests verts. PR ouverte, checks et build iPhone en cours : merge au run suivant. Rien à faire de votre côté |
