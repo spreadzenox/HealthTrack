@@ -8,7 +8,7 @@
 > 1 à 6 et 7a faites des deux côtés ; une seule routine et un seul dépôt pour Android et l'iPhone, puis une seule PR
 > pour les deux apps ; mode polish ; chantier cycle commencé).
 
-**⛔ 18/11 09:30 : GitHub Actions est bloqué depuis le 17/11 vers 18:40 (« your account is locked due to a billing issue »).** Plus aucun test, merge, envoi Alpha ni TestFlight tant que la facturation du compte GitHub n'est pas réglée : c'est votre geste, mission [P50](missions/P50.md) (sur la branche de #1091). Sept PR prêtes attendent (#1090 à #1096) et une huitième, #1097 ou suivante (NUIT-ETIQUETTE).
+**⛔ 18/11 09:30 : GitHub Actions est bloqué depuis le 17/11 vers 18:40 (« your account is locked due to a billing issue »).** Plus aucun test, merge, envoi Alpha ni TestFlight tant que la facturation du compte GitHub n'est pas réglée : c'est votre geste, mission [P50](missions/P50.md) (sur la branche de #1091). Sept PR prêtes attendent (#1090 à #1096) et une huitième, #1097 (NUIT-ETIQUETTE).
 
 **🧸 Bilan du sprint (fini le 17/11 à 03:00), étape par étape. Rien n'a encore été mesuré sur un vrai téléphone.**
 - **8 Scène** : livrée (île 3D, lumière, météo, 7 cadeaux, la nuit). Reste : croissance de l'île et vrai lever/coucher
