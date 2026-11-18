@@ -8,7 +8,7 @@ import assert from 'node:assert/strict'
 import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { SUBSCRIPTIONS, LIMITS, TERRITORY, TERRITORIES, GROUP, NOTIFICATIONS, bodies, pricePointFor, currentPrices, priceDetails, ensureSubscriptions, readReviewScreenshot, notificationsPlan, diagnose, appTerritories } from './store-subscriptions.mjs'
+import { SUBSCRIPTIONS, LIMITS, TERRITORY, TERRITORIES, PRICE_TERRITORIES, BASE_TERRITORY, GROUP, NOTIFICATIONS, bodies, pricePointFor, currentPrices, priceDetails, ensureSubscriptions, readReviewScreenshot, notificationsPlan, diagnose, appTerritories } from './store-subscriptions.mjs'
 
 const root = new URL('..', import.meta.url)
 const read = (path) => readFileSync(new URL(path, root), 'utf8')
@@ -251,6 +251,11 @@ test('ensureSubscriptions : tout se crée au premier passage, rien au second (id
   assert.deepEqual(['BEL', 'LUX', 'CHE', 'CAN'].map((t) => localOf('halcya_premium_mensuel', t)), [['4.99'], ['4.99'], ['4.90'], ['6.99']])
   assert.deepEqual(['CHE', 'CAN'].map((t) => localOf('halcya_premium_annuel', t)), [['29.00'], ['39.99']])
   assert.deepEqual(['CHE', 'CAN'].map((t) => localOf('halcya_gold_mensuel', t)), [['9.90'], ['12.99']])
+  // Territoire de base du prix de l'app (États-Unis) : un prix pour chaque abonnement (sans lui, « You must add a
+  // subscription price » chez Apple), mais jamais en vente là-bas (P32)
+  assert.equal(BASE_TERRITORY, 'USA')
+  assert.deepEqual(['halcya_gold_mensuel', 'halcya_premium_annuel', 'halcya_premium_mensuel'].map((pid) => localOf(pid, 'USA')), [['9.99'], ['29.99'], ['4.99']])
+  for (const a of Object.values(asc.db.avail)) assert.ok(!a.relationships.availableTerritories.data.some((t) => t.id === 'USA'), 'pas en vente aux États-Unis')
   const offers = Object.entries(asc.db.offers)
   assert.equal(offers.length, 1, 'un seul essai : Silver annuel')
   assert.equal(asc.db.subs.find((s) => s.id === offers[0][0]).attributes.productId, 'halcya_premium_annuel')
@@ -282,7 +287,7 @@ test('ensureSubscriptions : deux paliers au même prix (paiement mensuel d’App
   const { drift } = await ensureSubscriptions({ token: 't', fetchImpl: asc.fetchImpl })
   assert.deepEqual(drift, [])
   for (const s of asc.db.subs) assert.equal(asc.db.prices[s.id].length, 1)
-  assert.equal(asc.calls.filter((c) => c === 'POST /v1/subscriptionPrices').length, 3 * TERRITORIES.length)
+  assert.equal(asc.calls.filter((c) => c === 'POST /v1/subscriptionPrices').length, 3 * PRICE_TERRITORIES.length)
 })
 
 test('capture pour l’examen : envoyée pour chaque abonnement, morceaux et empreinte MD5, la précédente remplacée', async () => {
@@ -369,7 +374,7 @@ test('diagnose : relevé sans écriture de chaque pièce exigée par Apple', asy
   blank.db.appPrice = { data: { relationships: { baseTerritory: { data: { id: 'FRA' } } } } }
   const blankLines = await diagnose({ token: 't', fetchImpl: blank.fetchImpl })
   assert.match(blankLines[0], /; disponibilité de l'app non réglée \(« Prix et disponibilité » vide\) ; prix de l'app réglé \(territoire de base FRA\)$/)
-  assert.match(lines[2], /^halcya_gold_mensuel : état MISSING_METADATA ; noms fr-FR .* ; capture absente ; prix FRA 9\.99 sans date, BEL 9\.99 sans date, LUX 9\.99 sans date, CHE 9\.90 sans date, CAN 12\.99 sans date ; territoires FRA, BEL, LUX, CHE, CAN ; note pour l'examen absente ; formules aucune ; versions 1 PREPARE_FOR_SUBMISSION$/)
+  assert.match(lines[2], /^halcya_gold_mensuel : état MISSING_METADATA ; noms fr-FR .* ; capture absente ; prix FRA 9\.99 sans date, BEL 9\.99 sans date, LUX 9\.99 sans date, CHE 9\.90 sans date, CAN 12\.99 sans date, USA 9\.99 sans date ; territoires FRA, BEL, LUX, CHE, CAN ; note pour l'examen absente ; formules aucune ; versions 1 PREPARE_FOR_SUBMISSION$/)
   // Une pièce que l'API ne sait pas lire n'interrompt pas le relevé
   const broken = fakeAsc()
   await ensureSubscriptions({ token: 't', fetchImpl: broken.fetchImpl })

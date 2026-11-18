@@ -394,6 +394,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **18/11 19:30** — Prix de Gold refusé par Apple (« You must add a subscription price ») : relevé par l'API, prix des 5 pays en place et valables ; le territoire de base du prix de l'app est les États-Unis, sans prix d'abonnement. Correctif : un prix aux États-Unis pour chaque abonnement, vente toujours limitée aux 5 pays de P32. Seconde piste si Apple refuse encore : base de l'app en France (geste du propriétaire).
 - **18/11 18:30** — Testeurs : kit de recrutement réécrit pour la refonte (`INVITATION-TESTEURS.md` § 0, P12) ; SECU-SANTE : « Infos de santé » ajoutées à la Sécurité des données Google (photo des selles), alignée sur Apple ; envoi = P51.
 - **18/11 17:30** — CI-ECO (#1101, décision du 18/11 : au plus 3 h de Mac par jour) et PR regroupée de #1090 à #1097 (un seul build iPhone). GitHub Actions débloqué vers 16:10 (P50 soldée).
 - **18/11 10:30** — Pile des huit PR en attente (#1090 à #1097) fusionnée en local dans l'ordre de merge prévu : aucun conflit de code, 4 080 tests verts, build et Accueil relus. GitHub Actions toujours bloqué (P50) : rien de mergé.

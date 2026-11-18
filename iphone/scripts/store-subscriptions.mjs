@@ -27,9 +27,18 @@ export const TERRITORY = 'FRA'
  * jamais les États-Unis ; Royaume-Uni et reste de l'UE avec l'anglais). Pas dans les territoires qu'Apple ajoutera.
  */
 export const TERRITORIES = ['FRA', 'BEL', 'LUX', 'CHE', 'CAN']
-export const CURRENCY = { FRA: '€', BEL: '€', LUX: '€', CHE: 'CHF', CAN: '$CA' }
+export const CURRENCY = { FRA: '€', BEL: '€', LUX: '€', CHE: 'CHF', CAN: '$CA', USA: '$' }
+/**
+ * Territoire de base du prix de l'app (relevé du 18/11 : `appPriceSchedule` → USA). App Store Connect calcule les prix
+ * d'un abonnement depuis un territoire de base, que l'API ne sait pas lire, et refuse « Add for Review » avec « You must
+ * add a subscription price » quand ce territoire n'a pas de prix, même si les 5 pays de vente en ont. Un prix y est donc
+ * fixé, **sans** ouvrir la vente aux États-Unis : la disponibilité reste celle de P32 (`TERRITORIES`).
+ */
+export const BASE_TERRITORY = 'USA'
+/** Pays où chaque abonnement a un prix : ceux de la vente, plus le territoire de base. */
+export const PRICE_TERRITORIES = [...TERRITORIES, BASE_TERRITORY]
 /** Prix d'un abonnement dans chaque pays : zone euro au prix français ; Suisse et Canada comme Google Play (P32). */
-const localPrices = (eur, chf, cad) => ({ FRA: eur, BEL: eur, LUX: eur, CHE: chf, CAN: cad })
+const localPrices = (eur, chf, cad, usd) => ({ FRA: eur, BEL: eur, LUX: eur, CHE: chf, CAN: cad, USA: usd })
 export const GROUP = { referenceName: 'Halcya', name: 'Halcya' }
 /**
  * Notifications serveur de l'App Store (version 2) : le relais d'Android les reçoit depuis la v691 (I6-RELAIS-3,
@@ -52,16 +61,16 @@ export const LIMITS = { name: 30, description: 45, referenceName: 64 }
 export const SUBSCRIPTIONS = [
   {
     productId: 'halcya_gold_mensuel', referenceName: 'Halcya Gold mensuel', groupLevel: 1, period: 'ONE_MONTH',
-    price: '9.99', prices: localPrices('9.99', '9.90', '12.99'), name: 'Halcya Gold', description: 'IA : 20 par jour, quantités mieux estimées', trial: null,
+    price: '9.99', prices: localPrices('9.99', '9.90', '12.99', '9.99'), name: 'Halcya Gold', description: 'IA : 20 par jour, quantités mieux estimées', trial: null,
   },
   {
     productId: 'halcya_premium_annuel', referenceName: 'Halcya Premium annuel', groupLevel: 2, period: 'ONE_YEAR',
-    price: '29.99', prices: localPrices('29.99', '29.00', '39.99'), name: 'Halcya Silver annuel', description: 'Analyse IA des repas, 10 par jour',
+    price: '29.99', prices: localPrices('29.99', '29.00', '39.99', '29.99'), name: 'Halcya Silver annuel', description: 'Analyse IA des repas, 10 par jour',
     trial: { offerMode: 'FREE_TRIAL', duration: 'TWO_WEEKS', numberOfPeriods: 1 },
   },
   {
     productId: 'halcya_premium_mensuel', referenceName: 'Halcya Premium mensuel', groupLevel: 2, period: 'ONE_MONTH',
-    price: '4.99', prices: localPrices('4.99', '4.90', '6.99'), name: 'Halcya Silver', description: 'Analyse IA des repas, 10 par jour', trial: null,
+    price: '4.99', prices: localPrices('4.99', '4.90', '6.99', '4.99'), name: 'Halcya Silver', description: 'Analyse IA des repas, 10 par jour', trial: null,
   },
 ]
 
@@ -276,7 +285,7 @@ export async function ensureSubscriptions({ token, fetchImpl = fetch, log = () =
       }
     }
 
-    for (const territory of TERRITORIES) {
+    for (const territory of PRICE_TERRITORIES) {
       const price = s.prices?.[territory] ?? (territory === TERRITORY ? s.price : null)
       if (!price) continue
       const unit = CURRENCY[territory]
@@ -425,7 +434,7 @@ export async function diagnose({ token, fetchImpl = fetch }) {
     const delivery = shot?.attributes?.assetDeliveryState
     parts.push(`capture ${shot ? `${delivery?.state ?? '?'}${delivery?.errors?.length ? ` (${delivery.errors.map((x) => x.code || x.description).join(', ')})` : ''}` : 'absente'}`)
     const byTerritory = []
-    for (const territory of TERRITORIES) {
+    for (const territory of PRICE_TERRITORIES) {
       const prices = await api('GET', `/v1/subscriptions/${id}/prices?filter[territory]=${territory}&include=subscriptionPricePoint&limit=50`)
       byTerritory.push(`${territory} ${priceDetails(prices).join(' / ') || 'aucun'}`)
     }
@@ -450,10 +459,10 @@ export async function diagnose({ token, fetchImpl = fetch }) {
 
 function dryRun(log) {
   log(`Notifications serveur de l'App Store : ${NOTIFICATIONS.url} (${NOTIFICATIONS.version}, production et sandbox)`)
-  log(`Groupe « ${GROUP.referenceName} » (nom affiché ${LOCALE} : « ${GROUP.name} »), en vente en ${TERRITORIES.join(', ')} (P32)`)
+  log(`Groupe « ${GROUP.referenceName} » (nom affiché ${LOCALE} : « ${GROUP.name} »), en vente en ${TERRITORIES.join(', ')} (P32) ; prix aussi en ${BASE_TERRITORY}, territoire de base, sans y être en vente`)
   for (const s of SUBSCRIPTIONS) {
     const trial = s.trial ? `, essai ${s.trial.duration} (${s.trial.offerMode})` : ''
-    const local = TERRITORIES.map((t) => `${t} ${s.prices[t]} ${CURRENCY[t]}`).join(', ')
+    const local = PRICE_TERRITORIES.map((t) => `${t} ${s.prices[t]} ${CURRENCY[t]}`).join(', ')
     log(`- ${s.productId} : niveau ${s.groupLevel}, ${s.period}, ${s.price} €${trial} ; « ${s.name} » / « ${s.description} » ; ${local}`)
   }
 }
