@@ -393,6 +393,10 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **18/11 07:30** — Actions toujours bloqué (P50) : sonde refusée vers 06:31 UTC. Rien de neuf à merger.
+- **18/11 06:30** — Actions toujours bloqué (P50) : sonde refusée vers 05:31 UTC. Rien de neuf à merger.
+- **18/11 05:30** — Actions toujours bloqué (P50) : sonde refusée ; le cron Alpha de 23:45 (parti à 03:53 UTC) a échoué sans démarrer, pas d'envoi Alpha cette nuit. Rien de neuf à merger.
+- **18/11 03:30** — Actions toujours bloqué (P50). Les six PR en attente (#1090 à #1095) fusionnées ensemble en local : aucun conflit de code (journal seulement), 4 072 tests verts, build, budget de lectures et captures sans erreur ; îlot voisin vu à 76 jours avec l'horloge figée à 14:00. Lien de session retiré du corps de #1093.
 - **17/11 23:30** — MONDE-4b, fin (PR empilée sur #1092) : l'image fixe des téléphones lents suit l'îlot (13 images : croissance 0, 30, 90 jours × 4 saisons, et la nuit avec Pilou endormi ; environ 290 Ko), rendues par un script depuis le banc de la scène. GitHub Actions toujours bloqué (P50) : rien de mergé, pas d'envoi Alpha ce soir.
 - **17/11 22:30** — MONDE-4b, 2e partie (même PR #1092) : la nouvelle de l'îlot (mare, îlot voisin, petit arbre, saison) dite une fois dans l'étiquette de l'Accueil, avec un petit saut de Pilou ; jamais la nuit. GitHub Actions toujours bloqué (P50) : rien de mergé.
 - **17/11 21:30** — MONDE-4b, 1re partie (PR empilée sur MONDE-4a) : l'arbuste du J1 devient un petit arbre à 45 jours d'usage (`growthAt().tree`, g ≥ 0,5), même feuillage de saison ; Android et iPhone par le même code. GitHub Actions toujours bloqué (P50) : rien de mergé. Restent : nouvelle dite une fois, image fixe du palier bas.

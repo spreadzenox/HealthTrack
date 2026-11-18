@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, lanterns } from './trials'
+import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, lanterns, pilouSays } from './trials'
 
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30, unit: 'min', text: '30 min de sommeil de plus' } }
 const START = new Date(2026, 10, 1, 9)
@@ -66,7 +66,9 @@ describe('Essais (ORG-8)', () => {
     it('fini, mieux les lendemains des jours avec : « Plutôt oui », à confirmer', () => {
       const s = trialStatus(ten, { outcome: series(4, 2.5), now: END })
       expect(s).toMatchObject({ done: true, bilan: 'yes', confirm: true })
-      expect(bilanWords(s)).toEqual({ title: 'Plutôt oui', note: 'À confirmer sur plus de jours : 5 jours avec, c’est encore peu.' })
+      expect(bilanWords(s)).toEqual({ title: 'Plutôt oui', note: 'À confirmer sur plus de jours : 5 lendemains mesurés, c’est encore peu.' })
+      // LANT-2 : la réserve compte les lendemains mesurés, la bulle de Pilou les jours tenus : deux mots différents
+      expect(bilanWords(s).note).not.toMatch(/jours avec/)
     })
 
     it('fini, moins bien les lendemains des jours avec : « Plutôt non », jamais « vérifié »', () => {
@@ -152,5 +154,22 @@ describe('UPG-1 : l’essai en cours sur la carte Agir de l’Accueil', () => {
       expect(l).toHaveLength(7)
       expect(l[0].state).toBe('pending')
     })
+  })
+})
+
+describe('LANT-2 : ce que dit Pilou sur la page du défi', () => {
+  const st = (over) => ({ done: true, bilan: 'yes', kept: 5, ...over })
+  it('au bilan, il salue l’effort : même bulle et même geste quel que soit le résultat', () => {
+    const yes = pilouSays(st({ bilan: 'yes' }))
+    expect(yes).toEqual({ expr: 'content', move: 'nod', text: 'Bravo pour vos 5 jours avec.' })
+    for (const bilan of ['no', 'none', 'too_few']) expect(pilouSays(st({ bilan }))).toEqual(yes)
+  })
+  it('au bilan : un seul jour tenu, ou aucun', () => {
+    expect(pilouSays(st({ kept: 1 })).text).toBe('Bravo pour votre jour avec.')
+    expect(pilouSays(st({ kept: 0 })).text).toBe('Merci d’avoir essayé.')
+  })
+  it('juste après « Commencer » : un saut et la promesse des lanternes ; ensuite il attend, sans bulle', () => {
+    expect(pilouSays({ done: false }, { started: true })).toEqual({ expr: 'content', move: 'hop', text: 'C’est parti ! Chaque jour avec tenu allume une lanterne.' })
+    expect(pilouSays({ done: false })).toEqual({ expr: 'tranquille', move: 'none', text: null })
   })
 })
