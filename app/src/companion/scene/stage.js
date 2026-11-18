@@ -9,6 +9,7 @@ import { createIsland } from './island'
 import { createFlowerBed } from './flowers'
 import { createGifts } from './gifts'
 import { createWeatherFx } from './weatherFx'
+import { createNeighbour } from './neighbour'
 import { createPlaceholderPilou } from './placeholderPilou'
 import { GOLDEN, directionOf, normalizeLight } from './light'
 import { TIER_SETTINGS, pixelRatioFor } from './quality'
@@ -115,6 +116,8 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
   world.add(island.group)
   const flowers = createFlowerBed({ topY: island.topY, reducedMotion })
   world.add(flowers.group)
+  const neighbour = createNeighbour({ quality: tier, season: island.season })
+  world.add(neighbour.group)
 
   const make = createPilou || ((T, o) => createPlaceholderPilou(T, o))
   let pilou = make(THREE, { quality: tier, reducedMotion, seed: 3, envMap: scene.environment, traits: null, now: () => new Date() })
@@ -156,7 +159,7 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
     // le monde flotte de ±0,045 (6,9 s)
     world.position.y = rm ? 0 : 0.045 * Math.sin((t / 6900) * Math.PI * 2)
     pilou.update(t, 0)
-    const growing = flowers.update(t) | gifts.update(t) | weather.update(t)
+    const growing = flowers.update(t) | gifts.update(t) | weather.update(t) | neighbour.update(t, { reducedMotion: rm })
     if (dust && !rm) {
       dust.rotation.y = t / 90000
       dust.position.y = 0.05 * Math.sin(t / 5000)
@@ -198,16 +201,25 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
     setSeason(next) {
       island.setSeason(next)
       gifts.setSeason(island.season)
+      neighbour.setSeason(island.season)
     },
     get season() {
       return island.season
     },
-    /** Croissance de l'îlot (sortie de `growthAt`) : îlot plus large et plus haut, arbuste plus grand ; caméra fixe. */
+    /**
+     * Croissance de l'îlot (sortie de `growthAt`) : îlot plus large et plus haut, arbuste plus grand, îlot voisin
+     * (mois 1 : il arrive sous les yeux s'il apparaît Accueil ouvert, il est déjà là sinon), mare (mois 3) ; caméra fixe.
+     */
     setGrowth(growth) {
       if (!growth) return
       island.setGrowth(growth)
       gifts.setShrubScale(growth.shrubScale)
+      if (growth.neighbourIsland ?? growth.neighbor) neighbour.show(growthDays != null)
       growthDays = Number(growth.days) || 0
+    },
+    /** Ce que le temps long a posé sur l'île (tests, banc). */
+    get longTime() {
+      return { neighbour: neighbour.shown, pond: island.hasPond }
     },
     get growthDays() {
       return growthDays
@@ -259,6 +271,7 @@ export function createStage(canvas, { width, height, tier = 'haut', reducedMotio
     dispose() {
       pilou.dispose?.()
       island.dispose()
+      neighbour.dispose()
       scene.environment?.dispose?.()
       renderer.dispose()
     },

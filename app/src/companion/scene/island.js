@@ -36,6 +36,50 @@ export const SEASON_COLORS = Object.freeze({
 })
 const DEFAULT_SEASON = 'printemps-ete'
 
+/**
+ * La mare du 3e mois (SPEC île § 8) : à gauche de Pilou, entre l'arbuste et les fleurs du jour (repère de l'îlot :
+ * angle 0 = vers l'écran, rayon du plateau = 1). Eau claire, gelée l'hiver ; bord de sable.
+ */
+export const POND = Object.freeze({ angleDeg: -100, r: 0.68, rx: 0.24, rz: 0.17 })
+export const POND_WATER = Object.freeze({ 'printemps-ete': '#3E97B8', automne: '#3F87A0', hiver: '#CFE5EE', 'fin-hiver': '#469FBE' })
+
+function buildPond() {
+  const g = new THREE.Group()
+  g.name = 'mare'
+  const a = (POND.angleDeg * Math.PI) / 180
+  const x = Math.sin(a) * POND.r * ISLAND.R, z = Math.cos(a) * POND.r * ISLAND.R
+  const rr = Math.hypot(x, z)
+  const y = 0.018 * (1 - (rr / ISLAND.R) ** 2)
+  g.position.set(x, y, z)
+  g.rotation.y = a
+  const rim = new THREE.Mesh(new THREE.CircleGeometry(1, 28), new THREE.MeshStandardMaterial({ color: '#E3C99A', roughness: 0.9 }))
+  rim.rotation.x = -Math.PI / 2
+  rim.scale.set(POND.rx * ISLAND.R * 1.18, POND.rz * ISLAND.R * 1.25, 1)
+  rim.position.y = 0.004
+  const water = new THREE.Mesh(
+    new THREE.CircleGeometry(1, 28),
+    new THREE.MeshStandardMaterial({ color: POND_WATER[DEFAULT_SEASON], roughness: 0.18, envMapIntensity: 0.35 }),
+  )
+  water.name = 'eau'
+  water.rotation.x = -Math.PI / 2
+  water.scale.set(POND.rx * ISLAND.R, POND.rz * ISLAND.R, 1)
+  water.position.y = 0.007
+  // trois roseaux derrière l'eau : la mare se lit même vue de côté, au-dessus du gazon
+  const reedMat = new THREE.MeshStandardMaterial({ color: '#6F8F3A', roughness: 0.6 })
+  const headMat = new THREE.MeshStandardMaterial({ color: '#7A4E2E', roughness: 0.5 })
+  ;[[-0.05, -0.12, 0.2], [0.04, -0.15, 0.24], [0.13, -0.1, 0.17]].forEach(([rx, rz, h], i) => {
+    const reed = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.009, h, 5), reedMat)
+    reed.position.set(rx, h / 2, rz)
+    reed.rotation.z = (i - 1) * 0.12
+    const head = new THREE.Mesh(new THREE.CapsuleGeometry(0.016, 0.045, 2, 6), headMat)
+    head.position.set(rx + (i - 1) * 0.012 * h * 5, h * 0.92, rz)
+    g.add(reed, head)
+  })
+  g.add(rim, water)
+  g.visible = false
+  return { group: g, water }
+}
+
 function boundaryY(i, theta) {
   if (!i) return STRATA[0].y
   return STRATA[i].y + 0.035 * valueNoise1(theta * 0.8 + i * 3.3, 71 + i) - 0.02 * Math.sin(theta + i * 1.7)
@@ -234,6 +278,14 @@ export function createIsland({ quality = 'haut', tufts = 600, seed = 7, season =
   const palette = (sea) => SEASON_COLORS[sea].tufts.map((h) => new THREE.Color(h))
   const greens = palette(current)
   const tuftTone = [] // indice de teinte de chaque touffe : la même touffe change de couleur avec la saison
+  const pondTufts = [] // touffes sur l'emplacement de la mare : rangées quand elle apparaît
+  const pa = (POND.angleDeg * Math.PI) / 180
+  const pc = [Math.sin(pa) * POND.r * ISLAND.R, Math.cos(pa) * POND.r * ISLAND.R]
+  const inPond = (x, z) => {
+    const dx = x - pc[0], dz = z - pc[1]
+    const u = dx * Math.cos(pa) - dz * Math.sin(pa), w = dx * Math.sin(pa) + dz * Math.cos(pa)
+    return (u / (POND.rx * ISLAND.R * 1.35)) ** 2 + (w / (POND.rz * ISLAND.R * 1.6)) ** 2 < 1
+  }
   let placed = 0
   const golden = Math.PI * (3 - Math.sqrt(5))
   for (let i = 0; placed < tufts && i < tufts * 3; i++) {
@@ -250,12 +302,18 @@ export function createIsland({ quality = 'haut', tufts = 600, seed = 7, season =
     s.set(k, k * (0.8 + r() * 0.5), k)
     m.compose(v, q, s)
     tuftMesh.setMatrixAt(placed, m)
+    if (inPond(x, z)) pondTufts.push(placed)
     const tone = Math.floor(r() * greens.length)
     tuftTone.push(tone)
     tuftMesh.setColorAt(placed, greens[tone])
     placed++
   }
   tuftMesh.count = placed
+  const tuftMatrices = pondTufts.reduce((acc, i) => {
+    acc[i] = new THREE.Matrix4()
+    tuftMesh.getMatrixAt(i, acc[i])
+    return acc
+  }, {})
   tuftMesh.name = 'herbe'
   if (placed) group.add(tuftMesh)
 
@@ -270,6 +328,10 @@ export function createIsland({ quality = 'haut', tufts = 600, seed = 7, season =
   blob.name = 'ombre'
   group.add(blob)
 
+  const pond = buildPond()
+  pond.water.material.color.set(POND_WATER[current])
+  group.add(pond.group)
+
   return {
     group,
     get season() {
@@ -283,16 +345,33 @@ export function createIsland({ quality = 'haut', tufts = 600, seed = 7, season =
       const tones = palette(current)
       tuftTone.forEach((tone, i) => tuftMesh.setColorAt(i, tones[tone % tones.length]))
       if (tuftMesh.instanceColor) tuftMesh.instanceColor.needsUpdate = true
+      pond.water.material.color.set(POND_WATER[current])
     },
     /**
      * Croissance de l'îlot (sortie de `growthAt`, SPEC île § 8) : largeur × `islandScaleXZ`, hauteur × `islandScaleY`.
      * Le dessus reste à la même hauteur (y ≈ 0) : Pilou ne bouge pas, la caméra non plus. Les brins d'herbe gardent leur
-     * nombre et grandissent avec l'îlot. Jamais en dessous de l'îlot de départ (rien ne recule).
+     * nombre et grandissent avec l'îlot. Jamais en dessous de l'îlot de départ (rien ne recule). Au 3e mois, la mare
+     * (`pond`).
      */
     setGrowth(growth) {
       const xz = Math.max(1, Number(growth?.islandScaleXZ) || 1)
       const y = Math.max(1, Number(growth?.islandScaleY) || 1)
       group.scale.set(xz, y, xz)
+      const pondNow = Boolean(growth?.pond)
+      if (pondNow !== pond.group.visible) {
+        pond.group.visible = pondNow
+        // l'herbe laisse la place à l'eau (et revient si la mare n'est plus là)
+        const hidden = new THREE.Matrix4().makeScale(0, 0, 0)
+        for (const i of pondTufts) tuftMesh.setMatrixAt(i, pondNow ? hidden : tuftMatrices[i])
+        tuftMesh.instanceMatrix.needsUpdate = true
+      }
+    },
+    get hasPond() {
+      return pond.group.visible
+    },
+    /** Nombre de touffes posées sur l'emplacement de la mare (rangées quand elle apparaît). */
+    get pondTufts() {
+      return pondTufts.length
     },
     get growthScale() {
       return { xz: group.scale.x, y: group.scale.y }
