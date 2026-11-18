@@ -139,7 +139,7 @@ export default function Act({ read = readAct, now }) {
   ]
   const start = async (factor) => {
     const id = await saveNewTrial(createTrial(factor, { now: at }))
-    navigate(`/agir/essai/${id}`)
+    navigate(`/agir/essai/${id}`, { state: { started: true } })
   }
   // POLISH-SIM-70 : avec l'objectif ventre, l'état vide parle de la digestion et ouvre son analyse (comme la barre d'onglets)
   const gutFirst = wantsGut(goalsOf())

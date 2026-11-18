@@ -216,6 +216,29 @@ button.act-card-action {
   color: var(--tone-text, var(--text));
 }
 
+/* LANT-2 : Pilou (80 px) dans la carte du jour et au bilan ; seul, il se tient à droite du jour ; avec sa phrase,
+   il prend la ligne. */
+.trial-pilou {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.trial-pilou:not(.has-text) {
+  float: right;
+  margin: -6px -4px 0 8px;
+}
+.trial-pilou.has-text { margin: 0 0 10px; }
+.trial-pilou-says {
+  margin: 0;
+  font-weight: 800;
+  line-height: 1.3;
+}
+.trial-today::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
 .trial-day {
   margin: 0;
   font-size: 0.85rem;

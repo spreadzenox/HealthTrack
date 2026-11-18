@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, lanterns } from './trials'
+import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, lanterns, pilouSays } from './trials'
 
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30, unit: 'min', text: '30 min de sommeil de plus' } }
 const START = new Date(2026, 10, 1, 9)
@@ -152,5 +152,22 @@ describe('UPG-1 : l’essai en cours sur la carte Agir de l’Accueil', () => {
       expect(l).toHaveLength(7)
       expect(l[0].state).toBe('pending')
     })
+  })
+})
+
+describe('LANT-2 : ce que dit Pilou sur la page du défi', () => {
+  const st = (over) => ({ done: true, bilan: 'yes', kept: 5, ...over })
+  it('au bilan, il salue l’effort : même bulle et même geste quel que soit le résultat', () => {
+    const yes = pilouSays(st({ bilan: 'yes' }))
+    expect(yes).toEqual({ expr: 'content', move: 'nod', text: 'Bravo pour vos 5 jours avec.' })
+    for (const bilan of ['no', 'none', 'too_few']) expect(pilouSays(st({ bilan }))).toEqual(yes)
+  })
+  it('au bilan : un seul jour tenu, ou aucun', () => {
+    expect(pilouSays(st({ kept: 1 })).text).toBe('Bravo pour votre jour avec.')
+    expect(pilouSays(st({ kept: 0 })).text).toBe('Merci d’avoir essayé.')
+  })
+  it('juste après « Commencer » : un saut et la promesse des lanternes ; ensuite il attend, sans bulle', () => {
+    expect(pilouSays({ done: false }, { started: true })).toEqual({ expr: 'content', move: 'hop', text: 'C’est parti ! Chaque jour avec tenu allume une lanterne.' })
+    expect(pilouSays({ done: false })).toEqual({ expr: 'tranquille', move: 'none', text: null })
   })
 })
