@@ -1,0 +1,79 @@
+# Préparation de la soumission App Store de la refonte (retours du propriétaire du 18/11, mission PI2 partie 0,
+# BACKLOG R18-SOUMISSION-a) : scripts/store-submission.mjs. Sans `build` : relevé seul (lecture). Avec `preparer` et
+# `build` (ex. 1180.1180) : la version « Prepare for Submission » prend le numéro de testflight-version.json, la build
+# y est attachée (si elle est validée chez « Testeurs Halcya »), les notes pour l'examen deviennent celles de
+# store/app-store/notes-examen.md, publication manuelle. JAMAIS d'envoi à l'examen : « Submit for Review » reste le
+# geste du propriétaire. Lancement manuel par la routine, sur main seulement (environnement `appstore` : ASC_KEY_ID,
+# ASC_ISSUER_ID, ASC_KEY_P8, jamais affichés).
+name: App Store — préparer la soumission
+
+on:
+  workflow_dispatch:
+    inputs:
+      build:
+        description: "Numéro de la build de la refonte à attacher (ex. 1180.1180) ; vide : relevé seul"
+        required: false
+        default: ""
+      preparer:
+        description: "Préparer la version (numéro, build, notes, publication manuelle) ; sinon relevé seul"
+        type: boolean
+        default: false
+      essai:
+        description: "Essai : afficher le plan sans rien écrire"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: store-push
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: iphone
+
+jobs:
+  # Garde de la bascule : ce workflow écrit chez Apple. Il ne démarre que sur main, et seulement quand
+  # iphone/fusion/bascule.json l'autorise (voir iphone/fusion/BASCULE.md). Sinon le job suivant est sauté.
+  garde:
+    name: Publication iOS activée ?
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      publication: ${{ steps.garde.outputs.publication }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: iphone/fusion
+      - id: garde
+        run: fusion/garde.sh
+  soumission:
+    name: Version de l'App Store
+    needs: garde
+    if: needs.garde.outputs.publication == 'oui'
+    runs-on: ubuntu-latest
+    environment: appstore
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Tests du script
+        run: node --test scripts/store-submission.test.mjs
+      - name: Préparation ou relevé (API App Store Connect)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          BUILD: ${{ inputs.build }}
+          PREPARER: ${{ inputs.preparer }}
+          ESSAI: ${{ inputs.essai }}
+        run: |
+          set --
+          if [ -n "$BUILD" ]; then set -- "$@" --build "$BUILD"; fi
+          if [ "$PREPARER" = "true" ]; then set -- "$@" --preparer; fi
+          if [ "$ESSAI" = "true" ]; then set -- "$@" --essai; fi
+          node scripts/store-submission.mjs "$@"

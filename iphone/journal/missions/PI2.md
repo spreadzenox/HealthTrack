@@ -12,7 +12,7 @@
 
 ## Partie 0 — Faite par la routine, par l'API (rien à faire de votre côté)
 
-Workflow « App Store — préparer la soumission » (`R18-SOUMISSION-a` au BACKLOG ; à écrire), lancé sur main, qui
+Workflow « App Store — préparer la soumission » (`.github/workflows/ios-store-submission.yml`, écrit le 18/11 21:30), lancé sur main, qui
 **n'envoie rien à l'examen** :
 
 1. la version en préparation (aujourd'hui **844**, « Prepare for Submission ») prend le numéro des builds TestFlight,

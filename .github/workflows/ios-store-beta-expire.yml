@@ -1,6 +1,6 @@
 # Livraison continue sur TestFlight (décision du propriétaire du 09/11 vers 11:00) : expire les builds qui ne servent
 # plus (scripts/store-beta-expire.mjs). Builds nommées (`builds`, ex. « 896.376 ») ou nettoyage après chaque nouvelle
-# build (`nettoyage`). Jamais la build attachée à la version de l'App Store (844.344) ni la dernière build distribuée
+# build (`nettoyage`). Jamais la build attachée à la version de l'App Store (lue à chaque passage) ni la dernière build distribuée
 # au groupe externe ; la version de l'App Store est seulement lue. Puis le relevé de l'examen bêta (lecture seule)
 # vérifie le résultat. Lancement manuel par la routine, sur main seulement (environnement `appstore` : ASC_KEY_ID,
 # ASC_ISSUER_ID, ASC_KEY_P8, jamais affichés).
