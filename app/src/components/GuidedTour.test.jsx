@@ -125,6 +125,17 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
     expect(loadOnboarding().tour).toBe('crashed')
   })
 
+  it('passe par Ma journée, juste après l’Accueil, et dit où trouver Agir (POLISH-SIM-99)', () => {
+    const steps = tourSteps({ hc: true, face: false, gut: false })
+    const i = steps.findIndex((s) => s.route === '/ma-journee')
+    expect(i).toBeGreaterThan(0)
+    expect(steps[i - 1].route).toBe('/')
+    expect(steps[i].anchor).toBe('.day-checklist')
+    expect(steps[i].title).toBe('Ma journée')
+    expect(steps[i].days).toBeUndefined()
+    expect(steps.find((s) => s.route === '/agir').text).toMatch(/depuis l’Accueil/)
+  })
+
   it('étapes : digestion seulement avec digestion ou cycle ; la phrase Santé sur iPhone suit healthStoreName', () => {
     expect(tourSteps({ hc: true, face: false, gut: false }).some((s) => s.days === 28)).toBe(false)
     expect(tourSteps({ hc: true, face: false, gut: true }).some((s) => s.days === 28)).toBe(true)

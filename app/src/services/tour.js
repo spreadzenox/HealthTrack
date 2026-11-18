@@ -49,6 +49,8 @@ export function tourSteps({ hc, face, gut }) {
     { route: '/', title: 'Votre Accueil', text: hc ? 'Vos 30 derniers jours arrivent. Le reste se remplit au fil des jours.' : 'Pour l’instant, il attend vos premières notes.', button: `Exemple au jour ${W}` },
     { route: '/', days: W, reveal: true, anchor: '.day-status', title: 'Votre bien-être du jour', text: face ? 'Lu par la caméra quand vous regardez votre téléphone, et par vos notes.' : 'D’après vos notes. Avec la lecture du visage, il se remplit tout seul.', button: 'Suivant' },
     { route: '/', days: W, anchor: '.today-sources', title: 'Vos mesures du jour', text: hc ? 'Ce que vos appareils envoient, comparé à vos habitudes.' : `Avec ${healthStoreName()} ou une montre, vos nuits et vos pas s’affichent ici.`, button: 'Suivant' },
+    // POLISH-SIM-99 : l'onglet où l'on note, juste après l'Accueil (refonte, brief § 4)
+    { route: '/ma-journee', anchor: '.day-checklist', title: 'Ma journée', text: 'Ce qui se note à la main chaque jour. Une ligne part quand c’est fait.', button: 'Suivant' },
     { route: DAY_ROUTE, title: 'Vos journées', text: 'Chacune de vos journées sera gardée ici.', button: `Exemple au jour ${W}` },
     { route: DAY_ROUTE, days: W, reveal: true, anchor: '.trends-detail', title: 'Une journée d’un coup d’œil', text: 'Touchez un jour pour revoir vos notes et vos repas.', button: 'Suivant' },
     { route: '/recommendations/bien-etre', title: 'Objectifs', text: gut ? `Bien-être : un score après ${SW} jours notés, des pistes après ${W}. Digestion : ${SD} et ${D}.` : `Un premier score après ${SW} jours notés, vos pistes après ${W}.`, button: `Exemple au jour ${W}` },
@@ -62,7 +64,7 @@ export function tourSteps({ hc, face, gut }) {
     )
   }
   steps.push(
-    { route: '/agir', title: 'Agir', text: 'Ici, vous vérifierez une piste par vous-même.', button: `Exemple au jour ${W}` },
+    { route: '/agir', title: 'Agir', text: 'Ouvert depuis l’Accueil : ici, vous vérifierez une piste par vous-même.', button: `Exemple au jour ${W}` },
     { route: '/agir', days: W, reveal: true, anchor: '.act-card', title: 'Vérifier par un essai', text: `${APP_NAME} vous propose dix jours d’essai, puis compare les jours avec et les jours sans.`, button: 'Revenir à mes données' },
     { route: '/', anchor: '.tabbar', title: 'À vous', text: 'Pour revoir cette visite : « Voir un exemple », en bas des écrans encore vides.', button: 'Terminer', last: true },
   )

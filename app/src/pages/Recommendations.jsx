@@ -5,7 +5,7 @@
  * calculé dans le worker) :
  * - avant les résultats, un seul compte à rebours avec la phrase du propriétaire, « Noter maintenant » et « Recevoir
  *   un rappel » ;
- * - ensuite « Pistes à tester » (« Essayer dans Agir »), « Ce qui va avec votre … » par horizon (Court / Moyen / Long
+ * - ensuite « Pistes à tester » (« Vérifier par un essai », vers Agir), « Ce qui va avec votre … » par horizon (Court / Moyen / Long
  *   terme, barres de part et d'autre de zéro en points sur 5 pour une variation habituelle, fourchette, couleur du
  *   thème, hachurées si pas assez net) et, à part, « À regarder, pas à changer » ;
  * - « Comment c'est calculé » en lien discret en bas.
@@ -255,7 +255,7 @@ function PisteCard({ f, locked = false }) {
       )}
       {locked
         ? <Link to="/premium" className="reco-piste-try">Débloquer</Link>
-        : <Link to="/agir" className="reco-piste-try">Essayer dans Agir</Link>}
+        : <Link to="/agir" className="reco-piste-try">Vérifier par un essai</Link>}
     </li>
   )
 }
