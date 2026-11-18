@@ -52,6 +52,8 @@ const PLAY_TO_APPLE = {
   PSL_USER_GENERATED_CONTENT: 'NSPrivacyCollectedDataTypeOtherUserContent',
   PSL_DEVICE_ID: 'NSPrivacyCollectedDataTypeDeviceID',
   PSL_PURCHASE_HISTORY: 'NSPrivacyCollectedDataTypePurchaseHistory',
+  // Photo des selles : « Health » chez Apple depuis le 05/11, « Infos de santé » chez Google depuis SECU-SANTE (18/11)
+  PSL_HEALTH: 'NSPrivacyCollectedDataTypeHealth',
 }
 
 describe('données collectées déclarées à Apple (A5)', () => {
@@ -59,7 +61,7 @@ describe('données collectées déclarées à Apple (A5)', () => {
 
   it('les mêmes types que la déclaration de Google Play d’Android, rien de plus', async () => {
     const { DECLARED_DATA_TYPES } = await import('../../store/data-safety/answers.mjs')
-    expect(Object.keys(types()).sort()).toEqual([...DECLARED_DATA_TYPES.map((t) => PLAY_TO_APPLE[t]), 'NSPrivacyCollectedDataTypeHealth'].sort())
+    expect(Object.keys(types()).sort()).toEqual(DECLARED_DATA_TYPES.map((t) => PLAY_TO_APPLE[t]).sort())
   })
 
   it('jamais de pistage, seulement pour faire fonctionner l’app ; la position arrondie n’est liée à rien', () => {

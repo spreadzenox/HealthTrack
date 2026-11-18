@@ -21,6 +21,9 @@
   « You must add a subscription price » alors que la page montre des prix) et le drapeau « gardé ». 19 tests verts.
 
 ## Vérifications
+- Premier passage de #1103 : « Tests d'Android avec les correctifs iOS » rouge : `privacyManifest.test.js` (overlay iPhone)
+  ajoutait « Health » à part, en plus des types de Google. Corrigé : `PSL_HEALTH` ↔ `NSPrivacyCollectedDataTypeHealth`,
+  les deux déclarations sont désormais identiques ; vérifié en local (4 tests A5 verts).
 - `npm run test` (app/) : 4 081 verts (367 fichiers). `node --test scripts/store-subscriptions.test.mjs` : 19 verts.
 - `node scripts/play/data-safety-cli.mjs --write` : types déclarés PURCHASE_HISTORY, APPROX_LOCATION, PHOTOS,
   HEALTH, USER_GENERATED_CONTENT, DEVICE_ID.
@@ -29,7 +32,7 @@
 ## Merge
 - **#1102 mergée** (e35c665, squash) : 15 checks verts (Vitest, APK, 4 émulateurs, relais, build iPhone avec un seul
   iPhone, 0 erreur JS). Captures iPhone relues : Accueil démo clair et sombre (îlot élargi, herbe dorée, bulles,
-  étiquette « Pilou est tranquille »), Agir. #1090 à #1097 fermées.
+  étiquette « Pilou est tranquille »), Agir. #1090 à #1097 fermées. Build & Release de main : **v792**, APK 35,6 Mo (35 625 541 octets).
 - Cette PR-ci (journal, déclaration Play, script App Store) : en brouillon, puis prête ; merge si ses checks passent.
 
 ## Suite proposée
