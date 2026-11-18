@@ -7,21 +7,23 @@
 // - `--builds 896.376[,…]` : expire les builds nommées (réponse « expire la 896 » ; une build en examen bêta depuis
 //   plus de 24 h quand une plus récente est prête) ;
 // - `--nettoyage` : à chaque nouvelle build sur TestFlight, expire celles qui ne servent plus. Restent : la build
-//   attachée à la version de l'App Store (soumission du propriétaire, 844.344), la dernière build distribuée au groupe
+//   attachée à la version de l'App Store (soumission du propriétaire, lue à chaque passage), la dernière build distribuée au groupe
 //   externe (les testeurs ont toujours une version installable, jusqu'à ce que sa remplaçante le soit), toute build en
 //   examen bêta, toute build du groupe externe pas encore soumise et plus récente que la distribuée, toute build pas
 //   encore traitée par Apple et la plus récente (la prochaine à soumettre).
 // `--essai` : le plan seul, rien n'est expiré.
 //
 // Seule écriture permise : `PATCH /v1/builds/{id}` avec `expired: true` (garde dans `expiryClient`). La version de
-// l'App Store est seulement lue, pour connaître sa build. La 844.344 n'est jamais expirée, quoi qu'on demande.
+// l'App Store est seulement lue, pour connaître sa build : celle-là n'est jamais expirée, quoi qu'on demande. La
+// 844.344 (soumission d'avant la refonte) n'est plus protégée en dur depuis le 18/11 (« la 844.344 s'expire comme les
+// autres une fois la build de la refonte attachée ») : tant qu'elle reste attachée, la lecture la garde.
 import { pathToFileURL } from 'node:url'
 import { jwt } from './store-push.mjs'
 import { client } from './store-subscriptions.mjs'
 import { BUNDLE_ID, GROUP_NAME, GROUP_FIELDS, masked, verdict } from './store-beta.mjs'
 
-/** Jamais expirées, même demandées : la build de la soumission du propriétaire (décisions du 06/11 et du 09/11). */
-export const PROTECTED = new Set(['844.344'])
+/** Jamais expirées, même demandées, en plus de la build attachée à la version de l'App Store (vide depuis le 18/11). */
+export const PROTECTED = new Set()
 export const IN_REVIEW = new Set(['WAITING_FOR_REVIEW', 'IN_REVIEW'])
 /** Au-delà, une build en examen bêta peut céder la place à une plus récente (règle du propriétaire du 09/11). */
 export const STALE_REVIEW_HOURS = 24
@@ -145,10 +147,10 @@ export async function collect({ api, all }) {
 }
 
 /** Expire les builds du plan (sauf `essai`). Rend les versions expirées. */
-export async function expire({ api, plan, essai = false, log = () => {} }) {
+export async function expire({ api, plan, attached = [], essai = false, log = () => {} }) {
   const done = []
   for (const b of plan) {
-    if (PROTECTED.has(b.version)) throw new Error(`refus : ${b.version} est protégée`)
+    if (PROTECTED.has(b.version) || attached.includes(b.version)) throw new Error(`refus : ${b.version} est protégée`)
     if (essai) { log(`Essai : ${b.version} serait expirée.`); continue }
     await api('PATCH', `/v1/builds/${b.id}`, { data: { type: 'builds', id: b.id, attributes: { expired: true } } })
     done.push(b.version)
@@ -183,14 +185,14 @@ async function main() {
   if (named.length) {
     const { expire: list, refused } = namedPlan({ builds, wanted: named, attached })
     for (const r of refused) log(`Refusée : ${r.version} (${r.why}).`)
-    expired.push(...await expire({ api, plan: list, essai, log }))
+    expired.push(...await expire({ api, plan: list, attached, essai, log }))
   }
   if (cleanup) {
     const after = builds.filter((b) => !expired.includes(b.version))
     const plan = cleanupPlan({ builds: after, attached })
     for (const k of plan.keep) log(`Gardée : ${k.version} (${k.why}).`)
     if (!plan.expire.length) log('Nettoyage : rien à expirer.')
-    expired.push(...await expire({ api, plan: plan.expire, essai, log }))
+    expired.push(...await expire({ api, plan: plan.expire, attached, essai, log }))
   }
   log(`Bilan : ${essai ? 'essai, rien expiré' : expired.length ? `expirées : ${expired.join(', ')}` : 'rien expiré'}. La version de l'App Store n'a pas été touchée.`)
 }

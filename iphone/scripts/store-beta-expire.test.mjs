@@ -36,10 +36,13 @@ test('nettoyage : une build ajoutée au groupe externe mais pas encore soumise r
   assert.deepEqual(cleanupPlan({ builds: old }).expire.map((x) => x.version), ['830.323'])
 })
 
-test('nettoyage : la 844.344 reste même sans lecture de la version de l’App Store', () => {
-  const plan = cleanupPlan({ builds: today(), attached: [] })
-  assert.ok(plan.keep.some((k) => k.version === '844.344'))
-  assert.ok(!plan.expire.some((x) => x.version === '844.344'))
+test('nettoyage : la 844.344 part une fois la build de la refonte attachée (consigne du 18/11) ; l’attachée reste', () => {
+  const builds = [...today(), b('1180.1180', { inGroup: true, review: 'APPROVED', external: 'IN_BETA_TESTING' })]
+  const plan = cleanupPlan({ builds, attached: ['1180.1180'] })
+  assert.ok(plan.keep.some((k) => k.version === '1180.1180' && /App Store/.test(k.why)))
+  assert.ok(plan.expire.some((x) => x.version === '844.344'))
+  // tant qu'elle est attachée, elle reste
+  assert.ok(!cleanupPlan({ builds, attached: ['844.344'] }).expire.some((x) => x.version === '844.344'))
 })
 
 test('nettoyage : la distribuée reste jusqu’à ce que sa remplaçante soit distribuée', () => {
@@ -79,14 +82,14 @@ test('seule écriture permise : expirer une build ; la version de l’App Store 
   assert.deepEqual(calls.map(([m]) => m), ['GET', 'PATCH'])
 })
 
-test('expiration : un PATCH « expired » par build ; essai sans appel ; la 844.344 jamais', async () => {
+test('expiration : un PATCH « expired » par build ; essai sans appel ; jamais la build attachée', async () => {
   const calls = []
   const { api } = expiryClient('t', async (url, init) => { calls.push([init.method, url.split('/v1')[1], JSON.parse(init.body || '{}')]); return ok({}) })
   assert.deepEqual(await expire({ api, plan: [b('896.376')] }), ['896.376'])
   assert.deepEqual(calls, [['PATCH', '/builds/id-896.376', { data: { type: 'builds', id: 'id-896.376', attributes: { expired: true } } }]])
   assert.deepEqual(await expire({ api, plan: [b('935.412')], essai: true }), [])
   assert.equal(calls.length, 1)
-  await assert.rejects(() => expire({ api, plan: [b('844.344')] }), /protégée/)
+  await assert.rejects(() => expire({ api, plan: [b('844.344')], attached: ['844.344'] }), /protégée/)
 })
 
 test('lecture : builds avec examen et état externe inclus, groupe, build de la version de l’App Store', async () => {
