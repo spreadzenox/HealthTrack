@@ -93,7 +93,7 @@ export default function SleepRegularityCard({ onStatus }) {
           <summary>Hypothèse générale à tester chez vous</summary>
           <p className="baseline-hint" role="note">
             Hypothèse générale (études) : des horaires proches chaque jour, week-end compris, iraient avec un meilleur
-            sommeil et un meilleur bien-être le lendemain. Vos Analyses diront si c’est vrai chez vous.
+            sommeil et un meilleur bien-être le lendemain. L’onglet Objectifs dira si c’est vrai chez vous.
           </p>
         </details>
       )}

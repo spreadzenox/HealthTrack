@@ -208,7 +208,7 @@ export default function Data() {
 
   return (
     <section className="food-page">
-      <h2 className="page-title">Vos données</h2>
+      <h2 className="page-title">Sauvegarde</h2>
       <p className="page-intro">
         Vos données sont sur ce téléphone et passent les mises à jour. Si la sauvegarde du téléphone est
         activée, elles y sont copiées, chiffrées ; {APP_NAME} ne la lit pas. Exportez-les avant de réinstaller
