@@ -387,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **18/11 03:30** — Actions toujours bloqué (P50). Les six PR en attente (#1090 à #1095) fusionnées ensemble en local : aucun conflit de code (journal seulement), 4 072 tests verts, build, budget de lectures et captures sans erreur ; îlot voisin vu à 76 jours avec l'horloge figée à 14:00. Lien de session retiré du corps de #1093.
 - **17/11 17:30** — **#1088 (MONDE-3) mergée** (93f4a47) : l'îlot grandit avec les jours d'usage (× 1,3 en largeur, arbuste × 1,45 à 90 jours), recompte léger des jours (budget de lectures de l'Accueil respecté). 14 checks verts, captures iPhone de l'Accueil relues. Suite : MONDE-4.
 - **17/11 12:30** — MONDE-2 : l'îlot et l'arbuste prennent la couleur de la saison (automne : herbe dorée ; hiver : neige ; fin d'hiver : amandier en fleur), hémisphère d'après la position météo. Palier image fixe inchangé.
 - **17/11 09:30** — MONDE-1 : l'île de l'Accueil s'endort et se réveille aux heures de sommeil habituelles (même cache du jour que le widget Android), heures par défaut 7 h / 22 h 30 sans 7 nuits lisibles. #1080 : job émulateur API 35 annulé et relancé.
