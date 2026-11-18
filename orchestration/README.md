@@ -171,13 +171,18 @@ Elles s'appliquent à l'orchestrateur comme aux routines.
   prélèvement d'usage. Depuis, règle « CI ÉCONOME » dans les instructions : au plus 3 heures de Mac par jour en moyenne.
   Si le verrou revient : page Billing › Overview, bandeau en bas du plan ; texte de ticket au support dans la
   conversation d'orchestration du 18/11.
-- **Testeurs.** J = 08/11. Relance du septième jour vers le 15/11. Demande d'accès à la production (P30) au
+- **Testeurs.** Invitations du 08/11, 4 inscrits le 18/11 (voir ci-dessus). Relance du septième jour vers le 15/11. Demande d'accès à la production (P30) au
   quatorzième jour.
 - **Maquettes PROP-SIM** (propositions issues des simulations) : les montrer au propriétaire quand la routine en
   produit ; rien ne se code sans son accord.
 - **App Store.** TestFlight part de ce dépôt depuis le 13/11 (workflow `ios-testflight.yml`, version 893, build
-  `<versionCode>.<commits de ce dépôt>`). La soumission publique est le geste du propriétaire ; le build 844.344 reste
-  attaché à la version 844 pour elle.
+  `<versionCode>.<commits de ce dépôt>`). Décision du 18/11 : « oui go soumettre directement la refonte » ; la 844.344
+  (d'avant la refonte) ne sera pas soumise. Déclaration « dispositif médical » faite (« No »). Bloquant à lever par la
+  routine via l'API : Apple refuse d'ajouter Gold mensuel à une soumission (« You must add a subscription price »).
+  La soumission reste le clic du propriétaire.
+- **Testeurs Google Play (18/11)** : 4 inscrits sur les 12 exigés ; le test fermé ne compte pas encore et l'accès à
+  la production (P30) viendra 14 jours après le 12e. Recruter est la prochaine action du propriétaire ; la routine
+  prépare les messages.
 - **Après la bascule** : fait le 14/11 par le propriétaire (ancienne clé App Store Connect révoquée, PR de renvoi
   mergée dans l'ancien dépôt iOS). Ne pas archiver l'ancien dépôt tant que `iphone/README.md` (« Avant d'archiver »)
   le déconseille.
