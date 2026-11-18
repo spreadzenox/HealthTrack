@@ -275,7 +275,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 > TestFlight). Un produit, deux magasins : une fonction n'est livrée que des deux côtés, ou avec une ligne de
 > `iphone/journal/PARITE.md`. Ce qui reste au propriétaire chez Apple : soumission d'une version à l'examen de l'App
 > Store et mise en production, comptes, clés, certificats, contrats, banque, fiscalité (missions
-> `iphone/journal/missions/PI1.md`, faite le 14/11, et `PI2.md`, réécrite le 14/11 : déclaration « dispositif médical » sur « No » jusqu'à « Save », brouillon de soumission jusqu'à « Submit for Review ») ; la build 844.344 de la version 844 est celle de sa soumission.
+> `iphone/journal/missions/PI1.md`, faite le 14/11, et `PI2.md`, réécrite le 18/11 20:30 pour la refonte : version passée à 893 et build de la refonte attachée par l'API (R18-SOUMISSION-a), abonnements « Add for Review » par Claude dans Chrome, il ne reste au propriétaire que « Submit for Review » ; déclaration « dispositif médical » faite le 18/11, « No ») ; la 844.344 reste attachée jusqu'à ce que la build de la refonte la remplace, puis s'expire comme les autres.
 > Automatique après un merge : TestFlight, puis chaque nuit groupe externe, examen bêta et expiration des anciennes
 > builds (`iphone/journal/README.md` § 4). Une seule « prochaine action du propriétaire » en tête du résumé. Étapes :
 > FUSION-1 à 5 (`BACKLOG.md`).
@@ -394,6 +394,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **18/11 20:30** — **R18-SOUMISSION, préparation (run « idées », sans code produit).** Notes pour l'examen d'Apple revues pour la refonte (`iphone/store/app-store/notes-examen.md`, 3 988 caractères ; l'ancien texte collé le 18/11 parlait de l'onglet « Sources » et de « Journal → Jours », qui n'existent plus) ; mission PI2 réécrite (partie 0 par l'API : version 893, build de la refonte, notes ; partie 1 abonnements par Claude dans Chrome ; partie 2 : « Submit for Review », seul geste du propriétaire) ; outillage spécifié au BACKLOG (R18-SOUMISSION-a). #1105 mergée (journal du prix USA).
 - **18/11 19:30** — Prix de Gold refusé par Apple (« You must add a subscription price ») : relevé par l'API, prix des 5 pays en place et valables ; le territoire de base du prix de l'app est les États-Unis, sans prix d'abonnement. Correctif : un prix aux États-Unis pour chaque abonnement, vente toujours limitée aux 5 pays de P32. Seconde piste si Apple refuse encore : base de l'app en France (geste du propriétaire).
 - **18/11 18:30** — Testeurs : kit de recrutement réécrit pour la refonte (`INVITATION-TESTEURS.md` § 0, P12) ; SECU-SANTE : « Infos de santé » ajoutées à la Sécurité des données Google (photo des selles), alignée sur Apple ; envoi = P51.
 - **18/11 17:30** — CI-ECO (#1101, décision du 18/11 : au plus 3 h de Mac par jour) et PR regroupée de #1090 à #1097 (un seul build iPhone). GitHub Actions débloqué vers 16:10 (P50 soldée).

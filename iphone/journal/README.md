@@ -23,8 +23,8 @@
 **👉 Prochaine action du propriétaire**
 - **Quand vous voulez (3 min)** : dans Chrome, connecté à App Store Connect, dites à Claude **« fais la mission PI1 »**
   (`journal/missions/PI1.md`, lecture seule : ce qu'Apple reproche encore aux abonnements) et renvoyez « PI1 fait » avec
-  son relevé. Le jour où vous voulez soumettre : **« fais la mission PI2 »** (tout prêt jusqu'au bouton
-  « Ajouter pour examen », que vous cliquez). Classement complet dans `journal/missions/README.md`.
+  son relevé. Soumission de la refonte : **« fais la mission PI2 »** quand la routine écrit « PI2 prête »
+  (réécrite le 18/11 : version 893 et build de la refonte posées par l'API, il ne vous reste que « Submit for Review »). Classement complet dans `journal/missions/README.md`.
 - Votre « Ok cycle » (10/11, 18:50) est fait sur iPhone : règles et symptômes lus dans Santé, carte « Suivi du cycle
   (Santé) » dans Sources ; la suite (le cycle dans les analyses) attend Android (CYCLE-4).
 - Fait : déploiement continu en place (chaque nouvelle build part chez les testeurs) ; nettoyage après chaque envoi
