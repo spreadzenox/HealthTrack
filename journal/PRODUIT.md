@@ -387,6 +387,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **18/11 07:30** — Actions toujours bloqué (P50) : sonde refusée vers 06:31 UTC. Rien de neuf à merger.
 - **18/11 06:30** — Actions toujours bloqué (P50) : sonde refusée vers 05:31 UTC. Rien de neuf à merger.
 - **18/11 05:30** — Actions toujours bloqué (P50) : sonde refusée ; le cron Alpha de 23:45 (parti à 03:53 UTC) a échoué sans démarrer, pas d'envoi Alpha cette nuit. Rien de neuf à merger.
 - **18/11 03:30** — Actions toujours bloqué (P50). Les six PR en attente (#1090 à #1095) fusionnées ensemble en local : aucun conflit de code (journal seulement), 4 072 tests verts, build, budget de lectures et captures sans erreur ; îlot voisin vu à 76 jours avec l'horloge figée à 14:00. Lien de session retiré du corps de #1093.

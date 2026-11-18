@@ -114,6 +114,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 18/11 07:30 — [Actions toujours bloqué](runs/2026-11-18-0730-actions-bloque.md) | 🛠️ | **GitHub Actions toujours bloqué** (sonde refusée vers 06:31 UTC). Rien mergé, rien envoyé. Votre geste [P50](missions/P50.md) débloque tout : les six PR en attente partiront en quelques minutes. Rien d'autre à faire de votre côté |
 | 18/11 06:30 — [Actions toujours bloqué](runs/2026-11-18-0630-actions-bloque.md) | 🛠️ | **GitHub Actions toujours bloqué** (sonde refusée vers 05:31 UTC). Rien mergé, rien envoyé. Votre geste [P50](missions/P50.md) débloque tout : les six PR en attente partiront en quelques minutes. Rien d'autre à faire de votre côté |
 | 18/11 05:30 — [Actions toujours bloqué](runs/2026-11-18-0530-actions-bloque-sonde.md) | 🛠️ | **GitHub Actions toujours bloqué** (sonde refusée vers 04:31 UTC). **Pas d'envoi Alpha cette nuit** : le cron de 23:45 est parti à 03:53 UTC et a échoué sans démarrer. Votre geste [P50](missions/P50.md) débloque tout : les six PR en attente partiront en quelques minutes. Rien d'autre à faire de votre côté |
 | 18/11 04:30 — [Actions toujours bloqué](runs/2026-11-18-0430-actions-toujours-bloque.md) | 🛠️ | **GitHub Actions toujours bloqué** (sonde refusée à 03:30 UTC : compte verrouillé pour un problème de facturation). Votre geste [P50](missions/P50.md) débloque tout : les six PR en attente, déjà vérifiées ensemble, partiront en quelques minutes. Rien d'autre à faire de votre côté |
