@@ -35,7 +35,7 @@ index 2a7f5c1..7a31cc8 100644
  import { appLocale, localeDate } from '../i18n/locale.js'
 @@ -206,9 +207,15 @@ export default function Data() {
      <section className="food-page">
-       <h2 className="page-title">Vos données</h2>
+       <h2 className="page-title">Sauvegarde</h2>
        <p className="page-intro">
 -        Vos données sont sur ce téléphone et passent les mises à jour. Si la sauvegarde du téléphone est
 -        activée, elles y sont copiées, chiffrées ; {APP_NAME} ne la lit pas. Exportez-les avant de réinstaller

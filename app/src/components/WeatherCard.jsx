@@ -107,7 +107,7 @@ export default function WeatherCard({ sync = syncWeather, getPosition = getAppro
           </p>
           <MethodNote summary="Détails">
             Température, soleil, pression atmosphérique, qualité de l’air et pollens arrivent tout seuls chaque jour
-            (et les 3 derniers mois d’un coup). Vos Analyses vérifient s’ils pèsent sur <em>votre</em> bien-être.
+            (et les 3 derniers mois d’un coup). L’onglet Objectifs vérifie s’ils pèsent sur <em>votre</em> bien-être.
           </MethodNote>
           <button type="button" className="btn btn-primary connector-btn" onClick={usePosition} disabled={busy}>
             Utiliser ma position approximative
