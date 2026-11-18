@@ -17,6 +17,10 @@
  *   npm run visual -- --update-banner=stalled   # … téléchargement bloqué (aucun octet depuis 45 s)
  *   npm run visual -- --routes=/ --click="Noter moi-même"   # la note de bien-être manuelle (carte bien-être, POL-3)
  *   npm run visual -- --routes=/ --tz=America/New_York  # autre fuseau, pour voir l'Accueil à une autre heure
+ *   npm run visual -- --routes=/ --now=14:00 --usage-days=76  # horloge du navigateur partie de 14:00 (dans le fuseau
+ *                                          --tz ; une date ISO complète marche aussi) : l'Accueil de démo de jour, quelle
+ *                                          que soit l'heure du run ; --usage-days : décompte de l'îlot déjà gardé, la
+ *                                          croissance se voit dès la première capture (VISUAL-NOW)
  *                                          (ex. le bilan du soir du ventre, proposé à partir de 18 h)
  *   npm run visual -- --lang=en            # app en anglais (VITE_I18N_EN=1, langue choisie « English », jalon 9) :
  *                                          compte par page les mots français restants (avertissement, pas un échec)
@@ -164,6 +168,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { generateDemoEntries } from './demoData.mjs'
 import { gotoRoute } from './navigate.mjs'
+import { parseNow, usageDaysStorage } from './clock.mjs'
 import { encodeFrame } from '../../src/devices/huawei/protocol.js'
 
 // Même fuseau que le navigateur simulé, pour que les heures des données de démo soient cohérentes.
@@ -590,6 +595,17 @@ async function main() {
       timezoneId: args.tz || 'Europe/Paris',
       colorScheme: args.light ? 'light' : 'dark',
     })
+
+    // Horloge (VISUAL-NOW) : le temps part de --now puis s'écoule normalement (timers et animations inchangés).
+    const startAt = args.now ? parseNow(args.now, { tz: args.tz || 'Europe/Paris' }) : null
+    if (startAt) {
+      await context.clock.install({ time: startAt })
+      await context.clock.resume()
+    }
+    if (args['usage-days'] != null) {
+      const { key, value } = usageDaysStorage(args['usage-days'])
+      await context.addInitScript(([k, v]) => localStorage.setItem(k, v), [key, value])
+    }
 
     // Grande police d'Android : la WebView multiplie la taille du texte par l'échelle du système (textZoom).
     if (args['font-scale']) {
@@ -1274,7 +1290,7 @@ async function main() {
 
     // Base propre + données de démo injectées via le module de stockage de l'app.
     await page.goto(baseUrl, { waitUntil: 'load' })
-    let entries = args.empty ? [] : generateDemoEntries({ illness: Boolean(args.radar) })
+    let entries = args.empty ? [] : generateDemoEntries({ illness: Boolean(args.radar), ...(startAt ? { now: startAt } : {}) })
     if (args['wellbeing-gap']) {
       // Saisie interrompue (vacances…) : pas de note de bien-être entre 9 et 4 jours avant aujourd'hui.
       const dayStart = (n) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - n); return d }
