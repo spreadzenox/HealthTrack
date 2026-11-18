@@ -175,6 +175,17 @@ export function trialStatus(trial, { summaries = new Map(), outcome = new Map(),
 }
 
 /**
+ * LANT-1 : une lanterne par jour « avec », dans l'ordre du calendrier (5 pour un défi de 10 jours, 7 pour un ancien
+ * essai de 14). Allumée quand le jour est tenu, éteinte quand il ne l'a pas été (rien ne repart à zéro), en attente
+ * tant que le jour n'est pas passé ou que la tenue est inconnue. Les jours « sans » n'ont pas de lanterne.
+ */
+export function lanterns(status) {
+  return status.calendar
+    .filter((d) => d.with)
+    .map((d) => ({ date: d.date, state: d.held === true ? 'lit' : d.held === false ? 'out' : 'pending' }))
+}
+
+/**
  * UPG-1 : l'essai en cours, pour la carte Agir de l'Accueil (Agir n'a plus d'onglet depuis la refonte). `rows` : les
  * entrées « trial » ; seule la date compte (la tenue n'y figure pas). Le plus avancé s'il y en a plusieurs ; null sinon.
  */

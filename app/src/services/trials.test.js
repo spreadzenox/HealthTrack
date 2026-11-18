@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial } from './trials'
+import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, lanterns } from './trials'
 
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30, unit: 'min', text: '30 min de sommeil de plus' } }
 const START = new Date(2026, 10, 1, 9)
@@ -133,5 +133,24 @@ describe('UPG-1 : l’essai en cours sur la carte Agir de l’Accueil', () => {
     const later = { ...ten, startedAt: '2026-11-02T09:00:00.000Z', schedule: ten.schedule.map((d, i) => ({ date: `2026-11-${String(i + 2).padStart(2, '0')}`, with: !d.with })) }
     const two = homeTrial([row(8, later), row(7, ten)], new Date(2026, 10, 3, 10))
     expect(two).toMatchObject({ to: '/agir', title: 'Dormir au moins 7 h 30', detail: '2 essais en cours · jour 3 sur 10 · aujourd’hui, jour avec' })
+  })
+
+  describe('LANT-1 : une lanterne par jour avec', () => {
+    const days = (n) => [...Array(n)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 }))
+    const t10 = { ...createTrial(sleep, { now: START }), schedule: days(10) }
+
+    it('5 jours avec : 2 tenus, 1 pas tenu, 2 à venir → allumée, allumée, éteinte, en attente, en attente', () => {
+      const summaries = new Map([['2026-11-01', { sleepMinutes: 460 }], ['2026-11-03', { sleepMinutes: 470 }], ['2026-11-05', { sleepMinutes: 380 }]])
+      const s = trialStatus(t10, { summaries, now: new Date(2026, 10, 6, 10) })
+      expect(lanterns(s).map((l) => l.state)).toEqual(['lit', 'lit', 'out', 'pending', 'pending'])
+      expect(lanterns(s).map((l) => l.date)).toEqual(['2026-11-01', '2026-11-03', '2026-11-05', '2026-11-07', '2026-11-09'])
+    })
+
+    it('un essai ancien de 14 jours (7 avec) garde ses 7 lanternes ; une tenue inconnue reste en attente', () => {
+      const s = trialStatus({ ...t10, schedule: days(14) }, { now: new Date(2026, 10, 4, 10) })
+      const l = lanterns(s)
+      expect(l).toHaveLength(7)
+      expect(l[0].state).toBe('pending')
+    })
   })
 })
