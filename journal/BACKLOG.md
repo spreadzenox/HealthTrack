@@ -73,8 +73,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   bandeau d'ajout, bloc digestif, repas) ; Données s'ouvre sur Tendances (sous-onglets Tendances, Nutrition, Repas,
   Jours) ; Réglages › Données devient « Sauvegarde ». **Restes** : la visite guidée ne passe pas par Ma journée ;
   l'Accueil d'une installation vide est court et montre « Agir » dès le 1er jour (Pilou et les bulles : étapes 8 et
-  10) ; « Vos Analyses » reste écrit dans trois cartes de Sources (l'onglet s'appelle Objectifs) ; l'écran
-  Réglages › Sauvegarde garde le titre « Vos données » ; services de notification natifs non lus (aucune route
+  10) ; ~~« Vos Analyses » dans trois cartes de Sources ; le titre « Vos données » de
+  Réglages › Sauvegarde~~ (faits le 18/11 22:30, #1109) ; services de notification natifs non lus (aucune route
   trouvée par recherche de texte) ; `/ma-journee` absente des captures de la fiche Play et du balayage natif.
 - [x] **REFONTE-3 — Ma journée** (15/11 05:35, Android : #1001 mergée à 06:23, v1077 ; **iPhone : PR de suivi ouverte, à finir**, 51 correctifs appliqués à blanc) : la
   checklist en tête de Ma journée (`DayChecklist.jsx`, `services/dayChecklist.js`) : Repas en trois cercles (Matin
