@@ -3,6 +3,8 @@
 > Document vivant, maintenu par Claude à chaque run. Cocher ce qui est livré (avec le n° de PR),
 > re-prioriser librement. Les idées viennent de l'audit de l'app, de `RESEARCH.md` et des runs.
 
+> **🔴 17/11 19:30 — CI-BILLING** : GitHub Actions refuse tous les jobs (« account is locked due to a billing issue »). Bloque merges, releases, Alpha et TestFlight. Geste du propriétaire : mission `missions/P50.md`. Au retour : relancer les checks de #1090 (`gh api -X POST …/actions/runs/<id>/rerun`), la merger, puis vérifier Build & Release, Play — AAB et TestFlight.
+
 ## Vision (horizon 6–12 mois) — réorientée le 11/10/2026 (directions du propriétaire, voir charte §0)
 
 HealthTrack devient le **hub ultime de la santé, de l'humeur et de la vie** — un « humain augmenté par les
@@ -437,6 +439,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [x] **MONDE-4a** (17/11 18:30, PR) : l'îlot voisin (30 jours d'usage) et la mare (90 jours) dans la scène 3D. Îlot voisin : `scene/neighbour.js`, même socle que l'île en petit (× 0,24, sans ombre de contact), à droite, plus bas que le plateau et un peu devant (1,72 ; −0,68 ; 0,7), en miroir du nuage du J6 ; testé dans le cadre 390 × 350, hors de l'orbite des bulles (1 à 8 bulles, tous déphasages) et non caché par l'îlot adulte ; il suit la saison ; il arrive en 900 ms (`back`) s'il apparaît Accueil ouvert, il est déjà là sinon ; d'un coup en mouvements réduits. Mare : dans `island.js` (elle grandit avec l'îlot), à gauche de Pilou (−100°, r 0,68), bord de sable, trois roseaux pour qu'elle se lise sous la caméra rasante, l'herbe rangée sur son emplacement quand elle apparaît ; eau bleue, glace l'hiver ; testée hors de Pilou, de l'arbuste, de la lanterne, des galets et des 10 places des fleurs du jour. Rendus du banc relus à 0, 30 et 90 jours, en hiver et le soir. **Restent (MONDE-4b)** : le petit arbre (`tree`, g ≥ 0,5 : autre forme que l'arbuste agrandi), la nouvelle dite une fois à l'ouverture (`worldNews`, étiquette et petit saut de Pilou), l'image fixe du palier bas (sans croissance ni saison).
   - [ ] ~~MONDE-3~~ (texte d'origine) : croissance (échelle, caméra qui garde Pilou à la même taille, arbre ; la projection des bulles `stage.project` et l'image fixe du palier bas suivent la même caméra ; décompte des jours d'usage sans relire toutes les notes à l'ouverture de l'Accueil, budget de lectures : voir le run du 17/11 10:30) ; trancher d'abord l'unité des « touffes » (14 → 42 fleuries ≠ 600 brins). **MONDE-4** : îlot voisin (30 j), mare (90 j), la nouvelle dite une fois à l'ouverture. Ensemble, ils soldent « `growthAt` et `loadWorldContext()` branchés dans la scène » de REFONTE-RESTES-SPRINT.
   - [x] **CI-EMU-TIMEOUT** (PR #1084 le 17/11 09:30, mergée à 10:35, `timeout-minutes: 30` sur API 34, 35, 36) (17/11 08:30) : le job « HealthTrack sur Samsung A56 (API 35) » n'a pas de `timeout-minutes` ; sur #1080 (56541bb) il est resté bloqué plus de 50 min à « Lancer l'émulateur » (≈ 10 min d'habitude), ce qui retient le merge jusqu'au délai de GitHub (6 h). Ajouter `timeout-minutes: 30` à ce job (comme API 32), dans une PR à part.
+  - [ ] **LANT-1 à LANT-4, WIDGET-POSES** (découpés le 17/11 20:30, run « idées » ; détail, tests rouges et risques dans
+    `journal/maquettes/compagnon/DECOUPAGE-RITUEL-LANTERNES.md`) : soldent « rituel du soir et lanternes » et « poses du
+    widget » de REFONTE-RESTES-SPRINT, après MONDE-4b. Les lanternes suivent le tirage au sort gardé par le propriétaire
+    (15/11) : **5 lanternes = les 5 jours « avec »**, allumées quand le jour est tenu, pas « 5 soirs réussis » de la SPEC.
+    LANT-1 lanternes sur la page du défi ; LANT-2 Pilou sur la page du défi et au bilan (il salue l'effort) ; LANT-3
+    lanterne qui s'allume le matin sur l'îlot (aucune lecture de plus) ; LANT-4 rituel du soir, piste d'écran seulement
+    (2D ou 3D à trancher : proposition 2D, le tiroir 3D mesuré à 61 200 triangles pour une cible de 25 000) ;
+    WIDGET-POSES poses rendues depuis `companion/pilou/`. Tout en code partagé, aucun correctif iPhone touché (vérifié).
   - [ ] **REFONTE-RESTES-SPRINT** (après POLISH-MEET-DARK, un sujet par run) : ~~nom choisi dans l'étiquette de l'île~~
     (déjà fait : `CompanionHome` lit `useCompanionNameSafe()` sans prop, vérifié le 17/11 04:30) ; ~~nom choisi dans le widget~~
     (17/11 04:30, PR « widget-nom » : `syncPilouWidget` envoie `companionNameNow()`, test rouge puis vert) ; `growthAt` et `loadWorldContext()` branchés dans la scène ; poses du

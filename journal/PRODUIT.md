@@ -264,6 +264,12 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 4. Actions du propriétaire (jamais faites par la routine) — la plus débloquante d'abord
 
+> **🔴 P50 (17/11, 19:30) — la plus débloquante : le compte GitHub est bloqué pour un problème de facturation.**
+> Depuis le 17/11 vers 18:40, chaque job GitHub Actions échoue sans démarrer (« The job was not started because your
+> account is locked due to a billing issue »). Tant que ce n'est pas réglé : aucun test de PR, donc aucun merge ; aucune
+> release, aucun envoi Alpha ni TestFlight. Voie b jusqu'à l'écran de paiement, c pour le paiement :
+> [`missions/P50.md`](missions/P50.md) (https://github.com/settings/billing).
+
 > **Décision du propriétaire du 13/11 vers 19:05 — un seul dépôt, une seule routine (« go bascule ») : faite.** La
 > version iPhone vit dans `iphone/` (#945, #950) ; cette routine fait Android (Google Play) et l'iPhone (App Store,
 > TestFlight). Un produit, deux magasins : une fonction n'est livrée que des deux côtés, ou avec une ligne de
@@ -387,6 +393,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **17/11 20:30** — Run « idées » : rituel du soir, lanternes du défi et poses du widget découpés en LANT-1 à 4 et WIDGET-POSES (`maquettes/compagnon/DECOUPAGE-RITUEL-LANTERNES.md`) ; 5 lanternes = les 5 jours « avec » du tirage au sort gardé le 15/11. GitHub Actions toujours bloqué (P50) : rien mergé.
 - **17/11 18:30** — MONDE-4a (PR) : l'îlot voisin flotte à droite après 30 jours d'usage, une mare bordée de roseaux s'ouvre à gauche de Pilou après 90 jours (glace l'hiver) ; Android et iPhone par le même code. Restent MONDE-4b : petit arbre, nouvelle dite une fois, image fixe du palier bas.
 - **17/11 17:30** — **#1088 (MONDE-3) mergée** (93f4a47) : l'îlot grandit avec les jours d'usage (× 1,3 en largeur, arbuste × 1,45 à 90 jours), recompte léger des jours (budget de lectures de l'Accueil respecté). 14 checks verts, captures iPhone de l'Accueil relues. Suite : MONDE-4.
 - **17/11 12:30** — MONDE-2 : l'îlot et l'arbuste prennent la couleur de la saison (automne : herbe dorée ; hiver : neige ; fin d'hiver : amandier en fleur), hémisphère d'après la position météo. Palier image fixe inchangé.
