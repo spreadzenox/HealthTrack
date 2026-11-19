@@ -428,7 +428,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       [synthèse](simulations/2026-11-19-0830-synthese.md). Rien de perdu à la mise à jour. Constats vérifiés sur captures →
       POLISH-SIM-109 à 115. Écartés (outil) : carbonara de l'analyse factice, « Gold est prolongé », « Version installée :
       0.0.0 », pas « d'habitude » au jour 1. Reste d'UPG-3 : « Prendre soin de soi » en mise à jour, « Stressé » neuve.
-    - [ ] **POLISH-SIM-109 — « Humeur du jour » contredit la note** (J14, prioritaire pour le 22/11) : note 2/5 à 08:34,
+    - [x] **POLISH-SIM-109 — « Humeur du jour » contredit la note** (FAIT 19/11 09:30 : titre « Humeur de » + nom du compagnon, test `CompanionHome.test.jsx`) (J14, prioritaire pour le 22/11) : note 2/5 à 08:34,
       la barre en tête de l'Accueil dit « De bonne humeur ». C'est l'humeur de Pilou (brief), mais rien ne le dit.
       Proposition : libellé « Humeur de Pilou », ou barre qui ne contredit jamais la note du jour (le plus simple qui
       suffit, d'après le brief § 5).

@@ -1,5 +1,5 @@
 /**
- * Jauge « Humeur du jour » (refonte « Compagnon », étape 10 ; brief § 4 et § 5, specs/ile.SPEC.md § 3 et § 12).
+ * Jauge « Humeur de Pilou » (titre avec le nom choisi : c’est l’humeur du compagnon, pas celle de la personne, POLISH-SIM-109) (refonte « Compagnon », étape 10 ; brief § 4 et § 5, specs/ile.SPEC.md § 3 et § 12).
  * Elle dit le fait d'avoir noté, jamais le contenu : chaque geste du jour la fait monter, « Oui » comme « Non ».
  * Plancher « Tranquille » ; elle ne redescend jamais dans la journée (une saisie annulée ne la fait pas baisser) :
  * le plus haut cran atteint est gardé pour la date du jour, sur le téléphone seulement.

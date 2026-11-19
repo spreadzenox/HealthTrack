@@ -32,6 +32,8 @@
   font-weight: 800;
   font-size: 0.95rem;
   color: var(--color-ink);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .cmp-mood-word {

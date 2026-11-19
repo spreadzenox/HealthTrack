@@ -479,7 +479,7 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
   return (
     <section className="cmp-home" aria-label={`${name} et votre journée`}>
       <div className="cmp-mood" data-level={mood.level}>
-        <span className="cmp-mood-title" id="cmp-mood-title">Humeur du jour</span>
+        <span className="cmp-mood-title" id="cmp-mood-title">{`Humeur de ${name}`}</span>
         <span className="cmp-mood-word">{mood.word}</span>
         <div className="cmp-mood-track" role="meter" aria-labelledby="cmp-mood-title" aria-valuemin={0}
           aria-valuemax={MOOD_TOP} aria-valuenow={mood.level} aria-valuetext={mood.word}>
