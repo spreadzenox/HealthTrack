@@ -232,6 +232,17 @@ describe('cohérence avec la réintroduction et les données livrées', () => {
     expect(est('Oignon, cru', 40).fructans.level).toBe('élevé')
     expect(est('Oignon rouge, cru', 40).fructans.high).toBeCloseTo(2.52)
   })
+  it('table livrée : l’oignon cuit ou poêlé riche en fructanes, analogie de l’oignon cru en confiance basse (POLISH-SIM-106)', () => {
+    const est = (ingredient, quantity_g) => estimateMealFodmap([{ ingredient, quantity_g }], table, measurements)
+    const hi = (ingredient, quantity_g) => mealFodmapHighlights(est(ingredient, quantity_g)).find((h) => h.group === 'fructans')
+    for (const name of ['Oignon, cuit', 'Oignon blanc ou jaune, sauté/poêlé sans matière grasse', 'Oignon rouge, sauté/poêlé']) {
+      expect(est(name, 40).fructans.level).toBe('élevé')
+      expect(hi(name, 40)).toMatchObject({ probable: true })
+      expect(measurements.foods[name].fructans).toMatchObject({ confidence: 'analogie', analogy_of: 'Oignon, cru' })
+    }
+    expect(est('Oignon cuit', 40).fructans.level).toBe('élevé') // alias
+    expect(measurements.foods['Oignon, cuit'].fructans).toMatchObject({ g: 1.95, g_high: 6.25 }) // 1,97 et 6,3 × 6,2 / 6,25
+  })
   it('table livrée : pain complet, couscous et boulgour au-dessus du repère fructanes, pain bis jamais « bas » (N3f)', () => {
     const est = (ingredient, quantity_g) => estimateMealFodmap([{ ingredient, quantity_g }], table, measurements)
     const hi = (ingredient, quantity_g) => mealFodmapHighlights(est(ingredient, quantity_g)).find((h) => h.group === 'fructans')

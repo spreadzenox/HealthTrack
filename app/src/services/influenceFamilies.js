@@ -7,13 +7,14 @@
  *   lien net ne soit caché. Le corps et la météo restent dans « À regarder, pas à changer ».
  * - Niveau d'une famille : son lien net le plus fort, en points sur 5 pour une variation habituelle. Les deux seuils
  *   sont des repères d'affichage, pas des tests.
- * - Sans lien net, la famille le dit ; sans facteur comparé (trop peu de données), aussi.
+ * - Sans lien net, la famille le dit avec les mots de la légende des barres hachurées (« pas assez net », POLISH-SIM-104) ;
+ *   sans facteur comparé (trop peu de données), aussi.
  */
 export const MEDIUM_FROM = 0.25
 export const STRONG_FROM = 0.5
 
 export const LEVEL_WORDS = { 3: 'Lien fort', 2: 'Lien moyen', 1: 'Lien faible' }
-const NONE_WORD = 'Pas de lien net pour l’instant'
+const NONE_WORD = 'Pas assez net pour l’instant'
 const NODATA_WORD = 'Pas assez de données'
 
 export const FAMILIES = [

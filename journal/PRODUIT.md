@@ -394,6 +394,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **19/11 06:30** — **POLISH-SIM-104 et 106** (objectif du 22/11) : famille sans lien net « Pas assez net pour l’instant » (les mots de la légende hachurée) ; oignon cuit ou poêlé riche en fructanes (analogie de l’oignon cru, confiance basse).
 - **19/11 05:30** — **UPG-6 et POLISH-SIM-103** (objectif du 22/11) : le score de bien-être d'Objectifs dit « Moyenne de vos 7 derniers jours » ; la fiche d'un jour (Tendances) écrit la note comme « Vos saisies » au lieu de l'arrondir ; titre « Ce qui a pu jouer ce jour-là ».
 - **19/11 04:30** — **POLISH-SIM-102 et UPG-7** (objectif du 22/11) : la carte digestion de Ma journée et celle d'Objectifs nomment les deux mêmes paliers (premier score au 14e jour noté, pistes au 28e) ; passé le 14e jour, Ma journée dit que le score est dans Objectifs. **TestFlight 1173.1173 soumise à l'examen bêta** et ajoutée à « Testeurs Halcya » (workflow lancé par l'API GitHub).
 - **19/11 00:30** — **#1109 mergée (v794) ; TestFlight 893 (1170.1170) envoyée** (lancée à la main, le cron de 21:20 ayant plus de 3 h de retard ; première build avec toute la refonte regroupée, candidate pour PI2 une fois validée chez « Testeurs Halcya »). **POLISH-SIM-99** en PR : la visite guidée passe par Ma journée ; lien de piste « Vérifier par un essai ».

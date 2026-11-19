@@ -44,7 +44,9 @@ describe('familles de ce qui va avec un objectif (refonte « Compagnon », étap
     expect(rows.map((r) => [r.id, r.level, r.state, r.lead])).toEqual([
       ['sleep', 0, 'none', null], ['nutrition', 0, 'none', null], ['activity', 0, 'nodata', null],
     ])
-    expect(rows[0].word).toBe('Pas de lien net pour l’instant')
+    // POLISH-SIM-104 : les mêmes mots que la légende des barres hachurées (« pas assez net »), plus « pas de lien »
+    // au-dessus de chiffres comme GOS −1,1 pt
+    expect(rows[0].word).toBe('Pas assez net pour l’instant')
     expect(rows[2].word).toBe('Pas assez de données')
   })
 

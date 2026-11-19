@@ -391,12 +391,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       14, premier score dans 5 jours ». Nommer les deux paliers (premier score à 14, pistes à 28) au même endroit.
     - [x] **POLISH-SIM-103 — Bien-être d'un jour** (19/11 05:30, avec UPG-6 : « vous avez noté 4,2 · estimé avec le visage » sous 4,0 ; titre « Ce qui a pu jouer ce jour-là », demandé par trois simulations) : Tendances › Jour affiche 4,0 en tête et 4,2 dans la saisie (moyenne
       ou note ?) ; « Ce qui a pu peser » ne liste que des effets positifs.
-    - [ ] **POLISH-SIM-104 — Exemple de « Votre bien-être »** : famille Alimentation « Pas de lien net » au-dessus de
+    - [x] **POLISH-SIM-104 — Exemple de « Votre bien-être »** (19/11 06:30 : une famille sans lien net dit « Pas assez net pour l’instant », les mots de la légende des barres hachurées ; « Essayer dans Agir » déjà retiré par POLISH-SIM-99) : famille Alimentation « Pas de lien net » au-dessus de
       lignes GOS −1,1 pt et Lactose −0,9 pt.
     - [ ] **POLISH-SIM-105 — Accueil « Ce que Halcya suit pour vous »** : liste VFC et température de la peau sans montre
       qui les donne, et Météo non activée, juste après « Health Connect n'est pas sur ce téléphone » (vérifier sur
       Android, la version web n'a pas Health Connect).
-    - [ ] **POLISH-SIM-106 — FODMAP de l'oignon cuit** : `fodmapMeasurements.json` n'a que l'oignon cru (fructanes) ;
+    - [x] **POLISH-SIM-106 — FODMAP de l'oignon cuit** (19/11 06:30 : « Oignon, cuit », oignon blanc ou jaune et rouge sautés/poêlés : fructanes de l’oignon cru ramenés par les glucides Ciqual cuit / cru, fourchette Ferjančič–Liljebo gardée, confiance « analogie » ; oignon nouveau non repris, autre légume ; test) : `fodmapMeasurements.json` n'a que l'oignon cru (fructanes) ;
       l'oignon cuit n'est marqué que « fructose en excès ». Ajouter l'analogie documentée (confiance basse) pour
       l'oignon cuit ou poêlé, comme pour l'ail.
     - [ ] **POLISH-SIM-107 — Tendances** : en passant de Semaine à Jour, la mesure choisie (Sommeil) redevient

@@ -65,6 +65,15 @@
     "Poireau, cru": {
       "fructans": { "g": 0.24, "source": "ferjancic2024", "ref": "tableau 1, poireau", "confidence": "mesure", "g_high": 3.8, "source_high": "liljebo2020", "ref_high": "suppl. tableau 3, Leek (d'après Muir 2007, moyenne poireau entier et blanc)" }
     },
+    "Oignon, cuit": {
+      "fructans": { "g": 1.95, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "analogie", "analogy_of": "Oignon, cru", "g_high": 6.25, "source_high": "liljebo2020", "ref_high": "suppl. tableau 3, Onion (d'après Muir 2007)", "notes": "Oignon cru ramené par les glucides Ciqual (cuit / cru) : oignon seul, sans autre ingrédient ; une partie des fructanes passe dans l’eau de cuisson, estimation plutôt haute." }
+    },
+    "Oignon blanc ou jaune, sauté/poêlé sans matière grasse": {
+      "fructans": { "g": 2.12, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "analogie", "analogy_of": "Oignon, cru", "g_high": 6.78, "source_high": "liljebo2020", "ref_high": "suppl. tableau 3, Onion (d'après Muir 2007)", "notes": "Oignon cru ramené par les glucides Ciqual (cuit / cru) : oignon seul, sans autre ingrédient ; une partie des fructanes passe dans l’eau de cuisson, estimation plutôt haute." }
+    },
+    "Oignon rouge, sauté/poêlé": {
+      "fructans": { "g": 2.38, "source": "ferjancic2024", "ref": "tableau 1, oignon", "confidence": "analogie", "analogy_of": "Oignon, cru", "g_high": 7.61, "source_high": "liljebo2020", "ref_high": "suppl. tableau 3, Onion (d'après Muir 2007)", "notes": "Oignon cru ramené par les glucides Ciqual (cuit / cru) : oignon seul, sans autre ingrédient ; une partie des fructanes passe dans l’eau de cuisson, estimation plutôt haute." }
+    },
     "Ail, cru": {
       "fructans": { "g": 17.4, "source": "liljebo2020", "ref": "suppl. tableau 3, Garlic (d’après Muir 2007)", "confidence": "citée" }
     },
