@@ -24,8 +24,12 @@
 - Parité : 70 % (inchangée).
 
 ## Vérifications
-- Voir le corps de la PR pour la suite complète, build et lint.
+- Local : `npm run test` 4 110 verts ; avec les 51 correctifs iPhone 4 477 verts ; build et ESLint propres ; capture
+  `/bienvenue --onboarding=auto` relue.
+- PR #1126 (65ea4bf2), à 16:18 UTC : Vitest, tests avec correctifs iOS, Build APK, émulateurs (A56 API 35 et 36,
+  API 28, 32, 34), relais, montre : verts. **Build iOS (simulateur) et captures : en cours** à la fin du run.
 
 ## Suite proposée
-1. Merger cette PR après ses checks (build iPhone compris).
+1. **Run suivant : finir #1126** : build iPhone verte, captures de l'accueil (temps 2 et 3) regardées, branche à jour,
+   merge en squash.
 2. POLISH-SIM-108 (petits défauts) ou POLISH-SIM-107 (réponse du propriétaire attendue sur les courbes).
