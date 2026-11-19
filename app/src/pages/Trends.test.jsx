@@ -285,6 +285,29 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(screen.getByRole('img', { name: 'Courbe de Bien-être, Sommeil' })).toBeInTheDocument()
   })
 
+  it('POLISH-SIM-107 : la mesure choisie (Sommeil) reste en passant de Semaine à Jour, et au retour', async () => {
+    renderAt('/tendances?mesure=sleep')
+    await screen.findByRole('img', { name: 'Courbe de Sommeil' })
+    fireEvent.click(screen.getByRole('button', { name: 'jeudi 5 novembre' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Jour' }))
+    const chips = screen.getByRole('list', { name: 'Mesures affichées' })
+    expect(within(chips).getByText('Sommeil')).toBeInTheDocument()
+    expect(within(chips).queryByText('Bien-être')).toBeNull()
+    // la courbe heure par heure est celle du bien-être : pas sous « Sommeil » seul
+    expect(screen.queryByRole('img', { name: /heure par heure/ })).toBeNull()
+    expect(screen.getByRole('group', { name: /Détail du jeudi 5 novembre/ })).toHaveTextContent('Sommeil')
+    // « + » propose le bien-être, qui a son détail heure par heure : on reste en Jour
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une mesure' }))
+    const wb = within(screen.getByRole('list', { name: 'Mesures à ajouter' })).getByRole('button', { name: /Bien-être/ })
+    expect(wb).not.toHaveClass('is-daily')
+    fireEvent.click(wb)
+    expect(screen.getByRole('button', { name: 'Jour' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('img', { name: 'Bien-être du jeudi 5 novembre, heure par heure' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Retirer Bien-être' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Semaine' }))
+    expect(screen.getByRole('img', { name: 'Courbe de Sommeil' })).toBeInTheDocument()
+  })
+
   // Correction T1 du propriétaire (07/11 vers 23:50) : jamais une carte vide à l'ouverture
   const renderWith = (path, { st = states, d = days, f = face } = {}) => render(
     <MemoryRouter initialEntries={[path]}>
