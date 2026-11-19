@@ -451,6 +451,33 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       « montre ou bracelet » ; rien ne dit où voir son poids. « Montre, bracelet ou balance ? » et une ligne « votre
       poids arrive de la balance » (le poids est déjà dans Tendances). Pas d'objectif « maigrir » (brief § 3.1 : cible
       inchangée).
+    - [x] **UPG-3c** (19/11 20:30, run « idées ») : 2 simulations, « Prendre soin de soi, maigrir » J45 en mise à jour
+      (`--equipment=phone-scale --goals=care --legacy`) et « Stressé et pressé » J1 neuve (`--equipment=watch`) :
+      [`J45`](simulations/2026-11-19-2030-prendre-soin-maj-J45.md), [`J1`](simulations/2026-11-19-2030-stresse-presse-J1.md),
+      [synthèse](simulations/2026-11-19-2030-synthese.md). Rien de perdu à la mise à jour (essai, pesées, saisies).
+      Constats vérifiés sur captures et dans le code → POLISH-SIM-116 à 121. Reste d'UPG-3 (8 parcours sur 10) :
+      « Ventre, sans technique » en mise à jour, « Tout mesurer » neuve.
+    - [ ] **POLISH-SIM-116 — Trois délais pour le bien-être** (J1, prioritaire pour le 22/11) : Accueil « Jour 1 sur 7 avant
+      vos premiers résultats », Objectifs « 6 jours », page « Votre bien-être » (`Recommendations.jsx`, `resultsView.js`)
+      « Encore 13 jours notés… 1/14 ». `objectiveCard('wellbeing')` compte 7 (brief : 7 jours bien-être), le compte à
+      rebours de la page prend `daysNeeded` de l'analyse (14). Spec : la page dit le même palier que l'Accueil et
+      Objectifs (premier résultat au 7e jour noté), puis, s'il reste un palier, le nommer comme pour la digestion
+      (run du 19/11 04:30 : « premier score au 14e jour, pistes au 28e »). Vérifier ce qui s'affiche réellement au 7e jour.
+    - [ ] **POLISH-SIM-117 — Jour sans point pour une note** (J1) : Données › Tendances › Jour, note 2/5 de 20:33 (bulle
+      Bien-être de l'Accueil) listée dans « Vos saisies » mais la courbe dit « Aucune lecture du visage ce jour-là »
+      (`TrendsViewer.jsx` `DayChart` : `view.note` nul). Chercher pourquoi la note du jour n'arrive pas dans la vue Jour
+      (type ou heure de la saisie par bulle), test d'abord ; message seulement sans lecture ni note.
+    - [ ] **POLISH-SIM-118 — Poids invisible en Semaine** (J45, balance) : pesée tous les 3 jours → moins de
+      `TREND_MIN_POINTS` (3) sur 7 jours, « Poids » absent du « + » de Semaine ; POLISH-SIM-115 promet « à voir dans
+      Tendances ». Spec : une mesure espacée (poids) est proposée si elle a 3 points sur la plus longue période (Mois),
+      et la Semaine trace les points qu'elle a. Test sur `buildTrendSeries` / `available`.
+    - [ ] **POLISH-SIM-119 — « Suivre une habitude » ouvre Paramètres en haut** (J45) : depuis Ma journée, arrive sur
+      Apparence ; mener à « Vos habitudes » (ancre et défilement, comme les autres liens vers une rubrique).
+    - [ ] **POLISH-SIM-120 — Essai en cours introuvable sous Objectifs** (J45, mise à jour) : sa page allume Objectifs et
+      revient à « ← Votre bien-être » (#1128), mais ni Objectifs ni « Votre bien-être » ne le montrent ; seule la carte
+      de l'Accueil y mène. Une ligne « Essai en cours : … jour N sur 10 » sur la page de l'objectif suivi.
+    - [ ] **POLISH-SIM-121 — Deux liens « comment c'est calculé »** (J1) : « Votre bien-être » montre « Comment est
+      calculé votre bien-être ? » et « Comment c'est calculé » l'un sous l'autre ; n'en garder qu'un.
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
