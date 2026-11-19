@@ -1,7 +1,7 @@
 /**
  * Journal › Tendances (ORG-3, ORG-3c, revue design du 07/11) : un visualiseur. Fonction pure, sans React.
  * Une ou plusieurs mesures superposables, un axe par unité (deux au plus) ; une mesure n'est proposée qu'à partir de
- * 3 points sur la période (leçon 17). Bien-être et confort digestif viennent du modèle à espace d'états (TS-1) :
+ * 3 points sur la période (leçon 17 ; une mesure espacée comme le poids : 3 points sur le Mois, POLISH-SIM-118). Bien-être et confort digestif viennent du modèle à espace d'états (TS-1) :
  * chaque jour une valeur et sa fourchette, un point plein seulement les jours notés ; l'attendu d'après vos habitudes
  * ne prolonge que le futur (pointillés, fourchette qui s'élargit : Semaine 3 jours, Mois 7). Aucun attendu sur le
  * passé. Les autres mesures viennent des résumés du jour (montre, téléphone).
@@ -43,6 +43,12 @@ export const trendMeasure = (key) => TREND_MEASURES.find((m) => m.key === key) ?
 
 /** Un graphique à partir de 3 points (leçon 17). */
 export const TREND_MIN_POINTS = 3
+
+/**
+ * POLISH-SIM-118 : mesures espacées (une pesée tous les 3 jours). Elles comptent leurs 3 points sur le Mois, et la
+ * Semaine trace ceux qu'elle a ; sans aucun point dans la semaine, la puce grisée ramène au Mois (POLISH-SIM-81b).
+ */
+const SPARSE_MEASURES = new Set(['weight'])
 
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v)
 
@@ -96,9 +102,16 @@ export function buildTrendSeries({ states = null, days = [], period = 'week', no
     }
     series[m.key] = pts.filter((p) => inRange.has(p.date))
   }
-  const available = TREND_MEASURES
-    .filter((m) => series[m.key].filter((p) => !p.future).length >= TREND_MIN_POINTS)
-    .map((m) => m.key)
+  const monthPast = new Set(periodDates('month', now).dates.filter((d) => d <= today))
+  const enough = (m) => {
+    const past = series[m.key].filter((p) => !p.future).length
+    if (past >= TREND_MIN_POINTS) return true
+    if (!SPARSE_MEASURES.has(m.key) || past === 0) return false
+    let n = 0
+    for (const [date, summary] of byDate) if (monthPast.has(date) && isNum(summary?.[m.field])) n += 1
+    return n >= TREND_MIN_POINTS
+  }
+  const available = TREND_MEASURES.filter(enough).map((m) => m.key)
   return { dates, today, series, available }
 }
 
