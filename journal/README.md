@@ -18,6 +18,8 @@
 
 **19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge). **02:30 : fiche App Store** : la liste des captures suit la refonte (les actuelles montrent encore Analyses et le Journal) ; série à prendre de jour par la CI, regardée, puis envoyée avant « 👉 PI2 prête ».
 
+**19/11 19:30 : repas, une phrase simple pour les FODMAP** : quand un repas touche plusieurs groupes FODMAP, sa carte pêche dit seulement « Parfois mal digérés : lentille verte, oignon, ail » ; les groupes, les grammes et les sources restent derrière « Détails » (UPG-9, « Ventre, sans technique » : « 4 lignes rouges »). Un seul groupe : « Riche en fructanes : oignon », comme avant.
+
 **19/11 18:30 : essai, le retour mène à votre objectif** : en haut de la page d’un essai, le lien dit « ← Votre bien-être » ou « ← Votre confort digestif » et y ramène ; il disait « ← Agir » alors que l’onglet allumé est Objectifs (POLISH-SIM-108).
 
 **19/11 17:30 : essai, rien à tenir les jours « comme d’habitude »** : dans le calendrier d’un essai, ces jours n’ont plus de marque « – pas tenu » (une persona s’en étonnait : « je n’avais rien à tenir ») ; seuls les jours avec consigne en portent une (POLISH-SIM-108).
@@ -163,6 +165,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 19/11 19:30 — [Repas : FODMAP en une phrase](runs/2026-11-19-1930-fodmap-une-phrase.md) | 🛠️ | **UPG-9 (carte d'un repas)** : plusieurs groupes FODMAP se disent en une phrase (« Parfois mal digérés : … »), le détail par groupe derrière « Détails ». Test d'abord, capture relue. Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 18:30 — [Essai : retour vers l’objectif](runs/2026-11-19-1830-essai-retour-objectif.md) | 🛠️ | **POLISH-SIM-108 (lien retour)** : la page d’un essai revient à l’objectif qu’il suit (bien-être ou confort digestif), sous l’onglet Objectifs. Test d'abord, capture relue. Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 17:30 — [Essai : jours comme d’habitude](runs/2026-11-19-1730-essai-jours-sans.md) | 🛠️ | **POLISH-SIM-108 (essai)** : plus de marque tenu / pas tenu sur les jours « comme d’habitude » d’un essai ; calcul inchangé. Test d'abord, capture relue. #1126 (temps d'écran) attendait encore sa build iPhone. Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 16:30 — [Temps d'écran seulement s'il est possible](runs/2026-11-19-1630-temps-ecran-pris-en-charge.md) | 🛠️ | **POLISH-SIM-105i** : temps 2 et 3 de l'accueil sans temps d'écran quand le téléphone ne le donne pas (iPhone avant iOS 26.4, Android 8) ; correctif iPhone 55 fondu dans le code partagé (51 correctifs). Tests d'abord. TestFlight : 1173.1173. Parité : 70 %. | #1126 ouverte (build iPhone en cours) |
