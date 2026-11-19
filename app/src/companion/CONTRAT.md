@@ -14,7 +14,7 @@ Références : brief `journal/maquettes/compagnon/BRIEF-REFONTE-COMPAGNON.md` (�
 |---|---|---|
 | `app/src/companion/` (racine), `scene/`, `CONTRAT.md`, `bus.js` | SCÈNE | canevas three.js, île, lumière, paliers, pause, repli image fixe, `<CompanionScene>`, mouvements réduits, interrupteur |
 | `app/src/companion/pilou/` | PILOU | `createPilou(THREE, options)`, expressions, yeux, montre, toucher, images pré-rendues des petits Pilou |
-| `app/src/companion/bubbles/` | BULLES | bulles DOM, éclatement, jauge « Humeur du jour », état des fleurs, barre de la première semaine, cadeaux |
+| `app/src/companion/bubbles/` | BULLES | bulles DOM, éclatement, jauge « Humeur de Pilou » (titre : « Humeur de » + le nom choisi), état des fleurs, barre de la première semaine, cadeaux |
 | `app/src/companion/life/` | VIE | nourrir, refléter le bien-être, méditer, fin de journée, rencontre et nom, jour 7, Pilou dans Objectifs et Données |
 | `app/src/companion/world/` | MONDE | fonctions pures : heure → lumière, météo → décor, semaines → croissance ; widget et notifications |
 | `app/src/companion/studio/` | STUDIO | Studio Pilou, fiche de traits locale (IndexedDB), export/import |

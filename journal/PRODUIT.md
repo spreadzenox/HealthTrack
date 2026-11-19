@@ -396,6 +396,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **19/11 09:30** — **POLISH-SIM-109** (objectif du 22/11) : la jauge de l'Accueil s'appelle « Humeur de » + le nom du compagnon ; elle ne se lit plus comme l'humeur de la personne.
 - **19/11 07:30** — **POLISH-SIM-107** (objectif du 22/11) : Tendances garde la mesure choisie en passant de Semaine à Jour et au retour ; courbe heure par heure seulement avec le bien-être, que « + » propose en Jour. FC, phases du sommeil et SpO2 dans « + » : nouvelles courbes, à proposer.
 - **19/11 06:30** — **POLISH-SIM-104 et 106** (objectif du 22/11) : famille sans lien net « Pas assez net pour l’instant » (les mots de la légende hachurée) ; oignon cuit ou poêlé riche en fructanes (analogie de l’oignon cru, confiance basse).
 - **19/11 05:30** — **UPG-6 et POLISH-SIM-103** (objectif du 22/11) : le score de bien-être d'Objectifs dit « Moyenne de vos 7 derniers jours » ; la fiche d'un jour (Tendances) écrit la note comme « Vos saisies » au lieu de l'arrondir ; titre « Ce qui a pu jouer ce jour-là ».

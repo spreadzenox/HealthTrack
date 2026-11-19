@@ -68,8 +68,14 @@ describe('CompanionHome — les bulles', () => {
     act(() => { vi.advanceTimersByTime(1000) })
     expect(events.some((e) => e.type === 'flower:grow' && e.payload.theme === 'miel' && e.payload.angleDeg === -74)).toBe(true)
     expect(events.some((e) => e.type === 'mood:changed' && e.payload.word === 'De bonne humeur' && e.payload.value === 0.25)).toBe(true)
-    expect(screen.getByRole('meter', { name: 'Humeur du jour' })).toHaveAttribute('aria-valuetext', 'De bonne humeur')
+    expect(screen.getByRole('meter', { name: 'Humeur de Pilou' })).toHaveAttribute('aria-valuetext', 'De bonne humeur')
     off()
+  })
+
+  it('la jauge dit que c’est l’humeur du compagnon, pas celle de la personne (POLISH-SIM-109)', () => {
+    renderHome({ name: 'Moka' })
+    expect(screen.getByRole('meter', { name: 'Humeur de Moka' })).toBeInTheDocument()
+    expect(screen.queryByText('Humeur du jour')).toBeNull()
   })
 
   it('l’humeur ne redescend pas quand une saisie est annulée', () => {
