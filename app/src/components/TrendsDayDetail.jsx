@@ -2,7 +2,7 @@
  * Détail d'un jour passé de Journal › Tendances (ORG-3c, revue design du 07/11, maquette validée) :
  * « Expressions du visage » en étoile à 8 branches (rayon en racine carrée, le jour en couleur pleine, l'habitude des
  * 28 jours en trait gris), « Humeur et éveil » (un point par lecture, la moyenne du jour, l'habitude en ellipse grise)
- * et « Ce qui a pu peser ce jour-là » (les 3 plus grandes contributions du modèle d'Analyses, barres de part et d'autre
+ * et « Ce qui a pu jouer ce jour-là » (les 3 plus grandes contributions du modèle d'Analyses, barres de part et d'autre
  * de zéro, couleur du thème). Des estimations de l'expression du visage, jamais un diagnostic.
  */
 import { contributionText, formatPoints, weighView } from '../services/trendsDay'
@@ -84,7 +84,7 @@ export function MoodMap({ points, day, habit }) {
 }
 
 /**
- * « Ce qui a pu peser ce jour-là » : ce qui s'est passé (« Nuits plus courtes que d'habitude (6 h 21) », T4), barres de
+ * « Ce qui a pu jouer ce jour-là » : ce qui s'est passé (« Nuits plus courtes que d'habitude (6 h 21) », T4), barres de
  * part et d'autre de zéro, en points sur 5 (« −0,29 pt »), couleur du thème.
  */
 export function ContributionBars({ items }) {
@@ -149,8 +149,8 @@ export default function TrendsDayDetail({ face, contributions, outcome = null, v
         </section>
       )}
       {weigh && (
-        <section className="tdd-block" aria-label="Ce qui a pu peser ce jour-là">
-          <h3 className="tdd-title">Ce qui a pu peser ce jour-là</h3>
+        <section className="tdd-block" aria-label="Ce qui a pu jouer ce jour-là">
+          <h3 className="tdd-title">Ce qui a pu jouer ce jour-là</h3>
           {weigh.items.length > 0 && WEIGH_ON[outcome] && <p className="tdd-text tdd-weigh-on">{WEIGH_ON[outcome]}</p>}
           {weigh.items.length > 0 && <ContributionBars items={weigh.items} />}
           {weigh.note && <p className="tdd-text">{WEIGH_NOTE[weigh.note]}</p>}

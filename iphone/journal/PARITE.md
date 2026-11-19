@@ -16,6 +16,8 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+19/11 05:30 : UPG-6 et POLISH-SIM-103 (Objectifs « Moyenne de vos 7 derniers jours » ; la fiche d'un jour de Tendances cite la note comme « Vos saisies » ; « Ce qui a pu jouer ce jour-là ») : code partagé ; les correctifs 56 et 64 (`trendsData.js`, `trendsDay.js`) s'appliquent toujours (`git apply --check`). Parité inchangée : 70 %.
+
 19/11 04:30 : POLISH-SIM-102 et UPG-7 (deux paliers de la digestion nommés dans Ma journée et Objectifs) : code partagé, aucun correctif iPhone ne touche `DigestBlock.jsx` ni `Objectives.jsx`. 1173.1173 soumise à l'examen bêta. Parité inchangée : 70 %.
 
 19/11 03:30 : POLISH-SIM-101 et UPG-5 (note de la nouvelle navigation en tête de Nouveautés tant qu'elle n'est pas lue, ligne « Mon cycle ») : code partagé, `upstream.json` suit HEAD ; le correctif 33 (test de Nouveautés) s'applique toujours (`git apply --check`). Parité inchangée : 70 %.

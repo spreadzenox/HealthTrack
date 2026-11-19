@@ -37,6 +37,13 @@ describe('Objectifs, vue d’ensemble (refonte « Compagnon », étape 6a)', () 
     expect(card).toHaveAttribute('href', '/recommendations/bien-etre')
   })
 
+  it('UPG-6 : le score dit que c’est la moyenne des 7 derniers jours (l’Accueil montre la note du jour)', async () => {
+    goals([])
+    show(states([3, 3, 3, 3, 4, 4, 4]))
+    const card = await screen.findByTestId('objective-wellbeing')
+    expect(card).toHaveTextContent('Moyenne de vos 7 derniers jours')
+  })
+
   it('le lien « Ce qui va avec » finit par l’icône chevron, pas un « › » texte que Nunito rapetisse (7d-4)', async () => {
     goals([])
     show(states([3, 3, 3, 3, 4, 4, 4]))
