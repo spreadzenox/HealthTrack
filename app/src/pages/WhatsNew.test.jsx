@@ -111,3 +111,33 @@ describe('WhatsNewBanner', () => {
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 })
+
+describe('WhatsNew page, note à la une (POLISH-SIM-101)', () => {
+  beforeEach(() => localStorage.clear())
+
+  const WITH_HEADLINE = [
+    { id: '2026-11-18-0100-c', date: '2026-11-18', kind: 'correctif', title: 'Petit correctif', items: [] },
+    { id: '2026-11-15-0435-nav', date: '2026-11-15', kind: 'nouveau', aLaUne: true, title: 'Nouveaux onglets', items: [] },
+    { id: '2026-11-10-0100-a', date: '2026-11-10', kind: 'amélioration', title: 'Ancienne note', items: [] },
+  ]
+
+  it('puts an unread headline note first', () => {
+    localStorage.setItem('healthtrack-whats-new-last-seen', '2026-11-10-0100-a')
+    renderAt('/nouveautes', <WhatsNew changelog={WITH_HEADLINE} />)
+    const titles = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)
+    expect(titles).toEqual(['Nouveaux onglets', 'Petit correctif', 'Ancienne note'])
+  })
+
+  it('keeps date order once the headline note has been read', () => {
+    localStorage.setItem('healthtrack-whats-new-last-seen', '2026-11-15-0435-nav')
+    renderAt('/nouveautes', <WhatsNew changelog={WITH_HEADLINE} />)
+    const titles = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)
+    expect(titles).toEqual(['Petit correctif', 'Nouveaux onglets', 'Ancienne note'])
+  })
+
+  it('says where « Mon cycle » went in the navigation note (UPG-5)', () => {
+    const nav = CHANGELOG.find((e) => e.id === '2026-11-15-0435-refonte-navigation')
+    expect(nav.aLaUne).toBe(true)
+    expect(nav.items.some((i) => /Mon cycle/.test(i) && /Règles/.test(i))).toBe(true)
+  })
+})

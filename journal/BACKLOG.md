@@ -356,7 +356,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     « Ma digestion », Calme / Gêne / Douleur ne prennent aucun état après le geste ; seule la ligne « Bilan du jour :
     Gêne » le dit. Marquer le dernier choix du jour (rond plein, fond de la couleur digestion), sans empêcher une
     seconde note dans la journée.
-  - [ ] **UPG-5 — Testeur qui arrive : « où sont passés vos onglets »** (J45 `--legacy`) : rien ne dit où est le
+  - [x] **UPG-5 — Testeur qui arrive** (19/11 03:30 : ligne « Mon cycle » → « Règles » de Ma journée ajoutée à la note à la une, et la note passe en tête de la page Nouveautés tant qu'elle n'est pas lue, avec POLISH-SIM-101 ; capture `--whats-new` relue) **« : « où sont passés vos onglets »** (J45 `--legacy`) : rien ne dit où est le
     Journal (Tendances › toucher un jour), ni Analyses (Objectifs › Ce qui va avec…), ni Agir (carte de l'Accueil),
     ni ce que devient « Mon cycle » (Règles dans Ma journée, contexte de la digestion). La note à la une
     (`2026-11-15-0435-refonte-navigation`) le dit en partie : la compléter d'une ligne sur « Mon cycle », et, dans
@@ -385,7 +385,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       montre « Confort digestif » coché sans que la personne l'ait choisi, et rien ne dit où sont passés Sport (famille
       Activité) et Cycle (bouton « Règles »). Une note unique après la mise à jour ; vérifier que cocher Confort digestif
       est voulu par la migration 5a (cycle = contexte de la digestion), sinon ne pas le cocher.
-    - [ ] **POLISH-SIM-101 — Page Nouveautés** : le bandeau met la note de la nouvelle navigation à la une (UPG-2), mais
+    - [x] **POLISH-SIM-101 — Page Nouveautés** (19/11 03:30 : `WhatsNew.jsx` place en tête la note `aLaUne` non lue, choisie par `bannerHeadline` comme le bandeau ; ordre par date une fois lue ; 3 tests) : le bandeau met la note de la nouvelle navigation à la une (UPG-2), mais
       la page la range par date, perdue dans une très longue liste. La mettre en tête de la page quand elle est non lue.
     - [ ] **POLISH-SIM-102 — Deux décomptes de la digestion** : Ma journée « 9/28, encore 19 jours », Objectifs « 9 sur
       14, premier score dans 5 jours ». Nommer les deux paliers (premier score à 14, pistes à 28) au même endroit.
