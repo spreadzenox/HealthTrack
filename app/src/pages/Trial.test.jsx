@@ -71,6 +71,19 @@ describe('Un essai (ORG-8)', () => {
     expect(screen.getByLabelText(/1 novembre : avec, tenu/)).toHaveTextContent('1✓')
   })
 
+  it('POLISH-SIM-108 : le lien retour mène à l’objectif suivi, sous l’onglet Objectifs (plus « ← Agir »)', async () => {
+    renderTrial(new Date(2026, 10, 3, 10))
+    const back = await screen.findByRole('link', { name: '← Votre bien-être' })
+    expect(back).toHaveAttribute('href', '/recommendations/bien-etre')
+    expect(screen.queryByRole('link', { name: '← Agir' })).not.toBeInTheDocument()
+  })
+
+  it('POLISH-SIM-108 : un essai sur le ventre revient à « Votre confort digestif »', async () => {
+    renderTrial(new Date(2026, 10, 3, 10), { factor: { ...payload.factor, outcome: 'digestion' } })
+    const back = await screen.findByRole('link', { name: '← Votre confort digestif' })
+    expect(back).toHaveAttribute('href', '/recommendations/ventre')
+  })
+
   it('POLISH-ESSAI-VIDE : sans point, le graphique vide avec ses axes et une seule phrase', async () => {
     renderTrial(new Date(2026, 10, 1, 10))
     const card = (await screen.findByRole('heading', { name: 'Résultat en cours' })).closest('article')
