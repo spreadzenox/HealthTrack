@@ -18,6 +18,8 @@
 
 **19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge). **02:30 : fiche App Store** : la liste des captures suit la refonte (les actuelles montrent encore Analyses et le Journal) ; série à prendre de jour par la CI, regardée, puis envoyée avant « 👉 PI2 prête ».
 
+**19/11 12:30 : des mots plus clairs** : la barre de la première semaine dit « Jour 2 sur 7 avant vos premiers résultats » (comme Objectifs ; « analyses » ne désigne plus que celles des repas par l'IA) ; dans Repas, la liste qui reprend un repas déjà noté s'appelle « Refaire un repas » (un repas noté une fois y figure, c'est voulu) ; Nouveautés dit « la note importante d'abord » quand elle passe en tête (POLISH-SIM-111 à 113).
+
 **19/11 11:30 : Réglages, vos anciens objectifs** : si vous aviez choisi « Mon sport » ou « Mon cycle », Paramètres › Vos objectifs dit maintenant où les retrouver (séances dans la famille Activité d'Objectifs, règles dans Ma journée › Règles) ; Confort digestif reste coché, c'est voulu (POLISH-SIM-100).
 
 **19/11 10:30 : premier lancement, l'écran « Ce que Halcya suit pour vous »** ne liste plus que ce qui arrivera vraiment : la météo et le temps d'écran seulement si vous les avez allumés (sinon « Activables dans Réglages › Sources »), et VFC, respiration et température de la peau sous « Selon votre montre » (beaucoup de montres ne les envoient pas) (POLISH-SIM-105).
@@ -149,6 +151,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 19/11 12:30 — [Mots plus clairs](runs/2026-11-19-1230-mots-plus-clairs.md) | 🛠️ | **POLISH-SIM-111 à 113** : « avant vos premiers résultats » à l'Accueil et dans la cérémonie du 7e jour ; « Refaire un repas » au lieu de « Repas habituels » ; phrase d'en-tête de Nouveautés qui suit l'ordre réel. Tests d'abord, captures relues. Code partagé, iPhone compris (52 correctifs appliqués en séquence). Rien à faire de votre côté |
 | 19/11 11:30 — [Réglages : anciens objectifs](runs/2026-11-19-1130-anciens-objectifs.md) | 🛠️ | **POLISH-SIM-100** : sous « Vos objectifs », une ligne par ancien objectif retiré (Sport, Mon cycle) pour dire où il est passé ; rien pour une installation neuve. Test d'abord, capture relue. Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 10:30 — [Premier lancement : ce qui est vraiment suivi](runs/2026-11-19-1030-accueil-suivi.md) | 🛠️ | **POLISH-SIM-105** : au temps 3 de l'accueil, Météo et Temps d'écran seulement s'ils sont allumés, VFC, respiration et température « selon votre montre ». Test d'abord, captures avec et sans montre. Rien à faire de votre côté |
 | 19/11 09:30 — [Accueil : « Humeur de Pilou »](runs/2026-11-19-0930-humeur-pilou.md) | 🛠️ | **POLISH-SIM-109** : la jauge d'en haut de l'Accueil s'appelle « Humeur de » + le nom du compagnon (elle disait « De bonne humeur » après une note de 2/5). Test d'abord, captures claire et sombre. Rien à faire de votre côté |

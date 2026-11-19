@@ -38,7 +38,7 @@ describe('cérémonie du jour 7', () => {
     const got = []
     bus.on(EVENTS.MILESTONE, (p) => got.push(p))
     show(() => ({ ready: true }))
-    expect(await screen.findByRole('heading', { name: 'Vos premières analyses sont prêtes' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Vos premiers résultats sont prêts' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Voir mes objectifs' }))
     expect(await screen.findByText('Page Objectifs')).toBeInTheDocument()
     expect(loadCompanion().ceremony7By).toBe('shown')

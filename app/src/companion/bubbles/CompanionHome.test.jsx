@@ -97,7 +97,7 @@ describe('CompanionHome — la première semaine', () => {
     const events = []
     const off = bus.on('*', (payload, type) => events.push({ type, payload }))
     renderHome({ wellbeing: { noted: 0, todayNoted: false } })
-    expect(screen.getByRole('heading', { name: 'Jour 1 sur 7 avant vos premières analyses' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Jour 1 sur 7 avant vos premiers résultats' })).toBeInTheDocument()
     expect(screen.getByText('Cadeau du jour : touchez la bulle dorée')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /Cadeau du jour pour Pilou/ }))
     expect(events.find((e) => e.type === 'gift:opened').payload).toEqual({ day: 1, item: 'arbuste' })
@@ -109,7 +109,7 @@ describe('CompanionHome — la première semaine', () => {
   it('le 7e jour : la carte des analyses et le délai du confort digestif', () => {
     localStorage.setItem('halcya.companion.firstWeek', JSON.stringify({ opened: [1, 2, 3, 4, 5, 6] }))
     renderHome({ wellbeing: { noted: 7, todayNoted: true }, askGut: true, gut: { daysLeft: 7 } })
-    expect(screen.getByRole('heading', { name: 'Vos premières analyses de bien-être sont prêtes' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Vos premiers résultats de bien-être sont prêts' })).toBeInTheDocument()
     expect(screen.getByText('Confort digestif : premier score dans 7 jours.')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Découvrir' })).toHaveAttribute('href', '/recommendations')
     expect(bus.last('milestone')).toEqual({ kind: 'day7' })
@@ -125,7 +125,7 @@ describe('CompanionHome — la première semaine', () => {
 
   it('sans les états du jour, aucune barre', () => {
     renderHome({ wellbeing: null })
-    expect(screen.queryByText(/avant vos premières analyses/)).toBeNull()
+    expect(screen.queryByText(/avant vos premiers résultats/)).toBeNull()
   })
 })
 

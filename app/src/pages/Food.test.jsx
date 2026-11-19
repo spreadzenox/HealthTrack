@@ -484,6 +484,9 @@ describe('Food — saisie sans photo', () => {
     listEntries.mockResolvedValue([fromage(2, '2026-10-08T12:00:00Z', 80), fromage(1, '2026-10-07T12:00:00Z', 100)])
     render(<BrowserRouter><Food /></BrowserRouter>)
     const quick = await screen.findByRole('button', { name: /Refaire Fromage \(2 fois\)/i })
+    // POLISH-SIM-111 : un repas noté une seule fois y figure aussi, le titre ne dit donc pas « habituels »
+    expect(screen.getByRole('heading', { name: 'Refaire un repas' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Repas habituels' })).toBeNull()
     fireEvent.click(quick)
     expect(screen.getByRole('heading', { name: 'Refaire : Fromage' })).toBeInTheDocument()
     expect(screen.getByLabelText(/Grammes de Abondance/i)).toHaveValue(80)

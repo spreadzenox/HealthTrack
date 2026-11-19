@@ -436,11 +436,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [ ] **POLISH-SIM-110 — Nom d'un repas corrigé** (J1) : après l'analyse, retirer les aliments proposés et en ajouter
       d'autres (yaourt, banane) garde le nom de l'analyse (« Pâtes à la carbonara ») et perd la description. Nom
       recalculé depuis les aliments restants s'il n'a pas été tapé, description gardée.
-    - [ ] **POLISH-SIM-111 — « Repas habituels » dès un repas** (J1) : un repas noté une fois y figure déjà. N'y mettre
+    - [x] **POLISH-SIM-111 — « Repas habituels » dès un repas** (FAIT 19/11 12:30 : seuil vérifié, le repas noté une fois y figure exprès — tests de `frequentMeals`, refaire un repas récent ; c'est le titre qui trompait : « Refaire un repas », test `Food.test.jsx`) (J1) : un repas noté une fois y figure déjà. N'y mettre
       qu'un repas noté au moins 2 fois (vérifier le seuil voulu dans le code avant).
-    - [ ] **POLISH-SIM-112 — Deux sens de « analyses »** (J1) : Accueil « Jour 1 sur 7 avant vos premières analyses »,
+    - [x] **POLISH-SIM-112 — Deux sens de « analyses »** (FAIT 19/11 12:30 : barre, carte du 7e jour et cérémonie disent « premiers résultats », comme Objectifs ; tests `CompanionHome`, `Ceremony7`) (J1) : Accueil « Jour 1 sur 7 avant vos premières analyses »,
       Repas « 20 analyses IA restantes ». Accueil : « avant vos premiers résultats ».
-    - [ ] **POLISH-SIM-113 — Nouveautés, phrase d'en-tête** (J14) : la note à la une passe en tête (POLISH-SIM-101,
+    - [x] **POLISH-SIM-113 — Nouveautés, phrase d'en-tête** (FAIT 19/11 12:30 : « la note importante d’abord, puis de la plus récente à la plus ancienne » seulement quand elle est en tête ; test `WhatsNew.test.jsx`) (J14) : la note à la une passe en tête (POLISH-SIM-101,
       voulu) mais la page dit encore « de la plus récente à la plus ancienne ». Adapter la phrase quand la note à la
       une est en tête.
     - [ ] **POLISH-SIM-114 — Rappels introuvables** (J14, à vérifier sur Android) : les réglages des rappels sont

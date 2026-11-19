@@ -1,9 +1,9 @@
 /**
  * La première semaine (refonte « Compagnon », étape 10 ; brief § 3.5 et § 4, specs/ile.SPEC.md § 7).
- * « Jour 3 sur 7 avant vos premières analyses » : la barre porte sur le bien-être et compte les jours notés comme
+ * « Jour 3 sur 7 avant vos premiers résultats » : la barre porte sur le bien-être et compte les jours notés comme
  * l'onglet Objectifs (services/objectivesOverview.js, même seuil FIRST_SCORE_DAY) ; un jour sans rien ne la fait
  * pas reculer, elle attend. Un cadeau par jour noté (J1 arbuste … J7 arc-en-ciel), ouvert une fois, à la première
- * ouverture du jour. Au 7e jour, la barre laisse la place à la carte des premières analyses.
+ * ouverture du jour. Au 7e jour, la barre laisse la place à la carte des premiers résultats.
  * Seuls les cadeaux déjà ouverts et le jour de la fin sont gardés (téléphone seulement, aucune donnée de santé).
  */
 import { FIRST_SCORE_DAY } from '../../config/firstResults'
@@ -103,7 +103,7 @@ export function wellbeingDays(states, now = new Date()) {
   return { noted: days.length, todayNoted: days.some((d) => d.date === today) }
 }
 
-/** « Découvrir » a été touché : la carte des premières analyses ne revient plus les jours suivants. */
+/** « Découvrir » a été touché : la carte des premiers résultats ne revient plus les jours suivants. */
 export function markReadySeen({ storage = globalThis.localStorage } = {}) {
   write(storage, { ...read(storage), seen: true })
 }
