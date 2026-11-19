@@ -102,7 +102,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     const piste = screen.getByRole('region', { name: 'Piste à tester' })
     expect(within(piste).getAllByRole('listitem')).toHaveLength(1)
     expect(piste).toHaveTextContent('+0,4 point sur 5 pour 50 min de sommeil de plus (court terme)')
-    expect(within(piste).getByRole('link', { name: 'Essayer dans Agir' })).toHaveAttribute('href', '/agir')
+    expect(within(piste).getByRole('link', { name: 'Vérifier par un essai' })).toHaveAttribute('href', '/agir')
     const bars = screen.getByRole('region', { name: 'Ce qui a été comparé' })
     expect(bars).toHaveTextContent('Court terme')
     expect(bars).toHaveTextContent('Moyen terme')
@@ -155,7 +155,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     renderPage({}, readyResults)
     const pistes = await screen.findByRole('region', { name: 'Pistes à tester' })
     expect(within(pistes).getAllByRole('listitem').map((li) => li.querySelector('.reco-piste-title').textContent)).toEqual(['Sommeil', 'Pas'])
-    expect(within(pistes).getAllByRole('link', { name: 'Essayer dans Agir' })[0]).toHaveAttribute('href', '/agir')
+    expect(within(pistes).getAllByRole('link', { name: 'Vérifier par un essai' })[0]).toHaveAttribute('href', '/agir')
     // titre neutre : la liste montre aussi ce qui va avec les bons jours ; valeurs en « pt » comme Tendances
     expect(screen.queryByRole('region', { name: /pèse/ })).toBeNull()
     const weigh = screen.getByRole('region', { name: 'Ce qui va avec votre bien-être' })

@@ -71,7 +71,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   51 correctifs, 3938 tests verts, captures simulateur regardées) : barre Accueil · Ma journée · Objectifs · Données, aucune adresse changée ;
   l'ancien Aujourd'hui rangé dans Accueil (bien-être du jour, mesures, lien Agir) et Ma journée (`/ma-journee` :
   bandeau d'ajout, bloc digestif, repas) ; Données s'ouvre sur Tendances (sous-onglets Tendances, Nutrition, Repas,
-  Jours) ; Réglages › Données devient « Sauvegarde ». **Restes** : la visite guidée ne passe pas par Ma journée ;
+  Jours) ; Réglages › Données devient « Sauvegarde ». **Restes** : ~~la visite guidée ne passe pas par Ma journée~~ (fait, POLISH-SIM-99, 19/11) ;
   l'Accueil d'une installation vide est court et montre « Agir » dès le 1er jour (Pilou et les bulles : étapes 8 et
   10) ; ~~« Vos Analyses » dans trois cartes de Sources ; le titre « Vos données » de
   Réglages › Sauvegarde~~ (faits le 18/11 22:30, #1109) ; services de notification natifs non lus (aucune route
@@ -378,7 +378,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       « Tout mesurer » J45 `--legacy` (`sport,cycle`, Pixel Watch) : [`J1`](simulations/2026-11-16-2030-ventre-et-donnees-J1.md),
       [`J45`](simulations/2026-11-16-2030-tout-mesurer-maj-J45.md). Rien de perdu à la mise à jour ; constats en POLISH-SIM-99 à 108.
       Écarté : « carbonara » à la place du repas décrit (analyse factice de l'outil, pas un défaut de l'app).
-    - [ ] **POLISH-SIM-99 — Visite guidée et Ma journée** (prioritaire pour le 22/11, point 2) : la visite ne montre pas
+    - [x] **POLISH-SIM-99 — Visite guidée et Ma journée** (19/11 00:30 : étape « Ma journée » sur la checklist réelle, juste après l'Accueil ; lien de piste « Vérifier par un essai » ; étape Agir « Ouvert depuis l'Accueil » ; le retour « ← Agir » de l'essai reste, la page s'appelle Agir) (prioritaire pour le 22/11, point 2) : la visite ne montre pas
       l'onglet « Ma journée » (là où l'on note) et dit « Essayer dans Agir » alors qu'Agir n'est plus un onglet ; le lien
       retour de l'essai dit « ← Agir ». Ajouter l'étape Ma journée, dire « depuis l'Accueil ».
     - [ ] **POLISH-SIM-100 — Objectifs migrés expliqués** (point 1) : après la conversion `sport,cycle`, Paramètres
