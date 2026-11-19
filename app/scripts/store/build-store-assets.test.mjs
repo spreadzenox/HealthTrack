@@ -35,13 +35,20 @@ describe('captures de la fiche Play', () => {
     for (const [route] of SCREENSHOTS) expect(redirects.has(route), route).toBe(false)
   })
 
+  it('suit la barre de la refonte : Accueil, Ma journée, Objectifs, puis Tendances', () => {
+    expect(SCREENSHOTS.slice(0, 4).map(([route]) => route)).toEqual(['/', '/ma-journee', '/recommendations', '/tendances'])
+  })
+
   it('les options propres à une capture sont des options de `npm run visual`', () => {
     for (const [, , , extra = []] of SCREENSHOTS) for (const a of extra) expect(a).toMatch(/^--[a-z-]+(=.+)?$/)
   })
 
   it('aucun nom d’onglet périmé et des captures de la variante play avec un abonnement', () => {
-    for (const [, , file] of SCREENSHOTS) expect(file).not.toMatch(/pistes/)
+    // « Pistes » → « Analyses » (24/10), puis « Aujourd’hui » et « Analyses » remplacés par la refonte (REFONTE-2).
+    for (const [, , file] of SCREENSHOTS) expect(file).not.toMatch(/pistes|aujourdhui|analyses/)
     expect(SCREENSHOT_ARGS).toContain('--play')
     expect(SCREENSHOT_ARGS.some((a) => a.startsWith('--subscription='))).toBe(true)
+    // Horloge fixée de jour : générées la nuit, les captures montraient Pilou endormi.
+    expect(SCREENSHOT_ARGS).toContain('--now=14:00')
   })
 })
