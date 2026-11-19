@@ -63,8 +63,11 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
         setError('Aucun aliment reconnu : précisez la description ou ajoutez-les ci-dessous.')
         return
       }
-      setItems(itemsForEditing(result.items))
-      setDescribed({ provider: result.provider, model: result.model })
+      const aiItems = itemsForEditing(result.items)
+      setItems(aiItems)
+      setDescribed({
+        provider: result.provider, model: result.model, dish: result.dish, ingredients: aiItems.map((it) => it.ingredient),
+      })
       if (result.dish) setName(result.dish)
     } catch (err) {
       setError(err.message || 'Analyse impossible, réessayez ou ajoutez les aliments ci-dessous.')
@@ -75,9 +78,15 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
 
   // Un aliment ajouté ou corrigé à la main règle l'erreur précédente (IA sans résultat, repas vide) : elle ne doit pas
   // laisser croire que l'enregistrement a raté (simulation de personas du 08/11)
+  // Plus aucun aliment de l'IA (POLISH-SIM-110) : son nom non retouché s'efface et la description revient, gardée,
+  // pour relancer ; le repas redevient une saisie à la main
   const changeItems = (next) => {
     setItems(next)
     setError(null)
+    if (described && !next.some((it) => described.ingredients.includes(it.ingredient))) {
+      setDescribed(null)
+      if (described.dish && name === described.dish) setName('')
+    }
   }
 
   const save = async () => {

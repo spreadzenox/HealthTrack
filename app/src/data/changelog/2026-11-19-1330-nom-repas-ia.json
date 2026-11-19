@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-19",
+  "kind": "correctif",
+  "title": "Un repas décrit garde un nom juste",
+  "items": [
+    "Si vous retirez tous les aliments proposés par l’IA, le nom qu’elle avait proposé s’efface et votre description revient, prête à relancer. Un nom que vous avez tapé reste."
+  ]
+}

@@ -18,6 +18,8 @@
 
 **19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge). **02:30 : fiche App Store** : la liste des captures suit la refonte (les actuelles montrent encore Analyses et le Journal) ; série à prendre de jour par la CI, regardée, puis envoyée avant « 👉 PI2 prête ».
 
+**19/11 13:30 : un repas décrit garde un nom juste** : si vous retirez tous les aliments que l'IA a proposés, le nom qu'elle avait donné (« Pâtes à la carbonara ») s'efface et votre description revient, prête à relancer ; un nom que vous avez tapé reste (POLISH-SIM-110).
+
 **19/11 12:30 : des mots plus clairs** : la barre de la première semaine dit « Jour 2 sur 7 avant vos premiers résultats » (comme Objectifs ; « analyses » ne désigne plus que celles des repas par l'IA) ; dans Repas, la liste qui reprend un repas déjà noté s'appelle « Refaire un repas » (un repas noté une fois y figure, c'est voulu) ; Nouveautés dit « la note importante d'abord » quand elle passe en tête (POLISH-SIM-111 à 113).
 
 **19/11 11:30 : Réglages, vos anciens objectifs** : si vous aviez choisi « Mon sport » ou « Mon cycle », Paramètres › Vos objectifs dit maintenant où les retrouver (séances dans la famille Activité d'Objectifs, règles dans Ma journée › Règles) ; Confort digestif reste coché, c'est voulu (POLISH-SIM-100).
@@ -151,6 +153,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 19/11 13:30 — [Nom d'un repas décrit](runs/2026-11-19-1330-nom-repas-ia.md) | 🛠️ | **POLISH-SIM-110** : aliments de l'IA tous retirés → nom proposé effacé, description rendue pour relancer, repas enregistré comme saisie à la main ; un nom tapé reste. Test d'abord, capture relue. Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 12:30 — [Mots plus clairs](runs/2026-11-19-1230-mots-plus-clairs.md) | 🛠️ | **POLISH-SIM-111 à 113** : « avant vos premiers résultats » à l'Accueil et dans la cérémonie du 7e jour ; « Refaire un repas » au lieu de « Repas habituels » ; phrase d'en-tête de Nouveautés qui suit l'ordre réel. Tests d'abord, captures relues. Code partagé, iPhone compris (52 correctifs appliqués en séquence). Rien à faire de votre côté |
 | 19/11 11:30 — [Réglages : anciens objectifs](runs/2026-11-19-1130-anciens-objectifs.md) | 🛠️ | **POLISH-SIM-100** : sous « Vos objectifs », une ligne par ancien objectif retiré (Sport, Mon cycle) pour dire où il est passé ; rien pour une installation neuve. Test d'abord, capture relue. Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 10:30 — [Premier lancement : ce qui est vraiment suivi](runs/2026-11-19-1030-accueil-suivi.md) | 🛠️ | **POLISH-SIM-105** : au temps 3 de l'accueil, Météo et Temps d'écran seulement s'ils sont allumés, VFC, respiration et température « selon votre montre ». Test d'abord, captures avec et sans montre. Rien à faire de votre côté |

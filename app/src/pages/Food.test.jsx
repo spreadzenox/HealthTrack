@@ -586,6 +586,51 @@ describe('Food — décrire un repas en quelques mots', () => {
     spy.mockRestore()
   })
 
+  it('aliments de l’IA tous retirés : nom proposé effacé, description rendue pour relancer (POLISH-SIM-110)', async () => {
+    const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+    setGeminiApiKey('KEY')
+    const gemini = await import('../services/geminiStandalone')
+    const spy = vi.spyOn(gemini, 'analyzeMealText').mockResolvedValue({
+      provider: 'gemini', model: 'm', dish: 'Pâtes à la carbonara',
+      items: [{ ingredient: 'Abondance', quantity: '30 g', quantity_g: 30 }],
+    })
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    fireEvent.click(screen.getByRole('button', { name: /Décrire ou saisir sans photo/i }))
+    fireEvent.change(screen.getByLabelText(/Décrivez votre repas/i), { target: { value: 'yaourt, banane, café' } })
+    fireEvent.click(screen.getByRole('button', { name: /Remplir avec Gemini/i }))
+    expect(await screen.findByLabelText('Nom')).toHaveValue('Pâtes à la carbonara')
+    fireEvent.click(screen.getByRole('button', { name: 'Supprimer Abondance' }))
+    expect(screen.getByLabelText('Nom')).toHaveValue('')
+    expect(screen.getByLabelText(/Décrivez votre repas/i)).toHaveValue('yaourt, banane, café')
+    fireEvent.change(screen.getByLabelText(/Ajouter un ingrédient/i), { target: { value: 'abondance' } })
+    fireEvent.click(screen.getByRole('option', { name: 'Abondance' }))
+    fireEvent.click(screen.getByRole('button', { name: /Enregistrer ce repas/i }))
+    await screen.findByText(/Repas enregistré/)
+    const { createEntry } = await import('../storage/localHealthStorage')
+    const payload = createEntry.mock.calls.at(-1)[0].payload
+    expect(payload).not.toHaveProperty('dish')
+    expect(payload.provider).toBe('manual')
+    spy.mockRestore()
+  })
+
+  it('nom tapé à la main gardé même si les aliments de l’IA sont retirés (POLISH-SIM-110)', async () => {
+    const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+    setGeminiApiKey('KEY')
+    const gemini = await import('../services/geminiStandalone')
+    const spy = vi.spyOn(gemini, 'analyzeMealText').mockResolvedValue({
+      provider: 'gemini', model: 'm', dish: 'Pâtes à la carbonara',
+      items: [{ ingredient: 'Abondance', quantity: '30 g', quantity_g: 30 }],
+    })
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    fireEvent.click(screen.getByRole('button', { name: /Décrire ou saisir sans photo/i }))
+    fireEvent.change(screen.getByLabelText(/Décrivez votre repas/i), { target: { value: 'petit-déjeuner' } })
+    fireEvent.click(screen.getByRole('button', { name: /Remplir avec Gemini/i }))
+    fireEvent.change(await screen.findByLabelText('Nom'), { target: { value: 'Petit-déjeuner' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Supprimer Abondance' }))
+    expect(screen.getByLabelText('Nom')).toHaveValue('Petit-déjeuner')
+    spy.mockRestore()
+  })
+
   it('photo : nom effacé = repas enregistré sans nom (POLISH-SIM-49)', async () => {
     const { setGeminiApiKey } = await import('../settings/geminiApiKey')
     setGeminiApiKey('KEY')
