@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { CHANGELOG } from '../data/changelog'
-import { getLastSeenId, getUnseenEntries, markAllSeen } from '../services/whatsNew'
+import { bannerHeadline, getLastSeenId, getUnseenEntries, markAllSeen } from '../services/whatsNew'
 import { CURRENT_VERSION } from '../services/updateCheck'
 import { APP_NAME } from '../config/brand'
 import '../Food.css'
@@ -20,7 +20,11 @@ function formatDate(iso) {
 
 export default function WhatsNew({ changelog = CHANGELOG }) {
   // Capturé à l'ouverture : les entrées restent marquées « nouveau » pendant la lecture.
-  const [unseenIds] = useState(() => new Set(getUnseenEntries(changelog, getLastSeenId()).map((e) => e.id)))
+  const [unseen] = useState(() => getUnseenEntries(changelog, getLastSeenId()))
+  const unseenIds = new Set(unseen.map((e) => e.id))
+  // POLISH-SIM-101 : la note à la une du bandeau (nouvelle navigation) passe en tête tant qu'elle n'est pas lue.
+  const headline = bannerHeadline(unseen)
+  const entries = headline?.aLaUne ? [headline, ...changelog.filter((e) => e.id !== headline.id)] : changelog
 
   useEffect(() => {
     markAllSeen(changelog)
@@ -34,7 +38,7 @@ export default function WhatsNew({ changelog = CHANGELOG }) {
         <p className="hint">Aucune nouveauté pour le moment.</p>
       ) : (
         <ol className="whats-new-list">
-          {changelog.map((entry) => (
+          {entries.map((entry) => (
             <li key={entry.id} className={`whats-new-entry${unseenIds.has(entry.id) ? ' is-unseen' : ''}`}>
               <div className="whats-new-entry-meta">
                 <span className={`whats-new-kind kind-${entry.kind}`}>{KIND_LABELS[entry.kind] ?? entry.kind}</span>
