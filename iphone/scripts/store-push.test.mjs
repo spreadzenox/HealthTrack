@@ -50,6 +50,10 @@ test('captures : les 8 fichiers du tableau de store/app-store/captures.md, dans 
   assert.equal(files[0], 'iphone-17-pro-max-demo-clair-accueil.png')
   assert.equal(files[7], 'iphone-17-pro-max-demo-sombre-accueil.png')
   assert.ok(files.every((f) => /^iphone-17-pro-max-.+\.png$/.test(f)))
+  // Refonte « Compagnon » (19/11) : Ma journée en 2e, comme dans la barre ; ni Journal ni Sources (écrans d'avant)
+  assert.equal(files[1], 'iphone-17-pro-max-demo-clair-ma-journee.png')
+  assert.ok(files.includes('iphone-17-pro-max-demo-clair-agir.png'))
+  assert.ok(!files.some((f) => /-(journal|connectors)\.png$/.test(f)))
 })
 
 test('envoi d’une capture : morceaux selon les opérations d’Apple, empreinte MD5 du fichier', async () => {
@@ -143,6 +147,8 @@ test('captures iPad 13" : tableau de la section iPad de captures.md (Nutrition �
   assert.ok(ipad.every((f) => /^ipad-pro-13-inch-\(m5\)-.+\.png$/.test(f)))
   assert.ok(ipad.some((f) => f.endsWith('-demo-clair-nutrition.png')))
   assert.ok(!ipad.some((f) => f.includes('connectors')))
+  assert.ok(ipad.some((f) => f.endsWith('-demo-clair-ma-journee.png')))
+  assert.ok(!ipad.some((f) => f.endsWith('-demo-clair-journal.png')))
 })
 
 // 6/11, décision du propriétaire du 05/11 vers 23:00 (« renommez-la et donnez-lui la build finale ») : `--attacher-build`

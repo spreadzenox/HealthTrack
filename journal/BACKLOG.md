@@ -75,7 +75,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   l'Accueil d'une installation vide est court et montre « Agir » dès le 1er jour (Pilou et les bulles : étapes 8 et
   10) ; ~~« Vos Analyses » dans trois cartes de Sources ; le titre « Vos données » de
   Réglages › Sauvegarde~~ (faits le 18/11 22:30, #1109) ; services de notification natifs non lus (aucune route
-  trouvée par recherche de texte) ; ~~`/ma-journee` absente des captures de la fiche Play~~ (fait le 19/11 01:30 : 7 captures dans l'ordre de la barre, horloge à 14:00) ; `/ma-journee` absente du balayage natif ; captures App Store à refaire de même.
+  trouvée par recherche de texte) ; ~~`/ma-journee` absente des captures de la fiche Play~~ (fait le 19/11 01:30 : 7 captures dans l'ordre de la barre, horloge à 14:00) ; ~~`/ma-journee` absente du balayage natif~~ (fait le 19/11 02:30 : routes dans l'ordre de la barre, `/journal` retiré) ; captures App Store : **sélection de la refonte écrite le 19/11 02:30** (`iphone/store/app-store/captures.md`, iPhone et iPad, Ma journée et Agir, ni Journal ni Sources) ; reste **REFONTE-2-ASC** : lancer `ios-build.yml` sur main avec `devices: iPhone 17 Pro Max` puis `iPad Pro 13-inch (M5)` **de jour (9:00-17:00 Paris)**, regarder les séries, puis `store-push.yml` « captures » et « captures_ipad » (avant PI2).
 - [x] **REFONTE-3 — Ma journée** (15/11 05:35, Android : #1001 mergée à 06:23, v1077 ; **iPhone : PR de suivi ouverte, à finir**, 51 correctifs appliqués à blanc) : la
   checklist en tête de Ma journée (`DayChecklist.jsx`, `services/dayChecklist.js`) : Repas en trois cercles (Matin
   avant 11 h, Midi avant 16 h, Soir ; un cercle vide ouvre l'appareil photo), Bien-être (« Noter »), « Votre digestion

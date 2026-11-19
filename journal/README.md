@@ -16,7 +16,7 @@
 
 **Soumission App Store de la refonte (18/11 20:30, outillage 21:30)** : notes pour l'examen revues pour la nouvelle navigation et mission PI2 réécrite ; l'outil qui passera la version à 893 et y attachera une build de la refonte par l'API est écrit (#1107, il n'envoie jamais rien à l'examen) ; Claude dans Chrome rangera les abonnements dans le brouillon, et il ne vous restera que « Submit for Review » (vers le 22/11, « 👉 PI2 prête » vous le dira).
 
-**19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge).
+**19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge). **02:30 : fiche App Store** : la liste des captures suit la refonte (les actuelles montrent encore Analyses et le Journal) ; série à prendre de jour par la CI, regardée, puis envoyée avant « 👉 PI2 prête ».
 
 **19/11 00:30 : TestFlight 893 (1170.1170) envoyée**, première build avec toute la refonte regroupée : candidate pour la soumission App Store (PI2) une fois validée chez les testeurs. La visite guidée passe maintenant par Ma journée.
 
@@ -131,6 +131,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 19/11 02:30 — [Captures App Store de la refonte : sélection](runs/2026-11-19-0230-captures-app-store.md) | 🛠️ | Le balayage des émulateurs visite Ma journée (au lieu de l'ancien Journal). La liste des captures de la fiche App Store (iPhone et iPad) suit la refonte : Accueil avec Pilou, Ma journée, Objectifs, Tendances, Agir, Repas ; à capturer **de jour** par la CI, puis à envoyer avant la soumission (PI2). Alpha du soir pas encore partie à 02:30. | PR de ce run |
 | 19/11 01:30 — [Captures de la fiche Play](runs/2026-11-19-0130-fiche-play-ma-journee.md) | 🛠️ | Les 7 captures de la fiche Play suivent la nouvelle barre (Accueil avec Pilou de jour, **Ma journée**, Objectifs, Tendances, Agir, Repas, Réintroduction) ; horloge fixée à 14:00 pour ne plus montrer Pilou endormi. Envoi par la CI au merge. 4 083 tests verts. |
 | 19/11 00:30 — [La visite passe par Ma journée](runs/2026-11-19-0030-visite-ma-journee.md) | 🛠️ | **#1109 mergée** (v794, APK 35,6 Mo). **TestFlight : build 893 (1170.1170) envoyée** (cron de 21:20 parti en retard : lancée à la main, 5 min de Mac), la première avec toute la refonte regroupée. **POLISH-SIM-99** (pour le 22/11) : la visite guidée montre l'onglet Ma journée ; le lien d'une piste dit « Vérifier par un essai ». 4 082 tests verts. Parité : 70 %. | #1109, PR de ce run |
 | 18/11 22:30 — [Noms de la nouvelle navigation](runs/2026-11-18-2230-sauvegarde-titre.md) | 🛠️ | #1108 mergée (journal). **Restes de REFONTE-2** : Réglages › Sauvegarde a enfin ce titre en haut de page (il disait « Vos données ») ; les cartes Météo, Temps d'écran et Régularité du sommeil renvoient à l'onglet Objectifs au lieu des anciennes « Analyses ». Même changement sur iPhone (correctifs 06 et 34 refaits). 4 081 tests verts. Build iPhone du soir pas encore partie à 22:30 (cron en retard). TestFlight : 1148.1148. Parité : 70 %. | #1109 |
