@@ -18,6 +18,8 @@
 
 **19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge). **02:30 : fiche App Store** : la liste des captures suit la refonte (les actuelles montrent encore Analyses et le Journal) ; série à prendre de jour par la CI, regardée, puis envoyée avant « 👉 PI2 prête ».
 
+**19/11 08:30 (run « idées ») : deux personas de plus** (« Prendre soin de soi » à l'installation, « Stressé et pressé » à la mise à jour) : rien de perdu ; 7 défauts rangés (POLISH-SIM-109 à 115), le plus net : la barre « Humeur du jour » de l'Accueil, qui est l'humeur de Pilou, dit « De bonne humeur » juste après une note de 2/5. **Une proposition pour vous** : [maquette](maquettes/tendances-courbes/maquette.png) de trois courbes de plus dans Tendances (sommeil profond, cœur heure par heure, oxygène la nuit, seulement si la montre les envoie) ; répondez « go courbes », « go phases » ou « non ».
+
 **19/11 07:30 : Tendances** : la mesure choisie (Sommeil, Pas…) reste affichée en passant de Semaine à Jour, et au retour ; en Jour, la courbe heure par heure n'apparaît qu'avec le bien-être, que « + » propose sans quitter le jour (POLISH-SIM-107).
 
 **19/11 06:30 : oignon cuit et familles** : l’oignon cuit ou poêlé est compté riche en fructanes (avant : seulement « fructose en excès ») ; dans Objectifs › Par famille, une famille sans lien net dit « Pas assez net pour l’instant », comme les barres hachurées en dessous (POLISH-SIM-104, 106).
@@ -141,6 +143,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 19/11 08:30 — [Personas, spécs, maquette des courbes](runs/2026-11-19-0830-personas-upg3.md) | 💡 | **UPG-3b** : 2 personas (Prendre soin J1, Stressé J14 mise à jour), rien de perdu, POLISH-SIM-109 à 115 ; spécs de 100 et 105 prêtes ; maquette « trois courbes de plus » (reste de 107) proposée. |
 | 19/11 07:30 — [Tendances : la mesure reste en Jour](runs/2026-11-19-0730-tendances-jour.md) | 🛠️ | **POLISH-SIM-107** : dans Tendances, Sommeil (ou une autre mesure) choisi en Semaine reste affiché en passant à Jour et au retour ; la courbe heure par heure n'apparaît qu'avec le bien-être, que « + » propose en Jour. Code partagé, iPhone compris. | PR de ce run |
 | 19/11 06:30 — [Oignon cuit, familles pas assez nettes](runs/2026-11-19-0630-oignon-cuit-familles.md) | 🛠️ | **POLISH-SIM-104, 106** : dans Objectifs › Par famille, « Pas assez net pour l’instant » (au lieu de « Pas de lien net » au-dessus de chiffres hachurés) ; l’oignon cuit ou poêlé compté riche en fructanes (analogie de l’oignon cru). Code partagé, iPhone compris. | PR de ce run |
 | 19/11 05:30 — [Bien-être : mêmes chiffres](runs/2026-11-19-0530-bien-etre-memes-chiffres.md) | 🛠️ | **UPG-6, POLISH-SIM-103** : score d'Objectifs dit « moyenne de vos 7 derniers jours » ; la fiche d'un jour cite la note comme « Vos saisies » ; « Ce qui a pu jouer ce jour-là ». Code partagé, iPhone compris. | PR de ce run |
