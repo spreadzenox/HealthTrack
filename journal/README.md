@@ -18,6 +18,8 @@
 
 **19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge). **02:30 : fiche App Store** : la liste des captures suit la refonte (les actuelles montrent encore Analyses et le Journal) ; série à prendre de jour par la CI, regardée, puis envoyée avant « 👉 PI2 prête ».
 
+**19/11 10:30 : premier lancement, l'écran « Ce que Halcya suit pour vous »** ne liste plus que ce qui arrivera vraiment : la météo et le temps d'écran seulement si vous les avez allumés (sinon « Activables dans Réglages › Sources »), et VFC, respiration et température de la peau sous « Selon votre montre » (beaucoup de montres ne les envoient pas) (POLISH-SIM-105).
+
 **19/11 09:30 : la jauge en haut de l'Accueil s'appelle « Humeur de Pilou »** (avec le nom choisi) : elle monte quand vous notez, « Oui » comme « Non », et ne se lit plus comme votre propre humeur (POLISH-SIM-109).
 
 **19/11 08:30 (run « idées ») : deux personas de plus** (« Prendre soin de soi » à l'installation, « Stressé et pressé » à la mise à jour) : rien de perdu ; 7 défauts rangés (POLISH-SIM-109 à 115), le plus net : la barre « Humeur du jour » de l'Accueil, qui est l'humeur de Pilou, dit « De bonne humeur » juste après une note de 2/5. **Une proposition pour vous** : [maquette](maquettes/tendances-courbes/maquette.png) de trois courbes de plus dans Tendances (sommeil profond, cœur heure par heure, oxygène la nuit, seulement si la montre les envoie) ; répondez « go courbes », « go phases » ou « non ».
@@ -145,6 +147,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 19/11 10:30 — [Premier lancement : ce qui est vraiment suivi](runs/2026-11-19-1030-accueil-suivi.md) | 🛠️ | **POLISH-SIM-105** : au temps 3 de l'accueil, Météo et Temps d'écran seulement s'ils sont allumés, VFC, respiration et température « selon votre montre ». Test d'abord, captures avec et sans montre. Rien à faire de votre côté |
 | 19/11 09:30 — [Accueil : « Humeur de Pilou »](runs/2026-11-19-0930-humeur-pilou.md) | 🛠️ | **POLISH-SIM-109** : la jauge d'en haut de l'Accueil s'appelle « Humeur de » + le nom du compagnon (elle disait « De bonne humeur » après une note de 2/5). Test d'abord, captures claire et sombre. Rien à faire de votre côté |
 | 19/11 08:30 — [Personas, spécs, maquette des courbes](runs/2026-11-19-0830-personas-upg3.md) | 💡 | **UPG-3b** : 2 personas (Prendre soin J1, Stressé J14 mise à jour), rien de perdu, POLISH-SIM-109 à 115 ; spécs de 100 et 105 prêtes ; maquette « trois courbes de plus » (reste de 107) proposée. |
 | 19/11 07:30 — [Tendances : la mesure reste en Jour](runs/2026-11-19-0730-tendances-jour.md) | 🛠️ | **POLISH-SIM-107** : dans Tendances, Sommeil (ou une autre mesure) choisi en Semaine reste affiché en passant à Jour et au retour ; la courbe heure par heure n'apparaît qu'avec le bien-être, que « + » propose en Jour. Code partagé, iPhone compris. | PR de ce run |

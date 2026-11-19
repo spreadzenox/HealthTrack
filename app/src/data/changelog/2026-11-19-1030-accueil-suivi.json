@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-19",
+  "kind": "correctif",
+  "title": "Premier lancement : ce qui est vraiment suivi",
+  "items": [
+    "L’écran « Ce que Halcya suit pour vous » ne montre la météo et le temps d’écran que si vous les avez activés.",
+    "Variabilité cardiaque, respiration et température de la peau sont marquées « selon votre montre »."
+  ]
+}

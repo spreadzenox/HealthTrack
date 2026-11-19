@@ -20,7 +20,7 @@ import Onboarding from './Onboarding'
 import onboardingSource from './Onboarding.jsx?raw'
 import { FLOW_VERSION, loadOnboarding, saveOnboarding } from '../settings/onboarding'
 import { getHabits, setHabits } from '../settings/habits'
-import { stepsFor, TEMPS, AUTO_TILES, dailyNotes, dailySummary } from '../services/onboardingFlow'
+import { stepsFor, TEMPS, AUTO_TILES, autoTiles, dailyNotes, dailySummary } from '../services/onboardingFlow'
 import { CHANGELOG } from '../data/changelog'
 import { getLastSeenId } from '../services/whatsNew'
 import { markMet, wearsWatch } from '../companion/life/companionState'
@@ -256,23 +256,51 @@ describe('Temps 3 : « Ce que Halcya suit pour vous, sans rien faire »', () => 
   beforeEach(() => localStorage.clear())
   const tiles = () => [...screen.getByRole('list', { name: 'Suivi sans rien faire' }).children].map((li) => li.textContent)
 
-  it('avec une montre : les 9 tuiles du brief, sans le « stress » de la montre, aux couleurs des thèmes', () => {
-    at('auto', { watch: 'yes' })
+  it('avec une montre : Sommeil, Pas, Séances, Cœur sûrs ; VFC, respiration, température « selon votre montre » (POLISH-SIM-105)', () => {
+    at('auto', { watch: 'yes', weather: 'on' })
     renderAt()
     expect(screen.getByText('Pour information : rien à valider.')).toBeInTheDocument()
-    expect(tiles()).toEqual(['Sommeil', 'Pas', 'Séances de sport', 'Cœur', 'Variabilité cardiaque', 'Respiration', 'Température de la peau', 'Temps d’écran', 'Météo'])
+    expect(tiles()).toEqual(['Sommeil', 'Pas', 'Séances de sport', 'Cœur', 'Météo'])
+    expect(screen.getByText('Selon votre montre : variabilité cardiaque, respiration, température de la peau.')).toBeInTheDocument()
     expect(AUTO_TILES.some((t) => /stress/i.test(t.label))).toBe(false)
     expect(screen.getByText('Sommeil').closest('li')).toHaveAttribute('data-tone', 'night')
     expect(screen.getByText('Rien à cocher : tout se fait en arrière-plan, grâce à votre montre et à votre téléphone.')).toBeInTheDocument()
+    expect(screen.queryByText(/Activables dans/)).toBeNull()
     expect(screen.queryByRole('checkbox')).toBeNull()
   })
 
-  it('sans montre : seulement ce que le téléphone donne ; le reste est annoncé pour plus tard, sans le promettre', () => {
-    at('auto', { watch: 'no' })
+  it('météo éteinte à l’écran d’avant : pas de tuile Météo, une ligne vers Réglages › Sources (POLISH-SIM-105)', () => {
+    at('auto', { watch: 'yes', weather: 'off' })
     renderAt()
-    expect(tiles()).toEqual(['Temps d’écran', 'Météo'])
+    expect(tiles()).toEqual(['Sommeil', 'Pas', 'Séances de sport', 'Cœur'])
+    expect(screen.getByText('Activables dans Réglages › Sources : météo.')).toBeInTheDocument()
+  })
+
+  it('sans montre, météo allumée : seulement la météo ; le reste est annoncé pour plus tard, sans le promettre', () => {
+    at('auto', { watch: 'no', weather: 'on' })
+    renderAt()
+    expect(tiles()).toEqual(['Météo'])
     expect(screen.getByText('Avec une montre ou un bracelet : sommeil, pas, séances de sport, cœur, variabilité cardiaque, respiration, température de la peau.')).toBeInTheDocument()
     expect(screen.queryByText(/grâce à votre montre/)).toBeNull()
+    expect(screen.queryByText(/Selon votre montre/)).toBeNull()
+  })
+
+  it('Android : temps d’écran allumé en tuile, éteint dans « Activables » avec la météo (autoTiles)', () => {
+    const a = autoTiles({ watch: true, on: { screen: true, weather: false }, available: { screen: true } })
+    expect(a.tiles.map((t) => t.id)).toEqual(['sleep', 'steps', 'workouts', 'heart', 'screen'])
+    expect(a.off).toEqual(['météo'])
+    const b = autoTiles({ watch: false, on: {}, available: { screen: true } })
+    expect(b.off).toEqual(['temps d’écran', 'météo'])
+    expect(b.maybe).toEqual([])
+  })
+
+  it('sans montre ni météo : aucune liste vide, juste ce qui est activable et ce qu’une montre ajouterait', () => {
+    at('auto', { watch: 'no', weather: 'off' })
+    renderAt()
+    expect(screen.queryByRole('list', { name: 'Suivi sans rien faire' })).toBeNull()
+    expect(screen.queryByText(/Rien à cocher/)).toBeNull()
+    expect(screen.getByText('Activables dans Réglages › Sources : météo.')).toBeInTheDocument()
+    expect(screen.getByText(/^Avec une montre ou un bracelet :/)).toBeInTheDocument()
   })
 })
 

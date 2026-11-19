@@ -401,7 +401,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       ou note ?) ; « Ce qui a pu peser » ne liste que des effets positifs.
     - [x] **POLISH-SIM-104 — Exemple de « Votre bien-être »** (19/11 06:30 : une famille sans lien net dit « Pas assez net pour l’instant », les mots de la légende des barres hachurées ; « Essayer dans Agir » déjà retiré par POLISH-SIM-99) : famille Alimentation « Pas de lien net » au-dessus de
       lignes GOS −1,1 pt et Lactose −0,9 pt.
-    - [ ] **POLISH-SIM-105 — Accueil « Ce que Halcya suit pour vous »** : liste VFC et température de la peau sans montre
+    - [x] **POLISH-SIM-105 — Accueil « Ce que Halcya suit pour vous »** (FAIT 19/11 10:30 : `autoTiles` dans `onboardingFlow.js` ; Météo et Temps d’écran en tuile seulement allumés, sinon « Activables dans Réglages › Sources : … » ; avec une montre, VFC, respiration et température sur la ligne « Selon votre montre : … » ; aucune liste vide sans montre ni source ; 5 tests. Reste iPhone : avant iOS 26.4, « temps d’écran » est dit activable alors que Sources le cache (correctif 44) → POLISH-SIM-105i) : liste VFC et température de la peau sans montre
       qui les donne, et Météo non activée, juste après « Health Connect n'est pas sur ce téléphone » (vérifier sur
       Android, la version web n'a pas Health Connect).
       **Spéc. prête (19/11 08:30, run « idées », code lu)** : c'est l'écran du temps 3 de l'accueil (`AutoStep`,
@@ -432,6 +432,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       la barre en tête de l'Accueil dit « De bonne humeur ». C'est l'humeur de Pilou (brief), mais rien ne le dit.
       Proposition : libellé « Humeur de Pilou », ou barre qui ne contredit jamais la note du jour (le plus simple qui
       suffit, d'après le brief § 5).
+    - [ ] **POLISH-SIM-105i — iPhone, temps 3 avant iOS 26.4** : ne pas citer « temps d’écran » dans « Activables » quand `checkPhoneUsageAccess().supported` est faux (même logique que le correctif 55) : correctif minimal dans `iphone/patches/55-*` ou `available.screen` calculé depuis l'accès.
     - [ ] **POLISH-SIM-110 — Nom d'un repas corrigé** (J1) : après l'analyse, retirer les aliments proposés et en ajouter
       d'autres (yaourt, banane) garde le nom de l'analyse (« Pâtes à la carbonara ») et perd la description. Nom
       recalculé depuis les aliments restants s'il n'a pas été tapé, description gardée.
