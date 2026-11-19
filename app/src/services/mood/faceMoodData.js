@@ -14,9 +14,17 @@ import { faceMoodEstimate } from './faceMood'
 import { faceMoodDays } from './faceMoodDays'
 import { wellbeingHistory } from './wellbeingHistory'
 
-export async function loadFaceMoodEntries({ list = listEntries, withStool = false } = {}) {
+export async function loadFaceMoodEntries({ list = listEntries, withStool = false, notesAlways = false } = {}) {
   const bursts = await list({ type: FACE_BURST_TYPE, limit: Infinity })
-  if (!bursts.length) return { bursts, notes: [] }
+  if (!bursts.length) {
+    if (!notesAlways) return { bursts, notes: [] }
+    // POLISH-SIM-117 : Tendances › Jour place la note du jour même sans caméra (une note par jour au plus : peu à lire)
+    const [wellbeing, gut] = await Promise.all([
+      list({ type: 'wellbeing', limit: Infinity }),
+      list({ type: GUT_TYPE, limit: Infinity }),
+    ])
+    return { bursts, notes: [...(wellbeing || []), ...(gut || [])] }
+  }
   const first = bursts.reduce((min, b) => (b.at < min ? b.at : min), bursts[0].at)
   const since = new Date(first)
   since.setHours(0, 0, 0, 0)

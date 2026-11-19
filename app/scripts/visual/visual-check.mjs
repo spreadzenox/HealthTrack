@@ -36,6 +36,7 @@
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *   npm run visual -- --routes=/tendances --history-days=2  # historique presque vide : seules les données des 2 derniers
  *                                          jours (aujourd'hui et hier) sont gardées (T3, captures à côté de la maquette)
+ *   npm run visual -- --routes=/tendances?vue=jour --no-face --wellbeing-today  # sans caméra : la note seule en Jour
  *   npm run visual -- --routes=/agir --history-days=2 --wellbeing-today  # Agir vide, bien-être noté il y a une heure
  *   npm run visual -- --routes=/ma-journee --day-done --tz=Pacific/Kiritimati  # Ma journée finie : « Plus rien à
  *                                          faire » (refonte étape 3 ; un fuseau où il est tard) ; =partial : un repas
@@ -1324,6 +1325,10 @@ async function main() {
       const n = Math.max(1, Number(args['history-days']) || 2)
       const from = new Date(); from.setHours(0, 0, 0, 0); from.setDate(from.getDate() - (n - 1))
       entries = entries.filter((e) => new Date(e.at) >= from)
+    }
+    if (args['no-face']) {
+      // Caméra jamais activée : aucune lecture du visage, les notes seules (POLISH-SIM-117, Tendances › Jour)
+      entries = entries.filter((e) => e.type !== 'face_burst')
     }
     if (args['wellbeing-today']) {
       // Bien-être déjà noté aujourd'hui, il y a une heure (POLISH-SIM-92 : Agir vide ne redemande pas la note).

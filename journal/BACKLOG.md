@@ -463,7 +463,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       rebours de la page prend `daysNeeded` de l'analyse (14). Spec : la page dit le même palier que l'Accueil et
       Objectifs (premier résultat au 7e jour noté), puis, s'il reste un palier, le nommer comme pour la digestion
       (run du 19/11 04:30 : « premier score au 14e jour, pistes au 28e »). Vérifier ce qui s'affiche réellement au 7e jour.
-    - [ ] **POLISH-SIM-117 — Jour sans point pour une note** (J1) : Données › Tendances › Jour, note 2/5 de 20:33 (bulle
+    - [x] **POLISH-SIM-117 — Jour sans point pour une note** (FAIT 19/11 22:30 : cause, `loadFaceMoodEntries` ne lisait aucune note sans rafale du visage ; Tendances l'appelle avec `notesAlways`, notes de bien-être et digestives lues même sans caméra ; option `--no-face` de `npm run visual`) (J1) : Données › Tendances › Jour, note 2/5 de 20:33 (bulle
       Bien-être de l'Accueil) listée dans « Vos saisies » mais la courbe dit « Aucune lecture du visage ce jour-là »
       (`TrendsViewer.jsx` `DayChart` : `view.note` nul). Chercher pourquoi la note du jour n'arrive pas dans la vue Jour
       (type ou heure de la saisie par bulle), test d'abord ; message seulement sans lecture ni note.
