@@ -55,9 +55,9 @@ describe('ContributionBars', () => {
   })
 })
 
-describe('TrendsDayDetail, « Ce qui a pu peser ce jour-là » (POLISH-SIM-71)', () => {
+describe('TrendsDayDetail, « Ce qui a pu jouer ce jour-là » (POLISH-SIM-71)', () => {
   const c = (key, points, extra = {}) => ({ key, label: key, theme: 'sleep', horizon: 'short', points, value: 300, usual: 420, ...extra })
-  const region = () => screen.getByRole('region', { name: 'Ce qui a pu peser ce jour-là' })
+  const region = () => screen.getByRole('region', { name: 'Ce qui a pu jouer ce jour-là' })
 
   it('dit sur quelle note portent les points', () => {
     const { unmount } = render(<TrendsDayDetail face={null} contributions={[c('sleepMinutes', -0.4)]} outcome="wellbeing" value={3.1} />)
@@ -94,6 +94,6 @@ describe('TrendsDayDetail, « Ce qui a pu peser ce jour-là » (POLISH-SIM-71)',
 
   it('sans contribution calculée, le bloc reste absent', () => {
     render(<TrendsDayDetail face={null} contributions={[]} outcome="wellbeing" value={1.4} />)
-    expect(screen.queryByRole('region', { name: 'Ce qui a pu peser ce jour-là' })).toBeNull()
+    expect(screen.queryByRole('region', { name: 'Ce qui a pu jouer ce jour-là' })).toBeNull()
   })
 })

@@ -80,13 +80,18 @@ describe('detailSource (POLISH-SIM-4) : d’où vient le chiffre d’un jour pas
     expect(detailSource('wellbeing', { value: 3.42, note: 3.4, readings: 2 })).toBe('votre note')
   })
   it('bien-être différent de la note : dit ce qui s’y mêle (visage ou jours voisins)', () => {
-    expect(detailSource('wellbeing', { value: 3.2, note: 3.4, noteChoice: 3, readings: 2 })).toBe('vous avez noté 3 · estimé avec le visage')
-    expect(detailSource('wellbeing', { value: 3.2, note: 3.4, noteChoice: 3, readings: 0 })).toBe('vous avez noté 3 · estimé avec les jours voisins')
+    expect(detailSource('wellbeing', { value: 3.2, note: 3, noteText: '3', readings: 2 })).toBe('vous avez noté 3 · estimé avec le visage')
+    expect(detailSource('wellbeing', { value: 3.2, note: 3, noteText: '3', readings: 0 })).toBe('vous avez noté 3 · estimé avec les jours voisins')
   })
-  it('POLISH-SIM-90 : la note se dit telle qu’elle a été donnée (un choix de 1 à 5), jamais « 3,4 »', () => {
-    expect(detailSource('wellbeing', { value: 3.9, note: 4, noteChoice: 4, readings: 1 })).toBe('vous avez noté 4 · estimé avec le visage')
-    // sans le choix (ancien appelant), la note s'arrondit au choix le plus proche
-    expect(detailSource('wellbeing', { value: 3.2, note: 3.4, readings: 2 })).toBe('vous avez noté 3 · estimé avec le visage')
+  it('POLISH-SIM-90 : une note choisie de 1 à 5 se dit telle qu’elle a été donnée', () => {
+    expect(detailSource('wellbeing', { value: 3.9, note: 4, noteText: '4', readings: 1 })).toBe('vous avez noté 4 · estimé avec le visage')
+  })
+  it('UPG-6, POLISH-SIM-103 : une note à décimale (ancienne échelle) se dit comme dans « Vos saisies », jamais arrondie', () => {
+    // fiche du 12/11 : 2,8 en tête, la saisie dit 2,6 / 5 ; la ligne disait « vous avez noté 3 »
+    expect(detailSource('wellbeing', { value: 2.8, note: 2.6, noteText: '2,6', readings: 3 })).toBe('vous avez noté 2,6 · estimé avec le visage')
+    // sans le texte (ancien appelant), la note s'écrit à une décimale
+    expect(detailSource('wellbeing', { value: 4.0, note: 4.2, readings: 2 })).toBe('vous avez noté 4,2 · estimé avec le visage')
+    expect(detailSource('wellbeing', { value: 3.2, note: 4, readings: 2 })).toBe('vous avez noté 4 · estimé avec le visage')
   })
   it('bien-être sans note : lu sur le visage, ou estimé', () => {
     expect(detailSource('wellbeing', { value: 3.2, note: null, readings: 3 })).toBe('d’après le visage')

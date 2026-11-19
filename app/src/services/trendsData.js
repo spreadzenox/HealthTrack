@@ -167,11 +167,13 @@ export function defaultTrendsView({ asked = null, askedDay = false, available = 
  * lecture). Le sens de l'échelle digestive est dit sous la courbe (POLISH-SIM-54).
  * POLISH-SIM-90 : quand le chiffre s'écarte de la note, la note se dit d'abord, telle qu'elle a été donnée (un choix
  * de 1 à 5, « douleur » avec sa valeur), puis ce qui fait l'estimation.
+ * UPG-6, POLISH-SIM-103 : la note s'écrit comme dans « Vos saisies » (`noteText`, « 2,6 » pour une ancienne note),
+ * jamais arrondie à un autre chiffre.
  * @param {'wellbeing'|'digestion'} key
- * @param {{ value: number, note?: number|null, noteChoice?: number|null, readings?: number, gut?: string|null,
+ * @param {{ value: number, note?: number|null, noteText?: string|null, readings?: number, gut?: string|null,
  *   gutScore?: number|null, observed?: boolean }} d
  */
-export function detailSource(key, { value, note = null, noteChoice = null, readings = 0, gut = null, gutScore = null, observed = false }) {
+export function detailSource(key, { value, note = null, noteText = null, readings = 0, gut = null, gutScore = null, observed = false }) {
   // POLISH-SIM-54 : l'échelle est dite une fois sous la courbe (gloss), plus à chaque jour
   if (key === 'digestion') {
     // POLISH-SIM-71 : « 2,0 /5, noté « douleur » » contredit l'échelle (douleur = 1) : le chiffre est une estimation
@@ -180,7 +182,7 @@ export function detailSource(key, { value, note = null, noteChoice = null, readi
   }
   if (note != null) {
     if (Math.round(value * 10) === Math.round(note * 10)) return 'votre note'
-    const n = noteChoice ?? Math.min(5, Math.max(1, Math.round(note)))
+    const n = noteText ?? String(Math.round(note * 10) / 10).replace('.', ',')
     return `vous avez noté ${n} · estimé avec ${readings > 0 ? 'le visage' : 'les jours voisins'}`
   }
   if (readings > 0) return 'd’après le visage'

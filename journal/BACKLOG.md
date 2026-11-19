@@ -361,7 +361,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     ni ce que devient « Mon cycle » (Règles dans Ma journée, contexte de la digestion). La note à la une
     (`2026-11-15-0435-refonte-navigation`) le dit en partie : la compléter d'une ligne sur « Mon cycle », et, dans
     la page Nouveautés, la placer en tête tant qu'elle n'est pas lue (comme le bandeau).
-  - [ ] **UPG-6 — Deux chiffres de bien-être le même jour** (J45) : Accueil « 3/5 » (aujourd'hui) et Objectifs
+  - [x] **UPG-6 — Deux chiffres de bien-être le même jour** (19/11 05:30 : Objectifs « Moyenne de vos 7 derniers jours » ; la fiche d'un jour écrit la note comme « Vos saisies » (`noteText` = `formatNote`, « vous avez noté 2,6 »), jamais arrondie à un autre chiffre ; le chiffre en tête reste l'estimation du jour, que la ligne explique) (J45) : Accueil « 3/5 » (aujourd'hui) et Objectifs
     « 3,1 / 5 » (moyenne des 7 jours, non dite) ; Tendances › Jour du 12/11 : 2,8 en tête, « vous avez noté 3 », 2,6
     dans les saisies. Dire « moyenne sur 7 jours » sous le chiffre d'Objectifs ; vérifier l'origine des trois
     chiffres de Tendances › Jour (avec POLISH-SIM-80 et 88).
@@ -389,7 +389,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       la page la range par date, perdue dans une très longue liste. La mettre en tête de la page quand elle est non lue.
     - [x] **POLISH-SIM-102 — Deux décomptes de la digestion** (19/11 04:30 : Ma journée « Premier score au 14e jour noté, pistes au 28e. » ; Objectifs, sous « Premier score dans N jours notés » : « Pistes au 28e jour noté. » ; passé 14 jours, Ma journée renvoie au score d’Objectifs) : Ma journée « 9/28, encore 19 jours », Objectifs « 9 sur
       14, premier score dans 5 jours ». Nommer les deux paliers (premier score à 14, pistes à 28) au même endroit.
-    - [ ] **POLISH-SIM-103 — Bien-être d'un jour** : Tendances › Jour affiche 4,0 en tête et 4,2 dans la saisie (moyenne
+    - [x] **POLISH-SIM-103 — Bien-être d'un jour** (19/11 05:30, avec UPG-6 : « vous avez noté 4,2 · estimé avec le visage » sous 4,0 ; titre « Ce qui a pu jouer ce jour-là », demandé par trois simulations) : Tendances › Jour affiche 4,0 en tête et 4,2 dans la saisie (moyenne
       ou note ?) ; « Ce qui a pu peser » ne liste que des effets positifs.
     - [ ] **POLISH-SIM-104 — Exemple de « Votre bien-être »** : famille Alimentation « Pas de lien net » au-dessus de
       lignes GOS −1,1 pt et Lactose −0,9 pt.

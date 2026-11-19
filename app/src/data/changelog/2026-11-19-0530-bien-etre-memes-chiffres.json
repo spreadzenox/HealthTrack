@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-19",
+  "kind": "amélioration",
+  "title": "Bien-être : des chiffres qui se répondent",
+  "items": [
+    "Dans Objectifs, le score de bien-être dit que c’est la moyenne de vos 7 derniers jours. L’Accueil, lui, montre la note du jour.",
+    "Dans le détail d’un jour (Données › Tendances), votre note s’écrit comme dans « Vos saisies », par exemple « vous avez noté 2,6 », au lieu d’être arrondie.",
+    "« Ce qui a pu peser ce jour-là » s’appelle « Ce qui a pu jouer ce jour-là », puisqu’on y voit aussi ce qui a aidé."
+  ]
+}

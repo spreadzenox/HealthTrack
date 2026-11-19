@@ -62,7 +62,8 @@ function ObjectiveCard({ card }) {
             <span className="objective-score"><span className="mono">{n1(card.score)}</span> / <span className="mono">5</span></span>
             {card.trend && <span className="objective-trend"><span aria-hidden="true">{ARROW[card.trend]} </span>{TREND_WORDS[card.trend]}</span>}
             <Bars bars={card.bars} />
-            <span className="objective-note">Vos 7 derniers jours</span>
+            {/* UPG-6 : l’Accueil montre la note du jour, ici c’est la moyenne */}
+            <span className="objective-note">Moyenne de vos 7 derniers jours</span>
           </>
         )}
         {card.state === 'waiting' && (

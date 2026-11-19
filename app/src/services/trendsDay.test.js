@@ -118,6 +118,17 @@ describe('« Ce qui a pu peser » dit ce qui s’est passé (T4)', () => {
   })
 })
 
+describe('UPG-6 : la note du jour telle que « Vos saisies » l’écrit', () => {
+  it('dayFaceDetail donne noteText : « 2,6 » pour une ancienne note, « 3 » pour un choix de 1 à 5', async () => {
+    const { dayFaceDetail } = await import('./trendsDay')
+    const { fromDisplay } = await import('./mood/wellbeingScale')
+    const at = (h) => new Date(2026, 10, 12, h).toISOString()
+    expect(dayFaceDetail([{ type: 'wellbeing', at: at(22), payload: { score: fromDisplay(2.6) } }], '2026-11-12').noteText).toBe('2,6')
+    expect(dayFaceDetail([{ type: 'wellbeing', at: at(22), payload: { score: fromDisplay(3) } }], '2026-11-12').noteText).toBe('3')
+    expect(dayFaceDetail([], '2026-11-12').noteText).toBeNull()
+  })
+})
+
 describe('POLISH-SIM-71 : note digestive du jour et seuil d’affichage', () => {
   it('dayFaceDetail donne la note du niveau le plus marqué (douleur = 1)', async () => {
     const { dayFaceDetail } = await import('./trendsDay')

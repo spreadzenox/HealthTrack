@@ -10,7 +10,7 @@
 import { localDateKey } from './analysisEngine'
 import { moodFaceBursts } from './faceBursts'
 import { expressionMix, habitualMix, habitShifts, pointDetail, wellbeingHistory } from './mood/wellbeingHistory'
-import { scoreToChoice, toDisplay } from './mood/wellbeingScale'
+import { formatNote, toDisplay } from './mood/wellbeingScale'
 import { gutLevelLabel } from './today'
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
@@ -91,8 +91,9 @@ export function dayFaceDetail(entries, dateKey) {
     // POLISH-SIM-71 : la note de ce niveau (douleur = 1), pour dire quand le chiffre du jour s'en écarte
     gutScore: gutLevel ? GUT_SCORE[gutLevel] : null,
     note: lastNote ? toDisplay(lastNote.payload.score) : null,
-    // POLISH-SIM-90 : la note telle qu'elle a été donnée (choix de 1 à 5), pour la fiche du jour
-    noteChoice: lastNote ? scoreToChoice(lastNote.payload.score) : null,
+    // POLISH-SIM-90, UPG-6 : la note écrite comme dans « Vos saisies » (« 3 » pour un choix de 1 à 5, « 2,6 » pour
+    // une note de l'ancienne échelle), pour que la fiche du jour ne la contredise pas
+    noteText: lastNote ? formatNote(lastNote.payload.score) : null,
     mix: withHabit,
     shifts: shiftsSentence(habitShifts(withHabit)),
     points,

@@ -178,7 +178,7 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(detail).toHaveTextContent('Plus de tristesse, moins de mépris que d’habitude. Le trait gris montre votre habitude.')
     expect(detail).toHaveTextContent('Chaque point est une lecture ; la zone grise, votre habitude.')
     // contributions lues au premier jour touché (budget de lectures)
-    const weigh = await within(detail).findByRole('region', { name: 'Ce qui a pu peser ce jour-là' })
+    const weigh = await within(detail).findByRole('region', { name: 'Ce qui a pu jouer ce jour-là' })
     // T4 : ce qui s'est passé, avec la valeur, et l'unité « pt »
     expect(within(weigh).getByText('Nuits plus courtes que d’habitude (5 h)').closest('li')).toHaveAttribute('data-tone', 'night')
     expect(weigh).toHaveTextContent('−0,40 pt')
@@ -193,7 +193,7 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(detail).toHaveTextContent('Sommeil')
     expect(detail.textContent).not.toMatch(/lectures? du visage/)
     await new Promise((r) => setTimeout(r, 20))
-    expect(within(detail).queryByRole('region', { name: 'Ce qui a pu peser ce jour-là' })).toBeNull()
+    expect(within(detail).queryByRole('region', { name: 'Ce qui a pu jouer ce jour-là' })).toBeNull()
   })
 
   it('TS-2 : vue Mois, repère « changement » avec niveau avant et après et « Au même moment », jamais de cause', async () => {
