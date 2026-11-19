@@ -122,6 +122,24 @@ function SubscriptionBlock() {
   )
 }
 
+/** POLISH-SIM-100 : après la refonte (étape 5a), une phrase par ancien objectif retiré, pour dire où il est passé. */
+const FORMER_GOALS = [
+  { id: 'sport', text: 'Sport : vos séances comptent dans la famille Activité d’Objectifs.' },
+  { id: 'cycle', text: 'Mon cycle : notez vos règles dans Ma journée › Règles. Confort digestif le remplace.' },
+]
+
+function FormerGoalsNote() {
+  // lecture pure : `migrateGoals` n'écrit rien et rend `goalsBefore`, migration du démarrage faite ou non
+  const before = migrateGoals(loadOnboarding()).goalsBefore || []
+  const lines = FORMER_GOALS.filter((g) => before.includes(g.id))
+  if (!lines.length) return null
+  return (
+    <ul className="hint former-goals" aria-label="Vos anciens objectifs">
+      {lines.map((g) => <li key={g.id}>{g.text}</li>)}
+    </ul>
+  )
+}
+
 export default function Settings() {
   const [apiKey, setApiKey] = useState(() => getGeminiApiKey())
   const [saved, setSaved] = useState(false)
@@ -237,6 +255,7 @@ export default function Settings() {
           quel que soit votre choix.
         </p>
         {gutGoal && <GutEveningReminder variant="setting" />}
+        <FormerGoalsNote />
       </div>
 
       {/* Refonte étape 4 : ce que la personne note par oui ou non dans Ma journée. */}

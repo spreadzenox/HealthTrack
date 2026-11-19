@@ -117,6 +117,38 @@ describe('Settings — Vos objectifs (refonte étape 5a)', () => {
     expect(screen.queryByRole('checkbox', { name: 'Rappel du bilan digestif, le soir' })).toBeNull()
   })
 
+  it('POLISH-SIM-100 : après la migration, une ligne dit où sont passés Sport et Mon cycle', () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({
+      done: true, goals: ['wellbeing', 'gut', 'cycle'], goalsBefore: ['sport', 'cycle'], goalsVersion: 2,
+    }))
+    renderSettings()
+    const note = screen.getByRole('list', { name: 'Vos anciens objectifs' })
+    expect(within(note).getAllByRole('listitem')).toHaveLength(2)
+    expect(within(note).getByText(/Sport : vos séances comptent dans la famille Activité d’Objectifs\./)).toBeInTheDocument()
+    expect(within(note).getByText(/Mon cycle : notez vos règles dans Ma journée › Règles\. Confort digestif le remplace\./))
+      .toBeInTheDocument()
+  })
+
+  it('POLISH-SIM-100 : ancien « Mon sport » seul, avant la migration du démarrage : une seule ligne', () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['stress', 'sport'] }))
+    renderSettings()
+    const note = screen.getByRole('list', { name: 'Vos anciens objectifs' })
+    expect(within(note).getAllByRole('listitem')).toHaveLength(1)
+    expect(within(note).queryByText(/Mon cycle/)).toBeNull()
+  })
+
+  it('POLISH-SIM-100 : installation neuve ou autres anciens objectifs, aucune ligne', () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['wellbeing', 'gut'], goalsVersion: 2 }))
+    const { unmount } = renderSettings()
+    expect(screen.queryByRole('list', { name: 'Vos anciens objectifs' })).toBeNull()
+    unmount()
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({
+      done: true, goals: ['wellbeing'], goalsBefore: ['stress', 'care'], goalsVersion: 2,
+    }))
+    renderSettings()
+    expect(screen.queryByRole('list', { name: 'Vos anciens objectifs' })).toBeNull()
+  })
+
   it('sans Confort digestif, pas de rappel du soir', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true }))
     renderSettings()

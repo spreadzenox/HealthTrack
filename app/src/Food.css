@@ -264,6 +264,16 @@
   color: var(--text-muted);
 }
 
+/* POLISH-SIM-100 : où sont passés les anciens objectifs, une ligne chacun, sans puce */
+.former-goals {
+  list-style: none;
+  padding: 0;
+}
+
+.former-goals li + li {
+  margin-top: 4px;
+}
+
 
 .settings-input {
   width: 100%;
