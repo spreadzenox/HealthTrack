@@ -1,14 +1,15 @@
 /**
  * Calendrier de pastilles d'un essai (ORG-8) : pleine = jour « avec », contour = jour « sans » ; ✓ tenu, – pas tenu ;
- * rien tant que le jour n'est pas passé ou que la tenue est inconnue.
+ * rien tant que le jour n'est pas passé ou que la tenue est inconnue. Un jour « sans » (comme d'habitude) n'a rien à
+ * tenir : jamais de marque (POLISH-SIM-108) ; sa tenue sert seulement au calcul du résultat (trials.js).
  * `grid` (page d'un essai, POLISH-ESSAI-GRILLE) : cases numérotées, une ligne de 7 par semaine, comme la maquette.
  */
 import { appLocale } from '../i18n/locale.js'
 
-const mark = (d) => (d.held === true ? '✓' : d.held === false ? '–' : '')
+const mark = (d) => (!d.with ? '' : d.held === true ? '✓' : d.held === false ? '–' : '')
 
 export default function TrialDots({ days, grid = false }) {
-  const label = (d) => `${new Date(`${d.date}T12:00:00`).toLocaleDateString(appLocale(), { day: 'numeric', month: 'long' })} : ${d.with ? 'avec' : 'sans'}${d.held === true ? ', tenu' : d.held === false ? ', pas tenu' : ''}`
+  const label = (d) => `${new Date(`${d.date}T12:00:00`).toLocaleDateString(appLocale(), { day: 'numeric', month: 'long' })} : ${d.with ? `avec${d.held === true ? ', tenu' : d.held === false ? ', pas tenu' : ''}` : 'comme d’habitude'}`
   const cls = (d) => `trial-dot${d.with ? ' is-with' : ''}${d.today ? ' is-today' : ''}${d.future ? ' is-future' : ''}`
   if (!grid) {
     return (
