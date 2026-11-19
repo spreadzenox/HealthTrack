@@ -18,6 +18,8 @@
 
 **19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge). **02:30 : fiche App Store** : la liste des captures suit la refonte (les actuelles montrent encore Analyses et le Journal) ; série à prendre de jour par la CI, regardée, puis envoyée avant « 👉 PI2 prête ».
 
+**19/11 21:30 : bien-être, un seul délai** : la page « Votre bien-être » dit maintenant « Premier score dans N jours notés » (7e jour noté, comme l'Accueil et Objectifs), puis « Pistes au 14e jour noté » ; une fois le score là, « Vos pistes dans N jours notés » et « Votre score est déjà dans Objectifs ». Même chose pour le confort digestif (14e et 28e jour) (POLISH-SIM-116).
+
 **19/11 20:30 (run « idées ») : deux personas de plus** (« Prendre soin de soi » à la mise à jour, « Stressé et pressé » à l'installation) : rien de perdu ; 6 défauts rangés (POLISH-SIM-116 à 121). Le plus net : le bien-être annonce trois délais selon l'écran (Accueil « Jour 1 sur 7 », Objectifs « 6 jours », « Votre bien-être » « 13 jours ») ; aussi le poids d'une balance qui n'apparaît pas en Semaine dans Tendances quand on se pèse tous les 3 jours. Corrigés par les prochains runs de code. Passage des personas : 8 parcours sur 10.
 
 **19/11 19:30 : repas, une phrase simple pour les FODMAP** : quand un repas touche plusieurs groupes FODMAP, sa carte pêche dit seulement « Parfois mal digérés : lentille verte, oignon, ail » ; les groupes, les grammes et les sources restent derrière « Détails » (UPG-9, « Ventre, sans technique » : « 4 lignes rouges »). Un seul groupe : « Riche en fructanes : oignon », comme avant.
@@ -167,6 +169,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 19/11 21:30 — [Bien-être, un seul délai](runs/2026-11-19-2130-bien-etre-un-palier.md) | 🛠️ | **POLISH-SIM-116** : la page d'un objectif annonce le palier du premier score (7e / 14e jour noté) puis celui des pistes (14e / 28e), comme l'Accueil et Objectifs. 4 116 tests verts. Rien à faire de votre côté |
 | 19/11 20:30 — [Personas, passage 4](runs/2026-11-19-2030-personas-upg3c.md) | 💡 | **UPG-3c** : « Prendre soin de soi » J45 en mise à jour (balance) et « Stressé et pressé » J1 neuve (Galaxy Watch). Rien de perdu ; 6 constats vérifiés (POLISH-SIM-116 à 121), en tête trois délais différents pour le bien-être. Journal seulement. Rien à faire de votre côté |
 | 19/11 19:30 — [Repas : FODMAP en une phrase](runs/2026-11-19-1930-fodmap-une-phrase.md) | 🛠️ | **UPG-9 (carte d'un repas)** : plusieurs groupes FODMAP se disent en une phrase (« Parfois mal digérés : … »), le détail par groupe derrière « Détails ». Test d'abord, capture relue. Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 18:30 — [Essai : retour vers l’objectif](runs/2026-11-19-1830-essai-retour-objectif.md) | 🛠️ | **POLISH-SIM-108 (lien retour)** : la page d’un essai revient à l’objectif qu’il suit (bien-être ou confort digestif), sous l’onglet Objectifs. Test d'abord, capture relue. Code partagé, iPhone compris. Rien à faire de votre côté |

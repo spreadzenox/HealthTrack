@@ -457,7 +457,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       [synthèse](simulations/2026-11-19-2030-synthese.md). Rien de perdu à la mise à jour (essai, pesées, saisies).
       Constats vérifiés sur captures et dans le code → POLISH-SIM-116 à 121. Reste d'UPG-3 (8 parcours sur 10) :
       « Ventre, sans technique » en mise à jour, « Tout mesurer » neuve.
-    - [ ] **POLISH-SIM-116 — Trois délais pour le bien-être** (J1, prioritaire pour le 22/11) : Accueil « Jour 1 sur 7 avant
+    - [x] **POLISH-SIM-116 — Trois délais pour le bien-être** (FAIT 19/11 21:30 : `Countdown` de `Recommendations.jsx` dit « Premier score dans N jours notés » et « Pistes au 14e jour noté » avant `FIRST_SCORE_DAY`, puis « Vos pistes dans N jours notés » et « Votre score est déjà dans Objectifs » ; digestion 14/28 de même) (J1, prioritaire pour le 22/11) : Accueil « Jour 1 sur 7 avant
       vos premiers résultats », Objectifs « 6 jours », page « Votre bien-être » (`Recommendations.jsx`, `resultsView.js`)
       « Encore 13 jours notés… 1/14 ». `objectiveCard('wellbeing')` compte 7 (brief : 7 jours bien-être), le compte à
       rebours de la page prend `daysNeeded` de l'analyse (14). Spec : la page dit le même palier que l'Accueil et

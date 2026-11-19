@@ -45,6 +45,7 @@ import { localDateKey } from '../services/analysisEngine'
 import { eveningNotePlugin } from '../services/eveningNote'
 import { APP_NAME } from '../config/brand'
 import { FEATURES } from '../config/distribution'
+import { FIRST_RESULTS_DAY, FIRST_SCORE_DAY } from '../config/firstResults'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { gutCardMode } from '../settings/onboarding'
 import { appLocale } from '../i18n/locale.js'
@@ -119,26 +120,41 @@ function ReintroLink({ line }) {
   )
 }
 
+/**
+ * POLISH-SIM-116 : deux paliers, les mêmes que l'Accueil et Objectifs. Avant le premier score (7e jour noté pour le
+ * bien-être, 14e pour la digestion) : jours restants jusqu'au score, puis le jour des pistes. Score passé : jours
+ * restants jusqu'aux pistes, le score se lit dans Objectifs.
+ */
 function Countdown({ outcome, view, onNote, onReminder, notedToday = [] }) {
   const w = WORDS[outcome]
   const n = view.daysLeft
-  const title = n != null && n > 0
-    ? `Encore ${n} jour${n > 1 ? 's' : ''} noté${n > 1 ? 's' : ''} avant vos premiers résultats`
-    : 'Vos premiers résultats arrivent bientôt'
+  const have = view.progress?.have
+  const scoreDay = FIRST_SCORE_DAY[outcome]
+  const beforeScore = have != null && have < scoreDay
+  const notedDays = (k) => `${k} jour${k > 1 ? 's' : ''} noté${k > 1 ? 's' : ''}`
+  const title = beforeScore
+    ? `Premier score dans ${notedDays(scoreDay - have)}`
+    : n != null && n > 0 ? `Vos pistes dans ${notedDays(n)}` : 'Vos pistes arrivent bientôt'
+  const bar = beforeScore ? { have, need: scoreDay } : view.progress
   return (
     <section className="today-card reco-countdown" data-testid={`reco-countdown-${outcome}`} aria-labelledby={`reco-cd-${outcome}`}>
       <h3 id={`reco-cd-${outcome}`} className="today-card-title">{keepWhole(title)}</h3>
       <p className="today-card-text">
         Notez {w.note} chaque jour : {APP_NAME} cherchera ensuite quels facteurs sont statistiquement liés à {w.what}.
       </p>
-      {view.progress && (
+      {bar && (
         <>
-          <div className="pistes-progress" role="progressbar" aria-valuemin={0} aria-valuemax={view.progress.need}
-            aria-valuenow={view.progress.have} aria-label="Jours notés">
-            <div className="pistes-progress-bar" style={{ width: `${(view.progress.have / view.progress.need) * 100}%` }} />
+          <div className="pistes-progress" role="progressbar" aria-valuemin={0} aria-valuemax={bar.need}
+            aria-valuenow={bar.have} aria-label="Jours notés">
+            <div className="pistes-progress-bar" style={{ width: `${(bar.have / bar.need) * 100}%` }} />
           </div>
-          <p className="pistes-count"><span className="mono">{view.progress.have}/{view.progress.need}</span> jours notés, pas forcément d’affilée</p>
+          <p className="pistes-count"><span className="mono">{bar.have}/{bar.need}</span> jours notés, pas forcément d’affilée</p>
         </>
+      )}
+      {bar && (
+        <p className="today-card-text reco-stages">
+          {beforeScore ? `Pistes au ${FIRST_RESULTS_DAY[outcome]}e jour noté.` : 'Votre score est déjà dans Objectifs.'}
+        </p>
       )}
       {outcome === 'digestion' && view.symptomsLeft > 0 && view.symptoms && (
         <p className="today-card-text">
