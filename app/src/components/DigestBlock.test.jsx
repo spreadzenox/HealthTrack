@@ -36,8 +36,17 @@ describe('DigestBlock (AUJ-4)', () => {
     // POLISH-SIM-32 : quelle fenêtre ? Aucune : tous les jours notés comptent, d'affilée ou non
     expect(screen.getByText('3/28').parentElement).toHaveTextContent('3/28 jours notés, pas forcément d’affilée')
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '3')
+    // POLISH-SIM-102, UPG-7 : les deux paliers nommés, comme dans Objectifs
+    expect(screen.getByText('Premier score au 14e jour noté, pistes au 28e.')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Noter ma digestion' }))
     expect(onNote).toHaveBeenCalled()
+  })
+
+  it('POLISH-SIM-102 : après 14 jours notés, le score est dans Objectifs, les pistes au 28e', async () => {
+    wrap({ read: async () => Array.from({ length: 15 }, (_, i) => note(i + 1)) })
+    await screen.findByRole('heading', { name: 'Encore 13 jours notés avant vos analyses digestives' })
+    expect(screen.getByText('Votre score de confort est dans Objectifs. Pistes au 28e jour noté.')).toBeInTheDocument()
+    expect(screen.queryByText(/Premier score au 14e/)).toBeNull()
   })
 
   it('ni délais, ni correction statistique, ni minimum', async () => {

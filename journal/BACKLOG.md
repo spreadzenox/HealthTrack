@@ -365,7 +365,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     « 3,1 / 5 » (moyenne des 7 jours, non dite) ; Tendances › Jour du 12/11 : 2,8 en tête, « vous avez noté 3 », 2,6
     dans les saisies. Dire « moyenne sur 7 jours » sous le chiffre d'Objectifs ; vérifier l'origine des trois
     chiffres de Tendances › Jour (avec POLISH-SIM-80 et 88).
-  - [ ] **UPG-7 — Délais de la digestion** (J1) : Objectifs « Premier score dans 13 jours », Ma journée et Confort
+  - [x] **UPG-7 — Délais de la digestion** (fait le 19/11 04:30 avec POLISH-SIM-102) (J1) : Objectifs « Premier score dans 13 jours », Ma journée et Confort
     digestif « Encore 27 jours » ; nommer les deux paliers sur la même carte (score au 14e jour, pistes au 28e).
   - [ ] **UPG-8 — Repas décrit, aliments oubliés** (J1, à vérifier hors analyse factice de l'outil) : « pâtes
     carbonara, un yaourt et une pomme » ne rend que la carbonara. Dans l'outil, l'analyse est factice : vérifier
@@ -387,7 +387,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       est voulu par la migration 5a (cycle = contexte de la digestion), sinon ne pas le cocher.
     - [x] **POLISH-SIM-101 — Page Nouveautés** (19/11 03:30 : `WhatsNew.jsx` place en tête la note `aLaUne` non lue, choisie par `bannerHeadline` comme le bandeau ; ordre par date une fois lue ; 3 tests) : le bandeau met la note de la nouvelle navigation à la une (UPG-2), mais
       la page la range par date, perdue dans une très longue liste. La mettre en tête de la page quand elle est non lue.
-    - [ ] **POLISH-SIM-102 — Deux décomptes de la digestion** : Ma journée « 9/28, encore 19 jours », Objectifs « 9 sur
+    - [x] **POLISH-SIM-102 — Deux décomptes de la digestion** (19/11 04:30 : Ma journée « Premier score au 14e jour noté, pistes au 28e. » ; Objectifs, sous « Premier score dans N jours notés » : « Pistes au 28e jour noté. » ; passé 14 jours, Ma journée renvoie au score d’Objectifs) : Ma journée « 9/28, encore 19 jours », Objectifs « 9 sur
       14, premier score dans 5 jours ». Nommer les deux paliers (premier score à 14, pistes à 28) au même endroit.
     - [ ] **POLISH-SIM-103 — Bien-être d'un jour** : Tendances › Jour affiche 4,0 en tête et 4,2 dans la saisie (moyenne
       ou note ?) ; « Ce qui a pu peser » ne liste que des effets positifs.

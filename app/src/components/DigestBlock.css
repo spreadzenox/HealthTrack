@@ -47,7 +47,8 @@
   background: var(--peach-label);
 }
 
-.digest-count {
+.digest-count,
+.digest-steps {
   margin: 8px 0 0;
   font-size: 0.85rem;
 }
