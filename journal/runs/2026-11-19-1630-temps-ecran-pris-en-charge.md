@@ -16,7 +16,7 @@
 - **Sort des correctifs** : le correctif iPhone 55 (même condition, derrière `FEATURES.iosStore`) est retiré, sa
   condition vit maintenant dans le code partagé. 51 correctifs.
 - Tests écrits d'abord (`Onboarding.test.jsx`, 4 cas) : 2 rouges sans le changement, tous verts avec.
-- Note de Nouveautés `2026-11-19-1630-temps-ecran-pris-en-charge` (Android et iPhone).
+- Notes de Nouveautés : `2026-11-19-1630-temps-ecran-pris-en-charge` (play, sideload) et, pour l’iPhone, `iphone/overlay/…/2026-11-19-1630-temps-ecran-iphone` (appstore) : la première note citait « Android » et cassait le test des notes iPhone de la PR.
 
 ## iPhone
 - `scripts/upstream.sh` (HEAD, dossier de travail) : 51 correctifs appliqués ; tests de `Onboarding*` et

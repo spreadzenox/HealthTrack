@@ -1,8 +1,9 @@
 {
   "date": "2026-11-19",
   "kind": "correctif",
+  "variants": ["play", "sideload"],
   "title": "Le temps d’écran seulement s’il est possible",
   "items": [
-    "Au premier lancement, le temps d’écran n’est plus proposé sur un téléphone qui ne le donne pas aux apps (Android 8, iPhone avant iOS 26.4)."
+    "Au premier lancement, le temps d’écran n’est plus proposé sur un téléphone qui ne le donne pas aux apps (Android 8)."
   ]
 }
