@@ -467,7 +467,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       Bien-être de l'Accueil) listée dans « Vos saisies » mais la courbe dit « Aucune lecture du visage ce jour-là »
       (`TrendsViewer.jsx` `DayChart` : `view.note` nul). Chercher pourquoi la note du jour n'arrive pas dans la vue Jour
       (type ou heure de la saisie par bulle), test d'abord ; message seulement sans lecture ni note.
-    - [ ] **POLISH-SIM-118 — Poids invisible en Semaine** (J45, balance) : pesée tous les 3 jours → moins de
+    - [x] **POLISH-SIM-118 — Poids invisible en Semaine** (FAIT 19/11 23:30 : `SPARSE_MEASURES` de `trendsData.js`, 3 pesées sur le Mois et au moins une dans la semaine ; sans pesée dans la semaine, la puce grisée ramène au Mois) (J45, balance) : pesée tous les 3 jours → moins de
       `TREND_MIN_POINTS` (3) sur 7 jours, « Poids » absent du « + » de Semaine ; POLISH-SIM-115 promet « à voir dans
       Tendances ». Spec : une mesure espacée (poids) est proposée si elle a 3 points sur la plus longue période (Mois),
       et la Semaine trace les points qu'elle a. Test sur `buildTrendSeries` / `available`.

@@ -49,6 +49,25 @@ describe('Tendances (ORG-3)', () => {
     expect(trendMeasure('weight').fmt(79.3)).toMatch(/^79,3\s?kg$/)
   })
 
+  it('POLISH-SIM-118 : une pesée tous les 3 jours a sa courbe en Semaine (3 pesées sur le Mois, les points de la semaine)', () => {
+    const at = (k, kg) => ({ dateKey: k, summary: { weightKg: kg } })
+    const days = [at('2026-10-27', 80), at('2026-10-30', 79.8), at('2026-11-02', 79.6), at('2026-11-05', 79.4)]
+    const r = buildTrendSeries({ days, period: 'week', now: NOW })
+    expect(r.series.weight.map((p) => p.date)).toEqual(['2026-11-02', '2026-11-05'])
+    expect(r.available).toEqual(['weight'])
+    // Deux pesées en tout : pas encore de courbe, ni en Semaine ni en Mois
+    const two = buildTrendSeries({ days: days.slice(2), period: 'week', now: NOW })
+    expect(two.available).toEqual([])
+    expect(buildTrendSeries({ days: days.slice(2), period: 'month', now: NOW }).available).toEqual([])
+    // Aucune pesée cette semaine : rien à tracer en Semaine (la puce grisée ramène au Mois, POLISH-SIM-81b)
+    const old = buildTrendSeries({ days: days.slice(0, 2).concat(at('2026-10-24', 80.2)), period: 'week', now: NOW })
+    expect(old.available).toEqual([])
+    // Les mesures quotidiennes gardent la règle des 3 points sur la période
+    const sleep = [10, 20, 30].map((d) => ({ dateKey: `2026-10-${d}`, summary: { sleepMinutes: 420 } }))
+      .concat({ dateKey: '2026-11-06', summary: { sleepMinutes: 400 } })
+    expect(buildTrendSeries({ days: sleep, period: 'week', now: NOW }).available).toEqual([])
+  })
+
   it('un axe par unité, deux au plus', () => {
     expect(unitsOf(['wellbeing', 'digestion'])).toEqual(['/5'])
     expect(canAdd(['wellbeing'], 'sleep')).toBe(true)
