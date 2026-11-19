@@ -46,7 +46,7 @@ describe('Un essai (ORG-8)', () => {
     expect(weeks).toHaveLength(2)
     expect(weeks.map((w) => w.querySelectorAll('li').length)).toEqual([7, 7])
     expect(screen.getByLabelText(/1 novembre : avec, tenu/)).toHaveTextContent('1✓')
-    expect(screen.getByLabelText(/14 novembre : sans/)).toHaveTextContent('14')
+    expect(screen.getByLabelText(/14 novembre : comme d’habitude/)).toHaveTextContent('14')
   })
 
   it('POLISH-ESSAI-ORDRE : « Résultat en cours » avant « Les 14 jours », légende avec la consigne', async () => {
@@ -59,6 +59,16 @@ describe('Un essai (ORG-8)', () => {
     expect(legend).toHaveTextContent('comme d’habitude')
     expect(legend).toHaveTextContent('✓ tenu · – pas tenu')
     expect(screen.queryByText(/Pleine : jour avec/)).not.toBeInTheDocument()
+  })
+
+  it('POLISH-SIM-108 : un jour « comme d’habitude » n’est jamais marqué tenu ou pas tenu (rien à tenir)', async () => {
+    // jours sans : le 2 répondu « Non », le 4 répondu « Oui » ; le 1 (avec) : tenu d'après le sommeil
+    renderTrial(new Date(2026, 10, 6, 10), { answers: { '2026-11-02': false, '2026-11-04': true } })
+    const sans = await screen.findByLabelText(/^2 novembre : comme d’habitude$/)
+    expect(sans).toHaveTextContent(/^2$/)
+    expect(screen.getByLabelText(/^4 novembre : comme d’habitude$/)).toHaveTextContent(/^4$/)
+    expect(screen.queryByLabelText(/novembre : sans/)).not.toBeInTheDocument()
+    expect(screen.getByLabelText(/1 novembre : avec, tenu/)).toHaveTextContent('1✓')
   })
 
   it('POLISH-ESSAI-VIDE : sans point, le graphique vide avec ses axes et une seule phrase', async () => {
