@@ -300,7 +300,8 @@ export default function Food() {
 
       {!quickMeal && habits.length > 0 && (
         <div className="meal-habits">
-          <h3 className="section-title">Repas habituels</h3>
+          {/* POLISH-SIM-111 : un repas noté une fois y figure déjà (refaire un repas récent) */}
+          <h3 className="section-title">Refaire un repas</h3>
           <ul className="meal-habits-list">
             {habits.map((h) => (
               <li key={h.key}>

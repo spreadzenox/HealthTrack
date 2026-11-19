@@ -33,7 +33,12 @@ export default function WhatsNew({ changelog = CHANGELOG }) {
   return (
     <section className="food-page whats-new-page">
       <h2 className="page-title">Nouveautés</h2>
-      <p className="page-intro">Ce qui a changé dans {APP_NAME}, de la plus récente à la plus ancienne. Version installée : {CURRENT_VERSION}.</p>
+      <p className="page-intro">
+        Ce qui a changé dans {APP_NAME}
+        {/* POLISH-SIM-113 : la phrase suit l'ordre réel quand la note à la une passe devant */}
+        {headline?.aLaUne ? ' : la note importante d’abord, puis de la plus récente à la plus ancienne.' : ', de la plus récente à la plus ancienne.'}
+        {' '}Version installée : {CURRENT_VERSION}.
+      </p>
       {changelog.length === 0 ? (
         <p className="hint">Aucune nouveauté pour le moment.</p>
       ) : (

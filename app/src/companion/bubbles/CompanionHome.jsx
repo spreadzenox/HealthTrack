@@ -259,7 +259,7 @@ function FirstWeekCard({ week, gut, name, onOpenGift }) {
   if (week.state === 'ready') {
     return (
       <section className="cmp-week cmp-week-ready" data-tone="mint" aria-labelledby="cmp-week-ready">
-        <h2 id="cmp-week-ready" className="cmp-week-title">Vos premières analyses de bien-être sont prêtes</h2>
+        <h2 id="cmp-week-ready" className="cmp-week-title">Vos premiers résultats de bien-être sont prêts</h2>
         {gut && <p className="cmp-week-text">{digestionCountdown(gut.daysLeft)}</p>}
         <Link to="/recommendations" className="cmp-week-cta" onClick={() => markReadySeen()}>Découvrir</Link>
       </section>
@@ -267,7 +267,7 @@ function FirstWeekCard({ week, gut, name, onOpenGift }) {
   }
   return (
     <section className="cmp-week" aria-labelledby="cmp-week-title">
-      <h2 id="cmp-week-title" className="cmp-week-title">Jour {week.day} sur {WEEK_DAYS} avant vos premières analyses</h2>
+      <h2 id="cmp-week-title" className="cmp-week-title">Jour {week.day} sur {WEEK_DAYS} avant vos premiers résultats</h2>
       <div className="cmp-week-bar" aria-hidden="true">
         {GIFTS.map((g) => <span key={g.day} className={g.day <= week.filled ? 'cmp-week-seg is-full' : 'cmp-week-seg'} />)}
       </div>
@@ -441,7 +441,7 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
     setMessage(giftText(g, name))
     setWeekTick((t) => t + 1)
   }
-  // Le 7e jour : l'arc-en-ciel arrive avec la carte des premières analyses, une seule fois
+  // Le 7e jour : l'arc-en-ciel arrive avec la carte des premiers résultats, une seule fois
   useEffect(() => {
     if (week?.state !== 'ready' || week.rainbowGiven) return
     giveGift(GIFTS[WEEK_DAYS - 1])

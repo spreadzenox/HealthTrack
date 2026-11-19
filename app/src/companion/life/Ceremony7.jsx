@@ -1,7 +1,7 @@
 /**
  * La cérémonie du jour 7 (lot VIE, étape 12 ; specs/comprendre.SPEC.md § 5) : une seule fois dans la vie de l'app,
  * quand le bien-être a son premier score. Le grand arc-en-ciel se trace derrière Pilou (pêche, menthe, lilas, bleu
- * nuit), il saute de joie ; « Vos premières analyses sont prêtes ». Avec l'objectif digestion, la carte dit son propre
+ * nuit), il saute de joie ; « Vos premiers résultats sont prêts ». Avec l'objectif digestion, la carte dit son propre
  * délai. Mouvements réduits : tout en fondu, sans saut ni confettis.
  */
 import PilouFigure from './PilouFigure'
@@ -26,7 +26,7 @@ export default function Ceremony7({ name, gutDaysLeft = null, onSee, onClose }) 
         </div>
       </div>
       <span className="ceremony7-tag" data-tone="mint">Bien-être</span>
-      <h2 id="ceremony7-title" className="ceremony7-title">Vos premières analyses sont prêtes</h2>
+      <h2 id="ceremony7-title" className="ceremony7-title">Vos premiers résultats sont prêts</h2>
       <p className="ceremony7-text">Sept jours notés : {name} vous montre ce qui va avec votre bien-être, dans Objectifs.</p>
       {gutDaysLeft != null && (
         <p className="ceremony7-text">

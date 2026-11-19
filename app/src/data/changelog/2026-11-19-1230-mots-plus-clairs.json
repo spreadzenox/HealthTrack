@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-19",
+  "kind": "correctif",
+  "title": "Des mots plus clairs à l’Accueil, dans Repas et Nouveautés",
+  "items": [
+    "La première semaine, l’Accueil compte les jours « avant vos premiers résultats », comme Objectifs : « analyses » désigne seulement les analyses de repas par l’IA.",
+    "Repas : la liste qui reprend un repas déjà noté s’appelle « Refaire un repas ».",
+    "Nouveautés : quand une note importante est affichée en premier, la phrase du haut le dit."
+  ]
+}

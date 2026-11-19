@@ -126,6 +126,8 @@ describe('WhatsNew page, note à la une (POLISH-SIM-101)', () => {
     renderAt('/nouveautes', <WhatsNew changelog={WITH_HEADLINE} />)
     const titles = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)
     expect(titles).toEqual(['Nouveaux onglets', 'Petit correctif', 'Ancienne note'])
+    // POLISH-SIM-113 : la phrase d'en-tête dit l'ordre réel
+    expect(screen.getByText(/la note importante d’abord, puis de la plus récente à la plus ancienne/)).toBeInTheDocument()
   })
 
   it('keeps date order once the headline note has been read', () => {
@@ -133,6 +135,8 @@ describe('WhatsNew page, note à la une (POLISH-SIM-101)', () => {
     renderAt('/nouveautes', <WhatsNew changelog={WITH_HEADLINE} />)
     const titles = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)
     expect(titles).toEqual(['Petit correctif', 'Nouveaux onglets', 'Ancienne note'])
+    expect(screen.getByText(/, de la plus récente à la plus ancienne\./)).toBeInTheDocument()
+    expect(screen.queryByText(/note importante/)).toBeNull()
   })
 
   it('says where « Mon cycle » went in the navigation note (UPG-5)', () => {
