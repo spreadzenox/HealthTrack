@@ -288,8 +288,11 @@ export default function TrendsViewer({
   // Jour affiché : celui touché en Semaine ou Mois s'il n'est pas futur, sinon le dernier jour qui a une lecture ou
   // une note (aujourd'hui dès sa première lecture ; T3), sinon aujourd'hui
   const day = dayDate ?? (initialDay && initialDay <= data.today ? initialDay : data.today)
-  // En Jour, seul le bien-être a un détail heure par heure : les autres mesures sont grisées dans « + »
-  const dayAddable = data.available.filter((k) => k !== 'wellbeing')
+  // POLISH-SIM-107 : en Jour, les mesures choisies restent (Sommeil ne redevient plus Bien-être) ; seul le bien-être a
+  // un détail heure par heure : les autres mesures sont grisées dans « + », le bien-être s'y ajoute sans quitter Jour
+  const dayKeys = shown.length ? shown : ['wellbeing']
+  const dayHourly = dayKeys.includes('wellbeing')
+  const dayAddable = data.available.filter((k) => !dayKeys.includes(k))
   // POLISH-SIM-81 : une mesure touchée en Jour s'ouvre là où elle a une courbe, la Semaine d'abord, sinon le Mois
   // (trois pesées espacées n'ont de courbe qu'en Mois : en Semaine la mesure choisie disparaissait)
   const weekAvailable = useMemo(
@@ -332,13 +335,13 @@ export default function TrendsViewer({
     <article className="today-card trends-card">
       <div className="trends-controls">
         <ul className="trends-chips" aria-label="Mesures affichées">
-          {(isDay ? ['wellbeing'] : shown).map((k) => {
+          {(isDay ? dayKeys : shown).map((k) => {
             const m = trendMeasure(k)
             return (
               <li key={k} className="trends-chip" data-tone={m.tone}>
                 <span className="trends-chip-dot" aria-hidden="true" />
                 {m.label}
-                {!isDay && shown.length > 1 && (
+                {shown.length > 1 && (
                   <button type="button" className="trends-chip-remove" aria-label={`Retirer ${m.label}`}
                     onClick={() => setKeys(keys.filter((x) => x !== k))}>
                     <LineIcon name="close" size={12} />
@@ -374,15 +377,20 @@ export default function TrendsViewer({
       {adding && isDay && (
         <>
         <p className="trends-add-caption">
-          {dayAddable.every((k) => dailyPeriod(k) === 'week') ? 'Une valeur par jour, en Semaine' : 'Une valeur par jour, en Semaine ou en Mois'}
+          {dayAddable.filter((k) => k !== 'wellbeing').every((k) => dailyPeriod(k) === 'week') ? 'Une valeur par jour, en Semaine' : 'Une valeur par jour, en Semaine ou en Mois'}
         </p>
         <ul className="trends-add-menu" aria-label="Mesures à ajouter">
           {dayAddable.map((k) => {
             const m = trendMeasure(k)
+            const hourly = k === 'wellbeing'
             return (
               <li key={k}>
-                <button type="button" className="trends-chip is-daily" data-tone={m.tone}
-                  onClick={() => { setKeys(shown.includes(k) ? shown : canAdd(shown, k) ? [...shown, k] : [k]); choosePeriod(dailyPeriod(k)) }}>
+                <button type="button" className={`trends-chip${hourly ? '' : ' is-daily'}`} data-tone={m.tone}
+                  onClick={() => {
+                    setKeys(canAdd(shown, k) ? [...shown, k] : [k])
+                    if (hourly) setAdding(false)
+                    else choosePeriod(dailyPeriod(k))
+                  }}>
                   <span className="trends-chip-dot" aria-hidden="true" />{m.label}
                 </button>
               </li>
@@ -418,9 +426,9 @@ export default function TrendsViewer({
               <LineIcon name="chevron" size={18} />
             </button>
           </div>
-          <DayChart date={day} view={dayReadings ? dayReadings(day) : { readings: [], note: null, nowHour: null }} />
-          <DayDetail data={data} keys={shown.length ? shown : ['wellbeing']} date={day} titled={false} readEntries={readDayEntries}
-            extra={dayExtra?.(day, shown.length ? shown : ['wellbeing']) ?? null} />
+          {dayHourly && <DayChart date={day} view={dayReadings ? dayReadings(day) : { readings: [], note: null, nowHour: null }} />}
+          <DayDetail data={data} keys={dayKeys} date={day} titled={false} readEntries={readDayEntries}
+            extra={dayExtra?.(day, dayKeys) ?? null} />
         </>
       ) : shown.length ? (
         <>

@@ -399,7 +399,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **POLISH-SIM-106 — FODMAP de l'oignon cuit** (19/11 06:30 : « Oignon, cuit », oignon blanc ou jaune et rouge sautés/poêlés : fructanes de l’oignon cru ramenés par les glucides Ciqual cuit / cru, fourchette Ferjančič–Liljebo gardée, confiance « analogie » ; oignon nouveau non repris, autre légume ; test) : `fodmapMeasurements.json` n'a que l'oignon cru (fructanes) ;
       l'oignon cuit n'est marqué que « fructose en excès ». Ajouter l'analogie documentée (confiance basse) pour
       l'oignon cuit ou poêlé, comme pour l'ail.
-    - [ ] **POLISH-SIM-107 — Tendances** : en passant de Semaine à Jour, la mesure choisie (Sommeil) redevient
+    - [ ] **POLISH-SIM-107 — Tendances** (19/11 07:30 : **1re moitié faite** : la mesure choisie reste en Jour et au retour en Semaine ; courbe heure par heure seulement avec le bien-être ; « + » en Jour propose le bien-être sans quitter Jour. Reste : FC, phases du sommeil, SpO2 dans « + » = nouvelles courbes, proposition au propriétaire en mode polish) : en passant de Semaine à Jour, la mesure choisie (Sommeil) redevient
       Bien-être ; le « + » ne propose pas FC, phases du sommeil, SpO2 ni digestion (à vérifier : données reçues ?).
     - [ ] **POLISH-SIM-108 — Petits** : « Encore 4 choses aujourd'hui » ne baisse pas après un repas noté ; essai : les
       jours « comme d'habitude » marqués « pas tenu » ; export CSV demandé (persona Tout mesurer : proposition, pas
