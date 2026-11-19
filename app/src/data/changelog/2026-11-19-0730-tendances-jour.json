@@ -1,6 +1,6 @@
 {
   "date": "2026-11-19",
-  "kind": "correction",
+  "kind": "correctif",
   "title": "Tendances : votre mesure reste en vue Jour",
   "items": [
     "Dans Tendances, la mesure choisie (le sommeil par exemple) reste affichée quand vous passez de Semaine à Jour, puis au retour.",
