@@ -443,7 +443,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **POLISH-SIM-113 — Nouveautés, phrase d'en-tête** (FAIT 19/11 12:30 : « la note importante d’abord, puis de la plus récente à la plus ancienne » seulement quand elle est en tête ; test `WhatsNew.test.jsx`) (J14) : la note à la une passe en tête (POLISH-SIM-101,
       voulu) mais la page dit encore « de la plus récente à la plus ancienne ». Adapter la phrase quand la note à la
       une est en tête.
-    - [ ] **POLISH-SIM-114 — Rappels introuvables** (J14, à vérifier sur Android) : les réglages des rappels sont
+    - [x] **POLISH-SIM-114 — Rappels introuvables** (FAIT 19/11 14:30 : bloc « Rappels » de Paramètres, `RemindersSetting.jsx` : note du soir, bilan digestif (sorti de « Vos objectifs »), portion du jour ; mêmes interrupteurs et préférences, caché là où rien ne se programme ; 4 tests) (J14, à vérifier sur Android) : les réglages des rappels sont
       répartis (note du soir dans la carte du visage, bilan du soir, essai, FODMAP) ; la persona pressée ne trouve
       rien pour « être peu dérangée ». Une ligne « Rappels » dans Réglages qui les regroupe (interrupteurs existants,
       aucun nouveau rappel).

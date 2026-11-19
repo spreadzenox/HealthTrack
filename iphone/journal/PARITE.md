@@ -132,6 +132,7 @@ Une ligne par livraison Android reportée ici (date, PR `[Auto]`, ce que ça cha
 
 | Date | PR Android | Ce que ça demande côté iOS | État |
 |---|---|---|---|
+| 19/11 14:30 | PR POLISH-SIM-114 (Paramètres › Rappels) | Code partagé (`RemindersSetting.jsx`, `Settings.jsx`) : aucun correctif ne touche ces fichiers ; chaque ligne se cache quand le plugin manque sur iPhone (correctif 10) ; le texte « notifications refusées » lit `FEATURES.iosStore` dans le code partagé (Réglages › Notifications sur iPhone), sans nouveau correctif. | ⏳ en PR |
 | 17/11 22:30 | PR MONDE-4b (nouvelle de l'îlot dite une fois) | Code partagé (`app/src/companion/`, WebView) : rien à corriger côté iOS, `iphone/patches/` ne touche pas `companion/`. | ⏳ en PR #1092, Actions bloquées (P50) |
 | 17/11 21:30 | PR MONDE-4b (petit arbre) | Code partagé (`app/src/companion/scene/gifts.js`, WebView) : rien à corriger côté iOS, `iphone/patches/` ne touche pas `companion/`. | ⏳ en PR (empilée sur MONDE-4a), Actions bloquées (P50) |
 | 17/11 18:30 | PR MONDE-4a (îlot voisin, mare) | Code partagé (`app/src/companion/scene/`, WebView) : rien à corriger côté iOS, `iphone/patches/` ne touche pas `companion/`. Le simulateur sort l'Accueil en image fixe : l'îlot voisin et la mare se verront sur un vrai iPhone. | ⏳ en PR, merge après la build simulateur et les captures de l'Accueil |

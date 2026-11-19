@@ -13,7 +13,7 @@ import { DISTRIBUTION, FEATURES, STORE, storeOfPurchase } from '../config/distri
 import { feedbackLink } from '../config/feedback'
 import { OBJECTIVES, goalsOf, loadOnboarding, migrateGoals, saveOnboarding, wantsGut } from '../settings/onboarding'
 import { syncGutEvening } from '../services/gutEvening'
-import GutEveningReminder from '../components/GutEveningReminder'
+import RemindersSetting from '../components/RemindersSetting'
 import AiCreditsHint from '../components/AiCreditsHint'
 import { describeEntitlement, manageSubscriptionUrl, tierName } from '../services/entitlement'
 import { PREMIUM_AI_DAILY, GOLD_AI_DAILY } from '../config/premiumBenefits'
@@ -254,9 +254,11 @@ export default function Settings() {
           Avec «&nbsp;Confort digestif&nbsp;», {APP_NAME} vous propose de noter votre digestion. Vos notes sont gardées,
           quel que soit votre choix.
         </p>
-        {gutGoal && <GutEveningReminder variant="setting" />}
         <FormerGoalsNote />
       </div>
+
+      {/* POLISH-SIM-114 : les rappels existants, regroupés */}
+      <RemindersSetting gutGoal={gutGoal} />
 
       {/* Refonte étape 4 : ce que la personne note par oui ou non dans Ma journée. */}
       <HabitsSetting />

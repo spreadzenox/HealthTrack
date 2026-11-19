@@ -396,6 +396,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **19/11 14:30** — **POLISH-SIM-114** (objectif du 22/11) : Paramètres › Rappels regroupe la note de bien-être du soir, le bilan digestif du soir et la portion du jour d'une réintroduction (interrupteurs existants, aucun nouveau rappel).
 - **19/11 13:30** — **POLISH-SIM-110** (objectif du 22/11) : repas décrit à l'IA, tous ses aliments retirés → son nom non retouché s'efface et la description revient pour relancer ; un nom tapé reste.
 - **19/11 12:30** — **POLISH-SIM-111 à 113** (objectif du 22/11) : un seul sens pour « analyses » (Accueil et cérémonie du 7e jour : « premiers résultats », comme Objectifs) ; « Refaire un repas » au lieu de « Repas habituels » ; en-tête de Nouveautés fidèle à l'ordre quand la note à la une passe devant.
 - **19/11 11:30** — **POLISH-SIM-100** (objectif du 22/11) : Réglages › Paramètres › Vos objectifs dit où sont passés les anciens « Mon sport » (famille Activité d'Objectifs) et « Mon cycle » (Ma journée › Règles ; Confort digestif le remplace), seulement pour qui les avait choisis.
