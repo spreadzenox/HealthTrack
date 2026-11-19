@@ -39,6 +39,7 @@ import { actSections, reintroLine } from '../services/act'
 import { FODMAP_CHALLENGE_TYPE } from '../services/fodmapChallenge'
 import LineIcon from '../components/LineIcon'
 import { listEntries } from '../storage/localHealthStorage'
+import { TRIAL_TYPE, homeTrial } from '../services/trials'
 import { scoreToChoice } from '../services/mood/wellbeingScale'
 import { GUT_LEVELS, GUT_TYPE } from '../services/today'
 import { localDateKey } from '../services/analysisEngine'
@@ -119,6 +120,22 @@ function ReintroLink({ line }) {
     </Link>
   )
 }
+
+/** POLISH-SIM-120 : l'essai en cours de cet objectif ; sa page allume Objectifs, on le retrouve donc ici. */
+function TrialLink({ trial }) {
+  if (!trial) return null
+  return (
+    <Link to={trial.to} className="today-card act-card reco-trial" data-testid="reco-trial">
+      <span className="act-card-body">
+        <span className="act-card-title">Essai en cours : {trial.title}</span>
+        <span className="act-card-detail">{trial.detail.replace(/^Essai · /, '')}</span>
+      </span>
+      <LineIcon name="chevron" size={20} className="act-chevron" />
+    </Link>
+  )
+}
+
+const readTrialRows = () => listEntries({ type: TRIAL_TYPE, limit: Infinity })
 
 /**
  * POLISH-SIM-116 : deux paliers, les mêmes que l'Accueil et Objectifs. Avant le premier score (7e jour noté pour le
@@ -441,7 +458,7 @@ function HowItWorks() {
   )
 }
 
-export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults'), readGut = readGutNotes, readWellbeing = readWellbeingToday, readReintro = readReintroData }) {
+export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults'), readGut = readGutNotes, readWellbeing = readWellbeingToday, readReintro = readReintroData, readTrials = readTrialRows }) {
   const outcome = view === 'gut' ? 'digestion' : 'wellbeing'
   const [results, setResults] = useState(() => peekAnalysis('analysisResults').result ?? null)
   const [error, setError] = useState(null)
@@ -454,6 +471,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const [gutToday, setGutToday] = useState([])
   const [wbToday, setWbToday] = useState([])
   const [reintro, setReintro] = useState(null)
+  const [trial, setTrial] = useState(null)
   const { family } = useParams()
   const base = outcome === 'digestion' ? '/recommendations/ventre' : '/recommendations/bien-etre'
 
@@ -501,6 +519,17 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
     }
   }, [outcome, readReintro, revision])
 
+  useEffect(() => {
+    let alive = true
+    Promise.resolve()
+      .then(readTrials)
+      .then((rows) => alive && setTrial(homeTrial(rows, new Date(), { outcome })))
+      .catch(() => alive && setTrial(null))
+    return () => {
+      alive = false
+    }
+  }, [outcome, readTrials, revision])
+
   const v = results ? resultsView(results.outcomes?.[outcome]) : { state: 'loading' }
   // Version Play sans abonnement (hors période de lancement) : les pistes restent floues, comme avant
   const locked = FEATURES.billing && !ent.premium
@@ -540,6 +569,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}
       {outcome === 'wellbeing' && noted != null && v.state !== 'locked' && <p className="reco-noted" role="status">Noté : <span className="mono">{noted}/5</span></p>}
+      {!isExampleMode() && <TrialLink trial={trial} />}
       {v.state === 'loading' && !error && (
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul des analyses…</p></div>
       )}

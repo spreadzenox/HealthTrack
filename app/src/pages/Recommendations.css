@@ -964,3 +964,8 @@
 .reco-reintro {
   margin-top: 14px;
 }
+
+/* POLISH-SIM-120 : l'essai en cours de l'objectif, sous le titre */
+.reco-page .reco-trial {
+  margin-bottom: 20px;
+}

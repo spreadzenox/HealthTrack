@@ -204,10 +204,14 @@ export function pilouSays(status, { started = false } = {}) {
 /**
  * UPG-1 : l'essai en cours, pour la carte Agir de l'Accueil (Agir n'a plus d'onglet depuis la refonte). `rows` : les
  * entrées « trial » ; seule la date compte (la tenue n'y figure pas). Le plus avancé s'il y en a plusieurs ; null sinon.
+ * `outcome` : ne garder que les essais de cet objectif (page « Votre bien-être » ou « Votre confort digestif »).
  */
-export function homeTrial(rows, now = new Date()) {
+export function homeTrial(rows, now = new Date(), { outcome = null } = {}) {
+  // POLISH-SIM-120 : sous un objectif, ses seuls essais (un essai sans objectif noté compte pour le bien-être)
+  const ofOutcome = (e) => !outcome || (e.payload.factor?.outcome === 'digestion' ? 'digestion' : 'wellbeing') === outcome
   const live = (rows ?? [])
     .filter((e) => e?.type === TRIAL_TYPE && Array.isArray(e.payload?.schedule) && e.payload.schedule.length && !e.payload.removedAt && !e.payload.kept)
+    .filter(ofOutcome)
     .map((e) => ({ e, s: trialStatus(e.payload, { now }) }))
     .filter(({ s }) => !s.done && s.todayDay)
     .sort((a, b) => b.s.dayIndex - a.s.dayIndex)

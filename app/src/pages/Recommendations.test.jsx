@@ -4,6 +4,7 @@ import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Recommendations from './Recommendations'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
 import { startChallenge, defaultPlan } from '../services/fodmapChallenge'
+import { createTrial } from '../services/trials'
 
 const f = (key, label, effect, { theme = 'sleep', actionable = true, net = true, horizon = 'short' } = {}) => ({
   key, label, theme, actionable, outcome: 'wellbeing', horizon, effect, low: effect - 0.15, high: effect + 0.15, net,
@@ -360,3 +361,30 @@ describe('REFONTE-6e : la réintroduction guidée sous Confort digestif', () => 
   })
 })
 
+
+describe('POLISH-SIM-120 : l’essai en cours se retrouve sous son objectif', () => {
+  beforeEach(() => localStorage.clear())
+  const sleepFactor = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30 } }
+  const trialRow = (id, outcome) => {
+    const payload = createTrial({ ...sleepFactor, outcome }, { now: new Date(Date.now() - 2 * 86_400_000) })
+    return { id, type: 'trial', at: payload.startedAt, payload }
+  }
+
+  it('bien-être : une carte « Essai en cours » mène à la page de l’essai', async () => {
+    renderPage({ readTrials: async () => [trialRow(7, 'wellbeing')] }, readyResults)
+    const link = await screen.findByTestId('reco-trial')
+    expect(link).toHaveAttribute('href', '/agir/essai/7')
+    expect(link).toHaveTextContent('Essai en cours')
+    expect(link).toHaveTextContent('Dormir au moins 7 h 30')
+    expect(link).toHaveTextContent(/^Essai en cours : Dormir au moins 7 h 30jour 3 sur 10 · aujourd’hui, jour (avec|sans)$/)
+  })
+
+  it('un essai du bien-être n’apparaît pas sous le confort digestif ; sans essai ni lecture, rien', async () => {
+    renderPage({ view: 'gut', readReintro: async () => ({ challenges: [], gut: [] }), readTrials: async () => [trialRow(7, 'wellbeing')] }, readyResults)
+    await screen.findByTestId('reco-countdown-digestion')
+    expect(screen.queryByTestId('reco-trial')).toBeNull()
+    renderPage({ readTrials: async () => { throw new Error('x') } }, readyResults)
+    await screen.findByText('Par famille')
+    expect(screen.queryByTestId('reco-trial')).toBeNull()
+  })
+})

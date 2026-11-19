@@ -137,6 +137,7 @@ corrélation ≠ causalité) et D6 (science personnelle, normes — FODMAP compr
 
 ## 2. Jalons (ordre de livraison conseillé) et état
 
+> 20/11 00:30 : POLISH-SIM-120 fait : l'essai en cours se retrouve en haut de « Votre bien-être » ou « Votre confort digestif » (carte vers sa page).
 > 19/11 23:30 : POLISH-SIM-118 fait : une pesée tous les 2 ou 3 jours suffit pour choisir « Poids » en Semaine dans Tendances (3 pesées sur le mois).
 > 19/11 22:30 : POLISH-SIM-117 fait : sans caméra, la note de bien-être apparaît dans Tendances › Jour (losange à son heure).
 > 19/11 21:30 : POLISH-SIM-116 fait : un seul délai pour le bien-être (score au 7e jour noté, pistes au 14e) sur l'Accueil, Objectifs et la page de l'objectif.
