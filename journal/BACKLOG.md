@@ -75,7 +75,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   l'Accueil d'une installation vide est court et montre « Agir » dès le 1er jour (Pilou et les bulles : étapes 8 et
   10) ; ~~« Vos Analyses » dans trois cartes de Sources ; le titre « Vos données » de
   Réglages › Sauvegarde~~ (faits le 18/11 22:30, #1109) ; services de notification natifs non lus (aucune route
-  trouvée par recherche de texte) ; `/ma-journee` absente des captures de la fiche Play et du balayage natif.
+  trouvée par recherche de texte) ; ~~`/ma-journee` absente des captures de la fiche Play~~ (fait le 19/11 01:30 : 7 captures dans l'ordre de la barre, horloge à 14:00) ; `/ma-journee` absente du balayage natif ; captures App Store à refaire de même.
 - [x] **REFONTE-3 — Ma journée** (15/11 05:35, Android : #1001 mergée à 06:23, v1077 ; **iPhone : PR de suivi ouverte, à finir**, 51 correctifs appliqués à blanc) : la
   checklist en tête de Ma journée (`DayChecklist.jsx`, `services/dayChecklist.js`) : Repas en trois cercles (Matin
   avant 11 h, Midi avant 16 h, Soir ; un cercle vide ouvre l'appareil photo), Bien-être (« Noter »), « Votre digestion
