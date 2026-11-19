@@ -44,7 +44,9 @@ const CALLS = [
   ['WatchVault', 'status'],
   ['AppManager', 'installedPackages'],
 ]
-const ROUTES = ['/', '/connectors', '/journal', '/tendances', '/recommendations', '/montre', '/settings', '/premium']
+// Dans l'ordre de la barre de la refonte (Accueil, Ma journée, Objectifs, Données), puis Sources, Montre, Réglages et Premium.
+// « /journal » n'est plus qu'une redirection vers Tendances › Jour depuis REFONTE-7.
+const ROUTES = ['/', '/ma-journee', '/recommendations', '/tendances', '/connectors', '/montre', '/settings', '/premium']
 
 const adb = (...args) => execFileSync('adb', args, { encoding: 'utf8', maxBuffer: 64 << 20 }).replace(/\r/g, '')
 const shell = (cmd) => {

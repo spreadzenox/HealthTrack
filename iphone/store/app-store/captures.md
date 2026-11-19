@@ -32,19 +32,26 @@ une à une (celles du 1/11 n'avaient pas les onglets d'Analyses ni ceux du Journ
 propriétaire) ; `store-push.yml` avec « captures » dès que c'est réglé. Anciennes captures gardées
 sur la branche `captures/store-0111` (commit `b2245af`).
 
-Envoyées par l'API le 1/11, à la place de celles du 31/10. Dans l'ordre d'affichage ; les trois premières sont
-celles qu'on voit sans faire défiler :
+**Sélection de la refonte (19/11), à capturer de jour puis à regarder avant tout envoi.** Les captures du 6/11 montrent
+Analyses et le Journal jour par jour, qui n'existent plus : elles ne peuvent pas accompagner la soumission de la refonte
+(PI2). Même ordre que la fiche Play (barre Accueil, Ma journée, Objectifs, Données). Lancer `ios-build.yml` sur `main`
+avec `devices: iPhone 17 Pro Max` **entre 9:00 et 17:00 (heure de Paris)** : le simulateur suit l'horloge du runner, et
+la nuit Pilou dort sur une île nocturne. Tant que cette série n'est pas sur `captures/store` et regardée, ne pas lancer
+`store-push.yml` avec « captures » (l'ancienne série a encore un `demo-clair-accueil.png` d'avant la refonte).
 
 | # | Fichier (`captures/store`) | Ce qu'elle montre |
 |---|---|---|
-| 1 | `iphone-17-pro-max-demo-clair-accueil.png` | « Votre journée » : bien-être, sommeil, VFC, pas, la carte « Votre ventre », « Photo du repas » et « + 1 cigarette » |
-| 2 | `iphone-17-pro-max-demo-clair-recommendations.png` | « Vos analyses », onglet Bien-être : « des liens repérés dans vos données, à vérifier avant d'y croire », pistes « Nuits plus longues → meilleur bien-être » (piste solide) et « Plus de pas » (à confirmer) |
-| 3 | `iphone-17-pro-max-demo-clair-food.png` | Journal, onglet Repas : « Photo du repas » en grand bouton, « Galerie » et « Décrire », repas habituels, derniers repas avec leurs calories |
-| 4 | `iphone-17-pro-max-demo-clair-reintroduction.png` | Analyses, onglet FODMAP : réintroduction guidée, groupe par groupe |
-| 5 | `iphone-17-pro-max-demo-clair-tendances.png` | Analyses, onglet Tendances : votre forme face à votre propre norme (FC au repos, VFC, horaires de sommeil) |
-| 6 | `iphone-17-pro-max-demo-clair-journal.png` | Journal, onglet Jours : vos derniers jours, mesure par mesure, et la forme des selles estimée par photo |
-| 7 | `iphone-17-pro-max-demo-clair-connectors.png` | Sources : Apple Watch par l'app Santé, lecture du visage, temps d'écran, « Elles restent sur ce téléphone » |
+| 1 | `iphone-17-pro-max-demo-clair-accueil.png` | Accueil : Pilou sur son île, les bulles Repas et Bien-être du jour |
+| 2 | `iphone-17-pro-max-demo-clair-ma-journee.png` | Ma journée : repas en trois cercles, bien-être, habitudes, bandeau d'ajout |
+| 3 | `iphone-17-pro-max-demo-clair-recommendations.png` | Objectifs : ce que vous suivez et les pistes à vérifier |
+| 4 | `iphone-17-pro-max-demo-clair-tendances.png` | Données › Tendances : la semaine face à votre propre norme |
+| 5 | `iphone-17-pro-max-demo-clair-agir.png` | Agir : un essai personnel pour vérifier une piste |
+| 6 | `iphone-17-pro-max-demo-clair-food.png` | Repas : « Photo du repas », repas habituels, derniers repas |
+| 7 | `iphone-17-pro-max-demo-clair-reintroduction.png` | Réintroduction guidée, groupe par groupe |
 | 8 | `iphone-17-pro-max-demo-sombre-accueil.png` | L'accueil en mode sombre |
+
+Série précédente (6/11, envoyée par l'API le 1/11 puis le 6/11 ; à remplacer) : Accueil « Votre journée », Analyses
+(Bien-être, FODMAP, Tendances), Journal (Repas, Jours), Sources, Accueil sombre.
 
 Écartées :
 - les captures de notification (`note-du-soir`, `notification-bilan`), où la bannière n'apparaît pas à cette taille ;
@@ -75,13 +82,15 @@ Série du 2/11 (`9d7db16`, Android v717, build 717.217), regardée écran par é
 - l'accueil (clair et sombre) dit encore « sur le téléphone » ; la page Sources (« Elles restent sur ce téléphone »,
   temps d'écran) est remplacée par **Nutrition** (choix « B » du propriétaire, 2/11).
 
+**Sélection de la refonte (19/11), à capturer** (`devices: iPad Pro 13-inch (M5)`, de jour, mêmes règles que l'iPhone ; la série du 6/11 ci-dessus est à remplacer) :
+
 | # | Fichier (`captures/store-ipad`) | Ce qu'elle montre |
 |---|---|---|
-| 1 | `ipad-pro-13-inch-(m5)-demo-clair-accueil.png` | « Votre journée » |
-| 2 | `ipad-pro-13-inch-(m5)-demo-clair-recommendations.png` | « Vos analyses », onglet Bien-être : des pistes à vérifier |
-| 3 | `ipad-pro-13-inch-(m5)-demo-clair-food.png` | Journal, onglet Repas : « Photo du repas », repas habituels, derniers repas |
-| 4 | `ipad-pro-13-inch-(m5)-demo-clair-reintroduction.png` | Analyses, onglet FODMAP : réintroduction guidée |
-| 5 | `ipad-pro-13-inch-(m5)-demo-clair-tendances.png` | Analyses, onglet Tendances : votre forme face à votre propre norme |
-| 6 | `ipad-pro-13-inch-(m5)-demo-clair-journal.png` | Journal, onglet Jours : vos derniers jours |
-| 7 | `ipad-pro-13-inch-(m5)-demo-clair-nutrition.png` | Journal, onglet Nutrition : vos apports moyens face aux repères (protéines, fibres, vitamines, minéraux) |
+| 1 | `ipad-pro-13-inch-(m5)-demo-clair-accueil.png` | Accueil : Pilou sur son île |
+| 2 | `ipad-pro-13-inch-(m5)-demo-clair-ma-journee.png` | Ma journée : repas, bien-être, habitudes |
+| 3 | `ipad-pro-13-inch-(m5)-demo-clair-recommendations.png` | Objectifs : ce que vous suivez et les pistes à vérifier |
+| 4 | `ipad-pro-13-inch-(m5)-demo-clair-tendances.png` | Données › Tendances : la semaine face à votre propre norme |
+| 5 | `ipad-pro-13-inch-(m5)-demo-clair-agir.png` | Agir : un essai personnel |
+| 6 | `ipad-pro-13-inch-(m5)-demo-clair-food.png` | Repas : « Photo du repas », repas habituels |
+| 7 | `ipad-pro-13-inch-(m5)-demo-clair-nutrition.png` | Nutrition : vos apports moyens face aux repères (choix « B » du propriétaire, 2/11, gardé) |
 | 8 | `ipad-pro-13-inch-(m5)-demo-sombre-accueil.png` | L'accueil en mode sombre |
