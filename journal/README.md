@@ -18,6 +18,8 @@
 
 **19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge). **02:30 : fiche App Store** : la liste des captures suit la refonte (les actuelles montrent encore Analyses et le Journal) ; série à prendre de jour par la CI, regardée, puis envoyée avant « 👉 PI2 prête ».
 
+**19/11 11:30 : Réglages, vos anciens objectifs** : si vous aviez choisi « Mon sport » ou « Mon cycle », Paramètres › Vos objectifs dit maintenant où les retrouver (séances dans la famille Activité d'Objectifs, règles dans Ma journée › Règles) ; Confort digestif reste coché, c'est voulu (POLISH-SIM-100).
+
 **19/11 10:30 : premier lancement, l'écran « Ce que Halcya suit pour vous »** ne liste plus que ce qui arrivera vraiment : la météo et le temps d'écran seulement si vous les avez allumés (sinon « Activables dans Réglages › Sources »), et VFC, respiration et température de la peau sous « Selon votre montre » (beaucoup de montres ne les envoient pas) (POLISH-SIM-105).
 
 **19/11 09:30 : la jauge en haut de l'Accueil s'appelle « Humeur de Pilou »** (avec le nom choisi) : elle monte quand vous notez, « Oui » comme « Non », et ne se lit plus comme votre propre humeur (POLISH-SIM-109).
@@ -147,6 +149,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 19/11 11:30 — [Réglages : anciens objectifs](runs/2026-11-19-1130-anciens-objectifs.md) | 🛠️ | **POLISH-SIM-100** : sous « Vos objectifs », une ligne par ancien objectif retiré (Sport, Mon cycle) pour dire où il est passé ; rien pour une installation neuve. Test d'abord, capture relue. Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 10:30 — [Premier lancement : ce qui est vraiment suivi](runs/2026-11-19-1030-accueil-suivi.md) | 🛠️ | **POLISH-SIM-105** : au temps 3 de l'accueil, Météo et Temps d'écran seulement s'ils sont allumés, VFC, respiration et température « selon votre montre ». Test d'abord, captures avec et sans montre. Rien à faire de votre côté |
 | 19/11 09:30 — [Accueil : « Humeur de Pilou »](runs/2026-11-19-0930-humeur-pilou.md) | 🛠️ | **POLISH-SIM-109** : la jauge d'en haut de l'Accueil s'appelle « Humeur de » + le nom du compagnon (elle disait « De bonne humeur » après une note de 2/5). Test d'abord, captures claire et sombre. Rien à faire de votre côté |
 | 19/11 08:30 — [Personas, spécs, maquette des courbes](runs/2026-11-19-0830-personas-upg3.md) | 💡 | **UPG-3b** : 2 personas (Prendre soin J1, Stressé J14 mise à jour), rien de perdu, POLISH-SIM-109 à 115 ; spécs de 100 et 105 prêtes ; maquette « trois courbes de plus » (reste de 107) proposée. |

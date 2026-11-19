@@ -396,6 +396,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **19/11 11:30** — **POLISH-SIM-100** (objectif du 22/11) : Réglages › Paramètres › Vos objectifs dit où sont passés les anciens « Mon sport » (famille Activité d'Objectifs) et « Mon cycle » (Ma journée › Règles ; Confort digestif le remplace), seulement pour qui les avait choisis.
 - **19/11 09:30** — **POLISH-SIM-109** (objectif du 22/11) : la jauge de l'Accueil s'appelle « Humeur de » + le nom du compagnon ; elle ne se lit plus comme l'humeur de la personne.
 - **19/11 07:30** — **POLISH-SIM-107** (objectif du 22/11) : Tendances garde la mesure choisie en passant de Semaine à Jour et au retour ; courbe heure par heure seulement avec le bien-être, que « + » propose en Jour. FC, phases du sommeil et SpO2 dans « + » : nouvelles courbes, à proposer.
 - **19/11 06:30** — **POLISH-SIM-104 et 106** (objectif du 22/11) : famille sans lien net « Pas assez net pour l’instant » (les mots de la légende hachurée) ; oignon cuit ou poêlé riche en fructanes (analogie de l’oignon cru, confiance basse).

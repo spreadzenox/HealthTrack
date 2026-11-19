@@ -381,7 +381,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **POLISH-SIM-99 — Visite guidée et Ma journée** (19/11 00:30 : étape « Ma journée » sur la checklist réelle, juste après l'Accueil ; lien de piste « Vérifier par un essai » ; étape Agir « Ouvert depuis l'Accueil » ; le retour « ← Agir » de l'essai reste, la page s'appelle Agir) (prioritaire pour le 22/11, point 2) : la visite ne montre pas
       l'onglet « Ma journée » (là où l'on note) et dit « Essayer dans Agir » alors qu'Agir n'est plus un onglet ; le lien
       retour de l'essai dit « ← Agir ». Ajouter l'étape Ma journée, dire « depuis l'Accueil ».
-    - [ ] **POLISH-SIM-100 — Objectifs migrés expliqués** (point 1) : après la conversion `sport,cycle`, Paramètres
+    - [x] **POLISH-SIM-100 — Objectifs migrés expliqués** (FAIT 19/11 11:30 : `FormerGoalsNote` dans `Settings.jsx`, une ligne par ancien objectif retiré lu dans `goalsBefore` (par `migrateGoals`, sans rien écrire, migration du démarrage faite ou non) ; Confort digestif reste coché, voulu ; 3 tests ; état `--onboarding=former` de l'outil de captures) (point 1) : après la conversion `sport,cycle`, Paramètres
       montre « Confort digestif » coché sans que la personne l'ait choisi, et rien ne dit où sont passés Sport (famille
       Activité) et Cycle (bouton « Règles »). Une note unique après la mise à jour ; vérifier que cocher Confort digestif
       est voulu par la migration 5a (cycle = contexte de la digestion), sinon ne pas le cocher.

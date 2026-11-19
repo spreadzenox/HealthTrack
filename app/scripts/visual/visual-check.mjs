@@ -807,6 +807,9 @@ async function main() {
       // Accueil fini il y a un mois, avec l'objectif digestion : les deux cartes d'Objectifs (REFONTE-6a,
       // --routes=/recommendations --onboarding=gut)
       gut: { flow: 3, done: true, endedBy: 'completed', doneAt: new Date(Date.now() - 30 * 86_400_000).toISOString(), goals: ['wellbeing', 'gut'], goalsVersion: 2, tour: 'done' },
+      // Mise à jour d'un ancien « Mon sport » + « Mon cycle » (étape 5a) : Réglages dit où ils sont passés
+      // (POLISH-SIM-100, --routes=/settings --onboarding=former)
+      former: { flow: 3, done: true, endedBy: 'completed', doneAt: new Date(Date.now() - 45 * 86_400_000).toISOString(), goals: ['wellbeing', 'gut', 'cycle'], goalsBefore: ['sport', 'cycle'], goalsVersion: 2, tour: 'done' },
     }
     if (args.onboarding === 'unlock-later') {
       // « Plus tard » à la lecture au déverrouillage il y a 3 jours (POL-PLAY-84) : rappel discret dans la carte
