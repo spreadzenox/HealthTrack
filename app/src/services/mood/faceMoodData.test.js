@@ -8,6 +8,16 @@ describe('loadFaceMoodEntries', () => {
     expect(list).toHaveBeenCalledTimes(1)
   })
 
+  it('POLISH-SIM-117 : notesAlways lit les notes même sans lecture du visage (Tendances › Jour)', async () => {
+    const note = { type: 'wellbeing', at: '2026-11-19T19:33:00.000Z', payload: { score: 2 } }
+    const list = vi.fn(async (opts) => (opts.type === 'wellbeing' ? [note] : []))
+    const out = await loadFaceMoodEntries({ list, notesAlways: true })
+    expect(out.bursts).toEqual([])
+    expect(out.notes).toEqual([note])
+    expect(list.mock.calls.map((c) => c[0].type)).toEqual(['face_burst', 'wellbeing', 'gut'])
+    expect(list.mock.calls[1][0].since).toBeUndefined()
+  })
+
   it('reads notes only from the day of the first face reading', async () => {
     const bursts = [{ type: 'face_burst', at: '2026-10-18T09:00:00.000Z' }, { type: 'face_burst', at: '2026-10-10T15:00:00.000Z' }]
     const list = vi.fn(async (opts) => (opts.type === 'face_burst' ? bursts : [{ type: opts.type }]))

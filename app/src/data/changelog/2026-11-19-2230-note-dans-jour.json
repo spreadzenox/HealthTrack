@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-19",
+  "kind": "correctif",
+  "title": "Tendances : votre note dans la vue Jour",
+  "items": [
+    "Sans lecture du visage, la vue Jour de Tendances place maintenant votre note de bien-être à son heure, au lieu de dire « Aucune lecture du visage ce jour-là »."
+  ]
+}

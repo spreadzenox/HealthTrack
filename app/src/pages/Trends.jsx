@@ -20,7 +20,8 @@ import { exampleEntries, isExampleMode } from '../storage/exampleMode'
 
 const readStates = () => getAnalysis('dayStates').catch(() => null)
 // Détail d'un jour (ORG-3c) : lectures du visage et notes, contributions du modèle d'Analyses (ORG-5, contrat)
-const readFace = () => loadFaceMoodEntries().then(({ bursts, notes }) => [...bursts, ...notes]).catch(() => [])
+// POLISH-SIM-117 : les notes aussi sans lecture du visage (la vue Jour place la note en losange)
+const readFace = () => loadFaceMoodEntries({ notesAlways: true }).then(({ bursts, notes }) => [...bursts, ...notes]).catch(() => [])
 const readChanges = () => getAnalysis('changes').catch(() => null)
 const readContributions = () => getAnalysis('analysisResults').then((r) => r?.contributions ?? null).catch(() => null)
 
