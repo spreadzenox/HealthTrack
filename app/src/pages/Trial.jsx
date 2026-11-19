@@ -159,7 +159,12 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
   )
   return (
     <section className="act-page trial-page" data-tone={THEME_TONE[t.factor.theme] ?? 'stone'}>
-      <p className="act-back"><Link to="/agir">← Agir</Link></p>
+      {/* POLISH-SIM-108 : l'essai est rangé sous Objectifs (onglet allumé) ; on revient à l'objectif qu'il suit */}
+      <p className="act-back">
+        <Link to={outcomeId === 'digestion' ? '/recommendations/ventre' : '/recommendations/bien-etre'}>
+          ← {outcomeId === 'digestion' ? 'Votre confort digestif' : 'Votre bien-être'}
+        </Link>
+      </p>
       <h1 className="page-title">{instruction(t, true)}</h1>
       {!s.done && (
         <article className="today-card trial-today">

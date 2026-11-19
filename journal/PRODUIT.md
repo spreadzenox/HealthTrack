@@ -396,6 +396,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **19/11 18:30** — **POLISH-SIM-108 (lien retour)** (objectif du 22/11) : la page d'un essai, rangée sous Objectifs, revient à « Votre bien-être » ou « Votre confort digestif » au lieu de « ← Agir ».
 - **19/11 17:30** — **POLISH-SIM-108 (essai)** (objectif du 22/11) : le calendrier d'un essai ne marque plus « tenu » ou « pas tenu » les jours « comme d'habitude » ; « Encore N choses » reste une pastille par ligne (spec), compter chaque repas serait une proposition.
 - **19/11 16:30** — **POLISH-SIM-105i** (objectif du 22/11) : l'accueil ne propose plus le temps d'écran quand le téléphone ne le donne pas (iPhone avant iOS 26.4, Android 8) ; correctif iPhone 55 fondu dans le code partagé.
 - **19/11 15:30** — **POLISH-SIM-115** (objectif du 22/11) : le temps 2 de l'accueil cite la balance et dit que le poids arrive par la même source, visible dans Tendances.
