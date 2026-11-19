@@ -14,10 +14,13 @@ import { gutCardMode } from '../settings/onboarding'
 import { isExampleMode } from '../storage/exampleMode'
 import { appLocale } from '../i18n/locale.js'
 import PilouGuide from '../companion/life/PilouGuide'
+import { GUT_PISTES_MIN_NOTE_DAYS } from '../services/today'
 
 const CARDS = {
   wellbeing: { title: 'Bien-être', tone: 'mint', to: '/recommendations/bien-etre', more: 'Ce qui va avec votre bien-être' },
-  digestion: { title: 'Confort digestif', tone: 'peach', to: '/recommendations/ventre', more: 'Ce qui va avec votre confort digestif', wait: 'La digestion demande plus de recul.' },
+  digestion: { title: 'Confort digestif', tone: 'peach', to: '/recommendations/ventre', more: 'Ce qui va avec votre confort digestif', 
+    // POLISH-SIM-102, UPG-7 : les deux paliers nommés, comme dans Ma journée (DigestBlock)
+    wait: `Pistes au ${GUT_PISTES_MIN_NOTE_DAYS}e jour noté.` },
 }
 const ARROW = { up: '↑', down: '↓', flat: '→' }
 // L'échelle affichée va de 1 à 5 (wellbeingScale) : une barre pleine vaut 5, la plus petite 1

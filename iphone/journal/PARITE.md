@@ -16,6 +16,8 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+19/11 04:30 : POLISH-SIM-102 et UPG-7 (deux paliers de la digestion nommés dans Ma journée et Objectifs) : code partagé, aucun correctif iPhone ne touche `DigestBlock.jsx` ni `Objectives.jsx`. 1173.1173 soumise à l'examen bêta. Parité inchangée : 70 %.
+
 19/11 03:30 : POLISH-SIM-101 et UPG-5 (note de la nouvelle navigation en tête de Nouveautés tant qu'elle n'est pas lue, ligne « Mon cycle ») : code partagé, `upstream.json` suit HEAD ; le correctif 33 (test de Nouveautés) s'applique toujours (`git apply --check`). Parité inchangée : 70 %.
 **Dernière version Android suivie** : v1040 (commit `b9db9de`, 14/11/2026), voir `upstream.json`. Livré par Android de
 v1037 à v1040 (14/11 07:35) : #962 (POLISH-SIM-77, détail d'une ligne « Riche en… » d'un repas) : code partagé, repris

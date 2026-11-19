@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { APP_NAME } from '../config/brand'
+import { FIRST_SCORE_DAY } from '../config/firstResults'
 import { readGutNotes } from '../services/gutNotes'
 import { GUT_TYPE, gutEveningCheck, gutLevelLabel, gutNotesProgress, isGutDayNote } from '../services/today'
 import { localDateKey } from '../services/analysisEngine'
@@ -140,6 +141,12 @@ export default function DigestBlock({ onNote, read = readGutNotes, summary: summ
           </div>
           <p className="digest-count">
             <span className="mono">{bar.days}/{bar.target}</span> jours notés, pas forcément d’affilée
+          </p>
+          {/* POLISH-SIM-102, UPG-7 : les deux paliers nommés, comme dans Objectifs */}
+          <p className="digest-steps">
+            {bar.days < FIRST_SCORE_DAY.digestion
+              ? `Premier score au ${FIRST_SCORE_DAY.digestion}e jour noté, pistes au ${bar.target}e.`
+              : `Votre score de confort est dans Objectifs. Pistes au ${bar.target}e jour noté.`}
           </p>
         </>
       )}
