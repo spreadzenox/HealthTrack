@@ -350,9 +350,9 @@ function WatchStep({ state, update, installed }) {
   const name = healthStoreName()
   return (
     <>
-      <h1 className="onb-title">Avez-vous une montre ou un bracelet ?</h1>
-      <p className="onb-lead">On la branche une seule fois.</p>
-      <div className="onb-face-modes" role="radiogroup" aria-label="Avez-vous une montre ou un bracelet ?">
+      <h1 className="onb-title">Avez-vous une montre, un bracelet ou une balance ?</h1>
+      <p className="onb-lead">On les branche une seule fois.</p>
+      <div className="onb-face-modes" role="radiogroup" aria-label="Avez-vous une montre, un bracelet ou une balance ?">
         {WATCH_CHOICES.map((c) => (
           <label key={c.id} className={`onb-face-mode${watch === c.id ? ' is-selected' : ''}`}>
             <input type="radio" name="watch" checked={watch === c.id} onChange={() => update({ watch: c.id })} />
@@ -364,6 +364,8 @@ function WatchStep({ state, update, installed }) {
         <>
           <HealthCard health={state.health} onHealth={(health) => update({ health })} />
           {huaweiFound && <HuaweiCard huawei={state.huawei} onHuawei={(huawei) => update({ huawei })} />}
+          {/* POLISH-SIM-115 : le poids d'une balance arrive par la même source et se voit dans Tendances */}
+          <p className="onb-quiet">Une balance connectée ? Votre poids arrive aussi par {name}, à voir dans Tendances.</p>
           <p className="onb-fine">Une seule fois. Ensuite, vos sources se gèrent dans Réglages › Sources.</p>
         </>
       )}

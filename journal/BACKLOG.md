@@ -447,7 +447,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       répartis (note du soir dans la carte du visage, bilan du soir, essai, FODMAP) ; la persona pressée ne trouve
       rien pour « être peu dérangée ». Une ligne « Rappels » dans Réglages qui les regroupe (interrupteurs existants,
       aucun nouveau rappel).
-    - [ ] **POLISH-SIM-115 — Balance et poids à l'accueil** (J1, téléphone + balance) : le temps 2 ne parle que de
+    - [x] **POLISH-SIM-115 — Balance et poids à l'accueil** (FAIT 19/11 15:30 : titre « Avez-vous une montre, un bracelet ou une balance ? », « On les branche une seule fois », à « Oui » : « Une balance connectée ? Votre poids arrive aussi par Health Connect, à voir dans Tendances. » (Santé sur iPhone) ; 2 tests) (J1, téléphone + balance) : le temps 2 ne parle que de
       « montre ou bracelet » ; rien ne dit où voir son poids. « Montre, bracelet ou balance ? » et une ligne « votre
       poids arrive de la balance » (le poids est déjà dans Tendances). Pas d'objectif « maigrir » (brief § 3.1 : cible
       inchangée).

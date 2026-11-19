@@ -69,7 +69,7 @@ describe('Accueil, temps 2 : les sources quand on a une montre', () => {
 
   it('la divulgation est au-dessus du bouton ; « Connecter Health Connect » demande l’accès d’un geste, puis l’import part', async () => {
     renderAt()
-    expect(screen.getByRole('heading', { name: 'Avez-vous une montre ou un bracelet ?' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Avez-vous une montre, un bracelet ou une balance ?' })).toBeInTheDocument()
     expect(screen.getByText(/Elle n’écrit rien et n’envoie rien/)).toBeInTheDocument()
     expect(btn('Continuer')).toBeEnabled()
     fireEvent.click(btn('Connecter Health Connect'))

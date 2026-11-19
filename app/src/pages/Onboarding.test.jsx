@@ -91,7 +91,7 @@ describe('Accueil en 4 temps (refonte étape 5b) : le parcours', () => {
     meetPilou()
     expect(screen.getByText('1 sur 4')).toBeInTheDocument()
     fireEvent.click(btn('Continuer'))
-    expect(heading('Avez-vous une montre ou un bracelet ?')).toBeInTheDocument()
+    expect(heading('Avez-vous une montre, un bracelet ou une balance ?')).toBeInTheDocument()
     expect(screen.getByText('2 sur 4')).toBeInTheDocument()
     fireEvent.click(btn('Continuer'))
     expect(heading('Ce que Halcya suit pour vous, sans rien faire')).toBeInTheDocument()
@@ -212,13 +212,13 @@ describe('Temps 1 : « Qu’est-ce qui vous amène ? »', () => {
   })
 })
 
-describe('Temps 2 : « Avez-vous une montre ou un bracelet ? » (sans Health Connect sur le téléphone)', () => {
+describe('Temps 2 : « Avez-vous une montre, un bracelet ou une balance ? » (sans Health Connect sur le téléphone)', () => {
   beforeEach(() => localStorage.clear())
 
   it('rien de choisi : ni carte de source, ni permission ; la météo reste proposée par son interrupteur', () => {
     at('watch')
     renderAt()
-    expect(screen.getByText('On la branche une seule fois.')).toBeInTheDocument()
+    expect(screen.getByText('On les branche une seule fois.')).toBeInTheDocument()
     expect(radio('Oui')).not.toBeChecked()
     expect(radio('Non, pas pour l’instant')).not.toBeChecked()
     expect(screen.queryByText(/Health Connect/)).toBeNull()
@@ -233,6 +233,15 @@ describe('Temps 2 : « Avez-vous une montre ou un bracelet ? » (sans Health Con
     expect(loadOnboarding().watch).toBe('yes')
     expect(await screen.findByText(/Health Connect n’est pas sur ce téléphone/)).toBeInTheDocument()
     expect(screen.getByText('Une seule fois. Ensuite, vos sources se gèrent dans Réglages › Sources.')).toBeInTheDocument()
+    expect(screen.getByText('Une balance connectée ? Votre poids arrive aussi par Health Connect, à voir dans Tendances.')).toBeInTheDocument()
+  })
+
+  it('la balance n’est citée qu’après « Oui » (POLISH-SIM-115)', () => {
+    at('watch')
+    renderAt()
+    expect(screen.queryByText(/Votre poids arrive/)).toBeNull()
+    fireEvent.click(radio('Non, pas pour l’instant'))
+    expect(screen.queryByText(/Votre poids arrive/)).toBeNull()
   })
 
   it('« Non, pas pour l’instant » : une ligne discrète, aucune carte', () => {
