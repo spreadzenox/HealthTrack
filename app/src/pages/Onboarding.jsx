@@ -20,7 +20,7 @@ import { FEATURES } from '../config/distribution'
 import Premium from './Premium'
 import { AHA_DAYS, summarizeImport } from '../services/firstImport'
 import {
-  AUTO_TILES,
+  autoTiles,
   DATA_LEAVES,
   IMPORT_PATIENCE_MS,
   TEMPS,
@@ -383,25 +383,38 @@ function WatchStep({ state, update, installed }) {
 
 /* ───────────────────────── Temps 3 : ce que Halcya suit seule ───────────────────────── */
 
-function AutoStep({ watch, children }) {
-  const tiles = AUTO_TILES.filter((t) => watch || !t.watch)
-  const later = AUTO_TILES.filter((t) => !watch && t.watch).map((t) => t.label.toLowerCase())
+const weatherOn = (weather) => weather === 'on' || (weather == null && getWeatherSettings().enabled)
+const screenOn = (screen) => screen === 'on' || (screen == null && getPhoneUsageSettings().enabled)
+
+function AutoStep({ watch, weather, screen, children }) {
+  const phoneUsage = isPhoneUsageAvailable()
+  const { tiles, maybe, off, later } = autoTiles({
+    watch,
+    on: { weather: weatherOn(weather), screen: phoneUsage && screenOn(screen) },
+    available: { screen: phoneUsage },
+  })
   return (
     <>
       <h1 className="onb-title">Ce que {APP_NAME} suit pour vous, sans rien faire</h1>
       <p className="onb-lead">Pour information : rien à valider.</p>
-      <ul className="onb-auto" aria-label="Suivi sans rien faire">
-        {tiles.map((t) => (
-          <li key={t.id} data-tone={t.tone}>
-            {t.label}
-          </li>
-        ))}
-      </ul>
-      <p className="onb-fine">
-        {watch
-          ? 'Rien à cocher : tout se fait en arrière-plan, grâce à votre montre et à votre téléphone.'
-          : 'Rien à cocher : tout se fait en arrière-plan, si vous l’avez activé à l’écran précédent.'}
-      </p>
+      {tiles.length > 0 && (
+        <ul className="onb-auto" aria-label="Suivi sans rien faire">
+          {tiles.map((t) => (
+            <li key={t.id} data-tone={t.tone}>
+              {t.label}
+            </li>
+          ))}
+        </ul>
+      )}
+      {maybe.length > 0 && <p className="onb-quiet">Selon votre montre : {maybe.join(', ')}.</p>}
+      {tiles.length > 0 && (
+        <p className="onb-fine">
+          {watch
+            ? 'Rien à cocher : tout se fait en arrière-plan, grâce à votre montre et à votre téléphone.'
+            : 'Rien à cocher : tout se fait en arrière-plan.'}
+        </p>
+      )}
+      {off.length > 0 && <p className="onb-quiet">Activables dans Réglages › Sources : {off.join(', ')}.</p>}
       {later.length > 0 && <p className="onb-quiet">Avec une montre ou un bracelet : {later.join(', ')}.</p>}
       {children}
     </>
@@ -846,7 +859,7 @@ export default function Onboarding() {
         {step === 'meet' && <MeetPilou mode="onboarding" onDone={() => go(state.step + 1)} />}
         {temps >= 0 && <OnboardingPilou step={step} gut={gut} watch={state.watch} />}
         {step === 'auto' && (
-          <AutoStep watch={state.watch === 'yes'}>
+          <AutoStep watch={state.watch === 'yes'} weather={state.weather} screen={state.screen}>
             <FoundStep
               health={state.health}
               imported={!!state.imported}

@@ -47,18 +47,41 @@ export function stepsFor() {
 /**
  * Temps 3 : ce que Halcya suit sans rien demander (brief § 3.3 ; le « stress » de la montre n'y est pas). Sans
  * montre, seuls le temps d'écran et la météo viennent du téléphone : le reste est annoncé pour plus tard.
+ * POLISH-SIM-105 : `maybe` = beaucoup de montres ne l'envoient pas (PERSONAS.md), dit « selon votre montre » ;
+ * `phone` = seulement s'il a été allumé à l'écran d'avant, sinon dit « activable ».
  */
 export const AUTO_TILES = [
   { id: 'sleep', label: 'Sommeil', tone: 'night', watch: true },
   { id: 'steps', label: 'Pas', tone: 'lilac', watch: true },
   { id: 'workouts', label: 'Séances de sport', tone: 'lilac', watch: true },
   { id: 'heart', label: 'Cœur', tone: 'rose', watch: true },
-  { id: 'hrv', label: 'Variabilité cardiaque', tone: 'rose', watch: true },
-  { id: 'breath', label: 'Respiration', tone: 'rose', watch: true },
-  { id: 'skin', label: 'Température de la peau', tone: 'rose', watch: true },
-  { id: 'screen', label: 'Temps d’écran', tone: 'stone' },
-  { id: 'weather', label: 'Météo', tone: 'stone' },
+  { id: 'hrv', label: 'Variabilité cardiaque', tone: 'rose', watch: true, maybe: true },
+  { id: 'breath', label: 'Respiration', tone: 'rose', watch: true, maybe: true },
+  { id: 'skin', label: 'Température de la peau', tone: 'rose', watch: true, maybe: true },
+  { id: 'screen', label: 'Temps d’écran', tone: 'stone', phone: true },
+  { id: 'weather', label: 'Météo', tone: 'stone', phone: true },
 ]
+
+/**
+ * Ce que le temps 3 montre : `tiles` sûres, `maybe` (selon la montre), `off` (activable dans Sources), `later`
+ * (avec une montre). `on` dit pour chaque source du téléphone si elle est allumée, `available` si elle existe ici.
+ */
+export function autoTiles({ watch, on = {}, available = {} }) {
+  const tiles = []
+  const maybe = []
+  const off = []
+  const later = []
+  for (const t of AUTO_TILES) {
+    if (t.phone) {
+      if (on[t.id]) tiles.push(t)
+      else if (available[t.id] !== false) off.push(t)
+    } else if (!watch) later.push(t)
+    else if (t.maybe) maybe.push(t)
+    else tiles.push(t)
+  }
+  const words = (list) => list.map((t) => t.label.toLowerCase())
+  return { tiles, maybe: words(maybe), off: words(off), later: words(later) }
+}
 
 /** Temps 4 : ce qui se note à la main chaque jour, hors habitudes (la digestion seulement avec son objectif). */
 export function dailyNotes(gut) {
