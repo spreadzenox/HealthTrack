@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Maquette — Tendances : cœur, phases du sommeil, oxygène</title>
+<style>
+@font-face{font-family:Nunito;src:url(../../../app/src/assets/fonts/report/nunito-400.ttf)}
+@font-face{font-family:Nunito;font-weight:700;src:url(../../../app/src/assets/fonts/report/nunito-700.ttf)}
+body{margin:0;background:#efe9df;font-family:Nunito,sans-serif;color:#1f2a24;padding:24px}
+h1{font-size:22px;margin:0 0 4px} .sub{margin:0 0 20px;color:#555;font-size:14px;max-width:1100px}
+.row{display:flex;gap:24px;align-items:flex-start}
+.phone{width:360px;background:#fdf7f0;border-radius:28px;box-shadow:0 2px 12px #0002;padding:18px 16px 24px}
+.cap{font-size:13px;font-weight:700;color:#0f6b4f;margin:0 0 10px}
+.card{background:#f5efe4;border-radius:22px;padding:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chip{background:#fff;border-radius:20px;padding:6px 12px;font-size:14px;display:flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%}
+.seg{display:flex;background:#fff;border-radius:20px;font-size:13px;margin-left:auto} .seg span{padding:6px 10px} .seg .on{background:#0f6b4f;color:#fff;border-radius:20px}
+.sheet{background:#fff;border-radius:22px 22px 0 0;padding:14px 16px;margin-top:12px;box-shadow:0 -2px 10px #0001}
+.sheet h3{margin:0 0 8px;font-size:15px} .opt{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid #eee5d8;font-size:15px}
+.opt small{color:#6b6b63;margin-left:auto;font-size:12px} .new{font-size:11px;background:#e4f1ea;color:#0f6b4f;border-radius:8px;padding:1px 6px}
+.off{color:#a39d92}
+.leg{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:#555;margin-top:6px} .leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.big{font-size:20px;font-weight:700} .muted{font-size:13px;color:#6b6b63}
+.notes{max-width:1130px;margin-top:22px;font-size:14px;line-height:1.5;background:#fff;border-radius:16px;padding:14px 18px}
+</style></head><body>
+<h1>Proposition : trois courbes de plus dans Tendances (POLISH-SIM-107, reste)</h1>
+<p class="sub">Demandé par la persona « Tout mesurer » (16/11). Maquette seulement : rien n'est codé sans votre accord (mode polish). Une mesure n'apparaît dans « + » que si votre montre l'envoie.</p>
+<div class="row">
+<div class="phone"><p class="cap">1 · « + » : les nouvelles mesures, seulement si elles arrivent</p>
+ <div class="card"><div class="chips"><span class="chip"><span class="dot" style="background:#2F4A86"></span>Sommeil</span><span class="chip">+</span><span class="seg"><span>Jour</span><span class="on">Semaine</span><span>Mois</span></span></div>
+ <div class="muted">Touchez un jour pour son détail.</div></div>
+ <div class="sheet"><h3>Ajouter une courbe</h3>
+ <div class="opt"><span class="dot" style="background:#0f6b4f"></span>Bien-être</div>
+ <div class="opt"><span class="dot" style="background:#6c5bb5"></span>Pas</div>
+ <div class="opt"><span class="dot" style="background:#2F4A86"></span>Sommeil profond <span class="new">nouveau</span><small>par nuit</small></div>
+ <div class="opt"><span class="dot" style="background:#B5446E"></span>Cœur <span class="new">nouveau</span><small>moyenne du jour</small></div>
+ <div class="opt"><span class="dot" style="background:#B5446E"></span>Oxygène la nuit <span class="new">nouveau</span><small>SpO2</small></div>
+ <div class="opt"><span class="dot" style="background:#B5446E"></span>Cœur au repos</div>
+ <div class="opt off"><span class="dot" style="background:#ccc"></span>Variabilité cardiaque<small>votre montre ne l'envoie pas</small></div>
+ </div></div>
+<div class="phone"><p class="cap">2 · Jour : la nuit en phases, le cœur heure par heure</p>
+ <div class="card"><div class="chips"><span class="chip"><span class="dot" style="background:#2F4A86"></span>Sommeil</span><span class="chip"><span class="dot" style="background:#B5446E"></span>Cœur</span><span class="seg"><span class="on">Jour</span><span>Semaine</span></span></div>
+ <div class="big">Nuit du 18 au 19 : 7 h 50</div><div class="muted">dont 1 h 35 de sommeil profond</div>
+ <svg width="320" height="70"><rect x="10.0" y="36" width="9.6" height="12" rx="2" fill="#9DB4E0"/><rect x="19.6" y="50" width="35.1" height="12" rx="2" fill="#2F4A86"/><rect x="54.7" y="36" width="25.5" height="12" rx="2" fill="#9DB4E0"/><rect x="80.2" y="22" width="16.0" height="12" rx="2" fill="#7E6BC9"/><rect x="96.2" y="36" width="35.1" height="12" rx="2" fill="#9DB4E0"/><rect x="131.3" y="50" width="25.5" height="12" rx="2" fill="#2F4A86"/><rect x="156.8" y="36" width="25.5" height="12" rx="2" fill="#9DB4E0"/><rect x="182.3" y="22" width="19.1" height="12" rx="2" fill="#7E6BC9"/><rect x="201.5" y="8" width="7.7" height="12" rx="2" fill="#E7B98A"/><rect x="209.1" y="36" width="37.0" height="12" rx="2" fill="#9DB4E0"/><rect x="246.2" y="22" width="25.5" height="12" rx="2" fill="#7E6BC9"/><rect x="271.7" y="36" width="19.1" height="12" rx="2" fill="#9DB4E0"/><rect x="290.9" y="22" width="19.1" height="12" rx="2" fill="#7E6BC9"/><text x="10" y="68" font-size="10" fill="#6b6b63" font-family="monospace">23:10</text><text x="280" y="68" font-size="10" fill="#6b6b63" font-family="monospace">07:00</text></svg>
+ <div class="leg"><span><i style="background:#E7B98A"></i>éveil</span><span><i style="background:#7E6BC9"></i>paradoxal</span><span><i style="background:#9DB4E0"></i>léger</span><span><i style="background:#2F4A86"></i>profond</span></div>
+ <div class="big" style="margin-top:14px">Cœur : 71 bpm en moyenne</div><div class="muted">de 54 la nuit à 121 vers 18 h</div>
+ <svg width="320" height="130"><line x1="10" y1="110" x2="310" y2="110" stroke="#ddd5c8"/><path d="M10.0,102.6 L13.1,104.0 L16.2,101.0 L19.4,103.5 L22.5,104.3 L25.6,101.0 L28.8,95.8 L31.9,97.0 L35.0,97.3 L38.1,102.8 L41.2,99.6 L44.4,102.2 L47.5,103.3 L50.6,103.9 L53.8,102.9 L56.9,95.7 L60.0,96.7 L63.1,96.9 L66.2,97.0 L69.4,103.1 L72.5,101.9 L75.6,98.7 L78.8,97.7 L81.9,96.5 L85.0,96.2 L88.1,104.1 L91.2,98.9 L94.4,98.3 L97.5,82.4 L100.6,85.7 L103.8,82.8 L106.9,86.6 L110.0,78.2 L113.1,78.8 L116.2,82.0 L119.4,84.5 L122.5,78.4 L125.6,81.8 L128.8,78.7 L131.9,79.0 L135.0,82.4 L138.1,83.4 L141.2,81.5 L144.4,83.2 L147.5,85.9 L150.6,84.4 L153.8,79.4 L156.9,87.1 L160.0,87.0 L163.1,81.2 L166.2,84.7 L169.4,53.4 L172.5,54.0 L175.6,84.1 L178.8,77.5 L181.9,85.5 L185.0,83.4 L188.1,85.5 L191.2,81.2 L194.4,84.7 L197.5,83.9 L200.6,80.0 L203.8,84.3 L206.9,81.9 L210.0,78.5 L213.1,86.5 L216.2,86.9 L219.4,85.2 L222.5,79.8 L225.6,81.3 L228.8,85.1 L231.9,84.2 L235.0,85.7 L238.1,25.4 L241.2,29.6 L244.4,23.0 L247.5,78.5 L250.6,78.0 L253.8,80.2 L256.9,77.9 L260.0,87.3 L263.1,84.6 L266.2,77.8 L269.4,79.7 L272.5,83.4 L275.6,78.1 L278.8,81.3 L281.9,79.3 L285.0,97.1 L288.1,98.1 L291.2,95.6 L294.4,98.6 L297.5,96.2 L300.6,90.4 L303.8,96.7 L306.9,99.9 L310.0,99.6" fill="none" stroke="#B5446E" stroke-width="1.6"/>
+ <text x="10" y="126" font-size="10" fill="#6b6b63" font-family="monospace">0 h</text><text x="150" y="126" font-size="10" fill="#6b6b63" font-family="monospace">12 h</text><text x="290" y="126" font-size="10" fill="#6b6b63" font-family="monospace">24 h</text></svg>
+ </div></div>
+<div class="phone"><p class="cap">3 · Semaine : l'oxygène de la nuit</p>
+ <div class="card"><div class="chips"><span class="chip"><span class="dot" style="background:#B5446E"></span>Oxygène la nuit</span><span class="chip">+</span><span class="seg"><span>Jour</span><span class="on">Semaine</span><span>Mois</span></span></div>
+ <svg width="320" height="150"><text x="2" y="12" font-size="10" fill="#6b6b63" font-family="monospace">%</text>
+ <line x1="18" y1="48" x2="310" y2="48" stroke="#e6dfd2"/><text x="2" y="51" font-size="10" fill="#6b6b63" font-family="monospace">96</text>
+ <line x1="18" y1="96" x2="310" y2="96" stroke="#e6dfd2"/><text x="2" y="99" font-size="10" fill="#6b6b63" font-family="monospace">92</text>
+ <polyline points="30,48 72,60 114,48 156,72 198,48 240,60 282,48" fill="none" stroke="#B5446E" stroke-width="2"/><circle cx="30" cy="48" r="4" fill="#B5446E"/><circle cx="72" cy="60" r="4" fill="#B5446E"/><circle cx="114" cy="48" r="4" fill="#B5446E"/><circle cx="156" cy="72" r="4" fill="#B5446E"/><circle cx="198" cy="48" r="4" fill="#B5446E"/><circle cx="240" cy="60" r="4" fill="#B5446E"/><circle cx="282" cy="48" r="4" fill="#B5446E"/><text x="30" y="142" font-size="10" text-anchor="middle" fill="#6b6b63" font-family="monospace">13/11</text><text x="72" y="142" font-size="10" text-anchor="middle" fill="#6b6b63" font-family="monospace">14/11</text><text x="114" y="142" font-size="10" text-anchor="middle" fill="#6b6b63" font-family="monospace">15/11</text><text x="156" y="142" font-size="10" text-anchor="middle" fill="#6b6b63" font-family="monospace">16/11</text><text x="198" y="142" font-size="10" text-anchor="middle" fill="#6b6b63" font-family="monospace">17/11</text><text x="240" y="142" font-size="10" text-anchor="middle" fill="#6b6b63" font-family="monospace">18/11</text><text x="282" y="142" font-size="10" text-anchor="middle" fill="#6b6b63" font-family="monospace">19/11</text></svg>
+ <div class="muted">Moyenne de la nuit, telle que la montre la donne. Une estimation, pas une mesure médicale.</div></div></div>
+</div>
+<div class="notes"><b>Ce qui change, en bref</b><br>
+• « + » propose Sommeil profond, Cœur (moyenne du jour) et Oxygène la nuit, mais seulement si la montre les envoie (Apple Watch, Galaxy Watch, Garmin, Pixel Watch, Xiaomi : environ un tiers des personnes, d'après PERSONAS.md). Sinon la ligne reste grisée avec la raison, comme aujourd'hui.<br>
+• En vue Jour : la nuit dessinée en phases sous la durée du sommeil, et la courbe du cœur heure par heure (les relevés que la montre envoie déjà, rien de nouveau n'est demandé).<br>
+• Couleurs inchangées : bleu nuit pour le sommeil, framboise pour le corps. Aucune donnée ne quitte le téléphone.<br>
+• Coût estimé : 2 runs de code (lecture des phases et de la FC continue déjà stockées ; courbes ; tests), parité iPhone dans les mêmes runs (Santé envoie ces trois mesures).<br>
+<b>Votre réponse</b> : « go courbes » (les trois), « go phases » (une seule), ou « non ».</div>
+</body></html>

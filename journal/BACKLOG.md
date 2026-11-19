@@ -385,6 +385,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       montre « Confort digestif » coché sans que la personne l'ait choisi, et rien ne dit où sont passés Sport (famille
       Activité) et Cycle (bouton « Règles »). Une note unique après la mise à jour ; vérifier que cocher Confort digestif
       est voulu par la migration 5a (cycle = contexte de la digestion), sinon ne pas le cocher.
+      **Spéc. prête (19/11 08:30, run « idées », code lu)** : cocher Confort digestif est **voulu** (`migrateGoals`,
+      `src/settings/onboarding.js` l. 71 : `wantsGut` vrai pour l'ancien « cycle », brief § 3.1) : on le garde. La
+      migration garde les anciens choix dans `goalsBefore`. Dans Réglages › Paramètres › « Vos objectifs » (`Settings.jsx`),
+      si `goalsBefore` contient `sport` ou `cycle`, une ligne discrète sous la liste, une seule phrase par ancien
+      objectif : « Sport : vos séances comptent dans la famille Activité d'Objectifs. » ; « Mon cycle : notez vos règles
+      dans Ma journée › Règles ; Confort digestif le remplace. » Rien d'autre à cocher, rien d'effacé. Tests : réglages
+      `{ goalsBefore: ['sport','cycle'], goalsVersion: 2 }` → deux lignes ; installation neuve → aucune. Capture :
+      `/settings` (ou l'outil des personas en `--legacy --goals=sport,cycle`), relue.
     - [x] **POLISH-SIM-101 — Page Nouveautés** (19/11 03:30 : `WhatsNew.jsx` place en tête la note `aLaUne` non lue, choisie par `bannerHeadline` comme le bandeau ; ordre par date une fois lue ; 3 tests) : le bandeau met la note de la nouvelle navigation à la une (UPG-2), mais
       la page la range par date, perdue dans une très longue liste. La mettre en tête de la page quand elle est non lue.
     - [x] **POLISH-SIM-102 — Deux décomptes de la digestion** (19/11 04:30 : Ma journée « Premier score au 14e jour noté, pistes au 28e. » ; Objectifs, sous « Premier score dans N jours notés » : « Pistes au 28e jour noté. » ; passé 14 jours, Ma journée renvoie au score d’Objectifs) : Ma journée « 9/28, encore 19 jours », Objectifs « 9 sur
@@ -396,10 +404,20 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [ ] **POLISH-SIM-105 — Accueil « Ce que Halcya suit pour vous »** : liste VFC et température de la peau sans montre
       qui les donne, et Météo non activée, juste après « Health Connect n'est pas sur ce téléphone » (vérifier sur
       Android, la version web n'a pas Health Connect).
+      **Spéc. prête (19/11 08:30, run « idées », code lu)** : c'est l'écran du temps 3 de l'accueil (`AutoStep`,
+      `src/pages/Onboarding.jsx` l. 386), pas l'Accueil. `AUTO_TILES` (`src/services/onboardingFlow.js` l. 51) est listé
+      en entier dès que « Oui » est choisi pour la montre, et Météo et Temps d'écran y sont même éteints à l'écran
+      d'avant. Correctif : (1) Météo et Temps d'écran seulement s'ils sont allumés (`state.weather`, `state.screen` ou
+      leurs réglages), sinon une ligne « Activables dans Réglages › Sources : météo. » ; (2) avec une montre, Sommeil,
+      Pas et Cœur restent ; Variabilité cardiaque, Respiration et Température de la peau passent sur une ligne « Selon
+      votre montre : … » (beaucoup de montres ne les envoient pas, PERSONAS.md) ; la liste « Ce que Halcya a trouvé »
+      juste dessous dit ensuite ce qui arrive vraiment. Tests dans `Onboarding.test.jsx` (« Temps 3 ») : météo éteinte
+      → pas de tuile Météo ; montre oui → trois tuiles fermes et la ligne « Selon votre montre ». Capture
+      `--routes=/bienvenue --onboarding=notes` (écran du temps 3) relue.
     - [x] **POLISH-SIM-106 — FODMAP de l'oignon cuit** (19/11 06:30 : « Oignon, cuit », oignon blanc ou jaune et rouge sautés/poêlés : fructanes de l’oignon cru ramenés par les glucides Ciqual cuit / cru, fourchette Ferjančič–Liljebo gardée, confiance « analogie » ; oignon nouveau non repris, autre légume ; test) : `fodmapMeasurements.json` n'a que l'oignon cru (fructanes) ;
       l'oignon cuit n'est marqué que « fructose en excès ». Ajouter l'analogie documentée (confiance basse) pour
       l'oignon cuit ou poêlé, comme pour l'ail.
-    - [ ] **POLISH-SIM-107 — Tendances** (19/11 07:30 : **1re moitié faite** : la mesure choisie reste en Jour et au retour en Semaine ; courbe heure par heure seulement avec le bien-être ; « + » en Jour propose le bien-être sans quitter Jour. Reste : FC, phases du sommeil, SpO2 dans « + » = nouvelles courbes, proposition au propriétaire en mode polish) : en passant de Semaine à Jour, la mesure choisie (Sommeil) redevient
+    - [ ] **POLISH-SIM-107 — Tendances** (19/11 07:30 : **1re moitié faite** : la mesure choisie reste en Jour et au retour en Semaine ; courbe heure par heure seulement avec le bien-être ; « + » en Jour propose le bien-être sans quitter Jour. Reste : FC, phases du sommeil, SpO2 dans « + » = nouvelles courbes, proposition au propriétaire en mode polish ; **maquette de la proposition faite le 19/11 08:30** : [`maquettes/tendances-courbes/`](maquettes/tendances-courbes/README.md), réponse attendue « go courbes », « go phases » ou « non ») : en passant de Semaine à Jour, la mesure choisie (Sommeil) redevient
       Bien-être ; le « + » ne propose pas FC, phases du sommeil, SpO2 ni digestion (à vérifier : données reçues ?).
     - [ ] **POLISH-SIM-108 — Petits** : « Encore 4 choses aujourd'hui » ne baisse pas après un repas noté ; essai : les
       jours « comme d'habitude » marqués « pas tenu » ; export CSV demandé (persona Tout mesurer : proposition, pas
