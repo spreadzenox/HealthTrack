@@ -433,7 +433,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       Proposition : libellé « Humeur de Pilou », ou barre qui ne contredit jamais la note du jour (le plus simple qui
       suffit, d'après le brief § 5).
     - [ ] **POLISH-SIM-105i — iPhone, temps 3 avant iOS 26.4** : ne pas citer « temps d’écran » dans « Activables » quand `checkPhoneUsageAccess().supported` est faux (même logique que le correctif 55) : correctif minimal dans `iphone/patches/55-*` ou `available.screen` calculé depuis l'accès.
-    - [ ] **POLISH-SIM-110 — Nom d'un repas corrigé** (J1) : après l'analyse, retirer les aliments proposés et en ajouter
+    - [x] **POLISH-SIM-110 — Nom d'un repas corrigé** (FAIT 19/11 13:30 : plus aucun aliment de l'IA → nom proposé non retouché effacé, description rendue telle quelle pour relancer, repas enregistré en saisie à la main ; nom tapé gardé ; tests `Food.test.jsx`. Le café oublié venait de l'analyse factice de l'outil) (J1) : après l'analyse, retirer les aliments proposés et en ajouter
       d'autres (yaourt, banane) garde le nom de l'analyse (« Pâtes à la carbonara ») et perd la description. Nom
       recalculé depuis les aliments restants s'il n'a pas été tapé, description gardée.
     - [x] **POLISH-SIM-111 — « Repas habituels » dès un repas** (FAIT 19/11 12:30 : seuil vérifié, le repas noté une fois y figure exprès — tests de `frequentMeals`, refaire un repas récent ; c'est le titre qui trompait : « Refaire un repas », test `Food.test.jsx`) (J1) : un repas noté une fois y figure déjà. N'y mettre
