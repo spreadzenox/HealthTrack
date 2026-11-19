@@ -3,7 +3,8 @@
  * montre les grammes estimés (une fourchette quand les mesures publiées divergent) et le repère de départ, en une
  * phrase ; puis où se trouve le groupe et ce que le repère vaut ; les sources sur une ligne à part, en petit
  * (POLISH-SIM-77 : « ≈ 0,73 g · repère 0,3 g », « Varney 2017 » n'étaient pas compris). Rien quand aucun groupe ne dépasse son repère (un groupe inconnu n'est jamais présenté comme
- * bas). Repères = hypothèses de départ (règle 6).
+ * bas). Repères = hypothèses de départ (règle 6). Plusieurs groupes (UPG-9, « Ventre, sans technique » : « 4 lignes
+ * rouges ») : une seule phrase, « Parfois mal digérés : oignon, lentilles, pomme », et les groupes derrière « Détails ».
  */
 import { useState } from 'react'
 import { useNutritionTable } from '../data/nutritionTable'
@@ -41,8 +42,17 @@ export default function MealFodmapLine({ items }) {
   if (!table) return null
   const highlights = mealFodmapHighlights(estimateMealFodmap(items, table, measurements))
   if (highlights.length === 0) return null
+  const folded = highlights.length > 1 && !open
+  // Dans l'ordre du repas, chaque aliment une fois.
+  const rank = (f) => { const i = (items ?? []).findIndex((it) => it.ingredient === f); return i < 0 ? Infinity : i }
+  const allFoods = [...new Set(highlights.flatMap((h) => h.foods))].sort((a, b) => rank(a) - rank(b))
   return (
     <div className="meal-fodmap" data-testid="meal-fodmap">
+      {folded ? (
+        <p className="meal-fodmap-summary" data-testid="meal-fodmap-summary">
+          <span className="meal-fodmap-tag">Parfois mal digérés</span>{' '}{foodList(allFoods)}
+        </p>
+      ) : (
       <ul className="meal-fodmap-list">
         {highlights.map((h) => (
           <li key={h.group}>
@@ -59,6 +69,7 @@ export default function MealFodmapLine({ items }) {
           </li>
         ))}
       </ul>
+      )}
       <DetailsToggle on={open} onToggle={() => setOpen((v) => !v)} />
       {open && (
         <>

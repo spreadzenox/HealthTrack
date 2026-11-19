@@ -52,6 +52,24 @@ describe('MealFodmapLine — FODMAP par sous-groupe sur la carte d’un repas (N
     expect(sources).toMatch(/^Repères : Varney 2017\. Teneurs : .*Ferjančič 2024.*\.$/)
     expect(screen.getByTestId('meal-fodmap').textContent).not.toMatch(/≈|·/)
   })
+  it('plusieurs groupes : une phrase simple, les groupes derrière « Détails » (UPG-9)', () => {
+    render(<MealFodmapLine items={[
+      { ingredient: 'Oignon, cru', quantity_g: 70 },
+      { ingredient: 'Lentilles cuites', quantity_g: 150 },
+      { ingredient: 'Pomme', quantity_g: 150 },
+    ]} />)
+    const card = screen.getByTestId('meal-fodmap')
+    expect(screen.getByTestId('meal-fodmap-summary').textContent).toBe('Parfois mal digérés oignon, lentilles cuites, pomme')
+    expect(card.textContent).not.toMatch(/fructanes|GOS|fructose|Riche/)
+    fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
+    expect(screen.getByText('Riche en fructanes')).toBeTruthy()
+    expect(screen.getByText('Probablement riche en GOS')).toBeTruthy()
+    expect(screen.getByText('Riche en fructose en excès')).toBeTruthy()
+  })
+  it('un seul groupe : la ligne « Riche en … » reste visible d’emblée (N4)', () => {
+    render(<MealFodmapLine items={[{ ingredient: 'Oignon, cru', quantity_g: 70 }]} />)
+    expect(screen.queryByTestId('meal-fodmap-summary')).toBeNull()
+  })
   it('rien quand aucun groupe ne dépasse son repère ou sans ingrédients', () => {
     const { container, rerender } = render(<MealFodmapLine items={[{ ingredient: 'Riz blanc cuit', quantity_g: 150 }]} />)
     expect(container.textContent).toBe('')

@@ -16,6 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+19/11 19:30 : UPG-9 (carte FODMAP d’un repas en une phrase quand plusieurs groupes) : code partagé, aucun correctif iPhone ne touche `MealFodmapLine.jsx` ni son CSS ou son test. Parité inchangée : 70 %.
 19/11 18:30 : POLISH-SIM-108 (lien retour d’un essai vers l’objectif suivi, plus « ← Agir ») : code partagé, aucun correctif iPhone ne touche `Trial.jsx` ni `Trial.test.jsx`. Parité inchangée : 70 %.
 19/11 17:30 : POLISH-SIM-108 (calendrier d’un essai : aucune marque sur les jours « comme d’habitude ») : code partagé, aucun correctif iPhone ne touche `TrialDots.jsx` ni `Trial.test.jsx`. Parité inchangée : 70 %.
 19/11 12:30 : POLISH-SIM-111 à 113 (« premiers résultats » à l'Accueil et dans la cérémonie du 7e jour, « Refaire un repas », en-tête de Nouveautés) : code partagé ; le correctif 33 (`WhatsNew.test.jsx`) et les 51 autres s'appliquent en séquence. Parité inchangée : 70 %.
