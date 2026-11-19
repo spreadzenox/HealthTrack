@@ -18,6 +18,8 @@
 
 **19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge). **02:30 : fiche App Store** : la liste des captures suit la refonte (les actuelles montrent encore Analyses et le Journal) ; série à prendre de jour par la CI, regardée, puis envoyée avant « 👉 PI2 prête ».
 
+**19/11 06:30 : oignon cuit et familles** : l’oignon cuit ou poêlé est compté riche en fructanes (avant : seulement « fructose en excès ») ; dans Objectifs › Par famille, une famille sans lien net dit « Pas assez net pour l’instant », comme les barres hachurées en dessous (POLISH-SIM-104, 106).
+
 **19/11 05:30 : bien-être, des chiffres qui se répondent** : Objectifs dit « Moyenne de vos 7 derniers jours » (l'Accueil montre la note du jour) ; dans le détail d'un jour, votre note s'écrit comme dans « Vos saisies » (« vous avez noté 2,6 », plus « 3 ») ; « Ce qui a pu peser » devient « Ce qui a pu jouer ce jour-là » (UPG-6, POLISH-SIM-103).
 
 **19/11 04:30 : digestion, un seul décompte** : Ma journée et Objectifs nomment les deux mêmes paliers, premier score au 14e jour noté et pistes au 28e (avant : « encore 19 jours » d'un côté, « premier score dans 5 jours » de l'autre). **TestFlight 1173.1173 ajoutée à « Testeurs Halcya » et soumise à l'examen bêta d'Apple** (04:31).
@@ -137,6 +139,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 19/11 06:30 — [Oignon cuit, familles pas assez nettes](runs/2026-11-19-0630-oignon-cuit-familles.md) | 🛠️ | **POLISH-SIM-104, 106** : dans Objectifs › Par famille, « Pas assez net pour l’instant » (au lieu de « Pas de lien net » au-dessus de chiffres hachurés) ; l’oignon cuit ou poêlé compté riche en fructanes (analogie de l’oignon cru). Code partagé, iPhone compris. | PR de ce run |
 | 19/11 05:30 — [Bien-être : mêmes chiffres](runs/2026-11-19-0530-bien-etre-memes-chiffres.md) | 🛠️ | **UPG-6, POLISH-SIM-103** : score d'Objectifs dit « moyenne de vos 7 derniers jours » ; la fiche d'un jour cite la note comme « Vos saisies » ; « Ce qui a pu jouer ce jour-là ». Code partagé, iPhone compris. | PR de ce run |
 | 19/11 04:30 — [Digestion : un seul décompte](runs/2026-11-19-0430-paliers-digestion.md) | 🛠️ | **POLISH-SIM-102, UPG-7** : les cartes digestion de Ma journée et d'Objectifs nomment les deux paliers (score au 14e jour noté, pistes au 28e). **1173.1173 soumise à l'examen bêta** et ajoutée au groupe externe. Code partagé, iPhone compris. | PR de ce run |
 | 19/11 03:30 — [Nouveautés : la nouvelle navigation en premier](runs/2026-11-19-0330-nouveautes-a-la-une.md) | 🛠️ | Page Nouveautés : la note des nouveaux onglets en tête tant qu'elle n'est pas lue, avec une ligne sur « Mon cycle » → bouton « Règles » de Ma journée (POLISH-SIM-101, UPG-5). Code partagé, iPhone compris. TestFlight 1173.1173 partie vers 02:00 UTC ; soumission bêta à faire au run suivant (lancement refusé dans cette session). Alpha pas encore partie à 02:30 UTC. | PR de ce run |
