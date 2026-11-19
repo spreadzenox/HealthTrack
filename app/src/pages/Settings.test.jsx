@@ -175,6 +175,79 @@ describe('Settings — Vos objectifs (refonte étape 5a)', () => {
   })
 })
 
+describe('Settings — Rappels (POLISH-SIM-114)', () => {
+  beforeEach(() => localStorage.clear())
+
+  const fakeEvening = (enabled = false) => {
+    const configure = vi.fn(async (o) => ({ enabled: !!o.enabled, minuteOfDay: 21 * 60, notifications: true }))
+    window.__healthtrackFakeEveningNote = {
+      status: async () => ({ enabled, minuteOfDay: 21 * 60 }),
+      configure,
+      requestNotifications: async () => ({ notifications: true, asked: true }),
+    }
+    return configure
+  }
+
+  it('sans rappel possible sur ce téléphone, pas de bloc Rappels', () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
+    renderSettings()
+    expect(screen.queryByRole('region', { name: 'Rappels' })).toBeNull()
+  })
+
+  it('regroupe la note du soir, le bilan digestif et la portion du jour', async () => {
+    fakeEvening()
+    window.__healthtrackFakeGutEvening = { status: async () => ({ enabled: false, minuteOfDay: 20 * 60 }), configure: vi.fn(async (o) => o) }
+    window.__healthtrackFakePortionReminder = { schedule: vi.fn(async () => ({ notifications: true })) }
+    try {
+      localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'gut' }))
+      renderSettings()
+      const block = screen.getByRole('region', { name: 'Rappels' })
+      expect(within(block).getByRole('checkbox', { name: 'Note de bien-être, le soir' })).not.toBeChecked()
+      expect(within(block).getByRole('checkbox', { name: 'Rappel du bilan digestif, le soir' })).toBeInTheDocument()
+      expect(within(block).getByRole('checkbox', { name: 'Portion du jour, pendant une réintroduction' })).not.toBeChecked()
+      expect(await within(block).findByText(/Vers 21 h, seulement si vous n’avez pas déjà noté/)).toBeInTheDocument()
+    } finally {
+      delete window.__healthtrackFakeEveningNote
+      delete window.__healthtrackFakeGutEvening
+      delete window.__healthtrackFakePortionReminder
+    }
+  })
+
+  it('allume et éteint la note du soir avec l’interrupteur existant', async () => {
+    const configure = fakeEvening()
+    try {
+      localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true }))
+      renderSettings()
+      const box = screen.getByRole('checkbox', { name: 'Note de bien-être, le soir' })
+      fireEvent.click(box)
+      await waitFor(() => expect(configure).toHaveBeenCalledWith(expect.objectContaining({ enabled: true })))
+      await waitFor(() => expect(box).toBeChecked())
+      fireEvent.click(box)
+      await waitFor(() => expect(configure).toHaveBeenLastCalledWith({ enabled: false }))
+      await waitFor(() => expect(box).not.toBeChecked())
+    } finally {
+      delete window.__healthtrackFakeEveningNote
+    }
+  })
+
+  it('la portion du jour garde le choix de la réintroduction', async () => {
+    const schedule = vi.fn(async () => ({ notifications: true }))
+    window.__healthtrackFakePortionReminder = { schedule }
+    try {
+      localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true }))
+      localStorage.setItem('halcya_portion_reminder', JSON.stringify({ enabled: true, minute: 13 * 60 }))
+      renderSettings()
+      const box = screen.getByRole('checkbox', { name: 'Portion du jour, pendant une réintroduction' })
+      expect(box).toBeChecked()
+      expect(screen.getByText(/Chaque jour de test vers 13 h/)).toBeInTheDocument()
+      fireEvent.click(box)
+      await waitFor(() => expect(JSON.parse(localStorage.getItem('halcya_portion_reminder'))).toEqual({ enabled: false, minute: 13 * 60 }))
+    } finally {
+      delete window.__healthtrackFakePortionReminder
+    }
+  })
+})
+
 describe('Settings — Apparence', () => {
   beforeEach(() => {
     localStorage.clear()
