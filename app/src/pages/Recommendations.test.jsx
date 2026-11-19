@@ -48,10 +48,22 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
   it('avant les résultats : un seul compte à rebours, la phrase du propriétaire et « Noter maintenant »', async () => {
     renderPage({}, { outcomes: { wellbeing: lockedOutcome(5), digestion: lockedOutcome(0) } })
     const card = await screen.findByTestId('reco-countdown-wellbeing')
-    expect(within(card).getByRole('heading')).toHaveTextContent('Encore 9 jours notés avant vos premiers résultats')
+    // POLISH-SIM-116 : le même palier qu'Objectifs et l'Accueil (premier score au 7e jour noté), puis les pistes
+    expect(within(card).getByRole('heading')).toHaveTextContent('Premier score dans 2 jours notés')
+    expect(card.querySelector('.pistes-count')).toHaveTextContent('5/7 jours notés, pas forcément d’affilée')
+    expect(card).toHaveTextContent('Pistes au 14e jour noté.')
     expect(card).toHaveTextContent('Notez votre bien-être chaque jour : Halcya cherchera ensuite quels facteurs sont statistiquement liés à votre bien-être.')
     expect(within(card).getByRole('button', { name: 'Noter maintenant' })).toBeInTheDocument()
     expect(document.body.textContent).not.toMatch(/Sur quelques semaines|Autres liens repérés|Bientôt|Dans les heures|Benjamini/)
+  })
+
+  it('POLISH-SIM-116 : score passé, la page compte les jours jusqu’aux pistes et renvoie au score d’Objectifs', async () => {
+    renderPage({}, { outcomes: { wellbeing: lockedOutcome(9), digestion: lockedOutcome(0) } })
+    const card = await screen.findByTestId('reco-countdown-wellbeing')
+    expect(within(card).getByRole('heading')).toHaveTextContent('Vos pistes dans 5 jours notés')
+    expect(card.querySelector('.pistes-count')).toHaveTextContent('9/14 jours notés, pas forcément d’affilée')
+    expect(card).toHaveTextContent('Votre score est déjà dans Objectifs.')
+    expect(card).not.toHaveTextContent('premiers résultats')
   })
 
   it('REFONTE-6b : « Par famille » en tête des résultats, la force du lien en trois points et en mots', async () => {
@@ -272,7 +284,8 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
   it('Digestion : même structure ; les jours de gêne manquants sont dits ; « Noter maintenant » ouvre la fenêtre de Ma journée', async () => {
     renderPage({ view: 'gut' }, readyResults)
     const card = await screen.findByTestId('reco-countdown-digestion')
-    expect(card).toHaveTextContent('Encore 25 jours notés avant vos premiers résultats')
+    expect(card).toHaveTextContent('Premier score dans 11 jours notés')
+    expect(card).toHaveTextContent('Pistes au 28e jour noté.')
     // POLISH-SIM-32 : la fenêtre du compteur est dite
     expect(card.querySelector('.pistes-count')).toHaveTextContent(/^\d+\/\d+ jours notés, pas forcément d’affilée$/)
     expect(card).toHaveTextContent('statistiquement liés à votre confort digestif')
