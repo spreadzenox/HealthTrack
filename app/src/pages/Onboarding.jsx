@@ -48,6 +48,7 @@ import {
   getPhoneUsageSettings,
   isPhoneUsageAvailable,
   openPhoneUsageAccessSettings,
+  checkPhoneUsageAccess,
 } from '../services/phoneUsageSync'
 import { detectPhoneApps } from '../devices/phoneApps'
 import { GOLD_AI_DAILY } from '../config/premiumBenefits'
@@ -312,8 +313,31 @@ function WeatherRow({ weather, onWeather }) {
   )
 }
 
+/**
+ * Le téléphone donne-t-il le temps d'écran ? Non avant Android 9 et, sur iPhone, avant iOS 26.4 (POLISH-SIM-105i,
+ * ancien correctif iPhone 55) : on ne le propose pas, comme la carte de Sources.
+ */
+function usePhoneUsageSupported() {
+  const available = isPhoneUsageAvailable()
+  const [supported, setSupported] = useState(available)
+  useEffect(() => {
+    if (!available) return undefined
+    let alive = true
+    checkPhoneUsageAccess()
+      .then((a) => alive && setSupported(a.supported))
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [available])
+  return available && supported
+}
+
 function ScreenTimeRow({ screen, onScreen }) {
   const on = screen === 'on' || (screen == null && getPhoneUsageSettings().enabled)
+  const supported = usePhoneUsageSupported()
+  // Déjà allumé sur un téléphone qui ne le donne pas : la ligne reste, pour pouvoir le couper
+  if (!supported && !on) return null
   const toggle = async () => {
     if (on) {
       disablePhoneUsage()
@@ -389,7 +413,7 @@ const weatherOn = (weather) => weather === 'on' || (weather == null && getWeathe
 const screenOn = (screen) => screen === 'on' || (screen == null && getPhoneUsageSettings().enabled)
 
 function AutoStep({ watch, weather, screen, children }) {
-  const phoneUsage = isPhoneUsageAvailable()
+  const phoneUsage = usePhoneUsageSupported()
   const { tiles, maybe, off, later } = autoTiles({
     watch,
     on: { weather: weatherOn(weather), screen: phoneUsage && screenOn(screen) },

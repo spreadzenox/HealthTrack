@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 
 const stored = vi.hoisted(() => ({ entries: [], created: [] }))
@@ -310,6 +310,51 @@ describe('Temps 3 : « Ce que Halcya suit pour vous, sans rien faire »', () => 
     expect(screen.queryByText(/Rien à cocher/)).toBeNull()
     expect(screen.getByText('Activables dans Réglages › Sources : météo.')).toBeInTheDocument()
     expect(screen.getByText(/^Avec une montre ou un bracelet :/)).toBeInTheDocument()
+  })
+})
+
+describe('Temps d’écran que le téléphone ne donne pas (Android 8, iPhone avant iOS 26.4 ; POLISH-SIM-105i)', () => {
+  const fake = (supported) => {
+    window.__healthtrackFakePhoneUsage = {
+      checkAccess: async () => ({ granted: false, supported }),
+      openAccessSettings: async () => {},
+      queryScreenEvents: async () => ({ events: [] }),
+    }
+  }
+  beforeEach(() => localStorage.clear())
+  afterEach(() => {
+    delete window.__healthtrackFakePhoneUsage
+  })
+
+  it('temps 3 : « temps d’écran » n’est pas dit activable', async () => {
+    fake(false)
+    at('auto', { watch: 'no', weather: 'off' })
+    renderAt()
+    await waitFor(() => expect(screen.getByText('Activables dans Réglages › Sources : météo.')).toBeInTheDocument())
+  })
+
+  it('temps 3 : pris en charge, il reste activable', async () => {
+    fake(true)
+    at('auto', { watch: 'no', weather: 'off' })
+    renderAt()
+    expect(await screen.findByText('Activables dans Réglages › Sources : temps d’écran, météo.')).toBeInTheDocument()
+  })
+
+  it('temps 2 : pas de ligne « Temps d’écran » ; la météo reste', async () => {
+    fake(false)
+    at('watch', { watch: 'no' })
+    renderAt()
+    await waitFor(() => expect(screen.queryByRole('switch', { name: 'Temps d’écran' })).toBeNull())
+    expect(screen.getByRole('switch', { name: 'Météo' })).toBeInTheDocument()
+  })
+
+  it('temps 2 : déjà allumé, la ligne reste pour pouvoir le couper', async () => {
+    fake(false)
+    localStorage.setItem('healthtrack_phone_usage', JSON.stringify({ enabled: true }))
+    at('watch', { watch: 'no' })
+    renderAt()
+    await new Promise((r) => setTimeout(r, 0))
+    expect(screen.getByRole('switch', { name: 'Temps d’écran' })).toBeInTheDocument()
   })
 })
 
