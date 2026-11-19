@@ -396,6 +396,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **19/11 16:30** — **POLISH-SIM-105i** (objectif du 22/11) : l'accueil ne propose plus le temps d'écran quand le téléphone ne le donne pas (iPhone avant iOS 26.4, Android 8) ; correctif iPhone 55 fondu dans le code partagé.
 - **19/11 15:30** — **POLISH-SIM-115** (objectif du 22/11) : le temps 2 de l'accueil cite la balance et dit que le poids arrive par la même source, visible dans Tendances.
 - **19/11 14:30** — **POLISH-SIM-114** (objectif du 22/11) : Paramètres › Rappels regroupe la note de bien-être du soir, le bilan digestif du soir et la portion du jour d'une réintroduction (interrupteurs existants, aucun nouveau rappel).
 - **19/11 13:30** — **POLISH-SIM-110** (objectif du 22/11) : repas décrit à l'IA, tous ses aliments retirés → son nom non retouché s'efface et la description revient pour relancer ; un nom tapé reste.

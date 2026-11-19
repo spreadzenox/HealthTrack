@@ -18,6 +18,8 @@
 
 **19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge). **02:30 : fiche App Store** : la liste des captures suit la refonte (les actuelles montrent encore Analyses et le Journal) ; série à prendre de jour par la CI, regardée, puis envoyée avant « 👉 PI2 prête ».
 
+**19/11 16:30 : temps d'écran seulement s'il est possible** : au premier lancement, un iPhone d'avant iOS 26.4 (ou un Android 8) ne se voit plus proposer le temps d'écran, ni au temps 2 ni dans « Activables » (POLISH-SIM-105i ; un correctif iPhone de moins).
+
 **19/11 15:30 : la balance à l'accueil** : le temps 2 demande « Avez-vous une montre, un bracelet ou une balance ? » et, à « Oui », dit que le poids d'une balance connectée arrive aussi par Health Connect (Santé sur iPhone) et se voit dans Tendances ; pas d'objectif « maigrir » (POLISH-SIM-115).
 
 **19/11 14:30 : vos rappels au même endroit** : Réglages › Paramètres › Rappels montre ensemble la note de bien-être du soir, le bilan digestif du soir (avec Confort digestif) et la portion du jour d'une réintroduction ; mêmes interrupteurs, aucun nouveau rappel (POLISH-SIM-114).
@@ -157,6 +159,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 19/11 16:30 — [Temps d'écran seulement s'il est possible](runs/2026-11-19-1630-temps-ecran-pris-en-charge.md) | 🛠️ | **POLISH-SIM-105i** : temps 2 et 3 de l'accueil sans temps d'écran quand le téléphone ne le donne pas (iPhone avant iOS 26.4, Android 8) ; correctif iPhone 55 fondu dans le code partagé (51 correctifs). Tests d'abord. TestFlight : 1173.1173. Parité : 70 %. | PR de ce run |
 | 19/11 15:30 — [Balance à l'accueil](runs/2026-11-19-1530-balance-accueil.md) | 🛠️ | **POLISH-SIM-115** : le temps 2 de l'accueil cite la balance et dit où voir son poids (Tendances). Tests d'abord, capture relue, correctifs iPhone appliqués. Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 14:30 — [Rappels regroupés](runs/2026-11-19-1430-rappels.md) | 🛠️ | **POLISH-SIM-114** : bloc « Rappels » dans Paramètres (note du soir, bilan digestif, portion du jour), interrupteurs existants, caché là où rien ne se programme. Tests d'abord, capture relue. Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 13:30 — [Nom d'un repas décrit](runs/2026-11-19-1330-nom-repas-ia.md) | 🛠️ | **POLISH-SIM-110** : aliments de l'IA tous retirés → nom proposé effacé, description rendue pour relancer, repas enregistré comme saisie à la main ; un nom tapé reste. Test d'abord, capture relue. Code partagé, iPhone compris. Rien à faire de votre côté |
