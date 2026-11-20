@@ -190,6 +190,7 @@ RÈGLES DE RÉPONSE :
 
 2) Sinon, décompose le repas en ingrédients avec leur poids en grammes. Réponds UNIQUEMENT :
    {"not_food": false, "dish": "nom court du repas en français", "ingredients": [{"ingredient": "Nom exact copié de la liste", "quantity_g": nombre, "confidence": "high" | "medium" | "low"}]}
+   - Chaque plat, aliment ou boisson cité doit apparaître dans "ingredients", même s'il y en a plusieurs : « pâtes carbonara, un yaourt et une pomme » = les ingrédients des pâtes carbonara, plus le yaourt, plus la pomme. Pour plusieurs plats, "dish" les nomme ensemble (« Pâtes carbonara, yaourt et pomme »).
    - Un plat composé (« lasagnes maison », « salade niçoise ») : décompose-le en ses ingrédients principaux, sauf s'il existe tel quel dans la liste.
    - Quantités données (« 200 g », « 2 œufs », « un bol ») : convertis-les en grammes, "confidence": "high".
    - Quantité absente : prends une portion adulte habituelle en France, "confidence": "medium".

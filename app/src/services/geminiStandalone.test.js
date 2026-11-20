@@ -150,6 +150,14 @@ describe('analyzeMealText — repas décrit en quelques mots', () => {
     expect(prompt).toMatch(/matière grasse|huile|beurre/i)
   })
 
+  it('garde chaque plat, aliment et boisson cité quand le repas en compte plusieurs (UPG-8)', async () => {
+    fetch.mockResolvedValue(okResponse('{"not_food": false, "ingredients": []}'))
+    await analyzeMealText('pâtes carbonara, un yaourt et une pomme', 'KEY')
+    const prompt = JSON.parse(fetch.mock.calls[0][1].body).contents[0].parts[0].text
+    expect(prompt).toMatch(/Chaque plat, aliment ou boisson cité/)
+    expect(prompt).toMatch(/plusieurs plats/)
+  })
+
   it('rapproche les noms de la base et garde le nom du plat', async () => {
     fetch.mockResolvedValue(okResponse(JSON.stringify({
       not_food: false,

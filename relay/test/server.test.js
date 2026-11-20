@@ -64,6 +64,16 @@ test('description → consignes du relais (liste des ingrédients en tête), ré
   })
 })
 
+test('description de plusieurs plats : la consigne demande de garder chacun (UPG-8)', async () => {
+  const calls = []
+  await withServer({ vertex: okVertex(calls) }, async (url) => {
+    const res = await post(url, { kind: 'text', description: 'pâtes carbonara, un yaourt et une pomme' })
+    assert.equal(res.status, 200)
+    assert.match(calls[0].systemInstruction, /Chaque plat, aliment ou boisson cité/)
+    assert.match(calls[0].systemInstruction, /plusieurs plats/)
+  })
+})
+
 test('photo : métadonnées retirées avant l’envoi au modèle', async () => {
   const calls = []
   await withServer({ vertex: okVertex(calls) }, async (url) => {
