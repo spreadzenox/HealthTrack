@@ -13,6 +13,12 @@
  *   aujourd'hui » (la dernière valeur connue), sur les mêmes jours.
  * Les coefficients du modèle (effets à autres facteurs égaux) servent aussi aux contributions du jour : un facteur
  * n'y est pas compté deux fois à travers ses voisins.
+ *
+ * METHODE-BIAIS-1 (banc du 20/11) : la pénalité et le remplacement des jours sans valeur par la moyenne rétrécissent
+ * la taille d'un lien (environ la moitié de la vraie) et sa fourchette manque la vraie valeur 8 fois sur 10. La TAILLE
+ * montrée (`shown`) vient donc d'un second ajustement sans pénalité des seuls facteurs retenus et des contrôles, sur les
+ * jours où ils sont tous connus, avec sa fourchette par les mêmes tirages de semaines. La ridge garde tout le reste :
+ * choix des facteurs, stabilité du signe (« net »), prévision et contributions du jour.
  */
 import { rng } from './simulate'
 
@@ -22,6 +28,8 @@ export const MAX_FACTOR_CORR = 0.9
 export const RIDGE_GRID = [0.3, 1, 3, 10, 30, 100]
 export const BOOTSTRAP_SAMPLES = 100
 export const STABILITY_MIN = 0.85
+/** Taille sans pénalité seulement avec assez de jours complets : 2 semaines et 4 jours par facteur retenu. */
+export const SHOWN_MIN_DAYS_PER_FACTOR = 4
 const WEEK = 7
 
 const mean = (a) => a.reduce((s, v) => s + v, 0) / a.length
@@ -76,7 +84,9 @@ const predict = (beta, x) => x.reduce((s, v, j) => s + v * beta[j], 0)
  * @param {number} [o.seed]
  * @returns {null | { used: string[], lambda: number, beatsPersistence: boolean, cvError: number,
  *   persistenceError: number, coef: Map<string, { perUnit: number, low: number, high: number, stability: number,
- *   mean: number }> }}
+ *   mean: number, shown: { perUnit: number, low: number, high: number } }> }}
+ *   `shown` : la taille à montrer et sa fourchette (sans pénalité ; celles de la ridge s'il manque des jours complets
+ *   ou si le sens diffère).
  */
 export function fitOutcomeModel({ rows, candidates, valueOf, seed = 7, samples = BOOTSTRAP_SAMPLES }) {
   if (rows.length < 2 * WEEK || !candidates.length) return null
@@ -84,9 +94,11 @@ export function fitOutcomeModel({ rows, candidates, valueOf, seed = 7, samples =
   // Courte liste : par p croissante, sans doublon trop corrélé.
   const maxK = Math.max(1, Math.min(MAX_MODEL_FACTORS, Math.floor(rows.length / DAYS_PER_FACTOR)))
   const cols = new Map()
+  const raws = new Map()
   const colOf = (id) => {
     if (!cols.has(id)) {
       const raw = rows.map((r) => valueOf(id, r.dk))
+      raws.set(id, raw)
       const known = raw.filter((v) => v !== null)
       const m = known.length ? mean(known) : 0
       cols.set(id, raw.map((v) => (v === null ? m : v)))
@@ -160,9 +172,17 @@ export function fitOutcomeModel({ rows, candidates, valueOf, seed = 7, samples =
   const modelError = swp ? seModel / swp : Infinity
 
   const full = ridge(X, y, w, nCtrl, best.lambda)
-  // Stabilité : bootstrap par semaines.
+  // Taille montrée (METHODE-BIAIS-1) : moindres carrés pondérés sans pénalité sur les jours complets. Une pénalité
+  // infime sur toutes les colonnes ne sert qu'à rester soluble si un contrôle est constant sur ces jours.
+  const complete = rows.map((_, i) => used.every((id) => raws.get(id)[i] !== null))
+  const minDays = (idx) => idx.length >= Math.max(2 * WEEK, SHOWN_MIN_DAYS_PER_FACTOR * used.length)
+  const ols = (idx) => ridge(idx.map((i) => X[i]), idx.map((i) => y[i]), idx.map((i) => w[i]), 0, 1e-6)
+  const cc = rows.map((_, i) => i).filter((i) => complete[i])
+  const fullShown = minDays(cc) ? ols(cc) : null
+  // Stabilité : bootstrap par semaines (les mêmes tirages servent à la fourchette de la taille montrée).
   const r = rng(seed)
   const draws = used.map(() => [])
+  const drawsShown = used.map(() => [])
   for (let s = 0; s < samples; s += 1) {
     const idx = []
     for (let k = 0; k < weeks.length; k += 1) {
@@ -172,6 +192,11 @@ export function fitOutcomeModel({ rows, candidates, valueOf, seed = 7, samples =
     if (idx.length < nCtrl + 2) continue
     const beta = ridge(idx.map((i) => X[i]), idx.map((i) => y[i]), idx.map((i) => w[i]), nCtrl, best.lambda)
     used.forEach((_, j) => draws[j].push(beta[nCtrl + j]))
+    if (!fullShown) continue
+    const idxC = idx.filter((i) => complete[i])
+    if (!minDays(idxC)) continue
+    const betaC = ols(idxC)
+    used.forEach((_, j) => drawsShown[j].push(betaC[nCtrl + j]))
   }
   const quantile = (a, q) => {
     const b = [...a].sort((x, z) => x - z)
@@ -182,12 +207,23 @@ export function fitOutcomeModel({ rows, candidates, valueOf, seed = 7, samples =
     const b = full[nCtrl + j]
     const d = draws[j]
     const same = d.length ? d.filter((v) => Math.sign(v) === Math.sign(b) && v !== 0).length / d.length : 0
+    const sd = stats[j].sd
+    const ridgeCoef = {
+      perUnit: b / sd,
+      low: (d.length ? quantile(d, 0.025) : b) / sd,
+      high: (d.length ? quantile(d, 0.975) : b) / sd,
+    }
+    const bs = fullShown?.[nCtrl + j]
+    const ds = drawsShown[j]
+    // Assez de tirages et même sens que la ridge (le sens de « net » ne change jamais) ; sinon, la taille de la ridge.
+    const okShown = fullShown && ds.length >= samples / 2 && Math.sign(bs) === Math.sign(b) && bs !== 0
     coef.set(id, {
-      perUnit: b / stats[j].sd,
-      low: (d.length ? quantile(d, 0.025) : b) / stats[j].sd,
-      high: (d.length ? quantile(d, 0.975) : b) / stats[j].sd,
+      ...ridgeCoef,
       stability: same,
       mean: stats[j].m,
+      shown: okShown
+        ? { perUnit: bs / sd, low: quantile(ds, 0.025) / sd, high: quantile(ds, 0.975) / sd }
+        : ridgeCoef,
     })
   })
   return {

@@ -111,8 +111,35 @@ describe('banc de la méthode (ORG-5a)', () => {
     const est = b.estimates['wellbeing|habit_x|short']
     expect(est).toHaveLength(40)
     const ratio = est.reduce((s, e) => s + e.perUnit, 0) / est.length / eff.size
-    // Sous-estimé (ridge), jamais de signe inversé en moyenne. METHODE-BIAIS-1 relèvera ce plancher vers 1.
-    expect(ratio).toBeGreaterThan(0.4)
+    // METHODE-BIAIS-1 : taille montrée sans pénalité, sur les jours complets ; 0,61 avant, 0,77 après (40 jeux).
+    expect(ratio).toBeGreaterThan(0.7)
     expect(ratio).toBeLessThanOrEqual(1.1)
+  }, 120_000)
+
+  // METHODE-BIAIS-1 (21/11) : mesures à 90 jours, 40 jeux. Taille moyenne / vraie et part des jeux où la fourchette
+  // contient la vraie valeur : habitude 0,8 pt 0,51 / 17 % → 0,76 / 78 % ; habitude 1,6 pt 0,61 / 23 % → 0,77 / 55 % ;
+  // sommeil (effet fort) 0,61 / 38 % → 0,74 / 75 % ; sommeil (moyen) 0,53 / 47 % → 0,65 / 90 %. Puissance et faux
+  // liens inchangés (la netteté reste celle de la ridge). Reste un rétrécissement d'environ 0,25 : METHODE-BIAIS-2.
+  const cover = (est, truth) => est.filter((e) => e.low <= truth && truth <= e.high).length / est.length
+  const ratioOf = (est, truth) => est.reduce((s, e) => s + e.perUnit, 0) / est.length / truth
+
+  it('taille montrée : un effet du sommeil ressort aux trois quarts de sa taille, la fourchette contient souvent la vraie', () => {
+    const eff = { outcome: 'wellbeing', key: 'sleepMinutes', horizon: 'short', size: 1 }
+    const b = runBench(analyzeMatrix, { days: 90, effects: [eff] }, { reps: 40 })
+    const est = b.estimates['wellbeing|sleepMinutes|short']
+    const truth = (0.5 * eff.size) / 45 // points par minute (bruit du bien-être 0,5 ; écart type du sommeil 45 min)
+    expect(ratioOf(est, truth)).toBeGreaterThan(0.68)
+    expect(ratioOf(est, truth)).toBeLessThanOrEqual(1.1)
+    expect(cover(est, truth)).toBeGreaterThanOrEqual(0.65)
+    expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
+  }, 120_000)
+
+  it('taille montrée : une habitude à effet moyen, fourchette juste dans au moins 7 jeux sur 10', () => {
+    const eff = { outcome: 'wellbeing', key: 'habit_x', horizon: 'short', size: 0.8 }
+    const b = runBench(withHabit, { days: 90, binary: ['habit_x'], effects: [eff] }, { reps: 40 })
+    const est = b.estimates['wellbeing|habit_x|short']
+    expect(ratioOf(est, eff.size)).toBeGreaterThan(0.68)
+    expect(cover(est, eff.size)).toBeGreaterThanOrEqual(0.7)
+    expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
   }, 120_000)
 })
