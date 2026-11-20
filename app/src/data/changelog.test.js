@@ -39,6 +39,26 @@ describe('changelog par variante (VC-5)', () => {
     }
   })
 
+  it('les notes qui ne valent que pour Android le disent (DEM-IOS-5, DEM-IOS-11)', () => {
+    for (const id of ['2026-11-11-1635-noter-objectif', '2026-10-29-0533-paywall-lancement']) {
+      expect(ALL_CHANGELOG.find((e) => e.id === id)?.variants, id).toEqual(['play', 'sideload'])
+    }
+  })
+
+  it('les notes du code partagé valent aussi pour l’iPhone (DEM-IOS-12)', () => {
+    for (const id of ['2026-11-07-2150-norme-apres-changement', '2026-11-07-2200-bien-etre-du-jour-ts1']) {
+      const e = ALL_CHANGELOG.find((x) => x.id === id)
+      expect(e, id).toBeTruthy()
+      expect(e.variants, id).toBeUndefined()
+    }
+  })
+
+  it('une note propre à l’iPhone (appstore) ne s’affiche ni sur play ni en sideload', () => {
+    const ios = [{ id: '2026-11-20-0630-x', variants: ['appstore'] }]
+    expect(changelogFor(ios, 'play')).toHaveLength(0)
+    expect(changelogFor(ios, 'sideload')).toHaveLength(0)
+  })
+
   it('sideload garde l’historique complet d’avant la variante play', () => {
     expect(changelogFor(ALL_CHANGELOG, 'sideload').some((e) => e.id < PLAY_CHANGELOG_SINCE)).toBe(true)
   })

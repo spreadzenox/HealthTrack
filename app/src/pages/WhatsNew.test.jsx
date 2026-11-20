@@ -49,7 +49,8 @@ describe('WhatsNew page', () => {
       expect(['nouveau', 'amélioration', 'correctif']).toContain(e.kind)
       expect(e.title).toBeTruthy()
       expect(Array.isArray(e.items)).toBe(true)
-      if (e.variants !== undefined) expect(e.variants.length > 0 && e.variants.every((v) => ['play', 'sideload'].includes(v))).toBe(true)
+      // Les notes propres à l'iPhone (iphone/overlay/) portent la variante appstore
+      if (e.variants !== undefined) expect(e.variants.length > 0 && e.variants.every((v) => ['play', 'sideload', 'appstore'].includes(v))).toBe(true)
     }
   })
 })
