@@ -2,7 +2,8 @@
  * La checklist de « Ma journée » (refonte « Compagnon », étape 3 ; brief § 4, specs/journee.SPEC.md § 1, 2 et 8) :
  * seulement ce qui se note à la main. Repas (trois cercles Matin, Midi, Soir ; un cercle vide ouvre l'appareil
  * photo), bien-être (« Noter »), digestion le soir (seulement avec l'objectif digestion). Une ligne part quand
- * c'est fait ; tout fait : « Plus rien à faire ». « Déjà noté (n) » rouvre les saisies du jour pour les modifier.
+ * c'est fait ; tout fait : « Plus rien à faire ». « Déjà noté (n) » rouvre les saisies du jour pour les modifier, notes
+ * digestives d'un moment comprises (POLISH-SIM-123 : « Noté à 08:35 : Gêne » sous la ligne du soir).
  * Étape 4 : une ligne miel par habitude suivie, « Oui » et « Non » de même poids (on note, on ne juge pas).
  * Aucune calorie ici, aucun compteur de jours manqués (brief § 5).
  * Étape 11 (lot VIE) : la bannière de Pilou remplace « Encore N choses » et répond à chaque saisie ; la fin de
@@ -64,10 +65,13 @@ function MealsLine({ task }) {
   )
 }
 
-function NoteLine({ title, hint, onNote }) {
+function NoteLine({ title, hint, sub, onNote }) {
   return (
     <div className="day-line-row">
-      <span className="day-line-title">{title}</span>
+      <span className="day-line-titles">
+        <span className="day-line-title">{title}</span>
+        {sub && <span className="day-line-sub">{sub}</span>}
+      </span>
       {onNote
         ? <button type="button" className="day-line-btn" onClick={onNote}>Noter</button>
         : <span className="day-line-hint">{hint}</span>}
@@ -145,6 +149,7 @@ export default function DayChecklist({ entries, askGut = false, habits = [], now
                 {t.habit && <HabitLine habit={t.habit} onAnswer={onHabit} />}
                 {t.id === 'gut' && (
                   <NoteLine title="Votre digestion ce soir" hint={`À partir de ${GUT_EVENING_FROM_HOUR} h`}
+                    sub={t.moment ? `Noté à ${hhmm(t.moment.at)} : ${gutLevelLabel(t.moment.payload?.level)}` : null}
                     onNote={t.available ? onGut : undefined} />
                 )}
               </>
@@ -180,6 +185,7 @@ export default function DayChecklist({ entries, askGut = false, habits = [], now
                       {kind === 'wellbeing' && `Bien-être · ${scoreToChoice(entry.payload?.score)} sur 5`}
                       {answer}
                       {kind === 'gut' && `Digestion du jour · ${gutLevelLabel(entry.payload?.level)}`}
+                      {kind === 'gutMoment' && `Digestion · ${gutLevelLabel(entry.payload?.level)}`}
                     </span>
                     <LineIcon name="chevron" size={18} />
                   </>
@@ -188,7 +194,7 @@ export default function DayChecklist({ entries, askGut = false, habits = [], now
                   <li key={`${kind}-${entry.id ?? entry.at}`}>
                     {kind === 'meal' && <Link to="/food" className="day-noted-item">{inner}</Link>}
                     {kind === 'wellbeing' && <button type="button" className="day-noted-item" onClick={() => onWellbeing(entry)}>{inner}</button>}
-                    {kind === 'gut' && <button type="button" className="day-noted-item" onClick={onGut}>{inner}</button>}
+                    {(kind === 'gut' || kind === 'gutMoment') && <button type="button" className="day-noted-item" onClick={onGut}>{inner}</button>}
                     {kind === 'habit' && (
                       <button type="button" className="day-noted-item" aria-label={`${answer}, changer la réponse`}
                         onClick={() => onHabitUndo?.(entry)}>{inner}</button>

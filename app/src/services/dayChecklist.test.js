@@ -101,6 +101,31 @@ describe('dayChecklist', () => {
     expect(c.tasks[2].entry).toBe(bilan)
   })
 
+  it('une note digestive du matin va dans « Déjà noté » et sur la ligne du soir, qui reste à faire (POLISH-SIM-123)', () => {
+    const MORNING = new Date(2026, 10, 15, 8, 40)
+    const gene = { id: 'g1', type: 'gut', at: at(8, 35), payload: { level: 'discomfort' } }
+    const vieille = { id: 'g0', type: 'gut', at: at(8, 35, -1), payload: { level: 'pain' } }
+    const c = dayChecklist([vieille, gene], { now: MORNING, askGut: true })
+    const gut = c.tasks.find((t) => t.id === 'gut')
+    expect(gut.done).toBe(false)
+    expect(gut.available).toBe(false)
+    expect(gut.moment).toBe(gene)
+    expect(c.noted).toEqual([{ kind: 'gutMoment', entry: gene }])
+    // Sans l'objectif digestion, la note se voit quand même dans « Déjà noté »
+    expect(dayChecklist([gene], { now: MORNING, askGut: false }).noted.map((n) => n.kind)).toEqual(['gutMoment'])
+    // Une note sans niveau connu ne compte pas
+    expect(dayChecklist([{ ...gene, payload: { level: 'x' } }], { now: MORNING, askGut: true }).noted).toEqual([])
+  })
+
+  it('la ligne du soir cite la note du moment la plus récente, et le bilan reste seul « gut »', () => {
+    const a = { id: 'a', type: 'gut', at: at(8), payload: { level: 'calm' } }
+    const b = { id: 'b', type: 'gut', at: at(15), payload: { level: 'pain' } }
+    const bilan = { id: 'd', type: 'gut', at: at(20), payload: { level: 'calm', scope: 'day' } }
+    expect(dayChecklist([b, a], { now: NOON, askGut: true }).tasks.find((t) => t.id === 'gut').moment).toBe(b)
+    const c = dayChecklist([a, bilan], { now: EVENING, askGut: true })
+    expect(c.noted.map((n) => n.kind)).toEqual(['gutMoment', 'gut'])
+  })
+
   it('tout est noté : plus rien à faire, et la liste de ce qui est déjà noté', () => {
     const entries = [
       meal(8, 'Tartines'), meal(13, 'Salade'), meal(19, 'Soupe'),

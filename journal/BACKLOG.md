@@ -493,7 +493,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       par son heure, donc « Matin » se coche. Spec : le cercle touché passe son créneau à la page Repas ; si l'heure
       actuelle n'est pas dans ce créneau, l'heure du repas est proposée au milieu du créneau (08:00, 12:30, 19:30),
       modifiable ; dans le créneau, l'heure actuelle. Test : toucher Midi à 08:34 → repas à 12:30, cercle Midi plein.
-    - [ ] **POLISH-SIM-123 — Digestion notée le matin invisible** (J45) : « Gêne » notée à 08:35 par le bouton Digestion
+    - [x] **POLISH-SIM-123 — Digestion notée le matin invisible** (fait le 20/11 10:30 : « Déjà noté » et « Noté à
+      08:35 : Gêne » sous la ligne du soir, qui reste à faire ; Pilou sans « bonne soirée » le matin) (J45) : « Gêne » notée à 08:35 par le bouton Digestion
       n'apparaît ni dans « Déjà noté », ni dans le compteur ; la ligne dit toujours « Votre digestion ce soir · À partir
       de 18 h » et la bulle Digestion de l'Accueil reste à faire. `dayChecklist` ne lit que `gutEveningCheck` (le bilan
       du soir). Spec : toute note digestive du jour va dans « Déjà noté » ; la ligne du soir reste à faire avant 18 h

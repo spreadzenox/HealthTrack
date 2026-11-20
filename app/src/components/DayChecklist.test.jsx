@@ -54,6 +54,17 @@ describe('DayChecklist (refonte étape 3)', () => {
     expect(props.onGut).toHaveBeenCalled()
   })
 
+  it('une gêne notée le matin : la ligne du soir la cite et « Déjà noté » la montre (POLISH-SIM-123)', () => {
+    const gene = { id: 'g1', type: 'gut', at: at(8, 35), payload: { level: 'discomfort' } }
+    const { props } = show({ askGut: true, entries: [gene], now: new Date(2026, 10, 15, 8, 40) })
+    const line = screen.getByRole('group', { name: 'Votre digestion ce soir' })
+    expect(within(line).getByText('Noté à 08:35 : Gêne')).toBeInTheDocument()
+    expect(within(line).getByText('À partir de 18 h')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Déjà noté (1)' }))
+    fireEvent.click(screen.getByRole('button', { name: /08:35.*Digestion · Gêne/ }))
+    expect(props.onGut).toHaveBeenCalled()
+  })
+
   it('une ligne faite part de la liste et passe dans « Déjà noté », que l’on ouvre pour modifier', async () => {
     const { again, props } = show({ entries: [] })
     again({ entries: [note] })

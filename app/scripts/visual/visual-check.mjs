@@ -8,6 +8,7 @@
  *   npm run visual                         # toutes les pages, données de démo
  *   npm run visual -- --empty              # état vide (premier lancement)
  *   npm run visual -- --routes=/ --weigh-in # une pesée ce matin (ligne « Poids » d'Aujourd'hui)
+ *   npm run visual -- --routes=/ma-journee --onboarding=gut --gut-moment  # une gêne notée il y a 15 min (avant 18 h)
  *   npm run visual -- --routes=/,/food     # pages choisies
  *   npm run visual -- --dark               # thème sombre de l'app (le clair est celui par défaut)
  *   npm run visual -- --light              # schéma de couleurs clair du téléphone (avec --theme=system)
@@ -1420,6 +1421,11 @@ async function main() {
       // Une pesée ce matin, arrivée par Health Connect (POLISH-SIM-84 : ligne « Poids » d'Aujourd'hui).
       const at = new Date(); at.setHours(7, 30, 0, 0)
       entries.push({ type: 'weight', source: 'health_connect', at: at.toISOString(), payload: { valueKg: 72.4 } })
+    }
+    if (args['gut-moment']) {
+      // Une « Gêne » notée il y a un quart d'heure par le bouton Digestion (POLISH-SIM-123 : à lancer avant 18 h,
+      // avec --onboarding=gut ; Ma journée la cite sous la ligne du soir et dans « Déjà noté »).
+      entries.push({ type: 'gut', source: 'app_gut', at: new Date(Date.now() - 15 * 60_000).toISOString(), payload: { level: 'discomfort' } })
     }
     if (args['first-meal']) {
       // Un seul repas, noté aujourd'hui (POLISH-SIM-97 : Nutrition au premier jour dit « journée en cours »).
