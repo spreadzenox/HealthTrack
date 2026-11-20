@@ -424,7 +424,8 @@ export function EntryItem({ e, measuredScreen, onEdit, editingMealId, onEditMeal
   return (
     <li className="entry-card" data-type={e.type}>
       <div className="entry-card-header">
-        <time className="entry-at" dateTime={e.at}>{timeOf(e.at)}</time>
+        {/* POLISH-SIM-125 : une habitude vaut pour la journée, son heure (midi) est un rangement, pas une saisie */}
+        {e.type !== HABIT_TYPE && <time className="entry-at" dateTime={e.at}>{timeOf(e.at)}</time>}
         <span className="entry-type">{entryTitle(e)}</span>
         {e.type === 'food' && mealKcal(e.payload?.items) > 0 && (
           <span className="entry-kcal">≈ {mealKcal(e.payload.items).toLocaleString(appLocale())} kcal</span>
@@ -474,10 +475,14 @@ function dayBounds(dateKey) {
   return { since: new Date(y, m - 1, d).toISOString(), until: new Date(y, m - 1, d, 23, 59, 59, 999).toISOString() }
 }
 
-/** Une réponse par habitude et par jour : si deux existent, seule la dernière saisie est montrée (comme Ma journée). */
+/**
+ * Une réponse par habitude et par jour : si deux existent, seule la dernière saisie est montrée (comme Ma journée).
+ * Les habitudes n'ont pas d'heure : elles viennent après les saisies horodatées (POLISH-SIM-125, comme « Déjà noté »).
+ */
 function latestHabitsOnly(items, dateKey) {
   const answers = habitAnswers(items, dateKey)
-  return items.filter((e) => e.type !== HABIT_TYPE || answers.get(e.payload?.habit) === e)
+  const kept = items.filter((e) => e.type !== HABIT_TYPE || answers.get(e.payload?.habit) === e)
+  return [...kept.filter((e) => e.type !== HABIT_TYPE), ...kept.filter((e) => e.type === HABIT_TYPE)]
 }
 
 /**

@@ -118,6 +118,22 @@ describe('DayEntries : « Vos saisies » d’un jour passé (refonte, étape 7a)
     await waitFor(() => expect(updateEntry).toHaveBeenCalledWith(11, { payload: { habit: 'meditation', label: 'Méditation', done: false } }))
   })
 
+  it('une habitude n’a pas d’heure inventée et vient après les saisies horodatées (POLISH-SIM-125)', async () => {
+    const habit = { id: 'cafe', label: 'Café' }
+    await withEntries([
+      { id: 20, ...habitEntry(habit, key(1), true), created_at: at(1, 8) },
+      { id: 21, type: 'food', source: 'app_food', at: at(1, 9), payload: { dish: 'Tartines' } },
+      { id: 22, type: 'food', source: 'app_food', at: at(1, 19), payload: { dish: 'Soupe' } },
+    ])
+    renderDay(key(1))
+    const region = await screen.findByRole('region', { name: 'Vos saisies' })
+    const cards = [...region.querySelectorAll('.entry-card')]
+    const habitCard = cards.find((c) => c.dataset.type === 'habit')
+    expect(habitCard.querySelector('time')).toBeNull()
+    expect(habitCard.textContent).not.toMatch(/\d{1,2}[:h]\d{2}/)
+    expect(cards.indexOf(habitCard)).toBe(cards.length - 1)
+  })
+
   it('un repas passé garde Refaire, Modifier et Supprimer', async () => {
     await withEntries([{ id: 5, type: 'food', source: 'app_food', at: at(2, 12), payload: { dish: 'Salade', items: [{ name: 'Tomate, crue', grams: 100 }] } }])
     renderDay(key(2))

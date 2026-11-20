@@ -16,6 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+20/11 11:30 : POLISH-SIM-125 (habitude sans heure dans « Vos saisies ») : code partagé (`DayEntries.jsx`), aucun correctif iPhone ne le touche. Parité inchangée : 70 %.
 20/11 10:30 : POLISH-SIM-123 (digestion notée le matin visible dans Ma journée) : code partagé (`dayChecklist.js`, `DayChecklist`, `life/lines.js`, `DigestBlock.css`), aucun correctif iPhone ne les touche. Parité inchangée : 70 %.
 20/11 10:00 : POLISH-SIM-124 (pas du téléphone au temps 3 sans montre ; Santé sur iPhone) : code partagé (`onboardingFlow.js`, `AutoStep` d'`Onboarding.jsx`) ; les correctifs 23, 45 et 52 touchent `Onboarding.jsx` ailleurs et s'appliquent. Parité inchangée : 70 %.
 20/11 09:30 : POLISH-SIM-122 (repas rangé dans le cercle touché de Ma journée) : code partagé (`dayChecklist.js`, `MealPhotoButton`, `Food.jsx`, `NewMealForm`, `SavedMealEditor`), aucun correctif iPhone ne les touche. Parité inchangée : 70 %.

@@ -509,7 +509,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       montre ou un bracelet » alors que le téléphone les compte et que le temps 2 l'a dit (`autoTiles` de
       `services/onboardingFlow.js` : les pas sont rangés avec la montre). Spec : sans montre, tuile « Pas (votre
       téléphone) » si Health Connect ou Santé est là ; la ligne montre ne cite plus les pas. Test « Temps 3 » sans montre.
-    - [ ] **POLISH-SIM-125 — Habitude à une heure inventée** (J1) : Tendances › Jour › Vos saisies montre « 12:29 Café
+    - [x] **POLISH-SIM-125 — Habitude à une heure inventée** (fait le 20/11 11:30 : dans « Vos saisies », une habitude n'a plus d'heure et vient après les saisies horodatées, comme dans « Déjà noté » de Ma journée ; seul endroit qui l'affichait) (J1) : Tendances › Jour › Vos saisies montre « 12:29 Café
       Oui » à 08:40 ; une habitude est rangée à 12 h + quelques minutes (`services/habits.js` l. 50). Spec : pas d'heure
       pour une habitude dans « Vos saisies » (et partout où une saisie est datée à l'heure), « aujourd'hui » à la place.
     - [ ] **POLISH-SIM-126 — « Agir s'ouvre depuis le bas de l'Accueil »** (J45, essai en cours) : la note à la une
