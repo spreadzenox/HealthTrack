@@ -124,14 +124,15 @@ describe('banc de la méthode (ORG-5a)', () => {
   const cover = (est, truth) => est.filter((e) => e.low <= truth && truth <= e.high).length / est.length
   const ratioOf = (est, truth) => est.reduce((s, e) => s + e.perUnit, 0) / est.length / truth
 
-  it('taille montrée : un effet du sommeil ressort aux trois quarts de sa taille, la fourchette contient souvent la vraie', () => {
+  it('taille montrée : un effet du sommeil ressort près de sa taille, la fourchette contient la vraie', () => {
     const eff = { outcome: 'wellbeing', key: 'sleepMinutes', horizon: 'short', size: 1 }
     const b = runBench(analyzeMatrix, { days: 90, effects: [eff] }, { reps: 40 })
     const est = b.estimates['wellbeing|sleepMinutes|short']
     const truth = (0.5 * eff.size) / 45 // points par minute (bruit du bien-être 0,5 ; écart type du sommeil 45 min)
-    expect(ratioOf(est, truth)).toBeGreaterThan(0.68)
+    // METHODE-BIAIS-3 : 0,78 avant (les facteurs retenus sans appui en prenaient une part), 0,94 après.
+    expect(ratioOf(est, truth)).toBeGreaterThan(0.85)
     expect(ratioOf(est, truth)).toBeLessThanOrEqual(1.1)
-    expect(cover(est, truth)).toBeGreaterThanOrEqual(0.65)
+    expect(cover(est, truth)).toBeGreaterThanOrEqual(0.85)
     expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
   }, 120_000)
 
@@ -142,6 +143,53 @@ describe('banc de la méthode (ORG-5a)', () => {
     expect(ratioOf(est, eff.size)).toBeGreaterThan(0.8)
     expect(cover(est, eff.size)).toBeGreaterThanOrEqual(0.7)
     expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
+  }, 120_000)
+
+  // METHODE-BIAIS-3 (20/11 23:30) : un facteur continu autocorrélé (sommeil) ressortait à 0,78-0,80 de sa taille, 0,83
+  // même sans jour manquant ; les facteurs retenus sans effet (choisis parmi des dizaines pour une p favorable) en
+  // prenaient une part dans l'ajustement de la taille. Ils en sont retirés (seuls restent les très appuyés, p < 0,001) :
+  // sommeil fort 0,80 → 0,94, moyen 0,68 → 0,92 (60 jeux). Garde-fou : un facteur sans effet lié au sommeil n'hérite
+  // pas de son effet.
+  it('taille montrée : un effet moyen du sommeil n\'est plus rétréci', () => {
+    const eff = { outcome: 'wellbeing', key: 'sleepMinutes', horizon: 'short', size: 0.5 }
+    const b = runBench(analyzeMatrix, { days: 90, effects: [eff] }, { reps: 40 })
+    const truth = (0.5 * eff.size) / 45
+    expect(ratioOf(b.estimates['wellbeing|sleepMinutes|short'], truth)).toBeGreaterThan(0.8)
+    expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
+  }, 120_000)
+
+  it('simulateur : deux facteurs liés gardent leur échelle', () => {
+    const linked = [{ from: 'sleepMinutes', to: 'screen_late_minutes', r: -0.6 }]
+    const { matrix } = simulateMatrix({ days: 200, seed: 3, linked, factorMissing: 0 })
+    const pairs = [...matrix.days.values()].map((d) => [d.sleepMinutes, d.screen_late_minutes])
+    const m = (k) => pairs.reduce((s, p) => s + p[k], 0) / pairs.length
+    const [ma, mb] = [m(0), m(1)]
+    const cov = pairs.reduce((s, p) => s + (p[0] - ma) * (p[1] - mb), 0) / pairs.length
+    const sd = (k, mk) => Math.sqrt(pairs.reduce((s, p) => s + (p[k] - mk) ** 2, 0) / pairs.length)
+    expect(cov / sd(0, ma) / sd(1, mb)).toBeLessThan(-0.45)
+    expect(sd(1, mb)).toBeGreaterThan(15)
+    expect(sd(1, mb)).toBeLessThan(25)
+    // Sans `linked`, rien ne change pour les autres bancs.
+    expect(simulateMatrix({ days: 50, seed: 2, linked: [] }).matrix.series.wellbeing).toEqual(simulateMatrix({ days: 50, seed: 2 }).matrix.series.wellbeing)
+  })
+
+  it('un facteur sans effet lié au sommeil n\'hérite pas de l\'effet du sommeil', () => {
+    const effects = [{ outcome: 'wellbeing', key: 'sleepMinutes', horizon: 'short', size: 1 }]
+    const linked = [{ from: 'sleepMinutes', to: 'screen_late_minutes', r: -0.6 }]
+    const shown = []
+    let net = 0
+    for (let k = 0; k < 30; k += 1) {
+      const { matrix, lastDay } = simulateMatrix({ days: 90, effects, linked, seed: 1 + k })
+      const f = analyzeMatrix(matrix, { today: lastDay }).outcomes.wellbeing.horizons.short.factors
+        .find((x) => x.key === 'screen_late_minutes')
+      if (f?.inModel) shown.push(f.effect / f.usualChange.amount)
+      if (f?.net) net += 1
+    }
+    // Pente qu'il aurait s'il prenait tout l'effet du sommeil : −0,6 × 0,5 point / 20 min = −0,015 par minute.
+    const confounded = (-0.6 * 0.5) / 20
+    expect(shown.length).toBeGreaterThan(10)
+    expect(Math.abs(shown.reduce((s, v) => s + v, 0) / shown.length)).toBeLessThan(0.4 * Math.abs(confounded))
+    expect(net).toBe(0)
   }, 120_000)
 
   // METHODE-BIAIS-2 (20/11 22:30) : 10 % de jours sans mesure laissent des fenêtres « le jour même et la veille »

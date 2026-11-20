@@ -64,11 +64,13 @@ const SCALE = {
  * @param {number} [o.burnIn=28]          jours simulés avant le premier (pour remplir la fenêtre longue)
  * @param {string[]} [o.binary]          facteurs oui / non tirés chaque jour à pile ou face, sans mémoire (une habitude
  *   de Ma journée, REFONTE-4b-2) : valeur 1 ou 0, écart standardisé ±1 ; ils s'ajoutent à `factors`
+ * @param {Array<{ from: string, to: string, r: number }>} [o.linked]  facteurs liés (METHODE-BIAIS-3) : `to` devient
+ *   r × `from` + √(1 − r²) × lui-même (corrélation r, variance 1 gardée)
  */
 export function simulateMatrix({
   days = 70, seed = 1, factors = Object.keys(SCALE), factorAr = 0.6, factorMissing = 0.1, factorTrend = 0,
   effects = [], weekly = 0.3, trend = 0.5, noiseAr = 0.4, wellbeingMissing = 0.1, digestionMissing = 0.15,
-  symptomShare = 0.3, wellbeingSd = 0.5, burnIn = 28, binary = [],
+  symptomShare = 0.3, wellbeingSd = 0.5, burnIn = 28, binary = [], linked = [],
 } = {}) {
   const r = rng(seed)
   const total = days + burnIn
@@ -82,6 +84,11 @@ export function simulateMatrix({
     z[key] = s
   }
   for (const key of binary) z[key] = Array.from({ length: total }, () => (r() < 0.5 ? 1 : -1))
+  // Facteurs liés entre eux (le coucher tardif et l'écran du soir…) : sans nouveau tirage, les autres bancs ne bougent pas.
+  for (const { from, to, r: rho } of linked) {
+    if (!z[from] || !z[to]) continue
+    z[to] = z[to].map((v, i) => rho * z[from][i] + Math.sqrt(1 - rho ** 2) * v)
+  }
   const windowMean = (key, i, h) => {
     const [from, to] = WINDOWS[h]
     let sum = 0
