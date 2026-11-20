@@ -19,6 +19,10 @@
  * montrée (`shown`) vient donc d'un second ajustement sans pénalité des seuls facteurs retenus et des contrôles, sur les
  * jours où ils sont tous connus, avec sa fourchette par les mêmes tirages de semaines. La ridge garde tout le reste :
  * choix des facteurs, stabilité du signe (« net »), prévision et contributions du jour.
+ *
+ * METHODE-BIAIS-3 (banc du 20/11 23:30) : dans cet ajustement, les facteurs retenus sans réel appui (choisis parmi
+ * des dizaines pour une p favorable) prennent une part du lien d'un vrai facteur, surtout s'il est autocorrélé comme
+ * le sommeil. N'y restent, à côté du facteur, que les autres facteurs très appuyés (SHOWN_PARTNER_MAX_P).
  */
 import { rng } from './simulate'
 
@@ -30,6 +34,8 @@ export const BOOTSTRAP_SAMPLES = 100
 export const STABILITY_MIN = 0.85
 /** Taille sans pénalité seulement avec assez de jours complets : 2 semaines et 4 jours par facteur retenu. */
 export const SHOWN_MIN_DAYS_PER_FACTOR = 4
+/** METHODE-BIAIS-3 : p (tri univarié) d'un autre facteur retenu pour qu'il reste dans l'ajustement de la taille montrée. */
+export const SHOWN_PARTNER_MAX_P = 0.001
 const WEEK = 7
 
 const mean = (a) => a.reduce((s, v) => s + v, 0) / a.length
@@ -198,6 +204,14 @@ export function fitOutcomeModel({ rows, candidates, valueOf, completeOf, seed = 
   const sub = (idx) => [idx.map((i) => X[i]), idx.map((i) => y[i]), idx.map((i) => w[i])]
   // Un ajustement par facteur sur les mêmes jours moins ceux de sa fenêtre trop vide : les équations normales de tous
   // les jours sont faites une fois, puis on retire seulement les jours exclus (peu nombreux) pour chaque facteur.
+  // METHODE-BIAIS-3 : à côté du facteur, seuls les autres facteurs retenus très appuyés (p < SHOWN_PARTNER_MAX_P) ;
+  // un facteur sans effet retenu pour un hasard favorable prenait une part du lien (sommeil fort 0,80 de sa taille au
+  // banc, 0,94 sans eux), et un vrai facteur très appuyé reste là pour qu'un voisin corrélé n'hérite pas de son effet.
+  const pOf = new Map(candidates.map((c) => [c.id, c.p]))
+  const shownCols = used.map((_, j) => [
+    ...Array.from({ length: nCtrl }, (_, c) => c),
+    ...used.map((_, k) => k).filter((k) => k === j || pOf.get(used[k]) < SHOWN_PARTNER_MAX_P).map((k) => nCtrl + k),
+  ])
   const shownFits = (idx, all = normalEquations(...sub(idx))) => {
     return used.map((_, j) => {
       const out = idx.filter((i) => !okFor[j][i])
@@ -206,7 +220,9 @@ export function fitOutcomeModel({ rows, candidates, valueOf, completeOf, seed = 
         ? normalEquations(...sub(out), { A: all.A.map((row) => [...row]), b: [...all.b], sw: all.sw }, -1)
         : all
       // Une pénalité infime ne sert qu'à rester soluble si un contrôle est constant sur ces jours.
-      return solvePenalized(eq.A, eq.b, eq.sw / (idx.length - out.length), 0, 1e-6)[nCtrl + j]
+      const sel = shownCols[j]
+      const A2 = sel.map((a) => sel.map((c) => eq.A[Math.min(a, c)][Math.max(a, c)]))
+      return solvePenalized(A2, sel.map((a) => eq.b[a]), eq.sw / (idx.length - out.length), 0, 1e-6)[sel.indexOf(nCtrl + j)]
     })
   }
   const fullShown = shownFits(rows.map((_, i) => i))

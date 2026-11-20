@@ -144,11 +144,31 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   fort ne contient la vraie valeur que 55 % du temps (trop étroite). À mesurer contrôle par contrôle (ruptures TS-2,
   journée à part, tendance), avec le seuil de jours complets, puis TS-1 dans la boucle (matrice construite depuis des
   entrées simulées) ; cibles du spec : 0,8 à 1,2 et couverture ≥ 85 %, faux liens ≤ 5 %.
-- [ ] **METHODE-BIAIS-3 — Le sommeil encore aux trois quarts** (né de METHODE-BIAIS-2, 20/11 22:30) : un facteur
+- [x] **METHODE-BIAIS-3 — Le sommeil encore aux trois quarts** (**fait le 20/11 23:30** : mesure contrôle par
+  contrôle (sommeil fort, 30 à 60 jeux, mêmes tirages) : ruptures TS-2 0,79 → 0,80, fenêtre voisine du même facteur
+  0,80, rien ; **les autres facteurs retenus** font l'essentiel (sommeil seul dans l'ajustement : 0,96). Biais de
+  sélection : parmi ~48 candidats, les facteurs sans effet retenus pour une p favorable ont une corrélation de hasard
+  avec le sommeil (plus grande pour des séries autocorrélées) et prennent une part de son lien. `ridgeModel.js` :
+  `SHOWN_PARTNER_MAX_P` (0,001) ; l'ajustement de la taille d'un facteur ne garde, à côté de lui, que les autres
+  facteurs retenus très appuyés. Banc, 60 jeux à 90 j : sommeil fort 0,80 / 90 % → 0,95 / 93 % ; moyen 0,68 → 0,92 ;
+  sans jour manquant ni bruit autocorrélé 0,83 → 0,95. Garde-fou (simulateur : option `linked`, facteurs liés) :
+  l'écran du soir sans effet, corrélé à −0,6 au sommeil, garde une taille montrée de −0,004 par minute (−0,003 avant ;
+  −0,0135 s'il prenait tout l'effet) et n'est jamais net. Puissance et faux liens inchangés. 3 tests de plus, plancher
+  du sommeil relevé (0,68 → 0,85, couverture 0,65 → 0,85). Reste : METHODE-BIAIS-4) (né de METHODE-BIAIS-2, 20/11 22:30) : un facteur
   continu autocorrélé (sommeil, AR 0,6) ressort à 0,78 de sa taille, 0,87 même sans aucun jour manquant ni bruit
   autocorrélé, alors qu'une habitude sans mémoire monte à 0,92-0,95. Pistes à mesurer : la fenêtre voisine (moyen
   terme) du même facteur retenue avec lui et qui prend une part de l'effet ; le choix des candidats par p (effet du
   gagnant) ; puis TS-1 dans la boucle (matrice construite depuis des entrées simulées). Cibles inchangées.
+- [ ] **METHODE-BIAIS-4 — TS-1 dans la boucle du banc** (né de METHODE-BIAIS-3, 20/11 23:30) : le banc donne les
+  notes brutes ; dans l'app, le résultat est l'estimation lissée de TS-1, qui rétrécissait un effet du jour même
+  (0,63 → 0,38 au 19/11, avant METHODE-BIAIS-1 à 3). Construire la matrice depuis des entrées simulées
+  (`buildAnalysisMatrix`), mesurer taille et couverture, et si besoin régresser la taille sur les notes du jour.
+  Aussi : un vrai facteur moyen (p > 0,001) n'est plus un partenaire ; un voisin corrélé sans effet peut alors en
+  porter une part dans sa taille montrée (jamais « net ») : à mesurer avec `linked`.
+  Vu aux captures (démo, ~75 jours, déjà sur main) : au long terme, des lignes non nettes à ±2 à 3 points
+  (« Lactose +3,2 pt », ou « Méditation −3,0 pt » après ce run) ; une fenêtre de 21 jours sur 75 jours se confond avec
+  la tendance. Mesurer au banc la taille montrée d'un facteur sans effet au long terme et, si elle est souvent grande,
+  la ramener à la ridge ou masquer le chiffre sous un seuil de jours.
 - [x] **REFONTE-4b-3 — Essai d'Agir sur une habitude** (**fait le 20/11 18:30** : `instruction` dit « Méditation » ou « Pas d’étirements » pour un facteur `habit_<id>` ; `heldFromData` lit `summaries.get(jour).habits[id]`, rempli par `habitDays` (`habits.js`) dans `readTrialsData` ; question seulement sans réponse ; habitude gardée lue de même ; `npm run visual -- --play --routes=/agir --trial=8 --trial-factor=habit --click=Méditation`) : la consigne dit « Un peu plus de méditation que
   d'habitude » ; elle devrait dire « Méditation » les jours « avec », et l'essai devrait lire la réponse de Ma
   journée au lieu de reposer la question (`trials.js`, `MEASURED`).
