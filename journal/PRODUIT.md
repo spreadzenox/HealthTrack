@@ -147,6 +147,7 @@ corrélation ≠ causalité) et D6 (science personnelle, normes — FODMAP compr
 > 19/11 23:30 : POLISH-SIM-118 fait : une pesée tous les 2 ou 3 jours suffit pour choisir « Poids » en Semaine dans Tendances (3 pesées sur le mois).
 > 19/11 22:30 : POLISH-SIM-117 fait : sans caméra, la note de bien-être apparaît dans Tendances › Jour (losange à son heure).
 > 19/11 21:30 : POLISH-SIM-116 fait : un seul délai pour le bien-être (score au 7e jour noté, pistes au 14e) sur l'Accueil, Objectifs et la page de l'objectif.
+> 20/11 08:30 : **UPG-3 terminé** (10 parcours sur 10 : « Ventre, sans technique » en mise à jour, « Tout mesurer » neuve) ; rien de perdu à la mise à jour ; constats POLISH-SIM-122 à 128, en tête le repas de midi rangé au matin et le temps 3 vide sans montre.
 > 19/11 20:30 : UPG-3 à 8 simulations sur 10 parcours (restent « Ventre, sans technique » en mise à jour et « Tout mesurer » neuve) ; rien de perdu à la mise à jour ; constats POLISH-SIM-116 à 121, en tête trois délais différents pour le bien-être (7, 6 et 14 jours).
 > 19/11 08:30 : UPG-3 (passage des personas avant le 22/11) à 6 simulations sur 10 parcours ; constats POLISH-SIM-109 à 115 ; proposition « trois courbes de plus dans Tendances » en attente du propriétaire (`maquettes/tendances-courbes/`).
 

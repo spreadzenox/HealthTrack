@@ -346,7 +346,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     (Données = Tendances et Nutrition, le détail d'un jour dans Tendances). Tests : whatsNew, WhatsNewBanner (nouveau),
     changelog. Capture `npm run visual -- --whats-new --routes=/` : « Nouveau : Nouveaux onglets : Accueil, Ma
     journée, Objectifs, Données et 523 autres changements ». Code partagé sans correctif iPhone.
-  - [ ] **UPG-3 — Passage complet des personas** sur les deux parcours (installation neuve ; `--legacy`), avant le 22/11.
+  - [x] **UPG-3 — Passage complet des personas** (FAIT 20/11 08:30 : 10 parcours sur 10, dernier passage UPG-3d) sur les deux parcours (installation neuve ; `--legacy`), avant le 22/11.
     Passage 1 (16/11 19:30, [synthèse](simulations/2026-11-16-1930-synthese.md)) : Ventre sans technique J1
     (installation neuve, Android seul) et Ventre et données J45 `--legacy --goals=gut,cycle` (Samsung + Galaxy Watch).
     Rien de perdu, essai et bandeau UPG-2 vus ; constats UPG-4 à UPG-9 ci-dessous. Reste : Tout mesurer, Prendre
@@ -478,6 +478,45 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       de l'Accueil y mène. Une ligne « Essai en cours : … jour N sur 10 » sur la page de l'objectif suivi.
     - [x] **POLISH-SIM-121 — Deux liens « comment c'est calculé »** (FAIT 20/11 02:30 : un seul « Comment c’est calculé » en bas ; sur le bien-être, il dit d’abord d’où vient le chiffre, Pilou compris, puis la comparaison et « Le détail » ; `HowWellbeing` fondu dans `HowItWorks({ wellbeing })`) (J1) : « Votre bien-être » montre « Comment est
       calculé votre bien-être ? » et « Comment c'est calculé » l'un sous l'autre ; n'en garder qu'un.
+    - [x] **UPG-3d** (20/11 08:30, run « idées ») : 2 simulations, « Ventre, sans technique » J45 en mise à jour
+      (`--equipment=watch --source="Samsung Health" --goals=gut --legacy`, config 15 : Galaxy Ring) et « Tout mesurer »
+      J1 neuve (`--equipment=phone`, config 1 : Android seul) :
+      [`J45`](simulations/2026-11-20-0830-ventre-sans-technique-maj-J45.md), [`J1`](simulations/2026-11-20-0830-tout-mesurer-J1.md),
+      [synthèse](simulations/2026-11-20-0830-synthese.md). Rien de perdu à la mise à jour. **UPG-3 complet : 10 parcours
+      sur 10.** Constats vérifiés sur captures et dans le code → POLISH-SIM-122 à 128.
+    - [ ] **POLISH-SIM-122 — Repas de midi rangé au matin** (J45, prioritaire pour le 22/11) : à 08:34, toucher le cercle
+      « Midi » de Ma journée ouvre le repas à l'heure actuelle ; `mealSlotOf` (`services/dayChecklist.js`) le range
+      par son heure, donc « Matin » se coche. Spec : le cercle touché passe son créneau à la page Repas ; si l'heure
+      actuelle n'est pas dans ce créneau, l'heure du repas est proposée au milieu du créneau (08:00, 12:30, 19:30),
+      modifiable ; dans le créneau, l'heure actuelle. Test : toucher Midi à 08:34 → repas à 12:30, cercle Midi plein.
+    - [ ] **POLISH-SIM-123 — Digestion notée le matin invisible** (J45) : « Gêne » notée à 08:35 par le bouton Digestion
+      n'apparaît ni dans « Déjà noté », ni dans le compteur ; la ligne dit toujours « Votre digestion ce soir · À partir
+      de 18 h » et la bulle Digestion de l'Accueil reste à faire. `dayChecklist` ne lit que `gutEveningCheck` (le bilan
+      du soir). Spec : toute note digestive du jour va dans « Déjà noté » ; la ligne du soir reste à faire avant 18 h
+      mais dit « Noté à 08:35 : Gêne » sous son titre. Vérifier aussi « Reposez-vous bien » de Pilou à 08:35.
+    - [ ] **POLISH-SIM-124 — Accueil, temps 3 sans montre : rien de suivi** (J1, config Android seul, la plus fréquente) :
+      l'écran « Ce que Halcya suit pour vous, sans rien faire » n'a aucune tuile ; « pas » n'est que dans « Avec une
+      montre ou un bracelet » alors que le téléphone les compte et que le temps 2 l'a dit (`autoTiles` de
+      `services/onboardingFlow.js` : les pas sont rangés avec la montre). Spec : sans montre, tuile « Pas (votre
+      téléphone) » si Health Connect ou Santé est là ; la ligne montre ne cite plus les pas. Test « Temps 3 » sans montre.
+    - [ ] **POLISH-SIM-125 — Habitude à une heure inventée** (J1) : Tendances › Jour › Vos saisies montre « 12:29 Café
+      Oui » à 08:40 ; une habitude est rangée à 12 h + quelques minutes (`services/habits.js` l. 50). Spec : pas d'heure
+      pour une habitude dans « Vos saisies » (et partout où une saisie est datée à l'heure), « aujourd'hui » à la place.
+    - [ ] **POLISH-SIM-126 — « Agir s'ouvre depuis le bas de l'Accueil »** (J45, essai en cours) : la note à la une
+      (`2026-11-15-0435-refonte-navigation`) le dit, mais pendant un essai la carte du bas ne porte que son titre
+      (« Dormir au moins 7 h 30 »), sans le mot Agir. Spec : petite étiquette « Agir » au-dessus du titre de l'essai
+      sur la carte (`Dashboard.jsx` l. 144), ou phrase de la note ajustée ; le plus simple qui suffit.
+    - [ ] **POLISH-SIM-127 — Pas du matin face à une journée entière** (J1 et J45) : à 08:40, l'Accueil dit « 163,
+      d'habitude 6 717 » et la courbe Semaine plonge à 0 pour aujourd'hui. Spec : avant la fin du jour, « d'habitude »
+      compare à la même heure (ou dit « 6 717 sur une journée ») ; aujourd'hui en pointillé ou absent des courbes
+      Semaine et Mois tant que le jour n'est pas fini. Petit : « D'après votre montre » avec une bague (« votre montre
+      ou bague » selon l'appareil, ou « D'après Samsung Health »).
+    - [ ] **POLISH-SIM-128 — Famille Alimentation, encore technique** (J45, suite d'UPG-9) : la page de la famille
+      (Objectifs › Confort digestif › Alimentation) commence par « Aucun lien assez net » puis liste fructose en excès,
+      sorbitol, GOS, « pt » et barres d'erreur, sans nommer un aliment ; la persona ne sait pas quoi éviter. Spec : sous
+      le titre, une phrase simple (comme `pistePlain`) qui nomme les aliments du groupe le plus net, ou « Rien à éviter
+      pour l'instant : notez encore… » ; les lignes chiffrées derrière « Détails ». Sorbitol +0,2 court terme et −0,8
+      moyen terme : dire que les deux délais se lisent séparément (ou n'en montrer qu'un par défaut).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
