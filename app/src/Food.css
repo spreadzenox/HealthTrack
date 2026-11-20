@@ -198,6 +198,11 @@
   margin-bottom: 28px;
 }
 
+/* Atteinte par un lien (/settings#habitudes) : le titre s'arrête sous la barre d'état (POLISH-SIM-119). */
+.settings-block[id] {
+  scroll-margin-top: calc(var(--safe-top) + 16px);
+}
+
 .settings-block .section-title {
   margin-top: 0;
 }

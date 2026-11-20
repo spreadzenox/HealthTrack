@@ -296,3 +296,36 @@ describe('Settings — langue (jalon 9)', () => {
     expect(screen.queryByRole('radiogroup', { name: 'Langue' })).not.toBeInTheDocument()
   })
 })
+
+describe('Settings — lien vers une rubrique (POLISH-SIM-119)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('/settings#habitudes fait venir « Vos habitudes » à l’écran', async () => {
+    const scroll = vi.fn()
+    const original = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scroll
+    window.history.pushState({}, '', '/settings#habitudes')
+    try {
+      renderSettings()
+      await waitFor(() => expect(scroll).toHaveBeenCalled())
+      expect(scroll.mock.contexts[0]).toBe(document.getElementById('habitudes'))
+    } finally {
+      Element.prototype.scrollIntoView = original
+      window.history.pushState({}, '', '/')
+    }
+  })
+
+  it('sans ancre, la page s’ouvre en haut', () => {
+    const scroll = vi.fn()
+    const original = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scroll
+    window.history.pushState({}, '', '/settings')
+    try {
+      renderSettings()
+      expect(scroll).not.toHaveBeenCalled()
+    } finally {
+      Element.prototype.scrollIntoView = original
+      window.history.pushState({}, '', '/')
+    }
+  })
+})

@@ -222,7 +222,7 @@ describe('Dashboard', () => {
 
   it('Ma journée : sans habitude suivie, un lien discret mène aux Réglages (refonte étape 4)', async () => {
     renderDashboard('day')
-    expect(await screen.findByRole('link', { name: 'Suivre une habitude' })).toHaveAttribute('href', '/settings')
+    expect(await screen.findByRole('link', { name: 'Suivre une habitude' })).toHaveAttribute('href', '/settings#habitudes')
   })
 
   it('sans aucune donnée : pas de liens « … dans le Journal » (VC-26)', async () => {
