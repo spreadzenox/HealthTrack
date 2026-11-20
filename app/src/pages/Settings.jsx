@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import CompanionNameSetting from '../companion/life/CompanionNameSetting'
 import { APP_NAME } from '../config/brand'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from '../settings/geminiApiKey'
 import { GEMINI_MODELS, getGeminiModel, setGeminiModel } from '../settings/geminiModel'
 import { isDebugModeEnabled, setDebugModeEnabled, isDebugMenuUnlocked, unlockDebugMenu, DEBUG_UNLOCK_TAPS } from '../settings/debugMode'
@@ -156,6 +156,12 @@ export default function Settings() {
   const [cigarettePinned, setCigarettePinned] = useState(() => isCigaretteCounterPinned())
   const [theme, setTheme] = useState(() => getThemeChoice())
   const [goals, setGoals] = useState(() => goalsOf(loadOnboarding()))
+
+  // Un lien vers une rubrique (« Suivre une habitude » → /settings#habitudes) la fait venir à l'écran (POLISH-SIM-119).
+  const { hash } = useLocation()
+  useEffect(() => {
+    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
+  }, [hash])
 
   const handleSave = () => {
     setGeminiApiKey(apiKey)

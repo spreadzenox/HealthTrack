@@ -471,7 +471,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `TREND_MIN_POINTS` (3) sur 7 jours, « Poids » absent du « + » de Semaine ; POLISH-SIM-115 promet « à voir dans
       Tendances ». Spec : une mesure espacée (poids) est proposée si elle a 3 points sur la plus longue période (Mois),
       et la Semaine trace les points qu'elle a. Test sur `buildTrendSeries` / `available`.
-    - [ ] **POLISH-SIM-119 — « Suivre une habitude » ouvre Paramètres en haut** (J45) : depuis Ma journée, arrive sur
+    - [x] **POLISH-SIM-119 — « Suivre une habitude » ouvre Paramètres en haut** (FAIT 20/11 01:30 : lien `/settings#habitudes`, Paramètres fait venir à l'écran la rubrique de l'ancre, sous la barre d'état) (J45) : depuis Ma journée, arrive sur
       Apparence ; mener à « Vos habitudes » (ancre et défilement, comme les autres liens vers une rubrique).
     - [x] **POLISH-SIM-120 — Essai en cours introuvable sous Objectifs** (FAIT 20/11 00:30 : carte « Essai en cours : … » en haut de la page de l'objectif, `homeTrial(rows, now, { outcome })` filtré par objectif ; un ancien essai sans objectif compte pour le bien-être) (J45, mise à jour) : sa page allume Objectifs et
       revient à « ← Votre bien-être » (#1128), mais ni Objectifs ni « Votre bien-être » ne le montrent ; seule la carte

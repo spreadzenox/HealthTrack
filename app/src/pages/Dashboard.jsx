@@ -210,7 +210,7 @@ export default function Dashboard({ view = 'home' }) {
           onGut={() => setAddOpen('digestion')} onHabit={answerHabit} onHabitUndo={undoHabit} />
       )}
       {day && !loading && !error && habits.length === 0 && (
-        <Link to="/settings" className="day-habits-link">Suivre une habitude</Link>
+        <Link to="/settings#habitudes" className="day-habits-link">Suivre une habitude</Link>
       )}
       {/* Le seul vrai endroit pour ajouter le reste (AUJ-1), sous la checklist. */}
       {day && (
