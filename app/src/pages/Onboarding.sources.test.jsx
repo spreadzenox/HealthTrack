@@ -51,6 +51,46 @@ const night = (day) => ({
   payload: { endDate: new Date(Date.now() - day * 86400000).toISOString(), sourceName: 'com.garmin.android.apps.connectmobile' },
 })
 
+describe('Accueil, temps 2 sans montre : les pas du téléphone (POLISH-SIM-124b)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+    resetImportForTests()
+    delete window.__healthtrackFakeInstalledPackages
+    stored.entries = []
+    hc.availabilityDetails.mockResolvedValue({ available: true })
+    hc.checkPermissions.mockResolvedValue('not_asked')
+    hc.requestPermissions.mockResolvedValue('granted')
+    hc.sync.mockResolvedValue({ synced: 3, skipped: 0, errors: [] })
+    geo.getApproxPosition.mockResolvedValue({ lat: 45.76, lon: 4.84 })
+    weather.syncWeather.mockResolvedValue({})
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'watch', watch: 'no' })
+  })
+
+  it('« Non » : la carte propose de relier le téléphone pour ses pas, sans parler de montre', async () => {
+    renderAt()
+    expect(screen.getByRole('heading', { name: 'Health Connect' })).toBeInTheDocument()
+    expect(screen.getByText('vos pas, comptés par votre téléphone')).toBeInTheDocument()
+    expect(screen.getByText(/Elle n’écrit rien et n’envoie rien/)).toBeInTheDocument()
+    expect(screen.queryByText(/montres, bagues et balances/)).toBeNull()
+    expect(screen.queryByText(/Votre poids arrive/)).toBeNull()
+    expect(btn('Continuer')).toBeEnabled()
+    fireEvent.click(btn('Connecter Health Connect'))
+    await waitFor(() => expect(screen.getByText('Connecté.')).toBeInTheDocument())
+    expect(loadOnboarding().health).toBe('granted')
+    await waitFor(() => expect(hc.sync).toHaveBeenCalledOnce())
+  })
+
+  it('accès donné sans montre : le temps 3 montre la tuile « Pas (votre téléphone) »', async () => {
+    renderAt()
+    fireEvent.click(btn('Connecter Health Connect'))
+    await waitFor(() => expect(screen.getByText('Connecté.')).toBeInTheDocument())
+    fireEvent.click(btn('Continuer'))
+    const tiles = await screen.findByRole('list', { name: 'Suivi sans rien faire' })
+    expect(tiles.textContent).toMatch(/Pas \(votre téléphone\)/)
+  })
+})
+
 describe('Accueil, temps 2 : les sources quand on a une montre', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -90,7 +130,7 @@ describe('Accueil, temps 2 : les sources quand on a une montre', () => {
     expect(screen.queryByRole('heading', { name: 'Ce que Halcya a trouvé' })).not.toBeInTheDocument()
   })
 
-  it('« Non, pas pour l’instant » : aucune permission demandée, aucun import lancé', async () => {
+  it('« Non, pas pour l’instant » sans toucher la carte : aucune permission demandée, aucun import lancé', async () => {
     saveOnboarding({ watch: null })
     renderAt()
     fireEvent.click(screen.getByRole('radio', { name: 'Non, pas pour l’instant' }))
@@ -98,8 +138,7 @@ describe('Accueil, temps 2 : les sources quand on a une montre', () => {
     fireEvent.click(btn('Continuer'))
     fireEvent.click(btn('C’est parti !'))
     expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
-    expect(hc.availabilityDetails).not.toHaveBeenCalled()
-    expect(hc.checkPermissions).not.toHaveBeenCalled()
+    // POLISH-SIM-124b : la carte des pas du téléphone regarde si Health Connect est là, sans rien demander
     expect(hc.requestPermissions).not.toHaveBeenCalled()
     expect(hc.sync).not.toHaveBeenCalled()
   })

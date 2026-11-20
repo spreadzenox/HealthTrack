@@ -244,12 +244,13 @@ describe('Temps 2 : « Avez-vous une montre, un bracelet ou une balance ? » (sa
     expect(screen.queryByText(/Votre poids arrive/)).toBeNull()
   })
 
-  it('« Non, pas pour l’instant » : une ligne discrète, aucune carte', () => {
+  it('« Non, pas pour l’instant » sans Health Connect sur le téléphone : une ligne discrète, aucun bouton', () => {
     at('watch')
     renderAt()
     fireEvent.click(radio('Non, pas pour l’instant'))
     expect(loadOnboarding().watch).toBe('no')
-    expect(screen.getByText('Si votre téléphone compte vos pas, vous pourrez relier Health Connect dans Réglages › Sources.')).toBeInTheDocument()
+    expect(screen.getByText('Health Connect n’est pas sur ce téléphone. Vous pourrez le relier plus tard dans Réglages › Sources.')).toBeInTheDocument()
+    expect(screen.queryByText(/Si votre téléphone compte vos pas/)).toBeNull()
     expect(screen.queryByRole('button', { name: /Connecter/ })).toBeNull()
   })
 
