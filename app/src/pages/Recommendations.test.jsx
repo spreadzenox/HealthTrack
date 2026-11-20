@@ -144,18 +144,25 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'Votre bien-être' })).toBeInTheDocument()
   })
 
-  it('REFONTE-6b : « Comment est calculé votre bien-être ? » replié, pour le bien-être seulement', async () => {
+  it('POLISH-SIM-121 : un seul « Comment c’est calculé » ; sur le bien-être, il dit d’abord d’où vient le chiffre', async () => {
     renderPage({}, readyResults)
-    const link = await screen.findByRole('button', { name: 'Comment est calculé votre bien-être ?' })
+    const links = await screen.findAllByRole('button', { name: /^Comment/ })
+    expect(links.map((b) => b.textContent)).toEqual(['Comment c’est calculé'])
     expect(screen.queryByTestId('reco-how-wellbeing')).toBeNull()
-    fireEvent.click(link)
-    expect(screen.getByTestId('reco-how-wellbeing')).toHaveTextContent('votre note et la lecture du visage, si vous l’utilisez')
+    fireEvent.click(links[0])
+    const source = screen.getByTestId('reco-how-wellbeing')
+    expect(source).toHaveTextContent('votre note et la lecture du visage, si vous l’utilisez')
+    const simple = screen.getByTestId('reco-how-simple')
+    // D'où vient le chiffre, puis comment il est comparé
+    expect(source.compareDocumentPosition(simple) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('REFONTE-6b : la digestion n’a pas cette explication', async () => {
     renderPage({ view: 'gut' }, readyResults)
     await screen.findByTestId('reco-countdown-digestion')
-    expect(screen.queryByRole('button', { name: 'Comment est calculé votre bien-être ?' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Comment c’est calculé' }))
+    expect(screen.getByTestId('reco-how-simple')).toBeInTheDocument()
+    expect(screen.queryByTestId('reco-how-wellbeing')).toBeNull()
   })
 
   it('REFONTE-6b : pas de familles avant les premiers résultats', async () => {
