@@ -16,6 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+20/11 04:30 : UPG-9 (bandeau « Gold est prolongé ») : — sur iPhone (la carte de fin de période n'y apparaît jamais, `STORE.id === 'appstore'`) ; `entitlement.js` partagé, aucun correctif ; patch 49 (`persona-browse.mjs`) s'applique toujours. Parité inchangée : 70 %.
 20/11 03:30 : UPG-9 (pistes à tester en une phrase simple, chiffre derrière le chevron) : code partagé, aucun correctif iPhone ne touche `Recommendations.jsx` ni son test. Parité inchangée : 70 %.
 20/11 02:30 : POLISH-SIM-121 (un seul « Comment c’est calculé » sur « Votre bien-être ») : code partagé, `Recommendations.jsx` et son test ; le correctif 50 ne touche que `Recommendations.css`. Parité inchangée : 70 %.
 19/11 19:30 : UPG-9 (carte FODMAP d’un repas en une phrase quand plusieurs groupes) : code partagé, aucun correctif iPhone ne touche `MealFodmapLine.jsx` ni son CSS ou son test. Parité inchangée : 70 %.
