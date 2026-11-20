@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-20",
+  "kind": "correctif",
+  "title": "Repas décrit : chaque plat compte",
+  "items": [
+    "Si vous décrivez plusieurs choses, par exemple « pâtes carbonara, un yaourt et une pomme », l'analyse doit garder chacune d'elles. Vous pouvez toujours retirer ou ajouter un aliment avant d'enregistrer."
+  ]
+}
