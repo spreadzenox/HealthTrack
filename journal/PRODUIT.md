@@ -137,6 +137,7 @@ corrélation ≠ causalité) et D6 (science personnelle, normes — FODMAP compr
 
 ## 2. Jalons (ordre de livraison conseillé) et état
 
+> 20/11 06:30 : DEM-IOS-10 fait : un poids ou une masse grasse lus dans Health Connect (Santé sur iPhone) ne sont plus dits « saisis » dans le profil de Nutrition ; correctif iPhone 35 fondu dans le code partagé (50 restent). Prochain : préparation de PI2 (soumission App Store, build de la refonte au 21 ou 22/11), captures App Store de jour (REFONTE-2-ASC).
 > 20/11 04:30 : UPG-9 soldé : plus de « Gold est prolongé » au 1er jour (une prolongation se compte à partir d'un jour de recul ; l'outil des personas sert une date de fin fixe). Prochain : constats restants des personas (POLISH-SIM), puis passage complet des personas avant l'objectif du 22/11.
 > 20/11 03:30 : UPG-9 (pistes) fait : une piste à tester se lit en une phrase simple (« Avec 1 repas riche en fructanes de plus (blé, oignon, ail), votre digestion va plutôt moins bien. »), le chiffre derrière le chevron. Reste d'UPG-9 : le bandeau Gold du 1er jour. TestFlight 1196.1196 en test externe.
 > 20/11 02:30 : POLISH-SIM-121 fait : un seul « Comment c’est calculé » sur « Votre bien-être » (d’où vient le chiffre, puis la comparaison). Les six défauts du passage des personas du 19/11 20:30 (POLISH-SIM-116 à 121) sont soldés.

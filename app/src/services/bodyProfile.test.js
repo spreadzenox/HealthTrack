@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { getBodyProfile, computeBmi } from './bodyProfile'
+import { getBodyProfile, computeBmi, getLatestBodyComposition } from './bodyProfile'
 import { setBodySettings } from '../settings/bodySettings'
 import { setWithingsUserProfile } from '../settings/withingsSettings'
 
@@ -115,5 +115,34 @@ describe('bodyProfile', () => {
       expect(profile.activity).toBe('sedentary')
       expect(profile.origins.activity).toBe('manual')
     })
+  })
+})
+
+// Poids et masse grasse lus dans Health Connect (Santé sur iPhone, même source `health_connect`) : ce n'est pas une
+// saisie de la personne, ils ont leur propre origine (DEM-IOS-10, ancien correctif iPhone 35).
+const HC_NOW = new Date(2026, 9, 31, 10)
+
+describe('poids et masse grasse de Health Connect', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('un poids de Health Connect a l’origine « health », pas « manual »', async () => {
+    const p = await getBodyProfile([{ type: 'weight', source: 'health_connect', at: new Date(2026, 9, 28, 7).toISOString(), payload: { valueKg: 77.2 } }], HC_NOW)
+    expect(p.weightKg).toBe(77.2)
+    expect(p.origins.weight).toBe('health')
+  })
+
+  it('un poids saisi dans l’app reste « manual », un poids de Withings reste « withings »', async () => {
+    const at = new Date(2026, 9, 28, 7).toISOString()
+    expect((await getBodyProfile([{ type: 'weight', source: 'manual', at, payload: { valueKg: 70 } }], HC_NOW)).origins.weight).toBe('manual')
+    expect((await getBodyProfile([{ type: 'weight', source: 'withings', at, payload: { valueKg: 70 } }], HC_NOW)).origins.weight).toBe('withings')
+  })
+
+  it('la masse grasse de Health Connect est montrée, avec sa source ; la plus récente l’emporte', () => {
+    const hk = { type: 'body_composition', source: 'health_connect', at: new Date(2026, 9, 29, 7).toISOString(), payload: { fatRatioPct: 21.2 } }
+    const wi = { type: 'body_composition', source: 'withings', at: new Date(2026, 9, 20, 7).toISOString(), payload: { fatRatioPct: 22, muscleMassKg: 32.4 } }
+    expect(getLatestBodyComposition([hk])).toEqual({ fatRatioPct: 21.2, source: 'health_connect' })
+    expect(getLatestBodyComposition([wi, hk])).toEqual({ fatRatioPct: 21.2, source: 'health_connect' })
+    expect(getLatestBodyComposition([{ ...wi, at: new Date(2026, 9, 30, 7).toISOString() }, hk]).source).toBe('withings')
+    expect(getLatestBodyComposition([])).toBeNull()
   })
 })

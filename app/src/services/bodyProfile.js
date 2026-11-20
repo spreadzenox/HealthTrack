@@ -1,6 +1,7 @@
 /**
  * Profil corporel (poids, taille, sexe, âge) pour les repères nutritionnels.
- * Priorité : profil saisi dans l'app > Withings > valeur par défaut (signalée dans `origins`).
+ * Priorité : profil saisi dans l'app > dernière mesure (Withings, Health Connect ou Santé sur iPhone) > valeur par
+ * défaut (signalée dans `origins`).
  */
 
 import { listEntries } from '../storage/localHealthStorage'
@@ -22,6 +23,8 @@ function latest(entries, type, valueKey) {
 }
 
 function originOf(entry) {
+  // Health Connect (Santé sur iPhone, même source) : une mesure lue, pas une saisie de la personne (DEM-IOS-10)
+  if (entry.source === 'health_connect') return 'health'
   return entry.source === 'withings' ? 'withings' : 'manual'
 }
 
@@ -93,13 +96,13 @@ export async function getBodyProfile(entries, now = new Date()) {
 }
 
 /**
- * Latest Withings body composition snapshot (for display).
+ * Dernière composition corporelle (Withings ou Health Connect / Santé), avec sa source, pour l'affichage.
  */
 export function getLatestBodyComposition(entries) {
   const comp = (entries || [])
-    .filter((e) => e.type === 'body_composition' && e.source === 'withings')
+    .filter((e) => e.type === 'body_composition' && (e.source === 'withings' || e.source === 'health_connect'))
     .sort((a, b) => (b.at < a.at ? -1 : 1))[0]
-  return comp?.payload ?? null
+  return comp ? { ...comp.payload, source: comp.source } : null
 }
 
 export function computeBmi(weightKg, heightCm) {

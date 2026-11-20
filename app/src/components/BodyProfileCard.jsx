@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Capacitor } from '@capacitor/core'
 import { createEntry } from '../storage/localHealthStorage'
 import { getBodySettings, setBodySettings } from '../settings/bodySettings'
 import { computeBmi } from '../services/bodyProfile'
@@ -16,7 +17,11 @@ const SEX_LABEL = { M: 'Homme', F: 'Femme' }
 const SEP = '\u00a0· '
 const formatDayMonth = (iso) => new Intl.DateTimeFormat(appLocale(), { day: '2-digit', month: '2-digit' }).format(new Date(iso))
 
-// Composition de la dernière pesée Withings : une ligne du profil au lieu d'une section à part (D1).
+// Mesures lues dans Health Connect (l'app Santé sur iPhone) : ni saisies ni de Withings (DEM-IOS-10).
+const healthApp = () => (Capacitor?.getPlatform?.() === 'ios' ? 'app Santé' : 'Health Connect')
+const compositionSource = (payload) => (payload?.source === 'health_connect' ? healthApp() : 'Withings')
+
+// Composition de la dernière pesée (Withings ou Health Connect) : une ligne du profil au lieu d'une section à part (D1).
 const COMPOSITION_FIELDS = [
   ['fatRatioPct', 'Masse grasse', '%'],
   ['fatMassKg', 'Graisse', 'kg'],
@@ -225,7 +230,7 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
           Sexe, âge, taille, poids : vos repères d’apports en tiennent compte.
         </p>
         {compositionLine.length > 0 && (
-          <p className="nutrition-profile-line"><Sourced value={compositionLine.join(SEP)} hint="(Withings)" /></p>
+          <p className="nutrition-profile-line"><Sourced value={compositionLine.join(SEP)} hint={`(${compositionSource(composition)})`} /></p>
         )}
       </div>
     )
@@ -233,11 +238,13 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
 
   const weightHint = () => (origins.weight === 'withings'
     ? `(Withings, ${formatDayMonth(profile.weightAt)})`
-    : `(saisi le ${formatDayMonth(profile.weightAt)})`)
+    : origins.weight === 'health'
+      ? `(${healthApp()}, ${formatDayMonth(profile.weightAt)})`
+      : `(saisi le ${formatDayMonth(profile.weightAt)})`)
   const join = (parts) => parts.filter(Boolean).map((p, i) => <span key={i}>{i > 0 && SEP}{p}</span>)
   const bodyParts = join([
     known('weight') && <Sourced value={`${formatNumber(profile.weightKg)} kg`} hint={weightHint()} />,
-    known('height') && <Sourced value={`${profile.heightCm} cm`} hint={origins.height === 'withings' ? '(Withings)' : null} />,
+    known('height') && <Sourced value={`${profile.heightCm} cm`} hint={origins.height === 'withings' ? '(Withings)' : origins.height === 'health' ? `(${healthApp()})` : null} />,
     details && bmi != null && <span>IMC{'\u00a0'}{formatNumber(bmi)}</span>,
   ])
   const energyParts = join([
@@ -263,7 +270,7 @@ export default function BodyProfileCard({ profile, composition, onSaved }) {
       {head}
       {bodyParts.length > 0 && <p className="nutrition-profile-line">{bodyParts}</p>}
       {compositionLine.length > 0 && (
-        <p className="nutrition-profile-line"><Sourced value={compositionLine.join(SEP)} hint="(Withings)" /></p>
+        <p className="nutrition-profile-line"><Sourced value={compositionLine.join(SEP)} hint={`(${compositionSource(composition)})`} /></p>
       )}
       <p className="nutrition-profile-line">{energyParts}</p>
       {missing.length > 0 && (

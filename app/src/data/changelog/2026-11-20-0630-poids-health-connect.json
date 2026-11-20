@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-20",
+  "kind": "correctif",
+  "variants": ["play", "sideload"],
+  "title": "Votre poids venu de Health Connect",
+  "items": [
+    "Dans Nutrition, « Votre profil » : un poids ou une masse grasse lus dans Health Connect le disent (« Health Connect, 28/10 ») au lieu de « saisi le 28/10 »."
+  ]
+}
