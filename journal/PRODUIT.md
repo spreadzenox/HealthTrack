@@ -137,6 +137,7 @@ corrélation ≠ causalité) et D6 (science personnelle, normes — FODMAP compr
 
 ## 2. Jalons (ordre de livraison conseillé) et état
 
+> 20/11 10:00 : POLISH-SIM-124 fait en partie : au temps 3 sans montre, les pas sont ceux du téléphone (tuile si Health Connect / Santé est relié, sinon activables) ; reste 124b (proposer la connexion à « Non »). Prochain : 123, 125, 126 à 128.
 > 20/11 09:30 : POLISH-SIM-122 fait : dans Ma journée, le repas va dans le cercle touché (Midi touché à 8 h remplit Midi) ; un cercle déjà passé range le repas au milieu de son créneau (08:00, 12:30, 19:30), modifiable. Prochain : POLISH-SIM-124, 123, 125, puis 126 à 128.
 > 20/11 07:30 : DEM-IOS-5, 11 et 12 faits : les notes de Nouveautés qui ne valent que pour Android le disent (« Sans Health Connect », Premium offert), celles du code partagé du 07/11 valent aussi pour l’iPhone ; correctif iPhone 33 fondu dans le code partagé (la variante `appstore` est admise par le test des Nouveautés) : 49 restent. Prochain : PI2 (build de la refonte au 21 ou 22/11), captures App Store de jour (REFONTE-2-ASC).
 > 20/11 06:30 : DEM-IOS-10 fait : un poids ou une masse grasse lus dans Health Connect (Santé sur iPhone) ne sont plus dits « saisis » dans le profil de Nutrition ; correctif iPhone 35 fondu dans le code partagé (50 restent). Prochain : préparation de PI2 (soumission App Store, build de la refonte au 21 ou 22/11), captures App Store de jour (REFONTE-2-ASC).
