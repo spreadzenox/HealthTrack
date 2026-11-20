@@ -412,10 +412,11 @@ function WatchStep({ state, update, installed }) {
 const weatherOn = (weather) => weather === 'on' || (weather == null && getWeatherSettings().enabled)
 const screenOn = (screen) => screen === 'on' || (screen == null && getPhoneUsageSettings().enabled)
 
-function AutoStep({ watch, weather, screen, children }) {
+function AutoStep({ watch, health, weather, screen, children }) {
   const phoneUsage = usePhoneUsageSupported()
   const { tiles, maybe, off, later } = autoTiles({
     watch,
+    health,
     on: { weather: weatherOn(weather), screen: phoneUsage && screenOn(screen) },
     available: { screen: phoneUsage },
   })
@@ -885,7 +886,7 @@ export default function Onboarding() {
         {step === 'meet' && <MeetPilou mode="onboarding" onDone={() => go(state.step + 1)} />}
         {temps >= 0 && <OnboardingPilou step={step} gut={gut} watch={state.watch} />}
         {step === 'auto' && (
-          <AutoStep watch={state.watch === 'yes'} weather={state.weather} screen={state.screen}>
+          <AutoStep watch={state.watch === 'yes'} health={state.health} weather={state.weather} screen={state.screen}>
             <FoundStep
               health={state.health}
               imported={!!state.imported}

@@ -46,13 +46,13 @@ export function stepsFor() {
 
 /**
  * Temps 3 : ce que Halcya suit sans rien demander (brief § 3.3 ; le « stress » de la montre n'y est pas). Sans
- * montre, seuls le temps d'écran et la météo viennent du téléphone : le reste est annoncé pour plus tard.
+ * montre, les pas, le temps d'écran et la météo viennent du téléphone : le reste est annoncé pour plus tard.
  * POLISH-SIM-105 : `maybe` = beaucoup de montres ne l'envoient pas (PERSONAS.md), dit « selon votre montre » ;
  * `phone` = seulement s'il a été allumé à l'écran d'avant, sinon dit « activable ».
  */
 export const AUTO_TILES = [
   { id: 'sleep', label: 'Sommeil', tone: 'night', watch: true },
-  { id: 'steps', label: 'Pas', tone: 'lilac', watch: true },
+  { id: 'steps', label: 'Pas', tone: 'lilac', watch: true, phoneLabel: 'Pas (votre téléphone)' },
   { id: 'workouts', label: 'Séances de sport', tone: 'lilac', watch: true },
   { id: 'heart', label: 'Cœur', tone: 'rose', watch: true },
   { id: 'hrv', label: 'Variabilité cardiaque', tone: 'rose', watch: true, maybe: true },
@@ -65,14 +65,20 @@ export const AUTO_TILES = [
 /**
  * Ce que le temps 3 montre : `tiles` sûres, `maybe` (selon la montre), `off` (activable dans Sources), `later`
  * (avec une montre). `on` dit pour chaque source du téléphone si elle est allumée, `available` si elle existe ici.
+ * POLISH-SIM-124 : sans montre, le téléphone compte les pas (Health Connect ou Santé, `health` du temps 2) : suivis
+ * si l'accès est donné, activables sinon, absents si le téléphone n'a ni l'un ni l'autre ; jamais « avec une montre ».
  */
-export function autoTiles({ watch, on = {}, available = {} }) {
+export function autoTiles({ watch, health = null, on = {}, available = {} }) {
   const tiles = []
   const maybe = []
   const off = []
   const later = []
   for (const t of AUTO_TILES) {
-    if (t.phone) {
+    if (t.phoneLabel && !watch) {
+      const phoneTile = { ...t, label: t.phoneLabel }
+      if (health === 'granted') tiles.push(phoneTile)
+      else if (health !== 'unavailable') off.push(phoneTile)
+    } else if (t.phone) {
       if (on[t.id]) tiles.push(t)
       else if (available[t.id] !== false) off.push(t)
     } else if (!watch) later.push(t)
