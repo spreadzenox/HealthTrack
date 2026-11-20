@@ -27,6 +27,8 @@ public final class EveningNote {
     /** Note affichée (1 à 5) ; l'app la convertit dans son échelle interne (mood/wellbeingScale.js). */
     public static final int MIN_SCORE = 1;
     public static final int MAX_SCORE = 5;
+    /** Légende de la notification repliée : la même échelle que ses boutons (DEM-IOS-17). */
+    public static final String SCALE_LEGEND = MIN_SCORE + " = très bas, " + MAX_SCORE + " = très bien";
     /** v2 : « choice » 1 à 5 (v1 gardait « score » 0 à 5, toujours lu par l'app). */
     public static final int RECORD_VERSION = 2;
 

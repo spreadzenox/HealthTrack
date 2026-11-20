@@ -83,4 +83,12 @@ public class EveningNoteTest {
     public void noteHorsEchelle_refusee() {
         EveningNote.record(7, 0);
     }
+
+    /** DEM-IOS-17 : la notification repliée dit la même échelle que ses boutons (1 à 5), pas « 0 = très bas ». */
+    @Test
+    public void legendeDeLEchelle_commeLesBoutons() {
+        assertEquals("1 = très bas, 5 = très bien", EveningNote.SCALE_LEGEND);
+        assertTrue(EveningNote.SCALE_LEGEND.startsWith(EveningNote.MIN_SCORE + " = "));
+        assertTrue(EveningNote.SCALE_LEGEND.contains(EveningNote.MAX_SCORE + " = très bien"));
+    }
 }
