@@ -113,7 +113,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   probable : le résultat de chaque jour est l'estimation lissée de TS-1, et un facteur qui change d'un jour à l'autre
   (oui / non) y perd plus qu'un facteur lent. Ajouter un facteur binaire quotidien au banc (`method/bench.test.js`),
   mesurer, puis corriger la méthode ou dire la sous-estimation à l'écran.
-- [ ] **METHODE-BIAIS-1 — Taille d'un effet et fourchette honnêtes** (né de REFONTE-4b-2, 20/11 19:30) : au banc,
+- [ ] **METHODE-BIAIS-1 — Taille d'un effet et fourchette honnêtes** (né de REFONTE-4b-2, 20/11 19:30 ; **préparé le
+  20/11 20:30** : [`methode/METHODE-BIAIS-1.md`](methode/METHODE-BIAIS-1.md), sans pénalité et sans imputation des
+  jours manquants la taille ressort à 0,81-0,86 de la vraie et la fourchette est juste 82-90 % du temps) : au banc,
   le modèle régularisé rend tous les effets à 0,47-0,61 de leur taille (habitude comme sommeil) et sa fourchette ne
   contient la vraie valeur que dans 6 à 78 % des jeux selon le scénario (10 % pour un effet fort) ; dans l'app, TS-1 rétrécit encore un effet du
   jour même (0,63 → 0,38). Garder la ridge pour choisir les facteurs, la stabilité et les contributions du jour ;

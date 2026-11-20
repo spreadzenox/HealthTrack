@@ -25,8 +25,10 @@
 - Rien de propre à l'iPhone ce run. Parité inchangée : 70 %. Build TestFlight du soir (21:20) à venir (version 893).
 
 ## Suite proposée
-1. #1154 si le build iPhone relancé n'est pas vert à la fin de ce run (voir ci-dessous).
+1. Vérifier Build & Release de 0b2a1c4 (#1154) et le build TestFlight du soir (21:20).
 2. METHODE-BIAIS-1 au prochain run de code qui a le temps (spécification prête).
 3. Demain entre 9:00 et 17:00 : REFONTE-2-ASC, puis R18-SOUMISSION-b et « 👉 PI2 prête ».
 
 ## #1154
+- Build iPhone relancé **vert** à 20:44 ; branche à jour sur main ; aucun écran touché (outillage du banc), pas de
+  capture à regarder. **#1154 mergée** (squash, 0b2a1c4) pendant ce run.
