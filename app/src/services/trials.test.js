@@ -183,3 +183,36 @@ describe('LANT-2 : ce que dit Pilou sur la page du défi', () => {
     expect(pilouSays({ done: false })).toEqual({ expr: 'tranquille', move: 'none', text: null })
   })
 })
+
+describe('REFONTE-4b-3 : essai sur une habitude', () => {
+  const med = { key: 'habit_meditation', label: 'Méditation', theme: 'habit', outcome: 'wellbeing', effect: 0.6, center: 0.4, usualChange: { amount: 1, text: 'un jour « oui »' } }
+  const sched = [...Array(4)].map((_, i) => ({ date: `2026-11-0${i + 1}`, with: i % 2 === 0 }))
+
+  it('la consigne nomme l’habitude, sans quantité', () => {
+    const t = createTrial(med, { now: START })
+    expect(t.threshold).toBeNull()
+    expect(instruction(t)).toBe('Méditation')
+    expect(instruction(t, false)).toBe('Comme d’habitude')
+    expect(instruction(createTrial({ ...med, key: 'habit_stretching', label: 'Étirements', effect: -0.4 }, { now: START }))).toBe('Pas d’étirements')
+    expect(proposal(med).title).toBe('Méditation')
+  })
+
+  it('la tenue vient de la réponse de Ma journée ; la question seulement sans réponse', () => {
+    const t = { ...createTrial(med, { now: START }), schedule: sched }
+    const summaries = new Map([['2026-11-01', { habits: { meditation: true } }], ['2026-11-02', { habits: { meditation: false } }], ['2026-11-03', { habits: { meditation: false } }]])
+    const s = trialStatus(t, { summaries, now: new Date(2026, 10, 4, 10) })
+    expect(s.calendar.map((d) => d.held)).toEqual([true, true, false, null])
+    expect(s.calendar[0].fromData).toBe(true)
+    expect(s.ask).toBeNull()
+    const s2 = trialStatus(t, { summaries: new Map([['2026-11-01', { habits: { meditation: true } }]]), now: new Date(2026, 10, 4, 10) })
+    expect(s2.ask.question).toBe('Hier, méditation : c’était tenu ?')
+    expect(s2.ask.missing).toBeNull()
+  })
+
+  it('une habitude gardée se lit dans Ma journée', () => {
+    const t = { ...createTrial(med, { now: START }), kept: true }
+    const summaries = new Map([['2026-11-13', { habits: { meditation: true } }]])
+    const st = habitStatus(t, { summaries, now: new Date(2026, 10, 14, 10) })
+    expect(st.days.at(-1)).toEqual({ date: '2026-11-13', held: true })
+  })
+})

@@ -63,6 +63,26 @@ export function habitAnswers(entries, dateKey) {
   return out
 }
 
+/**
+ * REFONTE-4b-3 : toutes les réponses, par jour : `Map(AAAA-MM-JJ → { id: oui / non })` ; la dernière saisie gagne.
+ * Sert aux essais d'Agir sur une habitude (la tenue se lit ici au lieu d'être redemandée).
+ */
+export function habitDays(entries) {
+  const last = new Map()
+  for (const e of entries || []) {
+    if (e?.type !== HABIT_TYPE || !e.at || !e.payload?.habit || typeof e.payload.done !== 'boolean') continue
+    const k = `${localDateKey(e.at)}|${e.payload.habit}`
+    const prev = last.get(k)
+    if (!prev || (e.created_at || '') >= (prev.created_at || '')) last.set(k, e)
+  }
+  const out = new Map()
+  for (const [k, e] of last) {
+    const dk = k.slice(0, k.indexOf('|'))
+    out.set(dk, { ...out.get(dk), [e.payload.habit]: e.payload.done })
+  }
+  return out
+}
+
 const SKIP_KEY = 'healthtrack_yesterday_skipped'
 const WEEKDAYS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
 

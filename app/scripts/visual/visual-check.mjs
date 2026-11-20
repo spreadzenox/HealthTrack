@@ -33,7 +33,9 @@
  *   npm run visual -- --routes=/connectors --hrv-gap  # plus de VFC depuis 4 jours (« qui envoie quoi »)
  *   npm run visual -- --play --routes=/agir --trial=8 --click="Dormir au moins"  # essai du sommeil au jour 8
  *                                          sur 14 (tirage fixe), sur les données de démo (POLISH-ESSAI-AXES) ;
- *                                          --trial-factor=alcohol --click="alcool" : facteur sans mesure
+ *                                          --trial-factor=alcohol --click="alcool" : facteur sans mesure ;
+ *                                          --trial-factor=habit --click="Méditation" : une habitude, tenue lue dans les
+ *                                          réponses oui / non de Ma journée des jours passés (REFONTE-4b-3)
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *   npm run visual -- --routes=/tendances --history-days=2  # historique presque vide : seules les données des 2 derniers
  *                                          jours (aujourd'hui et hier) sont gardées (T3, captures à côté de la maquette)
@@ -1313,11 +1315,19 @@ async function main() {
       const schedule = flags.map((w, i) => { const d = new Date(start); d.setDate(d.getDate() + i); return { date: key(d), with: w } })
       // --trial-factor=alcohol : un facteur sans mesure, chaque lendemain compte (fourchette visible)
       const alcohol = args['trial-factor'] === 'alcohol'
+      // --trial-factor=habit : « Méditation », répondue « Oui » les jours avec passés (sauf le 2e), « Non » les autres
+      const habit = args['trial-factor'] === 'habit'
+      if (habit) {
+        schedule.filter((d) => d.date < key(new Date())).forEach((d, i) => entries.push({ type: 'habit', source: 'app_habit',
+          at: new Date(`${d.date}T12:01:00`).toISOString(), payload: { habit: 'meditation', label: 'Méditation', done: d.with && i !== 3 } }))
+      }
       entries.push({ type: 'trial', source: 'app_trial', at: start.toISOString(), payload: {
         factor: alcohol
           ? { key: 'alcohol', label: 'Alcool', theme: 'nutrition', outcome: 'wellbeing', effect: -0.3, center: null, change: 0 }
-          : { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, change: 30 },
-        direction: alcohol ? 'less' : 'more', threshold: alcohol ? null : 450, schedule, answers: {}, startedAt: start.toISOString(), endedAt: null,
+          : habit
+            ? { key: 'habit_meditation', label: 'Méditation', theme: 'habit', outcome: 'wellbeing', effect: 0.6, center: 0.4, change: 1 }
+            : { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, change: 30 },
+        direction: alcohol ? 'less' : 'more', threshold: alcohol || habit ? null : 450, schedule, answers: {}, startedAt: start.toISOString(), endedAt: null,
         kept: false, removedAt: null, nudgedAt: null,
       } })
     }
