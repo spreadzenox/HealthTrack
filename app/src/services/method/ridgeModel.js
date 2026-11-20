@@ -57,21 +57,35 @@ function solve(A, b) {
  * @param {number[][]} X  lignes
  */
 export function ridge(X, y, w, unpenalized, lambda) {
+  const { A, b, sw } = normalEquations(X, y, w)
+  return solvePenalized(A, b, sw / X.length, unpenalized, lambda)
+}
+
+/** Équations normales pondérées (Xᵀ W X, Xᵀ W y) et somme des poids ; `sign` = -1 pour retirer des lignes. */
+function normalEquations(X, y, w, into = null, sign = 1) {
   const p = X[0].length
-  const A = Array.from({ length: p }, () => new Array(p).fill(0))
-  const b = new Array(p).fill(0)
-  let sw = 0
+  const A = into?.A ?? Array.from({ length: p }, () => new Array(p).fill(0))
+  const b = into?.b ?? new Array(p).fill(0)
+  let sw = into?.sw ?? 0
   for (let i = 0; i < X.length; i += 1) {
     const xi = X[i]
-    sw += w[i]
+    const wi = sign * w[i]
+    sw += wi
     for (let j = 0; j < p; j += 1) {
-      b[j] += w[i] * xi[j] * y[i]
-      for (let k = j; k < p; k += 1) A[j][k] += w[i] * xi[j] * xi[k]
+      b[j] += wi * xi[j] * y[i]
+      for (let k = j; k < p; k += 1) A[j][k] += wi * xi[j] * xi[k]
     }
   }
-  for (let j = 0; j < p; j += 1) for (let k = 0; k < j; k += 1) A[j][k] = A[k][j]
-  for (let j = unpenalized; j < p; j += 1) A[j][j] += lambda * (sw / X.length)
-  return solve(A, b)
+  return { A, b, sw }
+}
+
+/** Résout (A + λ × pénalité) x = b ; A n'a que son triangle supérieur rempli ; ni A ni b ne sont modifiés. */
+function solvePenalized(A, b, penaltyScale, unpenalized, lambda) {
+  const p = A.length
+  const M = A.map((row) => [...row])
+  for (let j = 0; j < p; j += 1) for (let k = 0; k < j; k += 1) M[j][k] = M[k][j]
+  for (let j = unpenalized; j < p; j += 1) M[j][j] += lambda * penaltyScale
+  return solve(M, [...b])
 }
 
 const predict = (beta, x) => x.reduce((s, v, j) => s + v * beta[j], 0)
@@ -181,12 +195,21 @@ export function fitOutcomeModel({ rows, candidates, valueOf, completeOf, seed = 
   // leur moyenne les jours sans valeur (exiger qu'ils soient tous connus laissait trop peu de jours).
   const okFor = used.map((id) => rows.map((r, i) => raws.get(id)[i] !== null && (!completeOf || completeOf(id, r.dk))))
   const minDays = (idx) => idx.length >= Math.max(2 * WEEK, SHOWN_MIN_DAYS_PER_FACTOR * used.length)
-  const ols = (idx) => ridge(idx.map((i) => X[i]), idx.map((i) => y[i]), idx.map((i) => w[i]), 0, 1e-6)
-  const allIdx = rows.map((_, i) => i)
-  const fullShown = used.map((_, j) => {
-    const cc = allIdx.filter((i) => okFor[j][i])
-    return minDays(cc) ? ols(cc)[nCtrl + j] : null
-  })
+  const sub = (idx) => [idx.map((i) => X[i]), idx.map((i) => y[i]), idx.map((i) => w[i])]
+  // Un ajustement par facteur sur les mêmes jours moins ceux de sa fenêtre trop vide : les équations normales de tous
+  // les jours sont faites une fois, puis on retire seulement les jours exclus (peu nombreux) pour chaque facteur.
+  const shownFits = (idx, all = normalEquations(...sub(idx))) => {
+    return used.map((_, j) => {
+      const out = idx.filter((i) => !okFor[j][i])
+      if (!minDays(idx.filter((i) => okFor[j][i]))) return null
+      const eq = out.length
+        ? normalEquations(...sub(out), { A: all.A.map((row) => [...row]), b: [...all.b], sw: all.sw }, -1)
+        : all
+      // Une pénalité infime ne sert qu'à rester soluble si un contrôle est constant sur ces jours.
+      return solvePenalized(eq.A, eq.b, eq.sw / (idx.length - out.length), 0, 1e-6)[nCtrl + j]
+    })
+  }
+  const fullShown = shownFits(rows.map((_, i) => i))
   // Stabilité : bootstrap par semaines (les mêmes tirages servent à la fourchette de la taille montrée).
   const r = rng(seed)
   const draws = used.map(() => [])
@@ -198,13 +221,12 @@ export function fitOutcomeModel({ rows, candidates, valueOf, completeOf, seed = 
       week.forEach((wk, i) => { if (wk === pick) idx.push(i) })
     }
     if (idx.length < nCtrl + 2) continue
-    const beta = ridge(idx.map((i) => X[i]), idx.map((i) => y[i]), idx.map((i) => w[i]), nCtrl, best.lambda)
+    const eqs = normalEquations(...sub(idx))
+    const beta = solvePenalized(eqs.A, eqs.b, eqs.sw / idx.length, nCtrl, best.lambda)
     used.forEach((_, j) => draws[j].push(beta[nCtrl + j]))
-    used.forEach((_, j) => {
-      if (fullShown[j] === null) return
-      const idxC = idx.filter((i) => okFor[j][i])
-      if (minDays(idxC)) drawsShown[j].push(ols(idxC)[nCtrl + j])
-    })
+    if (fullShown.every((v) => v === null)) continue
+    const shown = shownFits(idx, eqs)
+    used.forEach((_, j) => { if (fullShown[j] !== null && shown[j] !== null) drawsShown[j].push(shown[j]) })
   }
   const quantile = (a, q) => {
     const b = [...a].sort((x, z) => x - z)
