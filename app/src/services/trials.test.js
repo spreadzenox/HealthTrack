@@ -130,6 +130,16 @@ describe('UPG-1 : l’essai en cours sur la carte Agir de l’Accueil', () => {
     })
   })
 
+  it('POLISH-SIM-120 : filtré par objectif suivi (un ancien essai sans objectif compte pour le bien-être)', () => {
+    const now = new Date(2026, 10, 3, 10)
+    const gut = { ...ten, factor: { ...ten.factor, outcome: 'digestion' } }
+    expect(homeTrial([row(7, ten)], now, { outcome: 'wellbeing' })).toMatchObject({ to: '/agir/essai/7' })
+    expect(homeTrial([row(7, ten)], now, { outcome: 'digestion' })).toBeNull()
+    expect(homeTrial([row(7, ten), row(9, gut)], now, { outcome: 'digestion' })).toMatchObject({ to: '/agir/essai/9', detail: 'Essai · jour 3 sur 10 · aujourd’hui, jour avec' })
+    const old = { ...ten, factor: { ...ten.factor, outcome: undefined } }
+    expect(homeTrial([row(5, old)], now, { outcome: 'wellbeing' })).toMatchObject({ to: '/agir/essai/5' })
+  })
+
   it('un jour « sans » : comme d’habitude ; deux essais : le plus avancé, et Agir pour voir les deux', () => {
     expect(homeTrial([row(7, ten)], new Date(2026, 10, 4, 10))).toMatchObject({ detail: 'Essai · jour 4 sur 10 · aujourd’hui, jour sans', withToday: false })
     const later = { ...ten, startedAt: '2026-11-02T09:00:00.000Z', schedule: ten.schedule.map((d, i) => ({ date: `2026-11-${String(i + 2).padStart(2, '0')}`, with: !d.with })) }

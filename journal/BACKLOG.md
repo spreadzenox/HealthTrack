@@ -473,7 +473,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       et la Semaine trace les points qu'elle a. Test sur `buildTrendSeries` / `available`.
     - [ ] **POLISH-SIM-119 — « Suivre une habitude » ouvre Paramètres en haut** (J45) : depuis Ma journée, arrive sur
       Apparence ; mener à « Vos habitudes » (ancre et défilement, comme les autres liens vers une rubrique).
-    - [ ] **POLISH-SIM-120 — Essai en cours introuvable sous Objectifs** (J45, mise à jour) : sa page allume Objectifs et
+    - [x] **POLISH-SIM-120 — Essai en cours introuvable sous Objectifs** (FAIT 20/11 00:30 : carte « Essai en cours : … » en haut de la page de l'objectif, `homeTrial(rows, now, { outcome })` filtré par objectif ; un ancien essai sans objectif compte pour le bien-être) (J45, mise à jour) : sa page allume Objectifs et
       revient à « ← Votre bien-être » (#1128), mais ni Objectifs ni « Votre bien-être » ne le montrent ; seule la carte
       de l'Accueil y mène. Une ligne « Essai en cours : … jour N sur 10 » sur la page de l'objectif suivi.
     - [ ] **POLISH-SIM-121 — Deux liens « comment c'est calculé »** (J1) : « Votre bien-être » montre « Comment est

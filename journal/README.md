@@ -18,6 +18,8 @@
 
 **19/11 01:30 : fiche Play** : captures refaites pour la nouvelle navigation, Ma journée comprise (envoi automatique au merge). **02:30 : fiche App Store** : la liste des captures suit la refonte (les actuelles montrent encore Analyses et le Journal) ; série à prendre de jour par la CI, regardée, puis envoyée avant « 👉 PI2 prête ».
 
+**20/11 00:30 : l'essai en cours sous son objectif** : la page « Votre bien-être » (ou « Votre confort digestif ») montre en haut « Essai en cours : Dormir au moins 7 h 30 · jour 3 sur 10 » et y mène ; avant, seule la carte de l'Accueil y menait (POLISH-SIM-120). Envois du soir (Alpha 23:45, TestFlight) pas encore partis à 23:40 UTC : retard du cron de GitHub, comme les deux nuits passées.
+
 **19/11 23:30 : le poids en Semaine** : si vous vous pesez tous les 2 ou 3 jours, « Poids » se choisit maintenant en Semaine dans Tendances (il fallait 3 pesées dans les 7 derniers jours) ; l'accueil le promettait (POLISH-SIM-118).
 
 **19/11 22:30 : Tendances › Jour sans caméra** : votre note de bien-être apparaît en losange à son heure ; la vue disait « Aucune lecture du visage ce jour-là » alors que la note était dans « Vos saisies » (POLISH-SIM-117). main avait un check rouge (émulateur : Maven Central saturé, erreur 429), relancé.
@@ -173,6 +175,7 @@ brief : [`BRIEF-REFONTE-COMPAGNON.md`](maquettes/compagnon/BRIEF-REFONTE-COMPAGN
 
 | Run | Type | Résultat |
 |---|---|---|
+| 20/11 00:30 — [Essai sous son objectif](runs/2026-11-20-0030-essai-sous-objectif.md) | 🛠️ | **POLISH-SIM-120** : l'essai en cours se retrouve en haut de la page de son objectif (bien-être ou confort digestif). Test d'abord, captures claire et sombre relues. Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 23:30 — [Tendances : le poids en Semaine](runs/2026-11-19-2330-poids-semaine.md) | 🛠️ | **POLISH-SIM-118** : une pesée tous les 2 ou 3 jours suffit pour choisir « Poids » en Semaine (3 pesées sur le mois, celles de la semaine tracées). Test d'abord, capture relue. Code partagé, iPhone compris (correctif 56 intact). Rien à faire de votre côté |
 | 19/11 22:30 — [Tendances : la note en Jour](runs/2026-11-19-2230-note-dans-jour.md) | 🛠️ | **POLISH-SIM-117** : sans lecture du visage, la vue Jour place la note de bien-être (Tendances ne lisait aucune note sans caméra). Test d'abord, capture relue. Émulateur de main relancé (429 de Maven Central). Code partagé, iPhone compris. Rien à faire de votre côté |
 | 19/11 21:30 — [Bien-être, un seul délai](runs/2026-11-19-2130-bien-etre-un-palier.md) | 🛠️ | **POLISH-SIM-116** : la page d'un objectif annonce le palier du premier score (7e / 14e jour noté) puis celui des pistes (14e / 28e), comme l'Accueil et Objectifs. 4 116 tests verts. Rien à faire de votre côté |
