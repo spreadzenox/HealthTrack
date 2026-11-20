@@ -7,13 +7,14 @@ import { createEntry, listEntries, updateEntry } from '../storage/localHealthSto
 import { buildDailyJournal } from './dailyJournal'
 import { outcomeSeries } from './analysisResults'
 import { TRIAL_SOURCE, TRIAL_TYPE } from './trials'
+import { HABIT_TYPE, habitDays } from './habits'
 
 const DAY_MS = 86_400_000
 const WINDOW_DAYS = 45
 
 export async function readTrialsData(now = new Date()) {
   const since = new Date(now.getTime() - WINDOW_DAYS * DAY_MS).toISOString()
-  const [trials, sleep, steps, phone, wellbeing, faces, gut] = await Promise.all([
+  const [trials, sleep, steps, phone, wellbeing, faces, gut, habits] = await Promise.all([
     listEntries({ type: TRIAL_TYPE, limit: Infinity }),
     listEntries({ type: 'sleep', since, limit: Infinity }),
     listEntries({ type: 'steps', since, limit: Infinity }),
@@ -21,8 +22,11 @@ export async function readTrialsData(now = new Date()) {
     listEntries({ type: 'wellbeing', since, limit: Infinity }),
     listEntries({ type: 'face_burst', since, limit: Infinity }),
     listEntries({ type: 'gut', since, limit: Infinity }),
+    listEntries({ type: HABIT_TYPE, since, limit: Infinity }),
   ])
   const summaries = new Map(buildDailyJournal([...sleep, ...steps, ...phone]).map((d) => [d.dateKey, d.summary]))
+  // REFONTE-4b-3 : les réponses oui / non de Ma journée, pour les essais sur une habitude
+  for (const [dk, answers] of habitDays(habits)) summaries.set(dk, { ...summaries.get(dk), habits: answers })
   const series = outcomeSeries([...wellbeing, ...faces, ...gut])
   return { trials, summaries, outcomes: { wellbeing: series.wellbeing, digestion: series.digestion } }
 }

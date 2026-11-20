@@ -41,6 +41,12 @@ const MEASURED = {
   screen_minutes: { field: 'screenMinutes', fmt: (v) => formatDuration(v), missing: 'Nous n’avons pas reçu votre temps d’écran d’hier.', more: 'Au moins', less: 'Moins de', suffix: ' d’écran' },
 }
 
+/** REFONTE-4b-3 : facteur « habitude » (habit_<id> d'Analyses), lu dans les réponses oui / non de Ma journée. */
+const HABIT_PREFIX = 'habit_'
+const habitIdOf = (key) => (typeof key === 'string' && key.startsWith(HABIT_PREFIX) ? key.slice(HABIT_PREFIX.length) : null)
+// « de méditation », « d’étirements »
+const ofWord = (what) => (/^[aeéèêiîoôuh]/.test(what) ? `d’${what}` : `de ${what}`)
+
 export function keyOfDate(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
@@ -85,8 +91,10 @@ export function instruction(trial, withDay = true) {
   const m = MEASURED[trial.factor.key]
   if (m && isNum(trial.threshold)) return `${trial.direction === 'more' ? m.more : m.less} ${m.fmt(trial.threshold)}${m.suffix ?? ''}`
   const what = trial.factor.label.toLowerCase()
+  // Une habitude se fait ou non : « Méditation », « Pas d’étirements »
+  if (habitIdOf(trial.factor.key)) return trial.direction === 'more' ? trial.factor.label : `Pas ${ofWord(what)}`
   // « d’alcool », « d’activité » ; « de sucres »
-  const of = /^[aeéèêiîoôuh]/.test(what) ? `d’${what}` : `de ${what}`
+  const of = ofWord(what)
   return trial.direction === 'more' ? `Un peu plus ${of} que d’habitude` : `Un peu moins ${of} que d’habitude`
 }
 
@@ -109,6 +117,13 @@ export function proposal(factor, outcome = factor.outcome) {
 
 /** Tenu d'après les données (true / false), ou null si la mesure manque. */
 function heldFromData(trial, day, summaries) {
+  const habit = habitIdOf(trial.factor.key)
+  if (habit) {
+    const done = summaries.get(day.date)?.habits?.[habit]
+    if (typeof done !== 'boolean') return null
+    const did = trial.direction === 'more' ? done : !done
+    return day.with ? did : !did
+  }
   const m = MEASURED[trial.factor.key]
   if (!m || !isNum(trial.threshold)) return null
   const v = summaries.get(day.date)?.[m.field]

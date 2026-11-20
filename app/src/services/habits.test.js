@@ -41,3 +41,17 @@ describe('habitudes (refonte étape 4)', () => {
     expect(answers.has('stretching')).toBe(false)
   })
 })
+
+describe('habitDays (REFONTE-4b-3)', () => {
+  it('les réponses par jour et par habitude, la dernière saisie gagne', async () => {
+    const { habitDays, habitEntry } = await import('./habits')
+    const med = { id: 'meditation', label: 'Méditation' }
+    const a = { ...habitEntry(med, '2026-11-02', true), created_at: '2026-11-02T08:00:00Z' }
+    const b = { ...habitEntry(med, '2026-11-02', false), created_at: '2026-11-02T09:00:00Z' }
+    const c = habitEntry({ id: 'reading', label: 'Lecture' }, '2026-11-03', true)
+    const days = habitDays([b, a, c, { type: 'wellbeing', at: '2026-11-03T10:00:00Z', payload: { score: 3 } }])
+    expect(days.get('2026-11-02')).toEqual({ meditation: false })
+    expect(days.get('2026-11-03')).toEqual({ reading: true })
+    expect(days.size).toBe(2)
+  })
+})
