@@ -118,6 +118,8 @@ describe('Dashboard', () => {
     const link = await screen.findByRole('link', { name: /Dormir au moins 7 h 30/ })
     expect(link).toHaveAttribute('href', '/agir/essai/9')
     expect(link).toHaveTextContent('Essai · jour 4 sur 10 · aujourd’hui, jour avec')
+    // POLISH-SIM-126 : la carte garde le mot « Agir » (la note des Nouveautés dit « Agir s’ouvre depuis le bas de l’Accueil »)
+    expect(link.querySelector('.home-act-kicker')).toHaveTextContent(/^Agir$/)
     const wb = screen.getByRole('heading', { level: 2, name: 'Bien-être aujourd’hui' })
     const data = await screen.findByRole('heading', { name: 'Vos données du jour' })
     expect(wb.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()

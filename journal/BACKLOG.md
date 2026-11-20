@@ -512,7 +512,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **POLISH-SIM-125 — Habitude à une heure inventée** (fait le 20/11 11:30 : dans « Vos saisies », une habitude n'a plus d'heure et vient après les saisies horodatées, comme dans « Déjà noté » de Ma journée ; seul endroit qui l'affichait) (J1) : Tendances › Jour › Vos saisies montre « 12:29 Café
       Oui » à 08:40 ; une habitude est rangée à 12 h + quelques minutes (`services/habits.js` l. 50). Spec : pas d'heure
       pour une habitude dans « Vos saisies » (et partout où une saisie est datée à l'heure), « aujourd'hui » à la place.
-    - [ ] **POLISH-SIM-126 — « Agir s'ouvre depuis le bas de l'Accueil »** (J45, essai en cours) : la note à la une
+    - [x] **POLISH-SIM-126 — « Agir s'ouvre depuis le bas de l'Accueil »** (fait le 20/11 12:30 : petite étiquette « Agir » au-dessus du titre de l'essai, `home-act-kicker` ; la note des Nouveautés reste juste) (J45, essai en cours) : la note à la une
       (`2026-11-15-0435-refonte-navigation`) le dit, mais pendant un essai la carte du bas ne porte que son titre
       (« Dormir au moins 7 h 30 »), sans le mot Agir. Spec : petite étiquette « Agir » au-dessus du titre de l'essai
       sur la carte (`Dashboard.jsx` l. 144), ou phrase de la note ajustée ; le plus simple qui suffit.

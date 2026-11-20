@@ -141,6 +141,8 @@ export default function Dashboard({ view = 'home' }) {
   const actLink = (
     <Link to={trial?.to ?? '/agir'} className="more-item home-act-link">
       <span className="more-text">
+        {/* POLISH-SIM-126 : pendant un essai, la carte garde le mot « Agir » au-dessus du titre */}
+        {trial && <span className="home-act-kicker">Agir</span>}
         <span className="more-title">{trial?.title ?? 'Agir'}</span>
         <span className="more-desc">{trial?.detail ?? 'Vérifier une piste par un essai'}</span>
       </span>
