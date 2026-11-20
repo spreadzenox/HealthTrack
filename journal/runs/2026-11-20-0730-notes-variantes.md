@@ -29,6 +29,10 @@
 - `npm run test` (app) : 4 136 verts ; `npm run build` vert ; lint des fichiers touchés propre ;
   `npm run visual --routes=/nouveautes` vert, capture relue (inchangée sur Android).
 
+- **Check « Frontend (Vitest) » rouge sur la PR** (sans lien avec le diff) : `PeriodSheet.test.jsx` (POLISH-SIM-46) lisait
+  la ligne `role="status"` dès sa présence, or elle est toujours rendue (vide) : course avec l'enregistrement. Reproduit
+  en retardant `createEntry` de 50 ms (rouge), corrigé en attendant le texte (`waitFor`), vert ; test du code inchangé.
+
 ## Suite proposée
 1. Finir cette PR (checks, build iOS, capture iPhone de Nouveautés), merger.
 2. Run « idées » de 08:00 : fin du passage UPG-3 des personas.

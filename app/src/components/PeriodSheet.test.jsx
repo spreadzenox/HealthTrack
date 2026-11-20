@@ -133,7 +133,8 @@ describe('PeriodSheet : noter ses règles en un geste (CYCLE-2)', () => {
       { id: 31, type: 'cycle', source: 'app_cycle', at: noon(10), payload: { subtype: 'symptom', symptom: 'cramps' } },
     ])
     fireEvent.click(crampes)
-    expect(await screen.findByRole('status')).toHaveTextContent('Noté : Crampes')
+    // La ligne role=status existe déjà (vide) : attendre son texte, pas sa présence
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Noté : Crampes'))
     await waitFor(() => expect(screen.getByRole('button', { name: 'Crampes' })).toHaveAttribute('aria-pressed', 'true'))
     expect(screen.getByRole('button', { name: 'Crampes' }).querySelector('.period-symptom-check')).not.toBeNull()
     store.listEntries.mockResolvedValue([])
