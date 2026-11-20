@@ -121,6 +121,11 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(piste).toHaveTextContent('+0,4 point sur 5 pour 50 min de sommeil de plus (court terme)')
     expect(within(piste).getByRole('link', { name: 'Vérifier par un essai' })).toHaveAttribute('href', '/agir')
     const bars = screen.getByRole('region', { name: 'Ce qui a été comparé' })
+    // POLISH-SIM-128 : les lignes chiffrées derrière le chevron
+    expect(bars).not.toHaveTextContent('Écran tard le soir')
+    expect(bars).toHaveTextContent('2 facteurs comparés, délai par délai.')
+    fireEvent.click(within(bars).getByRole('button', { name: 'Afficher les détails' }))
+    expect(bars).toHaveTextContent('Chaque délai se lit à part : un même facteur peut aller dans un sens le jour même et dans l’autre ensuite.')
     expect(bars).toHaveTextContent('Court terme')
     expect(bars).toHaveTextContent('Moyen terme')
     expect(bars).toHaveTextContent('Écran tard le soir')
@@ -140,6 +145,29 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(screen.queryByRole('region', { name: 'Piste à tester' })).toBeNull()
     expect(screen.getByTestId('reco-family-none')).toHaveTextContent('Aucun lien assez net pour l’instant dans cette famille.')
     expect(screen.getByRole('region', { name: 'Ce qui a été comparé' })).toBeInTheDocument()
+  })
+
+  it('POLISH-SIM-128 : Alimentation sans lien net dit simplement qu’il n’y a rien à éviter, chiffres derrière le chevron', async () => {
+    const results = structuredClone(readyResults)
+    const dig = results.outcomes.digestion = structuredClone(readyResults.outcomes.wellbeing)
+    dig.horizons.short.factors = [
+      { ...f('fodmap_fructose', 'Fructose en excès (FODMAP)', 0.2, { theme: 'nutrition', net: false }), outcome: 'digestion' },
+      { ...f('fodmap_sorbitol', 'Sorbitol (FODMAP)', 0.2, { theme: 'nutrition', net: false }), outcome: 'digestion' },
+    ]
+    dig.horizons.medium.factors = [{ ...f('fodmap_sorbitol', 'Sorbitol (FODMAP)', -0.8, { theme: 'nutrition', net: false, horizon: 'medium' }), outcome: 'digestion' }]
+    render(
+      <MemoryRouter initialEntries={['/recommendations/ventre/famille/nutrition']}>
+        <Routes>
+          <Route path="/recommendations/ventre/famille/:family" element={<Recommendations view="gut" read={async () => results} />} />
+          <Route path="*" element={<Where />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    await screen.findByRole('heading', { level: 2, name: 'Alimentation' })
+    expect(screen.getByTestId('reco-family-none')).toHaveTextContent('Rien à éviter pour l’instant : aucun aliment ne va nettement avec une digestion moins bonne. Continuez à noter vos repas.')
+    const bars = screen.getByRole('region', { name: 'Ce qui a été comparé' })
+    expect(bars).not.toHaveTextContent('Sorbitol')
+    expect(bars).not.toHaveTextContent('pt')
   })
 
   it('REFONTE-6c : famille inconnue, sans facteur comparé ou avant les résultats : retour au détail de l’objectif', async () => {

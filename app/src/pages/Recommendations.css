@@ -969,3 +969,14 @@
 .reco-page .reco-trial {
   margin-bottom: 20px;
 }
+
+/* POLISH-SIM-128 : « N facteurs comparés » et le chevron des lignes chiffrées, sur une ligne */
+.reco-family-compared-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.reco-family-compared-row .reco-next {
+  margin: 0;
+}
