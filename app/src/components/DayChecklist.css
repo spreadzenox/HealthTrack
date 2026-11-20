@@ -69,6 +69,17 @@
   font-weight: 700;
 }
 
+/* POLISH-SIM-123 : « Noté à 08:35 : Gêne » sous le titre de la ligne du soir */
+.day-line-titles {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.day-line-sub {
+  font-size: 0.85rem;
+}
+
 .day-line-count,
 .day-line-hint {
   font-size: 0.9rem;

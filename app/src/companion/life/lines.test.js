@@ -73,6 +73,18 @@ describe('digestion du soir', () => {
   })
 })
 
+describe('digestion notée dans la journée (POLISH-SIM-123)', () => {
+  it('une note du moment ne parle ni du soir ni de la journée', () => {
+    const matin = reactionFor({ type: 'gut', at: '2026-11-15T07:35:00Z', payload: { level: 'discomfort' } })
+    expect(matin.text).toBe('Merci de me l’avoir dit.')
+    expect(matin.sub).toBe('Digestion · noté')
+    expect(matin.say).not.toMatch(/soirée|Reposez-vous|du jour/)
+    expect(reactionFor({ type: 'gut', payload: { level: 'calm' } }).text).toBe('C’est noté, merci !')
+    // Le bilan du soir garde ses mots
+    expect(reactionFor({ type: 'gut', payload: { level: 'pain', scope: 'day' } }).text).toBe('Merci de me l’avoir dit. Reposez-vous bien.')
+  })
+})
+
 describe('fin de journée et retour', () => {
   it('avant 21 h la fête sobre, ensuite il dort', () => {
     expect(finishedLine(20, 'Pilou')).toMatchObject({ title: 'Plus rien à faire, bravo !', move: 'party' })
@@ -98,7 +110,7 @@ describe('reactionFor', () => {
     expect(reactionFor({ type: 'wellbeing', source: 'app_wellbeing', at: at(9), payload: { score: 5 } })?.text).toBe('Super ! Ça se fête.')
     expect(reactionFor({ type: 'wellbeing', source: 'face_sense', at: at(9), payload: { score: 1 } })).toBeNull()
     expect(reactionFor({ type: 'habit', at: at(12), payload: { habit: 'reading', label: 'Lecture', done: false } })?.move).toBe('shrug')
-    expect(reactionFor({ type: 'gut', at: at(20), payload: { level: 'tranquille' } })?.text).toBe('Merci, bonne soirée.')
+    expect(reactionFor({ type: 'gut', at: at(20), payload: { level: 'tranquille', scope: 'day' } })?.text).toBe('Merci, bonne soirée.')
     expect(reactionFor({ type: 'steps', at: at(9) })).toBeNull()
     expect(reactionFor(null)).toBeNull()
   })

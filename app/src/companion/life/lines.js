@@ -82,6 +82,16 @@ export function gutLine(level) {
   }
 }
 
+/**
+ * Digestion notée dans la journée (POLISH-SIM-123) : une note d'un moment, pas le bilan du soir ; ni « bonne soirée »
+ * ni « Digestion du jour » à 08:35.
+ */
+export function gutMomentLine(level) {
+  const low = level === 'discomfort' || level === 'pain'
+  const text = low ? 'Merci de me l’avoir dit.' : 'C’est noté, merci !'
+  return { expr: 'reconfortant', move: 'none', text, sub: 'Digestion · noté', say: `Digestion notée. ${text}` }
+}
+
 /** Une saisie annulée : « il rembobine », il ne recrache rien (SPEC § 10). */
 export const undoLine = () => ({ expr: 'content', move: 'rewind', text: 'D’accord, c’est annulé.', say: 'Annulé.' })
 
@@ -137,6 +147,6 @@ export function reactionFor(entry, { name } = {}) {
   if (entry.type === 'habit' && entry.payload?.habit) {
     return habitLine(entry.payload.habit, entry.payload.label || 'Habitude', !!entry.payload.done, name)
   }
-  if (entry.type === 'gut') return gutLine(entry.payload?.level)
+  if (entry.type === 'gut') return entry.payload?.scope === 'day' ? gutLine(entry.payload.level) : gutMomentLine(entry.payload?.level)
   return null
 }
