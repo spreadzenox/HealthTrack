@@ -36,7 +36,8 @@ import { THEME_TONE, pistesTitles, resultsView } from '../services/resultsView'
 import { influenceFamilies, familyDetail } from '../services/influenceFamilies'
 import { readGutNotes } from '../services/gutNotes'
 import { actSections, reintroLine } from '../services/act'
-import { FODMAP_CHALLENGE_TYPE } from '../services/fodmapChallenge'
+import { FODMAP_CHALLENGE_TYPE, FODMAP_GROUPS } from '../services/fodmapChallenge'
+import DetailsToggle from '../components/DetailsToggle'
 import LineIcon from '../components/LineIcon'
 import { listEntries } from '../storage/localHealthStorage'
 import { TRIAL_TYPE, homeTrial } from '../services/trials'
@@ -274,18 +275,36 @@ function Families({ outcome, families, base }) {
   )
 }
 
-/** Une piste : le lien net, son chiffre, et le chemin vers l'essai (ou vers l'abonnement tant que c'est flouté). */
+const FODMAP_HINTS = Object.fromEntries(FODMAP_GROUPS.map((g) => [`fodmap_${g.id}`, g.hint]))
+const PLAIN_SUBJECT = { wellbeing: 'vous allez', digestion: 'votre digestion va' }
+
+/**
+ * UPG-9 (« Ventre, sans technique » : « −2,7 pt pour 1 repas riche en fructanes, je n'y comprends rien ») : la piste
+ * se dit d'abord en clair, avec des aliments pour un groupe FODMAP ; « plutôt » garde le lien pour ce qu'il est, une
+ * piste à vérifier par un essai. Le chiffre, son unité et son délai restent derrière le chevron.
+ */
+function pistePlain(f) {
+  const change = (f.usualChange?.text ?? f.label).replace(' (FODMAP)', '')
+  const hint = FODMAP_HINTS[f.key]
+  const subject = PLAIN_SUBJECT[f.outcome] ?? PLAIN_SUBJECT.wellbeing
+  return `Avec ${change}${hint ? ` (${hint})` : ''}, ${subject} plutôt ${f.effect > 0 ? 'mieux' : 'moins bien'}.`
+}
+
+/** Une piste : le lien net en clair, son chiffre sur demande, et le chemin vers l'essai (ou vers l'abonnement tant que c'est flouté). */
 function PisteCard({ f, locked = false }) {
+  const [open, setOpen] = useState(false)
   return (
     <li className="today-card reco-piste" data-tone={THEME_TONE[f.theme] ?? 'stone'}>
       <span className={`reco-piste-title${locked ? ' is-locked' : ''}`}>
         {locked ? <span className="pistes-first-blur" aria-hidden="true" /> : f.label}
       </span>
-      {!locked && (
-        <span className="reco-piste-text">
+      {!locked && <span className="reco-piste-text">{pistePlain(f)}</span>}
+      {!locked && open && (
+        <span className="reco-piste-text" data-testid="reco-piste-detail">
           {monoDigits(pts(f.effect))} point sur 5 pour {f.usualChange?.text} ({f.horizonLabel.toLowerCase()})
         </span>
       )}
+      {!locked && <DetailsToggle on={open} onToggle={() => setOpen((v) => !v)} />}
       {locked
         ? <Link to="/premium" className="reco-piste-try">Débloquer</Link>
         : <Link to="/agir" className="reco-piste-try">Vérifier par un essai</Link>}
