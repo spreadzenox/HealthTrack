@@ -312,10 +312,22 @@ function PisteCard({ f, locked = false }) {
   )
 }
 
-/** REFONTE-6c : le détail d'une famille. Ses liens nets d'abord, puis tout ce qui a été comparé dans la famille. */
+/** POLISH-SIM-128 : sans piste, une phrase simple ; pour l'alimentation, dire qu'il n'y a rien à éviter. */
+const FAMILY_NONE = {
+  wellbeing: 'Rien à éviter pour l’instant : aucun aliment ne va nettement avec un bien-être moins bon. Continuez à noter vos repas.',
+  digestion: 'Rien à éviter pour l’instant : aucun aliment ne va nettement avec une digestion moins bonne. Continuez à noter vos repas.',
+}
+
+/**
+ * REFONTE-6c : le détail d'une famille. Ses liens nets d'abord, puis tout ce qui a été comparé dans la famille.
+ * POLISH-SIM-128 (« Ventre, sans technique ») : les lignes chiffrées (groupes, pt, fourchettes) derrière le chevron,
+ * et, quand plusieurs délais sont montrés, une phrase qui dit qu'ils se lisent séparément.
+ */
 function FamilyDetail({ outcome, detail }) {
   const w = WORDS[outcome]
   const many = detail.pistes.length > 1
+  const [open, setOpen] = useState(false)
+  const none = detail.id === 'nutrition' ? FAMILY_NONE[outcome] : 'Aucun lien assez net pour l’instant dans cette famille.'
   return (
     <>
       {detail.pistes.length > 0 ? (
@@ -327,21 +339,34 @@ function FamilyDetail({ outcome, detail }) {
         </section>
       ) : (
         <section className="reco-block">
-          <p className="today-card-text" data-testid="reco-family-none">Aucun lien assez net pour l’instant dans cette famille.</p>
+          <p className="today-card-text" data-testid="reco-family-none">{none}</p>
         </section>
       )}
       {detail.bars && (
         <section className="reco-block" aria-labelledby="reco-family-bars">
           <h3 id="reco-family-bars" className="reco-section-title">Ce qui a été comparé</h3>
-          <Unit w={w} />
-          {detail.horizons.map((h) => (
-            <div key={h.id} className="reco-horizon">
-              <p className="reco-horizon-title">{h.label} <span className="reco-horizon-window">{h.window}</span></p>
-              <EffectList factors={h.factors} />
-            </div>
-          ))}
-          {detail.horizons.some((h) => h.factors.some((f) => !f.net)) && (
-            <p className="reco-legend"><span className="reco-legend-unsure" aria-hidden="true" /> hachuré, chiffre en gris : pas assez net</p>
+          <div className="reco-family-compared-row">
+            <p className="reco-next" data-testid="reco-family-compared">
+              <span className="mono">{detail.count}</span> facteur{detail.count > 1 ? 's comparés' : ' comparé'}, délai par délai.
+            </p>
+            <DetailsToggle on={open} onToggle={() => setOpen((v) => !v)} />
+          </div>
+          {open && (
+            <>
+              <Unit w={w} />
+              {detail.horizons.length > 1 && (
+                <p className="reco-unit">Chaque délai se lit à part : un même facteur peut aller dans un sens le jour même et dans l’autre ensuite.</p>
+              )}
+              {detail.horizons.map((h) => (
+                <div key={h.id} className="reco-horizon">
+                  <p className="reco-horizon-title">{h.label} <span className="reco-horizon-window">{h.window}</span></p>
+                  <EffectList factors={h.factors} />
+                </div>
+              ))}
+              {detail.horizons.some((h) => h.factors.some((f) => !f.net)) && (
+                <p className="reco-legend"><span className="reco-legend-unsure" aria-hidden="true" /> hachuré, chiffre en gris : pas assez net</p>
+              )}
+            </>
           )}
         </section>
       )}

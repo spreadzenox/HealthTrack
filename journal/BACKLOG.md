@@ -521,7 +521,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       compare à la même heure (ou dit « 6 717 sur une journée ») ; aujourd'hui en pointillé ou absent des courbes
       Semaine et Mois tant que le jour n'est pas fini. Petit : « D'après votre montre » avec une bague (« votre montre
       ou bague » selon l'appareil, ou « D'après Samsung Health »).
-    - [ ] **POLISH-SIM-128 — Famille Alimentation, encore technique** (J45, suite d'UPG-9) : la page de la famille
+    - [x] **POLISH-SIM-128 — Famille Alimentation, encore technique** (fait le 20/11 14:30 : sans piste, la famille Alimentation dit « Rien à éviter pour l'instant : aucun aliment ne va nettement avec une digestion moins bonne (un bien-être moins bon). Continuez à noter vos repas. » ; dans toutes les familles, « Ce qui a été comparé » montre « N facteurs comparés, délai par délai. » et les lignes chiffrées derrière le chevron, avec « Chaque délai se lit à part… » quand plusieurs délais sont montrés ; une piste nette nommait déjà ses aliments par `pistePlain`) (J45, suite d'UPG-9) : la page de la famille
       (Objectifs › Confort digestif › Alimentation) commence par « Aucun lien assez net » puis liste fructose en excès,
       sorbitol, GOS, « pt » et barres d'erreur, sans nommer un aliment ; la persona ne sait pas quoi éviter. Spec : sous
       le titre, une phrase simple (comme `pistePlain`) qui nomme les aliments du groupe le plus net, ou « Rien à éviter

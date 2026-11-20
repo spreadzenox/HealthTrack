@@ -137,6 +137,7 @@ corrélation ≠ causalité) et D6 (science personnelle, normes — FODMAP compr
 
 ## 2. Jalons (ordre de livraison conseillé) et état
 
+> 20/11 14:30 : POLISH-SIM-128 fait : une famille sans piste nette dit simplement « Rien à éviter pour l'instant » (Alimentation) ; les lignes chiffrées de « Ce qui a été comparé » derrière le chevron, chaque délai lu à part. #1148 (POLISH-SIM-127) mergée. Prochain : POLISH-SIM-124b, 127b ; de jour, captures App Store de la refonte (REFONTE-2-ASC).
 > 20/11 13:30 : POLISH-SIM-127 fait : avant 21 h, « d'habitude 6 717 par jour » sous les pas et l'écran de l'Accueil ; aujourd'hui absent des courbes des pas et de l'écran dans Tendances. #1147 (POLISH-SIM-126) mergée avant ce run. Prochain : POLISH-SIM-128, 124b, 127b.
 > 20/11 12:30 : POLISH-SIM-126 fait : pendant un essai, la carte du bas de l'Accueil porte « Agir » au-dessus du titre de l'essai. #1146 (POLISH-SIM-125) mergée. Prochain : POLISH-SIM-127, 128, 124b.
 > 20/11 11:30 : POLISH-SIM-125 fait : dans Tendances › Jour › Vos saisies, une habitude n'a plus d'heure inventée (« 12:29 Café ») et vient après les saisies horodatées. #1144 et #1145 (POLISH-SIM-123) mergées. Prochain : POLISH-SIM-126 à 128, 124b.
