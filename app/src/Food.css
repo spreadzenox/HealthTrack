@@ -559,3 +559,10 @@
   min-width: 0;
   max-width: 60%;
 }
+
+/* POLISH-SIM-122 : où va le repas photographié depuis un cercle passé de Ma journée */
+.meal-slot-hint {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}

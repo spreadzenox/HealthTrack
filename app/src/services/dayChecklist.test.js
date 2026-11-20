@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { habitEntry } from './habits'
-import { dayChecklist, mealSlotOf, MEAL_SLOTS } from './dayChecklist'
+import { dayChecklist, mealSlotOf, mealSlotOfEntry, slotMealAt, MEAL_SLOTS } from './dayChecklist'
 
 const at = (h, m = 0, dayOffset = 0) => new Date(2026, 10, 15 + dayOffset, h, m).toISOString()
 const meal = (h, dish = 'Repas') => ({ id: `m${h}`, type: 'food', at: at(h), payload: { dish } })
@@ -16,6 +16,35 @@ describe('mealSlotOf', () => {
     expect(mealSlotOf(at(15, 59))).toBe('noon')
     expect(mealSlotOf(at(16))).toBe('evening')
     expect(mealSlotOf(at(23, 30))).toBe('evening')
+  })
+})
+
+describe('cercle touché (POLISH-SIM-122)', () => {
+  const MORNING = new Date(2026, 10, 15, 8, 34)
+  const AFTERNOON = new Date(2026, 10, 15, 15, 0)
+  const LATE = new Date(2026, 10, 15, 21, 0)
+
+  it('le créneau du repas suit le cercle touché, puis son heure', () => {
+    expect(mealSlotOfEntry({ at: at(8, 34), payload: { slot: 'noon' } })).toBe('noon')
+    expect(mealSlotOfEntry({ at: at(8, 34), payload: {} })).toBe('morning')
+    expect(mealSlotOfEntry({ at: at(8, 34), payload: { slot: 'brunch' } })).toBe('morning')
+    expect(mealSlotOfEntry({ at: at(8, 34) })).toBe('morning')
+  })
+
+  it('heure proposée : maintenant dans le créneau, son milieu s’il est passé, jamais dans le futur', () => {
+    expect(slotMealAt('morning', MORNING)).toBe(MORNING.toISOString())
+    expect(slotMealAt('morning', AFTERNOON)).toBe(at(8))
+    expect(slotMealAt('noon', LATE)).toBe(at(12, 30))
+    expect(slotMealAt('evening', LATE)).toBe(LATE.toISOString())
+    // Midi touché à 08:34 : le repas ne peut pas être dans le futur, il garde l'heure actuelle
+    expect(slotMealAt('noon', MORNING)).toBe(MORNING.toISOString())
+    expect(slotMealAt('inconnu', MORNING)).toBe(MORNING.toISOString())
+  })
+
+  it('Midi touché à 08:34 : c’est le cercle Midi qui se remplit', () => {
+    const lunch = { id: 'x', type: 'food', at: at(8, 34), payload: { dish: 'Salade', slot: 'noon' } }
+    const c = dayChecklist([lunch], { now: MORNING })
+    expect(c.tasks[0].slots.map((s) => s.filled)).toEqual([false, true, false])
   })
 })
 

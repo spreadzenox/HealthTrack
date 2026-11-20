@@ -484,7 +484,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       [`J45`](simulations/2026-11-20-0830-ventre-sans-technique-maj-J45.md), [`J1`](simulations/2026-11-20-0830-tout-mesurer-J1.md),
       [synthèse](simulations/2026-11-20-0830-synthese.md). Rien de perdu à la mise à jour. **UPG-3 complet : 10 parcours
       sur 10.** Constats vérifiés sur captures et dans le code → POLISH-SIM-122 à 128.
-    - [ ] **POLISH-SIM-122 — Repas de midi rangé au matin** (J45, prioritaire pour le 22/11) : à 08:34, toucher le cercle
+    - [x] **POLISH-SIM-122 — Repas de midi rangé au matin** (fait le 20/11 09:30 : le cercle touché suit la photo
+      ou la description (`payload.slot`, `mealSlotOfEntry`) ; créneau passé → milieu du créneau, modifiable dans
+      « Décrire », éditable après coup ; créneau à venir → heure du geste, jamais dans le futur (`mealTimeError`) :
+      écart assumé avec la spec « 12:30 à 08:34 », le cercle Midi se remplit quand même. Heure changée à la main → le
+      cercle suit l'heure.) (J45, prioritaire pour le 22/11) : à 08:34, toucher le cercle
       « Midi » de Ma journée ouvre le repas à l'heure actuelle ; `mealSlotOf` (`services/dayChecklist.js`) le range
       par son heure, donc « Matin » se coche. Spec : le cercle touché passe son créneau à la page Repas ; si l'heure
       actuelle n'est pas dans ce créneau, l'heure du repas est proposée au milieu du créneau (08:00, 12:30, 19:30),

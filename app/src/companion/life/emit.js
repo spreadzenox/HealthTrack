@@ -5,7 +5,7 @@
  * du contrat.
  */
 import { bus, EVENTS } from '../bus'
-import { mealSlotOf } from '../../services/dayChecklist'
+import { mealSlotOfEntry } from '../../services/dayChecklist'
 import { scoreToChoice } from '../../services/mood/wellbeingScale'
 
 const SLOT = { morning: 'breakfast', noon: 'lunch', evening: 'dinner' }
@@ -25,7 +25,7 @@ export function emitEntry(entry, { undone, mealsToday = 0, target = bus } = {}) 
   }
   if (!entry && undone) send(EVENTS.ENTRY_UNDONE, undone)
   if (!entry) return sent
-  if (entry.type === 'food') send(EVENTS.MEAL_LOGGED, { slot: SLOT[mealSlotOf(entry.at)], count: mealsToday, total: 3 })
+  if (entry.type === 'food') send(EVENTS.MEAL_LOGGED, { slot: SLOT[mealSlotOfEntry(entry)], count: mealsToday, total: 3 })
   if (entry.type === 'wellbeing') {
     const level = scoreToChoice(entry.payload?.score)
     send(EVENTS.WELLBEING_NOTED, { level, difficult: level <= 2, source: 'note' })

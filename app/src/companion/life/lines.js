@@ -6,7 +6,7 @@
  *
  * Expressions : les 12 de la planche (brief § 7.2), sous leurs noms du bus (CONTRAT.md § 3).
  */
-import { mealSlotOf } from '../../services/dayChecklist'
+import { mealSlotOfEntry } from '../../services/dayChecklist'
 import { scoreToChoice } from '../../services/mood/wellbeingScale'
 import { DEFAULT_NAME } from './companionState'
 import { EXPRESSIONS } from '../bus'
@@ -22,7 +22,7 @@ const n = (name) => name || DEFAULT_NAME
 
 /** Repas noté : la variante suit le cercle (l'heure du repas), pas l'heure à laquelle on le note (SPEC § 3.2). */
 export function mealLine(entry, name) {
-  const slot = entry?.at ? mealSlotOf(entry.at) : 'noon'
+  const slot = entry?.at ? mealSlotOfEntry(entry) : 'noon'
   const said = {
     morning: `${n(name)} est rassasié… et bien réveillé !`,
     noon: `${n(name)} est rassasié.`,

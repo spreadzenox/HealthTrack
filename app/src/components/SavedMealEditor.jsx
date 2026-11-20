@@ -52,6 +52,8 @@ function SavedMealEditorForm({ entry, onSaved, onCancel }) {
         return
       }
       changes.at = at
+      // Heure changée à la main : c'est elle qui range le repas, plus le cercle touché (POLISH-SIM-122)
+      delete changes.payload.slot
     }
     setSaving(true)
     setError(null)

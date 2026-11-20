@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-20",
+  "kind": "correctif",
+  "title": "Ma journée : le repas va dans le cercle touché",
+  "items": [
+    "Touchez « Midi » pour noter votre déjeuner : c'est le cercle Midi qui se remplit, même si vous le notez tôt.",
+    "Un repas oublié se rattrape : « Matin » touché l'après-midi range le repas à 08:00, une heure que vous pouvez changer."
+  ]
+}

@@ -30,6 +30,13 @@ describe('MealPhotoButton (TESTEUR-4b)', () => {
     expect(takePendingMealPhoto()).toBeNull()
   })
 
+  it('passes the touched circle to the meals page (POLISH-SIM-122)', () => {
+    render(<MemoryRouter><MealPhotoButton className="btn" slot="noon">Midi</MealPhotoButton></MemoryRouter>)
+    const input = inputOf(screen.getByRole('button', { name: 'Midi' }))
+    fireEvent.change(input, { target: { files: [new File(['x'], 'r.jpg', { type: 'image/jpeg' })] } })
+    expect(navigateMock).toHaveBeenCalledWith('/food', { state: { mealSlot: 'noon' } })
+  })
+
   it('does nothing when the camera is closed without a photo', () => {
     renderBtn()
     fireEvent.change(inputOf(screen.getByRole('button')), { target: { files: [] } })

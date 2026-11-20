@@ -54,7 +54,7 @@ function MealsLine({ task }) {
             <span className="day-meal-label">{s.label}</span>
           </Link>
         ) : (
-          <MealPhotoButton key={s.id} className="day-meal-slot" ariaLabel={`${s.label} : photographier le repas`}>
+          <MealPhotoButton key={s.id} className="day-meal-slot" slot={s.id} ariaLabel={`${s.label} : photographier le repas`}>
             <span className="day-meal-circle"><LineIcon name="camera" size={22} /></span>
             <span className="day-meal-label">{s.label}</span>
           </MealPhotoButton>
