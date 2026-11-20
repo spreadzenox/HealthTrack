@@ -68,3 +68,11 @@
 .home-act-link {
   margin: 12px 0 16px;
 }
+
+/* POLISH-SIM-126 : pendant un essai, le mot « Agir » au-dessus du titre de l'essai */
+.home-act-kicker {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
