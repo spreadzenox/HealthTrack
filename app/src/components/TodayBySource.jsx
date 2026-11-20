@@ -105,7 +105,7 @@ export default function TodayBySource({
             )
           })}
         </ul>
-        <p className="today-data-from">{sourcesSentence(groups.map((g) => g.id))}</p>
+        <p className="today-data-from">{sourcesSentence(groups)}</p>
         <StripPlus />
       </div>
       {!todayBySource.hasWatch(groups) && (

@@ -137,6 +137,7 @@ corrélation ≠ causalité) et D6 (science personnelle, normes — FODMAP compr
 
 ## 2. Jalons (ordre de livraison conseillé) et état
 
+> 20/11 15:30 : POLISH-SIM-127b fait : sous « Vos données du jour », « D'après votre bague » ou « D'après votre montre ou bague » selon l'app d'origine, « votre montre » seulement pour une montre connue. #1149 (POLISH-SIM-128) mergée avant ce run. Prochain : POLISH-SIM-124b ; de jour, captures App Store de la refonte (REFONTE-2-ASC).
 > 20/11 14:30 : POLISH-SIM-128 fait : une famille sans piste nette dit simplement « Rien à éviter pour l'instant » (Alimentation) ; les lignes chiffrées de « Ce qui a été comparé » derrière le chevron, chaque délai lu à part. #1148 (POLISH-SIM-127) mergée. Prochain : POLISH-SIM-124b, 127b ; de jour, captures App Store de la refonte (REFONTE-2-ASC).
 > 20/11 13:30 : POLISH-SIM-127 fait : avant 21 h, « d'habitude 6 717 par jour » sous les pas et l'écran de l'Accueil ; aujourd'hui absent des courbes des pas et de l'écran dans Tendances. #1147 (POLISH-SIM-126) mergée avant ce run. Prochain : POLISH-SIM-128, 124b, 127b.
 > 20/11 12:30 : POLISH-SIM-126 fait : pendant un essai, la carte du bas de l'Accueil porte « Agir » au-dessus du titre de l'essai. #1146 (POLISH-SIM-125) mergée. Prochain : POLISH-SIM-127, 128, 124b.

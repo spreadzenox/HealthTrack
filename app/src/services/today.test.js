@@ -287,6 +287,20 @@ describe('todayBySource (TESTEUR-1d-b)', () => {
     expect(groups[1].items[1]).toMatchObject({ label: 'Temps d’écran', value: '2 h 15' })
   })
 
+  it('montre, bague ou les deux selon l’appareil qui envoie les données (POLISH-SIM-127b)', () => {
+    const from = (label) => sourcesSentence(todayBySource({
+      tiles: tiles({ sleep: { sources: [label] }, hrv: { sources: [label] }, steps: { value: null } }), summary: {}, entries: [], now: NOW,
+    }))
+    expect(from('Montre Huawei')).toBe('D’après votre montre.')
+    expect(from('Health Connect · Garmin Connect')).toBe('D’après votre montre.')
+    expect(from('Santé · Apple Watch de Julie')).toBe('D’après votre montre.')
+    expect(from('Health Connect · Oura')).toBe('D’après votre bague.')
+    expect(from('Health Connect · Samsung Health')).toBe('D’après votre montre ou bague.')
+    expect(from('Health Connect')).toBe('D’après votre montre ou bague.')
+    // les identifiants seuls gardent la phrase d'avant
+    expect(sourcesSentence(['watch', 'phone'])).toBe('D’après votre montre et votre téléphone.')
+  })
+
   it('une source sans chiffre ne s’affiche pas ; sans montre, hasWatch est faux', () => {
     const none = { value: null, sources: [] }
     const groups = todayBySource({ tiles: tiles({ sleep: none, hrv: none }), summary: {}, entries: [], now: NOW })

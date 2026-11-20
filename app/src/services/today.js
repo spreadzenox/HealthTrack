@@ -356,17 +356,35 @@ export function todayBySource({ tiles = [], summary = null, entries = [], now = 
   if (s.cigarettes > 0) noted.push({ key: 'cigarettes', label: s.cigarettes > 1 ? 'Cigarettes' : 'Cigarette', value: String(s.cigarettes), when: null })
 
   return [
-    { id: 'watch', title: 'Montre', items: watch },
+    { id: 'watch', title: 'Montre', items: watch, wear: wearKind(watch.flatMap((t) => (t.sources || []).map(device))) },
     { id: 'phone', title: 'Téléphone', items: phone },
     { id: 'scale', title: 'Balance', items: scale },
     { id: 'noted', title: 'Noté par vous', items: noted },
   ].filter((g) => g.items.length)
 }
 const SOURCE_FROM = { watch: 'votre montre', phone: 'votre téléphone', scale: 'votre balance', noted: 'vos notes' }
+// POLISH-SIM-127b : « votre montre » seulement quand l'appareil en est une ; une app qui sert montres et bagues
+// (Samsung Health, Health Connect seul) dit « votre montre ou bague »
+const WATCH_DEVICE = /watch|montre|garmin|amazfit|zepp|polar|coros|suunto|withings/i
+const RING_DEVICE = /\bring\b|bague|oura|ultrahuman|circular/i
+const WEAR_FROM = { watch: 'votre montre', ring: 'votre bague', any: 'votre montre ou bague' }
 
-/** « D'après votre montre, votre téléphone et vos notes. » (AUJ-3 : sources en petit, sans nom d'appareil ni d'app) */
-export function sourcesSentence(groupIds) {
-  const parts = groupIds.map((id) => SOURCE_FROM[id]).filter(Boolean)
+function wearKind(devices) {
+  const watch = devices.some((d) => WATCH_DEVICE.test(d))
+  const ring = devices.some((d) => RING_DEVICE.test(d))
+  if (watch && !ring) return 'watch'
+  if (ring && !watch) return 'ring'
+  return 'any'
+}
+
+/**
+ * « D'après votre montre, votre téléphone et vos notes. » (AUJ-3 : sources en petit, sans nom d'appareil ni d'app)
+ * @param {(string|{id: string, wear?: string})[]} groups  identifiants, ou groupes de `todayBySource` (montre ou bague)
+ */
+export function sourcesSentence(groups) {
+  const parts = groups
+    .map((g) => (typeof g === 'string' ? SOURCE_FROM[g] : (g.id === 'watch' && WEAR_FROM[g.wear]) || SOURCE_FROM[g.id]))
+    .filter(Boolean)
   if (!parts.length) return ''
   const list = parts.length === 1 ? parts[0] : `${parts.slice(0, -1).join(', ')} et ${parts[parts.length - 1]}`
   return `D’après ${list}.`
