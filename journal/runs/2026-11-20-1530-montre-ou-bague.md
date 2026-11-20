@@ -29,3 +29,7 @@
 1. Finir cette PR (checks, build iOS, capture iPhone de l'Accueil), merger.
 2. POLISH-SIM-124b.
 3. De jour : captures App Store de la refonte (REFONTE-2-ASC), puis PI2 (21 ou 22/11).
+
+## Après l'ouverture de la PR
+- Build iOS rouge sur le contrôle « mot propre à Android » : la note de Nouveautés (commune aux deux apps) citait
+  « Samsung Health ». Phrase reprise sans nom d'app (« quand l'appli qui les envoie sert les deux »), poussée.

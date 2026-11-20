@@ -3,6 +3,6 @@
   "kind": "correctif",
   "title": "Accueil, votre montre ou votre bague",
   "items": [
-    "Sous « Vos données du jour », Halcya dit « D'après votre bague » quand vos données viennent d'une bague, et « D'après votre montre ou bague » quand l'appli d'origine sert les deux (Samsung Health par exemple)."
+    "Sous « Vos données du jour », Halcya dit « D'après votre bague » quand vos données viennent d'une bague, et « D'après votre montre ou bague » quand l'appli qui les envoie sert les deux."
   ]
 }
