@@ -503,7 +503,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       montre, « Pas (votre téléphone) » est une tuile si Health Connect / Santé est relié, sinon « Activables dans
       Réglages › Sources : pas (votre téléphone) », et rien si le téléphone n'a ni l'un ni l'autre ; la ligne « Avec
       une montre » ne cite plus les pas. Pas de tuile sans accès : ce serait promettre ce qui n'arrivera pas. Reste
-      **POLISH-SIM-124b** : proposer la carte Health Connect / Santé aussi à « Non » au temps 2, pour que les pas du
+      **POLISH-SIM-124b** [x] (fait le 20/11 16:30 : à « Non », carte « vos pas, comptés par votre téléphone » et
+      « Connecter Health Connect » / « Santé » ; accès donné → tuile « Pas (votre téléphone) » au temps 3 ; correctif
+      iPhone 45 refait) : proposer la carte Health Connect / Santé aussi à « Non » au temps 2, pour que les pas du
       téléphone soient suivis dès l'accueil ; Pilou dit « Tout ça, je m'en occupe » au-dessus d'un écran sans tuile.) (J1, config Android seul, la plus fréquente) :
       l'écran « Ce que Halcya suit pour vous, sans rien faire » n'a aucune tuile ; « pas » n'est que dans « Avec une
       montre ou un bracelet » alors que le téléphone les compte et que le temps 2 l'a dit (`autoTiles` de

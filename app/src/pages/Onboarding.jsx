@@ -163,7 +163,8 @@ function Switch({ checked, onChange, label, disabled = false }) {
   )
 }
 
-function HealthCard({ health, onHealth }) {
+/** `phone` : sans montre (« Non » au temps 2), la carte ne parle que des pas comptés par le téléphone (POLISH-SIM-124b). */
+function HealthCard({ health, onHealth, phone = false }) {
   const [busy, setBusy] = useState(false)
   const connector = healthConnector()
   const name = healthStoreName()
@@ -225,10 +226,17 @@ function HealthCard({ health, onHealth }) {
       <h2 id="onb-hc-title" className="onb-card-title">
         {name}
       </h2>
-      <p className="onb-card-sub">{name === 'Santé' ? 'votre iPhone et votre montre' : 'votre téléphone, vos montres, bagues et balances'}</p>
+      <p className="onb-card-sub">
+        {phone
+          ? 'vos pas, comptés par votre téléphone'
+          : name === 'Santé'
+            ? 'votre iPhone et votre montre'
+            : 'votre téléphone, vos montres, bagues et balances'}
+      </p>
       <p className="onb-card-text">
-        {APP_NAME} lit vos pas, votre sommeil, ce que vos appareils mesurent et vos 30 derniers jours. Elle n’écrit rien et
-        n’envoie rien. Vous choisissez type par type.
+        {phone
+          ? `${APP_NAME} lit vos pas et vos 30 derniers jours. Elle n’écrit rien et n’envoie rien. Vous choisissez type par type.`
+          : `${APP_NAME} lit vos pas, votre sommeil, ce que vos appareils mesurent et vos 30 derniers jours. Elle n’écrit rien et n’envoie rien. Vous choisissez type par type.`}
       </p>
       {health === 'granted' ? (
         <p className="onb-note onb-note-ok" role="status">
@@ -394,9 +402,10 @@ function WatchStep({ state, update, installed }) {
         </>
       )}
       {watch === 'no' && (
-        <p className="onb-quiet" role="status">
-          Si votre téléphone compte vos pas, vous pourrez relier {name} dans Réglages › Sources.
-        </p>
+        <>
+          <HealthCard phone health={state.health} onHealth={(health) => update({ health })} />
+          <p className="onb-fine">Une seule fois. Ensuite, vos sources se gèrent dans Réglages › Sources.</p>
+        </>
       )}
       <h2 className="onb-leaves-group">Sur ce téléphone</h2>
       <div className="onb-rows">

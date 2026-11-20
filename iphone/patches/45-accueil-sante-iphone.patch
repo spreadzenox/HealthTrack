@@ -1,5 +1,5 @@
 diff --git a/app/src/config/permissionDisclosures.js b/app/src/config/permissionDisclosures.js
-index 8668336..171949e 100644
+index b4db6198..c745ce0d 100644
 --- a/app/src/config/permissionDisclosures.js
 +++ b/app/src/config/permissionDisclosures.js
 @@ -142,7 +142,7 @@ if (FEATURES.iosStore) {
@@ -12,10 +12,10 @@ index 8668336..171949e 100644
      ],
      accept: 'J’accepte, ouvrir l’app Santé',
 diff --git a/app/src/pages/Onboarding.jsx b/app/src/pages/Onboarding.jsx
-index 7534876..3b33f3f 100644
+index 9283a51e..a1565420 100644
 --- a/app/src/pages/Onboarding.jsx
 +++ b/app/src/pages/Onboarding.jsx
-@@ -53,6 +53,9 @@ import { STATUS_LABEL, measureStatuses } from '../devices/deviceCapabilities'
+@@ -58,6 +58,9 @@ import { STATUS_LABEL, measureStatuses } from '../devices/deviceCapabilities'
  import { lastLaunchDay } from '../services/entitlement'
  import { monoDigits } from '../utils/monoDigits'
  
@@ -25,16 +25,18 @@ index 7534876..3b33f3f 100644
  const withTimeout = (promise, ms, fallback) =>
    Promise.race([promise, new Promise((resolve) => setTimeout(() => resolve(fallback), ms))])
  
-@@ -277,7 +280,7 @@ function HealthCard({ health, onHealth }) {
-       </h2>
-       <p className="onb-card-sub">{name === 'Santé' ? 'votre iPhone et votre montre' : 'votre téléphone, vos montres, bagues et balances'}</p>
+@@ -236,8 +239,8 @@ function HealthCard({ health, onHealth, phone = false }) {
+       </p>
        <p className="onb-card-text">
--        {APP_NAME} lit vos pas, votre sommeil, ce que vos appareils mesurent et vos 30 derniers jours. Elle n’écrit rien et
-+        {APP_NAME} lit vos pas, votre sommeil, ce que vos appareils mesurent et vos {IMPORT_SPAN}. Elle n’écrit rien et
-         n’envoie rien. Vous choisissez type par type.
+         {phone
+-          ? `${APP_NAME} lit vos pas et vos 30 derniers jours. Elle n’écrit rien et n’envoie rien. Vous choisissez type par type.`
+-          : `${APP_NAME} lit vos pas, votre sommeil, ce que vos appareils mesurent et vos 30 derniers jours. Elle n’écrit rien et n’envoie rien. Vous choisissez type par type.`}
++          ? `${APP_NAME} lit vos pas et vos ${IMPORT_SPAN}. Elle n’écrit rien et n’envoie rien. Vous choisissez type par type.`
++          : `${APP_NAME} lit vos pas, votre sommeil, ce que vos appareils mesurent et vos ${IMPORT_SPAN}. Elle n’écrit rien et n’envoie rien. Vous choisissez type par type.`}
        </p>
        {health === 'granted' ? (
-@@ -479,7 +482,7 @@ function FoundStep({ health, imported, onImported, installed, huawei, onConnect
+         <p className="onb-note onb-note-ok" role="status">
+@@ -510,7 +513,7 @@ function FoundStep({ health, imported, onImported, installed, huawei }) {
            <div
              className="onb-import-bar"
              role="progressbar"
@@ -43,7 +45,7 @@ index 7534876..3b33f3f 100644
              aria-valuemin={0}
              aria-valuemax={progress?.total || 1}
              aria-valuenow={progress?.done || 0}
-@@ -487,7 +490,7 @@ function FoundStep({ health, imported, onImported, installed, huawei, onConnect
+@@ -518,7 +521,7 @@ function FoundStep({ health, imported, onImported, installed, huawei }) {
              <span style={{ width: `${pct(progress)}%` }} />
            </div>
            <p className="onb-import-line">
@@ -52,7 +54,7 @@ index 7534876..3b33f3f 100644
            </p>
          </>
        )}
-@@ -522,7 +525,7 @@ function FoundStep({ health, imported, onImported, installed, huawei, onConnect
+@@ -553,7 +556,7 @@ function FoundStep({ health, imported, onImported, installed, huawei }) {
        )}
        {facts?.length > 0 && (
          <>
@@ -61,7 +63,7 @@ index 7534876..3b33f3f 100644
            <ul className="onb-facts">
              {facts.map((f) => (
                <li key={f.key} className={`onb-fact onb-fact--${f.key}`}>
-@@ -533,7 +536,7 @@ function FoundStep({ health, imported, onImported, installed, huawei, onConnect
+@@ -564,7 +567,7 @@ function FoundStep({ health, imported, onImported, installed, huawei }) {
              ))}
            </ul>
            {sharedSource && <p className="onb-facts-source">D’après {sharedSource}</p>}
@@ -71,7 +73,7 @@ index 7534876..3b33f3f 100644
        )}
        {entries && !facts?.length && (
 diff --git a/app/src/services/firstImport.js b/app/src/services/firstImport.js
-index 0abc153..d80054b 100644
+index 42ecab0f..661c6fe7 100644
 --- a/app/src/services/firstImport.js
 +++ b/app/src/services/firstImport.js
 @@ -24,6 +24,12 @@ const DAY_MS = 24 * 3600 * 1000
