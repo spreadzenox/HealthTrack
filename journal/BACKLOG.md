@@ -370,7 +370,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [ ] **UPG-8 — Repas décrit, aliments oubliés** (J1, à vérifier hors analyse factice de l'outil) : « pâtes
     carbonara, un yaourt et une pomme » ne rend que la carbonara. Dans l'outil, l'analyse est factice : vérifier
     d'abord sur l'analyse réelle (consigne du relais) avant tout code.
-  - [ ] **UPG-9 — Textes techniques pour « Ventre, sans technique »** (carte d'un repas FAITE le 19/11 19:30 : plusieurs groupes → « Parfois mal digérés : … » dans l'ordre du repas, groupes, grammes et sources derrière « Détails » ; un seul groupe inchangé (N4) ; 2 tests. Restent : les pistes « −2,7 pt » en clair, le bandeau Gold) (J1) : alertes FODMAP après un repas (4 lignes
+  - [ ] **UPG-9 — Textes techniques pour « Ventre, sans technique »** (carte d'un repas FAITE le 19/11 19:30 : plusieurs groupes → « Parfois mal digérés : … » dans l'ordre du repas, groupes, grammes et sources derrière « Détails » ; un seul groupe inchangé (N4) ; 2 tests. Pistes FAITES le 20/11 03:30 : « Avec 1 repas riche en fructanes de plus (blé, oignon, ail), votre digestion va plutôt moins bien. », points et délai derrière le chevron, aliments du groupe FODMAP, `pistePlain` de `Recommendations.jsx`, 2 tests. Reste : le bandeau Gold) (J1) : alertes FODMAP après un repas (4 lignes
     rouges, grammes, références d'articles) et pistes « −2,7 pt pour 1 repas riche en fructanes » : une phrase
     simple d'abord, chiffres et sources derrière « Détails ». Bandeau Gold au 1er jour : « Gold est prolongé » (le
     relais de l'outil sert la période prolongée ; vérifier le texte réel de la période de lancement).

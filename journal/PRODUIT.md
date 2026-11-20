@@ -137,6 +137,7 @@ corrélation ≠ causalité) et D6 (science personnelle, normes — FODMAP compr
 
 ## 2. Jalons (ordre de livraison conseillé) et état
 
+> 20/11 03:30 : UPG-9 (pistes) fait : une piste à tester se lit en une phrase simple (« Avec 1 repas riche en fructanes de plus (blé, oignon, ail), votre digestion va plutôt moins bien. »), le chiffre derrière le chevron. Reste d'UPG-9 : le bandeau Gold du 1er jour. TestFlight 1196.1196 en test externe.
 > 20/11 02:30 : POLISH-SIM-121 fait : un seul « Comment c’est calculé » sur « Votre bien-être » (d’où vient le chiffre, puis la comparaison). Les six défauts du passage des personas du 19/11 20:30 (POLISH-SIM-116 à 121) sont soldés.
 > 20/11 01:30 : POLISH-SIM-119 fait : « Suivre une habitude » (Ma journée) ouvre les Paramètres sur « Vos habitudes ». #1134 (POLISH-SIM-120) mergée.
 > 20/11 00:30 : POLISH-SIM-120 fait : l'essai en cours se retrouve en haut de « Votre bien-être » ou « Votre confort digestif » (carte vers sa page).

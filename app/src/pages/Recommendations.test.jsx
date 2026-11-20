@@ -114,6 +114,10 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(screen.getByRole('link', { name: '← Votre bien-être' })).toHaveAttribute('href', '/recommendations/bien-etre')
     const piste = screen.getByRole('region', { name: 'Piste à tester' })
     expect(within(piste).getAllByRole('listitem')).toHaveLength(1)
+    // UPG-9 : une phrase simple d'abord, le chiffre derrière le chevron
+    expect(piste).toHaveTextContent('Avec 50 min de sommeil de plus, vous allez plutôt mieux.')
+    expect(piste).not.toHaveTextContent('point sur 5')
+    fireEvent.click(within(piste).getByRole('button', { name: 'Afficher les détails' }))
     expect(piste).toHaveTextContent('+0,4 point sur 5 pour 50 min de sommeil de plus (court terme)')
     expect(within(piste).getByRole('link', { name: 'Vérifier par un essai' })).toHaveAttribute('href', '/agir')
     const bars = screen.getByRole('region', { name: 'Ce qui a été comparé' })
@@ -349,6 +353,21 @@ describe('REFONTE-6e : la réintroduction guidée sous Confort digestif', () => 
     expect(link).toHaveAttribute('href', '/reintroduction')
     expect(link).toHaveTextContent('Réintroduction guidée')
     expect(link).toHaveTextContent('À tester d’après vos analyses : le lactose')
+  })
+
+  it('UPG-9 : une piste FODMAP se dit en clair, avec les aliments ; le chiffre derrière « Détails »', async () => {
+    const gut = JSON.parse(JSON.stringify(readyResults.outcomes.wellbeing))
+    gut.horizons.short.factors = [{
+      ...f('fodmap_fructans', 'Fructanes', -2.7, { theme: 'nutrition' }), outcome: 'digestion',
+      usualChange: { amount: 1, unit: 'repas', text: '1 repas riche en fructanes (FODMAP) de plus' },
+    }]
+    gut.horizons.medium.factors = []
+    gutPage(async () => ({ challenges: [], gut: [] }), { outcomes: { wellbeing: readyResults.outcomes.wellbeing, digestion: gut } })
+    const pistes = await screen.findByRole('region', { name: 'Pistes à tester' })
+    expect(pistes).toHaveTextContent('Avec 1 repas riche en fructanes de plus (blé, oignon, ail), votre digestion va plutôt moins bien.')
+    expect(pistes).not.toHaveTextContent(/pt|point sur 5|FODMAP/)
+    fireEvent.click(within(pistes).getByRole('button', { name: 'Afficher les détails' }))
+    expect(pistes).toHaveTextContent('−2,7 point sur 5 pour 1 repas riche en fructanes (FODMAP) de plus (court terme)')
   })
 
   it('un test en cours se retrouve ici même avant les premiers résultats', async () => {
