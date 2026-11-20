@@ -389,6 +389,19 @@ function windowValue(days, key, num, horizon) {
   return n > 0 && n * 2 >= len ? sum / n : null
 }
 
+/**
+ * METHODE-BIAIS-2 (banc du 20/11 22:30) : une fenêtre à moitié remplie (la veille seule pour « le jour même et la
+ * veille ») mesure mal ce qui a agi, et la taille d'un lien en ressort rétrécie (0,75 de la vraie au banc ; 0,91 sans
+ * jour manquant). La taille montrée ne prend donc que les jours dont la fenêtre a au plus un jour manquant sur cinq.
+ */
+export const WINDOW_MISSING_SHOWN = 0.2
+function windowComplete(days, key, num, horizon) {
+  const len = horizon.to - horizon.from + 1
+  let missing = 0
+  for (let k = horizon.from; k <= horizon.to; k += 1) if (!isNum(days.get(keyOf(num - k))?.[key])) missing += 1
+  return missing <= Math.floor(WINDOW_MISSING_SHOWN * len)
+}
+
 const niceAmount = (sd, step) => Math.max(step, Math.round(sd / step) * step)
 
 // ─── Calcul ──────────────────────────────────────────────────────────────────
@@ -610,7 +623,13 @@ function fitModel(ys, days, fitted, weights, changeDates = []) {
     const [key, h] = id.split('|')
     return windowValue(days, key, dayNum(dk), byId.get(h))
   }
-  return fitOutcomeModel({ rows, candidates: fitted.map((f) => ({ id: `${f.key}|${f.horizon}`, p: f._p })), valueOf })
+  const completeOf = (id, dk) => {
+    const [key, h] = id.split('|')
+    return windowComplete(days, key, dayNum(dk), byId.get(h))
+  }
+  return fitOutcomeModel({
+    rows, candidates: fitted.map((f) => ({ id: `${f.key}|${f.horizon}`, p: f._p })), valueOf, completeOf,
+  })
 }
 
 /**

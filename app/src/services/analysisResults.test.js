@@ -97,8 +97,10 @@ describe('contrat des résultats d’Analyses', () => {
     expect(steps.actionable).toBe(true)
     expect(steps.usualChange.text).toMatch(/pas de plus$/)
     expect(steps.usualChange.amount % 500).toBe(0)
-    // Effet = pente × variation habituelle.
-    expect(steps.effect).toBeCloseTo(steps.perUnit * steps.usualChange.amount, 1)
+    // Effet : taille sans pénalité (METHODE-BIAIS-1 et 2) pour la variation habituelle ; la pente des contributions
+    // du jour (ridge, rétrécie) va dans le même sens et n'est pas plus grande.
+    expect(Math.sign(steps.effect)).toBe(Math.sign(steps.perUnit))
+    expect(Math.abs(steps.effect)).toBeGreaterThanOrEqual(0.9 * Math.abs(steps.perUnit * steps.usualChange.amount))
     // Le facteur le plus fort vient en premier.
     expect(wb.horizons.short.factors[0].key).toBe('steps')
   })
