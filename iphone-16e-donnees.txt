@@ -1,0 +1,36 @@
+== Documents
+total 1984
+drwxr-xr-x  6 runner  staff     192 Nov 20 13:04 .
+drwxr-xr-x@ 7 runner  staff     224 Nov 20 12:46 ..
+drwxr-xr-x  5 runner  staff     160 Nov 20 12:50 capture
+drwxr-xr-x@ 2 runner  staff      64 Nov 20 13:05 Copie de secours
+-rw-r--r--@ 1 runner  staff  505533 Nov 20 13:03 halcya-export-2026-11-20 2.json
+-rw-r--r--  1 runner  staff  505533 Nov 20 13:03 halcya-export-2026-11-20.json
+== Documents/Copie de secours
+total 0
+drwxr-xr-x@ 2 runner  staff   64 Nov 20 13:05 .
+drwxr-xr-x  6 runner  staff  192 Nov 20 13:04 ..
+== Library/WebKit
+Library/WebKit
+Library/WebKit/fr.jpesquet.sante
+Library/WebKit/fr.jpesquet.sante/WebsiteData
+Library/WebKit/fr.jpesquet.sante/WebsiteData/SearchHistory
+Library/WebKit/fr.jpesquet.sante/WebsiteData/IndexedDB
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeysHashSalts
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeys
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeys/v1
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeys/v1/salt
+Library/WebKit/fr.jpesquet.sante/WebsiteData/DeviceIdHashSalts
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/salt
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/PB88WdlNodDMV-gZNS6X5LgQ2G_64V9JCGw28vOr7HY
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/PB88WdlNodDMV-gZNS6X5LgQ2G_64V9JCGw28vOr7HY/PB88WdlNodDMV-gZNS6X5LgQ2G_64V9JCGw28vOr7HY
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/PB88WdlNodDMV-gZNS6X5LgQ2G_64V9JCGw28vOr7HY/PB88WdlNodDMV-gZNS6X5LgQ2G_64V9JCGw28vOr7HY/IndexedDB
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/PB88WdlNodDMV-gZNS6X5LgQ2G_64V9JCGw28vOr7HY/PB88WdlNodDMV-gZNS6X5LgQ2G_64V9JCGw28vOr7HY/LocalStorage
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/PB88WdlNodDMV-gZNS6X5LgQ2G_64V9JCGw28vOr7HY/PB88WdlNodDMV-gZNS6X5LgQ2G_64V9JCGw28vOr7HY/origin
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceMonitorThrottler
+Library/WebKit/fr.jpesquet.sante/WebsiteData/LocalStorage
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics/observations.db-wal
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics/observations.db-shm
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics/observations.db
