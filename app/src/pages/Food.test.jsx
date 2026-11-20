@@ -39,6 +39,46 @@ describe('Food', () => {
     expect(takePendingMealPhoto()).toBeNull()
   })
 
+  it('cercle « Matin » touché à 15 h : le repas photographié est rangé à 8 h, au matin (POLISH-SIM-122)', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2026, 10, 20, 15, 0))
+    try {
+      const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+      setGeminiApiKey('KEY')
+      const gemini = await import('../services/geminiStandalone')
+      vi.spyOn(gemini, 'analyzeWithGemini').mockResolvedValue({
+        provider: 'gemini', dish: 'Tartines', items: [{ ingredient: 'Pain', quantity: '60 g', quantity_g: 60 }],
+      })
+      const { createEntry } = await import('../storage/localHealthStorage')
+      createEntry.mockReset()
+      createEntry.mockResolvedValue('id-1')
+      const { setPendingMealPhoto } = await import('../services/mealPhotoHandoff')
+      setPendingMealPhoto(new File(['x'], 'repas.jpg', { type: 'image/jpeg' }))
+      render(<MemoryRouter initialEntries={[{ pathname: '/food', state: { mealSlot: 'morning' } }]}><Food /></MemoryRouter>)
+      expect(await screen.findByText('Repas du matin, rangé à 08:00')).toBeInTheDocument()
+      fireEvent.click(await screen.findByRole('button', { name: /Analyser les ingrédients/ }))
+      fireEvent.click(await screen.findByRole('button', { name: /Enregistrer ce repas/i }))
+      await screen.findByText(/Repas enregistré/)
+      const saved = createEntry.mock.calls[0][0]
+      expect(saved.at).toBe(new Date(2026, 10, 20, 8, 0).toISOString())
+      expect(saved.payload.slot).toBe('morning')
+    } finally {
+      vi.useRealTimers()
+      localStorage.clear()
+    }
+  })
+
+  it('« Décrire le repas » depuis le cercle Midi le soir : l’heure proposée est 12:30, modifiable (POLISH-SIM-122)', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2026, 10, 20, 21, 0))
+    try {
+      render(<MemoryRouter initialEntries={[{ pathname: '/food', state: { describeMeal: true, mealSlot: 'noon' } }]}><Food /></MemoryRouter>)
+      expect(await screen.findByLabelText('Heure du repas')).toHaveValue('2026-11-20T12:30')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('renders food page title', () => {
     render(
       <BrowserRouter>
@@ -340,6 +380,20 @@ describe('Food — modifier un repas enregistré', () => {
     expect(onUpdate).toHaveBeenCalled()
     expect(screen.queryByLabelText(/Grammes de Abondance/i)).not.toBeInTheDocument()
     window.removeEventListener('health-entries-updated', onUpdate)
+  })
+
+  it('heure changée à la main : le repas quitte le cercle touché (POLISH-SIM-122)', async () => {
+    const { listEntries, updateEntry } = await import('../storage/localHealthStorage')
+    updateEntry.mockClear()
+    updateEntry.mockResolvedValue()
+    listEntries.mockResolvedValue([{ ...meal, payload: { ...meal.payload, slot: 'noon' } }])
+    render(<BrowserRouter><Food /></BrowserRouter>)
+    await screen.findByText('Fromage', { selector: '.meal-dish' })
+    fireEvent.click(mealAction(/Modifier ce repas/i))
+    fireEvent.change(screen.getByLabelText(/Heure du repas/i), { target: { value: '2026-10-08T20:15' } })
+    fireEvent.click(screen.getByRole('button', { name: /^Enregistrer$/i }))
+    await vi.waitFor(() => expect(updateEntry).toHaveBeenCalled())
+    expect(updateEntry.mock.calls.at(-1)[1].payload).not.toHaveProperty('slot')
   })
 
   it('n’envoie pas l’heure si elle n’a pas changé', async () => {

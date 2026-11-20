@@ -24,6 +24,7 @@ import MealsEmpty from '../components/MealsEmpty'
 import MealFodmapLine from '../components/MealFodmapLine'
 import { gutCardMode } from '../settings/onboarding'
 import { appLocale } from '../i18n/locale.js'
+import { mealSlotPhrase, pastSlotAt } from '../services/dayChecklist'
 import { FEATURES } from '../config/distribution'
 
 /** Jours de repas affichés d'emblée, puis ajoutés à chaque « Voir les jours précédents ». */
@@ -131,12 +132,19 @@ export default function Food() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [redoFromNav])
 
+  // POLISH-SIM-122 : cercle Matin, Midi ou Soir touché dans Ma journée ; un créneau passé propose son heure.
+  // Lu une fois à l'ouverture (les effets ci-dessous effacent l'état de navigation).
+  const [mealSlot] = useState(() => location.state?.mealSlot ?? null)
+  const [slotPastAt] = useState(() => pastSlotAt(location.state?.mealSlot, new Date()))
+  // La photo prise depuis ce cercle-là seulement y est rangée (une autre photo, non).
+  const [photoSlot, setPhotoSlot] = useState(null)
+
   // POLISH-SIM-25 : « Décrire un repas » (Autre chose, ou appareil photo fermé sans photo) ouvre directement le champ.
   const describeFromNav = Boolean(location.state?.describeMeal)
   const [focusDescription, setFocusDescription] = useState(false)
   useEffect(() => {
     if (!describeFromNav) return
-    startQuickMeal()
+    startQuickMeal(mealSlot ? { slot: mealSlot } : undefined)
     setFocusDescription(true)
     navigate(location.pathname, { replace: true, state: null })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -147,6 +155,7 @@ export default function Food() {
     setError(null)
     setResult(null)
     setSavedId(null)
+    setPhotoSlot(null)
     setFile(f)
     const reader = new FileReader()
     reader.onload = () => setPreview(reader.result)
@@ -156,7 +165,11 @@ export default function Food() {
   // TESTEUR-4b : photo prise depuis l'Accueil, Nutrition ou le Journal vierge, reprise une seule fois.
   useEffect(() => {
     const f = takePendingMealPhoto()
-    if (f) handleFile(f)
+    if (f) {
+      handleFile(f)
+      setPhotoSlot(mealSlot)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onInputChange = (e) => {
@@ -216,11 +229,13 @@ export default function Food() {
       const id = await createEntry({
         type: 'food',
         source: 'app_food',
+        ...(photoSlot && slotPastAt ? { at: slotPastAt } : {}),
         payload: {
           items: toSave.map(itemForStorage),
           provider: result.provider,
           ...(result.model ? { model: result.model } : {}),
           ...(dish ? { dish } : {}),
+          ...(photoSlot ? { slot: photoSlot } : {}),
         },
       })
       setSavedId(id)
@@ -329,6 +344,7 @@ export default function Food() {
           title={quickMeal.title}
           dish={quickMeal.dish}
           initialItems={quickMeal.items}
+          slot={quickMeal.slot}
           autoFocusDescription={focusDescription}
           onCancel={() => { setQuickMeal(null); setFocusDescription(false) }}
           onSaved={() => {
@@ -345,6 +361,10 @@ export default function Food() {
         <div className="preview-wrap">
           <img src={preview} alt="Aperçu" />
         </div>
+      )}
+
+      {preview && photoSlot && slotPastAt && (
+        <p className="meal-slot-hint">{mealSlotPhrase(photoSlot)}, rangé à {timeOf(slotPastAt)}</p>
       )}
 
       {preview && !result && (

@@ -7,17 +7,50 @@ import { localDateKey } from './analysisEngine'
 import { GUT_TYPE, GUT_EVENING_FROM_HOUR, gutEveningCheck } from './today'
 import { habitAnswers } from './habits'
 
-/** Les trois cercles de la ligne Repas ; un repas remplit celui de son heure. */
+/**
+ * Les trois cercles de la ligne Repas ; un repas remplit celui de son heure, ou celui qu'on a touché pour le noter
+ * (`payload.slot`, POLISH-SIM-122). `mid` : heure proposée pour un créneau déjà passé.
+ */
 export const MEAL_SLOTS = [
-  { id: 'morning', label: 'Matin', before: 11 },
-  { id: 'noon', label: 'Midi', before: 16 },
-  { id: 'evening', label: 'Soir', before: 24 },
+  { id: 'morning', label: 'Matin', before: 11, mid: [8, 0], phrase: 'Repas du matin' },
+  { id: 'noon', label: 'Midi', before: 16, mid: [12, 30], phrase: 'Repas de midi' },
+  { id: 'evening', label: 'Soir', before: 24, mid: [19, 30], phrase: 'Repas du soir' },
 ]
 
 export function mealSlotOf(iso) {
   const h = new Date(iso).getHours()
   return MEAL_SLOTS.find((s) => h < s.before).id
 }
+
+const slotById = (id) => MEAL_SLOTS.find((s) => s.id === id) ?? null
+
+/** Créneau d'un repas : le cercle touché pour le noter s'il est connu, sinon son heure. */
+export function mealSlotOfEntry(entry) {
+  const touched = slotById(entry?.payload?.slot)
+  return touched ? touched.id : mealSlotOf(entry.at)
+}
+
+/**
+ * POLISH-SIM-122 : heure proposée pour un repas noté depuis un cercle déjà passé (Matin touché à 15 h → 08:00),
+ * null si le créneau est l'actuel ou à venir (un repas n'est jamais dans le futur : il garde l'heure du geste).
+ */
+export function pastSlotAt(slotId, now = new Date()) {
+  const slot = slotById(slotId)
+  if (!slot) return null
+  const current = MEAL_SLOTS.findIndex((s) => s.id === mealSlotOf(now.toISOString()))
+  if (MEAL_SLOTS.indexOf(slot) >= current) return null
+  const d = new Date(now)
+  d.setHours(slot.mid[0], slot.mid[1], 0, 0)
+  return d.toISOString()
+}
+
+/** Heure proposée pour un repas noté depuis un cercle : le milieu d'un créneau passé, sinon maintenant. */
+export function slotMealAt(slotId, now = new Date()) {
+  return pastSlotAt(slotId, now) ?? now.toISOString()
+}
+
+/** « Repas de midi », pour dire où un repas est rangé ; null pour un créneau inconnu. */
+export const mealSlotPhrase = (slotId) => slotById(slotId)?.phrase ?? null
 
 /**
  * @param {object[]} entries  entrées récentes (toutes dates)
@@ -31,7 +64,7 @@ export function dayChecklist(entries, { now = new Date(), askGut = false, habits
   const slots = MEAL_SLOTS.map((s) => ({
     id: s.id,
     label: s.label,
-    filled: meals.some((m) => mealSlotOf(m.at) === s.id),
+    filled: meals.some((m) => mealSlotOfEntry(m) === s.id),
   }))
   const count = slots.filter((s) => s.filled).length
   const wellbeing = ofToday.filter((e) => e.type === 'wellbeing').sort((a, b) => (a.at < b.at ? 1 : -1))[0] ?? null

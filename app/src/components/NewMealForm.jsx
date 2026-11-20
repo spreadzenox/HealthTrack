@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createEntry } from '../storage/localHealthStorage'
 import { atToLocalInput, dishToSave, itemForStorage, itemsForEditing, localInputToAt } from '../services/mealEditing'
 import { mealTimeError } from '../services/quickMeals'
+import { pastSlotAt } from '../services/dayChecklist'
 import { MEAL_TEXT_MAX_LENGTH } from '../services/geminiStandalone'
 import {
   aiPrivacyHint, analyzeMealDescription, canAnalyzeMeals, describeButtonLabel, needsAiConsent, rememberAiConsent,
@@ -17,7 +18,8 @@ import NutritionTableGate from './NutritionTableGate'
 /**
  * Saisie d'un repas sans photo : vide (ingrédients ajoutés par recherche, ou déduits par l'IA
  * d'une description en quelques mots) ou pré-rempli à partir d'un repas déjà enregistré
- * (« Refaire »). Heure par défaut : maintenant.
+ * (« Refaire »). Heure par défaut : maintenant ; depuis un cercle de Ma journée déjà passé (`slot`), le milieu
+ * de ce créneau, et le repas est rangé dans ce cercle tant que l'heure n'est pas changée (POLISH-SIM-122).
  */
 export default function NewMealForm(props) {
   return (
@@ -27,7 +29,7 @@ export default function NewMealForm(props) {
   )
 }
 
-function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFocusDescription = false }) {
+function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFocusDescription = false, slot = null }) {
   const [items, setItems] = useState(() => itemsForEditing(initialItems))
   // FODMAP du repas en cours de saisie (N4), seulement avec l'objectif « Mon ventre »
   const [showFodmap] = useState(() => gutCardMode() !== 'hide')
@@ -40,7 +42,8 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
   const [described, setDescribed] = useState(null)
   // Nom du repas modifiable (POLISH-SIM-49) : celui de « Refaire » ou celui proposé par l'IA ; null = pas de champ
   const [name, setName] = useState(dish || null)
-  const [initialTime] = useState(() => atToLocalInput(new Date().toISOString()))
+  const [pastAt] = useState(() => pastSlotAt(slot, new Date()))
+  const [initialTime] = useState(() => atToLocalInput(pastAt ?? new Date().toISOString()))
   const [time, setTime] = useState(initialTime)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
@@ -96,7 +99,9 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
       return
     }
     // Heure inchangée = au moment de l'enregistrement (le formulaire a pu rester ouvert)
-    const at = time === initialTime ? new Date().toISOString() : localInputToAt(time)
+    // Depuis un cercle passé, l'heure proposée est celle du créneau, pas celle de l'enregistrement
+    const unchanged = time === initialTime
+    const at = unchanged ? (pastAt ?? new Date().toISOString()) : localInputToAt(time)
     const timeError = mealTimeError(at)
     if (timeError) {
       setError(timeError)
@@ -115,6 +120,7 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
           provider: described ? `${described.provider}_text` : 'manual',
           ...(described?.model ? { model: described.model } : {}),
           ...(mealDish ? { dish: mealDish } : {}),
+          ...(slot && unchanged ? { slot } : {}),
         },
       })
       window.dispatchEvent(new CustomEvent('health-entries-updated'))

@@ -9,10 +9,12 @@ import LineIcon from './LineIcon'
  * La photo prise part ensuite vers la page Repas, qui l'affiche prête à analyser.
  * POLISH-SIM-17 : si l'appareil photo se ferme sans photo (annulé, refusé ou absent), un bandeau propose
  * de décrire le repas à la place, au lieu de ne rien montrer.
+ * POLISH-SIM-122 : `slot` (cercle Matin, Midi ou Soir de Ma journée) suit la photo ou la description jusqu'à la page
+ * Repas, qui range le repas dans ce cercle.
  */
 const HINT_MS = 8000
 
-export default function MealPhotoButton({ className, children, theme, ariaLabel }) {
+export default function MealPhotoButton({ className, children, theme, ariaLabel, slot }) {
   const id = `meal-photo-${useId().replace(/:/g, '')}`
   const navigate = useNavigate()
   const inputRef = useRef(null)
@@ -42,7 +44,8 @@ export default function MealPhotoButton({ className, children, theme, ariaLabel 
     if (!f) { setMissed(true); return }
     setMissed(false)
     setPendingMealPhoto(f)
-    navigate('/food')
+    if (slot) navigate('/food', { state: { mealSlot: slot } })
+    else navigate('/food')
   }
   return (
     <>
@@ -52,7 +55,7 @@ export default function MealPhotoButton({ className, children, theme, ariaLabel 
       {missed && (
         <div className="meal-photo-missed" role="status">
           <span>Aucune photo prise.</span>
-          <Link to="/food" state={{ describeMeal: true }} className="meal-photo-missed-link">Décrire le repas</Link>
+          <Link to="/food" state={{ describeMeal: true, ...(slot ? { mealSlot: slot } : {}) }} className="meal-photo-missed-link">Décrire le repas</Link>
           <button type="button" className="meal-photo-missed-close" aria-label="Fermer" onClick={() => setMissed(false)}>
             <LineIcon name="close" size={18} />
           </button>
