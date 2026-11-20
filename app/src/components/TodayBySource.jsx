@@ -97,7 +97,7 @@ export default function TodayBySource({
                     {n.direction && (
                       <span className="today-data-arrow mono" aria-label={n.text}>{n.direction === 'up' ? '↑' : '↓'}</span>
                     )}
-                    <span>d’habitude <span className="today-data-usual-value">{monoDigits(n.usualValue)}</span></span>
+                    <span>d’habitude <span className="today-data-usual-value">{monoDigits(n.usualValue)}</span>{n.partial && ' par jour'}</span>
                   </span>
                 )}
                 </Row>

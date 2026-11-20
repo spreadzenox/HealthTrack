@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-20",
+  "kind": "correctif",
+  "title": "Pas et temps d'écran : la journée n'est pas finie",
+  "items": [
+    "Le matin, l'Accueil dit « d'habitude 6 717 par jour » sous vos pas et votre temps d'écran : ce chiffre est celui d'une journée entière.",
+    "Dans Tendances, les courbes des pas et de l'écran s'arrêtent à hier : aujourd'hui n'y plonge plus vers zéro."
+  ]
+}
