@@ -128,11 +128,27 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   banc avec TS-1 dans la boucle (matrice construite depuis des entrées simulées) ; cibles : estimé / vrai entre 0,8
   et 1,2, couverture ≥ 85 %, faux liens toujours ≤ 5 % ; relever le plancher du test « habitude à effet fort » ;
   captures d'Objectifs et d'Agir (les chiffres affichés grandiront).
-- [ ] **METHODE-BIAIS-2 — Le dernier quart du rétrécissement** (né de METHODE-BIAIS-1, 20/11 21:30) : après la taille
+- [x] **METHODE-BIAIS-2 — Le dernier quart du rétrécissement** (**fait le 20/11 22:30** : mesure réglage par réglage
+  (habitude 1,6 pt, sommeil fort ; 30 jeux) : semaine, tendance, jours sans note et écart du jour autocorrélé ne
+  changent presque rien ; **les jours sans mesure du facteur font l'essentiel** (habitude 0,75 → 0,91 sans eux) : une
+  fenêtre « le jour même et la veille » remplie à moitié mesure mal ce qui a agi. `ridgeModel.js` : un ajustement sans
+  pénalité **par facteur retenu**, sur les jours où sa propre fenêtre est assez remplie (`completeOf`,
+  `windowComplete` dans `analysisResults.js` : au plus un jour manquant sur cinq, donc aucun pour le court terme) ;
+  les autres facteurs y gardent leur moyenne (exiger qu'ils soient tous connus renvoyait sur la ridge). Banc, 40 jeux
+  à 90 j, avant → après : habitude 0,8 pt 0,76 / 78 % → 0,87 / 90 % ; habitude 1,6 pt 0,77 / 55 % → 0,92 / 82 % ;
+  sommeil fort 0,74 / 75 % → 0,78 / 90 % ; sommeil moyen 0,65 / 90 % → 0,70 / 95 % ; 20 % de jours manquants,
+  habitude 1,6 pt 0,65 → 0,89 / 88 % ; puissance et faux liens inchangés. 1 test de plus (rouge avant), planchers
+  relevés ; test du contrat : l'effet n'est plus « pente de la ridge × variation », il est au moins aussi grand. Reste :
+  METHODE-BIAIS-3) (né de METHODE-BIAIS-1, 20/11 21:30) : après la taille
   sans pénalité, un lien ressort encore à 0,65-0,77 de sa taille au banc (notes brutes) et la fourchette d'un effet
   fort ne contient la vraie valeur que 55 % du temps (trop étroite). À mesurer contrôle par contrôle (ruptures TS-2,
   journée à part, tendance), avec le seuil de jours complets, puis TS-1 dans la boucle (matrice construite depuis des
   entrées simulées) ; cibles du spec : 0,8 à 1,2 et couverture ≥ 85 %, faux liens ≤ 5 %.
+- [ ] **METHODE-BIAIS-3 — Le sommeil encore aux trois quarts** (né de METHODE-BIAIS-2, 20/11 22:30) : un facteur
+  continu autocorrélé (sommeil, AR 0,6) ressort à 0,78 de sa taille, 0,87 même sans aucun jour manquant ni bruit
+  autocorrélé, alors qu'une habitude sans mémoire monte à 0,92-0,95. Pistes à mesurer : la fenêtre voisine (moyen
+  terme) du même facteur retenue avec lui et qui prend une part de l'effet ; le choix des candidats par p (effet du
+  gagnant) ; puis TS-1 dans la boucle (matrice construite depuis des entrées simulées). Cibles inchangées.
 - [x] **REFONTE-4b-3 — Essai d'Agir sur une habitude** (**fait le 20/11 18:30** : `instruction` dit « Méditation » ou « Pas d’étirements » pour un facteur `habit_<id>` ; `heldFromData` lit `summaries.get(jour).habits[id]`, rempli par `habitDays` (`habits.js`) dans `readTrialsData` ; question seulement sans réponse ; habitude gardée lue de même ; `npm run visual -- --play --routes=/agir --trial=8 --trial-factor=habit --click=Méditation`) : la consigne dit « Un peu plus de méditation que
   d'habitude » ; elle devrait dire « Méditation » les jours « avec », et l'essai devrait lire la réponse de Ma
   journée au lieu de reposer la question (`trials.js`, `MEASURED`).

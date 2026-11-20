@@ -81,6 +81,8 @@ const predict = (beta, x) => x.reduce((s, v, j) => s + v * beta[j], 0)
  * @param {Array<{ dk: string, num: number, y: number, w: number, controls: number[] }>} o.rows  jours du résultat
  * @param {Array<{ id: string, p: number }>} o.candidates  facteurs × horizons triés, déjà passés au tri univarié
  * @param {(id: string, dk: string) => number|null} o.valueOf  valeur du facteur sur la fenêtre de son horizon
+ * @param {(id: string, dk: string) => boolean} [o.completeOf]  fenêtre assez remplie pour la taille montrée
+ *   (METHODE-BIAIS-2) ; par défaut, une valeur connue
  * @param {number} [o.seed]
  * @returns {null | { used: string[], lambda: number, beatsPersistence: boolean, cvError: number,
  *   persistenceError: number, coef: Map<string, { perUnit: number, low: number, high: number, stability: number,
@@ -88,7 +90,7 @@ const predict = (beta, x) => x.reduce((s, v, j) => s + v * beta[j], 0)
  *   `shown` : la taille à montrer et sa fourchette (sans pénalité ; celles de la ridge s'il manque des jours complets
  *   ou si le sens diffère).
  */
-export function fitOutcomeModel({ rows, candidates, valueOf, seed = 7, samples = BOOTSTRAP_SAMPLES }) {
+export function fitOutcomeModel({ rows, candidates, valueOf, completeOf, seed = 7, samples = BOOTSTRAP_SAMPLES }) {
   if (rows.length < 2 * WEEK || !candidates.length) return null
   rows = [...rows].sort((a, b) => a.num - b.num)
   // Courte liste : par p croissante, sans doublon trop corrélé.
@@ -174,11 +176,17 @@ export function fitOutcomeModel({ rows, candidates, valueOf, seed = 7, samples =
   const full = ridge(X, y, w, nCtrl, best.lambda)
   // Taille montrée (METHODE-BIAIS-1) : moindres carrés pondérés sans pénalité sur les jours complets. Une pénalité
   // infime sur toutes les colonnes ne sert qu'à rester soluble si un contrôle est constant sur ces jours.
-  const complete = rows.map((_, i) => used.every((id) => raws.get(id)[i] !== null))
+  // METHODE-BIAIS-2 : un ajustement par facteur retenu, sur les jours où sa propre fenêtre est assez remplie (une
+  // fenêtre à moitié vide mesure mal ce qui a agi et rétrécit la taille de son lien) ; les autres facteurs y gardent
+  // leur moyenne les jours sans valeur (exiger qu'ils soient tous connus laissait trop peu de jours).
+  const okFor = used.map((id) => rows.map((r, i) => raws.get(id)[i] !== null && (!completeOf || completeOf(id, r.dk))))
   const minDays = (idx) => idx.length >= Math.max(2 * WEEK, SHOWN_MIN_DAYS_PER_FACTOR * used.length)
   const ols = (idx) => ridge(idx.map((i) => X[i]), idx.map((i) => y[i]), idx.map((i) => w[i]), 0, 1e-6)
-  const cc = rows.map((_, i) => i).filter((i) => complete[i])
-  const fullShown = minDays(cc) ? ols(cc) : null
+  const allIdx = rows.map((_, i) => i)
+  const fullShown = used.map((_, j) => {
+    const cc = allIdx.filter((i) => okFor[j][i])
+    return minDays(cc) ? ols(cc)[nCtrl + j] : null
+  })
   // Stabilité : bootstrap par semaines (les mêmes tirages servent à la fourchette de la taille montrée).
   const r = rng(seed)
   const draws = used.map(() => [])
@@ -192,11 +200,11 @@ export function fitOutcomeModel({ rows, candidates, valueOf, seed = 7, samples =
     if (idx.length < nCtrl + 2) continue
     const beta = ridge(idx.map((i) => X[i]), idx.map((i) => y[i]), idx.map((i) => w[i]), nCtrl, best.lambda)
     used.forEach((_, j) => draws[j].push(beta[nCtrl + j]))
-    if (!fullShown) continue
-    const idxC = idx.filter((i) => complete[i])
-    if (!minDays(idxC)) continue
-    const betaC = ols(idxC)
-    used.forEach((_, j) => drawsShown[j].push(betaC[nCtrl + j]))
+    used.forEach((_, j) => {
+      if (fullShown[j] === null) return
+      const idxC = idx.filter((i) => okFor[j][i])
+      if (minDays(idxC)) drawsShown[j].push(ols(idxC)[nCtrl + j])
+    })
   }
   const quantile = (a, q) => {
     const b = [...a].sort((x, z) => x - z)
@@ -213,10 +221,10 @@ export function fitOutcomeModel({ rows, candidates, valueOf, seed = 7, samples =
       low: (d.length ? quantile(d, 0.025) : b) / sd,
       high: (d.length ? quantile(d, 0.975) : b) / sd,
     }
-    const bs = fullShown?.[nCtrl + j]
+    const bs = fullShown[j]
     const ds = drawsShown[j]
     // Assez de tirages et même sens que la ridge (le sens de « net » ne change jamais) ; sinon, la taille de la ridge.
-    const okShown = fullShown && ds.length >= samples / 2 && Math.sign(bs) === Math.sign(b) && bs !== 0
+    const okShown = bs !== null && ds.length >= samples / 2 && Math.sign(bs) === Math.sign(b) && bs !== 0
     coef.set(id, {
       ...ridgeCoef,
       stability: same,

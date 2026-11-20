@@ -112,7 +112,8 @@ describe('banc de la méthode (ORG-5a)', () => {
     expect(est).toHaveLength(40)
     const ratio = est.reduce((s, e) => s + e.perUnit, 0) / est.length / eff.size
     // METHODE-BIAIS-1 : taille montrée sans pénalité, sur les jours complets ; 0,61 avant, 0,77 après (40 jeux).
-    expect(ratio).toBeGreaterThan(0.7)
+    // METHODE-BIAIS-2 : seulement les jours où la fenêtre du facteur est remplie ; 0,92 (30 jeux).
+    expect(ratio).toBeGreaterThan(0.85)
     expect(ratio).toBeLessThanOrEqual(1.1)
   }, 120_000)
 
@@ -138,8 +139,21 @@ describe('banc de la méthode (ORG-5a)', () => {
     const eff = { outcome: 'wellbeing', key: 'habit_x', horizon: 'short', size: 0.8 }
     const b = runBench(withHabit, { days: 90, binary: ['habit_x'], effects: [eff] }, { reps: 40 })
     const est = b.estimates['wellbeing|habit_x|short']
-    expect(ratioOf(est, eff.size)).toBeGreaterThan(0.68)
+    expect(ratioOf(est, eff.size)).toBeGreaterThan(0.8)
     expect(cover(est, eff.size)).toBeGreaterThanOrEqual(0.7)
+    expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
+  }, 120_000)
+
+  // METHODE-BIAIS-2 (20/11 22:30) : 10 % de jours sans mesure laissent des fenêtres « le jour même et la veille »
+  // remplies à moitié ; la veille seule mesure mal ce qui a agi et la taille montrée en sortait rétrécie (habitude
+  // 1,6 pt : 0,75 de la vraie, fourchette juste 53 % ; 0,91 et 90 % sans jour manquant). La taille d'un lien ne prend
+  // plus que les jours où sa propre fenêtre est remplie : 0,92 et 83 % ; sommeil fort 0,75 / 70 % → 0,78 / 83 %.
+  it('jours sans mesure : la taille d\'une habitude reste proche de la vraie, la fourchette la contient', () => {
+    const eff = { outcome: 'wellbeing', key: 'habit_x', horizon: 'short', size: 1.6 }
+    const b = runBench(withHabit, { days: 90, binary: ['habit_x'], effects: [eff], factorMissing: 0.2 }, { reps: 30 })
+    const est = b.estimates['wellbeing|habit_x|short']
+    expect(ratioOf(est, eff.size)).toBeGreaterThan(0.85)
+    expect(cover(est, eff.size)).toBeGreaterThanOrEqual(0.75)
     expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
   }, 120_000)
 })
