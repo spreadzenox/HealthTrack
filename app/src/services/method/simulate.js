@@ -62,11 +62,13 @@ const SCALE = {
  * @param {number} [o.symptomShare=0.3]   part des jours de gêne ou douleur
  * @param {number} [o.wellbeingSd=0.5]    bruit du bien-être, en points sur 5
  * @param {number} [o.burnIn=28]          jours simulés avant le premier (pour remplir la fenêtre longue)
+ * @param {string[]} [o.binary]          facteurs oui / non tirés chaque jour à pile ou face, sans mémoire (une habitude
+ *   de Ma journée, REFONTE-4b-2) : valeur 1 ou 0, écart standardisé ±1 ; ils s'ajoutent à `factors`
  */
 export function simulateMatrix({
   days = 70, seed = 1, factors = Object.keys(SCALE), factorAr = 0.6, factorMissing = 0.1, factorTrend = 0,
   effects = [], weekly = 0.3, trend = 0.5, noiseAr = 0.4, wellbeingMissing = 0.1, digestionMissing = 0.15,
-  symptomShare = 0.3, wellbeingSd = 0.5, burnIn = 28,
+  symptomShare = 0.3, wellbeingSd = 0.5, burnIn = 28, binary = [],
 } = {}) {
   const r = rng(seed)
   const total = days + burnIn
@@ -79,6 +81,7 @@ export function simulateMatrix({
     if (factorTrend) for (let i = 0; i < total; i += 1) s[i] += factorTrend * (i / total - 0.5)
     z[key] = s
   }
+  for (const key of binary) z[key] = Array.from({ length: total }, () => (r() < 0.5 ? 1 : -1))
   const windowMean = (key, i, h) => {
     const [from, to] = WINDOWS[h]
     let sum = 0
@@ -116,6 +119,7 @@ export function simulateMatrix({
       const [m, sd] = SCALE[key] ?? [0, 1]
       vals[key] = r() < factorMissing ? null : m + sd * z[key][i]
     }
+    for (const key of binary) vals[key] = r() < factorMissing ? null : (z[key][i] + 1) / 2
     dayMap.set(dk, vals)
     if (i < burnIn) continue
     if (r() >= wellbeingMissing) wellbeing.set(dk, Math.min(5, Math.max(0, 3 + wellbeingSd * wb[i])))

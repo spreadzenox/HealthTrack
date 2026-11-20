@@ -105,11 +105,22 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   heure après la note reste inconnue, `HABIT_SAME_SESSION_MS`) ; règle 6 testée (lien planté négatif) ; 10 mondes
   sans lien, aucune habitude nette ; `ANALYSIS_LIMITS.types.habit = 3000` ; phrase de Tendances (« Méditation » plus
   souvent que d'habitude) ; `npm run visual -- --habits=history`.
-- [ ] **REFONTE-4b-2 — Effet d'une habitude sous-estimé** : sur 70 jours simulés, un effet planté de 0,8 point
+- [x] **REFONTE-4b-2 — Effet d'une habitude sous-estimé** (**mesuré le 20/11 19:30**, `simulate.js` option `binary`,
+  `bench.js` `estimates`, 3 tests au banc ; détail dans `runs/2026-11-20-1930-banc-habitude.md` : la cause est
+  commune à tous les facteurs, ridge qui rétrécit à environ la moitié et fourchette qui manque la vraie valeur dans 70
+  à 90 % des jeux ; le lissage TS-1 rétrécit en plus un effet du jour même ; suite : METHODE-BIAIS-1) : sur 70 jours simulés, un effet planté de 0,8 point
   ressort entre 0,37 et 0,55, et 0,4 entre 0,05 et 0,15 ; la fourchette ne contient pas la vraie valeur. Cause
   probable : le résultat de chaque jour est l'estimation lissée de TS-1, et un facteur qui change d'un jour à l'autre
   (oui / non) y perd plus qu'un facteur lent. Ajouter un facteur binaire quotidien au banc (`method/bench.test.js`),
   mesurer, puis corriger la méthode ou dire la sous-estimation à l'écran.
+- [ ] **METHODE-BIAIS-1 — Taille d'un effet et fourchette honnêtes** (né de REFONTE-4b-2, 20/11 19:30) : au banc,
+  le modèle régularisé rend tous les effets à 0,47-0,61 de leur taille (habitude comme sommeil) et sa fourchette ne
+  contient la vraie valeur que dans 6 à 78 % des jeux selon le scénario (10 % pour un effet fort) ; dans l'app, TS-1 rétrécit encore un effet du
+  jour même (0,63 → 0,38). Garder la ridge pour choisir les facteurs, la stabilité et les contributions du jour ;
+  afficher effet et fourchette d'un ajustement non pénalisé des seuls facteurs retenus (ou d'une correction mesurée) ;
+  banc avec TS-1 dans la boucle (matrice construite depuis des entrées simulées) ; cibles : estimé / vrai entre 0,8
+  et 1,2, couverture ≥ 85 %, faux liens toujours ≤ 5 % ; relever le plancher du test « habitude à effet fort » ;
+  captures d'Objectifs et d'Agir (les chiffres affichés grandiront).
 - [x] **REFONTE-4b-3 — Essai d'Agir sur une habitude** (**fait le 20/11 18:30** : `instruction` dit « Méditation » ou « Pas d’étirements » pour un facteur `habit_<id>` ; `heldFromData` lit `summaries.get(jour).habits[id]`, rempli par `habitDays` (`habits.js`) dans `readTrialsData` ; question seulement sans réponse ; habitude gardée lue de même ; `npm run visual -- --play --routes=/agir --trial=8 --trial-factor=habit --click=Méditation`) : la consigne dit « Un peu plus de méditation que
   d'habitude » ; elle devrait dire « Méditation » les jours « avec », et l'essai devrait lire la réponse de Ma
   journée au lieu de reposer la question (`trials.js`, `MEASURED`).

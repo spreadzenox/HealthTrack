@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { analyzeMatrix, holm, tCritical95, tTwoSidedP } from '../analysisResults'
+import { analyzeMatrix, FACTORS, habitFactors, holm, tCritical95, tTwoSidedP } from '../analysisResults'
 import { runBench } from './bench'
 import { simulateMatrix } from './simulate'
 
@@ -77,4 +77,42 @@ describe('banc de la méthode (ORG-5a)', () => {
       expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
     }, 120_000)
   }
+
+  // REFONTE-4b-2 (banc du 20/11 19:30) : une habitude de Ma journée est un facteur oui / non tiré chaque jour, sans
+  // mémoire. Mesures (60 à 80 jeux, notes brutes, sans le lissage TS-1) : aucun faux lien sur 70 et 120 jours ;
+  // effet planté de 0,8 point retrouvé à 0,38-0,39 (net dans 15 % des jeux à 70 jours, 49 % à 120), de 1,6 point à
+  // 0,61 de sa taille (net 97 % à 90 jours). Ce n'est pas propre aux habitudes : le sommeil (effet fort) ressort à 0,55
+  // de sa taille ; c'est le modèle régularisé (ridge) qui rétrécit tous les effets, et sa fourchette (bootstrap autour
+  // de l'estimation rétrécie) ne contient la vraie valeur que dans 10 à 30 % des jeux. Dans l'app, le lissage TS-1
+  // rétrécit en plus un effet du jour même (0,63 → 0,38 sur les mondes de analysisResults.test.js). Suite : METHODE-BIAIS-1.
+  const habit = habitFactors([{ type: 'habit', at: '2026-01-01T12:00:00', payload: { habit: 'x', label: 'X', done: true } }])
+  const withHabit = (m, o) => analyzeMatrix(m, { ...o, factors: [...FACTORS, ...habit] })
+
+  it('simulateur : une habitude vaut 0 ou 1, chaque jour au hasard', () => {
+    const { matrix } = simulateMatrix({ days: 60, seed: 4, binary: ['habit_x'] })
+    const vals = [...matrix.days.values()].map((d) => d.habit_x).filter((v) => v !== null)
+    expect(new Set(vals)).toEqual(new Set([0, 1]))
+    const yes = vals.filter((v) => v === 1).length / vals.length
+    expect(yes).toBeGreaterThan(0.35)
+    expect(yes).toBeLessThan(0.65)
+    // Sans habitude, rien ne change pour les autres bancs (même suite de tirages).
+    expect(simulateMatrix({ days: 50, seed: 2, binary: [] }).matrix.series.wellbeing).toEqual(simulateMatrix({ days: 50, seed: 2 }).matrix.series.wellbeing)
+  })
+
+  it('habitude sans effet : au plus 5 % des jeux montrent un faux lien', () => {
+    expect(runBench(withHabit, { days: 70, binary: ['habit_x'] }, { reps: REPS }).falseSetRate).toBeLessThanOrEqual(0.05)
+  }, 120_000)
+
+  it('habitude à effet fort : retrouvée nette, dans le bon sens ; le banc dit aussi ce que la méthode en estime', () => {
+    const eff = { outcome: 'wellbeing', key: 'habit_x', horizon: 'short', size: 1.6 }
+    const b = runBench(withHabit, { days: 90, binary: ['habit_x'], effects: [eff] }, { reps: 40 })
+    expect(b.power['wellbeing|habit_x|short']).toBeGreaterThanOrEqual(0.8)
+    expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
+    const est = b.estimates['wellbeing|habit_x|short']
+    expect(est).toHaveLength(40)
+    const ratio = est.reduce((s, e) => s + e.perUnit, 0) / est.length / eff.size
+    // Sous-estimé (ridge), jamais de signe inversé en moyenne. METHODE-BIAIS-1 relèvera ce plancher vers 1.
+    expect(ratio).toBeGreaterThan(0.4)
+    expect(ratio).toBeLessThanOrEqual(1.1)
+  }, 120_000)
 })
