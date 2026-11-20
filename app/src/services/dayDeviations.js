@@ -112,6 +112,8 @@ export function measureNorms(days, now = new Date(), { since = {}, dayKey = null
       usualValue: m.fmt(med),
       value: m.fmt(v),
       direction,
+      // POLISH-SIM-127 : un cumul du jour (pas, écran) face à une journée entière : « d'habitude 6 717 par jour »
+      partial: Boolean(m.cumulative && !evening),
       text: direction ? m[direction] : null,
       score: Math.round(score * 10) / 10,
     }

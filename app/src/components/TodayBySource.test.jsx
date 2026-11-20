@@ -103,6 +103,17 @@ describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
     expect([...row.querySelectorAll('.mono:not(.today-data-arrow)')].map((s) => s.textContent)).toEqual(['5', '30', '7', '10'])
   })
 
+  it('POLISH-SIM-127 : pas du matin face à une journée entière, « d’habitude 6 700 par jour »', async () => {
+    const hist = []
+    for (let d = 7; d <= 21; d++) {
+      hist.push({ type: 'steps', source: 'health_connect', at: new Date(2026, 9, d, 10).toISOString(), payload: { value: d === 21 ? 163 : 6700 } })
+    }
+    wrap({ tiles: [{ ...tiles[2], value: '163' }], readNorms: async () => hist })
+    const row = valueEl('163').closest('li')
+    await waitFor(() => expect(row).toHaveTextContent(/d’habitude 6\s?700 par jour/))
+    expect(row.querySelector('.today-data-arrow')).toBeNull()
+  })
+
   it('VFC reprise d’hier : son « d’habitude » aussi, comparé à la nuit d’hier (POLISH-SIM-22)', async () => {
     // 14 nuits de VFC vers 48 ms jusqu’au 20/10 ; rien encore pour la nuit du 21 (montre pas synchronisée)
     const hist = []

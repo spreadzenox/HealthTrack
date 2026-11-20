@@ -1,5 +1,5 @@
 diff --git a/app/src/components/TodayBySource.jsx b/app/src/components/TodayBySource.jsx
-index c46a727..329af7f 100644
+index 6d0b837..0061e4e 100644
 --- a/app/src/components/TodayBySource.jsx
 +++ b/app/src/components/TodayBySource.jsx
 @@ -82,10 +82,12 @@ export default function TodayBySource({
@@ -18,7 +18,7 @@ index c46a727..329af7f 100644
                  <span className="today-data-label">
                    {i.label}
 diff --git a/app/src/services/journalChips.js b/app/src/services/journalChips.js
-index 72d90ce..b23f312 100644
+index 8946a30..c1f268e 100644
 --- a/app/src/services/journalChips.js
 +++ b/app/src/services/journalChips.js
 @@ -22,6 +22,7 @@ const CHIP_KEYS = {
@@ -30,10 +30,10 @@ index 72d90ce..b23f312 100644
    Respiration: 'respiratoryRate',
    Température: 'temperatureC',
 diff --git a/app/src/services/trendsData.js b/app/src/services/trendsData.js
-index eb0b9c9..c102e1d 100644
+index 1493180..72d773f 100644
 --- a/app/src/services/trendsData.js
 +++ b/app/src/services/trendsData.js
-@@ -33,6 +33,9 @@ export const TREND_MEASURES = [
+@@ -36,6 +36,9 @@ export const TREND_MEASURES = [
    { key: 'weight', label: 'Poids', unit: 'kg', tone: 'rose', field: 'weightKg', fmt: (v) => `${n1(v)} kg` },
    { key: 'hrv', label: 'Variabilité cardiaque', unit: 'ms', tone: 'rose', field: 'hrv', fmt: (v) => `${n0(v)} ms`,
      gloss: 'mesurée pendant la nuit, en millisecondes' },
@@ -42,4 +42,4 @@ index eb0b9c9..c102e1d 100644
 +    gloss: 'en millisecondes (SDNN), telle que la mesure l’app Santé' },
    { key: 'restingHr', label: 'Cœur au repos', unit: 'bpm', tone: 'rose', field: 'restingHr', fmt: (v) => `${n0(v)} bpm`,
      gloss: 'fréquence cardiaque au repos, en battements par minute' },
-   { key: 'screen', label: 'Écran', unit: 'h', tone: 'stone', field: 'screenMinutes', scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },
+   { key: 'screen', label: 'Écran', unit: 'h', tone: 'stone', field: 'screenMinutes', cumulative: true, scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },

@@ -40,6 +40,17 @@ describe('Tendances (ORG-3)', () => {
     expect(r.available).toEqual(['sleep'])
   })
 
+  it('POLISH-SIM-127 : pas et écran d’aujourd’hui absents des courbes tant que la journée n’est pas finie', () => {
+    const days = [4, 5, 6, 7].map((d) => ({ dateKey: `2026-11-0${d}`, summary: { steps: d === 7 ? 163 : 6700, screenMinutes: d === 7 ? 12 : 200, sleepMinutes: 420 } }))
+    for (const period of ['week', 'month']) {
+      const r = buildTrendSeries({ days, period, now: NOW })
+      expect(r.series.steps.map((p) => p.date)).toEqual(['2026-11-04', '2026-11-05', '2026-11-06'])
+      expect(r.series.screen.map((p) => p.date)).toEqual(['2026-11-04', '2026-11-05', '2026-11-06'])
+      // une mesure de la nuit est finie : aujourd'hui reste
+      expect(r.series.sleep.map((p) => p.date)).toContain('2026-11-07')
+    }
+  })
+
   it('POLISH-SIM-47 : le poids a sa courbe (kg) dès 3 pesées sur la période', () => {
     const days = [5, 6, 7].map((d) => ({ dateKey: `2026-11-0${d}`, summary: { weightKg: 80 - d / 10 } }))
     const r = buildTrendSeries({ days, period: 'week', now: NOW })

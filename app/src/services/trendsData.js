@@ -22,6 +22,7 @@ const n0 = (v) => Math.round(v).toLocaleString(appLocale())
 
 /**
  * Mesures du visualiseur, dans l'ordre du menu « + ». `tone` = couleur du thème (src/theme/themes.js).
+ * `cumulative` : la valeur monte dans la journée ; aujourd'hui n'est pas tracé (POLISH-SIM-127).
  * `gloss` : dit une fois sous les mesures affichées, le nom en toutes lettres d'une abréviation (POLISH-SIM-6) ou la
  * note de chaque niveau de la digestion notée en mots (POLISH-SIM-54, mêmes notes que GUT_COMFORT).
  */
@@ -30,14 +31,14 @@ export const TREND_MEASURES = [
   { key: 'digestion', label: 'Confort digestif', unit: '/5', tone: 'peach', state: true, fmt: (v) => `${n1(v)} /5`,
     gloss: 'Calme 5, Gêne 3, Douleur 1' },
   { key: 'sleep', label: 'Sommeil', unit: 'h', tone: 'night', field: 'sleepMinutes', scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },
-  { key: 'steps', label: 'Pas', unit: 'pas', tone: 'lilac', field: 'steps', fmt: (v) => n0(v) },
+  { key: 'steps', label: 'Pas', unit: 'pas', tone: 'lilac', field: 'steps', cumulative: true, fmt: (v) => n0(v) },
   // POLISH-SIM-47 : la pesée (à la main ou balance), dernière du jour ; thème corps
   { key: 'weight', label: 'Poids', unit: 'kg', tone: 'rose', field: 'weightKg', fmt: (v) => `${n1(v)} kg` },
   { key: 'hrv', label: 'Variabilité cardiaque', unit: 'ms', tone: 'rose', field: 'hrv', fmt: (v) => `${n0(v)} ms`,
     gloss: 'mesurée pendant la nuit, en millisecondes' },
   { key: 'restingHr', label: 'Cœur au repos', unit: 'bpm', tone: 'rose', field: 'restingHr', fmt: (v) => `${n0(v)} bpm`,
     gloss: 'fréquence cardiaque au repos, en battements par minute' },
-  { key: 'screen', label: 'Écran', unit: 'h', tone: 'stone', field: 'screenMinutes', scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },
+  { key: 'screen', label: 'Écran', unit: 'h', tone: 'stone', field: 'screenMinutes', cumulative: true, scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },
 ]
 export const trendMeasure = (key) => TREND_MEASURES.find((m) => m.key === key) ?? null
 
@@ -95,7 +96,8 @@ export function buildTrendSeries({ states = null, days = [], period = 'week', no
         const v = stateValue(band)
         if (!v) continue
         pts.push({ date, ...v, observed: Boolean(d.observed?.[m.key]), future: Boolean(d.future) })
-      } else if (date <= today) {
+      } else if (date < today || (date === today && !m.cumulative)) {
+        // POLISH-SIM-127 : un cumul (pas, écran) n'a pas sa valeur du jour tant que la journée n'est pas finie
         const raw = byDate.get(date)?.[m.field]
         if (isNum(raw)) pts.push({ date, value: raw * (m.scale ?? 1), observed: true, future: false })
       }

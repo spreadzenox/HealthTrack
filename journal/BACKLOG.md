@@ -516,7 +516,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       (`2026-11-15-0435-refonte-navigation`) le dit, mais pendant un essai la carte du bas ne porte que son titre
       (« Dormir au moins 7 h 30 »), sans le mot Agir. Spec : petite étiquette « Agir » au-dessus du titre de l'essai
       sur la carte (`Dashboard.jsx` l. 144), ou phrase de la note ajustée ; le plus simple qui suffit.
-    - [ ] **POLISH-SIM-127 — Pas du matin face à une journée entière** (J1 et J45) : à 08:40, l'Accueil dit « 163,
+    - [x] **POLISH-SIM-127 — Pas du matin face à une journée entière** (fait le 20/11 13:30 : avant 21 h, « d'habitude 6 717 par jour » sous les pas et l'écran (`partial` de `measureNorms`) ; aujourd'hui absent des courbes Semaine et Mois des pas et de l'écran (`cumulative` de `TREND_MEASURES`) ; correctif iPhone 56 refait. Reste **POLISH-SIM-127b** : « D'après votre montre » avec une bague) (J1 et J45) : à 08:40, l'Accueil dit « 163,
       d'habitude 6 717 » et la courbe Semaine plonge à 0 pour aujourd'hui. Spec : avant la fin du jour, « d'habitude »
       compare à la même heure (ou dit « 6 717 sur une journée ») ; aujourd'hui en pointillé ou absent des courbes
       Semaine et Mois tant que le jour n'est pas fini. Petit : « D'après votre montre » avec une bague (« votre montre

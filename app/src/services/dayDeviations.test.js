@@ -89,6 +89,15 @@ describe('measureNorms (AUJ-3 : l’écart à votre norme sur chaque mesure)', (
     expect(norms.hrv).toBeUndefined()
   })
 
+  it('POLISH-SIM-127 : avant 21 h, pas et écran comparés à une journée entière (`partial`) ; une nuit, jamais', () => {
+    const { norms } = measureNorms(history(usual, { sleepMinutes: 425, steps: 163, screenMinutes: 15 }), NOW)
+    expect(norms.steps.partial).toBe(true)
+    expect(norms.screen.partial).toBe(true)
+    expect(norms.sleep.partial).toBe(false)
+    const evening = measureNorms(history(usual, { steps: 163 }), new Date(2026, 9, 21, 21, 30)).norms
+    expect(evening.steps.partial).toBe(false)
+  })
+
   it('dit le sens d’un écart net', () => {
     const { norms } = measureNorms(history(usual, { sleepMinutes: 330 }), NOW)
     expect(norms.sleep).toMatchObject({ direction: 'down', text: 'Nuit plus courte' })
