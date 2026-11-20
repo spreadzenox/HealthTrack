@@ -289,7 +289,9 @@ describe('Temps 3 : « Ce que Halcya suit pour vous, sans rien faire »', () => 
     at('auto', { watch: 'no', weather: 'on' })
     renderAt()
     expect(tiles()).toEqual(['Météo'])
-    expect(screen.getByText('Avec une montre ou un bracelet : sommeil, pas, séances de sport, cœur, variabilité cardiaque, respiration, température de la peau.')).toBeInTheDocument()
+    expect(screen.getByText('Avec une montre ou un bracelet : sommeil, séances de sport, cœur, variabilité cardiaque, respiration, température de la peau.')).toBeInTheDocument()
+    // POLISH-SIM-124 : le téléphone compte les pas, une montre n'est pas nécessaire
+    expect(screen.getByText('Activables dans Réglages › Sources : pas (votre téléphone).')).toBeInTheDocument()
     expect(screen.queryByText(/grâce à votre montre/)).toBeNull()
     expect(screen.queryByText(/Selon votre montre/)).toBeNull()
   })
@@ -299,8 +301,21 @@ describe('Temps 3 : « Ce que Halcya suit pour vous, sans rien faire »', () => 
     expect(a.tiles.map((t) => t.id)).toEqual(['sleep', 'steps', 'workouts', 'heart', 'screen'])
     expect(a.off).toEqual(['météo'])
     const b = autoTiles({ watch: false, on: {}, available: { screen: true } })
-    expect(b.off).toEqual(['temps d’écran', 'météo'])
+    expect(b.off).toEqual(['pas (votre téléphone)', 'temps d’écran', 'météo'])
     expect(b.maybe).toEqual([])
+  })
+
+  it('sans montre, les pas du téléphone : suivis si Health Connect est relié, activables s’il existe, absents sinon (POLISH-SIM-124)', () => {
+    const granted = autoTiles({ watch: false, health: 'granted', on: { weather: true }, available: { screen: false } })
+    expect(granted.tiles.map((t) => t.label)).toEqual(['Pas (votre téléphone)', 'Météo'])
+    expect(granted.later).not.toContain('pas')
+    const none = autoTiles({ watch: false, health: 'unavailable', on: {}, available: { screen: false } })
+    expect(none.tiles).toEqual([])
+    expect(none.off).toEqual(['météo'])
+    expect(none.later).not.toContain('pas')
+    // Avec une montre, rien ne change : les pas viennent d'elle
+    const watch = autoTiles({ watch: true, health: 'granted', on: {}, available: { screen: false } })
+    expect(watch.tiles.map((t) => t.label)).toContain('Pas')
   })
 
   it('sans montre ni météo : aucune liste vide, juste ce qui est activable et ce qu’une montre ajouterait', () => {
@@ -308,7 +323,7 @@ describe('Temps 3 : « Ce que Halcya suit pour vous, sans rien faire »', () => 
     renderAt()
     expect(screen.queryByRole('list', { name: 'Suivi sans rien faire' })).toBeNull()
     expect(screen.queryByText(/Rien à cocher/)).toBeNull()
-    expect(screen.getByText('Activables dans Réglages › Sources : météo.')).toBeInTheDocument()
+    expect(screen.getByText('Activables dans Réglages › Sources : pas (votre téléphone), météo.')).toBeInTheDocument()
     expect(screen.getByText(/^Avec une montre ou un bracelet :/)).toBeInTheDocument()
   })
 })
@@ -330,14 +345,14 @@ describe('Temps d’écran que le téléphone ne donne pas (Android 8, iPhone av
     fake(false)
     at('auto', { watch: 'no', weather: 'off' })
     renderAt()
-    await waitFor(() => expect(screen.getByText('Activables dans Réglages › Sources : météo.')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText('Activables dans Réglages › Sources : pas (votre téléphone), météo.')).toBeInTheDocument())
   })
 
   it('temps 3 : pris en charge, il reste activable', async () => {
     fake(true)
     at('auto', { watch: 'no', weather: 'off' })
     renderAt()
-    expect(await screen.findByText('Activables dans Réglages › Sources : temps d’écran, météo.')).toBeInTheDocument()
+    expect(await screen.findByText('Activables dans Réglages › Sources : pas (votre téléphone), temps d’écran, météo.')).toBeInTheDocument()
   })
 
   it('temps 2 : pas de ligne « Temps d’écran » ; la météo reste', async () => {

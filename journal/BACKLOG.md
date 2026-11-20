@@ -498,7 +498,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       de 18 h » et la bulle Digestion de l'Accueil reste à faire. `dayChecklist` ne lit que `gutEveningCheck` (le bilan
       du soir). Spec : toute note digestive du jour va dans « Déjà noté » ; la ligne du soir reste à faire avant 18 h
       mais dit « Noté à 08:35 : Gêne » sous son titre. Vérifier aussi « Reposez-vous bien » de Pilou à 08:35.
-    - [ ] **POLISH-SIM-124 — Accueil, temps 3 sans montre : rien de suivi** (J1, config Android seul, la plus fréquente) :
+    - [x] **POLISH-SIM-124 — Accueil, temps 3 sans montre : rien de suivi** (fait le 20/11 10:00, en partie : sans
+      montre, « Pas (votre téléphone) » est une tuile si Health Connect / Santé est relié, sinon « Activables dans
+      Réglages › Sources : pas (votre téléphone) », et rien si le téléphone n'a ni l'un ni l'autre ; la ligne « Avec
+      une montre » ne cite plus les pas. Pas de tuile sans accès : ce serait promettre ce qui n'arrivera pas. Reste
+      **POLISH-SIM-124b** : proposer la carte Health Connect / Santé aussi à « Non » au temps 2, pour que les pas du
+      téléphone soient suivis dès l'accueil ; Pilou dit « Tout ça, je m'en occupe » au-dessus d'un écran sans tuile.) (J1, config Android seul, la plus fréquente) :
       l'écran « Ce que Halcya suit pour vous, sans rien faire » n'a aucune tuile ; « pas » n'est que dans « Avec une
       montre ou un bracelet » alors que le téléphone les compte et que le temps 2 l'a dit (`autoTiles` de
       `services/onboardingFlow.js` : les pas sont rangés avec la montre). Spec : sans montre, tuile « Pas (votre
