@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-20",
+  "kind": "correctif",
+  "title": "Note du soir : la bonne échelle",
+  "variants": ["play", "sideload"],
+  "items": [
+    "Repliée, la notification « Votre soirée ? » disait « 0 = très bas » alors que ses boutons vont de 1 à 5. Elle dit maintenant « 1 = très bas, 5 = très bien », comme une fois dépliée."
+  ]
+}

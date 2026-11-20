@@ -130,7 +130,7 @@ final class EveningNoteNotice {
                     .setSmallIcon(R.drawable.ic_stat_healthtrack)
                     .setContentTitle("Votre soirée ?")
                     .setLargeIcon(PilouNotice.evening(context))
-                    .setContentText("0 = très bas, 5 = très bien")
+                    .setContentText(EveningNote.SCALE_LEGEND)
                     .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                     .setCustomContentView(buttons(context, R.layout.notification_evening_note))
                     .setCustomBigContentView(buttons(context, R.layout.notification_evening_note_big))
