@@ -199,6 +199,15 @@ describe('Gold offert prolongé (P44-3b)', () => {
     expect(launchExtension()).toBeNull()
   })
 
+  it('une fin qui bouge de moins d’un jour n’est pas une prolongation (UPG-9 : « prolongé » au 1er jour)', async () => {
+    await refreshEntitlement({ fetchImpl: launch(UNTIL) })
+    await refreshEntitlement({ fetchImpl: launch(new Date(Date.parse(UNTIL) + 5_000).toISOString()) })
+    await refreshEntitlement({ fetchImpl: launch(new Date(Date.parse(UNTIL) + 23 * 3_600_000).toISOString()) })
+    expect(launchExtension()).toBeNull()
+    await refreshEntitlement({ fetchImpl: launch(new Date(Date.parse(UNTIL) + 23 * 3_600_000 + DAY).toISOString()) })
+    expect(launchExtension()).not.toBeNull()
+  })
+
   it('prolongation vue après la fin de la première période (relais muet entre-temps)', async () => {
     await refreshEntitlement({ fetchImpl: launch(UNTIL) })
     await refreshEntitlement({ fetchImpl: reply({ premium: false, source: null }) })

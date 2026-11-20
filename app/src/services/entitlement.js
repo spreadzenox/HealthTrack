@@ -24,7 +24,8 @@ const LAUNCH_EXTENDED_SEEN_KEY = 'halcya_launch_extended_seen'
 /** Événement `window` émis à chaque nouvel état donné par le relais (`detail` : les droits à jour). */
 export const ENTITLEMENT_EVENT = 'halcya:entitlement'
 export const ENTITLEMENT_TIMEOUT_MS = 15_000
-const GRACE_OFFLINE_MS = 3 * 86_400_000
+const DAY_MS = 86_400_000
+const GRACE_OFFLINE_MS = 3 * DAY_MS
 
 const FREE = Object.freeze({ premium: false, source: null, state: null, tier: null, productId: null, expiresAt: null, launchUntil: null })
 
@@ -99,10 +100,12 @@ export async function refreshEntitlement({ purchaseToken = null, renewalInfo = n
     try {
       localStorage.setItem(ENTITLEMENT_KEY, JSON.stringify(ent))
       if (ent.source === 'launch' && ent.launchUntil) {
-        // Le relais recule la fin (période prolongée pour tous, ou pour cette installation) : à dire une fois
+        // Le relais recule la fin (période prolongée pour tous, ou pour cette installation) : à dire une fois.
+        // Une prolongation se compte en jours : une fin qui bouge de moins d'un jour n'en est pas une (UPG-9)
         const before = Date.parse(localStorage.getItem(LAUNCH_LAST_UNTIL_KEY) ?? '')
-        if (Date.parse(ent.launchUntil) > before) localStorage.setItem(LAUNCH_EXTENDED_KEY, ent.launchUntil)
-        else if (Date.parse(ent.launchUntil) < before) localStorage.removeItem(LAUNCH_EXTENDED_KEY)
+        const moved = Date.parse(ent.launchUntil) - before
+        if (moved >= DAY_MS) localStorage.setItem(LAUNCH_EXTENDED_KEY, ent.launchUntil)
+        else if (moved <= -DAY_MS) localStorage.removeItem(LAUNCH_EXTENDED_KEY)
         localStorage.setItem(LAUNCH_LAST_UNTIL_KEY, ent.launchUntil)
       }
     } catch {
