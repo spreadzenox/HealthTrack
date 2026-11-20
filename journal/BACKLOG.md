@@ -113,7 +113,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   probable : le résultat de chaque jour est l'estimation lissée de TS-1, et un facteur qui change d'un jour à l'autre
   (oui / non) y perd plus qu'un facteur lent. Ajouter un facteur binaire quotidien au banc (`method/bench.test.js`),
   mesurer, puis corriger la méthode ou dire la sous-estimation à l'écran.
-- [ ] **METHODE-BIAIS-1 — Taille d'un effet et fourchette honnêtes** (né de REFONTE-4b-2, 20/11 19:30 ; **préparé le
+- [x] **METHODE-BIAIS-1 — Taille d'un effet et fourchette honnêtes** (**fait le 20/11 21:30**, `ridgeModel.js` `shown` :
+  ajustement sans pénalité des facteurs retenus sur les jours complets, fourchette par les mêmes tirages de semaines,
+  repli sur la ridge si moins de 2 semaines ou de 4 jours complets par facteur, ou si le sens diffère ; netteté,
+  stabilité, prévision et contributions du jour inchangées. Banc, 40 jeux à 90 j : habitude 0,8 pt 0,51 → 0,76 de la
+  vraie taille, fourchette juste 17 % → 78 % ; habitude 1,6 pt 0,61 → 0,77, 23 % → 55 % ; sommeil fort 0,61 → 0,74,
+  38 % → 75 % ; puissance et faux liens inchangés ; 2 tests de plus, plancher relevé à 0,7. Reste : METHODE-BIAIS-2) (né de REFONTE-4b-2, 20/11 19:30 ; **préparé le
   20/11 20:30** : [`methode/METHODE-BIAIS-1.md`](methode/METHODE-BIAIS-1.md), sans pénalité et sans imputation des
   jours manquants la taille ressort à 0,81-0,86 de la vraie et la fourchette est juste 82-90 % du temps) : au banc,
   le modèle régularisé rend tous les effets à 0,47-0,61 de leur taille (habitude comme sommeil) et sa fourchette ne
@@ -123,6 +128,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   banc avec TS-1 dans la boucle (matrice construite depuis des entrées simulées) ; cibles : estimé / vrai entre 0,8
   et 1,2, couverture ≥ 85 %, faux liens toujours ≤ 5 % ; relever le plancher du test « habitude à effet fort » ;
   captures d'Objectifs et d'Agir (les chiffres affichés grandiront).
+- [ ] **METHODE-BIAIS-2 — Le dernier quart du rétrécissement** (né de METHODE-BIAIS-1, 20/11 21:30) : après la taille
+  sans pénalité, un lien ressort encore à 0,65-0,77 de sa taille au banc (notes brutes) et la fourchette d'un effet
+  fort ne contient la vraie valeur que 55 % du temps (trop étroite). À mesurer contrôle par contrôle (ruptures TS-2,
+  journée à part, tendance), avec le seuil de jours complets, puis TS-1 dans la boucle (matrice construite depuis des
+  entrées simulées) ; cibles du spec : 0,8 à 1,2 et couverture ≥ 85 %, faux liens ≤ 5 %.
 - [x] **REFONTE-4b-3 — Essai d'Agir sur une habitude** (**fait le 20/11 18:30** : `instruction` dit « Méditation » ou « Pas d’étirements » pour un facteur `habit_<id>` ; `heldFromData` lit `summaries.get(jour).habits[id]`, rempli par `habitDays` (`habits.js`) dans `readTrialsData` ; question seulement sans réponse ; habitude gardée lue de même ; `npm run visual -- --play --routes=/agir --trial=8 --trial-factor=habit --click=Méditation`) : la consigne dit « Un peu plus de méditation que
   d'habitude » ; elle devrait dire « Méditation » les jours « avec », et l'essai devrait lire la réponse de Ma
   journée au lieu de reposer la question (`trials.js`, `MEASURED`).

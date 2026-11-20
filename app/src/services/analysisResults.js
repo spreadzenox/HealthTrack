@@ -705,11 +705,13 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
       if (c) {
         const a = f.usualChange.amount
         const r2 = (v) => Math.round(v * 100) / 100 + 0
+        // Contributions du jour : coefficient de la ridge ; taille et fourchette montrées : sans pénalité
+        // (METHODE-BIAIS-1), de même sens.
         f.perUnit = c.perUnit
         f.center = c.mean
-        f.effect = r2(c.perUnit * a)
-        f.low = r2(Math.min(c.low, c.high) * a)
-        f.high = r2(Math.max(c.low, c.high) * a)
+        f.effect = r2(c.shown.perUnit * a)
+        f.low = r2(Math.min(c.shown.low, c.shown.high) * a)
+        f.high = r2(Math.max(c.shown.low, c.shown.high) * a)
       }
       f.net = passed && Boolean(c) && c.stability >= STABILITY_MIN && Math.sign(f.effect) !== 0
       boundToScale(f)

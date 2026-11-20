@@ -162,7 +162,9 @@ export function buildTourEntries({ days, now = new Date(), received = new Set(),
     }
     for (let i = days; i >= 1; i--) {
       const d = daysBefore(now, i, 22)
-      const level = onionDay(i) ? 'pain' : onionDay(i + 1) ? 'discomfort' : 'calm'
+      // METHODE-BIAIS-1 : un soir d'oignon sur trois, gêne seulement (la taille montrée n'est plus rétrécie : un lien
+      // tout ou rien dépassait l'échelle et passait en « pas assez de données »)
+      const level = onionDay(i) ? (i % 3 === 0 ? 'discomfort' : 'pain') : onionDay(i + 1) ? 'discomfort' : 'calm'
       out.push({ type: 'gut', source: 'app_gut', at: d.toISOString(), payload: { level } })
     }
     return out
