@@ -476,7 +476,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **POLISH-SIM-120 — Essai en cours introuvable sous Objectifs** (FAIT 20/11 00:30 : carte « Essai en cours : … » en haut de la page de l'objectif, `homeTrial(rows, now, { outcome })` filtré par objectif ; un ancien essai sans objectif compte pour le bien-être) (J45, mise à jour) : sa page allume Objectifs et
       revient à « ← Votre bien-être » (#1128), mais ni Objectifs ni « Votre bien-être » ne le montrent ; seule la carte
       de l'Accueil y mène. Une ligne « Essai en cours : … jour N sur 10 » sur la page de l'objectif suivi.
-    - [ ] **POLISH-SIM-121 — Deux liens « comment c'est calculé »** (J1) : « Votre bien-être » montre « Comment est
+    - [x] **POLISH-SIM-121 — Deux liens « comment c'est calculé »** (FAIT 20/11 02:30 : un seul « Comment c’est calculé » en bas ; sur le bien-être, il dit d’abord d’où vient le chiffre, Pilou compris, puis la comparaison et « Le détail » ; `HowWellbeing` fondu dans `HowItWorks({ wellbeing })`) (J1) : « Votre bien-être » montre « Comment est
       calculé votre bien-être ? » et « Comment c'est calculé » l'un sous l'autre ; n'en garder qu'un.
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),

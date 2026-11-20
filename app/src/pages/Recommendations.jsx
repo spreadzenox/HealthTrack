@@ -407,26 +407,12 @@ function Results({ outcome, view, locked, families = [], base }) {
   )
 }
 
-/** REFONTE-6b (SPEC § 6.4, sans feuille ni Pilou) : d'où vient le chiffre du bien-être, dit une fois, replié. */
-function HowWellbeing() {
-  const [open, setOpen] = useState(false)
-  return (
-    <div className="reco-how">
-      <button type="button" className="reco-how-link" aria-expanded={open} onClick={() => setOpen(!open)}>
-        Comment est calculé votre bien-être ?
-      </button>
-      {open && <PilouFigure size={64} expr="content" move="hop" className="reco-how-pilou" />}
-      {open && (
-        <p className="reco-how-text" data-testid="reco-how-wellbeing">
-          Deux sources, réunies chaque jour : votre note et la lecture du visage, si vous l’utilisez. Un jour sans
-          note ni lecture, {APP_NAME} l’estime d’après les jours voisins.
-        </p>
-      )}
-    </div>
-  )
-}
-
-function HowItWorks() {
+/**
+ * « Comment c'est calculé », un seul lien en bas (POLISH-SIM-121 : « Votre bien-être » en avait deux l'un sous
+ * l'autre). Sur le bien-être, il dit d'abord d'où vient le chiffre (REFONTE-6b, SPEC § 6.4), puis comment il est
+ * comparé.
+ */
+function HowItWorks({ wellbeing = false }) {
   const [open, setOpen] = useState(false)
   const [more, setMore] = useState(false)
   return (
@@ -434,6 +420,13 @@ function HowItWorks() {
       <button type="button" className="reco-how-link" aria-expanded={open} onClick={() => setOpen(!open)}>
         Comment c’est calculé
       </button>
+      {open && wellbeing && <PilouFigure size={64} expr="content" move="hop" className="reco-how-pilou" />}
+      {open && wellbeing && (
+        <p className="reco-how-text" data-testid="reco-how-wellbeing">
+          Deux sources, réunies chaque jour : votre note et la lecture du visage, si vous l’utilisez. Un jour sans
+          note ni lecture, {APP_NAME} l’estime d’après les jours voisins.
+        </p>
+      )}
       {open && (
         <p className="reco-how-text" data-testid="reco-how-simple">
           {APP_NAME} compare vos jours notés à ce que vous avez fait le jour même et les semaines d’avant. Un lien
@@ -577,8 +570,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} families={influenceFamilies(results.outcomes?.[outcome])} base={base} />}
       {v.state !== 'loading' && <ReintroLink line={reintroText} />}
       {outcome === 'digestion' && v.state === 'results' && <DoctorReportCard />}
-      {outcome === 'wellbeing' && <HowWellbeing />}
-      <HowItWorks />
+      <HowItWorks wellbeing={outcome === 'wellbeing'} />
       <SeeExample />
       <WellbeingPrompt open={!!noteOpen} initialMode={noteOpen === 'reminder' ? 'reminder' : 'now'} onClose={() => setNoteOpen(false)} onSaved={setNoted} />
     </section>
