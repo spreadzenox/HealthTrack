@@ -378,27 +378,30 @@ describe('Temps 4 : « Ce que vous noterez chaque jour »', () => {
   beforeEach(() => localStorage.clear())
   const notes = () => [...screen.getByRole('list', { name: 'Chaque jour' }).children].map((li) => li.textContent)
 
-  it('sans l’objectif digestion : repas et bien-être, méditation cochée ; « 3 choses par jour »', () => {
+  it('sans l’objectif digestion : repas et bien-être, méditation cochée ; « Repas, bien-être et 1 habitude »', () => {
     at('notes', { goals: ['wellbeing'] })
     renderAt()
     expect(notes()).toEqual(['Repasen photo, 3 par jour', 'Bien-êtreune note rapide'])
     expect(screen.queryByText('Digestion')).toBeNull()
     expect(check('Méditation')).toBeChecked()
     for (const h of ['Étirements', 'Relaxation', 'Lecture']) expect(check(h)).not.toBeChecked()
-    expect(screen.getByRole('status')).toHaveTextContent('3 choses par jour · environ 1 minute')
+    expect(screen.getByRole('status')).toHaveTextContent('Repas, bien-être et 1 habitude · environ 1 minute')
     expect(screen.getByText('Partez de ce que vous faites déjà : ce n’est pas une liste de bonnes résolutions.')).toBeInTheDocument()
     // rien n'est enregistré tant que la personne n'a ni changé ni validé
     expect(getHabits()).toEqual([])
   })
 
-  it('avec l’objectif digestion : la ligne « Digestion · le soir » et « 4 choses par jour » ; jamais « ventre »', () => {
+  it('avec l’objectif digestion : la ligne « Digestion · le soir » et le résumé qui la nomme ; jamais « ventre »', () => {
     at('notes', { goals: ['wellbeing', 'gut'] })
     renderAt()
     expect(notes()).toEqual(['Repasen photo, 3 par jour', 'Bien-êtreune note rapide', 'Digestionle soir'])
-    expect(screen.getByRole('status')).toHaveTextContent('4 choses par jour · environ 1 minute')
+    expect(screen.getByRole('status')).toHaveTextContent('Repas, bien-être, digestion et 1 habitude · environ 1 minute')
     expect(document.body.textContent).not.toMatch(/ventre/i)
     expect(dailyNotes(false).map((n) => n.id)).toEqual(['meals', 'wellbeing'])
-    expect(dailySummary(5)).toBe('5 choses par jour · environ 1 minute')
+    // POLISH-SIM-132 : les repas sont 3 gestes, un total « N choses » ne collait jamais ; on nomme ce qui se note
+    expect(dailySummary(dailyNotes(true), 2)).toBe('Repas, bien-être, digestion et 2 habitudes · environ 1 minute')
+    expect(dailySummary(dailyNotes(false), 0)).toBe('Repas et bien-être · environ 1 minute')
+    expect(dailySummary(dailyNotes(false), 0)).not.toMatch(/choses/)
   })
 
   it('cocher, décocher : le réglage des habitudes suit aussitôt, le résumé aussi', () => {
@@ -406,7 +409,7 @@ describe('Temps 4 : « Ce que vous noterez chaque jour »', () => {
     renderAt()
     fireEvent.click(check('Étirements'))
     expect(getHabits().map((h) => h.id)).toEqual(['meditation', 'stretching'])
-    expect(screen.getByRole('status')).toHaveTextContent('4 choses par jour')
+    expect(screen.getByRole('status')).toHaveTextContent('Repas, bien-être et 2 habitudes')
     fireEvent.click(check('Méditation'))
     expect(getHabits().map((h) => h.id)).toEqual(['stretching'])
     expect(loadOnboarding().habitsChosen).toBe(true)

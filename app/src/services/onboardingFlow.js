@@ -98,8 +98,16 @@ export function dailyNotes(gut) {
   ].filter(Boolean)
 }
 
-/** Résumé du temps 4 : « 5 choses par jour · environ 1 minute ». */
-export const dailySummary = (count) => `${count} choses par jour · environ 1 minute`
+/**
+ * Résumé du temps 4 : « Repas, bien-être et 1 habitude · environ 1 minute ». Les repas valent 3 gestes : un total
+ * « N choses par jour » ne collait jamais (POLISH-SIM-132), on nomme donc ce qui se note.
+ */
+export function dailySummary(notes, habitCount) {
+  const words = notes.map((n, i) => (i === 0 ? n.label : n.label.toLowerCase()))
+  if (habitCount > 0) words.push(`${habitCount} habitude${habitCount > 1 ? 's' : ''}`)
+  const list = words.length > 1 ? `${words.slice(0, -1).join(', ')} et ${words[words.length - 1]}` : words.join('')
+  return `${list} · environ 1 minute`
+}
 
 
 /** Au-delà, « ce qui a été trouvé » s'affiche sans attendre la fin de l'import (qui continue en arrière-plan). */
