@@ -27,3 +27,9 @@ Bien-être et une habitude, et le bas dit « 3 choses par jour · environ 1 minu
 
 ## Pour le propriétaire
 Rien à faire.
+
+## Après le merge de #1169
+- main 8982fcf : « Build & Release » vert, release **v847** publiée (APK 35,7 Mo, 11:05 UTC) ; Tests, émulateur et
+  Play — AAB en cours à la fin du run (à vérifier au run suivant).
+- Le commit de journal ajouté à #1169 a relancé son build iOS (≈ 30 min de Mac pour un changement de journal seul) :
+  la prochaine fois, mettre le compte rendu dans la PR suivante plutôt que sur une PR dont le build iOS est déjà fait.
