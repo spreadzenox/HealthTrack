@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **21/11 20:30** — Run « idées » : personas « Ventre, sans technique » J45 (mise à jour) et « Prendre soin de soi » J14, iPhone seul ; rien de perdu à la mise à jour ; POLISH-SIM-134 à 138 au BACKLOG (synthèse `simulations/2026-11-21-2030-synthese.md`).
 - **21/11 19:30** — **DEM-IOS-8** (rien de visible) : « Mes appareils » compte le cycle parmi les mesures d'une source, jamais « arrêté » (par épisodes) ; le correctif iPhone 60 est fondu dans le code partagé (45 correctifs). Sur Android, servira quand CYCLE-3 lira les règles dans Health Connect.
 - **21/11 18:30** — **DEM-IOS-16** (rien de visible) : le test des libellés « digestif » ignore les identifiants de notes de Nouveautés (ils ne s'affichent jamais) ; le correctif iPhone 48, qui ajoutait ce motif, est fondu dans le code partagé (46 correctifs).
 - **21/11 17:30** — **DEM-IOS-15** (Android) : sans abonnement, une piste d'Objectifs montre de nouveau son titre flouté au-dessus de « Débloquer » (la barre mesurait 0 × 0) ; le correctif iPhone 50, qui faisait déjà la même chose, est fondu dans le code partagé (47 correctifs). DEM-IOS-19 classée sans objet.
