@@ -8,16 +8,32 @@
  *   facteur et fourchette dans la même unité), pour juger le biais et la couverture (REFONTE-4b-2).
  * La méthode est une fonction (matrix, { today }) → AnalysisResults (le contrat).
  */
+import { smoothedMatrix } from '../analysisResults'
 import { simulateMatrix } from './simulate'
+import { GUT_VALUE } from './stateSpace'
 
-export function runBench(method, scenario, { reps = 100, seed0 = 1 } = {}) {
+/**
+ * METHODE-BIAIS-4 — Ce que l'app analyse vraiment : les notes simulées passent par le lissage TS-1 (notes du
+ * bien-être ; notes du ventre calme / gêne / douleur), comme `buildAnalysisMatrix` le fait pour un vrai journal.
+ */
+export function smoothSimulated(matrix, today) {
+  const gutOf = { 5: GUT_VALUE.calm, 3: GUT_VALUE.discomfort, 1: GUT_VALUE.pain }
+  const wellbeing = new Map([...matrix.series.wellbeing].map(([dk, v]) => [dk, { note: v }]))
+  const digestion = new Map([...matrix.series.digestion].map(([dk, v]) => [dk, { gut: gutOf[v] }]))
+  return smoothedMatrix({ wellbeing, digestion }, { raw: matrix.series, days: matrix.days, today })
+}
+
+/** @param {{ reps?: number, seed0?: number, smooth?: boolean }} [opts]  smooth : notes lissées par TS-1, comme dans l'app */
+export function runBench(method, scenario, { reps = 100, seed0 = 1, smooth = false } = {}) {
   let falseSets = 0
   let falseLinks = 0
   let wrongHorizon = 0
   const found = new Map((scenario.effects ?? []).map((e) => [`${e.outcome}|${e.key}|${e.horizon}`, 0]))
   const estimates = new Map([...found.keys()].map((id) => [id, []]))
   for (let k = 0; k < reps; k += 1) {
-    const { matrix, truth, lastDay } = simulateMatrix({ ...scenario, seed: seed0 + k })
+    const sim = simulateMatrix({ ...scenario, seed: seed0 + k })
+    const { truth, lastDay } = sim
+    const matrix = smooth ? smoothSimulated(sim.matrix, lastDay) : sim.matrix
     const res = method(matrix, { today: lastDay })
     let anyFalse = false
     for (const [outcomeId, out] of Object.entries(res.outcomes)) {
