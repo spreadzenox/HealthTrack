@@ -638,6 +638,30 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - Proposition (fonction nouvelle, pas de code sans accord) : « Calories d'activité » dans le « + » de Tendances
       (le téléphone les envoie, la persona « Tout mesurer » ne les trouve nulle part ; Nutrition ne montre que les kcal
       mangées).
+  - **Passage des personas du 21/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-21-2030-synthese.md) ;
+    « Ventre, sans technique » J45 après la mise à jour et « Prendre soin de soi » J14, iPhone seul tous deux) :
+    - [ ] **POLISH-SIM-134 — Accueil, « Aucune photo prise » coupé à gauche** (J14, vérifié : capture
+      `bulle-repas-coupee.png` et `App.css` 980) : toucher la bulle Repas puis annuler la photo ouvre l'avis
+      `.meal-photo-missed` (`position: fixed`, `left: 50%`, `translateX(-50%)`), rendu dans la scène de l'île dont un
+      parent a une transformation : il se place par rapport à la scène, pas à l'écran, et on ne lit que « …se. Décrire
+      le repas ». Le rendre dans un portail (`document.body`) ; test qui vérifie qu'il n'est pas enfant de la scène.
+    - [ ] **POLISH-SIM-135 — Bandeau Nouveautés, « et 98 autres changements »** (J45 mise à jour, vérifié :
+      `WhatsNewBanner.jsx` 25) : après une semaine sans ouvrir l'app, le compte fait peur. Au-delà de 3, « et d'autres
+      nouveautés » ; la note à la une reste.
+    - [ ] **POLISH-SIM-136 — Objectifs ne montre pas l'essai en cours** (J45, vérifié : `TabBar.jsx` range
+      `/agir/essai` sous Objectifs, `Objectives.jsx` ne parle d'aucun essai) : l'essai ne se retrouve qu'en bas de
+      l'Accueil. Une ligne « Essai en cours : Dormir au moins 7 h 30 · jour 4 sur 10 » en haut d'Objectifs, qui ouvre
+      l'essai.
+    - [ ] **POLISH-SIM-137 — Ma journée, pas de chemin vers les repas passés** (J45 mise à jour) : les repas notés
+      avant la mise à jour ne se retrouvent que par Données › Nutrition › « Tous vos repas ». Un petit lien « Vos
+      repas » sous les cercles des repas de Ma journée.
+    - [ ] **POLISH-SIM-138 — Écran d'essai, « Aujourd'hui, jour avec. » et « 1 jour avec tenu sur 5 »** (J45,
+      mineur) : la persona ne sait pas si elle a réussi. Dire ce que le jour demande (« Aujourd'hui : dormir au moins
+      7 h 30 ») et compter en mots simples ; à faire avec les lanternes (LANT-*), sans toucher au tirage.
+    - À étudier (J14, « Prendre soin de soi ») : le poids noté dans le profil Nutrition n'alimente pas la mesure
+      « Poids » de Tendances (`trendsData.js`, champ `weightKg`, rempli par Health Connect ou Santé) ; sans balance, la
+      persona ne voit jamais son poids évoluer. Vérifier d'abord si une saisie manuelle de poids existe ailleurs ;
+      sinon proposition avec maquette (fonction nouvelle).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
