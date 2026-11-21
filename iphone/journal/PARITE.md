@@ -16,6 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+21/11 08:30 : run « idées », personas (journal seul, aucun code). Les constats POLISH-SIM-129 à 133 portent sur du code partagé : leurs correctifs partiront aussi sur iPhone. Parité inchangée : 70 %.
 21/11 07:30 : STILL-SOIR (image fixe de l'île le soir) : code partagé (`stills.js`, `CompanionScene.jsx`, nouvelle image `soir.webp`), aucun correctif iPhone ne les touche. Parité inchangée : 70 %.
 20/11 18:30 : REFONTE-4b-3 (essai d'Agir sur une habitude) : code partagé (`trials.js`, `trialsData.js`, `habits.js`), aucun correctif iPhone ne les touche. Parité inchangée : 70 %.
 20/11 12:30 : POLISH-SIM-126 (« Agir » sur la carte d'essai de l'Accueil) : code partagé (`Dashboard.jsx`, `More.css`), aucun correctif iPhone ne les touche. Parité inchangée : 70 %.
