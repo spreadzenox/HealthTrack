@@ -65,13 +65,18 @@ describe("l'image fixe suit l'îlot (palier bas, MONDE-4b)", () => {
     await vi.waitFor(() => expect(n.container.querySelector('img.companion-scene__still').getAttribute('src')).toMatch(/nuit/))
   })
 
-  it('ciel sombre avant le coucher : Pilou veille, l’image ne le montre pas endormi (NUIT-ETIQUETTE)', async () => {
+  it('ciel sombre avant le coucher : Pilou veille, l’image du soir ne le montre pas endormi (NUIT-ETIQUETTE, STILL-SOIR)', async () => {
     // 22 h : étoiles au ciel, coucher par défaut à 22 h 30 → « soir », Pilou veille à la lanterne
     const evening = new Date(2026, 10, 17, 22, 0)
     localStorage.setItem(USAGE_DAYS_KEY, JSON.stringify({ day: worldDayKey(evening), days: 60 }))
     const { container } = render(<CompanionScene now={() => evening} />)
-    await vi.waitFor(() => expect(container.querySelector('img.companion-scene__still').getAttribute('src')).toMatch(/j30-automne/))
+    await vi.waitFor(() => expect(container.querySelector('img.companion-scene__still').getAttribute('src')).toMatch(/soir/))
     expect(screen.queryByText(/dort/)).toBeNull()
+    cleanup()
+    // 18 h : encore jour au ciel → l'îlot éclairé de son étape et de sa saison
+    const dusk = new Date(2026, 10, 17, 18, 0)
+    const d = render(<CompanionScene now={() => dusk} />)
+    await vi.waitFor(() => expect(d.container.querySelector('img.companion-scene__still').getAttribute('src')).toMatch(/j30-automne/))
   })
 
   it('avant de connaître les jours d’usage : l’îlot nu de la saison', async () => {
