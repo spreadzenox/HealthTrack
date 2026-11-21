@@ -34,6 +34,11 @@ function sleepHistory(todayMinutes) {
 }
 
 describe('TodayBySource — « Vos données du jour » (AUJ-3)', () => {
+  it('POLISH-SIM-129 : pas de « + » (des données automatiques, rien à y ajouter, et pas de bandeau sur l’Accueil)', () => {
+    wrap({ tiles, summary: { screenMinutes: 45 } })
+    expect(screen.queryByRole('button')).toBeNull()
+  })
+
   it('un seul bloc, une ligne par mesure avec son icône et la couleur de son thème', () => {
     wrap({ tiles, summary: { screenMinutes: 45 } })
     expect(screen.getByRole('heading', { name: 'Vos données du jour' })).toBeInTheDocument()

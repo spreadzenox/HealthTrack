@@ -3,7 +3,8 @@
  * couleur de son thème (leçons 9 et 12), la valeur du jour et, dès 7 jours d'historique, l'écart à VOTRE norme sur la
  * mesure elle-même (« d'habitude 7 h 10 », flèche quand l'écart est net ; jamais un jugement, règle 6). Les sources
  * sont dites une fois, en petit en bas, sans nom d'appareil ni d'app. « Ce qui change aujourd'hui » (DayChanges)
- * n'existe plus : ses écarts sont ici, sur chaque mesure.
+ * n'existe plus : ses écarts sont ici, sur chaque mesure. Pas de « + » : des données automatiques, rien à y ajouter
+ * (POLISH-SIM-129, il menait à un bandeau absent de l'Accueil).
  */
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -14,7 +15,6 @@ import { lastAnalysis } from '../services/analysisRunner'
 import { localDateKey } from '../services/analysisEngine'
 import { measureTone } from '../theme/themes'
 import LineIcon from './LineIcon'
-import StripPlus from './StripPlus'
 import './TodayBySource.css'
 import { monoDigits } from '../utils/monoDigits'
 
@@ -106,7 +106,6 @@ export default function TodayBySource({
           })}
         </ul>
         <p className="today-data-from">{sourcesSentence(groups)}</p>
-        <StripPlus />
       </div>
       {!todayBySource.hasWatch(groups) && (
         <Link to="/connectors" className="today-sources-add">
