@@ -52,7 +52,8 @@ test('captures : les 8 fichiers du tableau de store/app-store/captures.md, dans 
   assert.ok(files.every((f) => /^iphone-17-pro-max-.+\.png$/.test(f)))
   // Refonte « Compagnon » (19/11) : Ma journée en 2e, comme dans la barre ; ni Journal ni Sources (écrans d'avant)
   assert.equal(files[1], 'iphone-17-pro-max-demo-clair-ma-journee.png')
-  assert.ok(files.includes('iphone-17-pro-max-demo-clair-agir.png'))
+  assert.ok(files.includes('iphone-17-pro-max-demo-clair-agir-essai.png'))
+  assert.ok(files.includes('iphone-17-pro-max-demo-clair-reintroduction-abonne.png'))
   assert.ok(!files.some((f) => /-(journal|connectors)\.png$/.test(f)))
 })
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { buildPlan, REVEALS, EMPTY_REVEALS, findButton, clickInOrder, prepare, MORE_ONBOARDING, ROUTES, EMPTY_ROUTES, EMPTY_SCROLLS, iphoneDemoEntries, runCaptureStep, STEP_KEY, probeHealthKit, probeGutEvening, probeEveningNote, probePortionReminder, probeDataRoundtrip, probeBackup, probeVoice, probeFace, probeFileImport, IMPORT_TEST_FILE, probeShareExport, probeShareReport, probeSnapshotWelcome, probeDeleteAll, waitForAck, watchRejections, lastSeenChangelogId, androidWords, pageText, healthSampleWindow, fakePhoneUsage, installPhoneUsageFake } from './captureMode'
+import { buildPlan, REVEALS, EMPTY_REVEALS, findButton, clickInOrder, prepare, MORE_ONBOARDING, ROUTES, EMPTY_ROUTES, EMPTY_SCROLLS, iphoneDemoEntries, runCaptureStep, STEP_KEY, probeHealthKit, probeGutEvening, probeEveningNote, probePortionReminder, probeDataRoundtrip, probeBackup, probeVoice, probeFace, probeFileImport, IMPORT_TEST_FILE, probeShareExport, probeShareReport, probeSnapshotWelcome, probeDeleteAll, waitForAck, watchRejections, lastSeenChangelogId, androidWords, pageText, healthSampleWindow, fakePhoneUsage, installPhoneUsageFake, TRIAL_ROUTES, sleepTrialEntry } from './captureMode'
 import { phoneUsageEntriesFromSegments, summarizeSegmentsDay } from './phoneUsageIos'
 import { summarizeSegmentsApps } from './phoneAppsIos'
 
@@ -1007,5 +1007,46 @@ describe('Tendances › Jour › veille et visite guidée sur Tendances (REFONTE
     await prepare({ name: 'demo-clair-ma-journee', route: '/journee', data: 'demo', theme: 'light' },
       { localStorage, latestChangelogId: 'x', now, storage: { upsertEntries: async () => {} }, demoEntries: () => [] })
     expect(JSON.parse(store.get('halcya_companion'))).toMatchObject({ watch: true, name: 'Pilou', metAt: '2026-11-16T10:00:00.000Z', ceremony7At: '2026-11-16T10:00:00.000Z' })
+  })
+})
+
+describe('captures de la fiche App Store comme celles de Play (ASC-CAPTURES-REFONTE)', () => {
+  const memory = () => {
+    const map = new Map()
+    return { getItem: (k) => map.get(k) ?? null, setItem: (k, v) => map.set(k, String(v)), removeItem: (k) => map.delete(k), map }
+  }
+
+  it('Agir avec un essai en cours (jour 8 sur 10), comme `--trial=8` de la fiche Play, après les pages claires', () => {
+    const steps = buildPlan(ROUTES, [], {}, {}, [], [], {}, [], {}, TRIAL_ROUTES)
+    const trial = steps.filter((s) => s.trial)
+    expect(trial.map((s) => [s.name, s.route, s.trial, s.data])).toEqual([['demo-clair-agir-essai', '/agir', 8, 'demo']])
+    expect(steps.indexOf(trial[0])).toBeGreaterThan(steps.findIndex((s) => s.name === 'demo-clair-agir'))
+    expect(buildPlan().some((s) => s.trial)).toBe(false)
+  })
+
+  it('l’essai du sommeil : commencé il y a 7 jours à 9 h, 5 jours avec et 5 sans, seuil 7 h 30', () => {
+    const now = new Date(2026, 10, 21, 14, 0)
+    const e = sleepTrialEntry(8, now)
+    expect(e).toMatchObject({ type: 'trial', source: 'app_trial' })
+    expect(new Date(e.at)).toEqual(new Date(2026, 10, 14, 9, 0))
+    expect(e.payload.factor.key).toBe('sleepMinutes')
+    expect(e.payload.threshold).toBe(450)
+    expect(e.payload.schedule).toHaveLength(10)
+    expect(e.payload.schedule[0]).toEqual({ date: '2026-11-14', with: true })
+    expect(e.payload.schedule.filter((d) => d.with)).toHaveLength(5)
+    expect(e.payload.endedAt).toBeNull()
+  })
+
+  it('l’essai est posé pour sa seule capture, puis retiré avant la page suivante', async () => {
+    const localStorage = memory()
+    const storage = { upsertEntries: vi.fn(async () => {}), createEntry: vi.fn(async () => 77), deleteEntry: vi.fn(async () => {}) }
+    const base = { localStorage, latestChangelogId: 'x', storage, demoEntries: () => [] }
+    await prepare({ name: 'demo-clair-agir-essai', route: '/agir', data: 'demo', theme: 'light', trial: 8 }, base)
+    expect(storage.createEntry).toHaveBeenCalledWith(expect.objectContaining({ type: 'trial' }))
+    expect(storage.deleteEntry).not.toHaveBeenCalled()
+    await prepare({ name: 'demo-clair-reintroduction-abonne', route: '/reintroduction', data: 'demo', theme: 'light' }, base)
+    expect(storage.deleteEntry).toHaveBeenCalledWith(77)
+    await prepare({ name: 'demo-sombre-accueil', route: '/', data: 'demo', theme: 'dark' }, base)
+    expect(storage.deleteEntry).toHaveBeenCalledTimes(1)
   })
 })
