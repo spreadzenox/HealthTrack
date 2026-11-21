@@ -137,6 +137,7 @@ corrélation ≠ causalité) et D6 (science personnelle, normes — FODMAP compr
 
 ## 2. Jalons (ordre de livraison conseillé) et état
 
+> 21/11 16:30 : captures de la fiche App Store de la refonte (iPhone 6,9" et iPad 13") regardées et envoyées avec la fiche sur la version 893 (run 44919753451) ; rien soumis. Prochain : rattacher la build du soir validée, puis « 👉 PI2 prête » (22/11).
 > 21/11 05:30 : R18-SOUMISSION-b fait (PI2, partie 0, par l'API) : version App Store 844 → 893, build de la refonte 1221.1221 attachée, notes pour l'examen revues (3 988 caractères), publication manuelle ; rien envoyé à l'examen. Prochain : captures de la fiche App Store de jour (ASC-CAPTURES-REFONTE), puis « 👉 PI2 prête ».
 > 20/11 17:30 : #1151 (POLISH-SIM-124b) mergée. DEM-IOS-17 fait : la note du soir repliée (Android) dit « 1 = très bas, 5 = très bien », comme ses boutons. Captures App Store de la refonte (REFONTE-2-ASC) remises à demain matin : le soir de Pilou commence à 17:48. Prochain : REFONTE-2-ASC de jour, puis PI2.
 > 20/11 16:30 : POLISH-SIM-124b fait : à « Non » (pas de montre) au temps 2, la carte Health Connect / Santé propose les pas du téléphone ; accès donné → tuile « Pas (votre téléphone) » au temps 3. Correctif iPhone 45 refait. Prochain : finir #1150 et cette PR ; de jour, captures App Store de la refonte (REFONTE-2-ASC), puis PI2.
