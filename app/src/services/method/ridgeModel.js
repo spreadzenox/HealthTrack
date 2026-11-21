@@ -99,7 +99,8 @@ const predict = (beta, x) => x.reduce((s, v, j) => s + v * beta[j], 0)
 /**
  * @param {object} o
  * @param {Array<{ dk: string, num: number, y: number, w: number, yShown?: number, wShown?: number, controls: number[] }>} o.rows  jours du résultat (yShown, wShown : observation du jour pour la taille montrée)
- * @param {Array<{ id: string, p: number }>} o.candidates  facteurs × horizons triés, déjà passés au tri univarié
+ * @param {Array<{ id: string, p: number, firm?: boolean }>} o.candidates  facteurs × horizons triés, déjà passés au tri
+ *   univarié (firm : passe la correction de Holm ; sa fourchette ne refait pas le choix de la liste, METHODE-BIAIS-7)
  * @param {(id: string, dk: string) => number|null} o.valueOf  valeur du facteur sur la fenêtre de son horizon
  * @param {(id: string, dk: string) => boolean} [o.completeOf]  fenêtre assez remplie pour la taille montrée
  *   (METHODE-BIAIS-2) ; par défaut, une valeur connue
@@ -230,6 +231,36 @@ export function fitOutcomeModel({ rows, candidates, valueOf, completeOf, seed = 
       return solvePenalized(A2, sel.map((a) => eq.b[a]), eq.sw / (idx.length - out.length), 0, 1e-6)[sel.indexOf(nCtrl + j)]
     })
   }
+  // METHODE-BIAIS-7 : la courte liste est choisie sur ces données (les plus petites p parmi des dizaines), donc un
+  // facteur sans effet retenu a toujours un écart de hasard favorable, que les tirages de semaines gardent : sa
+  // fourchette ne contenait zéro que 63 fois sur 100 au banc. Le choix est refait dans chaque tirage (même tri, par
+  // la pente univariée à contrôles égaux) ; un facteur qui n'y serait pas retenu compte pour un effet nul dans ce
+  // tirage (bootstrap après sélection). Seulement pour un facteur qui ne passe pas la correction de Holm (`firm`) :
+  // celui-là ne peut jamais être « net », et un lien qui la passe garde sa fourchette (avec 2 semaines, une seule place
+  // dans la liste : le choix varie d'un tirage à l'autre et effaçait la piste nette de la visite guidée).
+  const candIds = candidates.map((c) => c.id)
+  const firmIds = new Set(candidates.filter((c) => c.firm).map((c) => c.id))
+  const Z = rows.map((r, i) => [1, ...r.controls, ...candIds.map((id) => colOf(id)[i])])
+  const keptInDraw = (idx) => {
+    if (candIds.length <= maxK) return null
+    const { A, b } = normalEquations(idx.map((i) => Z[i]), idx.map((i) => y[i]), idx.map((i) => w[i]))
+    const yy = idx.reduce((s, i) => s + w[i] * y[i] * y[i], 0)
+    const dof = idx.length - nCtrl - 1
+    if (dof < 2) return null
+    const ctrl = Array.from({ length: nCtrl }, (_, c) => c)
+    const score = candIds.map((_, k) => {
+      const sel = [...ctrl, nCtrl + k]
+      const M = sel.map((a) => sel.map((c) => A[Math.min(a, c)][Math.max(a, c)]))
+      const bb = sel.map((a) => b[a])
+      const beta = solve(M, bb)
+      const rss = Math.max(0, yy - beta.reduce((s, v, j) => s + v * bb[j], 0))
+      const inv = solve(M, sel.map((_, j) => (j === nCtrl ? 1 : 0)))[nCtrl]
+      const se = Math.sqrt((rss / dof) * Math.max(inv, 1e-12))
+      return se > 0 ? Math.abs(beta[nCtrl]) / se : 0
+    })
+    const order = candIds.map((_, k) => k).sort((a, z) => score[z] - score[a])
+    return new Set(order.slice(0, maxK).map((k) => candIds[k]))
+  }
   // Sans observation propre (banc sur notes brutes), les équations de la ridge servent aussi à la taille montrée.
   const sameShown = rows.every((r) => r.yShown === undefined)
   const fullShown = shownFits(rows.map((_, i) => i))
@@ -249,7 +280,11 @@ export function fitOutcomeModel({ rows, candidates, valueOf, completeOf, seed = 
     used.forEach((_, j) => draws[j].push(beta[nCtrl + j]))
     if (fullShown.every((v) => v === null)) continue
     const shown = shownFits(idx, sameShown ? eqs : undefined)
-    used.forEach((_, j) => { if (fullShown[j] !== null && shown[j] !== null) drawsShown[j].push(shown[j]) })
+    const kept = keptInDraw(idx)
+    used.forEach((id, j) => {
+      if (fullShown[j] === null || shown[j] === null) return
+      drawsShown[j].push(kept && !firmIds.has(id) && !kept.has(id) ? 0 : shown[j])
+    })
   }
   const quantile = (a, q) => {
     const b = [...a].sort((x, z) => x - z)

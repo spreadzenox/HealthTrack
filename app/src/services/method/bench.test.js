@@ -275,6 +275,27 @@ describe('banc de la méthode (ORG-5a)', () => {
     expect(mean).toBeLessThan(1.15)
   }, 120_000)
 
+  // METHODE-BIAIS-7 (21/11 06:30) : la courte liste du modèle prend les plus petites p parmi des dizaines de candidats ;
+  // un facteur sans effet retenu garde donc son écart de hasard dans les tirages de semaines, et sa fourchette ne
+  // contenait zéro que 63 fois sur 100 (30 jeux, 90 jours, lissés). Le choix refait dans chaque tirage : 100 %.
+  it('aucun effet, lissé : la fourchette d\'un facteur retenu dans le modèle contient zéro', async () => {
+    const { smoothSimulated } = await import('./bench')
+    let covered = 0
+    let n = 0
+    for (let seed = 1; seed <= 20; seed += 1) {
+      const { matrix, lastDay } = simulateMatrix({ days: 90, seed })
+      const res = analyzeMatrix(smoothSimulated(matrix, lastDay), { today: lastDay })
+      for (const out of Object.values(res.outcomes)) {
+        for (const h of Object.values(out.horizons)) {
+          if (h.id === 'long') continue
+          for (const f of h.factors.filter((x) => x.inModel)) { n += 1; if (f.low <= 0 && f.high >= 0) covered += 1 }
+        }
+      }
+    }
+    expect(n).toBeGreaterThan(50)
+    expect(covered / n).toBeGreaterThanOrEqual(0.9)
+  }, 120_000)
+
   it('banc lissé : les séries sont celles de TS-1, avec l\'observation du jour à part', async () => {
     const { smoothSimulated } = await import('./bench')
     const { matrix, lastDay } = simulateMatrix({ days: 40, seed: 5 })
