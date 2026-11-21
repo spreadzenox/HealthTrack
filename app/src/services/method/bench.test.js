@@ -204,4 +204,43 @@ describe('banc de la méthode (ORG-5a)', () => {
     expect(cover(est, eff.size)).toBeGreaterThanOrEqual(0.75)
     expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
   }, 120_000)
+
+  // METHODE-BIAIS-4 (21/11 01:30) : dans l'app, l'analyse lit l'estimation lissée de TS-1, qui tire l'écart du jour vers
+  // la tendance. Rejouée au banc (option smooth), la taille montrée retombait à 0,47-0,73 de la vraie et sa fourchette
+  // ne la contenait que 17 à 33 % du temps (30 jeux, 90 jours), alors que les notes brutes donnaient 0,93-0,97.
+  // La taille montrée s'ajuste maintenant sur l'observation du jour (note, sinon visage) : 0,82-0,96 et 80 à 90 % ;
+  // la netteté (ridge sur la série lissée) ne change pas.
+  it('notes lissées comme dans l\'app : une habitude garde sa taille et sa fourchette la contient', () => {
+    const eff = { outcome: 'wellbeing', key: 'habit_x', horizon: 'short', size: 1.6 }
+    const b = runBench(withHabit, { days: 90, binary: ['habit_x'], effects: [eff] }, { reps: 30, smooth: true })
+    const est = b.estimates['wellbeing|habit_x|short']
+    expect(ratioOf(est, eff.size)).toBeGreaterThan(0.85)
+    expect(cover(est, eff.size)).toBeGreaterThanOrEqual(0.75)
+    expect(b.power['wellbeing|habit_x|short']).toBeGreaterThanOrEqual(0.8)
+    expect(b.falseSetRate).toBeLessThanOrEqual(0.05)
+  }, 120_000)
+
+  it('notes lissées comme dans l\'app : un effet fort du sommeil garde sa taille', () => {
+    const eff = { outcome: 'wellbeing', key: 'sleepMinutes', horizon: 'short', size: 1 }
+    const b = runBench(analyzeMatrix, { days: 90, effects: [eff] }, { reps: 30, smooth: true })
+    const est = b.estimates['wellbeing|sleepMinutes|short']
+    const truth = (0.5 * eff.size) / 45
+    expect(ratioOf(est, truth)).toBeGreaterThan(0.85)
+    expect(cover(est, truth)).toBeGreaterThanOrEqual(0.75)
+  }, 120_000)
+
+  it('notes lissées : aucun effet, au plus 5 % des jeux montrent un faux lien', () => {
+    expect(runBench(analyzeMatrix, { days: 70 }, { reps: 60, smooth: true }).falseSetRate).toBeLessThanOrEqual(0.05)
+  }, 120_000)
+
+  it('banc lissé : les séries sont celles de TS-1, avec l\'observation du jour à part', async () => {
+    const { smoothSimulated } = await import('./bench')
+    const { matrix, lastDay } = simulateMatrix({ days: 40, seed: 5 })
+    const m = smoothSimulated(matrix, lastDay)
+    const dk = [...matrix.series.wellbeing.keys()][10]
+    expect(m.series.observed.wellbeing.ys.get(dk)).toBeCloseTo(matrix.series.wellbeing.get(dk), 6)
+    expect(m.series.wellbeing.get(dk)).not.toBeCloseTo(matrix.series.wellbeing.get(dk), 6)
+    expect(m.series.digestion.size).toBe(matrix.series.digestion.size)
+  })
 })
+

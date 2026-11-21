@@ -98,7 +98,7 @@ const predict = (beta, x) => x.reduce((s, v, j) => s + v * beta[j], 0)
 
 /**
  * @param {object} o
- * @param {Array<{ dk: string, num: number, y: number, w: number, controls: number[] }>} o.rows  jours du résultat
+ * @param {Array<{ dk: string, num: number, y: number, w: number, yShown?: number, wShown?: number, controls: number[] }>} o.rows  jours du résultat (yShown, wShown : observation du jour pour la taille montrée)
  * @param {Array<{ id: string, p: number }>} o.candidates  facteurs × horizons triés, déjà passés au tri univarié
  * @param {(id: string, dk: string) => number|null} o.valueOf  valeur du facteur sur la fenêtre de son horizon
  * @param {(id: string, dk: string) => boolean} [o.completeOf]  fenêtre assez remplie pour la taille montrée
@@ -202,6 +202,11 @@ export function fitOutcomeModel({ rows, candidates, valueOf, completeOf, seed = 
   const okFor = used.map((id) => rows.map((r, i) => raws.get(id)[i] !== null && (!completeOf || completeOf(id, r.dk))))
   const minDays = (idx) => idx.length >= Math.max(2 * WEEK, SHOWN_MIN_DAYS_PER_FACTOR * used.length)
   const sub = (idx) => [idx.map((i) => X[i]), idx.map((i) => y[i]), idx.map((i) => w[i])]
+  // METHODE-BIAIS-4 : la taille montrée s'ajuste sur l'observation du jour (`yShown`, sans le lissage qui tire l'écart
+  // du jour vers la tendance), la ridge sur la série lissée.
+  const yS = rows.map((r) => r.yShown ?? r.y)
+  const wS = rows.map((r) => r.wShown ?? r.w)
+  const subShown = (idx) => [idx.map((i) => X[i]), idx.map((i) => yS[i]), idx.map((i) => wS[i])]
   // Un ajustement par facteur sur les mêmes jours moins ceux de sa fenêtre trop vide : les équations normales de tous
   // les jours sont faites une fois, puis on retire seulement les jours exclus (peu nombreux) pour chaque facteur.
   // METHODE-BIAIS-3 : à côté du facteur, seuls les autres facteurs retenus très appuyés (p < SHOWN_PARTNER_MAX_P) ;
@@ -212,12 +217,12 @@ export function fitOutcomeModel({ rows, candidates, valueOf, completeOf, seed = 
     ...Array.from({ length: nCtrl }, (_, c) => c),
     ...used.map((_, k) => k).filter((k) => k === j || pOf.get(used[k]) < SHOWN_PARTNER_MAX_P).map((k) => nCtrl + k),
   ])
-  const shownFits = (idx, all = normalEquations(...sub(idx))) => {
+  const shownFits = (idx, all = normalEquations(...subShown(idx))) => {
     return used.map((_, j) => {
       const out = idx.filter((i) => !okFor[j][i])
       if (!minDays(idx.filter((i) => okFor[j][i]))) return null
       const eq = out.length
-        ? normalEquations(...sub(out), { A: all.A.map((row) => [...row]), b: [...all.b], sw: all.sw }, -1)
+        ? normalEquations(...subShown(out), { A: all.A.map((row) => [...row]), b: [...all.b], sw: all.sw }, -1)
         : all
       // Une pénalité infime ne sert qu'à rester soluble si un contrôle est constant sur ces jours.
       const sel = shownCols[j]
@@ -225,6 +230,8 @@ export function fitOutcomeModel({ rows, candidates, valueOf, completeOf, seed = 
       return solvePenalized(A2, sel.map((a) => eq.b[a]), eq.sw / (idx.length - out.length), 0, 1e-6)[sel.indexOf(nCtrl + j)]
     })
   }
+  // Sans observation propre (banc sur notes brutes), les équations de la ridge servent aussi à la taille montrée.
+  const sameShown = rows.every((r) => r.yShown === undefined)
   const fullShown = shownFits(rows.map((_, i) => i))
   // Stabilité : bootstrap par semaines (les mêmes tirages servent à la fourchette de la taille montrée).
   const r = rng(seed)
@@ -241,7 +248,7 @@ export function fitOutcomeModel({ rows, candidates, valueOf, completeOf, seed = 
     const beta = solvePenalized(eqs.A, eqs.b, eqs.sw / idx.length, nCtrl, best.lambda)
     used.forEach((_, j) => draws[j].push(beta[nCtrl + j]))
     if (fullShown.every((v) => v === null)) continue
-    const shown = shownFits(idx, eqs)
+    const shown = shownFits(idx, sameShown ? eqs : undefined)
     used.forEach((_, j) => { if (fullShown[j] !== null && shown[j] !== null) drawsShown[j].push(shown[j]) })
   }
   const quantile = (a, q) => {

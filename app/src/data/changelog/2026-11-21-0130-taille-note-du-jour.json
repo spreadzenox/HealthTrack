@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-21",
+  "kind": "correctif",
+  "title": "Objectifs : la taille d'un lien mesurée sur vos notes",
+  "items": [
+    "La taille d'un lien (« +0,4 point ») se calcule maintenant sur vos notes du jour telles que vous les avez données. Elle se calculait sur la courbe lissée, qui ramène chaque journée vers la tendance et rendait les liens de 30 à 50 % plus petits qu'en vrai.",
+    "Vous verrez des chiffres un peu plus grands et des fourchettes plus justes. Ce qui rend un lien net ne change pas."
+  ]
+}

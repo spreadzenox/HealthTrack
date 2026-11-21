@@ -34,7 +34,7 @@ import { faceMoodDays } from './mood/faceMoodDays'
 import { FODMAP_SUBGROUPS } from './fodmapGroups'
 import { fodmapGroupOf, mealFactors } from './gutWindows'
 import { measuredTagsByDay } from './behaviorTags'
-import { estimateStates, observationsFromEntries } from './method/stateSpace'
+import { estimateStates, OBS_SD, observationsFromEntries } from './method/stateSpace'
 import { STABILITY_MIN, fitOutcomeModel } from './method/ridgeModel'
 import { detectChanges } from './method/changes'
 import { GUT_TYPE } from './today'
@@ -602,7 +602,7 @@ export function boundToScale(f) {
 }
 
 /** Modèle régularisé d'un résultat (ORG-5c) sur les facteurs × horizons triés. */
-function fitModel(ys, days, fitted, weights, changeDates = []) {
+function fitModel(ys, days, fitted, weights, changeDates = [], observed = null) {
   const nums = [...ys.keys()].map(dayNum)
   const first = Math.min(...nums)
   const keys = [...ys.keys()]
@@ -613,6 +613,8 @@ function fitModel(ys, days, fitted, weights, changeDates = []) {
     num: dayNum(dk),
     y: ys.get(dk),
     w: weights?.get(dk) ?? 1,
+    // METHODE-BIAIS-4 : la taille montrée s'ajuste sur l'observation du jour (sans lissage) quand elle existe.
+    ...(observed?.ys.has(dk) ? { yShown: observed.ys.get(dk), wShown: observed.weights.get(dk) ?? 1 } : {}),
     controls: [
       isWeekendKey(dk) ? 1 : 0, (dayNum(dk) - first) / 100, ...(withDisrupted ? [disrupted[i]] : []),
       ...changeDates.map((c) => (dk >= c ? 1 : 0)),
@@ -650,11 +652,18 @@ export function computeAnalysisResults(entries, { now = new Date() } = {}) {
  *   days: Map<string, Record<string, number|null>> }}
  */
 export function buildAnalysisMatrix(entries, { today } = {}) {
-  const raw = outcomeSeries(entries)
-  const days = factorDays(entries)
-  // ORG-5b : le résultat de chaque jour est l'estimation de TS-1 (notes et visage pour le bien-être ; notes du ventre
-  // et selles, sans rien du bien-être, pour la digestion : règle 5), pesée par sa précision (jours notés plus pesants).
-  const obs = observationsFromEntries(entries)
+  return smoothedMatrix(observationsFromEntries(entries), { raw: outcomeSeries(entries), days: factorDays(entries), today })
+}
+
+/**
+ * ORG-5b : le résultat de chaque jour est l'estimation de TS-1 (notes et visage pour le bien-être ; notes du ventre
+ * et selles, sans rien du bien-être, pour la digestion : règle 5), pesée par sa précision (jours notés plus pesants).
+ * Séparé de `buildAnalysisMatrix` pour que le banc (method/bench.js, option `smooth`) juge la méthode sur la même
+ * série lissée que l'app (METHODE-BIAIS-4).
+ * @param {{ wellbeing: Map, digestion: Map }} obs  observations par jour (observationsFromEntries)
+ * @param {{ raw: object, days: Map, today?: string }} o  raw = séries brutes (repli et nombre de jours de symptômes)
+ */
+export function smoothedMatrix(obs, { raw, days, today }) {
   const states = estimateStates(obs, { today, ahead: 0 })
   if (!states) return { series: raw, days }
   const wellbeing = new Map()
@@ -674,8 +683,40 @@ export function buildAnalysisMatrix(entries, { today } = {}) {
     }
   }
   return {
-    series: { wellbeing, digestion, symptomDays: raw.symptomDays, weights: { wellbeing: normWeights(wW), digestion: normWeights(wD) } },
+    series: {
+      wellbeing, digestion, symptomDays: raw.symptomDays, weights: { wellbeing: normWeights(wW), digestion: normWeights(wD) },
+      observed: observedSeries(obs, states.params),
+    },
     days,
+  }
+}
+
+/**
+ * METHODE-BIAIS-4 : l'observation du jour, sans lissage, pour la TAILLE montrée d'un lien. Le lissage tire l'écart du
+ * jour vers la tendance (environ deux tiers gardés pour une note : banc du 21/11) et rétrécissait d'autant la taille
+ * d'un effet du jour ; une observation bruitée, elle, ne biaise pas une pente. Note et visage (ventre et selles)
+ * combinés selon leur précision, pesés de même ; aucune information du bien-être dans la digestion (règle 5).
+ */
+function observedSeries(obs, params) {
+  const combine = (parts) => {
+    const ok = parts.filter(([v]) => isNum(v))
+    if (!ok.length) return null
+    const prec = ok.reduce((s, [, sd]) => s + 1 / sd ** 2, 0)
+    return { y: ok.reduce((s, [v, sd]) => s + v / sd ** 2, 0) / prec, w: prec }
+  }
+  const faceSd = params?.faceSd ?? OBS_SD.faceDefault
+  const build = (map, partsOf) => {
+    const ys = new Map()
+    const ws = new Map()
+    for (const [dk, o] of map) {
+      const c = combine(partsOf(o))
+      if (c) { ys.set(dk, c.y); ws.set(dk, c.w) }
+    }
+    return { ys, weights: normWeights(ws) }
+  }
+  return {
+    wellbeing: build(obs.wellbeing, (o) => [[o.note, OBS_SD.note], [o.face, faceSd]]),
+    digestion: build(obs.digestion, (o) => [[o.gut, OBS_SD.gut], [o.stool, OBS_SD.stool]]),
   }
 }
 
@@ -715,7 +756,7 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
     sameUnitPerFactor(fitted)
     const qs = holm(fitted.map((f) => f._p))
     // ORG-5c : les candidats entrent ensemble dans un modèle régularisé ; « net » exige aussi la stabilité.
-    const model = fitted.length ? fitModel(ys, days, fitted, series.weights?.[def.id], changeDates) : null
+    const model = fitted.length ? fitModel(ys, days, fitted, series.weights?.[def.id], changeDates, series.observed?.[def.id]) : null
     fitted.forEach((f, i) => {
       const passed = qs[i] <= NET_MAX_P && (f.low > 0 || f.high < 0)
       const c = model?.coef.get(`${f.key}|${f.horizon}`)
