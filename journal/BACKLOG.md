@@ -175,6 +175,18 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   hors échelle donc masqué : l'échelle ordonnée ne se lit pas comme une note. Mesurer au banc (`smooth: true`, effet
   planté sur la digestion, vérité à exprimer sur l'échelle 1 à 5 du confort) puis choisir : observation brute bornée,
   ou correction du rétrécissement par le gain de lissage.
+  **Mesuré le 21/11 02:30** (sondes jetables ; vérité = pente sur un journal brut de 1 500 jours, échelle du confort
+  4,5 / 2,5 / 1 ; 30 jeux à 90 jours) : fibres effet fort, lissée 0,71 / fourchette juste 73 %, observation 0,99 / 97 % ;
+  fibres effet moyen 0,73 / 91 % → 1,01 / 91 % ; sommeil moyen terme 0,76 / 75 % → 1,05 / 100 % ; nets identiques.
+  Sans effet (40 jeux, court et moyen terme) : 45 jours, médiane 0,36 → 0,48 pt, max 0,96 → 1,35, aucun ≥ 2 ;
+  70 jours 0,25 → 0,35, max 0,77 ; faux liens identiques (1/40 et 0/40). Choix : **observation brute** (`observedSeries`
+  avec `digestion: [[gut, OBS_SD.gut], [stool, OBS_SD.stool]]`, 1 ligne, et un test du banc écrit, rouge avant : 0,66).
+  **Bloquant** : `tourResults.test.js`, 4 tests « jour 28, une piste digestion (fructanes) » ; la visite plante un effet
+  presque déterministe (soir d'oignon → douleur, sinon calme) : taille montrée −4,04 pt > `SCALE_SPAN` (4), donc
+  `outOfScale` et plus net. La vraie différence ne peut dépasser 3,5 sur cette échelle : c'est la pente linéaire
+  multipliée par le « changement habituel » qui extrapole. Pistes : borner la taille montrée de la digestion à
+  l'étendue de l'échelle du confort (3,5) au lieu de la masquer quand la ridge la dit nette, ou un changement
+  habituel d'un facteur rare pris dans les jours observés ; mesurer au banc avant de choisir.
 - [x] **REFONTE-4b-3 — Essai d'Agir sur une habitude** (**fait le 20/11 18:30** : `instruction` dit « Méditation » ou « Pas d’étirements » pour un facteur `habit_<id>` ; `heldFromData` lit `summaries.get(jour).habits[id]`, rempli par `habitDays` (`habits.js`) dans `readTrialsData` ; question seulement sans réponse ; habitude gardée lue de même ; `npm run visual -- --play --routes=/agir --trial=8 --trial-factor=habit --click=Méditation`) : la consigne dit « Un peu plus de méditation que
   d'habitude » ; elle devrait dire « Méditation » les jours « avec », et l'essai devrait lire la réponse de Ma
   journée au lieu de reposer la question (`trials.js`, `MEASURED`).
