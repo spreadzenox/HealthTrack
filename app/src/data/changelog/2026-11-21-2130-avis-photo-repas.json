@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-21",
+  "kind": "correctif",
+  "title": "Accueil : « Aucune photo prise » se lit en entier",
+  "items": [
+    "Après avoir touché la bulle Repas et fermé l'appareil photo sans photo, l'avis qui propose de décrire le repas s'affichait coupé à gauche. Il s'affiche maintenant en entier, au-dessus des onglets."
+  ]
+}

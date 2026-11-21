@@ -56,6 +56,17 @@ describe('MealPhotoButton (TESTEUR-4b)', () => {
     expect(screen.queryByRole('status')).toBeNull()
   })
 
+  it('renders the hint at the root of the page, outside a transformed scene (POLISH-SIM-134)', () => {
+    const { container } = render(
+      <MemoryRouter><div data-testid="scene" style={{ transform: 'scale(1)' }}><MealPhotoButton className="btn">Repas</MealPhotoButton></div></MemoryRouter>,
+    )
+    fireEvent(inputOf(screen.getByRole('button', { name: 'Repas' })), new Event('cancel'))
+    const hint = screen.getByRole('status')
+    expect(screen.getByTestId('scene').contains(hint)).toBe(false)
+    expect(container.contains(hint)).toBe(false)
+    expect(hint.parentElement).toBe(document.body)
+  })
+
   it('hides the hint once a photo is taken', () => {
     renderBtn()
     const input = inputOf(screen.getByRole('button', { name: 'Photo du repas' }))
