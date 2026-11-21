@@ -421,18 +421,27 @@ function WatchStep({ state, update, installed }) {
 const weatherOn = (weather) => weather === 'on' || (weather == null && getWeatherSettings().enabled)
 const screenOn = (screen) => screen === 'on' || (screen == null && getPhoneUsageSettings().enabled)
 
-function AutoStep({ watch, health, weather, screen, children }) {
-  const phoneUsage = usePhoneUsageSupported()
-  const { tiles, maybe, off, later } = autoTiles({
+const autoTilesFor = ({ watch, health, weather, screen }, phoneUsage) =>
+  autoTiles({
     watch,
     health,
     on: { weather: weatherOn(weather), screen: phoneUsage && screenOn(screen) },
     available: { screen: phoneUsage },
   })
+
+function AutoStep({ watch, health, weather, screen, children }) {
+  const phoneUsage = usePhoneUsageSupported()
+  const { tiles, maybe, off, later } = autoTilesFor({ watch, health, weather, screen }, phoneUsage)
   return (
     <>
-      <h1 className="onb-title">Ce que {APP_NAME} suit pour vous, sans rien faire</h1>
-      <p className="onb-lead">Pour information : rien à valider.</p>
+      {tiles.length > 0 ? (
+        <>
+          <h1 className="onb-title">Ce que {APP_NAME} suit pour vous, sans rien faire</h1>
+          <p className="onb-lead">Pour information : rien à valider.</p>
+        </>
+      ) : (
+        <h1 className="onb-title">Pour l’instant, vous notez vous-même</h1>
+      )}
       {tiles.length > 0 && (
         <ul className="onb-auto" aria-label="Suivi sans rien faire">
           {tiles.map((t) => (
@@ -800,6 +809,12 @@ export default function Onboarding() {
   const [ent] = useEntitlement()
   const step = STEPS[state.step]
   const gut = wantsGut(goalsOf(state))
+  // POLISH-SIM-133 : au temps 3, rien de suivi seul → Pilou ne dit pas « je m'en occupe »
+  const phoneUsage = usePhoneUsageSupported()
+  const autoQuiet =
+    step === 'auto' &&
+    autoTilesFor({ watch: state.watch === 'yes', health: state.health, weather: state.weather, screen: state.screen }, phoneUsage)
+      .tiles.length === 0
   const temps = TEMPS.indexOf(step)
 
   const update = (patch) => setState(saveOnboarding(patch))
@@ -893,7 +908,7 @@ export default function Onboarding() {
         {step === 'watch' && <WatchStep state={state} update={update} installed={installed} />}
         {/* Lot VIE (étape 12) : la rencontre ; Pilou en tête de chaque temps (order: -1, OnboardingPilou.css) */}
         {step === 'meet' && <MeetPilou mode="onboarding" onDone={() => go(state.step + 1)} />}
-        {temps >= 0 && <OnboardingPilou step={step} gut={gut} watch={state.watch} />}
+        {temps >= 0 && <OnboardingPilou step={step} gut={gut} watch={state.watch} quiet={autoQuiet} />}
         {step === 'auto' && (
           <AutoStep watch={state.watch === 'yes'} health={state.health} weather={state.weather} screen={state.screen}>
             <FoundStep

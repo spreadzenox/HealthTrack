@@ -621,7 +621,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       à un autre onglet, au retour il ne reste que Bien-être (`TrendsViewer.jsx` l. 276, `useState(initialKeys)` refait
       au montage). Correctif : garder le choix pour la session (sessionStorage, clé `halcya.trends.keys`), un lien
       `?mesure=` gardant la priorité. Test au remontage.
-    - [ ] **POLISH-SIM-131 — Ma journée, pastilles contraires au décompte** (J1, à reproduire avant tout code) :
+    - [x] **POLISH-SIM-131 — Ma journée, pastilles contraires au décompte** (fait le 21/11 12:30 : reproduit à la lecture, `PilouBanner` met `is-todo` sur ce qui reste mais `DayChecklist.css` remplissait `.is-todo` ; pleine = fait désormais, comme les repas de comprendre.SPEC ; test `dayDotsFill.test.js`) (J1, à reproduire avant tout code) :
       « Encore 1 chose aujourd'hui » avec une pastille pleine et deux vides, alors que bien-être et Méditation sont
       notés et seuls les repas restent (« Déjà noté (2) ») ; `dayChecklist` donne repas (à faire), bien-être (fait),
       habitude (faite), donc ○●● attendu. Capture `simulations/captures/2026-11-21-0830-stresse-presse-J1/ma-journee-points.png`.
@@ -631,7 +631,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       jour », Bien-être et une habitude, et le bas dit « 3 choses par jour · environ 1 minute » ; la persona compte 5
       gestes (`dailySummary(count)`, `services/onboardingFlow.js`). Proposer « Repas, bien-être et 1 habitude · environ
       1 minute » ou compter les repas à part. Texte seul.
-    - [ ] **POLISH-SIM-133 — Accueil temps 3 vide sans Health Connect** (J1, mineur) : si Health Connect est indisponible
+    - [x] **POLISH-SIM-133 — Accueil temps 3 vide sans Health Connect** (fait le 21/11 12:30 : rien de suivi seul → titre « Pour l’instant, vous notez vous-même », Pilou « Pour l’instant, c’est vous qui notez. Je garde tout. », sans « rien à valider » ; capture `--onboarding=auto-quiet`) (J1, mineur) : si Health Connect est indisponible
       (`health === 'unavailable'` : Android trop ancien, ou la version web des personas), le temps 3 dit « Tout ça,
       je m'en occupe » au-dessus d'une liste vide (« Activables : météo » seulement). Dans ce cas, une bulle et un titre
       qui ne promettent rien de plus (« Pour l'instant, vous notez ; la météo s'active dans Réglages »).

@@ -38,7 +38,8 @@
   border-radius: 50%;
 }
 
-.day-dot.is-todo {
+/* Pleine = fait, vide = à faire (POLISH-SIM-131) */
+.day-dot:not(.is-todo) {
   background: var(--color-brand);
 }
 

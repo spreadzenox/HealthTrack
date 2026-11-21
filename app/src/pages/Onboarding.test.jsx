@@ -94,7 +94,8 @@ describe('Accueil en 4 temps (refonte étape 5b) : le parcours', () => {
     expect(heading('Avez-vous une montre, un bracelet ou une balance ?')).toBeInTheDocument()
     expect(screen.getByText('2 sur 4')).toBeInTheDocument()
     fireEvent.click(btn('Continuer'))
-    expect(heading('Ce que Halcya suit pour vous, sans rien faire')).toBeInTheDocument()
+    // Ni montre ni météo : rien ne se suit seul (POLISH-SIM-133)
+    expect(heading('Pour l’instant, vous notez vous-même')).toBeInTheDocument()
     expect(screen.getByText('3 sur 4')).toBeInTheDocument()
     fireEvent.click(btn('Continuer'))
     expect(heading('Ce que vous noterez chaque jour')).toBeInTheDocument()
@@ -326,6 +327,23 @@ describe('Temps 3 : « Ce que Halcya suit pour vous, sans rien faire »', () => 
     expect(screen.queryByText(/Rien à cocher/)).toBeNull()
     expect(screen.getByText('Activables dans Réglages › Sources : pas (votre téléphone), météo.')).toBeInTheDocument()
     expect(screen.getByText(/^Avec une montre ou un bracelet :/)).toBeInTheDocument()
+  })
+
+  it('rien de suivi seul : le titre et Pilou ne promettent rien (POLISH-SIM-133)', () => {
+    at('auto', { watch: 'no', weather: 'off', health: 'unavailable' })
+    renderAt()
+    expect(heading('Pour l’instant, vous notez vous-même')).toBeInTheDocument()
+    expect(screen.getByText('Pour l’instant, c’est vous qui notez. Je garde tout.')).toBeInTheDocument()
+    expect(screen.queryByText(/je m’en occupe/)).toBeNull()
+    expect(screen.queryByText('Pour information : rien à valider.')).toBeNull()
+    expect(screen.getByText('Activables dans Réglages › Sources : météo.')).toBeInTheDocument()
+  })
+
+  it('au moins une chose suivie seule : Pilou s’en occupe', () => {
+    at('auto', { watch: 'no', weather: 'on', health: 'unavailable' })
+    renderAt()
+    expect(heading('Ce que Halcya suit pour vous, sans rien faire')).toBeInTheDocument()
+    expect(screen.getByText('Tout ça, je m’en occupe. Vous n’avez rien à faire.')).toBeInTheDocument()
   })
 })
 
