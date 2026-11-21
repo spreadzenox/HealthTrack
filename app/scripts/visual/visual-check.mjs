@@ -131,7 +131,7 @@
  *   npm run visual -- --routes=/bienvenue --click="Commencer > Continuer"  # écrans suivants de l'onboarding
  *                                          (sans --onboarding, il est noté « fait » pour que les autres pages s'affichent)
  *   npm run visual -- --routes=/bienvenue --onboarding=notes   # accueil en 4 temps (refonte, étape 5b) : goal, goal-gut,
- *                                          watch, watch-yes, watch-huawei, watch-no, auto, auto-none, auto-found, notes,
+ *                                          watch, watch-yes, watch-huawei, watch-no, auto, auto-none, auto-quiet, auto-found, notes,
  *                                          notes-gut, face (avec --face=on), premium (avec --play), tour (visite
  *                                          guidée, route /, --click="Exemple au jour 14" pour l'exemple) ; sans valeur
  *                                          avec --empty : la carte d'ouverture
@@ -797,6 +797,8 @@ async function main() {
       'watch-no': at('watch', { watch: 'no' }),
       auto: at('auto', { watch: 'yes' }),
       'auto-none': at('auto', { watch: 'no' }),
+      // Rien de suivi seul : ni montre, ni Health Connect, ni météo (POLISH-SIM-133)
+      'auto-quiet': at('auto', { watch: 'no', weather: 'off', health: 'unavailable' }),
       // « Ce que Halcya a trouvé » sous les tuiles : résumé depuis les données de démo, sans relire Health Connect
       'auto-found': at('auto', { watch: 'yes', health: 'granted', imported: true }),
       notes: at('notes', { goals: ['wellbeing'], goalsVersion: 2 }),
