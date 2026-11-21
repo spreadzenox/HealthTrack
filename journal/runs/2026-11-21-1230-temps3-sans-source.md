@@ -30,9 +30,16 @@
 - iPhone : les 58 correctifs de `iphone/patches/` s'appliquent à la suite sur le code modifié (`git apply --index`,
   comme `upstream.sh`) ; aucun ne touche `OnboardingPilou.jsx` ni `AutoStep`. Code partagé : parité sans ligne à ajouter.
 
+## Merge de #1170
+- Build iPhone de #1170 vert (11:31 → 12:04 UTC) ; capture iPhone du temps 4 (`vierge-onboarding-notes`) regardée :
+  liste et habitudes correctes, la ligne de résumé reste sous le pli comme sur Android (texte couvert par le test).
+- Tous les checks verts, branche à jour sur main (8982fcf) : mergée en squash → **d1e2b79** (titre et texte écrits
+  à la main). « Build & Release » de d1e2b79 en cours à la fin du run : à vérifier au run suivant.
+- Cette branche remise sur d1e2b79, puis passée en « prête » (un seul build iPhone).
+
 ## Suite proposée
-0. Merger #1170 une fois son build iPhone vert et la capture iPhone du temps 4 regardée ; puis mettre cette branche
-   (empilée sur #1170) à jour sur main, la passer en « prête » (un build iPhone), regarder la capture et merger.
+0. Vérifier la release de d1e2b79 ; merger #1171 une fois son build iPhone vert et les captures iPhone du temps 3
+   et de Ma journée regardées.
 1. Les 5 défauts du passage du 21/11 sont soldés : suite du BACKLOG (polish, refonte).
 2. De jour : captures App Store de la refonte (ASC-CAPTURES-REFONTE), puis « 👉 PI2 prête ».
 3. Ce soir : build iPhone et TestFlight à 21:20, Alpha à 23:45.
