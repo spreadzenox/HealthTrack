@@ -621,7 +621,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       à un autre onglet, au retour il ne reste que Bien-être (`TrendsViewer.jsx` l. 276, `useState(initialKeys)` refait
       au montage). Correctif : garder le choix pour la session (sessionStorage, clé `halcya.trends.keys`), un lien
       `?mesure=` gardant la priorité. Test au remontage.
-    - [ ] **POLISH-SIM-131 — Ma journée, pastilles contraires au décompte** (J1, à reproduire avant tout code) :
+    - [x] **POLISH-SIM-131 — Ma journée, pastilles contraires au décompte** (fait le 21/11 12:30 : reproduit à la lecture, `PilouBanner` met `is-todo` sur ce qui reste mais `DayChecklist.css` remplissait `.is-todo` ; pleine = fait désormais, comme les repas de comprendre.SPEC ; test `dayDotsFill.test.js`) (J1, à reproduire avant tout code) :
       « Encore 1 chose aujourd'hui » avec une pastille pleine et deux vides, alors que bien-être et Méditation sont
       notés et seuls les repas restent (« Déjà noté (2) ») ; `dayChecklist` donne repas (à faire), bien-être (fait),
       habitude (faite), donc ○●● attendu. Capture `simulations/captures/2026-11-21-0830-stresse-presse-J1/ma-journee-points.png`.

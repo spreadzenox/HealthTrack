@@ -1,4 +1,4 @@
-# Run du 21/11 12:30 — Temps 3 sans source (POLISH-SIM-133)
+# Run du 21/11 12:30 — Temps 3 sans source et pastilles de Ma journée (POLISH-SIM-133, 131)
 
 **Type** : 🐛 · **Contrôle d'intégrité** : empreinte conforme (dd430fbd…), origin/main 8982fcf au départ.
 
@@ -20,15 +20,20 @@
 - `npm run visual -- --onboarding=auto-quiet` (nouveau préréglage) : capture relue ; `--onboarding=auto-none`
   (météo allumée) inchangée.
 
+- **POLISH-SIM-131** (reproduit à la lecture, sans persona) : `PilouBanner` marque `is-todo` ce qui reste, mais
+  `DayChecklist.css` remplissait `.day-dot.is-todo` : pleines = à faire, l'inverse de la convention (comprendre.SPEC,
+  repas : « pleines = photographié »). Désormais `.day-dot:not(.is-todo)` est rempli. Test CSS `dayDotsFill.test.js`
+  écrit rouge d'abord ; capture `/ma-journee` relue (« Encore 2 choses », deux pastilles vides).
+
 ## Vérifications
-- Tests : 4 188 ✅ · eslint propre sur les fichiers touchés.
+- Tests : 4 189 ✅ · eslint propre sur les fichiers touchés.
 - iPhone : les 58 correctifs de `iphone/patches/` s'appliquent à la suite sur le code modifié (`git apply --index`,
   comme `upstream.sh`) ; aucun ne touche `OnboardingPilou.jsx` ni `AutoStep`. Code partagé : parité sans ligne à ajouter.
 
 ## Suite proposée
 0. Merger #1170 une fois son build iPhone vert et la capture iPhone du temps 4 regardée ; puis mettre cette branche
    (empilée sur #1170) à jour sur main, la passer en « prête » (un build iPhone), regarder la capture et merger.
-1. POLISH-SIM-131 (Ma journée, pastilles) : à reproduire d'abord avec `npm run persona -- --day=1`.
+1. Les 5 défauts du passage du 21/11 sont soldés : suite du BACKLOG (polish, refonte).
 2. De jour : captures App Store de la refonte (ASC-CAPTURES-REFONTE), puis « 👉 PI2 prête ».
 3. Ce soir : build iPhone et TestFlight à 21:20, Alpha à 23:45.
 
