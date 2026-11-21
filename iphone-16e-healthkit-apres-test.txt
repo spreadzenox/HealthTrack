@@ -1,0 +1,110 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=16AFAE62-8F15-4D89-8041-9A6510AE4913 "-only-testing:HalcyaUITests/SanteUITests/testAccepterLaFeuilleSante"
+
+2026-11-21 12:53:10.507 xcodebuild[43950:122844] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-21 12:53:10.540 xcodebuild[43950:122844] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:16AFAE62-8F15-4D89-8041-9A6510AE4913, OS:26.2, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:16AFAE62-8F15-4D89-8041-9A6510AE4913, OS:26.2, name:iPhone 16e }
+2026-11-21 12:53:16.322 xcodebuild[43950:122844] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-21 12:53:27.568214+0000 HalcyaUITests-Runner[45081:125663] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-21 12:53:35.392.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-21 12:53:35.414.
+Test Suite 'SanteUITests' started at 2026-11-21 12:53:35.416.
+Test Case '-[HalcyaUITests.SanteUITests testAccepterLaFeuilleSante]' started.
+    t =     0.01s Start Test at 2026-11-21 12:53:35.422
+    t =     1.14s Set Up
+    t =     1.14s Open fr.jpesquet.sante
+    t =     1.14s     Activate fr.jpesquet.sante
+    t =     1.24s         Wait for fr.jpesquet.sante to idle
+    t =     1.37s Waiting 30.0s for Any (First Match) to exist
+    t =     2.42s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     2.42s         Checking existence of `Any (First Match)`
+    t =     2.77s Checking existence of `Any (First Match)`
+    t =     2.87s Tap Any (First Match)
+    t =     2.87s     Wait for fr.jpesquet.sante to idle
+    t =     2.87s     Find the Any (First Match)
+    t =     2.95s     Check for interrupting elements affecting "Tout activer" StaticText
+    t =     3.07s     Synthesize event
+    t =     3.55s     Wait for fr.jpesquet.sante to idle
+    t =     4.61s Checking `Expect predicate `isEnabled == 1` for object "Autoriser" Button`
+    t =     4.61s     Find the "Autoriser" Button
+    t =     4.74s     Capturing element debug description
+    t =     4.89s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     5.09s         Find: Descendants matching type Button
+    t =     5.10s         Find: Elements matching predicate '"Autoriser" IN identifiers'
+    t =     5.10s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     5.22s         Find: Descendants matching type Button
+    t =     5.23s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     5.57s Checking `Expect predicate `isEnabled == 1` for object "Autoriser" Button`
+    t =     5.57s     Find the "UIA.Health.Allow.Button" Button
+    t =     5.65s     Capturing element debug description
+    t =     5.73s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     5.83s         Find: Descendants matching type Button
+    t =     5.83s         Find: Elements matching predicate '"Autoriser" IN identifiers'
+    t =     5.84s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     5.92s         Find: Descendants matching type Button
+    t =     5.93s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     6.57s Checking `Expect predicate `isEnabled == 1` for object "Autoriser" Button`
+    t =     6.57s     Find the "UIA.Health.Allow.Button" Button
+    t =     6.64s     Capturing element debug description
+    t =     6.74s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     6.83s         Find: Descendants matching type Button
+    t =     6.83s         Find: Elements matching predicate '"Autoriser" IN identifiers'
+    t =     6.84s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     6.92s         Find: Descendants matching type Button
+    t =     6.93s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     7.56s Checking `Expect predicate `isEnabled == 1` for object "Autoriser" Button`
+    t =     7.57s     Find the "UIA.Health.Allow.Button" Button
+    t =     7.63s     Capturing element debug description
+    t =     7.74s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     7.84s         Find: Descendants matching type Button
+    t =     7.84s         Find: Elements matching predicate '"Autoriser" IN identifiers'
+    t =     7.85s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     7.94s         Find: Descendants matching type Button
+    t =     7.95s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     8.57s Checking `Expect predicate `isEnabled == 1` for object "Autoriser" Button`
+    t =     8.57s     Find the "UIA.Health.Allow.Button" Button
+    t =     8.62s     Capturing element debug description
+    t =     8.70s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     8.77s         Find: Descendants matching type Button
+    t =     8.77s         Find: Elements matching predicate '"Autoriser" IN identifiers'
+    t =     8.78s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     8.85s         Find: Descendants matching type Button
+    t =     8.85s         Requesting snapshot of accessibility hierarchy for app with pid 24199
+    t =     8.86s Checking existence of `"Tout activer" StaticText`
+    t =     8.98s Tap "Tout activer" StaticText
+    t =     8.98s     Wait for fr.jpesquet.sante to idle
+    t =     8.98s     Find the "Tout activer" StaticText
+    t =     9.05s     Check for interrupting elements affecting "Tout activer" StaticText
+    t =     9.11s     Synthesize event
+    t =     9.40s     Wait for fr.jpesquet.sante to idle
+    t =    10.46s Checking `Expect predicate `isEnabled == 1` for object "UIA.Health.Allow.Button" Button`
+    t =    10.46s     Find the "UIA.Health.Allow.Button" Button
+    t =    10.54s Tap "UIA.Health.Allow.Button" Button
+    t =    10.54s     Wait for fr.jpesquet.sante to idle
+    t =    10.54s     Find the "UIA.Health.Allow.Button" Button
+    t =    10.61s     Check for interrupting elements affecting "UIA.Health.Allow.Button" Button
+    t =    10.65s     Synthesize event
+    t =    10.94s     Wait for fr.jpesquet.sante to idle
+    t =    12.02s Checking `Expect predicate `exists == 0` for object "UIA.Health.Allow.Button" Button`
+    t =    12.02s     Checking existence of `"UIA.Health.Allow.Button" Button`
+    t =    12.05s Tear Down
+Test Case '-[HalcyaUITests.SanteUITests testAccepterLaFeuilleSante]' passed (12.129 seconds).
+Test Suite 'SanteUITests' passed at 2026-11-21 12:53:47.550.
+	 Executed 1 test, with 0 failures (0 unexpected) in 12.129 (12.134) seconds
+Test Suite 'HalcyaUITests.xctest' passed at 2026-11-21 12:53:47.551.
+	 Executed 1 test, with 0 failures (0 unexpected) in 12.129 (12.137) seconds
+Test Suite 'Selected tests' passed at 2026-11-21 12:53:47.551.
+	 Executed 1 test, with 0 failures (0 unexpected) in 12.129 (12.160) seconds
+2026-11-21 12:53:48.138 xcodebuild[43950:122844] [MT] IDETestOperationsObserverDebug: 31.801 elapsed -- Testing started completed.
+2026-11-21 12:53:48.138 xcodebuild[43950:122844] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-21 12:53:48.138 xcodebuild[43950:122844] [MT] IDETestOperationsObserverDebug: 31.801 sec, +31.801 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-ddanvhijpcrftecpkvukwvygjfed/Logs/Test/Test-HalcyaUITests-2026.11.21_12-53-10-+0000.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
