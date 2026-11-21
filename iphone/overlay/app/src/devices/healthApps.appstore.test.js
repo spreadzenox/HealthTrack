@@ -25,18 +25,3 @@ describe('« qui envoie quoi » avec la VFC de l’app Santé (SDNN, iPhone)', (
   })
 })
 
-// CYCLE-iOS-3 (décision du propriétaire du 10/11, « Ok cycle ») : le cycle lu dans l'app Santé (source `health_connect`,
-// app qui l'a noté dans `sourceName`) compte parmi les mesures reçues de « Mes appareils », sans jamais passer pour une
-// mesure « arrêtée » (rien n'arrive pendant les jours sans règles)
-describe('« qui envoie quoi » avec le cycle de l’app Santé (iPhone)', () => {
-  it('« cycle » parmi les mesures d’une source, pour les règles comme pour les symptômes', () => {
-    expect(metricKey({ type: 'cycle', payload: { subtype: 'period', flow: 'medium' } })).toBe('cycle')
-    expect(metricKey({ type: 'cycle', payload: { subtype: 'symptom', symptom: 'cramps' } })).toBe('cycle')
-    expect(METRICS.find((m) => m.key === 'cycle')?.label).toBe('cycle')
-    const now = new Date('2026-11-10T20:00:00Z')
-    const days = [1, 2, 3, 4, 5, 6, 7, 8].map((d) => ({ type: 'cycle', at: new Date(now - (d + 30) * 86400000).toISOString(), payload: { subtype: 'period' } }))
-    const [cycle] = sourceCoverage(days, now)
-    expect(cycle.key).toBe('cycle')
-    expect(cycle.stopped).toBeFalsy()
-  })
-})

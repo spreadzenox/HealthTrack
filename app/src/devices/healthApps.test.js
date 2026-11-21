@@ -11,6 +11,7 @@ import {
   missingWatchMetrics,
   unsharedWatchMetrics,
   metricKey,
+  METRICS,
 } from './healthApps'
 import { WATCH_GUIDES } from '../data/watchGuides'
 
@@ -197,6 +198,17 @@ describe('sourceCoverage (« qui envoie quoi »)', () => {
     expect(cov.find((m) => m.key === 'heartRate')).toMatchObject({ habitual: true, stopped: false, gapDays: 0 })
     // ordre d'affichage : cœur avant VFC
     expect(cov.map((m) => m.key)).toEqual(['heartRate', 'heartRateVariability'])
+  })
+
+  it('cycle (règles, symptômes) : suivi, par épisodes, jamais signalé comme arrêté (DEM-IOS-8)', () => {
+    expect(metricKey({ type: 'cycle', payload: { subtype: 'period', flow: 'medium' } })).toBe('cycle')
+    expect(metricKey({ type: 'cycle', payload: { subtype: 'symptom', symptom: 'cramps' } })).toBe('cycle')
+    expect(METRICS.find((m) => m.key === 'cycle')).toMatchObject({ label: 'cycle', episodic: true })
+    // 8 jours de règles il y a un mois : « habituel » sur sa fenêtre, mais rien n'arrive entre deux règles
+    const entries = daily(8, 30, (at) => ({ at, type: 'cycle', payload: { subtype: 'period' } }))
+    const [cycle] = sourceCoverage(entries, NOW)
+    expect(cycle).toMatchObject({ key: 'cycle', habitual: true, stopped: false })
+    expect(missingWatchMetrics([{ key: 'heartRate' }, { key: 'sleep' }])).not.toContain('cycle')
   })
 
   it('mesure occasionnelle (pesée, séance) : jamais signalée comme arrêtée', () => {

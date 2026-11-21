@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **21/11 19:30** — **DEM-IOS-8** (rien de visible) : « Mes appareils » compte le cycle parmi les mesures d'une source, jamais « arrêté » (par épisodes) ; le correctif iPhone 60 est fondu dans le code partagé (45 correctifs). Sur Android, servira quand CYCLE-3 lira les règles dans Health Connect.
 - **21/11 18:30** — **DEM-IOS-16** (rien de visible) : le test des libellés « digestif » ignore les identifiants de notes de Nouveautés (ils ne s'affichent jamais) ; le correctif iPhone 48, qui ajoutait ce motif, est fondu dans le code partagé (46 correctifs).
 - **21/11 17:30** — **DEM-IOS-15** (Android) : sans abonnement, une piste d'Objectifs montre de nouveau son titre flouté au-dessus de « Débloquer » (la barre mesurait 0 × 0) ; le correctif iPhone 50, qui faisait déjà la même chose, est fondu dans le code partagé (47 correctifs). DEM-IOS-19 classée sans objet.
 - **21/11 15:30** — **DEM-IOS-3** (rien de visible) : les plugins des rappels du soir, de la note du soir et de la portion sont exportés par leurs services ; le correctif iPhone 63 est fondu dans le code partagé (48 correctifs). Série 6,9" de la fiche App Store en cours sur main.
