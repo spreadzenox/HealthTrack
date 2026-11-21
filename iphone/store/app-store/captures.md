@@ -57,6 +57,10 @@ pour ce qui reste, corrigé par `d4be953`). Comme la fiche Play (`--trial=8`, `-
 fait maintenant Agir avec un essai du sommeil au jour 8 (`-essai`) et la Réintroduction vue par un abonné (`-abonne`) :
 séries iPhone et iPad à reprendre après ce changement, puis à regarder avant tout envoi.
 
+**Série de la refonte regardée le 21/11 15:30** (run 44913071824, `24a5b45`, build 1234.1234) : les 8 captures du
+tableau conviennent ; Agir montre l'essai du sommeil au jour 8 sur 10, la Réintroduction tous les groupes (vue d'abonné).
+**Envoyée le 21/11 vers 16:35** (`store-push.yml`, « captures » et « captures_ipad », run 44919753451).
+
 Série précédente (6/11, envoyée par l'API le 1/11 puis le 6/11 ; à remplacer) : Accueil « Votre journée », Analyses
 (Bien-être, FODMAP, Tendances), Journal (Repas, Jours), Sources, Accueil sombre.
 
@@ -89,7 +93,11 @@ Série du 2/11 (`9d7db16`, Android v717, build 717.217), regardée écran par é
 - l'accueil (clair et sombre) dit encore « sur le téléphone » ; la page Sources (« Elles restent sur ce téléphone »,
   temps d'écran) est remplacée par **Nutrition** (choix « B » du propriétaire, 2/11).
 
-**Sélection de la refonte (19/11), à capturer** (`devices: iPad Pro 13-inch (M5)`, de jour, mêmes règles que l'iPhone ; la série du 6/11 ci-dessus est à remplacer) :
+**Sélection de la refonte (19/11)**, capturée le 21/11 (run 44916283972, `24a5b45`, build 1234.1234, 2064 × 2752,
+fin 16:31 de Paris) et **regardée le 21/11 16:40** : même colonne centrée, rien de coupé ; Pilou de jour sur son île
+(clair et sombre) ; Ma journée avec les pastilles corrigées ; Agir avec l'essai du sommeil au jour 8 ; Tendances
+semaine (Pilou qui dépasse du graphique, comme sur l'iPhone) ; Nutrition avec ses repères et la mention des repas
+manquants ; aucun mot d'Android, aucune erreur JavaScript dans la console. Envoyée avec la série iPhone (run 44919753451) :
 
 | # | Fichier (`captures/store-ipad`) | Ce qu'elle montre |
 |---|---|---|
