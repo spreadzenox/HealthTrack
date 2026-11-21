@@ -61,6 +61,7 @@ function MealsLine({ task }) {
           </MealPhotoButton>
         )))}
       </div>
+      <Link to="/food" className="day-meals-link">Vos repas</Link>
     </>
   )
 }

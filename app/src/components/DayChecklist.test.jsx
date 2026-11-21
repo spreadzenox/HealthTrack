@@ -43,6 +43,12 @@ describe('DayChecklist (refonte étape 3)', () => {
     expect(within(meals).getByText('1 sur 3')).toBeInTheDocument()
   })
 
+  it('« Vos repas » sous les cercles mène à tous les repas, même avant le premier du jour (POLISH-SIM-137)', () => {
+    show()
+    const meals = screen.getByRole('group', { name: 'Repas' })
+    expect(within(meals).getByRole('link', { name: 'Vos repas' })).toHaveAttribute('href', '/food')
+  })
+
   it('avec l’objectif digestion, le ventre attend 18 h puis ouvre le bilan du jour', () => {
     const before = show({ askGut: true })
     const line = screen.getByRole('group', { name: 'Votre digestion ce soir' })
