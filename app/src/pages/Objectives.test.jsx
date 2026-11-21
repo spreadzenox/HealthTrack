@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Objectives from './Objectives'
 import { fromDisplay } from '../services/mood/wellbeingScale'
+import { createTrial } from '../services/trials'
 const ONBOARDING_KEY = 'healthtrack_onboarding'
 
 const NOW = new Date(2026, 10, 15, 12)
@@ -86,5 +87,41 @@ describe('Objectifs, vue d’ensemble (refonte « Compagnon », étape 6a)', () 
     expect(card).not.toHaveTextContent('plus de recul')
     expect(card).toHaveAttribute('href', '/recommendations/ventre')
     expect(document.body.textContent).not.toMatch(/ventre/i)
+  })
+})
+
+describe('POLISH-SIM-136 : l’essai en cours se retrouve en haut d’Objectifs', () => {
+  beforeEach(() => localStorage.clear())
+  const sleepFactor = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30 } }
+  const trialRow = (id, outcome = 'wellbeing') => {
+    const payload = createTrial({ ...sleepFactor, outcome }, { now: new Date(NOW.getTime() - 3 * DAY) })
+    return { id, type: 'trial', at: payload.startedAt, payload }
+  }
+  const showWith = (readTrials) => render(
+    <MemoryRouter><Objectives read={() => Promise.resolve(states([3, 3, 3, 3, 4, 4, 4]))} readTrials={readTrials} now={NOW} /></MemoryRouter>,
+  )
+
+  it('un essai en cours : une ligne au-dessus des objectifs, qui ouvre l’essai', async () => {
+    goals([])
+    showWith(async () => [trialRow(4)])
+    const link = await screen.findByTestId('objectives-trial')
+    expect(link).toHaveAttribute('href', '/agir/essai/4')
+    expect(link).toHaveTextContent(/^Essai en cours : Dormir au moins 7 h 30jour 4 sur 10 · aujourd’hui, jour (avec|sans)$/)
+    const card = await screen.findByTestId('objective-wellbeing')
+    expect(link.compareDocumentPosition(card) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('un essai du confort digestif compte aussi ; sans essai ou si la lecture échoue, rien', async () => {
+    goals([])
+    const { unmount } = showWith(async () => [trialRow(9, 'digestion')])
+    expect(await screen.findByTestId('objectives-trial')).toHaveAttribute('href', '/agir/essai/9')
+    unmount()
+    const r = showWith(async () => [])
+    await screen.findByTestId('objective-wellbeing')
+    expect(screen.queryByTestId('objectives-trial')).toBeNull()
+    r.unmount()
+    showWith(async () => { throw new Error('x') })
+    await screen.findByTestId('objective-wellbeing')
+    expect(screen.queryByTestId('objectives-trial')).toBeNull()
   })
 })
