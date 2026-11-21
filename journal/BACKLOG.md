@@ -640,7 +640,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       mangées).
   - **Passage des personas du 21/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-21-2030-synthese.md) ;
     « Ventre, sans technique » J45 après la mise à jour et « Prendre soin de soi » J14, iPhone seul tous deux) :
-    - [ ] **POLISH-SIM-134 — Accueil, « Aucune photo prise » coupé à gauche** (J14, vérifié : capture
+    - [x] **POLISH-SIM-134 — Accueil, « Aucune photo prise » coupé à gauche** (FAIT 21/11 21:30 : portail vers
+      `document.body` dans `MealPhotoButton.jsx`, test d'abord, capture de l'Accueil relue) (J14, vérifié : capture
       `bulle-repas-coupee.png` et `App.css` 980) : toucher la bulle Repas puis annuler la photo ouvre l'avis
       `.meal-photo-missed` (`position: fixed`, `left: 50%`, `translateX(-50%)`), rendu dans la scène de l'île dont un
       parent a une transformation : il se place par rapport à la scène, pas à l'écran, et on ne lit que « …se. Décrire

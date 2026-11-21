@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
 import { setPendingMealPhoto } from '../services/mealPhotoHandoff'
 import LineIcon from './LineIcon'
@@ -11,6 +12,8 @@ import LineIcon from './LineIcon'
  * de décrire le repas à la place, au lieu de ne rien montrer.
  * POLISH-SIM-122 : `slot` (cercle Matin, Midi ou Soir de Ma journée) suit la photo ou la description jusqu'à la page
  * Repas, qui range le repas dans ce cercle.
+ * POLISH-SIM-134 : le bandeau est rendu dans `document.body` ; dans la scène de l'île (parent transformé), un
+ * `position: fixed` se plaçait par rapport à la scène et sortait de l'écran à gauche.
  */
 const HINT_MS = 8000
 
@@ -52,14 +55,15 @@ export default function MealPhotoButton({ className, children, theme, ariaLabel,
       <input ref={inputRef} id={id} type="file" accept="image/*" capture="environment" onChange={onChange}
         className="visually-hidden-input" data-testid="meal-photo-input" />
       <label htmlFor={id} className={className} data-theme={theme} role="button" tabIndex={0} aria-label={ariaLabel} onKeyDown={onKeyDown}>{children}</label>
-      {missed && (
+      {missed && createPortal(
         <div className="meal-photo-missed" role="status">
           <span>Aucune photo prise.</span>
           <Link to="/food" state={{ describeMeal: true, ...(slot ? { mealSlot: slot } : {}) }} className="meal-photo-missed-link">Décrire le repas</Link>
           <button type="button" className="meal-photo-missed-close" aria-label="Fermer" onClick={() => setMissed(false)}>
             <LineIcon name="close" size={18} />
           </button>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   )
