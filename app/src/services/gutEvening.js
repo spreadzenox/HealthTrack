@@ -21,7 +21,8 @@ const LEARN_DAYS = 14
 const RECORD_VERSION = 1
 const KEY = 'healthtrack_gut_evening'
 
-const NativeGutEvening = registerPlugin('GutEvening')
+// Exporté pour les sondes de la build de captures iPhone (un seul registerPlugin par plugin)
+export const NativeGutEvening = registerPlugin('GutEvening')
 const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
 
 /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */
