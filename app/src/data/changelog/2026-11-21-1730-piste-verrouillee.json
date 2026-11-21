@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-21",
+  "kind": "correctif",
+  "title": "Objectifs : une piste réservée aux abonnés se voit",
+  "variants": ["play", "sideload"],
+  "items": [
+    "Sans abonnement, une piste repérée n'affichait que « Débloquer », sans rien au-dessus. Elle montre maintenant son titre flouté, pour que vous sachiez qu'une piste vous attend."
+  ]
+}
