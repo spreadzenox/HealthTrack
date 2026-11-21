@@ -750,7 +750,7 @@ function NotesStep({ gut, habits, onHabits }) {
         </div>
       )}
       <p className="onb-summary" role="status">
-        {monoDigits(dailySummary(notes.length + habits.length))}
+        {monoDigits(dailySummary(notes, habits.length))}
       </p>
       <p className="onb-motto">Partez de ce que vous faites déjà : ce n’est pas une liste de bonnes résolutions.</p>
     </>

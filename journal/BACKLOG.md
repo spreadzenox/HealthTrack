@@ -627,7 +627,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       habitude (faite), donc ○●● attendu. Capture `simulations/captures/2026-11-21-0830-stresse-presse-J1/ma-journee-points.png`.
       Reproduire avec `npm run persona -- --day=1` (note 2/5 puis « Non » à Méditation) ; peut-être l'état d'avant la
       dernière réponse.
-    - [ ] **POLISH-SIM-132 — Accueil temps 4, « 3 choses par jour »** (J1) : la liste montre Repas « en photo, 3 par
+    - [x] **POLISH-SIM-132 — Accueil temps 4, « 3 choses par jour »** (fait le 21/11 11:30 : `dailySummary(notes, habitCount)` nomme ce qui se note, « Repas, bien-être et 1 habitude · environ 1 minute ») (J1) : la liste montre Repas « en photo, 3 par
       jour », Bien-être et une habitude, et le bas dit « 3 choses par jour · environ 1 minute » ; la persona compte 5
       gestes (`dailySummary(count)`, `services/onboardingFlow.js`). Proposer « Repas, bien-être et 1 habitude · environ
       1 minute » ou compter les repas à part. Texte seul.
