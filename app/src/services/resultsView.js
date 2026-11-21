@@ -15,6 +15,14 @@
 const MAX_PISTES = 3
 const MAX_PER_HORIZON = 5
 
+/**
+ * METHODE-BIAIS-4 (banc du 21/11) : au long terme, une moyenne sur 21 jours se confond avec la tendance ; la taille
+ * d'un facteur sans effet y ressortait à 1,2 point de digestion en moyenne (« Lactose +3,2 pt »), et un vrai effet n'y
+ * est presque jamais net avant des mois. Une ligne pas nette n'y montre que sa fourchette, sans chiffre : elle ne sert
+ * ni à dire qu'un facteur change de sens, ni à choisir la ligne la plus forte d'un facteur.
+ */
+export const isRangeOnly = (f) => f.horizon === 'long' && !f.net
+
 /** Couleur du thème d'un facteur ou d'un résultat (DESIGN.md, leçon 12). */
 export const THEME_TONE = { wellbeing: 'mint', digestion: 'peach', nutrition: 'peach', activity: 'lilac', sleep: 'night', body: 'rose', context: 'stone', habit: 'honey' }
 
@@ -58,7 +66,7 @@ export function resultsView(outcome) {
   const weighFactors = (weigh ?? []).flatMap((x) => x.factors)
   const weighNothingNet = weighFactors.length > 0 && weighFactors.every((x) => !x.net)
   const byKey = new Map()
-  for (const x of weighFactors.filter((y) => !y.outOfScale && y.effect !== 0)) {
+  for (const x of weighFactors.filter((y) => !y.outOfScale && !isRangeOnly(y) && y.effect !== 0)) {
     byKey.set(x.key, [...(byKey.get(x.key) ?? []), x])
   }
   const flipped = weighNothingNet
@@ -68,7 +76,7 @@ export function resultsView(outcome) {
       .map((xs) => xs[0].label)
   const lookBest = new Map()
   // POLISH-SIM-16 : un effet hors échelle (« pas assez de données ») ne passe jamais devant un effet mesurable.
-  const rank = (f) => (f.outOfScale ? -1 : Math.abs(f.effect))
+  const rank = (f) => (f.outOfScale ? -1 : isRangeOnly(f) ? 0 : Math.abs(f.effect))
   for (const f of all.filter((x) => !x.actionable)) {
     const cur = lookBest.get(f.key)
     if (!cur || rank(f) > rank(cur)) lookBest.set(f.key, f)

@@ -32,7 +32,7 @@ import GutEveningReminder from '../components/GutEveningReminder'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
 import { isExampleMode } from '../storage/exampleMode'
-import { THEME_TONE, pistesTitles, resultsView } from '../services/resultsView'
+import { THEME_TONE, isRangeOnly, pistesTitles, resultsView } from '../services/resultsView'
 import { influenceFamilies, familyDetail } from '../services/influenceFamilies'
 import { readGutNotes } from '../services/gutNotes'
 import { actSections, reintroLine } from '../services/act'
@@ -211,6 +211,8 @@ function EffectBar({ f, max }) {
   const pos = (v) => `${50 + (v / max) * 50}%`
   const left = Math.min(0, f.effect)
   const right = Math.max(0, f.effect)
+  // METHODE-BIAIS-4 : au long terme, pas nette, la ligne ne montre que sa fourchette (resultsView.js).
+  const rangeOnly = isRangeOnly(f)
   return (
     <li className={`reco-effect${f.net ? '' : ' is-unsure'}`} data-tone={THEME_TONE[f.theme] ?? 'stone'}>
       <span className="reco-effect-label">
@@ -220,15 +222,17 @@ function EffectBar({ f, max }) {
       <span className="reco-effect-track" aria-hidden="true">
         <span className="reco-effect-zero" />
         <span className="reco-effect-range" style={{ left: pos(Math.max(-max, f.low)), right: `calc(100% - ${pos(Math.min(max, f.high))})` }} />
-        <span className="reco-effect-bar" style={{ left: pos(left), right: `calc(100% - ${pos(right)})` }} />
+        {!rangeOnly && <span className="reco-effect-bar" style={{ left: pos(left), right: `calc(100% - ${pos(right)})` }} />}
       </span>
-      <span className={`reco-effect-value${f.net ? '' : ' is-unsure'}`} aria-label={`${pts(f.effect)} point sur 5${f.net ? '' : ', pas assez net'}`}>{monoDigits(pts(f.effect))}&nbsp;pt</span>
+      {rangeOnly
+        ? <span className="reco-effect-value is-unsure is-word">pas assez net</span>
+        : <span className={`reco-effect-value${f.net ? '' : ' is-unsure'}`} aria-label={`${pts(f.effect)} point sur 5${f.net ? '' : ', pas assez net'}`}>{monoDigits(pts(f.effect))}&nbsp;pt</span>}
     </li>
   )
 }
 
 function EffectList({ factors }) {
-  const shown = factors.filter((f) => !f.outOfScale)
+  const shown = factors.filter((f) => !f.outOfScale && !isRangeOnly(f))
   const max = Math.max(0.3, ...shown.map((f) => Math.max(Math.abs(f.low), Math.abs(f.high), Math.abs(f.effect))))
   return <ul className="reco-effects">{factors.map((f) => <EffectBar key={`${f.key}-${f.horizon}`} f={f} max={max} />)}</ul>
 }

@@ -755,6 +755,15 @@
   color: var(--text-muted);
 }
 
+/* METHODE-BIAIS-4 : au long terme, pas nette, la ligne dit « pas assez net » à la place du chiffre. */
+.reco-effect-value.is-word {
+  width: 5.2em;
+  min-width: 0;
+  white-space: normal;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
 /* POLISH-SIM-16 : effet plus grand que l'échelle, pas de chiffre. */
 .reco-effect-out {
   grid-column: 2 / 4;

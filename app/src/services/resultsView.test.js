@@ -67,6 +67,22 @@ describe('Analyses sur le contrat (ORG-4, ORG-6)', () => {
     expect(v.flipped).toEqual(['Lactose'])
   })
 
+  it('METHODE-BIAIS-4 : au long terme, une ligne pas nette ne dit pas qu’un facteur change de sens', () => {
+    const v = resultsView({ status: 'ready', beatsPersistence: true, horizons: {
+      short: h('short', 'ready', [f('lactose', -0.2, { net: false, label: 'Lactose' }), f('sleep', 0.4)]),
+      long: h('long', 'ready', [f('lactose', 3.2, { net: false, horizon: 'long', label: 'Lactose' })]),
+    } })
+    expect(v.flipped).toEqual([])
+  })
+
+  it('METHODE-BIAIS-4 : « À regarder » garde la ligne mesurable d’un facteur plutôt que sa ligne de long terme pas nette', () => {
+    const v = resultsView({ status: 'ready', beatsPersistence: true, horizons: {
+      short: h('short', 'ready', [f('sleep', 0.4), f('hrv', 0.2, { actionable: false, net: false })]),
+      long: h('long', 'ready', [f('hrv', 2.4, { actionable: false, net: false, horizon: 'long' })]),
+    } })
+    expect(v.lookOnly.map((x) => [x.key, x.horizon])).toEqual([['hrv', 'short']])
+  })
+
   it('résumé pour l’Accueil et Agir', () => {
     const r = { outcomes: { wellbeing: { status: 'ready', horizons: { short: h('short', 'ready', [f('sleep', 0.4, { label: 'Sommeil' })]) } }, digestion: { status: 'ready', horizons: { short: h('short', 'ready', [f('fodmap_fructans', -0.4, { label: 'Fructanes' })]) } } } }
     expect(pistesTitles(r)).toEqual({ gut: ['Fructanes → digestion'], levers: ['Sommeil'] })

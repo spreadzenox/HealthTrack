@@ -250,6 +250,32 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(Number(sleep.querySelector('.reco-effect-bar').style.right.match(/([\d.]+)%/)?.[1] ?? 100)).toBeLessThan(30)
   })
 
+  it('METHODE-BIAIS-4 : au long terme, une ligne pas nette montre sa fourchette, sans chiffre ni barre', async () => {
+    const results = structuredClone(readyResults)
+    results.outcomes.wellbeing.horizons.long = {
+      ...h('long', 'Long terme', 'ready', [
+        { ...f('fodmap_lactose', 'Lactose', 3.2, { theme: 'nutrition', net: false, horizon: 'long' }), low: -0.6, high: 4.4 },
+        f('sleepMinutes', 'Sommeil', 0.3, { horizon: 'long' }),
+      ], 60, 42),
+      window: 'de 7 à 27 jours avant',
+    }
+    renderPage({}, results)
+    await screen.findByRole('region', { name: 'Pistes à tester' })
+    const rows = [...document.querySelectorAll('.reco-effect')]
+    const lactose = rows.find((li) => li.textContent.startsWith('Lactose'))
+    expect(lactose).toHaveTextContent('pas assez net')
+    expect(lactose.textContent).not.toMatch(/3,2|pt/)
+    expect(lactose.querySelector('.reco-effect-bar')).toBeNull()
+    expect(lactose.querySelector('.reco-effect-range')).not.toBeNull()
+    // Net au long terme : chiffre et barre, comme ailleurs ; pas net à court terme : chiffre en gris, comme avant.
+    const longSleep = rows.find((li) => li.textContent.startsWith('Sommeil') && li.textContent.includes('0,3'))
+    expect(longSleep.querySelector('.reco-effect-bar')).not.toBeNull()
+    const screenRow = rows.find((li) => li.textContent.startsWith('Temps d’écran'))
+    expect(screenRow).toHaveTextContent('−0,2')
+    // Sa fourchette (jusqu'à 4,4) n'étire pas l'échelle des autres barres.
+    expect(Number(longSleep.querySelector('.reco-effect-bar').style.right.match(/([\d.]+)%/)?.[1] ?? 100)).toBeLessThan(30)
+  })
+
   it('POLISH-SIM-50 : un facteur qui change de sens selon le délai est dit une fois, sous la légende', async () => {
     const results = structuredClone(readyResults)
     results.outcomes.wellbeing.horizons.short.factors.push(f('fodmap_lactose', 'Lactose', -0.2, { theme: 'nutrition', net: false }))
