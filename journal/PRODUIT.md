@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **21/11 18:30** — **DEM-IOS-16** (rien de visible) : le test des libellés « digestif » ignore les identifiants de notes de Nouveautés (ils ne s'affichent jamais) ; le correctif iPhone 48, qui ajoutait ce motif, est fondu dans le code partagé (46 correctifs).
 - **21/11 17:30** — **DEM-IOS-15** (Android) : sans abonnement, une piste d'Objectifs montre de nouveau son titre flouté au-dessus de « Débloquer » (la barre mesurait 0 × 0) ; le correctif iPhone 50, qui faisait déjà la même chose, est fondu dans le code partagé (47 correctifs). DEM-IOS-19 classée sans objet.
 - **21/11 15:30** — **DEM-IOS-3** (rien de visible) : les plugins des rappels du soir, de la note du soir et de la portion sont exportés par leurs services ; le correctif iPhone 63 est fondu dans le code partagé (48 correctifs). Série 6,9" de la fiche App Store en cours sur main.
 - **21/11 13:30** — **DEM-IOS-2** (rien de visible) : le thème réutilise le `SystemBars` de Capacitor au lieu de réenregistrer le plugin à chaque changement. #1171 débloquée (note de Nouveautés sans « Health Connect » pour l'iPhone) ; captures 6,9" de la fiche App Store lancées de jour (ASC-CAPTURES-REFONTE, avant « 👉 PI2 prête »).
