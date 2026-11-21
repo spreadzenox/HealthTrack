@@ -10,7 +10,9 @@ import { join, relative } from 'node:path'
  */
 const APP = join(import.meta.dirname, '..', '..')
 // « Et votre ventre ? » (première note de l'accueil, ACC-7) : texte exact validé par le propriétaire le 08/11
-const ALLOWED = [/recommendations\/ventre/, /mal au ventre/, /signals:/, /Et votre ventre ?/, /ce qui va avec votre ventre/]
+const ALLOWED = [/recommendations\/ventre/, /mal au ventre/, /signals:/, /Et votre ventre ?/, /ce qui va avec votre ventre/,
+  // Identifiant d'une note de Nouveautés (liste APPSTORE_HIDDEN de la variante appstore), jamais affiché (DEM-IOS-16)
+  /'\d{4}-\d{2}-\d{2}-\d{4}-[a-z-]*ventre[a-z-]*'/]
 
 function files(dir, out = []) {
   for (const f of readdirSync(dir)) {
@@ -38,5 +40,11 @@ describe('libellés « digestif » (AUJ-7)', () => {
       }
     }
     expect(hits).toEqual([])
+  })
+
+  it("l'identifiant d'une note de Nouveautés n'est pas un texte visible (DEM-IOS-16)", () => {
+    const allowed = (line) => ALLOWED.some((re) => re.test(line))
+    expect(allowed("  '2026-11-06-1935-ventre-grande-police',")).toBe(true)
+    expect(allowed("  title: 'Votre ventre en un coup d’œil',")).toBe(false)
   })
 })
