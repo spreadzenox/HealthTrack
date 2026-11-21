@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent, within, waitFor, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Trends from './Trends'
@@ -39,6 +39,27 @@ const renderAt = (path) => render(
 )
 
 describe('Journal › Tendances (ORG-3)', () => {
+  beforeEach(() => sessionStorage.clear())
+
+  it('POLISH-SIM-130 : les courbes choisies restent quand on revient sur l’onglet ; un lien ?mesure= garde la priorité', async () => {
+    const first = renderAt('/tendances')
+    fireEvent.click(await screen.findByRole('button', { name: 'Ajouter une mesure' }))
+    fireEvent.click(within(screen.getByRole('list', { name: 'Mesures à ajouter' })).getByRole('button', { name: /Pas/ }))
+    expect(screen.getByRole('img', { name: 'Courbe de Bien-être, Pas' })).toBeInTheDocument()
+    first.unmount()
+    const back = renderAt('/tendances')
+    expect(await screen.findByRole('img', { name: 'Courbe de Bien-être, Pas' })).toBeInTheDocument()
+    back.unmount()
+    renderAt('/tendances?mesure=sleep')
+    expect(await screen.findByRole('img', { name: 'Courbe de Sommeil' })).toBeInTheDocument()
+  })
+
+  it('POLISH-SIM-130 : un choix gardé dont aucune mesure n’a de courbe laisse la vue par défaut', async () => {
+    sessionStorage.setItem('halcya.trends.keys', JSON.stringify(['weight']))
+    renderAt('/tendances')
+    expect(await screen.findByRole('img', { name: 'Courbe de Bien-être' })).toBeInTheDocument()
+  })
+
   it('sous les onglets de Données, une carte avec les mesures, « + » et Jour / Semaine / Mois', async () => {
     renderAt('/tendances')
     expect(screen.getByRole('navigation', { name: 'Données' })).toBeInTheDocument()
@@ -425,6 +446,8 @@ describe('POLISH-SIM-81 : une mesure touchée en Jour garde sa courbe', () => {
 })
 
 describe('REFONTE-7b-2 (2) : l’exemple de la visite se charge sans montrer l’état vide', () => {
+  beforeEach(() => sessionStorage.clear())
+
   it('à l’entrée et à la sortie du mode exemple : le chargement, jamais les données d’avant', async () => {
     let release
     const slow = () => (isExample() ? new Promise((r) => (release = () => r(states))) : Promise.resolve(null))

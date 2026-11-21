@@ -419,6 +419,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **21/11 10:30** — **POLISH-SIM-130** : Tendances garde les courbes choisies pour la session (retour depuis un autre onglet) ; un lien `?mesure=` garde la priorité.
 - **21/11 09:30** — **POLISH-SIM-129** : sur l'Accueil, le « + » de « Bien-être aujourd'hui » ouvre la note de bien-être, celui de « Vos données du jour » est retiré (les deux menaient au bandeau d'ajout, qui n'est plus que dans Ma journée).
 - **21/11 08:30** — run « idées » : passage de personas avant l'objectif du 22/11 (Tout mesurer J14 mise à jour, Stressé et pressé J1 neuve) ; rien de perdu ; POLISH-SIM-129 à 133 au BACKLOG (dont le « + » mort de « Vos données du jour » sur l'Accueil) ; proposition : calories d'activité dans Tendances.
 - **21/11 07:30** — **STILL-SOIR** (objectif du 22/11, reste du sprint) : l'image fixe de l'île (palier bas, attente du premier rendu) a sa version du soir, îlot sombre et Pilou éveillé, entre la tombée de la nuit et le coucher ; avant, l'îlot éclairé de jour sous un ciel étoilé. METHODE-BIAIS-4 soldée.

@@ -46,7 +46,7 @@ export const KEPT_KEYS = [
   'halcya_ai_quota',
 ]
 
-const SESSION_KEYS = ['healthtrack-wellbeing-prompt-session']
+const SESSION_KEYS = ['healthtrack-wellbeing-prompt-session', 'halcya.trends.keys']
 
 function removeAll(storage, keys) {
   for (const k of keys) {
