@@ -419,6 +419,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **21/11 13:30** — **DEM-IOS-2** (rien de visible) : le thème réutilise le `SystemBars` de Capacitor au lieu de réenregistrer le plugin à chaque changement. #1171 débloquée (note de Nouveautés sans « Health Connect » pour l'iPhone) ; captures 6,9" de la fiche App Store lancées de jour (ASC-CAPTURES-REFONTE, avant « 👉 PI2 prête »).
 - **21/11 11:30** — **POLISH-SIM-132** : au temps 4 du premier lancement, le résumé nomme ce qui se note (« Repas, bien-être et 1 habitude · environ 1 minute ») au lieu de « 3 choses par jour » (les repas sont 3 gestes).
 - **21/11 12:30** — **POLISH-SIM-133** : au temps 3 du premier lancement, quand rien ne se suit seul (ni montre, ni Health Connect ou Santé, ni météo), le titre et Pilou ne promettent plus « je m’en occupe » : « Pour l’instant, vous notez vous-même ».
 - **21/11 12:30** — **POLISH-SIM-131** : Ma journée, les pastilles à côté de « Encore N choses » étaient inversées (pleines = à faire) ; pleine = fait désormais.
