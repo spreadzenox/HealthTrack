@@ -34,7 +34,7 @@ import { faceMoodDays } from './mood/faceMoodDays'
 import { FODMAP_SUBGROUPS } from './fodmapGroups'
 import { fodmapGroupOf, mealFactors } from './gutWindows'
 import { measuredTagsByDay } from './behaviorTags'
-import { estimateStates, OBS_SD, observationsFromEntries } from './method/stateSpace'
+import { estimateStates, GUT_VALUE, OBS_SD, observationsFromEntries } from './method/stateSpace'
 import { STABILITY_MIN, fitOutcomeModel } from './method/ridgeModel'
 import { detectChanges } from './method/changes'
 import { GUT_TYPE } from './today'
@@ -601,6 +601,25 @@ export function boundToScale(f) {
   return f
 }
 
+/** Étendue de l'échelle du confort (calme 4,5 → douleur 1) : aucune différence de digestion ne peut la dépasser. */
+export const GUT_SPAN = GUT_VALUE.calm - GUT_VALUE.pain
+
+/**
+ * METHODE-BIAIS-5 : la taille d'un lien de digestion s'ajuste sur l'observation du jour, une échelle ordonnée. Quand un
+ * facteur rare tranche presque à coup sûr (visite guidée : soir d'oignon → douleur, sinon calme), la pente multipliée
+ * par le changement habituel extrapole au-delà de l'échelle (−4 pt). Un lien net garde alors sa place, borné à
+ * l'étendue du confort ; un lien qui n'est pas net reste jugé par `boundToScale`. La fourchette ne sort jamais de
+ * l'échelle.
+ */
+export function boundToGutScale(f) {
+  const clamp = (v) => Math.max(-GUT_SPAN, Math.min(GUT_SPAN, v))
+  if (Math.abs(f.effect) > SCALE_SPAN && !f.net) return boundToScale(f)
+  f.effect = clamp(f.effect)
+  f.low = clamp(f.low)
+  f.high = clamp(f.high)
+  return f
+}
+
 /** Modèle régularisé d'un résultat (ORG-5c) sur les facteurs × horizons triés. */
 function fitModel(ys, days, fitted, weights, changeDates = [], observed = null) {
   const nums = [...ys.keys()].map(dayNum)
@@ -695,9 +714,9 @@ export function smoothedMatrix(obs, { raw, days, today }) {
  * METHODE-BIAIS-4 : l'observation du jour, sans lissage, pour la TAILLE montrée d'un lien. Le lissage tire l'écart du
  * jour vers la tendance (environ deux tiers gardés pour une note : banc du 21/11) et rétrécissait d'autant la taille
  * d'un effet du jour ; une observation bruitée, elle, ne biaise pas une pente. Note et visage combinés selon leur
- * précision, pesés de même. Bien-être seulement : pour la digestion, l'observation est une échelle ordonnée
- * (calme / gêne / douleur) dont la pente brute n'a pas été mesurée au banc et dépassait l'échelle sur la visite
- * guidée (fructanes −4 pt) ; elle garde la série lissée (METHODE-BIAIS-5).
+ * précision, pesés de même. METHODE-BIAIS-5 : la digestion aussi (ventre et selles selon leur précision ; banc du
+ * 21/11 : 0,71-0,76 de la vraie taille avec la série lissée, 0,99-1,05 avec l'observation), bornée à l'échelle du
+ * confort (`boundToGutScale`).
  */
 function observedSeries(obs, params) {
   const combine = (parts) => {
@@ -718,6 +737,7 @@ function observedSeries(obs, params) {
   }
   return {
     wellbeing: build(obs.wellbeing, (o) => [[o.note, OBS_SD.note], [o.face, faceSd]]),
+    digestion: build(obs.digestion, (o) => [[o.gut, OBS_SD.gut], [o.stool, OBS_SD.stool]]),
   }
 }
 
@@ -775,7 +795,8 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
         f.high = r2(Math.max(c.shown.low, c.shown.high) * a)
       }
       f.net = passed && Boolean(c) && c.stability >= STABILITY_MIN && Math.sign(f.effect) !== 0
-      boundToScale(f)
+      if (def.id === 'digestion') boundToGutScale(f)
+      else boundToScale(f)
       delete f._p
       horizons[f.horizon].factors.push(f)
     })
