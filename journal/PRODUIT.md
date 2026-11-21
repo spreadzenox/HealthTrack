@@ -419,6 +419,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **21/11 08:30** — run « idées » : passage de personas avant l'objectif du 22/11 (Tout mesurer J14 mise à jour, Stressé et pressé J1 neuve) ; rien de perdu ; POLISH-SIM-129 à 133 au BACKLOG (dont le « + » mort de « Vos données du jour » sur l'Accueil) ; proposition : calories d'activité dans Tendances.
 - **21/11 07:30** — **STILL-SOIR** (objectif du 22/11, reste du sprint) : l'image fixe de l'île (palier bas, attente du premier rendu) a sa version du soir, îlot sombre et Pilou éveillé, entre la tombée de la nuit et le coucher ; avant, l'îlot éclairé de jour sous un ciel étoilé. METHODE-BIAIS-4 soldée.
 - **19/11 19:30** — **UPG-9 (carte FODMAP d'un repas)** (objectif du 22/11) : plusieurs groupes → une phrase « Parfois mal digérés : … », groupes, grammes et sources derrière « Détails ». Reste d'UPG-9 : les pistes « −2,7 pt pour 1 repas riche en fructanes » en clair.
 - **19/11 18:30** — **POLISH-SIM-108 (lien retour)** (objectif du 22/11) : la page d'un essai, rangée sous Objectifs, revient à « Votre bien-être » ou « Votre confort digestif » au lieu de « ← Agir ».

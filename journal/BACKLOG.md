@@ -608,6 +608,36 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       le titre, une phrase simple (comme `pistePlain`) qui nomme les aliments du groupe le plus net, ou « Rien à éviter
       pour l'instant : notez encore… » ; les lignes chiffrées derrière « Détails ». Sorbitol +0,2 court terme et −0,8
       moyen terme : dire que les deux délais se lisent séparément (ou n'en montrer qu'un par défaut).
+  - **Passage des personas du 21/11 08:30 (PERSONAS-2111, avant l'objectif du 22/11)** : « Tout mesurer » J14 en mise à jour
+    (iPhone seul, joué sur l'apparence Android) et « Stressé et pressé » J1 neuve (Android seul). Synthèse :
+    `simulations/2026-11-21-0830-synthese.md`. Rien de perdu à la mise à jour (14 jours, essai jour 4 sur 10).
+    - [ ] **POLISH-SIM-129 — Accueil, le « + » de « Vos données du jour » ne fait rien** (J14, vérifié dans le code) :
+      `StripPlus` (`components/TodayBySource.jsx` l. 109) appelle `scrollToStrip()`, qui cherche `#today-add` ; le
+      bandeau d'ajout (`AddStrip`) n'est plus rendu que dans Ma journée (`Dashboard.jsx`, `{day && <AddStrip …>}`),
+      alors que `TodayBySource` n'est rendu que sur l'Accueil (`{home && …}`). Touché deux fois, rien. Correctif : retirer
+      le « + » de ce bloc (des données automatiques, rien à y ajouter ; leçon 7, une action, un endroit), ou le faire
+      mener à Ma journée. Vérifier aussi les autres `StripPlus` hors de Ma journée. Test : aucun bouton mort sur l'Accueil.
+    - [ ] **POLISH-SIM-130 — Tendances oublie les courbes choisies** (J14, vérifié) : Bien-être + Pas choisis, on passe
+      à un autre onglet, au retour il ne reste que Bien-être (`TrendsViewer.jsx` l. 276, `useState(initialKeys)` refait
+      au montage). Correctif : garder le choix pour la session (sessionStorage, clé `halcya.trends.keys`), un lien
+      `?mesure=` gardant la priorité. Test au remontage.
+    - [ ] **POLISH-SIM-131 — Ma journée, pastilles contraires au décompte** (J1, à reproduire avant tout code) :
+      « Encore 1 chose aujourd'hui » avec une pastille pleine et deux vides, alors que bien-être et Méditation sont
+      notés et seuls les repas restent (« Déjà noté (2) ») ; `dayChecklist` donne repas (à faire), bien-être (fait),
+      habitude (faite), donc ○●● attendu. Capture `simulations/captures/2026-11-21-0830-stresse-presse-J1/ma-journee-points.png`.
+      Reproduire avec `npm run persona -- --day=1` (note 2/5 puis « Non » à Méditation) ; peut-être l'état d'avant la
+      dernière réponse.
+    - [ ] **POLISH-SIM-132 — Accueil temps 4, « 3 choses par jour »** (J1) : la liste montre Repas « en photo, 3 par
+      jour », Bien-être et une habitude, et le bas dit « 3 choses par jour · environ 1 minute » ; la persona compte 5
+      gestes (`dailySummary(count)`, `services/onboardingFlow.js`). Proposer « Repas, bien-être et 1 habitude · environ
+      1 minute » ou compter les repas à part. Texte seul.
+    - [ ] **POLISH-SIM-133 — Accueil temps 3 vide sans Health Connect** (J1, mineur) : si Health Connect est indisponible
+      (`health === 'unavailable'` : Android trop ancien, ou la version web des personas), le temps 3 dit « Tout ça,
+      je m'en occupe » au-dessus d'une liste vide (« Activables : météo » seulement). Dans ce cas, une bulle et un titre
+      qui ne promettent rien de plus (« Pour l'instant, vous notez ; la météo s'active dans Réglages »).
+    - Proposition (fonction nouvelle, pas de code sans accord) : « Calories d'activité » dans le « + » de Tendances
+      (le téléphone les envoie, la persona « Tout mesurer » ne les trouve nulle part ; Nutrition ne montre que les kcal
+      mangées).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
