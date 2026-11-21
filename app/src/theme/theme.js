@@ -52,9 +52,10 @@ export function resolveTheme(choice = getThemeChoice()) {
 
 async function styleSystemBars(dark) {
   try {
-    const { Capacitor, registerPlugin } = await import('@capacitor/core')
-    if (!Capacitor.isNativePlatform()) return
-    const bars = registerPlugin('SystemBars')
+    // Capacitor 8 enregistre déjà « SystemBars » (le plugin natif de l'app porte ce nom) : un registerPlugin par
+    // changement de thème remplissait la console de « already registered » (DEM-IOS-2).
+    const { Capacitor, SystemBars: bars } = await import('@capacitor/core')
+    if (!Capacitor.isNativePlatform() || !bars) return
     restoreSafeArea(bars)
     await bars.setStyle({ dark })
   } catch {
