@@ -650,6 +650,13 @@
   font-size: 1.02rem;
 }
 
+/* DEM-IOS-15 : sans conteneur flexible, la barre floutée (flex: 1) mesurait 0 × 0. */
+.reco-piste-title.is-locked {
+  display: flex;
+  align-items: center;
+  min-height: 1.4em;
+}
+
 .reco-piste-text {
   font-size: 0.88rem;
 }
