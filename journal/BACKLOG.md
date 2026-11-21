@@ -175,7 +175,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   hors échelle donc masqué : l'échelle ordonnée ne se lit pas comme une note. Mesurer au banc (`smooth: true`, effet
   planté sur la digestion, vérité à exprimer sur l'échelle 1 à 5 du confort) puis choisir : observation brute bornée,
   ou correction du rétrécissement par le gain de lissage.
-  **Mesuré le 21/11 02:30** (sondes jetables ; vérité = pente sur un journal brut de 1 200 jours, échelle du confort
+  **Mesuré le 21/11 02:30** (sondes jetables ; vérité = pente sur un journal brut de 1 500 jours, échelle du confort
   4,5 / 2,5 / 1 ; 30 jeux à 90 jours) : fibres effet fort, lissée 0,71 / fourchette juste 73 %, observation 0,99 / 97 % ;
   fibres effet moyen 0,73 / 91 % → 1,01 / 91 % ; sommeil moyen terme 0,76 / 75 % → 1,05 / 100 % ; nets identiques.
   Sans effet (40 jeux, court et moyen terme) : 45 jours, médiane 0,36 → 0,48 pt, max 0,96 → 1,35, aucun ≥ 2 ;
