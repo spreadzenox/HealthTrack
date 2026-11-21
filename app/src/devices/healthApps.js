@@ -137,6 +137,8 @@ export const METRICS = [
   { key: 'blood_glucose', label: 'glycémie' },
   { key: 'weight', label: 'poids' },
   { key: 'body_composition', label: 'masse grasse' },
+  // Cycle (règles, symptômes) lu dans Health Connect ou l'app Santé : par épisodes, jamais « arrêté » (DEM-IOS-8)
+  { key: 'cycle', label: 'cycle', episodic: true },
 ]
 const METRIC_BY_KEY = new Map(METRICS.map((m) => [m.key, m]))
 
@@ -187,7 +189,7 @@ export function sourceCoverage(entries, now = new Date()) {
       lastAt: new Date(last).toISOString(),
       days: recentDays.size,
       habitual,
-      stopped: habitual && gapDays >= STOP_AFTER_DAYS,
+      stopped: habitual && !m.episodic && gapDays >= STOP_AFTER_DAYS,
       gapDays,
     }
   })
