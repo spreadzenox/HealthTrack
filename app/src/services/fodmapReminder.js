@@ -17,7 +17,8 @@ export const PORTION_DEFAULT_MINUTE = 12 * 60
 const KEY = 'halcya_portion_reminder'
 const GUT_WINDOW_DAYS = 120
 
-const NativePortionReminder = registerPlugin('PortionReminder')
+// Exporté pour les sondes de la build de captures iPhone (un seul registerPlugin par plugin)
+export const NativePortionReminder = registerPlugin('PortionReminder')
 const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
 
 /** Plugin natif dans l'app (deux variantes), faux plugin des captures / tests, sinon aucun. */

@@ -26,7 +26,8 @@ const RECORD_VERSIONS = [1, 2]
 const KEY = 'healthtrack_evening_note'
 const MINUTE_KEY = 'healthtrack_evening_note_minute'
 
-const NativeEveningNote = registerPlugin('EveningNote')
+// Exporté pour les sondes de la build de captures iPhone (un seul registerPlugin par plugin)
+export const NativeEveningNote = registerPlugin('EveningNote')
 const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
 
 /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */
