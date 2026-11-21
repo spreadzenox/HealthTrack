@@ -155,6 +155,17 @@
   color: var(--tone-label);
 }
 
+.day-meals-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-min);
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  text-decoration: underline;
+}
+
 .day-meal-slot.is-filled .day-meal-circle {
   border: 2px solid var(--tone-label);
   background: var(--tone-label);

@@ -655,7 +655,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `/agir/essai` sous Objectifs, `Objectives.jsx` ne parle d'aucun essai) : l'essai ne se retrouve qu'en bas de
       l'Accueil. Une ligne « Essai en cours : Dormir au moins 7 h 30 · jour 4 sur 10 » en haut d'Objectifs, qui ouvre
       l'essai.
-    - [ ] **POLISH-SIM-137 — Ma journée, pas de chemin vers les repas passés** (J45 mise à jour) : les repas notés
+    - [x] **POLISH-SIM-137 — Ma journée, pas de chemin vers les repas passés** (FAIT le 22/11 00:30 : lien « Vos repas » sous les cercles, vers `/food`, test d'abord) (J45 mise à jour) : les repas notés
       avant la mise à jour ne se retrouvent que par Données › Nutrition › « Tous vos repas ». Un petit lien « Vos
       repas » sous les cercles des repas de Ma journée.
     - [ ] **POLISH-SIM-138 — Écran d'essai, « Aujourd'hui, jour avec. » et « 1 jour avec tenu sur 5 »** (J45,
