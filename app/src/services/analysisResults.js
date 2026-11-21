@@ -694,8 +694,10 @@ export function smoothedMatrix(obs, { raw, days, today }) {
 /**
  * METHODE-BIAIS-4 : l'observation du jour, sans lissage, pour la TAILLE montrée d'un lien. Le lissage tire l'écart du
  * jour vers la tendance (environ deux tiers gardés pour une note : banc du 21/11) et rétrécissait d'autant la taille
- * d'un effet du jour ; une observation bruitée, elle, ne biaise pas une pente. Note et visage (ventre et selles)
- * combinés selon leur précision, pesés de même ; aucune information du bien-être dans la digestion (règle 5).
+ * d'un effet du jour ; une observation bruitée, elle, ne biaise pas une pente. Note et visage combinés selon leur
+ * précision, pesés de même. Bien-être seulement : pour la digestion, l'observation est une échelle ordonnée
+ * (calme / gêne / douleur) dont la pente brute n'a pas été mesurée au banc et dépassait l'échelle sur la visite
+ * guidée (fructanes −4 pt) ; elle garde la série lissée (METHODE-BIAIS-5).
  */
 function observedSeries(obs, params) {
   const combine = (parts) => {
@@ -716,7 +718,6 @@ function observedSeries(obs, params) {
   }
   return {
     wellbeing: build(obs.wellbeing, (o) => [[o.note, OBS_SD.note], [o.face, faceSd]]),
-    digestion: build(obs.digestion, (o) => [[o.gut, OBS_SD.gut], [o.stool, OBS_SD.stool]]),
   }
 }
 
