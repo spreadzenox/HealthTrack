@@ -15,6 +15,12 @@
 - Capture iPhone d'Objectifs › Votre bien-être (abonné) regardée : rien d'anormal ; console sans erreur JS.
   Captures Android relues par le run de 01:30. Branche à jour sur main. **Mergée** (squash, 594b17b).
 
+## Après le merge de #1160
+- Build & Release et Tests verts sur 594b17b. **iOS — TestFlight** du soir parti sur 594b17b : succès (build envoyée ;
+  soumission bêta au groupe externe et expiration au run qui suivra son traitement par Apple).
+- **Play — AAB** rouge : Maven Central en 429 (Too Many Requests, kotlin-stdlib 2.2.0), panne passagère comme les
+  19 et 20/11. Job relancé à 01:5x UTC.
+
 ## METHODE-BIAIS-5 : mesure (sondes jetables, non commitées)
 Vérité exprimée sur l'échelle du confort (ventre 4,5 / 2,5 / 1) : pente retrouvée sur un journal brut de 1 500 jours.
 30 jeux à 90 jours, taille montrée / vraie et fourchette juste :
