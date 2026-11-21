@@ -455,7 +455,7 @@
     et s'arrête avant « Submit for Review » ; partie A, déclaration « Regulated Medical Device » préparée sur « No »,
     arrêt avant « Save ». Écrans non vus par la routine (aide d'Apple et relevé PI1 seulement). À lancer par le
     propriétaire le jour de la soumission.
-  - [x] **18/11 21:30 : outillage de la partie 0 de PI2** (R18-SOUMISSION-a) : `scripts/store-submission.mjs` + `ios-store-submission.yml` ; reste à le lancer sur main (relevé, puis préparation avec la build choisie).
+  - [x] **18/11 21:30 : outillage de la partie 0 de PI2** (R18-SOUMISSION-a) : `scripts/store-submission.mjs` + `ios-store-submission.yml` ; reste à le lancer sur main (relevé, puis préparation avec la build choisie). **Lancé le 21/11 05:30** : version 893, 1221.1221 attachée, notes revues (R18-SOUMISSION-b).
   - [x] **18/11 20:30 : mission PI2 réécrite pour la refonte** (retours du 18/11) : déclaration faite (« No »), version 893 et build de la refonte posées par l'API (R18-SOUMISSION-a, `journal/BACKLOG.md`), abonnements par Claude dans Chrome, « Submit for Review » seul au propriétaire. Notes pour l'examen revues (3 988 caractères). Adresses du site iOS vérifiées : 200 le 18/11 20:30.
   - [ ] **Avant la soumission, à trancher par la routine** : les adresses de `notes-examen.md` et de la fiche pointent
     encore vers le site de l'ancien dépôt (`spreadzenox.github.io/HealthTrack-iOS/`), qui doit rester en ligne

@@ -12,6 +12,10 @@
 
 ## Partie 0 — Faite par la routine, par l'API (rien à faire de votre côté)
 
+**Faite le 21/11 vers 05:33 (Paris)** (run 44866638637) : version **893** en préparation, build **1221.1221** attachée,
+notes de 3 988 caractères, publication manuelle. Si une build plus récente est validée avant « 👉 PI2 prête », la
+routine la rattache et le résumé nomme la build attendue.
+
 Workflow « App Store — préparer la soumission » (`.github/workflows/ios-store-submission.yml`, écrit le 18/11 21:30), lancé sur main, qui
 **n'envoie rien à l'examen** :
 
