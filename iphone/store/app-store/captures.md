@@ -45,10 +45,17 @@ la nuit Pilou dort sur une île nocturne. Tant que cette série n'est pas sur `c
 | 2 | `iphone-17-pro-max-demo-clair-ma-journee.png` | Ma journée : repas en trois cercles, bien-être, habitudes, bandeau d'ajout |
 | 3 | `iphone-17-pro-max-demo-clair-recommendations.png` | Objectifs : ce que vous suivez et les pistes à vérifier |
 | 4 | `iphone-17-pro-max-demo-clair-tendances.png` | Données › Tendances : la semaine face à votre propre norme |
-| 5 | `iphone-17-pro-max-demo-clair-agir.png` | Agir : un essai personnel pour vérifier une piste |
+| 5 | `iphone-17-pro-max-demo-clair-agir-essai.png` | Agir : un essai personnel en cours (sommeil, jour 8 sur 10) |
 | 6 | `iphone-17-pro-max-demo-clair-food.png` | Repas : « Photo du repas », repas habituels, derniers repas |
-| 7 | `iphone-17-pro-max-demo-clair-reintroduction.png` | Réintroduction guidée, groupe par groupe |
+| 7 | `iphone-17-pro-max-demo-clair-reintroduction-abonne.png` | Réintroduction guidée, groupe par groupe (vue d'un abonné) |
 | 8 | `iphone-17-pro-max-demo-sombre-accueil.png` | L'accueil en mode sombre |
+
+**Première série de la refonte regardée le 21/11 14:30** (run 44904461830, `d1e2b79`) : Accueil (clair, sombre),
+Tendances et Repas conviennent ; trois ne vont pas pour une fiche : Agir montrait « Rien en cours » (aucun essai dans la
+démo), la Réintroduction n'était que l'encart « Débloquer », et Ma journée avait encore les pastilles inversées (pleines
+pour ce qui reste, corrigé par `d4be953`). Comme la fiche Play (`--trial=8`, `--subscription=gold`), le mode captures
+fait maintenant Agir avec un essai du sommeil au jour 8 (`-essai`) et la Réintroduction vue par un abonné (`-abonne`) :
+séries iPhone et iPad à reprendre après ce changement, puis à regarder avant tout envoi.
 
 Série précédente (6/11, envoyée par l'API le 1/11 puis le 6/11 ; à remplacer) : Accueil « Votre journée », Analyses
 (Bien-être, FODMAP, Tendances), Journal (Repas, Jours), Sources, Accueil sombre.
@@ -90,7 +97,7 @@ Série du 2/11 (`9d7db16`, Android v717, build 717.217), regardée écran par é
 | 2 | `ipad-pro-13-inch-(m5)-demo-clair-ma-journee.png` | Ma journée : repas, bien-être, habitudes |
 | 3 | `ipad-pro-13-inch-(m5)-demo-clair-recommendations.png` | Objectifs : ce que vous suivez et les pistes à vérifier |
 | 4 | `ipad-pro-13-inch-(m5)-demo-clair-tendances.png` | Données › Tendances : la semaine face à votre propre norme |
-| 5 | `ipad-pro-13-inch-(m5)-demo-clair-agir.png` | Agir : un essai personnel |
+| 5 | `ipad-pro-13-inch-(m5)-demo-clair-agir-essai.png` | Agir : un essai personnel en cours |
 | 6 | `ipad-pro-13-inch-(m5)-demo-clair-food.png` | Repas : « Photo du repas », repas habituels |
 | 7 | `ipad-pro-13-inch-(m5)-demo-clair-nutrition.png` | Nutrition : vos apports moyens face aux repères (choix « B » du propriétaire, 2/11, gardé) |
 | 8 | `ipad-pro-13-inch-(m5)-demo-sombre-accueil.png` | L'accueil en mode sombre |

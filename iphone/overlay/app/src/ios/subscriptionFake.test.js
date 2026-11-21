@@ -18,12 +18,14 @@ const memory = () => {
 }
 
 describe('droits d’abonné des captures', () => {
-  it('deux captures d’abonné, le détail du bien-être et la famille Sommeil (REFONTE-6c-1), après les pages claires et jamais en dernier', () => {
+  it('trois captures d’abonné, le détail du bien-être, la famille Sommeil (REFONTE-6c-1) et la Réintroduction, après les pages claires et jamais en dernier', () => {
     const steps = plan()
     const subscribed = steps.filter(needsSubscriptionFake)
     expect(subscribed.map((s) => [s.name, s.route, s.theme])).toEqual([
       ['demo-clair-recommendations-bien-etre-abonne', '/recommendations/bien-etre', 'light'],
       ['demo-clair-recommendations-bien-etre-famille-sleep-abonne', '/recommendations/bien-etre/famille/sleep', 'light'],
+      // ASC-CAPTURES-REFONTE : la Réintroduction de la fiche App Store, sans « Débloquer » (comme la fiche Play)
+      ['demo-clair-reintroduction-abonne', '/reintroduction', 'light'],
     ])
     expect(new Set(steps.map((s) => s.name)).size).toBe(steps.length)
     expect(needsSubscriptionFake(steps[steps.length - 1])).toBe(false) // les sondes et les gestes réels gardent les vrais droits

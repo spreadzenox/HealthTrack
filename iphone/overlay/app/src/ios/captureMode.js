@@ -24,7 +24,13 @@ export const EMPTY_ROUTES = ['/', '/ma-journee', '/tendances', '/food', '/nutrit
 // (REFONTE-6b) Pages recapturées comme les voit un abonné (`-abonne`) : sans abonnement, le détail d'un objectif
 // floute ses pistes et masque « Par famille », et depuis la fin de la période de lancement sur iPhone (06/11) le
 // relais ne rend plus Gold au simulateur
-export const SUBSCRIBED_ROUTES = ['/recommendations/bien-etre', '/recommendations/bien-etre/famille/sleep']
+// ASC-CAPTURES-REFONTE (21/11) : la Réintroduction de la fiche App Store vue par un abonné, sans « Débloquer » (la fiche
+// Play est faite avec `--subscription=gold`)
+export const SUBSCRIBED_ROUTES = ['/recommendations/bien-etre', '/recommendations/bien-etre/famille/sleep', '/reintroduction']
+// ASC-CAPTURES-REFONTE : Agir avec un essai du sommeil en cours, au jour 8 sur 10 (`-essai`), comme `--trial=8` de la
+// fiche Play ; l'essai n'existe que pour cette capture
+export const TRIAL_ROUTES = ['/agir']
+const TRIAL_KEY = 'halcya_ios_capture_trial'
 // Pages longues : écrans suivants, défilés d'environ 80 % de l'écran chacun (`-2`, `-3`…)
 // (I6) Écran d'abonnement défilé : formules, prix, bouton, renouvellement et liens, sous le pli (capture pour Apple)
 export const SCROLLS = { '/connectors': 2, '/data': 1, '/settings': 1, '/premium': 1 }
@@ -125,7 +131,7 @@ export const MORE_ONBOARDING = [
 ]
 
 export function buildPlan(routes = ROUTES, darkRoutes = DARK_ROUTES, scrolls = SCROLLS, reveals = REVEALS, moreOnboarding = [],
-  emptyRoutes = [], emptyScrolls = {}, subscribedRoutes = [], emptyReveals = {}) {
+  emptyRoutes = [], emptyScrolls = {}, subscribedRoutes = [], emptyReveals = {}, trialRoutes = []) {
   const light = (route) => {
     const base = { name: `demo-clair-${pageName(route)}`, route, data: 'demo', theme: 'light' }
     const more = Array.from({ length: scrolls[route] || 0 }, (_, k) => ({ ...base, name: `${base.name}-${k + 2}`, scroll: k + 1 }))
@@ -145,6 +151,7 @@ export function buildPlan(routes = ROUTES, darkRoutes = DARK_ROUTES, scrolls = S
     }),
     ...routes.flatMap(light),
     ...subscribedRoutes.map((route) => ({ name: `demo-clair-${pageName(route)}-abonne`, route, data: 'demo', theme: 'light', subscribed: true })),
+    ...trialRoutes.map((route) => ({ name: `demo-clair-${pageName(route)}-essai`, route, data: 'demo', theme: 'light', trial: 8 })),
     ...darkRoutes.map((route) => ({ name: `demo-sombre-${pageName(route)}`, route, data: 'demo', theme: 'dark' })),
   ]
 }
@@ -164,6 +171,28 @@ export function largeTextPlan(routes = LARGE_TEXT_ROUTES) {
     { name: 'vierge-onboarding', route: null, data: null, theme: null },
     ...routes.map((route) => ({ name: `demo-clair-${pageName(route)}`, route, data: 'demo', theme: 'light' })),
   ]
+}
+
+/**
+ * Essai du sommeil au jour `day` sur 10 (« Dormir au moins 7 h 30 »), commencé à 9 h, tirage fixe 5 jours avec et 5
+ * sans : le même que `npm run visual -- --trial=8` d'Android (scripts/visual/visual-check.mjs).
+ */
+export function sleepTrialEntry(day = 8, now = new Date()) {
+  const start = new Date(now)
+  start.setHours(9, 0, 0, 0)
+  start.setDate(start.getDate() - (day - 1))
+  const key = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  const flags = [true, false, false, true, true, false, true, false, true, false]
+  const schedule = flags.map((w, i) => {
+    const d = new Date(start)
+    d.setDate(d.getDate() + i)
+    return { date: key(d), with: w }
+  })
+  return { type: 'trial', source: 'app_trial', at: start.toISOString(), payload: {
+    factor: { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, change: 30 },
+    direction: 'more', threshold: 450, schedule, answers: {}, startedAt: start.toISOString(), endedAt: null,
+    kept: false, removedAt: null, nudgedAt: null,
+  } }
 }
 
 export async function prepare(step, { storage, demoEntries, latestChangelogId, localStorage, now = Date.now() }) {
@@ -190,6 +219,13 @@ export async function prepare(step, { storage, demoEntries, latestChangelogId, l
     localStorage.setItem(SEEDED_KEY, '1')
     onboarded()
   }
+  // Essai de la capture `-essai` : posé pour elle seule, retiré avant la page suivante (les sondes gardent la démo)
+  const trialId = localStorage.getItem(TRIAL_KEY)
+  if (trialId && !step.trial) {
+    await storage.deleteEntry(Number(trialId))
+    localStorage.removeItem(TRIAL_KEY)
+  }
+  if (step.trial && !trialId) localStorage.setItem(TRIAL_KEY, String(await storage.createEntry(sleepTrialEntry(step.trial, new Date(now)))))
   // Lu par initTheme() au démarrage : appliqué au rechargement qui suit
   if (step.theme) localStorage.setItem('healthtrack_theme', step.theme)
 }
@@ -442,7 +478,7 @@ export async function installCaptureMode() {
     const file = { directory: Directory.Documents, encoding: Encoding.UTF8 }
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
     const largeText = textSizeAdjusted()
-    const plan = largeText ? largeTextPlan() : buildPlan(ROUTES, DARK_ROUTES, SCROLLS, REVEALS, MORE_ONBOARDING, EMPTY_ROUTES, EMPTY_SCROLLS, SUBSCRIBED_ROUTES, EMPTY_REVEALS)
+    const plan = largeText ? largeTextPlan() : buildPlan(ROUTES, DARK_ROUTES, SCROLLS, REVEALS, MORE_ONBOARDING, EMPTY_ROUTES, EMPTY_SCROLLS, SUBSCRIBED_ROUTES, EMPTY_REVEALS, TRIAL_ROUTES)
     const step = plan[Number(window.localStorage.getItem(STEP_KEY) ?? 0)]
     if (step?.data === 'demo') installPhoneUsageFake()
     if (needsBillingFake(step)) installBillingFake()
