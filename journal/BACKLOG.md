@@ -169,7 +169,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   (« Lactose +3,2 pt », ou « Méditation −3,0 pt » après ce run) ; une fenêtre de 21 jours sur 75 jours se confond avec
   la tendance. Mesurer au banc la taille montrée d'un facteur sans effet au long terme et, si elle est souvent grande,
   la ramener à la ridge ou masquer le chiffre sous un seuil de jours.
-- [ ] **METHODE-BIAIS-5 — Taille d'un lien de digestion** (né de METHODE-BIAIS-4, 21/11 01:30) : la taille montrée
+- [x] **METHODE-BIAIS-5 — Taille d'un lien de digestion** (né de METHODE-BIAIS-4, 21/11 01:30 ; **fait le 21/11 03:30** : `observedSeries` donne aussi `digestion` (ventre et selles selon `OBS_SD`), et `boundToGutScale` borne un lien de digestion net à `GUT_SPAN` (3,5, calme 4,5 → douleur 1), fourchette comprise, au lieu de le masquer ; un lien pas net au-delà de 4 reste `outOfScale`. Banc apparié (30 jeux, 90 jours, fibres court terme) : taille lissée / taille sans lissage 0,70 avant (test rouge), entre 0,9 et 1,15 après ; visite guidée du jour 28 : piste fructanes gardée, `tourResults` vert) : la taille montrée
   d'un lien de digestion s'ajuste encore sur la série lissée de TS-1 (rétrécie comme l'était le bien-être). L'essai
   sur l'observation brute (ventre 4,5 / 2,5 / 1, selles) a donné « fructanes −4,04 pt » sur la visite guidée du jour 28,
   hors échelle donc masqué : l'échelle ordonnée ne se lit pas comme une note. Mesurer au banc (`smooth: true`, effet

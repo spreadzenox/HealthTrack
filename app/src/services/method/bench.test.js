@@ -233,6 +233,29 @@ describe('banc de la méthode (ORG-5a)', () => {
     expect(runBench(analyzeMatrix, { days: 70 }, { reps: 60, smooth: true }).falseSetRate).toBeLessThanOrEqual(0.05)
   }, 120_000)
 
+  // METHODE-BIAIS-5 (21/11) : la digestion lissée par TS-1 rétrécissait la taille d'un lien (0,71 à 0,76 de la vraie,
+  // banc du 21/11 02:30). Comparaison appariée : mêmes jeux analysés sans lissage (calme / gêne / douleur sur l'échelle
+  // du confort), la taille montrée doit rester la même.
+  it('notes du ventre lissées comme dans l\'app : un effet des fibres garde sa taille', async () => {
+    const { smoothSimulated } = await import('./bench')
+    const { GUT_VALUE } = await import('./stateSpace')
+    const gutOf = { 5: GUT_VALUE.calm, 3: GUT_VALUE.discomfort, 1: GUT_VALUE.pain }
+    const eff = { outcome: 'digestion', key: 'fiber_g', horizon: 'short', size: 1 }
+    const shown = (res) => res.outcomes.digestion.horizons.short.factors.find((f) => f.key === 'fiber_g')?.effect
+    const ratios = []
+    for (let seed = 1; seed <= 30; seed += 1) {
+      const { matrix, lastDay } = simulateMatrix({ days: 90, seed, effects: [eff] })
+      const raw = { ...matrix, series: { ...matrix.series, digestion: new Map([...matrix.series.digestion].map(([dk, v]) => [dk, gutOf[v]])) } }
+      const ref = shown(analyzeMatrix(raw, { today: lastDay }))
+      const got = shown(analyzeMatrix(smoothSimulated(matrix, lastDay), { today: lastDay }))
+      if (Number.isFinite(ref) && Number.isFinite(got) && Math.abs(ref) > 0.1) ratios.push(got / ref)
+    }
+    expect(ratios.length).toBeGreaterThanOrEqual(20)
+    const mean = ratios.reduce((s, v) => s + v, 0) / ratios.length
+    expect(mean).toBeGreaterThan(0.9)
+    expect(mean).toBeLessThan(1.15)
+  }, 120_000)
+
   it('banc lissé : les séries sont celles de TS-1, avec l\'observation du jour à part', async () => {
     const { smoothSimulated } = await import('./bench')
     const { matrix, lastDay } = simulateMatrix({ days: 40, seed: 5 })

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   CONTRACT_VERSION, DIGESTION_MIN_SYMPTOM_DAYS, FACTORS, factorKeysKnown, HORIZONS, OUTCOMES, UNLOCK_DAYS,
-  computeAnalysisResults, contributionsByDay, dayContributions, outcomeSeries, SCALE_SPAN, boundToScale, sameUnitPerFactor,
+  computeAnalysisResults, contributionsByDay, dayContributions, outcomeSeries, SCALE_SPAN, boundToScale, boundToGutScale, GUT_SPAN, sameUnitPerFactor,
   buildAnalysisMatrix, habitFactors,
 } from './analysisResults'
 import { isEstimatorInput } from './mood/estimatorInputs'
@@ -135,6 +135,14 @@ describe('contrat des résultats d’Analyses', () => {
     expect(l.low).toBe(-1.2)
     expect(l.high).toBe(-0.4)
     expect(l.net).toBe(true)
+  })
+
+  it('METHODE-BIAIS-5 : un lien de digestion net reste, borné à l’échelle du confort ; sinon jugé comme avant', () => {
+    expect(GUT_SPAN).toBe(3.5)
+    expect(boundToGutScale({ effect: -4.04, low: -5.2, high: -2.9, net: true })).toEqual({ effect: -3.5, low: -3.5, high: -2.9, net: true })
+    expect(boundToGutScale({ effect: -4.7, low: -6, high: 1, net: false })).toEqual({ effect: -4.7, low: -6, high: 1, net: false, outOfScale: true })
+    expect(boundToGutScale({ effect: 3.8, low: -0.2, high: 7, net: false })).toEqual({ effect: 3.5, low: -0.2, high: 3.5, net: false })
+    expect(boundToGutScale({ effect: 1.2, low: 0.4, high: 2, net: true })).toEqual({ effect: 1.2, low: 0.4, high: 2, net: true })
   })
 
   it('POLISH-SIM-16 : un effet plus grand que l’échelle n’est jamais net et ne pèse sur aucun jour', () => {
