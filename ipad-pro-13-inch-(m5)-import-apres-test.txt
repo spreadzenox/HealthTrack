@@ -1,0 +1,1882 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=1D202A62-75FA-4910-BFA1-14DDB30B0518 "-only-testing:HalcyaUITests/DonneesUITests/testImporterUnFichierDepuisFichiers"
+
+2026-11-21 15:18:36.800 xcodebuild[48144:139595] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-21 15:18:36.876 xcodebuild[48144:139595] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:1D202A62-75FA-4910-BFA1-14DDB30B0518, OS:26.2, name:iPad Pro 13-inch (M5) }
+{ platform:iOS Simulator, arch:x86_64, id:1D202A62-75FA-4910-BFA1-14DDB30B0518, OS:26.2, name:iPad Pro 13-inch (M5) }
+2026-11-21 15:18:52.436 xcodebuild[48144:139595] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-21 15:18:52.705 xcodebuild[48144:139595] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-21 15:19:02.380978+0000 HalcyaUITests-Runner[49145:142064] [Default] Running tests...
+2026-11-21 15:19:02.701918+0000 HalcyaUITests-Runner[49145:142464] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+    t =      nans Interface orientation changed to Portrait
+2026-11-21 15:19:05.732646+0000 HalcyaUITests-Runner[49145:142463] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+Test Suite 'Selected tests' started at 2026-11-21 15:19:05.829.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-21 15:19:05.831.
+Test Suite 'DonneesUITests' started at 2026-11-21 15:19:05.831.
+Test Case '-[HalcyaUITests.DonneesUITests testImporterUnFichierDepuisFichiers]' started.
+    t =     0.00s Start Test at 2026-11-21 15:19:05.834
+    t =     0.19s Set Up
+    t =     0.20s Open fr.jpesquet.sante
+    t =     0.20s     Activate fr.jpesquet.sante
+    t =     0.52s         Wait for fr.jpesquet.sante to idle
+    t =     0.53s Waiting 30.0s for Any (First Match) to exist
+    t =     1.55s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     1.55s         Checking existence of `Any (First Match)`
+    t =     1.73s Tap Any (First Match)
+    t =     1.73s     Wait for fr.jpesquet.sante to idle
+    t =     1.74s     Find the Any (First Match)
+    t =     1.88s     Check for interrupting elements affecting "Choisir un fichier à importer" Button
+    t =     1.99s         Wait for com.apple.springboard to idle
+    t =     2.10s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     2.10s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     2.16s     Synthesize event
+    t =     2.55s     Wait for fr.jpesquet.sante to idle
+    t =     2.55s Waiting 2.0s for Any (First Match) to exist
+    t =     3.63s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.63s         Checking existence of `Any (First Match)`
+    t =     3.74s         Capturing element debug description
+    t =     4.57s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     4.57s         Checking existence of `Any (First Match)`
+    t =     4.67s         Capturing element debug description
+    t =     4.67s     Checking existence of `Any (First Match)`
+    t =     4.75s Collecting debug information to assist test failure triage
+    t =     4.75s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =     4.91s Waiting 2.0s for Any (First Match) to exist
+    t =     5.92s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     5.93s         Checking existence of `Any (First Match)`
+    t =     6.06s         Capturing element debug description
+    t =     6.92s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     6.92s         Checking existence of `Any (First Match)`
+    t =     7.00s         Capturing element debug description
+    t =     7.00s     Checking existence of `Any (First Match)`
+    t =     7.10s Collecting debug information to assist test failure triage
+    t =     7.10s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =     7.30s Checking existence of `"Récents" Button`
+    t =     7.46s Checking existence of `"Explorer" Button`
+    t =     7.55s Checking existence of `"Parcourir" Button`
+    t =     7.65s Checking existence of `"Annuler" Button`
+    t =     8.03s Checking existence of `"Récents" Button`
+    t =     8.16s Checking existence of `"Explorer" Button`
+    t =     8.27s Checking existence of `"Parcourir" Button`
+    t =     8.36s Checking existence of `"Annuler" Button`
+    t =     8.78s Checking existence of `"Récents" Button`
+    t =     8.90s Checking existence of `"Explorer" Button`
+    t =     8.99s Checking existence of `"Parcourir" Button`
+    t =     9.07s Checking existence of `"Annuler" Button`
+    t =     9.43s Checking existence of `"Récents" Button`
+    t =     9.49s Checking existence of `"Explorer" Button`
+    t =     9.55s Checking existence of `"Parcourir" Button`
+    t =     9.61s Checking existence of `"Annuler" Button`
+    t =     9.97s Checking existence of `"Récents" Button`
+    t =    10.03s Checking existence of `"Explorer" Button`
+    t =    10.08s Checking existence of `"Parcourir" Button`
+    t =    10.13s Checking existence of `"Annuler" Button`
+    t =    10.49s Checking existence of `"Récents" Button`
+    t =    10.54s Checking existence of `"Explorer" Button`
+    t =    10.58s Checking existence of `"Parcourir" Button`
+    t =    10.63s Checking existence of `"Annuler" Button`
+    t =    10.98s Checking existence of `"Récents" Button`
+    t =    11.03s Checking existence of `"Explorer" Button`
+    t =    11.08s Checking existence of `"Parcourir" Button`
+    t =    11.13s Checking existence of `"Annuler" Button`
+    t =    11.49s Checking existence of `"Récents" Button`
+    t =    11.55s Checking existence of `"Explorer" Button`
+    t =    11.60s Checking existence of `"Parcourir" Button`
+    t =    11.65s Checking existence of `"Annuler" Button`
+    t =    12.00s Checking existence of `"Récents" Button`
+    t =    12.05s Checking existence of `"Explorer" Button`
+    t =    12.10s Checking existence of `"Parcourir" Button`
+    t =    12.15s Checking existence of `"Annuler" Button`
+    t =    12.50s Checking existence of `"Récents" Button`
+    t =    12.56s Checking existence of `"Explorer" Button`
+    t =    12.61s Checking existence of `"Parcourir" Button`
+    t =    12.66s Checking existence of `"Annuler" Button`
+    t =    13.01s Checking existence of `"Récents" Button`
+    t =    13.07s Checking existence of `"Explorer" Button`
+    t =    13.12s Checking existence of `"Parcourir" Button`
+    t =    13.17s Checking existence of `"Annuler" Button`
+sélecteur de fichiers absent après le toucher 1
+    t =    13.52s Tap "Choisir un fichier à importer" Button
+    t =    13.53s     Wait for fr.jpesquet.sante to idle
+    t =    13.53s     Find the "Choisir un fichier à importer" Button
+    t =    13.59s     Check for interrupting elements affecting "Choisir un fichier à importer" Button
+    t =    13.65s         Wait for com.apple.springboard to idle
+    t =    13.70s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    13.70s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    13.72s     Synthesize event
+    t =    14.02s     Wait for fr.jpesquet.sante to idle
+    t =    14.03s Waiting 2.0s for Any (First Match) to exist
+    t =    15.06s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    15.06s         Checking existence of `Any (First Match)`
+    t =    15.12s         Capturing element debug description
+    t =    16.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    16.04s         Checking existence of `Any (First Match)`
+    t =    16.09s         Capturing element debug description
+    t =    16.09s     Checking existence of `Any (First Match)`
+    t =    16.15s Collecting debug information to assist test failure triage
+    t =    16.15s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    16.23s Waiting 2.0s for Any (First Match) to exist
+    t =    17.24s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    17.24s         Checking existence of `Any (First Match)`
+    t =    17.31s         Capturing element debug description
+    t =    18.24s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    18.24s         Checking existence of `Any (First Match)`
+    t =    18.33s         Capturing element debug description
+    t =    18.33s     Checking existence of `Any (First Match)`
+    t =    18.42s Collecting debug information to assist test failure triage
+    t =    18.42s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    18.52s Checking existence of `"Récents" Button`
+    t =    18.59s Checking existence of `"Explorer" Button`
+    t =    18.68s Checking existence of `"Parcourir" Button`
+    t =    18.76s Checking existence of `"Annuler" Button`
+    t =    19.17s Checking existence of `"Récents" Button`
+    t =    19.25s Checking existence of `"Explorer" Button`
+    t =    19.33s Checking existence of `"Parcourir" Button`
+    t =    19.41s Checking existence of `"Annuler" Button`
+    t =    19.80s Checking existence of `"Récents" Button`
+    t =    19.86s Checking existence of `"Explorer" Button`
+    t =    19.93s Checking existence of `"Parcourir" Button`
+    t =    19.99s Checking existence of `"Annuler" Button`
+    t =    20.38s Checking existence of `"Récents" Button`
+    t =    20.44s Checking existence of `"Explorer" Button`
+    t =    20.50s Checking existence of `"Parcourir" Button`
+    t =    20.56s Checking existence of `"Annuler" Button`
+    t =    20.96s Checking existence of `"Récents" Button`
+    t =    21.03s Checking existence of `"Explorer" Button`
+    t =    21.10s Checking existence of `"Parcourir" Button`
+    t =    21.17s Checking existence of `"Annuler" Button`
+    t =    21.54s Checking existence of `"Récents" Button`
+    t =    21.62s Checking existence of `"Explorer" Button`
+    t =    21.69s Checking existence of `"Parcourir" Button`
+    t =    21.77s Checking existence of `"Annuler" Button`
+    t =    22.13s Checking existence of `"Récents" Button`
+    t =    22.20s Checking existence of `"Explorer" Button`
+    t =    22.28s Checking existence of `"Parcourir" Button`
+    t =    22.34s Checking existence of `"Annuler" Button`
+    t =    22.70s Checking existence of `"Récents" Button`
+    t =    22.79s Checking existence of `"Explorer" Button`
+    t =    22.88s Checking existence of `"Parcourir" Button`
+    t =    22.96s Checking existence of `"Annuler" Button`
+    t =    23.36s Checking existence of `"Récents" Button`
+    t =    23.47s Checking existence of `"Explorer" Button`
+    t =    23.57s Checking existence of `"Parcourir" Button`
+    t =    23.65s Checking existence of `"Annuler" Button`
+    t =    24.01s Checking existence of `"Récents" Button`
+    t =    24.09s Checking existence of `"Explorer" Button`
+    t =    24.17s Checking existence of `"Parcourir" Button`
+    t =    24.23s Checking existence of `"Annuler" Button`
+sélecteur de fichiers absent après le toucher 2
+    t =    24.60s Waiting 8.0s for Cell (First Match) to exist
+    t =    25.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    25.66s         Checking existence of `Cell (First Match)`
+    t =    25.75s         Capturing element debug description
+    t =    26.67s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    26.67s         Checking existence of `Cell (First Match)`
+    t =    26.74s         Capturing element debug description
+    t =    27.67s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    27.67s         Checking existence of `Cell (First Match)`
+    t =    27.74s         Capturing element debug description
+    t =    28.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    28.66s         Checking existence of `Cell (First Match)`
+    t =    28.76s         Capturing element debug description
+    t =    29.61s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    29.61s         Checking existence of `Cell (First Match)`
+    t =    29.68s         Capturing element debug description
+    t =    30.61s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    30.61s         Checking existence of `Cell (First Match)`
+    t =    30.70s         Capturing element debug description
+    t =    31.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    31.66s         Checking existence of `Cell (First Match)`
+    t =    31.75s         Capturing element debug description
+    t =    32.61s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    32.61s         Checking existence of `Cell (First Match)`
+    t =    32.74s         Capturing element debug description
+    t =    32.74s     Checking existence of `Cell (First Match)`
+    t =    32.82s Collecting debug information to assist test failure triage
+    t =    32.83s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    33.00s Waiting 3.0s for Any (First Match) to exist
+    t =    34.06s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    34.06s         Checking existence of `Any (First Match)`
+    t =    34.17s         Capturing element debug description
+    t =    35.01s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    35.01s         Checking existence of `Any (First Match)`
+    t =    35.13s         Capturing element debug description
+    t =    36.01s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    36.01s         Checking existence of `Any (First Match)`
+    t =    36.12s         Capturing element debug description
+    t =    36.13s     Checking existence of `Any (First Match)`
+    t =    36.24s Collecting debug information to assist test failure triage
+    t =    36.24s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    36.40s Waiting 3.0s for Any (First Match) to exist
+    t =    37.46s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    37.46s         Checking existence of `Any (First Match)`
+    t =    37.56s         Capturing element debug description
+    t =    38.41s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    38.41s         Checking existence of `Any (First Match)`
+    t =    38.52s         Capturing element debug description
+    t =    39.41s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    39.41s         Checking existence of `Any (First Match)`
+    t =    39.49s         Capturing element debug description
+    t =    39.49s     Checking existence of `Any (First Match)`
+    t =    39.60s Collecting debug information to assist test failure triage
+    t =    39.60s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    39.75s Checking existence of `Cell (First Match)`
+    t =    39.83s Waiting 8.0s for Cell (First Match) to exist
+    t =    40.86s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    40.86s         Checking existence of `Cell (First Match)`
+    t =    40.95s         Capturing element debug description
+    t =    41.88s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    41.88s         Checking existence of `Cell (First Match)`
+    t =    41.98s         Capturing element debug description
+    t =    42.90s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    42.90s         Checking existence of `Cell (First Match)`
+    t =    42.96s         Capturing element debug description
+    t =    43.88s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    43.88s         Checking existence of `Cell (First Match)`
+    t =    43.97s         Capturing element debug description
+    t =    44.88s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    44.88s         Checking existence of `Cell (First Match)`
+    t =    44.98s         Capturing element debug description
+    t =    45.84s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    45.84s         Checking existence of `Cell (First Match)`
+    t =    45.92s         Capturing element debug description
+    t =    46.86s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    46.86s         Checking existence of `Cell (First Match)`
+    t =    46.95s         Capturing element debug description
+    t =    47.83s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    47.84s         Checking existence of `Cell (First Match)`
+    t =    47.97s         Capturing element debug description
+    t =    47.97s     Checking existence of `Cell (First Match)`
+    t =    48.09s Collecting debug information to assist test failure triage
+    t =    48.10s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+étape « Sur mon iPhone » absente
+    t =    48.29s Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    49.52s Requesting snapshot of accessibility hierarchy for app with pid 10520
+Attributes: Application, 0x103b38f40, pid: 10520, label: 'Halcya'
+Element subtree:
+ →Application, 0x103b38f40, pid: 10520, label: 'Halcya'
+    Window (Main), 0x103b47b80, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103b4b450, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103b4b570, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x103b44b20, {{0.0, 0.0}, {1032.0, 1376.0}}
+            Other, 0x103b40e40, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+            WebView, 0x103b40f60, {{0.0, 0.0}, {1032.0, 1376.0}}
+              WebView, 0x103b4bc70, {{0.0, 0.0}, {1032.0, 1376.0}}
+                WebView, 0x103b4bd90, {{0.0, 0.0}, {1032.0, 1376.0}}
+                  Other, 0x103b4b850, {{0.0, 0.0}, {1032.0, 1376.0}}
+                    Other, 0x103b4b970, {{0.0, 0.0}, {1032.0, 1376.0}}
+                      Other, 0x103b4c090, {{0.0, -52.0}, {1032.0, 1376.0}}
+                        Other, 0x103d88d30, {{0.0, -52.0}, {1032.0, 1428.0}}, label: 'Halcya – ventre et bien-être', Focused
+                          Other, 0x103d8a1f0, {{292.0, -20.0}, {448.0, 70.0}}, label: 'bannière', Focused
+                            Other, 0x103d85ef0, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                              StaticText, 0x103d81ed0, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                            Link, 0x103d87490, {{696.0, -6.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                          Other, 0x103d82230, {{292.0, 50.0}, {448.0, 1055.0}}, label: 'principal', Focused
+                            Other, 0x103d882d0, {{292.0, 50.0}, {448.0, 29.0}}, label: 'Sauvegarde', value: 2, Focused
+                              StaticText, 0x103d88650, {{292.0, 50.0}, {110.0, 29.0}}, label: 'Sauvegarde', value: Sauvegarde, Focused
+                            Other, 0x103d84460, {{292.0, 87.0}, {448.0, 88.0}}, Focused
+                              StaticText, 0x103d847d0, {{292.0, 87.0}, {425.0, 22.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                              StaticText, 0x103d91240, {{292.0, 109.0}, {419.0, 66.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                            Other, 0x103d91950, {{308.0, 207.0}, {416.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                              StaticText, 0x103d92cd0, {{308.0, 207.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                            Other, 0x103d89770, {{308.0, 241.0}, {416.0, 21.0}}, Focused
+                              StaticText, 0x103d840e0, {{308.0, 241.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                            Other, 0x103d81820, {{308.0, 270.0}, {416.0, 19.0}}, Focused
+                              StaticText, 0x103d41080, {{308.0, 270.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                              StaticText, 0x103d78bb0, {{317.0, 271.0}, {3.0, 18.0}}, value:  , Focused
+                              StaticText, 0x103d7f940, {{319.0, 270.0}, {24.0, 18.0}}, label: '252', value: 252, Focused
+                              StaticText, 0x103d73ca0, {{342.0, 271.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                              StaticText, 0x103d4cf20, {{388.0, 271.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                            Button, 0x103d54f60, {{308.0, 301.0}, {416.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                            Other, 0x103d89b10, {{292.0, 393.0}, {448.0, 192.0}}, label: 'article', Focused
+                              StaticText, 0x103d83d80, {{310.0, 409.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                              Other, 0x103d54530, {{310.0, 439.0}, {412.0, 41.0}}, Focused
+                                StaticText, 0x103d74030, {{310.0, 439.0}, {407.0, 41.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                              StaticText, 0x103d73910, {{318.0, 489.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                              Link, 0x103d41740, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                                StaticText, 0x103d54c00, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                            Other, 0x103d64620, {{308.0, 625.0}, {416.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                              StaticText, 0x103d63860, {{308.0, 625.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                            Other, 0x103d57120, {{308.0, 659.0}, {416.0, 41.0}}, Focused
+                              StaticText, 0x103d5e620, {{308.0, 659.0}, {350.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                            Button, 0x103d548b0, {{292.0, 609.0}, {448.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                            Button, 0x103d78f20, {{308.0, 712.0}, {416.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                            Button, 0x103d79ca0, {{308.0, 776.0}, {416.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                            Other, 0x103d79290, {{308.0, 906.0}, {416.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                              StaticText, 0x103d76940, {{308.0, 906.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                            Other, 0x103d69c20, {{308.0, 940.0}, {416.0, 61.0}}, Focused
+                              StaticText, 0x103d5fdf0, {{308.0, 940.0}, {410.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                            Button, 0x103d67d70, {{308.0, 1013.0}, {416.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                          Other, 0x103d68b20, {{0.0, 1293.0}, {1032.0, 83.0}}, label: 'Principal, navigation', Focused
+                            Link, 0x103d69550, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', Focused
+                              StaticText, 0x103d69f80, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                            Link, 0x103d698b0, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', Focused
+                              StaticText, 0x103d502f0, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                            Link, 0x103d6beb0, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', Focused
+                              StaticText, 0x103d6c590, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                            Link, 0x103d6c220, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', Focused
+                              StaticText, 0x103d6b470, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', value: Données, Focused
+                Other, 0x103d68e90, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103d6da50, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103d6d6c0, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103d6cc40, {{35.0, 1370.0}, {964.0, 3.0}}
+                Other, 0x103d6d320, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103d6ddc0, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103d6e130, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103d6e480, {{35.0, 1370.0}, {964.0, 3.0}}
+      Other, 0x103d6eb40, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103d6c8f0, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+        Other, 0x103d70d00, {{226.0, 358.0}, {580.0, 650.0}}
+          Image, 0x103d6f200, {{76.0, 208.0}, {880.0, 950.0}}
+          Other, 0x103d6e800, {{226.0, 358.0}, {580.0, 650.0}}
+            Other, 0x103d6eeb0, {{226.0, 358.0}, {580.0, 650.0}}
+              Other, 0x103d70310, {{226.0, 358.0}, {580.0, 650.0}}
+                Other, 0x103d6fc40, {{226.0, 358.0}, {580.0, 650.0}}
+                  Other, 0x103d6f560, {{226.0, 358.0}, {580.0, 650.0}}
+                    Other, 0x103d6f8f0, {{226.0, 358.0}, {580.0, 650.0}}
+                      Other, 0x103d6ffc0, {{226.0, 358.0}, {580.0, 650.0}}
+                        Other, 0x103d71070, {{226.0, 358.0}, {580.0, 650.0}}
+                          Other, 0x103d71a90, {{226.0, 358.0}, {580.0, 650.0}}
+                            Other, 0x103d709c0, {{-580.0, -650.0}, {1740.0, 1950.0}}
+                            Other, 0x103d70670, {{226.0, 378.0}, {580.0, 630.0}}
+                              Image, 0x103d713e0, {{-150.0, -130.0}, {880.0, 930.0}}
+                              Other, 0x103d57830, {{226.0, 378.0}, {580.0, 630.0}}
+                                Other, 0x103d71de0, {{226.0, 378.0}, {580.0, 630.0}}
+                                  Other, 0x103d72140, {{226.0, 378.0}, {580.0, 630.0}}
+                                    Other, 0x103d72490, {{226.0, 378.0}, {580.0, 630.0}}
+                                      Other, 0x103d72ee0, {{226.0, 378.0}, {580.0, 630.0}}
+                                        ScrollView, 0x103d72b70, {{226.0, 378.0}, {580.0, 630.0}}
+                                          Other, 0x103d509a0, {{226.0, 378.0}, {580.0, 391.0}}
+                                            Other, 0x103d73240, {{264.0, 414.5}, {504.0, 334.5}}
+                                              Other, 0x103d72810, {{264.0, 414.5}, {504.0, 82.0}}
+                                                Other, 0x103d71730, {{264.0, 414.5}, {504.0, 82.0}}
+                                                  Other, 0x103d563c0, {{476.0, 415.5}, {80.0, 80.0}}
+                                                    Image, 0x103d65760, {{489.0, 434.0}, {54.5, 40.0}}, identifier: 'exclamationmark.icloud', label: 'erreur de chargement iCloud'
+                                              StaticText, 0x103d3f8a0, {{264.0, 536.5}, {504.0, 54.5}}, label: 'La synchronisation des données Santé avec iCloud est désactivée'
+                                              StaticText, 0x103d76270, {{264.0, 592.0}, {504.0, 157.0}}, label: 'Les informations relatives à votre santé et à votre forme ne sont pas synchronisées sur cet iPad actuellement.
+
+Vous pouvez gérer la synchronisation de Santé dans les réglages iCloud.'
+                                            Other, 0x103d56a60, {{0.0, 411.0}, {580.0, 0.0}}
+                                          Other, 0x103d60ef0, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103d7a6e0, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103d7bee0, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103d74df0, {{229.0, 826.0}, {574.0, 3.0}}
+                                          Other, 0x103d7a370, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103d7f270, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103d7d980, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103d7c8d0, {{229.0, 826.0}, {574.0, 3.0}}
+                                        Other, 0x103d7b480, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103d7aa60, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103d7c230, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103d7bb60, {{336.0, 856.0}, {360.0, 52.0}}, label: 'Ouvrir Réglages'
+                                              StaticText, 0x103d7b120, {{452.5, 871.5}, {127.0, 20.5}}, label: 'Ouvrir Réglages'
+                                            Other, 0x103d77e00, {{336.0, 856.0}, {360.0, 114.0}}
+                                              Other, 0x103d7b7d0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                Other, 0x103d7dd00, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103d7e090, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103d7cc40, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103d74a90, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103d743a0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103d754e0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103d7d620, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103d75bc0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103d75840, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103d814d0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103d80a70, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103d76cb0, {{336.0, 918.0}, {360.0, 52.0}}, label: 'Plus tard'
+                                              StaticText, 0x103d75f10, {{480.5, 933.5}, {71.0, 20.5}}, label: 'Plus tard'
+                        Other, 0x103d735b0, {{0.0, 0.0}, {0.0, 0.0}}
+    Window, 0x103d765d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103d80720, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103d77010, {{0.0, 0.0}, {1032.0, 1376.0}}
+Path to element:
+ →Application, 0x103b38f40, pid: 10520, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103e636d0, pid: 10520, label: 'Halcya'
+  }
+
+    t =    49.70s Waiting 3.0s for Cell (First Match) to exist
+    t =    50.74s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    50.74s         Checking existence of `Cell (First Match)`
+    t =    50.94s         Capturing element debug description
+    t =    51.70s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    51.70s         Checking existence of `Cell (First Match)`
+    t =    51.87s         Capturing element debug description
+    t =    52.71s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    52.71s         Checking existence of `Cell (First Match)`
+    t =    52.84s         Capturing element debug description
+    t =    52.84s     Checking existence of `Cell (First Match)`
+    t =    52.93s Collecting debug information to assist test failure triage
+    t =    52.93s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    53.15s Checking existence of `Cell (First Match)`
+    t =    53.29s Waiting 8.0s for Cell (First Match) to exist
+    t =    54.35s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    54.37s         Checking existence of `Cell (First Match)`
+    t =    54.56s         Capturing element debug description
+    t =    55.30s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    55.30s         Checking existence of `Cell (First Match)`
+    t =    55.46s         Capturing element debug description
+    t =    56.31s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    56.31s         Checking existence of `Cell (First Match)`
+    t =    56.42s         Capturing element debug description
+    t =    57.39s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    57.39s         Checking existence of `Cell (First Match)`
+    t =    57.50s         Capturing element debug description
+    t =    58.32s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    58.32s         Checking existence of `Cell (First Match)`
+    t =    58.41s         Capturing element debug description
+    t =    59.34s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    59.34s         Checking existence of `Cell (First Match)`
+    t =    59.42s         Capturing element debug description
+    t =    60.36s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    60.36s         Checking existence of `Cell (First Match)`
+    t =    60.44s         Capturing element debug description
+    t =    61.30s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    61.30s         Checking existence of `Cell (First Match)`
+    t =    61.39s         Capturing element debug description
+    t =    61.39s     Checking existence of `Cell (First Match)`
+    t =    61.47s Collecting debug information to assist test failure triage
+    t =    61.47s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+étape « Halcya » absente
+    t =    61.59s Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    62.26s Requesting snapshot of accessibility hierarchy for app with pid 10520
+Attributes: Application, 0x103e48f10, pid: 10520, label: 'Halcya'
+Element subtree:
+ →Application, 0x103e48f10, pid: 10520, label: 'Halcya'
+    Window (Main), 0x103e55f30, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103e54290, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103e60920, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x103e69370, {{0.0, 0.0}, {1032.0, 1376.0}}
+            Other, 0x103e552b0, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+            WebView, 0x103e51980, {{0.0, 0.0}, {1032.0, 1376.0}}
+              WebView, 0x103e404c0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                WebView, 0x103e405e0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                  Other, 0x103e43e20, {{0.0, 0.0}, {1032.0, 1376.0}}
+                    Other, 0x103e43f40, {{0.0, 0.0}, {1032.0, 1376.0}}
+                      Other, 0x103e58610, {{0.0, -52.0}, {1032.0, 1376.0}}
+                        Other, 0x103e58730, {{0.0, -52.0}, {1032.0, 1428.0}}, label: 'Halcya – ventre et bien-être', Focused
+                          Other, 0x103e66850, {{292.0, -20.0}, {448.0, 70.0}}, label: 'bannière', Focused
+                            Other, 0x103e66970, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                              StaticText, 0x103e4c160, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                            Link, 0x103e4c280, {{696.0, -6.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                          Other, 0x103e4c9a0, {{292.0, 50.0}, {448.0, 1055.0}}, label: 'principal', Focused
+                            Other, 0x103e4cac0, {{292.0, 50.0}, {448.0, 29.0}}, label: 'Sauvegarde', value: 2, Focused
+                              StaticText, 0x103e4c580, {{292.0, 50.0}, {110.0, 29.0}}, label: 'Sauvegarde', value: Sauvegarde, Focused
+                            Other, 0x103e4c6a0, {{292.0, 87.0}, {448.0, 88.0}}, Focused
+                              StaticText, 0x103e48630, {{292.0, 87.0}, {425.0, 22.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                              StaticText, 0x103e48750, {{292.0, 109.0}, {419.0, 66.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                            Other, 0x103e4b6a0, {{308.0, 207.0}, {416.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                              StaticText, 0x103e4b7c0, {{308.0, 207.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                            Other, 0x103e4b8e0, {{308.0, 241.0}, {416.0, 21.0}}, Focused
+                              StaticText, 0x103e4ba00, {{308.0, 241.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                            Other, 0x103e4bb20, {{308.0, 270.0}, {416.0, 19.0}}, Focused
+                              StaticText, 0x103e4bc40, {{308.0, 270.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                              StaticText, 0x103e56170, {{317.0, 271.0}, {3.0, 18.0}}, value:  , Focused
+                              StaticText, 0x103e56290, {{319.0, 270.0}, {24.0, 18.0}}, label: '252', value: 252, Focused
+                              StaticText, 0x103e563b0, {{342.0, 271.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                              StaticText, 0x103e564d0, {{388.0, 271.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                            Button, 0x103e55510, {{308.0, 301.0}, {416.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                            Other, 0x103e55630, {{292.0, 393.0}, {448.0, 192.0}}, label: 'article', Focused
+                              StaticText, 0x103e55750, {{310.0, 409.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                              Other, 0x103e51da0, {{310.0, 439.0}, {412.0, 41.0}}, Focused
+                                StaticText, 0x103e51ec0, {{310.0, 439.0}, {407.0, 41.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                              StaticText, 0x103e52220, {{318.0, 489.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                              Link, 0x103e52340, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                                StaticText, 0x103e52460, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                            Other, 0x103e52580, {{308.0, 625.0}, {416.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                              StaticText, 0x103e526a0, {{308.0, 625.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                            Other, 0x103e527c0, {{308.0, 659.0}, {416.0, 41.0}}, Focused
+                              StaticText, 0x103e528e0, {{308.0, 659.0}, {350.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                            Button, 0x103e52a00, {{292.0, 609.0}, {448.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                            Button, 0x103e52b20, {{308.0, 712.0}, {416.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                            Button, 0x103e63dc0, {{308.0, 776.0}, {416.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                            Other, 0x103e63ee0, {{308.0, 906.0}, {416.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                              StaticText, 0x103e64000, {{308.0, 906.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                            Other, 0x103e64120, {{308.0, 940.0}, {416.0, 61.0}}, Focused
+                              StaticText, 0x103e64240, {{308.0, 940.0}, {410.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                            Button, 0x103e645e0, {{308.0, 1013.0}, {416.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                          Other, 0x103e64700, {{0.0, 1293.0}, {1032.0, 83.0}}, label: 'Principal, navigation', Focused
+                            Link, 0x103e64820, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', Focused
+                              StaticText, 0x103e64940, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                            Link, 0x103e64a60, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', Focused
+                              StaticText, 0x103e64b80, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                            Link, 0x103e64ca0, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', Focused
+                              StaticText, 0x103e64dc0, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                            Link, 0x103e64ee0, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', Focused
+                              StaticText, 0x103e65000, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', value: Données, Focused
+                Other, 0x103e65120, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103e65240, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103e65360, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103e545f0, {{35.0, 1370.0}, {964.0, 3.0}}
+                Other, 0x103e54710, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103e54830, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103e54950, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103e6a8d0, {{35.0, 1370.0}, {964.0, 3.0}}
+      Other, 0x103e6a9f0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103e6ab10, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+        Other, 0x103e6ac30, {{226.0, 358.0}, {580.0, 650.0}}
+          Image, 0x103e6ad50, {{76.0, 208.0}, {880.0, 950.0}}
+          Other, 0x103e65640, {{226.0, 358.0}, {580.0, 650.0}}
+            Other, 0x103e65760, {{226.0, 358.0}, {580.0, 650.0}}
+              Other, 0x103e65880, {{226.0, 358.0}, {580.0, 650.0}}
+                Other, 0x103e659a0, {{226.0, 358.0}, {580.0, 650.0}}
+                  Other, 0x103e65ac0, {{226.0, 358.0}, {580.0, 650.0}}
+                    Other, 0x103e65be0, {{226.0, 358.0}, {580.0, 650.0}}
+                      Other, 0x103e65d00, {{226.0, 358.0}, {580.0, 650.0}}
+                        Other, 0x103e65e20, {{226.0, 358.0}, {580.0, 650.0}}
+                          Other, 0x103e65f40, {{226.0, 358.0}, {580.0, 650.0}}
+                            Other, 0x103e66060, {{-580.0, -650.0}, {1740.0, 1950.0}}
+                            Other, 0x103e66180, {{226.0, 378.0}, {580.0, 630.0}}
+                              Image, 0x103e67e60, {{-150.0, -130.0}, {880.0, 930.0}}
+                              Other, 0x103e67f80, {{226.0, 378.0}, {580.0, 630.0}}
+                                Other, 0x103e680a0, {{226.0, 378.0}, {580.0, 630.0}}
+                                  Other, 0x103e681c0, {{226.0, 378.0}, {580.0, 630.0}}
+                                    Other, 0x103e682e0, {{226.0, 378.0}, {580.0, 630.0}}
+                                      Other, 0x103e68400, {{226.0, 378.0}, {580.0, 630.0}}
+                                        ScrollView, 0x103e68520, {{226.0, 378.0}, {580.0, 630.0}}
+                                          Other, 0x103e68640, {{226.0, 378.0}, {580.0, 391.0}}
+                                            Other, 0x103e68760, {{264.0, 414.5}, {504.0, 334.5}}
+                                              Other, 0x103e68880, {{264.0, 414.5}, {504.0, 82.0}}
+                                                Other, 0x103e689a0, {{264.0, 414.5}, {504.0, 82.0}}
+                                                  Other, 0x103e68ac0, {{476.0, 415.5}, {80.0, 80.0}}
+                                                    Image, 0x103e68be0, {{489.0, 434.0}, {54.5, 40.0}}, identifier: 'exclamationmark.icloud', label: 'erreur de chargement iCloud'
+                                              StaticText, 0x103e68d00, {{264.0, 536.5}, {504.0, 54.5}}, label: 'La synchronisation des données Santé avec iCloud est désactivée'
+                                              StaticText, 0x103e68e20, {{264.0, 592.0}, {504.0, 157.0}}, label: 'Les informations relatives à votre santé et à votre forme ne sont pas synchronisées sur cet iPad actuellement.
+
+Vous pouvez gérer la synchronisation de Santé dans les réglages iCloud.'
+                                            Other, 0x103e690d0, {{0.0, 411.0}, {580.0, 0.0}}
+                                          Other, 0x103e66c70, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103e66d90, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103e66eb0, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103e66fd0, {{229.0, 826.0}, {574.0, 3.0}}
+                                          Other, 0x103e670f0, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103e67210, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103e67330, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103e63370, {{229.0, 826.0}, {574.0, 3.0}}
+                                        Other, 0x103e63490, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103e635b0, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103e676e0, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103e67800, {{336.0, 856.0}, {360.0, 52.0}}, label: 'Ouvrir Réglages'
+                                              StaticText, 0x103e67920, {{452.5, 871.5}, {127.0, 20.5}}, label: 'Ouvrir Réglages'
+                                            Other, 0x103e67a40, {{336.0, 856.0}, {360.0, 114.0}}
+                                              Other, 0x103e67b60, {{336.0, 856.0}, {360.0, 114.0}}
+                                                Other, 0x103e56e50, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103e56f70, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e57090, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103e571b0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103e572d0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e573f0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103e57510, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e57630, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103e57750, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103e57ef0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e58010, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103e58130, {{336.0, 918.0}, {360.0, 52.0}}, label: 'Plus tard'
+                                              StaticText, 0x103e58250, {{480.5, 933.5}, {71.0, 20.5}}, label: 'Plus tard'
+                        Other, 0x103e536b0, {{0.0, 0.0}, {0.0, 0.0}}
+    Window, 0x103e537d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103e538f0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103e53a10, {{0.0, 0.0}, {1032.0, 1376.0}}
+Path to element:
+ →Application, 0x103e48f10, pid: 10520, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103db6cc0, pid: 10520, label: 'Halcya'
+  }
+
+    t =    62.39s Waiting 3.0s for Cell (First Match) to exist
+    t =    63.41s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    63.41s         Checking existence of `Cell (First Match)`
+    t =    63.48s         Capturing element debug description
+    t =    64.41s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    64.41s         Checking existence of `Cell (First Match)`
+    t =    64.49s         Capturing element debug description
+    t =    65.41s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    65.41s         Checking existence of `Cell (First Match)`
+    t =    65.48s         Capturing element debug description
+    t =    65.48s     Checking existence of `Cell (First Match)`
+    t =    65.55s Collecting debug information to assist test failure triage
+    t =    65.55s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    65.63s Waiting 10.0s for Cell (First Match) to exist
+    t =    66.69s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    66.69s         Checking existence of `Cell (First Match)`
+    t =    66.77s         Capturing element debug description
+    t =    67.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    67.66s         Checking existence of `Cell (First Match)`
+    t =    67.75s         Capturing element debug description
+    t =    68.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    68.66s         Checking existence of `Cell (First Match)`
+    t =    68.73s         Capturing element debug description
+    t =    69.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    69.66s         Checking existence of `Cell (First Match)`
+    t =    69.72s         Capturing element debug description
+    t =    70.69s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    70.70s         Checking existence of `Cell (First Match)`
+    t =    70.76s         Capturing element debug description
+    t =    71.73s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    71.73s         Checking existence of `Cell (First Match)`
+    t =    71.79s         Capturing element debug description
+    t =    72.65s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    72.65s         Checking existence of `Cell (First Match)`
+    t =    72.72s         Capturing element debug description
+    t =    73.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    73.66s         Checking existence of `Cell (First Match)`
+    t =    73.72s         Capturing element debug description
+    t =    74.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    74.66s         Checking existence of `Cell (First Match)`
+    t =    74.72s         Capturing element debug description
+    t =    75.64s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    75.64s         Checking existence of `Cell (First Match)`
+    t =    75.71s         Capturing element debug description
+    t =    75.71s     Checking existence of `Cell (First Match)`
+    t =    75.78s Collecting debug information to assist test failure triage
+    t =    75.78s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    75.88s Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    76.32s Requesting snapshot of accessibility hierarchy for app with pid 10520
+Attributes: Application, 0x103b37d40, pid: 10520, label: 'Halcya'
+Element subtree:
+ →Application, 0x103b37d40, pid: 10520, label: 'Halcya'
+    Window (Main), 0x103b4c950, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103b26410, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103b236c0, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x103b2c810, {{0.0, 0.0}, {1032.0, 1376.0}}
+            Other, 0x103b24ec0, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+            WebView, 0x103b2f6f0, {{0.0, 0.0}, {1032.0, 1376.0}}
+              WebView, 0x103b22f80, {{0.0, 0.0}, {1032.0, 1376.0}}
+                WebView, 0x103b2a480, {{0.0, 0.0}, {1032.0, 1376.0}}
+                  Other, 0x103b24460, {{0.0, 0.0}, {1032.0, 1376.0}}
+                    Other, 0x103b23320, {{0.0, 0.0}, {1032.0, 1376.0}}
+                      Other, 0x103b29250, {{0.0, -52.0}, {1032.0, 1376.0}}
+                        Other, 0x103b2ffb0, {{0.0, -52.0}, {1032.0, 1428.0}}, label: 'Halcya – ventre et bien-être', Focused
+                          Other, 0x103b2b7b0, {{292.0, -20.0}, {448.0, 70.0}}, label: 'bannière', Focused
+                            Other, 0x103b39500, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                              StaticText, 0x103b47570, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                            Link, 0x103b51e60, {{696.0, -6.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                          Other, 0x103b99dd0, {{292.0, 50.0}, {448.0, 1055.0}}, label: 'principal', Focused
+                            Other, 0x103b30db0, {{292.0, 50.0}, {448.0, 29.0}}, label: 'Sauvegarde', value: 2, Focused
+                              StaticText, 0x103b528c0, {{292.0, 50.0}, {110.0, 29.0}}, label: 'Sauvegarde', value: Sauvegarde, Focused
+                            Other, 0x103b52280, {{292.0, 87.0}, {448.0, 88.0}}, Focused
+                              StaticText, 0x103b47150, {{292.0, 87.0}, {425.0, 22.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                              StaticText, 0x103b51a40, {{292.0, 109.0}, {419.0, 66.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                            Other, 0x103b2aa70, {{308.0, 207.0}, {416.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                              StaticText, 0x103b18400, {{308.0, 207.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                            Other, 0x103b34500, {{308.0, 241.0}, {416.0, 21.0}}, Focused
+                              StaticText, 0x103b34620, {{308.0, 241.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                            Other, 0x103b41730, {{308.0, 270.0}, {416.0, 19.0}}, Focused
+                              StaticText, 0x103b41850, {{308.0, 270.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                              StaticText, 0x103b45460, {{317.0, 271.0}, {3.0, 18.0}}, value:  , Focused
+                              StaticText, 0x103b45580, {{319.0, 270.0}, {24.0, 18.0}}, label: '252', value: 252, Focused
+                              StaticText, 0x103b46620, {{342.0, 271.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                              StaticText, 0x103b46740, {{388.0, 271.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                            Button, 0x103b33d50, {{308.0, 301.0}, {416.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                            Other, 0x103b33e70, {{292.0, 393.0}, {448.0, 192.0}}, label: 'article', Focused
+                              StaticText, 0x103b442c0, {{310.0, 409.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                              Other, 0x103b443e0, {{310.0, 439.0}, {412.0, 41.0}}, Focused
+                                StaticText, 0x103b43a20, {{310.0, 439.0}, {407.0, 41.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                              StaticText, 0x103b47990, {{318.0, 489.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                              Link, 0x103b47ab0, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                                StaticText, 0x103b47bd0, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                            Other, 0x103b47cf0, {{308.0, 625.0}, {416.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                              StaticText, 0x103b52e00, {{308.0, 625.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                            Other, 0x103b52f20, {{308.0, 659.0}, {416.0, 41.0}}, Focused
+                              StaticText, 0x103b53040, {{308.0, 659.0}, {350.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                            Button, 0x103be25c0, {{292.0, 609.0}, {448.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                            Button, 0x103be26e0, {{308.0, 712.0}, {416.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                            Button, 0x103be2800, {{308.0, 776.0}, {416.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                            Other, 0x103be2920, {{308.0, 906.0}, {416.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                              StaticText, 0x103be2a40, {{308.0, 906.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                            Other, 0x103be2b60, {{308.0, 940.0}, {416.0, 61.0}}, Focused
+                              StaticText, 0x103be2c80, {{308.0, 940.0}, {410.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                            Button, 0x103b9a470, {{308.0, 1013.0}, {416.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                          Other, 0x103b9a590, {{0.0, 1293.0}, {1032.0, 83.0}}, label: 'Principal, navigation', Focused
+                            Link, 0x103b9a6b0, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', Focused
+                              StaticText, 0x103b9a7d0, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                            Link, 0x103b9a8f0, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', Focused
+                              StaticText, 0x103b9aa10, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                            Link, 0x103b9ab30, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', Focused
+                              StaticText, 0x103b9ac50, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                            Link, 0x103b9ad70, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', Focused
+                              StaticText, 0x103b9ae90, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', value: Données, Focused
+                Other, 0x103b9afb0, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103b9b0d0, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103b9b1f0, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103b9b310, {{35.0, 1370.0}, {964.0, 3.0}}
+                Other, 0x103b9b430, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103b9b550, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103b9b670, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103b9b790, {{35.0, 1370.0}, {964.0, 3.0}}
+      Other, 0x103b9b8b0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103b9b9d0, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+        Other, 0x103b9baf0, {{226.0, 358.0}, {580.0, 650.0}}
+          Image, 0x103b9bc10, {{76.0, 208.0}, {880.0, 950.0}}
+          Other, 0x103b9bd30, {{226.0, 358.0}, {580.0, 650.0}}
+            Other, 0x103b9be50, {{226.0, 358.0}, {580.0, 650.0}}
+              Other, 0x103b9bf70, {{226.0, 358.0}, {580.0, 650.0}}
+                Other, 0x103b9c090, {{226.0, 358.0}, {580.0, 650.0}}
+                  Other, 0x103b9c1b0, {{226.0, 358.0}, {580.0, 650.0}}
+                    Other, 0x103b9c2d0, {{226.0, 358.0}, {580.0, 650.0}}
+                      Other, 0x103b9c3f0, {{226.0, 358.0}, {580.0, 650.0}}
+                        Other, 0x103b9c510, {{226.0, 358.0}, {580.0, 650.0}}
+                          Other, 0x103b9c630, {{226.0, 358.0}, {580.0, 650.0}}
+                            Other, 0x103b9c750, {{-580.0, -650.0}, {1740.0, 1950.0}}
+                            Other, 0x103b9c870, {{226.0, 378.0}, {580.0, 630.0}}
+                              Image, 0x103b9c990, {{-150.0, -130.0}, {880.0, 930.0}}
+                              Other, 0x103b9cab0, {{226.0, 378.0}, {580.0, 630.0}}
+                                Other, 0x103b9cbd0, {{226.0, 378.0}, {580.0, 630.0}}
+                                  Other, 0x103b9ccf0, {{226.0, 378.0}, {580.0, 630.0}}
+                                    Other, 0x103b9ce10, {{226.0, 378.0}, {580.0, 630.0}}
+                                      Other, 0x103b9cf30, {{226.0, 378.0}, {580.0, 630.0}}
+                                        ScrollView, 0x103b9d050, {{226.0, 378.0}, {580.0, 630.0}}
+                                          Other, 0x103b9d170, {{226.0, 378.0}, {580.0, 391.0}}
+                                            Other, 0x103b9d290, {{264.0, 414.5}, {504.0, 334.5}}
+                                              Other, 0x103b9d3b0, {{264.0, 414.5}, {504.0, 82.0}}
+                                                Other, 0x103b9d4d0, {{264.0, 414.5}, {504.0, 82.0}}
+                                                  Other, 0x103b9d5f0, {{476.0, 415.5}, {80.0, 80.0}}
+                                                    Image, 0x103b9d710, {{489.0, 434.0}, {54.5, 40.0}}, identifier: 'exclamationmark.icloud', label: 'erreur de chargement iCloud'
+                                              StaticText, 0x103b9d830, {{264.0, 536.5}, {504.0, 54.5}}, label: 'La synchronisation des données Santé avec iCloud est désactivée'
+                                              StaticText, 0x103b9d950, {{264.0, 592.0}, {504.0, 157.0}}, label: 'Les informations relatives à votre santé et à votre forme ne sont pas synchronisées sur cet iPad actuellement.
+
+Vous pouvez gérer la synchronisation de Santé dans les réglages iCloud.'
+                                            Other, 0x103b9dc00, {{0.0, 411.0}, {580.0, 0.0}}
+                                          Other, 0x103b9dd20, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103b9de40, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103b9df60, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103b9e080, {{229.0, 826.0}, {574.0, 3.0}}
+                                          Other, 0x103b9e1a0, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103b9e2c0, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103b9e3e0, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103b9e500, {{229.0, 826.0}, {574.0, 3.0}}
+                                        Other, 0x103b9e620, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103b9e740, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103b9e860, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103b9e980, {{336.0, 856.0}, {360.0, 52.0}}, label: 'Ouvrir Réglages'
+                                              StaticText, 0x103b9eaa0, {{452.5, 871.5}, {127.0, 20.5}}, label: 'Ouvrir Réglages'
+                                            Other, 0x103b9ebc0, {{336.0, 856.0}, {360.0, 114.0}}
+                                              Other, 0x103b9ece0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                Other, 0x103b9ee00, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103b9ef20, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b9f040, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103b9f160, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103b9f280, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b9f3a0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103b9f4c0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b9f5e0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103b9f700, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103b9f820, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b9f940, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103b9fa60, {{336.0, 918.0}, {360.0, 52.0}}, label: 'Plus tard'
+                                              StaticText, 0x103b9fb80, {{480.5, 933.5}, {71.0, 20.5}}, label: 'Plus tard'
+                        Other, 0x103b9fca0, {{0.0, 0.0}, {0.0, 0.0}}
+    Window, 0x103b9fdc0, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103b9fee0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103ba0000, {{0.0, 0.0}, {1032.0, 1376.0}}
+Path to element:
+ →Application, 0x103b37d40, pid: 10520, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103ba3a30, pid: 10520, label: 'Halcya'
+  }
+
+« halcya-essai-import » introuvable dans le sélecteur de fichiers
+aucun aperçu après le parcours 1
+    t =    76.41s Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    76.83s Requesting snapshot of accessibility hierarchy for app with pid 10520
+Attributes: Application, 0x103e54290, pid: 10520, label: 'Halcya'
+Element subtree:
+ →Application, 0x103e54290, pid: 10520, label: 'Halcya'
+    Window (Main), 0x103e63370, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103e53370, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103e620e0, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x103e63ad0, {{0.0, 0.0}, {1032.0, 1376.0}}
+            Other, 0x103e417d0, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+            WebView, 0x103e6a390, {{0.0, 0.0}, {1032.0, 1376.0}}
+              WebView, 0x103e59110, {{0.0, 0.0}, {1032.0, 1376.0}}
+                WebView, 0x103e636b0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                  Other, 0x103e69b30, {{0.0, 0.0}, {1032.0, 1376.0}}
+                    Other, 0x103e5b750, {{0.0, 0.0}, {1032.0, 1376.0}}
+                      Other, 0x103e5a410, {{0.0, -52.0}, {1032.0, 1376.0}}
+                        Other, 0x103e61cc0, {{0.0, -52.0}, {1032.0, 1428.0}}, label: 'Halcya – ventre et bien-être', Focused
+                          Other, 0x103e5b230, {{292.0, -20.0}, {448.0, 70.0}}, label: 'bannière', Focused
+                            Other, 0x103e5b350, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                              StaticText, 0x103e5ac70, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                            Link, 0x103e5ad90, {{696.0, -6.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                          Other, 0x103e5aeb0, {{292.0, 50.0}, {448.0, 1055.0}}, label: 'principal', Focused
+                            Other, 0x103e5bb70, {{292.0, 50.0}, {448.0, 29.0}}, label: 'Sauvegarde', value: 2, Focused
+                              StaticText, 0x103e5bc90, {{292.0, 50.0}, {110.0, 29.0}}, label: 'Sauvegarde', value: Sauvegarde, Focused
+                            Other, 0x103e5bdb0, {{292.0, 87.0}, {448.0, 88.0}}, Focused
+                              StaticText, 0x103e5bed0, {{292.0, 87.0}, {425.0, 22.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                              StaticText, 0x103e5bff0, {{292.0, 109.0}, {419.0, 66.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                            Other, 0x103e5c3b0, {{308.0, 207.0}, {416.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                              StaticText, 0x103e5c4d0, {{308.0, 207.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                            Other, 0x103e5c5f0, {{308.0, 241.0}, {416.0, 21.0}}, Focused
+                              StaticText, 0x103e60d40, {{308.0, 241.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                            Other, 0x103e60e60, {{308.0, 270.0}, {416.0, 19.0}}, Focused
+                              StaticText, 0x103e60f80, {{308.0, 270.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                              StaticText, 0x103e610a0, {{317.0, 271.0}, {3.0, 18.0}}, value:  , Focused
+                              StaticText, 0x103e611c0, {{319.0, 270.0}, {24.0, 18.0}}, label: '252', value: 252, Focused
+                              StaticText, 0x103e612e0, {{342.0, 271.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                              StaticText, 0x103e61400, {{388.0, 271.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                            Button, 0x103e61520, {{308.0, 301.0}, {416.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                            Other, 0x103e61640, {{292.0, 393.0}, {448.0, 192.0}}, label: 'article', Focused
+                              StaticText, 0x103e61760, {{310.0, 409.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                              Other, 0x103e4a220, {{310.0, 439.0}, {412.0, 41.0}}, Focused
+                                StaticText, 0x103e4a340, {{310.0, 439.0}, {407.0, 41.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                              StaticText, 0x103e4a6a0, {{318.0, 489.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                              Link, 0x103e4a7c0, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                                StaticText, 0x103e4a8e0, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                            Other, 0x103e4aa00, {{308.0, 625.0}, {416.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                              StaticText, 0x103e4ab20, {{308.0, 625.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                            Other, 0x103e4ac40, {{308.0, 659.0}, {416.0, 41.0}}, Focused
+                              StaticText, 0x103e4ad60, {{308.0, 659.0}, {350.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                            Button, 0x103e4ae80, {{292.0, 609.0}, {448.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                            Button, 0x103e4afa0, {{308.0, 712.0}, {416.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                            Button, 0x103e4b0c0, {{308.0, 776.0}, {416.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                            Other, 0x103e4b1e0, {{308.0, 906.0}, {416.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                              StaticText, 0x103e4b300, {{308.0, 906.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                            Other, 0x103e55f30, {{308.0, 940.0}, {416.0, 61.0}}, Focused
+                              StaticText, 0x103e56050, {{308.0, 940.0}, {410.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                            Button, 0x103e563f0, {{308.0, 1013.0}, {416.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                          Other, 0x103e56510, {{0.0, 1293.0}, {1032.0, 83.0}}, label: 'Principal, navigation', Focused
+                            Link, 0x103e56630, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', Focused
+                              StaticText, 0x103e62430, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                            Link, 0x103e62550, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', Focused
+                              StaticText, 0x103e62670, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                            Link, 0x103e62790, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', Focused
+                              StaticText, 0x103e5e320, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                            Link, 0x103e5e440, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', Focused
+                              StaticText, 0x103e5e560, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', value: Données, Focused
+                Other, 0x103e5e680, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103e5e7a0, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103e536b0, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103e537d0, {{35.0, 1370.0}, {964.0, 3.0}}
+                Other, 0x103e538f0, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103e53a10, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103e6a8d0, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103e6a9f0, {{35.0, 1370.0}, {964.0, 3.0}}
+      Other, 0x103e6ab10, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103e6ac30, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+        Other, 0x103e6ad50, {{226.0, 358.0}, {580.0, 650.0}}
+          Image, 0x103e57dd0, {{76.0, 208.0}, {880.0, 950.0}}
+          Other, 0x103e57ef0, {{226.0, 358.0}, {580.0, 650.0}}
+            Other, 0x103e58010, {{226.0, 358.0}, {580.0, 650.0}}
+              Other, 0x103e58130, {{226.0, 358.0}, {580.0, 650.0}}
+                Other, 0x103e58250, {{226.0, 358.0}, {580.0, 650.0}}
+                  Other, 0x103e56c50, {{226.0, 358.0}, {580.0, 650.0}}
+                    Other, 0x103e56d70, {{226.0, 358.0}, {580.0, 650.0}}
+                      Other, 0x103e56e90, {{226.0, 358.0}, {580.0, 650.0}}
+                        Other, 0x103e56fb0, {{226.0, 358.0}, {580.0, 650.0}}
+                          Other, 0x103e570d0, {{226.0, 358.0}, {580.0, 650.0}}
+                            Other, 0x103e571f0, {{-580.0, -650.0}, {1740.0, 1950.0}}
+                            Other, 0x103e57310, {{226.0, 378.0}, {580.0, 630.0}}
+                              Image, 0x103e57430, {{-150.0, -130.0}, {880.0, 930.0}}
+                              Other, 0x103e57550, {{226.0, 378.0}, {580.0, 630.0}}
+                                Other, 0x103e57670, {{226.0, 378.0}, {580.0, 630.0}}
+                                  Other, 0x103e57790, {{226.0, 378.0}, {580.0, 630.0}}
+                                    Other, 0x103e66730, {{226.0, 378.0}, {580.0, 630.0}}
+                                      Other, 0x103e66850, {{226.0, 378.0}, {580.0, 630.0}}
+                                        ScrollView, 0x103e66970, {{226.0, 378.0}, {580.0, 630.0}}
+                                          Other, 0x103e66a90, {{226.0, 378.0}, {580.0, 391.0}}
+                                            Other, 0x103e66bb0, {{264.0, 414.5}, {504.0, 334.5}}
+                                              Other, 0x103e66cd0, {{264.0, 414.5}, {504.0, 82.0}}
+                                                Other, 0x103e66df0, {{264.0, 414.5}, {504.0, 82.0}}
+                                                  Other, 0x103e66f10, {{476.0, 415.5}, {80.0, 80.0}}
+                                                    Image, 0x103e67030, {{489.0, 434.0}, {54.5, 40.0}}, identifier: 'exclamationmark.icloud', label: 'erreur de chargement iCloud'
+                                              StaticText, 0x103e67150, {{264.0, 536.5}, {504.0, 54.5}}, label: 'La synchronisation des données Santé avec iCloud est désactivée'
+                                              StaticText, 0x103e67270, {{264.0, 592.0}, {504.0, 157.0}}, label: 'Les informations relatives à votre santé et à votre forme ne sont pas synchronisées sur cet iPad actuellement.
+
+Vous pouvez gérer la synchronisation de Santé dans les réglages iCloud.'
+                                            Other, 0x103e67390, {{0.0, 411.0}, {580.0, 0.0}}
+                                          Other, 0x103e63f50, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103e64070, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103e64190, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103e642b0, {{229.0, 826.0}, {574.0, 3.0}}
+                                          Other, 0x103e643d0, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103e644f0, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103e64610, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103e64730, {{229.0, 826.0}, {574.0, 3.0}}
+                                        Other, 0x103e64850, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103e64970, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103e64a90, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103e64bb0, {{336.0, 856.0}, {360.0, 52.0}}, label: 'Ouvrir Réglages'
+                                              StaticText, 0x103e64cd0, {{452.5, 871.5}, {127.0, 20.5}}, label: 'Ouvrir Réglages'
+                                            Other, 0x103e64df0, {{336.0, 856.0}, {360.0, 114.0}}
+                                              Other, 0x103e64f10, {{336.0, 856.0}, {360.0, 114.0}}
+                                                Other, 0x103e65030, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103e65150, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e65270, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103e65390, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103e545f0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e54710, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103e54830, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e54950, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103e55510, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103e55630, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e55750, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103e51da0, {{336.0, 918.0}, {360.0, 52.0}}, label: 'Plus tard'
+                                              StaticText, 0x103e51ec0, {{480.5, 933.5}, {71.0, 20.5}}, label: 'Plus tard'
+                        Other, 0x103e51fe0, {{0.0, 0.0}, {0.0, 0.0}}
+    Window, 0x103e52100, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103e52220, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103e52340, {{0.0, 0.0}, {1032.0, 1376.0}}
+Path to element:
+ →Application, 0x103e54290, pid: 10520, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103db6cc0, pid: 10520, label: 'Halcya'
+  }
+
+    t =    76.91s Waiting 1.0s for "Annuler" Button to exist
+    t =    77.92s     Checking `Expect predicate `existsNoRetry == 1` for object "Annuler" Button`
+    t =    77.92s         Checking existence of `"Annuler" Button`
+    t =    77.98s         Capturing element debug description
+    t =    77.99s     Checking existence of `"Annuler" Button`
+    t =    78.04s Collecting debug information to assist test failure triage
+    t =    78.04s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    78.13s Tap "Choisir un fichier à importer" Button
+    t =    78.13s     Wait for fr.jpesquet.sante to idle
+    t =    78.13s     Find the "Choisir un fichier à importer" Button
+    t =    78.20s     Check for interrupting elements affecting "Choisir un fichier à importer" Button
+    t =    78.28s         Wait for com.apple.springboard to idle
+    t =    78.33s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    78.34s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    78.36s     Synthesize event
+    t =    78.68s     Wait for fr.jpesquet.sante to idle
+    t =    78.68s Waiting 2.0s for Any (First Match) to exist
+    t =    79.69s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    79.69s         Checking existence of `Any (First Match)`
+    t =    79.76s         Capturing element debug description
+    t =    80.70s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    80.70s         Checking existence of `Any (First Match)`
+    t =    80.79s         Capturing element debug description
+    t =    80.79s     Checking existence of `Any (First Match)`
+    t =    80.85s Collecting debug information to assist test failure triage
+    t =    80.85s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    81.00s Waiting 2.0s for Any (First Match) to exist
+    t =    82.01s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    82.01s         Checking existence of `Any (First Match)`
+    t =    82.14s         Capturing element debug description
+    t =    83.01s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    83.01s         Checking existence of `Any (First Match)`
+    t =    83.11s         Capturing element debug description
+    t =    83.11s     Checking existence of `Any (First Match)`
+    t =    83.21s Collecting debug information to assist test failure triage
+    t =    83.21s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    83.37s Checking existence of `"Récents" Button`
+    t =    83.47s Checking existence of `"Explorer" Button`
+    t =    83.59s Checking existence of `"Parcourir" Button`
+    t =    83.69s Checking existence of `"Annuler" Button`
+    t =    84.06s Checking existence of `"Récents" Button`
+    t =    84.12s Checking existence of `"Explorer" Button`
+    t =    84.16s Checking existence of `"Parcourir" Button`
+    t =    84.21s Checking existence of `"Annuler" Button`
+    t =    84.57s Checking existence of `"Récents" Button`
+    t =    84.62s Checking existence of `"Explorer" Button`
+    t =    84.68s Checking existence of `"Parcourir" Button`
+    t =    84.73s Checking existence of `"Annuler" Button`
+    t =    85.09s Checking existence of `"Récents" Button`
+    t =    85.16s Checking existence of `"Explorer" Button`
+    t =    85.24s Checking existence of `"Parcourir" Button`
+    t =    85.31s Checking existence of `"Annuler" Button`
+    t =    85.67s Checking existence of `"Récents" Button`
+    t =    85.79s Checking existence of `"Explorer" Button`
+    t =    85.87s Checking existence of `"Parcourir" Button`
+    t =    85.93s Checking existence of `"Annuler" Button`
+    t =    86.32s Checking existence of `"Récents" Button`
+    t =    86.39s Checking existence of `"Explorer" Button`
+    t =    86.46s Checking existence of `"Parcourir" Button`
+    t =    86.54s Checking existence of `"Annuler" Button`
+    t =    86.89s Checking existence of `"Récents" Button`
+    t =    86.94s Checking existence of `"Explorer" Button`
+    t =    87.00s Checking existence of `"Parcourir" Button`
+    t =    87.04s Checking existence of `"Annuler" Button`
+    t =    87.40s Checking existence of `"Récents" Button`
+    t =    87.45s Checking existence of `"Explorer" Button`
+    t =    87.49s Checking existence of `"Parcourir" Button`
+    t =    87.54s Checking existence of `"Annuler" Button`
+    t =    87.89s Checking existence of `"Récents" Button`
+    t =    87.95s Checking existence of `"Explorer" Button`
+    t =    88.02s Checking existence of `"Parcourir" Button`
+    t =    88.09s Checking existence of `"Annuler" Button`
+    t =    88.49s Checking existence of `"Récents" Button`
+    t =    88.56s Checking existence of `"Explorer" Button`
+    t =    88.63s Checking existence of `"Parcourir" Button`
+    t =    88.70s Checking existence of `"Annuler" Button`
+    t =    89.06s Checking existence of `"Récents" Button`
+    t =    89.15s Checking existence of `"Explorer" Button`
+    t =    89.28s Checking existence of `"Parcourir" Button`
+    t =    89.34s Checking existence of `"Annuler" Button`
+sélecteur de fichiers absent après le toucher 1
+    t =    89.71s Tap "Choisir un fichier à importer" Button
+    t =    89.71s     Wait for fr.jpesquet.sante to idle
+    t =    89.72s     Find the "Choisir un fichier à importer" Button
+    t =    89.78s     Check for interrupting elements affecting "Choisir un fichier à importer" Button
+    t =    89.88s         Wait for com.apple.springboard to idle
+    t =    89.92s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    89.92s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    89.94s     Synthesize event
+    t =    90.26s     Wait for fr.jpesquet.sante to idle
+    t =    90.27s Waiting 2.0s for Any (First Match) to exist
+    t =    91.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    91.29s         Checking existence of `Any (First Match)`
+    t =    91.37s         Capturing element debug description
+    t =    92.27s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    92.27s         Checking existence of `Any (First Match)`
+    t =    92.39s         Capturing element debug description
+    t =    92.39s     Checking existence of `Any (First Match)`
+    t =    92.48s Collecting debug information to assist test failure triage
+    t =    92.48s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    92.60s Waiting 2.0s for Any (First Match) to exist
+    t =    93.63s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    93.63s         Checking existence of `Any (First Match)`
+    t =    93.73s         Capturing element debug description
+    t =    94.60s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    94.60s         Checking existence of `Any (First Match)`
+    t =    94.67s         Capturing element debug description
+    t =    94.67s     Checking existence of `Any (First Match)`
+    t =    94.74s Collecting debug information to assist test failure triage
+    t =    94.74s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =    94.87s Checking existence of `"Récents" Button`
+    t =    94.96s Checking existence of `"Explorer" Button`
+    t =    95.06s Checking existence of `"Parcourir" Button`
+    t =    95.13s Checking existence of `"Annuler" Button`
+    t =    95.53s Checking existence of `"Récents" Button`
+    t =    95.59s Checking existence of `"Explorer" Button`
+    t =    95.65s Checking existence of `"Parcourir" Button`
+    t =    95.72s Checking existence of `"Annuler" Button`
+    t =    96.09s Checking existence of `"Récents" Button`
+    t =    96.16s Checking existence of `"Explorer" Button`
+    t =    96.23s Checking existence of `"Parcourir" Button`
+    t =    96.29s Checking existence of `"Annuler" Button`
+    t =    96.67s Checking existence of `"Récents" Button`
+    t =    96.72s Checking existence of `"Explorer" Button`
+    t =    96.79s Checking existence of `"Parcourir" Button`
+    t =    96.85s Checking existence of `"Annuler" Button`
+    t =    97.22s Checking existence of `"Récents" Button`
+    t =    97.30s Checking existence of `"Explorer" Button`
+    t =    97.40s Checking existence of `"Parcourir" Button`
+    t =    97.49s Checking existence of `"Annuler" Button`
+    t =    97.86s Checking existence of `"Récents" Button`
+    t =    97.92s Checking existence of `"Explorer" Button`
+    t =    97.98s Checking existence of `"Parcourir" Button`
+    t =    98.04s Checking existence of `"Annuler" Button`
+    t =    98.41s Checking existence of `"Récents" Button`
+    t =    98.47s Checking existence of `"Explorer" Button`
+    t =    98.54s Checking existence of `"Parcourir" Button`
+    t =    98.61s Checking existence of `"Annuler" Button`
+    t =    98.99s Checking existence of `"Récents" Button`
+    t =    99.06s Checking existence of `"Explorer" Button`
+    t =    99.12s Checking existence of `"Parcourir" Button`
+    t =    99.18s Checking existence of `"Annuler" Button`
+    t =    99.56s Checking existence of `"Récents" Button`
+    t =    99.62s Checking existence of `"Explorer" Button`
+    t =    99.69s Checking existence of `"Parcourir" Button`
+    t =    99.74s Checking existence of `"Annuler" Button`
+    t =   100.11s Checking existence of `"Récents" Button`
+    t =   100.17s Checking existence of `"Explorer" Button`
+    t =   100.24s Checking existence of `"Parcourir" Button`
+    t =   100.30s Checking existence of `"Annuler" Button`
+    t =   100.66s Checking existence of `"Récents" Button`
+    t =   100.72s Checking existence of `"Explorer" Button`
+    t =   100.77s Checking existence of `"Parcourir" Button`
+    t =   100.84s Checking existence of `"Annuler" Button`
+sélecteur de fichiers absent après le toucher 2
+    t =   101.22s Waiting 8.0s for Cell (First Match) to exist
+    t =   102.26s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   102.26s         Checking existence of `Cell (First Match)`
+    t =   102.33s         Capturing element debug description
+    t =   103.26s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   103.26s         Checking existence of `Cell (First Match)`
+    t =   103.33s         Capturing element debug description
+    t =   104.27s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   104.28s         Checking existence of `Cell (First Match)`
+    t =   104.34s         Capturing element debug description
+    t =   105.25s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   105.25s         Checking existence of `Cell (First Match)`
+    t =   105.30s         Capturing element debug description
+    t =   106.24s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   106.24s         Checking existence of `Cell (First Match)`
+    t =   106.29s         Capturing element debug description
+    t =   107.30s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   107.30s         Checking existence of `Cell (First Match)`
+    t =   107.35s         Capturing element debug description
+    t =   108.27s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   108.27s         Checking existence of `Cell (First Match)`
+    t =   108.34s         Capturing element debug description
+    t =   109.22s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   109.23s         Checking existence of `Cell (First Match)`
+    t =   109.27s         Capturing element debug description
+    t =   109.27s     Checking existence of `Cell (First Match)`
+    t =   109.31s Collecting debug information to assist test failure triage
+    t =   109.31s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =   109.40s Waiting 3.0s for Any (First Match) to exist
+    t =   110.46s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   110.46s         Checking existence of `Any (First Match)`
+    t =   110.52s         Capturing element debug description
+    t =   111.41s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   111.41s         Checking existence of `Any (First Match)`
+    t =   111.49s         Capturing element debug description
+    t =   112.41s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   112.41s         Checking existence of `Any (First Match)`
+    t =   112.49s         Capturing element debug description
+    t =   112.49s     Checking existence of `Any (First Match)`
+    t =   112.55s Collecting debug information to assist test failure triage
+    t =   112.55s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =   112.65s Waiting 3.0s for Any (First Match) to exist
+    t =   113.68s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   113.68s         Checking existence of `Any (First Match)`
+    t =   113.74s         Capturing element debug description
+    t =   114.66s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   114.66s         Checking existence of `Any (First Match)`
+    t =   114.74s         Capturing element debug description
+    t =   115.66s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =   115.66s         Checking existence of `Any (First Match)`
+    t =   115.73s         Capturing element debug description
+    t =   115.73s     Checking existence of `Any (First Match)`
+    t =   115.82s Collecting debug information to assist test failure triage
+    t =   115.82s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =   115.94s Checking existence of `Cell (First Match)`
+    t =   116.01s Waiting 8.0s for Cell (First Match) to exist
+    t =   117.04s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   117.04s         Checking existence of `Cell (First Match)`
+    t =   117.10s         Capturing element debug description
+    t =   118.02s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   118.02s         Checking existence of `Cell (First Match)`
+    t =   118.10s         Capturing element debug description
+    t =   119.02s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   119.03s         Checking existence of `Cell (First Match)`
+    t =   119.08s         Capturing element debug description
+    t =   120.01s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   120.01s         Checking existence of `Cell (First Match)`
+    t =   120.07s         Capturing element debug description
+    t =   121.06s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   121.06s         Checking existence of `Cell (First Match)`
+    t =   121.12s         Capturing element debug description
+    t =   122.06s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   122.06s         Checking existence of `Cell (First Match)`
+    t =   122.12s         Capturing element debug description
+    t =   123.02s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   123.02s         Checking existence of `Cell (First Match)`
+    t =   123.09s         Capturing element debug description
+    t =   124.01s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   124.01s         Checking existence of `Cell (First Match)`
+    t =   124.08s         Capturing element debug description
+    t =   124.08s     Checking existence of `Cell (First Match)`
+    t =   124.15s Collecting debug information to assist test failure triage
+    t =   124.15s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+étape « Sur mon iPhone » absente
+    t =   124.27s Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =   124.88s Requesting snapshot of accessibility hierarchy for app with pid 10520
+Attributes: Application, 0x103d63130, pid: 10520, label: 'Halcya'
+Element subtree:
+ →Application, 0x103d63130, pid: 10520, label: 'Halcya'
+    Window (Main), 0x103d40d10, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103d6beb0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103d89b10, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x103d680d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+            Other, 0x103d62380, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+            WebView, 0x103d814d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+              WebView, 0x103d5df40, {{0.0, 0.0}, {1032.0, 1376.0}}
+                WebView, 0x103d40650, {{0.0, 0.0}, {1032.0, 1376.0}}
+                  Other, 0x103d41080, {{0.0, 0.0}, {1032.0, 1376.0}}
+                    Other, 0x103d47bd0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                      Other, 0x103d95020, {{0.0, -52.0}, {1032.0, 1376.0}}
+                        Other, 0x103d6d6c0, {{0.0, -52.0}, {1032.0, 1428.0}}, label: 'Halcya – ventre et bien-être', Focused
+                          Other, 0x103d44bb0, {{292.0, -20.0}, {448.0, 70.0}}, label: 'bannière', Focused
+                            Other, 0x103d52940, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                              StaticText, 0x103d7bb60, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                            Link, 0x103d5f720, {{696.0, -6.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                          Other, 0x103d4afc0, {{292.0, 50.0}, {448.0, 1055.0}}, label: 'principal', Focused
+                            Other, 0x103d5a190, {{292.0, 50.0}, {448.0, 29.0}}, label: 'Sauvegarde', value: 2, Focused
+                              StaticText, 0x103d754e0, {{292.0, 50.0}, {110.0, 29.0}}, label: 'Sauvegarde', value: Sauvegarde, Focused
+                            Other, 0x103d57830, {{292.0, 87.0}, {448.0, 88.0}}, Focused
+                              StaticText, 0x103d709c0, {{292.0, 87.0}, {425.0, 22.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                              StaticText, 0x103d57b90, {{292.0, 109.0}, {419.0, 66.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                            Other, 0x103d76940, {{308.0, 207.0}, {416.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                              StaticText, 0x103d91cc0, {{308.0, 207.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                            Other, 0x103d4cf20, {{308.0, 241.0}, {416.0, 21.0}}, Focused
+                              StaticText, 0x103d78bb0, {{308.0, 241.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                            Other, 0x103d7cf90, {{308.0, 270.0}, {416.0, 19.0}}, Focused
+                              StaticText, 0x103d8f460, {{308.0, 270.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                              StaticText, 0x103d48cf0, {{317.0, 271.0}, {3.0, 18.0}}, value:  , Focused
+                              StaticText, 0x103d4ac40, {{319.0, 270.0}, {24.0, 18.0}}, label: '252', value: 252, Focused
+                              StaticText, 0x103d7dd00, {{342.0, 271.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                              StaticText, 0x103d63860, {{388.0, 271.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                            Button, 0x103d49090, {{308.0, 301.0}, {416.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                            Other, 0x103d882d0, {{292.0, 393.0}, {448.0, 192.0}}, label: 'article', Focused
+                              StaticText, 0x103d78160, {{310.0, 409.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                              Other, 0x103d6c220, {{310.0, 439.0}, {412.0, 41.0}}, Focused
+                                StaticText, 0x103d65060, {{310.0, 439.0}, {407.0, 41.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                              StaticText, 0x103d6ddc0, {{318.0, 489.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                              Link, 0x103d93060, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                                StaticText, 0x103d81820, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                            Other, 0x103d64cf0, {{308.0, 625.0}, {416.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                              StaticText, 0x103d6eeb0, {{308.0, 625.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                            Other, 0x103d49ea0, {{308.0, 659.0}, {416.0, 41.0}}, Focused
+                              StaticText, 0x103d687c0, {{308.0, 659.0}, {350.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                            Button, 0x103d6f8f0, {{292.0, 609.0}, {448.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                            Button, 0x103d4e030, {{308.0, 712.0}, {416.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                            Button, 0x103d5fa70, {{308.0, 776.0}, {416.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                            Other, 0x103d485f0, {{308.0, 906.0}, {416.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                              StaticText, 0x103d71a90, {{308.0, 906.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                            Other, 0x103d6da50, {{308.0, 940.0}, {416.0, 61.0}}, Focused
+                              StaticText, 0x103d70670, {{308.0, 940.0}, {410.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                            Button, 0x103d7adc0, {{308.0, 1013.0}, {416.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                          Other, 0x103d4e700, {{0.0, 1293.0}, {1032.0, 83.0}}, label: 'Principal, navigation', Focused
+                            Link, 0x103d3f530, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', Focused
+                              StaticText, 0x103d5e620, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                            Link, 0x103d50d10, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', Focused
+                              StaticText, 0x103d75840, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                            Link, 0x103d69f80, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', Focused
+                              StaticText, 0x103d54f60, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                            Link, 0x103d5e980, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', Focused
+                              StaticText, 0x103d5f030, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', value: Données, Focused
+                Other, 0x103d61900, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103d47f30, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103d83d80, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103d642c0, {{35.0, 1370.0}, {964.0, 3.0}}
+                Other, 0x103d43da0, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103d4c4b0, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103d4d970, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103d604d0, {{35.0, 1370.0}, {964.0, 3.0}}
+      Other, 0x103d6f200, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103d7c580, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+        Other, 0x103d60ba0, {{226.0, 358.0}, {580.0, 650.0}}
+          Image, 0x103d67340, {{76.0, 208.0}, {880.0, 950.0}}
+          Other, 0x103d541b0, {{226.0, 358.0}, {580.0, 650.0}}
+            Other, 0x103b5b000, {{226.0, 358.0}, {580.0, 650.0}}
+              Other, 0x103b57c00, {{226.0, 358.0}, {580.0, 650.0}}
+                Other, 0x103b9fbe0, {{226.0, 358.0}, {580.0, 650.0}}
+                  Other, 0x103b9ed80, {{226.0, 358.0}, {580.0, 650.0}}
+                    Other, 0x103b5c200, {{226.0, 358.0}, {580.0, 650.0}}
+                      Other, 0x103b9f160, {{226.0, 358.0}, {580.0, 650.0}}
+                        Other, 0x103b60340, {{226.0, 358.0}, {580.0, 650.0}}
+                          Other, 0x103b5b360, {{226.0, 358.0}, {580.0, 650.0}}
+                            Other, 0x103b5b780, {{-580.0, -650.0}, {1740.0, 1950.0}}
+                            Other, 0x103b5fef0, {{226.0, 378.0}, {580.0, 630.0}}
+                              Image, 0x103b55440, {{-150.0, -130.0}, {880.0, 930.0}}
+                              Other, 0x103b5e360, {{226.0, 378.0}, {580.0, 630.0}}
+                                Other, 0x103b5e480, {{226.0, 378.0}, {580.0, 630.0}}
+                                  Other, 0x103b60760, {{226.0, 378.0}, {580.0, 630.0}}
+                                    Other, 0x103b60880, {{226.0, 378.0}, {580.0, 630.0}}
+                                      Other, 0x103b53b80, {{226.0, 378.0}, {580.0, 630.0}}
+                                        ScrollView, 0x103b53ca0, {{226.0, 378.0}, {580.0, 630.0}}
+                                          Other, 0x103b5bba0, {{226.0, 378.0}, {580.0, 391.0}}
+                                            Other, 0x103b5bcc0, {{264.0, 414.5}, {504.0, 334.5}}
+                                              Other, 0x103b5bde0, {{264.0, 414.5}, {504.0, 82.0}}
+                                                Other, 0x103b9c370, {{264.0, 414.5}, {504.0, 82.0}}
+                                                  Other, 0x103b9c490, {{476.0, 415.5}, {80.0, 80.0}}
+                                                    Image, 0x103b9c5b0, {{489.0, 434.0}, {54.5, 40.0}}, identifier: 'exclamationmark.icloud', label: 'erreur de chargement iCloud'
+                                              StaticText, 0x103b9c6d0, {{264.0, 536.5}, {504.0, 54.5}}, label: 'La synchronisation des données Santé avec iCloud est désactivée'
+                                              StaticText, 0x103b9c7f0, {{264.0, 592.0}, {504.0, 157.0}}, label: 'Les informations relatives à votre santé et à votre forme ne sont pas synchronisées sur cet iPad actuellement.
+
+Vous pouvez gérer la synchronisation de Santé dans les réglages iCloud.'
+                                            Other, 0x103b9caa0, {{0.0, 411.0}, {580.0, 0.0}}
+                                          Other, 0x103b9cbc0, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103b9cce0, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103b9ce00, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103b9cf20, {{229.0, 826.0}, {574.0, 3.0}}
+                                          Other, 0x103b9d040, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103b9d160, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103b9d280, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103b9d3a0, {{229.0, 826.0}, {574.0, 3.0}}
+                                        Other, 0x103b9d4c0, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103b9d5e0, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103b9d700, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103b9d820, {{336.0, 856.0}, {360.0, 52.0}}, label: 'Ouvrir Réglages'
+                                              StaticText, 0x103b9d940, {{452.5, 871.5}, {127.0, 20.5}}, label: 'Ouvrir Réglages'
+                                            Other, 0x103b9f580, {{336.0, 856.0}, {360.0, 114.0}}
+                                              Other, 0x103b9f6a0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                Other, 0x103b9f7c0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103b5c610, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b5c730, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103b5c850, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103b5c970, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b5ca90, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103b5cbb0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b641f0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103b64310, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103b64430, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b64550, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103b64670, {{336.0, 918.0}, {360.0, 52.0}}, label: 'Plus tard'
+                                              StaticText, 0x103b64790, {{480.5, 933.5}, {71.0, 20.5}}, label: 'Plus tard'
+                        Other, 0x103b648b0, {{0.0, 0.0}, {0.0, 0.0}}
+    Window, 0x103b649d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103b64af0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103b64c10, {{0.0, 0.0}, {1032.0, 1376.0}}
+Path to element:
+ →Application, 0x103d63130, pid: 10520, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103b60010, pid: 10520, label: 'Halcya'
+  }
+
+    t =   124.98s Waiting 3.0s for Cell (First Match) to exist
+    t =   126.01s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   126.01s         Checking existence of `Cell (First Match)`
+    t =   126.07s         Capturing element debug description
+    t =   126.99s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   126.99s         Checking existence of `Cell (First Match)`
+    t =   127.04s         Capturing element debug description
+    t =   127.99s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   127.99s         Checking existence of `Cell (First Match)`
+    t =   128.05s         Capturing element debug description
+    t =   128.05s     Checking existence of `Cell (First Match)`
+    t =   128.10s Collecting debug information to assist test failure triage
+    t =   128.10s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =   128.20s Checking existence of `Cell (First Match)`
+    t =   128.25s Waiting 8.0s for Cell (First Match) to exist
+    t =   129.28s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   129.28s         Checking existence of `Cell (First Match)`
+    t =   129.36s         Capturing element debug description
+    t =   130.27s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   130.27s         Checking existence of `Cell (First Match)`
+    t =   130.33s         Capturing element debug description
+    t =   131.26s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   131.26s         Checking existence of `Cell (First Match)`
+    t =   131.36s         Capturing element debug description
+    t =   132.32s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   132.32s         Checking existence of `Cell (First Match)`
+    t =   132.43s         Capturing element debug description
+    t =   133.27s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   133.28s         Checking existence of `Cell (First Match)`
+    t =   133.37s         Capturing element debug description
+    t =   134.32s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   134.32s         Checking existence of `Cell (First Match)`
+    t =   134.41s         Capturing element debug description
+    t =   135.26s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   135.27s         Checking existence of `Cell (First Match)`
+    t =   135.36s         Capturing element debug description
+    t =   136.26s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   136.26s         Checking existence of `Cell (First Match)`
+    t =   136.32s         Capturing element debug description
+    t =   136.32s     Checking existence of `Cell (First Match)`
+    t =   136.38s Collecting debug information to assist test failure triage
+    t =   136.38s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+étape « Halcya » absente
+    t =   136.50s Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =   137.22s Requesting snapshot of accessibility hierarchy for app with pid 10520
+Attributes: Application, 0x103e5fb10, pid: 10520, label: 'Halcya'
+Element subtree:
+ →Application, 0x103e5fb10, pid: 10520, label: 'Halcya'
+    Window (Main), 0x103e67900, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103d9dbc0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103da1490, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x103da1b50, {{0.0, 0.0}, {1032.0, 1376.0}}
+            Other, 0x103da2570, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+            WebView, 0x103da2c60, {{0.0, 0.0}, {1032.0, 1376.0}}
+              WebView, 0x103da2ff0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                WebView, 0x103da3350, {{0.0, 0.0}, {1032.0, 1376.0}}
+                  Other, 0x103da36d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                    Other, 0x103da3a50, {{0.0, 0.0}, {1032.0, 1376.0}}
+                      Other, 0x103da3db0, {{0.0, -52.0}, {1032.0, 1376.0}}
+                        Other, 0x103da4150, {{0.0, -52.0}, {1032.0, 1428.0}}, label: 'Halcya – ventre et bien-être', Focused
+                          Other, 0x103da44d0, {{292.0, -20.0}, {448.0, 70.0}}, label: 'bannière', Focused
+                            Other, 0x103da4830, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                              StaticText, 0x103da4f00, {{334.0, 2.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                            Link, 0x103da55c0, {{696.0, -6.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                          Other, 0x103da5930, {{292.0, 50.0}, {448.0, 1055.0}}, label: 'principal', Focused
+                            Other, 0x103da5ca0, {{292.0, 50.0}, {448.0, 29.0}}, label: 'Sauvegarde', value: 2, Focused
+                              StaticText, 0x103da6010, {{292.0, 50.0}, {110.0, 29.0}}, label: 'Sauvegarde', value: Sauvegarde, Focused
+                            Other, 0x103da5260, {{292.0, 87.0}, {448.0, 88.0}}, Focused
+                              StaticText, 0x103da4bb0, {{292.0, 87.0}, {425.0, 22.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                              StaticText, 0x103da2900, {{292.0, 109.0}, {419.0, 66.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                            Other, 0x103d988c0, {{308.0, 207.0}, {416.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                              StaticText, 0x103da1ec0, {{308.0, 207.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                            Other, 0x103d9e2b0, {{308.0, 241.0}, {416.0, 21.0}}, Focused
+                              StaticText, 0x103d9c3b0, {{308.0, 241.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                            Other, 0x103d98560, {{308.0, 270.0}, {416.0, 19.0}}, Focused
+                              StaticText, 0x103d98c50, {{308.0, 270.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                              StaticText, 0x103d98fb0, {{317.0, 271.0}, {3.0, 18.0}}, value:  , Focused
+                              StaticText, 0x103d8e650, {{319.0, 270.0}, {24.0, 18.0}}, label: '252', value: 252, Focused
+                              StaticText, 0x103d8ed60, {{342.0, 271.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                              StaticText, 0x103d977d0, {{388.0, 271.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                            Button, 0x103d8cf10, {{308.0, 301.0}, {416.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                            Other, 0x103d59e30, {{292.0, 393.0}, {448.0, 192.0}}, label: 'article', Focused
+                              StaticText, 0x103d9ce10, {{310.0, 409.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                              Other, 0x103d9d4f0, {{310.0, 439.0}, {412.0, 41.0}}, Focused
+                                StaticText, 0x103d9d160, {{310.0, 439.0}, {407.0, 41.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                              StaticText, 0x103d8d260, {{318.0, 489.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                              Link, 0x103d93770, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                                StaticText, 0x103d8f7e0, {{477.0, 531.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                            Other, 0x103d8cbb0, {{308.0, 625.0}, {416.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                              StaticText, 0x103d8bde0, {{308.0, 625.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                            Other, 0x103d8f0e0, {{308.0, 659.0}, {416.0, 41.0}}, Focused
+                              StaticText, 0x103d8e9e0, {{308.0, 659.0}, {350.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                            Button, 0x103d8c150, {{292.0, 609.0}, {448.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                            Button, 0x103d8c840, {{308.0, 712.0}, {416.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                            Button, 0x103d9b5d0, {{308.0, 776.0}, {416.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                            Other, 0x103d8c4b0, {{308.0, 906.0}, {416.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                              StaticText, 0x103d81b70, {{308.0, 906.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                            Other, 0x103d889c0, {{308.0, 940.0}, {416.0, 61.0}}, Focused
+                              StaticText, 0x103d89e90, {{308.0, 940.0}, {410.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                            Button, 0x103d83340, {{308.0, 1013.0}, {416.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                          Other, 0x103d82fd0, {{0.0, 1293.0}, {1032.0, 83.0}}, label: 'Principal, navigation', Focused
+                            Link, 0x103d83a10, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', Focused
+                              StaticText, 0x103d83690, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                            Link, 0x103d825a0, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', Focused
+                              StaticText, 0x103d82c30, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                            Link, 0x103d87820, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', Focused
+                              StaticText, 0x103d87f30, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                            Link, 0x103d75170, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', Focused
+                              StaticText, 0x103d961c0, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', value: Données, Focused
+                Other, 0x103d95e30, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103d95aa0, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103d97b40, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103d97e90, {{35.0, 1370.0}, {964.0, 3.0}}
+                Other, 0x103d970b0, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 100 %
+                  Other, 0x103d96560, {{1026.0, 80.5}, {3.0, 1262.5}}
+                Other, 0x103d87ba0, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103d97450, {{35.0, 1370.0}, {964.0, 3.0}}
+      Other, 0x103d953a0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103d5c040, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+        Other, 0x103d98200, {{226.0, 358.0}, {580.0, 650.0}}
+          Image, 0x103d53770, {{76.0, 208.0}, {880.0, 950.0}}
+          Other, 0x103d56dc0, {{226.0, 358.0}, {580.0, 650.0}}
+            Other, 0x103d72b70, {{226.0, 358.0}, {580.0, 650.0}}
+              Other, 0x103d923e0, {{226.0, 358.0}, {580.0, 650.0}}
+                Other, 0x103d3ff50, {{226.0, 358.0}, {580.0, 650.0}}
+                  Other, 0x103d92950, {{226.0, 358.0}, {580.0, 650.0}}
+                    Other, 0x103d7fcb0, {{226.0, 358.0}, {580.0, 650.0}}
+                      Other, 0x103d55d00, {{226.0, 358.0}, {580.0, 650.0}}
+                        Other, 0x103d3d960, {{226.0, 358.0}, {580.0, 650.0}}
+                          Other, 0x103d533d0, {{226.0, 358.0}, {580.0, 650.0}}
+                            Other, 0x103d59400, {{-580.0, -650.0}, {1740.0, 1950.0}}
+                            Other, 0x103d915c0, {{226.0, 378.0}, {580.0, 630.0}}
+                              Image, 0x103d9c020, {{-150.0, -130.0}, {880.0, 930.0}}
+                              Other, 0x103d9b960, {{226.0, 378.0}, {580.0, 630.0}}
+                                Other, 0x103d99da0, {{226.0, 378.0}, {580.0, 630.0}}
+                                  Other, 0x103d9bcd0, {{226.0, 378.0}, {580.0, 630.0}}
+                                    Other, 0x103d99340, {{226.0, 378.0}, {580.0, 630.0}}
+                                      Other, 0x103d9b280, {{226.0, 378.0}, {580.0, 630.0}}
+                                        ScrollView, 0x103da17f0, {{226.0, 378.0}, {580.0, 630.0}}
+                                          Other, 0x103d68440, {{226.0, 378.0}, {580.0, 391.0}}
+                                            Other, 0x103d5ecd0, {{264.0, 414.5}, {504.0, 334.5}}
+                                              Other, 0x103d6aa10, {{264.0, 414.5}, {504.0, 82.0}}
+                                                Other, 0x103d509a0, {{264.0, 414.5}, {504.0, 82.0}}
+                                                  Other, 0x103d94920, {{476.0, 415.5}, {80.0, 80.0}}
+                                                    Image, 0x103d41e00, {{489.0, 434.0}, {54.5, 40.0}}, identifier: 'exclamationmark.icloud', label: 'erreur de chargement iCloud'
+                                              StaticText, 0x103d79610, {{264.0, 536.5}, {504.0, 54.5}}, label: 'La synchronisation des données Santé avec iCloud est désactivée'
+                                              StaticText, 0x103d62010, {{264.0, 592.0}, {504.0, 157.0}}, label: 'Les informations relatives à votre santé et à votre forme ne sont pas synchronisées sur cet iPad actuellement.
+
+Vous pouvez gérer la synchronisation de Santé dans les réglages iCloud.'
+                                            Other, 0x103d82230, {{0.0, 411.0}, {580.0, 0.0}}
+                                          Other, 0x103d4a570, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103d502f0, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103d3d5c0, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103d4bdc0, {{229.0, 826.0}, {574.0, 3.0}}
+                                          Other, 0x103d41ab0, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103d54530, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103d92cd0, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103d713e0, {{229.0, 826.0}, {574.0, 3.0}}
+                                        Other, 0x103d563c0, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103d7b480, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103d57120, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103d6c8f0, {{336.0, 856.0}, {360.0, 52.0}}, label: 'Ouvrir Réglages'
+                                              StaticText, 0x103d6ad80, {{452.5, 871.5}, {127.0, 20.5}}, label: 'Ouvrir Réglages'
+                                            Other, 0x103d6a320, {{336.0, 856.0}, {360.0, 114.0}}
+                                              Other, 0x103e6dc10, {{336.0, 856.0}, {360.0, 114.0}}
+                                                Other, 0x103efda40, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103e75760, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e75880, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103e75fa0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103e760c0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e646c0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103e647e0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e60e60, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103e60f80, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103e5bcb0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103e5bdd0, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103e6edd0, {{336.0, 918.0}, {360.0, 52.0}}, label: 'Plus tard'
+                                              StaticText, 0x103e6eef0, {{480.5, 933.5}, {71.0, 20.5}}, label: 'Plus tard'
+                        Other, 0x103e6e6b0, {{0.0, 0.0}, {0.0, 0.0}}
+    Window, 0x103e6e7d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103e71920, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103e71a40, {{0.0, 0.0}, {1032.0, 1376.0}}
+Path to element:
+ →Application, 0x103e5fb10, pid: 10520, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103b926e0, pid: 10520, label: 'Halcya'
+  }
+
+    t =   137.29s Waiting 3.0s for Cell (First Match) to exist
+    t =   138.32s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   138.32s         Checking existence of `Cell (First Match)`
+    t =   138.40s         Capturing element debug description
+    t =   139.34s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   139.34s         Checking existence of `Cell (First Match)`
+    t =   139.39s         Capturing element debug description
+    t =   140.30s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   140.30s         Checking existence of `Cell (First Match)`
+    t =   140.39s         Capturing element debug description
+    t =   140.39s     Checking existence of `Cell (First Match)`
+    t =   140.48s Collecting debug information to assist test failure triage
+    t =   140.48s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =   140.60s Waiting 10.0s for Cell (First Match) to exist
+    t =   141.61s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   141.61s         Checking existence of `Cell (First Match)`
+    t =   141.68s         Capturing element debug description
+    t =   142.61s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   142.61s         Checking existence of `Cell (First Match)`
+    t =   142.66s         Capturing element debug description
+    t =   143.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   143.66s         Checking existence of `Cell (First Match)`
+    t =   143.73s         Capturing element debug description
+    t =   144.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   144.66s         Checking existence of `Cell (First Match)`
+    t =   144.72s         Capturing element debug description
+    t =   145.66s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   145.66s         Checking existence of `Cell (First Match)`
+    t =   145.70s         Capturing element debug description
+    t =   146.64s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   146.64s         Checking existence of `Cell (First Match)`
+    t =   146.71s         Capturing element debug description
+    t =   147.62s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   147.62s         Checking existence of `Cell (First Match)`
+    t =   147.68s         Capturing element debug description
+    t =   148.63s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   148.63s         Checking existence of `Cell (First Match)`
+    t =   148.69s         Capturing element debug description
+    t =   149.61s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   149.61s         Checking existence of `Cell (First Match)`
+    t =   149.70s         Capturing element debug description
+    t =   150.61s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =   150.61s         Checking existence of `Cell (First Match)`
+    t =   150.68s         Capturing element debug description
+    t =   150.68s     Checking existence of `Cell (First Match)`
+    t =   150.73s Collecting debug information to assist test failure triage
+    t =   150.73s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =   150.86s Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =   151.61s Requesting snapshot of accessibility hierarchy for app with pid 10520
+Attributes: Application, 0x103d61900, pid: 10520, label: 'Halcya'
+Element subtree:
+ →Application, 0x103d61900, pid: 10520, label: 'Halcya'
+    Window (Main), 0x103d642c0, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103d43da0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103d604d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x103d4c4b0, {{0.0, 0.0}, {1032.0, 1376.0}}
+            Other, 0x103d83d80, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+            WebView, 0x103d5df40, {{0.0, 0.0}, {1032.0, 1376.0}}
+              WebView, 0x103d814d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                WebView, 0x103d4d970, {{0.0, 0.0}, {1032.0, 1376.0}}
+                  Other, 0x103d680d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                    Other, 0x103d7d620, {{0.0, 0.0}, {1032.0, 1376.0}}
+                      Other, 0x103d7c580, {{0.0, 0.0}, {1032.0, 1376.0}}
+                        Other, 0x103d55660, {{0.0, 0.0}, {1032.0, 1428.0}}, label: 'Halcya – ventre et bien-être', Focused
+                          Other, 0x103d89b10, {{292.0, 32.0}, {448.0, 70.0}}, label: 'bannière', Focused
+                            Other, 0x103d60ba0, {{334.0, 54.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                              StaticText, 0x103d42f80, {{334.0, 54.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                            Link, 0x103d4f120, {{696.0, 46.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                          Other, 0x103d77a90, {{292.0, 102.0}, {448.0, 1055.0}}, label: 'principal', Focused
+                            Other, 0x103d6beb0, {{292.0, 102.0}, {448.0, 29.0}}, label: 'Sauvegarde', value: 2, Focused
+                              StaticText, 0x103d95020, {{292.0, 102.0}, {110.0, 29.0}}, label: 'Sauvegarde', value: Sauvegarde, Focused
+                            Other, 0x103d63130, {{292.0, 139.0}, {448.0, 88.0}}, Focused
+                              StaticText, 0x103d5a840, {{292.0, 139.0}, {425.0, 22.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                              StaticText, 0x103d6ffc0, {{292.0, 161.0}, {419.0, 66.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                            Other, 0x103d67340, {{308.0, 259.0}, {416.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                              StaticText, 0x103d41080, {{308.0, 259.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                            Other, 0x103d47bd0, {{308.0, 293.0}, {416.0, 21.0}}, Focused
+                              StaticText, 0x103d460f0, {{308.0, 293.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                            Other, 0x103d78840, {{308.0, 322.0}, {416.0, 19.0}}, Focused
+                              StaticText, 0x103d63bc0, {{308.0, 322.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                              StaticText, 0x103d88650, {{317.0, 323.0}, {3.0, 18.0}}, value:  , Focused
+                              StaticText, 0x103d68b20, {{319.0, 322.0}, {24.0, 18.0}}, label: '252', value: 252, Focused
+                              StaticText, 0x103d49410, {{342.0, 323.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                              StaticText, 0x103d996b0, {{388.0, 323.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                            Button, 0x103d5b2b0, {{308.0, 353.0}, {416.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                            Other, 0x103d62a70, {{292.0, 445.0}, {448.0, 192.0}}, label: 'article', Focused
+                              StaticText, 0x103d72810, {{310.0, 461.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                              Other, 0x103d59ab0, {{310.0, 491.0}, {412.0, 41.0}}, Focused
+                                StaticText, 0x103d6b0f0, {{310.0, 491.0}, {407.0, 41.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                              StaticText, 0x103d69550, {{318.0, 541.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                              Link, 0x103d4a8d0, {{477.0, 583.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                                StaticText, 0x103d7cc40, {{477.0, 583.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                            Other, 0x103d5f390, {{308.0, 677.0}, {416.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                              StaticText, 0x103d71a90, {{308.0, 677.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                            Other, 0x103d6f8f0, {{308.0, 711.0}, {416.0, 41.0}}, Focused
+                              StaticText, 0x103d49ea0, {{308.0, 711.0}, {350.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                            Button, 0x103d4e030, {{292.0, 661.0}, {448.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                            Button, 0x103d687c0, {{308.0, 764.0}, {416.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                            Button, 0x103d64cf0, {{308.0, 828.0}, {416.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                            Other, 0x103d6eeb0, {{308.0, 958.0}, {416.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                              StaticText, 0x103d882d0, {{308.0, 958.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                            Other, 0x103d81820, {{308.0, 992.0}, {416.0, 61.0}}, Focused
+                              StaticText, 0x103d93060, {{308.0, 992.0}, {410.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                            Button, 0x103d73240, {{308.0, 1065.0}, {416.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                          Other, 0x103d51080, {{0.0, 1293.0}, {1032.0, 83.0}}, label: 'Principal, navigation', Focused
+                            Link, 0x103d65060, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', Focused
+                              StaticText, 0x103d78160, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                            Link, 0x103d49090, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', Focused
+                              StaticText, 0x103d7cf90, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                            Link, 0x103d63860, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', Focused
+                              StaticText, 0x103d7dd00, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                            Link, 0x103d4ac40, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', Focused
+                              StaticText, 0x103d48cf0, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', value: Données, Focused
+                Other, 0x103d8f460, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 0 %
+                  Other, 0x103d78bb0, {{1026.0, 33.0}, {3.0, 1262.5}}
+                Other, 0x103d4cf20, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103d76940, {{35.0, 1370.0}, {964.0, 3.0}}
+                Other, 0x103d91cc0, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 0 %
+                  Other, 0x103d57b90, {{1026.0, 33.0}, {3.0, 1262.5}}
+                Other, 0x103d57830, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103d67d70, {{35.0, 1370.0}, {964.0, 3.0}}
+      Other, 0x103d5d890, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103d709c0, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+        Other, 0x103d5a190, {{226.0, 358.0}, {580.0, 650.0}}
+          Image, 0x103d754e0, {{76.0, 208.0}, {880.0, 950.0}}
+          Other, 0x103d5f720, {{226.0, 358.0}, {580.0, 650.0}}
+            Other, 0x103d44bb0, {{226.0, 358.0}, {580.0, 650.0}}
+              Other, 0x103d7bb60, {{226.0, 358.0}, {580.0, 650.0}}
+                Other, 0x103d52940, {{226.0, 358.0}, {580.0, 650.0}}
+                  Other, 0x103d62380, {{226.0, 358.0}, {580.0, 650.0}}
+                    Other, 0x103d80720, {{226.0, 358.0}, {580.0, 650.0}}
+                      Other, 0x103d7a370, {{226.0, 358.0}, {580.0, 650.0}}
+                        Other, 0x103d85810, {{226.0, 358.0}, {580.0, 650.0}}
+                          Other, 0x103d803a0, {{226.0, 358.0}, {580.0, 650.0}}
+                            Other, 0x103d6d320, {{-580.0, -650.0}, {1740.0, 1950.0}}
+                            Other, 0x103d5b620, {{226.0, 378.0}, {580.0, 630.0}}
+                              Image, 0x103d91950, {{-150.0, -130.0}, {880.0, 930.0}}
+                              Other, 0x103d89770, {{226.0, 378.0}, {580.0, 630.0}}
+                                Other, 0x103d7e3e0, {{226.0, 378.0}, {580.0, 630.0}}
+                                  Other, 0x103d91240, {{226.0, 378.0}, {580.0, 630.0}}
+                                    Other, 0x103d94200, {{226.0, 378.0}, {580.0, 630.0}}
+                                      Other, 0x103d784f0, {{226.0, 378.0}, {580.0, 630.0}}
+                                        ScrollView, 0x103d735b0, {{226.0, 378.0}, {580.0, 630.0}}
+                                          Other, 0x103d5cad0, {{226.0, 378.0}, {580.0, 391.0}}
+                                            Other, 0x103d7f5e0, {{264.0, 414.5}, {504.0, 334.5}}
+                                              Other, 0x103d60820, {{264.0, 414.5}, {504.0, 82.0}}
+                                                Other, 0x103d77380, {{264.0, 414.5}, {504.0, 82.0}}
+                                                  Other, 0x103d80de0, {{476.0, 415.5}, {80.0, 80.0}}
+                                                    Image, 0x103d7eef0, {{489.0, 434.0}, {54.5, 40.0}}, identifier: 'exclamationmark.icloud', label: 'erreur de chargement iCloud'
+                                              StaticText, 0x103d8ace0, {{264.0, 536.5}, {504.0, 54.5}}, label: 'La synchronisation des données Santé avec iCloud est désactivée'
+                                              StaticText, 0x103d58280, {{264.0, 592.0}, {504.0, 157.0}}, label: 'Les informations relatives à votre santé et à votre forme ne sont pas synchronisées sur cet iPad actuellement.
+
+Vous pouvez gérer la synchronisation de Santé dans les réglages iCloud.'
+                                            Other, 0x103d5d520, {{0.0, 411.0}, {580.0, 0.0}}
+                                          Other, 0x103d76cb0, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103d5d1b0, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103d71070, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103d4cbd0, {{229.0, 826.0}, {574.0, 3.0}}
+                                          Other, 0x103d70310, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103d5b980, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103d44810, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103d52250, {{229.0, 826.0}, {574.0, 3.0}}
+                                        Other, 0x103d70d00, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103d77710, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103d471b0, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103d6fc40, {{336.0, 856.0}, {360.0, 52.0}}, label: 'Ouvrir Réglages'
+                                              StaticText, 0x103d765d0, {{452.5, 871.5}, {127.0, 20.5}}, label: 'Ouvrir Réglages'
+                                            Other, 0x103d7a010, {{336.0, 856.0}, {360.0, 114.0}}
+                                              Other, 0x103d66fe0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                Other, 0x103d60170, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103d75bc0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103d47520, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103d559c0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103d6cfc0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103d6e480, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103d6e800, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103d676c0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103d743a0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103d63f40, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103d60ef0, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103d6eb40, {{336.0, 918.0}, {360.0, 52.0}}, label: 'Plus tard'
+                                              StaticText, 0x103d66240, {{480.5, 933.5}, {71.0, 20.5}}, label: 'Plus tard'
+                        Other, 0x103d3fc00, {{0.0, 0.0}, {0.0, 0.0}}
+    Window, 0x103d8e300, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103d77010, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103d4c830, {{0.0, 0.0}, {1032.0, 1376.0}}
+Path to element:
+ →Application, 0x103d61900, pid: 10520, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103b56e20, pid: 10520, label: 'Halcya'
+  }
+
+« halcya-essai-import » introuvable dans le sélecteur de fichiers
+aucun aperçu après le parcours 2
+    t =   151.72s Requesting snapshot of accessibility hierarchy for app with pid 10520
+    t =   152.48s Requesting snapshot of accessibility hierarchy for app with pid 10520
+Attributes: Application, 0x103b5b780, pid: 10520, label: 'Halcya'
+Element subtree:
+ →Application, 0x103b5b780, pid: 10520, label: 'Halcya'
+    Window (Main), 0x103b84e50, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103b86790, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103b5bfe0, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x103b86370, {{0.0, 0.0}, {1032.0, 1376.0}}
+            Other, 0x103b86ff0, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+            WebView, 0x103b5c100, {{0.0, 0.0}, {1032.0, 1376.0}}
+              WebView, 0x103b5c220, {{0.0, 0.0}, {1032.0, 1376.0}}
+                WebView, 0x103b5c340, {{0.0, 0.0}, {1032.0, 1376.0}}
+                  Other, 0x103b5c460, {{0.0, 0.0}, {1032.0, 1376.0}}
+                    Other, 0x103b5c580, {{0.0, 0.0}, {1032.0, 1376.0}}
+                      Other, 0x103b5c6a0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                        Other, 0x103b5c7c0, {{0.0, 0.0}, {1032.0, 1428.0}}, label: 'Halcya – ventre et bien-être', Focused
+                          Other, 0x103b5c8e0, {{292.0, 32.0}, {448.0, 70.0}}, label: 'bannière', Focused
+                            Other, 0x103b5ca00, {{334.0, 54.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                              StaticText, 0x103b5cb20, {{334.0, 54.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                            Link, 0x103b5cc40, {{696.0, 46.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                          Other, 0x103b5d600, {{292.0, 102.0}, {448.0, 1055.0}}, label: 'principal', Focused
+                            Other, 0x103b5d720, {{292.0, 102.0}, {448.0, 29.0}}, label: 'Sauvegarde', value: 2, Focused
+                              StaticText, 0x103b5d840, {{292.0, 102.0}, {110.0, 29.0}}, label: 'Sauvegarde', value: Sauvegarde, Focused
+                            Other, 0x103b5d960, {{292.0, 139.0}, {448.0, 88.0}}, Focused
+                              StaticText, 0x103b5da80, {{292.0, 139.0}, {425.0, 22.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                              StaticText, 0x103b5dba0, {{292.0, 161.0}, {419.0, 66.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                            Other, 0x103b5df60, {{308.0, 259.0}, {416.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                              StaticText, 0x103b5e080, {{308.0, 259.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                            Other, 0x103b5e1a0, {{308.0, 293.0}, {416.0, 21.0}}, Focused
+                              StaticText, 0x103b5e2c0, {{308.0, 293.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                            Other, 0x103b5e3e0, {{308.0, 322.0}, {416.0, 19.0}}, Focused
+                              StaticText, 0x103b5e500, {{308.0, 322.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                              StaticText, 0x103b57c00, {{317.0, 323.0}, {3.0, 18.0}}, value:  , Focused
+                              StaticText, 0x103b57d20, {{319.0, 322.0}, {24.0, 18.0}}, label: '252', value: 252, Focused
+                              StaticText, 0x103b57e40, {{342.0, 323.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                              StaticText, 0x103b57f60, {{388.0, 323.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                            Button, 0x103b9c370, {{308.0, 353.0}, {416.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                            Other, 0x103b9c490, {{292.0, 445.0}, {448.0, 192.0}}, label: 'article', Focused
+                              StaticText, 0x103b9c5b0, {{310.0, 461.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                              Other, 0x103b9c6d0, {{310.0, 491.0}, {412.0, 41.0}}, Focused
+                                StaticText, 0x103b9c7f0, {{310.0, 491.0}, {407.0, 41.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                              StaticText, 0x103b9cb50, {{318.0, 541.0}, {46.0, 17.0}}, label: 'premium', value: premium, Focused
+                              Link, 0x103b9cc70, {{477.0, 583.0}, {78.0, 24.0}}, label: 'Débloquer', Focused
+                                StaticText, 0x103b9cd90, {{477.0, 583.0}, {78.0, 24.0}}, label: 'Débloquer', value: Débloquer, Focused
+                            Other, 0x103b9ceb0, {{308.0, 677.0}, {416.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                              StaticText, 0x103b9cfd0, {{308.0, 677.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                            Other, 0x103b9d0f0, {{308.0, 711.0}, {416.0, 41.0}}, Focused
+                              StaticText, 0x103b9d210, {{308.0, 711.0}, {350.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                            Button, 0x103b9d330, {{292.0, 661.0}, {448.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                            Button, 0x103b9d450, {{308.0, 764.0}, {416.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                            Button, 0x103b9d570, {{308.0, 828.0}, {416.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                            Other, 0x103b9d690, {{308.0, 958.0}, {416.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                              StaticText, 0x103b9d7b0, {{308.0, 958.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                            Other, 0x103b9d8d0, {{308.0, 992.0}, {416.0, 61.0}}, Focused
+                              StaticText, 0x103b9d9f0, {{308.0, 992.0}, {410.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                            Button, 0x103b9dd90, {{308.0, 1065.0}, {416.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                          Other, 0x103b9deb0, {{0.0, 1293.0}, {1032.0, 83.0}}, label: 'Principal, navigation', Focused
+                            Link, 0x103b9dfd0, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', Focused
+                              StaticText, 0x103b9e0f0, {{317.0, 1333.0}, {38.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                            Link, 0x103b9e210, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', Focused
+                              StaticText, 0x103b9e330, {{427.0, 1333.0}, {58.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                            Link, 0x103b9e450, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', Focused
+                              StaticText, 0x103b9e570, {{552.0, 1333.0}, {48.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                            Link, 0x103b9e690, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', Focused
+                              StaticText, 0x103b9e7b0, {{672.0, 1333.0}, {48.0, 17.0}}, label: 'Données', value: Données, Focused
+                Other, 0x103b9e8d0, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 0 %
+                  Other, 0x103b9e9f0, {{1026.0, 33.0}, {3.0, 1262.5}}
+                Other, 0x103b9eb10, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103b9ec30, {{35.0, 1370.0}, {964.0, 3.0}}
+                Other, 0x103b9ed50, {{999.0, 30.0}, {30.0, 1316.0}}, label: 'Barre de défilement verticale, 2 pages', value: 0 %
+                  Other, 0x103b9ee70, {{1026.0, 33.0}, {3.0, 1262.5}}
+                Other, 0x103b5b000, {{32.0, 1343.0}, {970.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                  Other, 0x103b5b120, {{35.0, 1370.0}, {964.0, 3.0}}
+      Other, 0x103b5b240, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103b5b360, {{-1032.0, -1376.0}, {3096.0, 4128.0}}
+        Other, 0x103b5b480, {{226.0, 358.0}, {580.0, 650.0}}
+          Image, 0x103b9f4a0, {{76.0, 208.0}, {880.0, 950.0}}
+          Other, 0x103b9f5c0, {{226.0, 358.0}, {580.0, 650.0}}
+            Other, 0x103b9f6e0, {{226.0, 358.0}, {580.0, 650.0}}
+              Other, 0x103b9f800, {{226.0, 358.0}, {580.0, 650.0}}
+                Other, 0x103b9f920, {{226.0, 358.0}, {580.0, 650.0}}
+                  Other, 0x103b9fa40, {{226.0, 358.0}, {580.0, 650.0}}
+                    Other, 0x103b9fb60, {{226.0, 358.0}, {580.0, 650.0}}
+                      Other, 0x103b9fc80, {{226.0, 358.0}, {580.0, 650.0}}
+                        Other, 0x103b9a430, {{226.0, 358.0}, {580.0, 650.0}}
+                          Other, 0x103b9a550, {{226.0, 358.0}, {580.0, 650.0}}
+                            Other, 0x103b9a670, {{-580.0, -650.0}, {1740.0, 1950.0}}
+                            Other, 0x103b9a790, {{226.0, 378.0}, {580.0, 630.0}}
+                              Image, 0x103b9a8b0, {{-150.0, -130.0}, {880.0, 930.0}}
+                              Other, 0x103b9a9d0, {{226.0, 378.0}, {580.0, 630.0}}
+                                Other, 0x103b9aaf0, {{226.0, 378.0}, {580.0, 630.0}}
+                                  Other, 0x103b9ac10, {{226.0, 378.0}, {580.0, 630.0}}
+                                    Other, 0x103b9ad30, {{226.0, 378.0}, {580.0, 630.0}}
+                                      Other, 0x103b9ae50, {{226.0, 378.0}, {580.0, 630.0}}
+                                        ScrollView, 0x103b9af70, {{226.0, 378.0}, {580.0, 630.0}}
+                                          Other, 0x103b9b090, {{226.0, 378.0}, {580.0, 391.0}}
+                                            Other, 0x103b9b1b0, {{264.0, 414.5}, {504.0, 334.5}}
+                                              Other, 0x103b9b2d0, {{264.0, 414.5}, {504.0, 82.0}}
+                                                Other, 0x103b9b3f0, {{264.0, 414.5}, {504.0, 82.0}}
+                                                  Other, 0x103b9b510, {{476.0, 415.5}, {80.0, 80.0}}
+                                                    Image, 0x103b9b630, {{489.0, 434.0}, {54.5, 40.0}}, identifier: 'exclamationmark.icloud', label: 'erreur de chargement iCloud'
+                                              StaticText, 0x103b9b750, {{264.0, 536.5}, {504.0, 54.5}}, label: 'La synchronisation des données Santé avec iCloud est désactivée'
+                                              StaticText, 0x103b9b870, {{264.0, 592.0}, {504.0, 157.0}}, label: 'Les informations relatives à votre santé et à votre forme ne sont pas synchronisées sur cet iPad actuellement.
+
+Vous pouvez gérer la synchronisation de Santé dans les réglages iCloud.'
+                                            Other, 0x103b9bb20, {{0.0, 411.0}, {580.0, 0.0}}
+                                          Other, 0x103b9bc40, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103b9bd60, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103b9be80, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103b9bfa0, {{229.0, 826.0}, {574.0, 3.0}}
+                                          Other, 0x103b9c0c0, {{773.0, 416.0}, {30.0, 416.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                            Other, 0x103b9c1e0, {{800.0, 482.0}, {3.0, 347.0}}
+                                          Other, 0x103b54e60, {{226.0, 799.0}, {580.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                            Other, 0x103b54f80, {{229.0, 826.0}, {574.0, 3.0}}
+                                        Other, 0x103b550a0, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103b551c0, {{226.0, 832.0}, {580.0, 176.0}}
+                                          Other, 0x103b552e0, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103b55400, {{336.0, 856.0}, {360.0, 52.0}}, label: 'Ouvrir Réglages'
+                                              StaticText, 0x103b55520, {{452.5, 871.5}, {127.0, 20.5}}, label: 'Ouvrir Réglages'
+                                            Other, 0x103b55640, {{336.0, 856.0}, {360.0, 114.0}}
+                                              Other, 0x103b78aa0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                Other, 0x103b78bc0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103b78ce0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b78e00, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103b78f20, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103b79040, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b79160, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103b79280, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b793a0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                      Other, 0x103b794c0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                  Other, 0x103b795e0, {{336.0, 856.0}, {360.0, 114.0}}
+                                                    Other, 0x103b79700, {{336.0, 856.0}, {360.0, 114.0}}
+                                            Button, 0x103b79820, {{336.0, 918.0}, {360.0, 52.0}}, label: 'Plus tard'
+                                              StaticText, 0x103b79940, {{480.5, 933.5}, {71.0, 20.5}}, label: 'Plus tard'
+                        Other, 0x103b79a60, {{0.0, 0.0}, {0.0, 0.0}}
+    Window, 0x103b79b80, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x103b79ca0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x103b79dc0, {{0.0, 0.0}, {1032.0, 1376.0}}
+Path to element:
+ →Application, 0x103b5b780, pid: 10520, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x103e78680, pid: 10520, label: 'Halcya'
+  }
+
+    t =   152.59s Waiting 1.0s for "Annuler" Button to exist
+    t =   153.60s     Checking `Expect predicate `existsNoRetry == 1` for object "Annuler" Button`
+    t =   153.60s         Checking existence of `"Annuler" Button`
+    t =   153.66s         Capturing element debug description
+    t =   153.67s     Checking existence of `"Annuler" Button`
+    t =   153.73s Collecting debug information to assist test failure triage
+    t =   153.73s     Requesting snapshot of accessibility hierarchy for app with pid 10520
+/Users/runner/work/HealthTrack/HealthTrack/iphone/uitests/HalcyaUITests/SanteUITests.swift:175: error: -[HalcyaUITests.DonneesUITests testImporterUnFichierDepuisFichiers] : failed - aperçu de l'import jamais affiché
+    t =   154.10s Tear Down
+Test Case '-[HalcyaUITests.DonneesUITests testImporterUnFichierDepuisFichiers]' failed (154.209 seconds).
+Test Suite 'DonneesUITests' failed at 2026-11-21 15:21:40.052.
+	 Executed 1 test, with 1 failure (0 unexpected) in 154.209 (154.221) seconds
+Test Suite 'HalcyaUITests.xctest' failed at 2026-11-21 15:21:40.057.
+	 Executed 1 test, with 1 failure (0 unexpected) in 154.209 (154.226) seconds
+Test Suite 'Selected tests' failed at 2026-11-21 15:21:40.058.
+	 Executed 1 test, with 1 failure (0 unexpected) in 154.209 (154.228) seconds
+2026-11-21 15:22:11.247 xcodebuild[48144:139595] [MT] IDETestOperationsObserverDebug: 198.526 elapsed -- Testing started completed.
+2026-11-21 15:22:11.251 xcodebuild[48144:139595] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-21 15:22:11.251 xcodebuild[48144:139595] [MT] IDETestOperationsObserverDebug: 198.526 sec, +198.526 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-hikjtlrwyiamluhfffxcteyktuiz/Logs/Test/Test-HalcyaUITests-2026.11.21_15-18-36-+0000.xcresult
+
+Failing tests:
+	DonneesUITests.testImporterUnFichierDepuisFichiers()
+
+** TEST EXECUTE FAILED **
+
+Testing started

@@ -1,0 +1,349 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=1D202A62-75FA-4910-BFA1-14DDB30B0518 "-only-testing:HalcyaUITests/NotificationsUITests/testNoterLaSoireeDepuisLaBanniere"
+
+2026-11-21 15:14:49.208 xcodebuild[40489:118966] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-21 15:14:49.263 xcodebuild[40489:118966] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:1D202A62-75FA-4910-BFA1-14DDB30B0518, OS:26.2, name:iPad Pro 13-inch (M5) }
+{ platform:iOS Simulator, arch:x86_64, id:1D202A62-75FA-4910-BFA1-14DDB30B0518, OS:26.2, name:iPad Pro 13-inch (M5) }
+2026-11-21 15:14:58.945 xcodebuild[40489:118966] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-21 15:15:15.986636+0000 HalcyaUITests-Runner[41406:121325] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-21 15:15:19.455.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-21 15:15:19.457.
+Test Suite 'NotificationsUITests' started at 2026-11-21 15:15:19.458.
+Test Case '-[HalcyaUITests.NotificationsUITests testNoterLaSoireeDepuisLaBanniere]' started.
+    t =     0.01s Start Test at 2026-11-21 15:15:19.465
+    t =     0.88s Set Up
+    t =     0.91s Waiting 90.0s for Any (First Match) to exist
+    t =     1.92s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     1.99s         Checking existence of `Any (First Match)`
+    t =     2.33s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     2.33s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     2.48s         Capturing element debug description
+    t =     2.92s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     2.95s         Checking existence of `Any (First Match)`
+    t =     3.10s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     3.10s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     3.11s         Capturing element debug description
+    t =     3.96s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.96s         Checking existence of `Any (First Match)`
+    t =     4.09s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     4.10s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     4.11s         Capturing element debug description
+    t =     4.92s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     4.93s         Checking existence of `Any (First Match)`
+    t =     5.10s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     5.12s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     5.13s         Capturing element debug description
+    t =     5.98s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     5.99s         Checking existence of `Any (First Match)`
+    t =     6.16s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     6.17s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     6.18s         Capturing element debug description
+    t =     6.91s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     6.92s         Checking existence of `Any (First Match)`
+    t =     7.00s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     7.01s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     7.02s         Capturing element debug description
+    t =     7.97s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     7.97s         Checking existence of `Any (First Match)`
+    t =     8.11s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     8.12s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     8.13s         Capturing element debug description
+    t =     8.97s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     8.97s         Checking existence of `Any (First Match)`
+    t =     9.09s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     9.10s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =     9.10s         Capturing element debug description
+    t =     9.93s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     9.93s         Checking existence of `Any (First Match)`
+    t =    10.04s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    10.04s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    10.05s         Capturing element debug description
+    t =    10.91s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    10.91s         Checking existence of `Any (First Match)`
+    t =    11.02s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    11.03s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    11.03s         Capturing element debug description
+    t =    11.94s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    11.94s         Checking existence of `Any (First Match)`
+    t =    12.38s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    12.39s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    12.40s         Capturing element debug description
+    t =    12.92s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    12.92s         Checking existence of `Any (First Match)`
+    t =    13.15s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    13.19s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    13.21s Press Any (First Match) for 1.5 seconds
+    t =    13.21s     Wait for com.apple.springboard to idle
+    t =    14.36s     Find the Any (First Match)
+    t =    14.50s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    14.68s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    14.81s     Check for interrupting elements affecting "NotificationShortLookView" BannerNotification
+    t =    15.32s         Wait for fr.jpesquet.sante to idle
+    t =    15.96s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    15.96s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    16.25s     Synthesize event
+    t =    18.17s     Wait for com.apple.springboard to idle
+    t =    19.77s Requesting snapshot of accessibility hierarchy for app with pid 8962
+    t =    20.71s Requesting snapshot of accessibility hierarchy for app with pid 8962
+Attributes: Application, 0x101c4b2b0, pid: 8962, label: ' '
+Element subtree:
+ →Application, 0x101c4b2b0, pid: 8962, label: ' '
+    Window, 0x10182fa60, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x101830810, {{0.0, 0.0}, {1032.0, 1376.0}}
+    Window, 0x101830130, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x10182f6f0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x1018304a0, {{1174.5, -150.0}, {7.5, 7.5}}
+    Window, 0x10182fdd0, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x101830b70, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x101830ec0, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x101831240, {{0.0, 0.0}, {1032.0, 1376.0}}
+            Other, 0x1018315a0, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101831940, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101831cd0, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101832040, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101c423b0, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101c4a8b0, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101c45520, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101c4f850, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101c42040, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101c3daa0, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101c3f8e0, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101c3fa00, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x101c40730, {{0.0, 0.0}, {1032.0, 1376.0}}
+    Window, 0x101c40850, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x101c49330, {{0.0, 0.0}, {1032.0, 1376.0}}
+    Window, 0x101c49450, {{0.0, 0.0}, {1032.0, 1376.0}}, identifier: 'SBSwitcherWindow:Main'
+      Other, 0x101c48f00, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x101c49020, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x101c32d60, {{0.0, 0.0}, {1032.0, 1376.0}}
+            Other, 0x101c32e80, {{0.0, 0.0}, {1032.0, 1376.0}}
+              ScrollView, 0x101c4c850, {{0.0, 0.0}, {1032.0, 1376.0}}
+              Other, 0x101c4c970, {{0.0, 0.0}, {1032.0, 1376.0}}, identifier: 'AppSwitcherContentView'
+                Other, 0x101c4ca90, {{0.0, 0.0}, {1032.0, 1376.0}}
+                  Other, 0x101c4cbb0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                Other, 0x101c4ccd0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                  Other, 0x101c4cdf0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                    Other, 0x101c4cf10, {{0.0, 0.0}, {1032.0, 1376.0}}
+                Other, 0x101c4d030, {{0.0, 0.0}, {1032.0, 1376.0}}, identifier: 'card:fr.jpesquet.sante:sceneID:fr.jpesquet.sante-default', label: 'Halcya'
+                  Other, 0x101c4d150, {{0.0, 0.0}, {1032.0, 1376.0}}
+                    Other, 0x101c4d270, {{0.0, 0.0}, {1032.0, 1376.0}}
+                      Other, 0x101c4d390, {{-196.0, -294.0}, {1424.0, 1964.0}}
+                        Other, 0x101c4d4b0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                          Other, 0x101c4d5d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                            ScrollView, 0x101c4d6f0, {{0.0, -688.0}, {1032.0, 2064.0}}
+                              Other, 0x101c4e250, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                Other, 0x101c4e370, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                  Other, 0x101c4e490, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                Other, 0x101c4e5b0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                  Other, 0x101c4e6d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                    Other, 0x1018323b0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                      Other, 0x101832700, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                        Other, 0x101832a80, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                          Other, 0x101832dc0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                            Other, 0x101833130, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                              Other, 0x101833480, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                                Other, 0x1018337e0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                                  Other, 0x101833b70, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                                    StatusBar, 0x101833ec0, {{0.0, 0.0}, {1032.0, 32.0}}
+                                                      Other, 0x101834240, {{0.0, 0.0}, {1032.0, 32.0}}
+                                                        Other, 0x101834590, {{0.0, 0.0}, {1032.0, 32.0}}
+                                                          Other, 0x1018348f0, {{25.0, 7.0}, {18.0, 18.0}}
+                                                          Other, 0x101834c40, {{25.0, 11.0}, {453.0, 10.0}}
+                                                            StaticText, 0x101b434e0, {{25.0, 7.5}, {38.0, 17.0}}, label: '15:15'
+                                                            StaticText, 0x101b45950, {{73.0, 7.5}, {137.5, 17.0}}, label: 'Samedi 21 novembre'
+                                                          Other, 0x101b469f0, {{507.0, 7.0}, {18.0, 18.0}}
+                                                          Other, 0x101b470b0, {{554.0, 11.0}, {452.0, 10.0}}
+                                                            Other, 0x101b46d50, {{937.0, 10.5}, {18.5, 11.0}}, label: 'Données cellulaires', value: 4 sur 4 barres, in...
+                                                            Other, 0x101b477c0, {{959.5, 11.0}, {15.0, 10.0}}, identifier: '3 sur 3 barres Wi-Fi', value: SSID, 3 sur 3 barr...
+                                                            Other, 0x101b47430, {{978.5, 9.5}, {27.5, 13.0}}, label: 'Charge de la batterie : 100 %'
+                                                          Other, 0x101b4aed0, {{988.0, 7.0}, {18.0, 18.0}}
+                                              Other, 0x101b4b5b0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                                Other, 0x101b47b20, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                                  Other, 0x101b4c350, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                            Other, 0x101b4bc70, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                  Other, 0x101b4c6d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                                  Other, 0x101b4bfd0, {{0.0, 32.0}, {1032.0, 1344.0}}
+                                Other, 0x101b4b910, {{1012.0, 1356.0}, {40.0, 40.0}}, identifier: 'resize-grabber', label: 'Redimensionner Halcya', value: en bas à droite
+                Other, 0x101834f80, {{0.0, 0.0}, {1032.0, 1376.0}}
+                  Other, 0x1018352f0, {{0.0, 0.0}, {1032.0, 1376.0}}
+                    Other, 0x101b4b240, {{0.0, 0.0}, {1032.0, 1376.0}}
+                      Other, 0x101c4e7f0, {{0.0, 0.0}, {1032.0, 1376.0}}
+    Window, 0x101c4e910, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x101c4ea30, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x101b4a7d0, {{0.0, 0.0}, {1032.0, 1376.0}}
+    Window, 0x101b4ab50, {{0.0, 0.0}, {516.0, 688.0}}
+      Other, 0x101b4a120, {{0.0, 0.0}, {516.0, 688.0}}
+        Other, 0x101b4a470, {{0.0, 0.0}, {516.0, 688.0}}
+    Window, 0x101b49a40, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x101b49dc0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x101b49390, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x101b496e0, {{0.0, 0.0}, {1032.0, 1376.0}}
+          Other, 0x101b49010, {{0.0, 0.0}, {1032.0, 1376.0}}
+    Window, 0x101b48c70, {{0.0, 0.0}, {1032.0, 1376.0}}
+      StatusBar, 0x101b48920, {{0.0, 0.0}, {1032.0, 32.0}}
+      Other, 0x101b48210, {{0.0, 0.0}, {1032.0, 1376.0}}
+    Window (Main), 0x101b47ec0, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x101b485a0, {{0.0, 0.0}, {1032.0, 1376.0}}
+        Other, 0x101b44320, {{0.0, 0.0}, {1032.0, 1376.0}}
+        BannerNotification, 0x101b45280, {{238.0, 8.0}, {556.0, 66.0}}
+          Other, 0x101b46000, {{238.0, 8.0}, {556.0, 66.0}}, label: 'Notification'
+            Other, 0x101b46350, {{238.0, 8.0}, {556.0, 66.0}}
+              BannerNotification, 0x101c4eb50, {{238.0, 8.0}, {556.0, 66.0}}, identifier: 'NotificationShortLookView', label: 'HALCYA, maintenant, Votre soirée ?, 1 = très bas, 5 = très bien'
+                Other, 0x101c4ec70, {{238.0, 8.0}, {556.0, 66.0}}, identifier: 'ShortLook.Platter'
+                  Other, 0x101c4ed90, {{238.0, 8.0}, {556.0, 66.0}}
+                  Other, 0x101c4eeb0, {{238.0, 8.0}, {556.0, 66.0}}
+                  Other, 0x101c4efd0, {{238.0, 8.0}, {556.0, 66.0}}, identifier: 'ShortLook.Platter.Content'
+                    Button, 0x101b45c90, {{238.0, 8.0}, {556.0, 66.0}}, identifier: 'ShortLook.Platter.Content.Seamless', label: 'maintenant, Votre soirée ?, 1 = très bas, 5 = très bien'
+                      Other, 0x101b449e0, {{238.0, 8.0}, {556.0, 66.0}}, identifier: 'ShortLook.Platter.Content.Seamless.CrossFade'
+                        StaticText, 0x101b4d4b0, {{302.0, 22.0}, {397.0, 18.0}}, identifier: 'NotificationTitle', label: 'Votre soirée ?'
+                        Other, 0x101b4e5b0, {{302.0, 40.0}, {475.0, 18.0}}, identifier: 'NotificationBody.TopAligned.originalMessage'
+                          StaticText, 0x101b4ded0, {{302.0, 40.0}, {475.0, 18.0}}, identifier: 'TextContent.Primary', label: '1 = très bas, 5 = très bien'
+                    Other, 0x101b4e240, {{238.0, 8.0}, {556.0, 66.0}}
+                      Other, 0x101b4d820, {{238.0, 8.0}, {556.0, 66.0}}
+                        Other, 0x101b4db60, {{238.0, 8.0}, {556.0, 66.0}}
+                          Other, 0x101b4ca60, {{238.0, 8.0}, {556.0, 66.0}}
+                            Other, 0x101b4d140, {{238.0, 8.0}, {556.0, 66.0}}
+                              Other, 0x101b4cdb0, {{238.0, 8.0}, {556.0, 66.0}}
+                          Other, 0x101b466a0, {{238.0, 8.0}, {556.0, 66.0}}
+                            Other, 0x101b4f6b0, {{238.0, 8.0}, {556.0, 66.0}}
+    Window, 0x101b4f320, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x101b50100, {{0.0, 0.0}, {1032.0, 1376.0}}
+    Window, 0x101b50460, {{0.0, 0.0}, {1032.0, 1376.0}}
+      Other, 0x101b507b0, {{0.0, 0.0}, {1032.0, 1376.0}}
+Path to element:
+ →Application, 0x101c4b2b0, pid: 8962, label: ' '
+Query chain:
+ →Find: Application 'com.apple.springboard'
+  Output: {
+    Application, 0x1018359b0, pid: 8962, label: ' '
+  }
+
+    t =    20.83s Waiting 10.0s for "1" Button to exist
+    t =    21.88s     Checking `Expect predicate `existsNoRetry == 1` for object "1" Button`
+    t =    21.88s         Checking existence of `"1" Button`
+    t =    21.97s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    21.99s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    21.99s         Capturing element debug description
+    t =    22.85s     Checking `Expect predicate `existsNoRetry == 1` for object "1" Button`
+    t =    22.85s         Checking existence of `"1" Button`
+    t =    22.92s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    22.92s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    22.92s         Capturing element debug description
+    t =    23.88s     Checking `Expect predicate `existsNoRetry == 1` for object "1" Button`
+    t =    23.88s         Checking existence of `"1" Button`
+    t =    23.95s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    23.95s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    23.95s         Capturing element debug description
+    t =    24.92s     Checking `Expect predicate `existsNoRetry == 1` for object "1" Button`
+    t =    24.92s         Checking existence of `"1" Button`
+    t =    24.96s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    24.96s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    24.96s         Capturing element debug description
+    t =    25.85s     Checking `Expect predicate `existsNoRetry == 1` for object "1" Button`
+    t =    25.85s         Checking existence of `"1" Button`
+    t =    25.87s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    25.87s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    25.88s         Capturing element debug description
+    t =    26.85s     Checking `Expect predicate `existsNoRetry == 1` for object "1" Button`
+    t =    26.85s         Checking existence of `"1" Button`
+    t =    26.88s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    26.88s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    26.88s         Capturing element debug description
+    t =    27.93s     Checking `Expect predicate `existsNoRetry == 1` for object "1" Button`
+    t =    27.93s         Checking existence of `"1" Button`
+    t =    27.96s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    27.96s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    27.96s         Capturing element debug description
+    t =    28.91s     Checking `Expect predicate `existsNoRetry == 1` for object "1" Button`
+    t =    28.91s         Checking existence of `"1" Button`
+    t =    29.34s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    29.36s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    29.39s         Capturing element debug description
+    t =    29.88s     Checking `Expect predicate `existsNoRetry == 1` for object "1" Button`
+    t =    29.88s         Checking existence of `"1" Button`
+    t =    29.95s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    29.96s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    29.97s         Capturing element debug description
+    t =    30.84s     Checking `Expect predicate `existsNoRetry == 1` for object "1" Button`
+    t =    30.84s         Checking existence of `"1" Button`
+    t =    30.87s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    30.87s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    30.87s         Capturing element debug description
+    t =    30.87s     Checking existence of `"1" Button`
+    t =    30.90s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    30.90s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    30.90s Collecting debug information to assist test failure triage
+    t =    30.90s     Requesting snapshot of accessibility hierarchy for app with pid 8962
+    t =    30.96s Waiting 1.0s for "2" Button to exist
+    t =    31.97s     Checking `Expect predicate `existsNoRetry == 1` for object "2" Button`
+    t =    31.97s         Checking existence of `"2" Button`
+    t =    32.00s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    32.00s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    32.01s         Capturing element debug description
+    t =    32.01s     Checking existence of `"2" Button`
+    t =    32.04s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    32.04s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    32.04s Collecting debug information to assist test failure triage
+    t =    32.04s     Requesting snapshot of accessibility hierarchy for app with pid 8962
+    t =    32.11s Waiting 1.0s for "3" Button to exist
+    t =    33.12s     Checking `Expect predicate `existsNoRetry == 1` for object "3" Button`
+    t =    33.12s         Checking existence of `"3" Button`
+    t =    33.15s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    33.15s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    33.15s         Capturing element debug description
+    t =    33.16s     Checking existence of `"3" Button`
+    t =    33.19s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    33.19s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    33.19s Collecting debug information to assist test failure triage
+    t =    33.19s     Requesting snapshot of accessibility hierarchy for app with pid 8962
+    t =    33.25s Waiting 1.0s for "4" Button to exist
+    t =    34.26s     Checking `Expect predicate `existsNoRetry == 1` for object "4" Button`
+    t =    34.26s         Checking existence of `"4" Button`
+    t =    34.29s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    34.30s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    34.30s         Capturing element debug description
+    t =    34.30s     Checking existence of `"4" Button`
+    t =    34.33s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    34.33s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    34.33s Collecting debug information to assist test failure triage
+    t =    34.33s     Requesting snapshot of accessibility hierarchy for app with pid 8962
+    t =    34.39s Waiting 1.0s for "5" Button to exist
+    t =    35.39s     Checking `Expect predicate `existsNoRetry == 1` for object "5" Button`
+    t =    35.39s         Checking existence of `"5" Button`
+    t =    35.43s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    35.43s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    35.43s         Capturing element debug description
+    t =    35.43s     Checking existence of `"5" Button`
+    t =    35.46s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    35.47s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    35.47s Collecting debug information to assist test failure triage
+    t =    35.47s     Requesting snapshot of accessibility hierarchy for app with pid 8962
+actions visibles :  (0 sur 5)
+    t =    35.54s Checking existence of `"0" Button`
+    t =    35.59s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+    t =    35.59s Ignoring failure to get hierarchy for remote element in process 36552 (Error getting main window kAXErrorServerNotFound)
+/Users/runner/work/HealthTrack/HealthTrack/iphone/uitests/HalcyaUITests/SanteUITests.swift:102: error: -[HalcyaUITests.NotificationsUITests testNoterLaSoireeDepuisLaBanniere] : failed - aucune note dans la bannière dépliée
+    t =    35.66s Tear Down
+Test Case '-[HalcyaUITests.NotificationsUITests testNoterLaSoireeDepuisLaBanniere]' failed (35.778 seconds).
+Test Suite 'NotificationsUITests' failed at 2026-11-21 15:15:55.242.
+	 Executed 1 test, with 1 failure (0 unexpected) in 35.778 (35.784) seconds
+Test Suite 'HalcyaUITests.xctest' failed at 2026-11-21 15:15:55.242.
+	 Executed 1 test, with 1 failure (0 unexpected) in 35.778 (35.786) seconds
+Test Suite 'Selected tests' failed at 2026-11-21 15:15:55.243.
+	 Executed 1 test, with 1 failure (0 unexpected) in 35.778 (35.788) seconds
+2026-11-21 15:16:55.332 xcodebuild[40489:118966] [MT] IDETestOperationsObserverDebug: 116.362 elapsed -- Testing started completed.
+2026-11-21 15:16:55.334 xcodebuild[40489:118966] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-21 15:16:55.334 xcodebuild[40489:118966] [MT] IDETestOperationsObserverDebug: 116.363 sec, +116.363 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-ffoirrlfhhhgcgbrdmnuwwfsscoh/Logs/Test/Test-HalcyaUITests-2026.11.21_15-14-49-+0000.xcresult
+
+Failing tests:
+	NotificationsUITests.testNoterLaSoireeDepuisLaBanniere()
+
+** TEST EXECUTE FAILED **
+
+Testing started
