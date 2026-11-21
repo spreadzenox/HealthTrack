@@ -621,7 +621,7 @@ export function boundToGutScale(f) {
 }
 
 /** Modèle régularisé d'un résultat (ORG-5c) sur les facteurs × horizons triés. */
-function fitModel(ys, days, fitted, weights, changeDates = [], observed = null) {
+function fitModel(ys, days, fitted, weights, changeDates = [], observed = null, firm = []) {
   const nums = [...ys.keys()].map(dayNum)
   const first = Math.min(...nums)
   const keys = [...ys.keys()]
@@ -649,7 +649,7 @@ function fitModel(ys, days, fitted, weights, changeDates = [], observed = null) 
     return windowComplete(days, key, dayNum(dk), byId.get(h))
   }
   return fitOutcomeModel({
-    rows, candidates: fitted.map((f) => ({ id: `${f.key}|${f.horizon}`, p: f._p })), valueOf, completeOf,
+    rows, candidates: fitted.map((f, i) => ({ id: `${f.key}|${f.horizon}`, p: f._p, firm: Boolean(firm[i]) })), valueOf, completeOf,
   })
 }
 
@@ -777,9 +777,10 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
     sameUnitPerFactor(fitted)
     const qs = holm(fitted.map((f) => f._p))
     // ORG-5c : les candidats entrent ensemble dans un modèle régularisé ; « net » exige aussi la stabilité.
-    const model = fitted.length ? fitModel(ys, days, fitted, series.weights?.[def.id], changeDates, series.observed?.[def.id]) : null
+    const firm = fitted.map((f, i) => qs[i] <= NET_MAX_P && (f.low > 0 || f.high < 0))
+    const model = fitted.length ? fitModel(ys, days, fitted, series.weights?.[def.id], changeDates, series.observed?.[def.id], firm) : null
     fitted.forEach((f, i) => {
-      const passed = qs[i] <= NET_MAX_P && (f.low > 0 || f.high < 0)
+      const passed = firm[i]
       const c = model?.coef.get(`${f.key}|${f.horizon}`)
       f.inModel = Boolean(c)
       f.stability = c ? Math.round(c.stability * 100) / 100 : null

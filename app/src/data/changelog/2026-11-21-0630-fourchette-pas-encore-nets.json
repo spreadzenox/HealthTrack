@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-21",
+  "kind": "correctif",
+  "title": "Objectifs : des fourchettes honnêtes pour les liens pas encore nets",
+  "items": [
+    "Un facteur « pas encore net » pouvait montrer une fourchette tout entière d'un côté, comme s'il jouait. Sa fourchette tient maintenant compte du hasard qui l'a fait remonter parmi des dizaines de facteurs : elle passe par zéro quand rien ne le distingue du hasard. Les liens nets ne changent pas."
+  ]
+}
