@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import DayStatusCard from './DayStatusCard'
 
@@ -15,13 +15,25 @@ const face = (note, extra = {}) => ({
 const view = (props) => render(<MemoryRouter><DayStatusCard now={now} {...props} /></MemoryRouter>)
 
 describe('Bloc bien-être du jour (AUJ-2)', () => {
+  it('POLISH-SIM-129 : le « + » ouvre la note de bien-être (l’Accueil n’a pas de bandeau d’ajout)', () => {
+    const onAddManual = vi.fn()
+    view({ data: face(3.25), onAddManual })
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une note de bien-être' }))
+    expect(onAddManual).toHaveBeenCalledTimes(1)
+  })
+
+  it('POLISH-SIM-129 : sans moyen d’ouvrir la note, pas de « + » mort', () => {
+    view({ data: face(3.25) })
+    expect(screen.queryByRole('button', { name: 'Ajouter une note de bien-être' })).toBeNull()
+  })
+
   it('rien pendant la lecture', () => {
     const { container } = view({ data: undefined })
     expect(container).toBeEmptyDOMElement()
   })
 
   it('la donnée, pas un verdict : valeur sur 5, nombre de lectures, courbe du jour ; toucher ouvre l’historique', () => {
-    view({ data: face(3.25) })
+    view({ data: face(3.25), onAddManual: () => {} })
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Bien-être aujourd’hui')
     expect(document.querySelector('.day-status-number')).toHaveTextContent('3,6')
     expect(document.querySelector('.day-status-max')).toHaveTextContent('/5')
@@ -32,7 +44,7 @@ describe('Bloc bien-être du jour (AUJ-2)', () => {
     // Plus de verdict, d’échelle à segments, d’« estimation prudente » ni d’horizon qui respire
     expect(screen.queryByText(/Plutôt|difficile|prudente|Votre journée/)).not.toBeInTheDocument()
     expect(document.querySelector('.day-breath')).toBeNull()
-    // AUJ-6 : un seul bouton, le petit « + » qui remonte au bandeau
+    // AUJ-6 : un seul bouton, le petit « + » (POLISH-SIM-129 : il ouvre la note)
     expect(screen.getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Ajouter une note de bien-être'])
   })
 

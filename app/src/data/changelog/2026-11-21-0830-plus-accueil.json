@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-21",
+  "kind": "correctif",
+  "title": "Accueil : les « + » qui ne faisaient rien",
+  "items": [
+    "Le « + » de « Bien-être aujourd'hui » ouvre maintenant la note de bien-être.",
+    "Le « + » sous « Vos données du jour » est retiré : ces données arrivent seules, il n'y avait rien à y ajouter."
+  ]
+}

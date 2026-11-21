@@ -92,7 +92,10 @@ export default function DayStatusCard({
       </Link>
       {est?.startCalibration && <StartCalibration cal={est.startCalibration} onAddManual={onAddManual} onReminder={onReminder} />}
       {reminder}
-      {!(est?.startCalibration && !est.startCalibration.notedToday) && <StripPlus label="Ajouter une note de bien-être" />}
+      {/* POLISH-SIM-129 : l'Accueil n'a pas de bandeau d'ajout, le « + » ouvre la note elle-même */}
+      {onAddManual && !(est?.startCalibration && !est.startCalibration.notedToday) && (
+        <StripPlus label="Ajouter une note de bien-être" onClick={onAddManual} />
+      )}
     </section>
   )
 }

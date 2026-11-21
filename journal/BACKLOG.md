@@ -611,7 +611,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - **Passage des personas du 21/11 08:30 (PERSONAS-2111, avant l'objectif du 22/11)** : « Tout mesurer » J14 en mise à jour
     (iPhone seul, joué sur l'apparence Android) et « Stressé et pressé » J1 neuve (Android seul). Synthèse :
     `simulations/2026-11-21-0830-synthese.md`. Rien de perdu à la mise à jour (14 jours, essai jour 4 sur 10).
-    - [ ] **POLISH-SIM-129 — Accueil, le « + » de « Vos données du jour » ne fait rien** (J14, vérifié dans le code) :
+    - [x] **POLISH-SIM-129 — Accueil, le « + » de « Vos données du jour » ne fait rien** (fait le 21/11 09:30 : « + » retiré de `TodayBySource` ; le second « + » mort de l'Accueil, celui de `DayStatusCard`, ouvre la note de bien-être par `onAddManual` (`StripPlus` prend un `onClick`), et n'est pas rendu sans elle ; `DigestBlock`, seul autre `StripPlus`, est dans Ma journée avec le bandeau) (J14, vérifié dans le code) :
       `StripPlus` (`components/TodayBySource.jsx` l. 109) appelle `scrollToStrip()`, qui cherche `#today-add` ; le
       bandeau d'ajout (`AddStrip`) n'est plus rendu que dans Ma journée (`Dashboard.jsx`, `{day && <AddStrip …>}`),
       alors que `TodayBySource` n'est rendu que sur l'Accueil (`{home && …}`). Touché deux fois, rien. Correctif : retirer
