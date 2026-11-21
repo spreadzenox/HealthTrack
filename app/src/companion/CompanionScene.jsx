@@ -22,7 +22,7 @@ import { getWeatherSettings } from '../services/weatherSync'
 import { stillKey } from './scene/stills.js'
 import './CompanionScene.css'
 
-// images fixes de l'îlot (palier bas et attente du premier rendu) : étape de croissance × saison, et la nuit
+// images fixes de l'îlot (palier bas et attente du premier rendu) : étape de croissance × saison, le soir et la nuit
 const STILLS = Object.fromEntries(
   Object.entries(import.meta.glob('./scene/stills/*.webp', { eager: true, import: 'default', query: '?url' }))
     .map(([file, url]) => [file.replace('./scene/stills/', '').replace('.webp', ''), url]),
@@ -516,8 +516,10 @@ export default function CompanionScene({
   }, [reducedMotion])
 
   // la nuit (heure de coucher, lot MONDE), Pilou dort : l'étiquette le dit (SPEC île § 5) ; l'image fixe aussi,
-  // pas dès que le ciel est sombre : à 22 h, il veille encore si l'on se couche plus tard (NUIT-ETIQUETTE)
+  // pas dès que le ciel est sombre : à 22 h, il veille encore si l'on se couche plus tard (NUIT-ETIQUETTE) ; entre la
+  // tombée de la nuit et le coucher, l'image du soir (îlot sombre, lanterne, Pilou éveillé : STILL-SOIR)
   const asleep = Boolean(light.asleep)
+  const evening = Boolean(light.night) && !asleep
   const text = (!asleep && news) || label || [asleep ? `${name} dort` : `${name} est ${moodWord(mood)}`, weatherLabel].filter(Boolean).join(' · ')
   const showFallback = tier === 'bas' || !ready
 
@@ -531,7 +533,7 @@ export default function CompanionScene({
     >
       <div className="companion-scene__frame" style={{ maxWidth: MAX_WIDTH, height }}>
         {showFallback && (
-          <img className="companion-scene__still" src={STILLS[stillKey({ ...look, night: asleep })]} alt="" aria-hidden="true" draggable="false" />
+          <img className="companion-scene__still" src={STILLS[stillKey({ ...look, night: asleep, evening })]} alt="" aria-hidden="true" draggable="false" />
         )}
         {tier !== 'bas' && (
           <canvas

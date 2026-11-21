@@ -19,10 +19,15 @@ describe('images fixes de la scène (palier bas)', () => {
     expect(stillKey({ days: 120, season: 'hiver', night: true })).toBe('nuit')
   })
 
-  it('les 13 images existent dans le dépôt', async () => {
+  it('le soir, entre la tombée de la nuit et le coucher : îlot sombre, Pilou éveillé (STILL-SOIR)', () => {
+    expect(stillKey({ days: 50, season: 'hiver', evening: true })).toBe('soir')
+    expect(stillKey({ days: 50, season: 'hiver', evening: true, night: true })).toBe('nuit')
+  })
+
+  it('les 14 images existent dans le dépôt', async () => {
     const files = import.meta.glob('./stills/*.webp')
     const names = Object.keys(files).map((f) => f.replace('./stills/', '').replace('.webp', '')).sort()
-    const expected = ['nuit', ...STILL_STAGES.flatMap((d) => STILL_SEASONS.map((s) => stillName(d, s)))].sort()
+    const expected = ['nuit', 'soir', ...STILL_STAGES.flatMap((d) => STILL_SEASONS.map((s) => stillName(d, s)))].sort()
     expect(names).toEqual(expected)
   })
 })
