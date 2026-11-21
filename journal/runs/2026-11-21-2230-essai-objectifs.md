@@ -20,7 +20,7 @@
 - iPhone : aucun correctif de `iphone/patches/` ne touche ces fichiers ; livré des deux côtés, PARITE.md à jour.
 
 ## Vérifications
-- Suite Vitest complète (voir la PR) ; eslint propre sur les fichiers touchés.
+- Suite Vitest complète : 4 199 tests verts (372 fichiers) ; `npm run build` passe ; eslint propre sur les fichiers touchés.
 - `npm run visual -- --play --routes=/recommendations --trial=4 --now=13:00 --usage-days=76`, clair et `--dark` :
   captures relues, la ligne « Essai en cours : Dormir au moins 7 h 30 · jour 4 sur 10 · aujourd'hui, jour avec » est
   au-dessus de Pilou et de la carte Bien-être, entière, aucune erreur JS.
