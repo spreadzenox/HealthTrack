@@ -649,7 +649,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [ ] **POLISH-SIM-135 — Bandeau Nouveautés, « et 98 autres changements »** (J45 mise à jour, vérifié :
       `WhatsNewBanner.jsx` 25) : après une semaine sans ouvrir l'app, le compte fait peur. Au-delà de 3, « et d'autres
       nouveautés » ; la note à la une reste.
-    - [ ] **POLISH-SIM-136 — Objectifs ne montre pas l'essai en cours** (J45, vérifié : `TabBar.jsx` range
+    - [x] **POLISH-SIM-136 — Objectifs ne montre pas l'essai en cours** (FAIT 21/11 22:30 : ligne `TrialLink` sous le
+      titre d'Objectifs, composant partagé avec POLISH-SIM-120, test d'abord, captures relues) (J45, vérifié : `TabBar.jsx` range
       `/agir/essai` sous Objectifs, `Objectives.jsx` ne parle d'aucun essai) : l'essai ne se retrouve qu'en bas de
       l'Accueil. Une ligne « Essai en cours : Dormir au moins 7 h 30 · jour 4 sur 10 » en haut d'Objectifs, qui ouvre
       l'essai.

@@ -15,6 +15,9 @@ import { isExampleMode } from '../storage/exampleMode'
 import { appLocale } from '../i18n/locale.js'
 import PilouGuide from '../companion/life/PilouGuide'
 import { GUT_PISTES_MIN_NOTE_DAYS } from '../services/today'
+import { TRIAL_TYPE, homeTrial } from '../services/trials'
+import { listEntries } from '../storage/localHealthStorage'
+import TrialLink from '../components/TrialLink'
 
 const CARDS = {
   wellbeing: { title: 'Bien-être', tone: 'mint', to: '/recommendations/bien-etre', more: 'Ce qui va avec votre bien-être' },
@@ -31,6 +34,7 @@ const n1 = (v) => v.toLocaleString(appLocale(), { minimumFractionDigits: 1, maxi
 const days = (n, word = '') => `${n} jour${n > 1 ? 's' : ''}${word ? ` ${word}${n > 1 ? 's' : ''}` : ''}`
 
 const readStates = () => getAnalysis('dayStates').catch(() => null)
+const readTrialRows = () => listEntries({ type: TRIAL_TYPE, limit: Infinity })
 
 function Bars({ bars }) {
   return (
@@ -87,7 +91,7 @@ function ObjectiveCard({ card }) {
   )
 }
 
-export default function Objectives({ read = readStates, now }) {
+export default function Objectives({ read = readStates, readTrials = readTrialRows, now }) {
   const [states, setStates] = useState(() => peekAnalysis('dayStates').result ?? undefined)
   const [revision, setRevision] = useState(0)
   // Pendant l'exemple (« Voir un exemple »), la digestion fictive s'affiche aussi
@@ -105,10 +109,21 @@ export default function Objectives({ read = readStates, now }) {
       alive = false
     }
   }, [read, revision])
+  // POLISH-SIM-136 : l'essai en cours (bien-être ou digestion) ; sa page allume cet onglet, on le retrouve donc ici
+  const [trial, setTrial] = useState(null)
+  useEffect(() => {
+    let alive = true
+    Promise.resolve().then(readTrials).then((rows) => alive && setTrial(homeTrial(rows, now || new Date())))
+      .catch(() => alive && setTrial(null))
+    return () => {
+      alive = false
+    }
+  }, [readTrials, revision, now])
 
   return (
     <section className="objectives-page">
       <h2 className="page-title">Objectifs</h2>
+      {!isExampleMode() && <TrialLink trial={trial} className="objectives-trial" testId="objectives-trial" />}
       {states === undefined ? (
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul de vos scores…</p></div>
       ) : (() => {

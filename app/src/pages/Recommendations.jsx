@@ -53,6 +53,7 @@ import { gutCardMode } from '../settings/onboarding'
 import { appLocale } from '../i18n/locale.js'
 import { keepWhole } from '../utils/keepWhole'
 import './Recommendations.css'
+import TrialLink from '../components/TrialLink'
 import { monoDigits } from '../utils/monoDigits'
 
 const WORDS = {
@@ -116,20 +117,6 @@ function ReintroLink({ line }) {
       <span className="act-card-body">
         <span className="act-card-title">Réintroduction guidée</span>
         <span className="act-card-detail">{line}</span>
-      </span>
-      <LineIcon name="chevron" size={20} className="act-chevron" />
-    </Link>
-  )
-}
-
-/** POLISH-SIM-120 : l'essai en cours de cet objectif ; sa page allume Objectifs, on le retrouve donc ici. */
-function TrialLink({ trial }) {
-  if (!trial) return null
-  return (
-    <Link to={trial.to} className="today-card act-card reco-trial" data-testid="reco-trial">
-      <span className="act-card-body">
-        <span className="act-card-title">Essai en cours : {trial.title}</span>
-        <span className="act-card-detail">{trial.detail.replace(/^Essai · /, '')}</span>
       </span>
       <LineIcon name="chevron" size={20} className="act-chevron" />
     </Link>
@@ -610,7 +597,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}
       {outcome === 'wellbeing' && noted != null && v.state !== 'locked' && <p className="reco-noted" role="status">Noté : <span className="mono">{noted}/5</span></p>}
-      {!isExampleMode() && <TrialLink trial={trial} />}
+      {!isExampleMode() && <TrialLink trial={trial} className="reco-trial" testId="reco-trial" />}
       {v.state === 'loading' && !error && (
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul des analyses…</p></div>
       )}

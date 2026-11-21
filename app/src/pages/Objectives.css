@@ -97,3 +97,8 @@
   flex: none;
   transform: rotate(-90deg);
 }
+
+/* POLISH-SIM-136 : l'essai en cours, sous le titre, comme sous un objectif (.reco-trial) */
+.objectives-page .objectives-trial {
+  margin-bottom: 20px;
+}
