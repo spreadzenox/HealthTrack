@@ -794,7 +794,7 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
         f.low = r2(Math.min(c.shown.low, c.shown.high) * a)
         f.high = r2(Math.max(c.shown.low, c.shown.high) * a)
       }
-      f.net = passed && Boolean(c) && c.stability >= STABILITY_MIN && Math.sign(f.effect) !== 0
+      f.net = passed && Boolean(c) && c.stability >= STABILITY_MIN && Math.sign(f.effect) !== 0 && (f.low > 0 || f.high < 0)
       if (def.id === 'digestion') boundToGutScale(f)
       else boundToScale(f)
       delete f._p
