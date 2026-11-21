@@ -268,12 +268,17 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
  * `dayReadings(date)` : les lectures et la note du jour pour la vue Jour (dayReadingsView).
  * `initialDay` : jour ouvert par défaut en vue Jour (latestReadingDay).
  * `readDayEntries` : lecture des saisies d'un jour pour « Vos saisies » (DayEntries ; par défaut le stockage).
+ * `onKeys(keys)` : appelé quand la personne change les mesures affichées (POLISH-SIM-130 : gardées pour la session).
  */
 export default function TrendsViewer({
   states, days, now, initialKeys = ['wellbeing'], period, onPeriod, dayReadings = null, dayExtra = null, changes = null,
-  initialDay = null, readDayEntries = undefined,
+  initialDay = null, readDayEntries = undefined, onKeys = null,
 }) {
-  const [keys, setKeys] = useState(initialKeys)
+  const [keys, setKeysState] = useState(initialKeys)
+  const setKeys = (next) => {
+    setKeysState(next)
+    onKeys?.(next)
+  }
   const [adding, setAdding] = useState(false)
   const [selected, setSelected] = useState(null)
   const [dayDate, setDayDate] = useState(null)

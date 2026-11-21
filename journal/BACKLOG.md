@@ -617,7 +617,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       alors que `TodayBySource` n'est rendu que sur l'Accueil (`{home && …}`). Touché deux fois, rien. Correctif : retirer
       le « + » de ce bloc (des données automatiques, rien à y ajouter ; leçon 7, une action, un endroit), ou le faire
       mener à Ma journée. Vérifier aussi les autres `StripPlus` hors de Ma journée. Test : aucun bouton mort sur l'Accueil.
-    - [ ] **POLISH-SIM-130 — Tendances oublie les courbes choisies** (J14, vérifié) : Bien-être + Pas choisis, on passe
+    - [x] **POLISH-SIM-130 — Tendances oublie les courbes choisies** (fait le 21/11 10:30 : choix gardé pour la session dans `halcya.trends.keys` (`services/trendsKeptKeys.js`, `onKeys` de `TrendsViewer`), hors mode exemple ; `?mesure=` et `?vue=jour` gardent la priorité ; effacé par « Supprimer toutes mes données ») (J14, vérifié) : Bien-être + Pas choisis, on passe
       à un autre onglet, au retour il ne reste que Bien-être (`TrendsViewer.jsx` l. 276, `useState(initialKeys)` refait
       au montage). Correctif : garder le choix pour la session (sessionStorage, clé `halcya.trends.keys`), un lien
       `?mesure=` gardant la priorité. Test au remontage.

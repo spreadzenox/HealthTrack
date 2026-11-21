@@ -14,6 +14,7 @@ import TrendsViewer from '../components/TrendsViewer'
 import { getAnalysis } from '../services/analysisRunner'
 import { readMeasureDays } from '../services/trendsMeasureDays'
 import { buildTrendSeries, defaultTrendsView } from '../services/trendsData'
+import { keepKeys, readKeptKeys } from '../services/trendsKeptKeys'
 import { dayFaceDetail, dayReadingsView, latestReadingDay } from '../services/trendsDay'
 import { loadFaceMoodEntries } from '../services/mood/faceMoodData'
 import { exampleEntries, isExampleMode } from '../storage/exampleMode'
@@ -67,12 +68,20 @@ export default function Trends({
   }, [wantContrib, readDayContributions])
   // T1 : une courbe dès qu'une mesure le peut. L'estimation TS-1 est attendue (spinner) avant de décider : le
   // bien-être ne manque jamais seulement parce qu'elle n'est pas encore calculée.
-  const view = useMemo(() => (data ? defaultTrendsView({
-    asked,
-    askedDay: params.get('vue') === 'jour',
-    available: buildTrendSeries({ states: data.states, days: data.days, period: 'week', now: now || new Date() }).available,
-    hasWellbeing: data.face.length > 0 || Boolean(data.states?.days?.some((d) => !d.future && d.observed?.wellbeing)),
-  }) : null), [data, asked, params, now])
+  const view = useMemo(() => {
+    if (!data) return null
+    const askedDay = params.get('vue') === 'jour'
+    const available = buildTrendSeries({ states: data.states, days: data.days, period: 'week', now: now || new Date() }).available
+    // POLISH-SIM-130 : sans lien qui demande une mesure, les courbes choisies plus tôt dans la session (hors exemple)
+    const kept = !asked && !askedDay && !isExampleMode() ? readKeptKeys() : null
+    if (kept?.some((k) => available.includes(k))) return { period: 'week', keys: kept }
+    return defaultTrendsView({
+      asked,
+      askedDay,
+      available,
+      hasWellbeing: data.face.length > 0 || Boolean(data.states?.days?.some((d) => !d.future && d.observed?.wellbeing)),
+    })
+  }, [data, asked, params, now])
   const period = chosen ?? view?.period ?? 'week'
   useEffect(() => {
     if (period !== 'month' || changes) return undefined
@@ -106,6 +115,7 @@ export default function Trends({
           initialKeys={view.keys}
           period={period}
           onPeriod={setPeriod}
+          onKeys={(k) => !isExampleMode() && keepKeys(k)}
           dayReadings={(date) => dayReadingsView(data.face, date, now || new Date())}
           initialDay={latestReadingDay(data.face, now || new Date())}
           dayExtra={dayExtra}

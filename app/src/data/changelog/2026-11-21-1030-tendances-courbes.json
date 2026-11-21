@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-21",
+  "kind": "correctif",
+  "title": "Tendances garde vos courbes",
+  "items": [
+    "Les courbes que vous avez choisies restent affichées quand vous revenez sur Tendances depuis un autre onglet.",
+    "Un lien qui ouvre une mesure précise (le sommeil depuis l'Accueil, par exemple) l'affiche toujours en premier."
+  ]
+}
