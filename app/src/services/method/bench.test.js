@@ -192,6 +192,25 @@ describe('banc de la méthode (ORG-5a)', () => {
     expect(net).toBe(0)
   }, 120_000)
 
+  // METHODE-BIAIS-6 (21/11 04:30) : un voisin très lié au sommeil (r = −0,7 à −0,8), sans effet, partageait l'effet du
+  // sommeil dans la ridge et y gardait un signe stable : « net » 3 fois sur 30 (8 à r = −0,8), toujours à côté du
+  // sommeil net. Un lien n'est net que si sa fourchette montrée (ajustée avec les facteurs très appuyés) exclut zéro.
+  it('voisin très lié au sommeil, lissé comme dans l\'app : il ne devient pas net, le sommeil le reste', async () => {
+    const { smoothSimulated } = await import('./bench')
+    const effects = [{ outcome: 'wellbeing', key: 'sleepMinutes', horizon: 'short', size: 1 }]
+    const linked = [{ from: 'sleepMinutes', to: 'screen_late_minutes', r: -0.7 }]
+    let neighbor = 0
+    let sleep = 0
+    for (let k = 0; k < 30; k += 1) {
+      const { matrix, lastDay } = simulateMatrix({ days: 90, effects, linked, seed: 1 + k })
+      const fs = analyzeMatrix(smoothSimulated(matrix, lastDay), { today: lastDay }).outcomes.wellbeing.horizons.short.factors
+      if (fs.find((x) => x.key === 'screen_late_minutes')?.net) neighbor += 1
+      if (fs.find((x) => x.key === 'sleepMinutes')?.net) sleep += 1
+    }
+    expect(neighbor).toBeLessThanOrEqual(1)
+    expect(sleep).toBeGreaterThanOrEqual(18)
+  }, 120_000)
+
   // METHODE-BIAIS-2 (20/11 22:30) : 10 % de jours sans mesure laissent des fenêtres « le jour même et la veille »
   // remplies à moitié ; la veille seule mesure mal ce qui a agi et la taille montrée en sortait rétrécie (habitude
   // 1,6 pt : 0,75 de la vraie, fourchette juste 53 % ; 0,91 et 90 % sans jour manquant). La taille d'un lien ne prend
