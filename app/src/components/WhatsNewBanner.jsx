@@ -4,6 +4,13 @@ import { useChangelog } from '../hooks/useChangelog'
 import { bannerHeadline, getLastSeenId, getUnseenEntries, markAllSeen } from '../services/whatsNew'
 import './WhatsNew.css'
 
+// Au-delà de 3, un compte (« et 98 autres changements ») fait peur après une absence (POLISH-SIM-135).
+function othersLabel(others) {
+  if (others < 1) return ''
+  if (others > 3) return ' et d’autres nouveautés'
+  return others === 1 ? ' et 1 autre changement' : ` et ${others} autres changements`
+}
+
 export default function WhatsNewBanner({ changelog: given }) {
   const changelog = useChangelog(given)
   // Relu à chaque navigation : la page Nouveautés marque tout comme vu.
@@ -22,7 +29,7 @@ export default function WhatsNewBanner({ changelog: given }) {
     <div className="whats-new-banner" role="status">
       <p className="whats-new-banner-text">
         <strong>Nouveau :</strong> {bannerHeadline(unseen).title}
-        {unseen.length > 1 && ` et ${unseen.length - 1} autre${unseen.length > 2 ? 's' : ''} changement${unseen.length > 2 ? 's' : ''}`}
+        {othersLabel(unseen.length - 1)}
       </p>
       <div className="whats-new-banner-actions">
         <Link to="/nouveautes" className="whats-new-banner-link">

@@ -16,6 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+21/11 23:30 : POLISH-SIM-135 (bandeau Nouveautés : « et d’autres nouveautés » au-delà de 3) : code partagé, aucun correctif iPhone touché (45). Livré des deux côtés. Parité inchangée : 70 %.
 21/11 22:30 : POLISH-SIM-136 (l'essai en cours en haut d'Objectifs, composant `TrialLink` partagé) : code partagé, aucun correctif iPhone touché (45). Livré des deux côtés. Parité inchangée : 70 %.
 21/11 21:30 : POLISH-SIM-134 (l'avis « Aucune photo prise » de l'Accueil, rendu dans un portail) : code partagé, aucun correctif iPhone touché (45). Livré des deux côtés. Parité inchangée : 70 %.
 21/11 19:30 : DEM-IOS-8 (le cycle dans « Mes appareils ») : correctif 60 fondu dans le code partagé (`METRICS` de `healthApps.js` : « cycle », par épisodes, jamais « arrêté ») ; le test iPhone du cycle passe dans `healthApps.test.js` ; 45 correctifs, tous appliqués sans erreur. Rien ne change sur iPhone. Parité inchangée : 70 %.

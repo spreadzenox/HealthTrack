@@ -646,7 +646,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `.meal-photo-missed` (`position: fixed`, `left: 50%`, `translateX(-50%)`), rendu dans la scène de l'île dont un
       parent a une transformation : il se place par rapport à la scène, pas à l'écran, et on ne lit que « …se. Décrire
       le repas ». Le rendre dans un portail (`document.body`) ; test qui vérifie qu'il n'est pas enfant de la scène.
-    - [ ] **POLISH-SIM-135 — Bandeau Nouveautés, « et 98 autres changements »** (J45 mise à jour, vérifié :
+    - [x] **POLISH-SIM-135 — Bandeau Nouveautés, « et 98 autres changements »** (FAIT 21/11 23:30 : `othersLabel`
+      dans `WhatsNewBanner.jsx`, compte exact jusqu'à 3, test d'abord, capture `--whats-new` relue) (J45 mise à jour, vérifié :
       `WhatsNewBanner.jsx` 25) : après une semaine sans ouvrir l'app, le compte fait peur. Au-delà de 3, « et d'autres
       nouveautés » ; la note à la une reste.
     - [x] **POLISH-SIM-136 — Objectifs ne montre pas l'essai en cours** (FAIT 21/11 22:30 : ligne `TrialLink` sous le
