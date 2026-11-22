@@ -828,6 +828,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   fondus sous `FEATURES.iosStore` (déjà utilisé par `RemindersSetting.jsx`, faux sur Android) ; le 07 ne garde que
   `WatchDiagnostic.jsx` ; test Android dans `PhoneUsageCard.test.jsx`. 31 restent. Suivant : 34 (temps d'écran
   iPhone, `PhoneUsageCard.jsx`, `permissionDisclosures.js`, `phoneUsageSync.js`) ou 06 (textes).
+  22/11 16:30 : #1198 mergée. Correctifs 13 (divulgation avant l'app Santé) et 45 (6 mois importés à l'accueil sur
+  iPhone), avec la partie `firstImport.js` du 15 (« App Santé » comme source du « aha »), fondus sous `FEATURES.iosStore`
+  (`permissionDisclosures.js`, `Onboarding.jsx`, `firstImport.js`) ; tests Android (divulgation Health Connect, 30 jours
+  importés) ; le 15 ne garde que `Data.jsx` et `today.js`. 29 restent. Suivant : 34 (temps d'écran iPhone) ou 06 (textes).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).

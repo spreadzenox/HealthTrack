@@ -58,6 +58,9 @@ import { STATUS_LABEL, measureStatuses } from '../devices/deviceCapabilities'
 import { lastLaunchDay } from '../services/entitlement'
 import { monoDigits } from '../utils/monoDigits'
 
+// Version iOS (HealthTrack-iOS) : l'iPhone importe 6 mois de l'app Santé (IOS_FIRST_IMPORT_DAYS), Android 30 jours
+const IMPORT_SPAN = FEATURES.iosStore ? '6 derniers mois' : '30 derniers jours'
+
 const withTimeout = (promise, ms, fallback) =>
   Promise.race([promise, new Promise((resolve) => setTimeout(() => resolve(fallback), ms))])
 
@@ -236,8 +239,8 @@ function HealthCard({ health, onHealth, phone = false }) {
       </p>
       <p className="onb-card-text">
         {phone
-          ? `${APP_NAME} lit vos pas et vos 30 derniers jours. Elle n’écrit rien et n’envoie rien. Vous choisissez type par type.`
-          : `${APP_NAME} lit vos pas, votre sommeil, ce que vos appareils mesurent et vos 30 derniers jours. Elle n’écrit rien et n’envoie rien. Vous choisissez type par type.`}
+          ? `${APP_NAME} lit vos pas et vos ${IMPORT_SPAN}. Elle n’écrit rien et n’envoie rien. Vous choisissez type par type.`
+          : `${APP_NAME} lit vos pas, votre sommeil, ce que vos appareils mesurent et vos ${IMPORT_SPAN}. Elle n’écrit rien et n’envoie rien. Vous choisissez type par type.`}
       </p>
       {health === 'granted' ? (
         <p className="onb-note onb-note-ok" role="status">
@@ -520,7 +523,7 @@ function FoundStep({ health, imported, onImported, installed, huawei }) {
           <div
             className="onb-import-bar"
             role="progressbar"
-            aria-label="Import de vos 30 derniers jours"
+            aria-label={`Import de vos ${IMPORT_SPAN}`}
             aria-valuemin={0}
             aria-valuemax={progress?.total || 1}
             aria-valuenow={progress?.done || 0}
@@ -528,7 +531,7 @@ function FoundStep({ health, imported, onImported, installed, huawei }) {
             <span style={{ width: `${pct(progress)}%` }} />
           </div>
           <p className="onb-import-line">
-            {monoDigits(`Import de vos 30 derniers jours${progress ? ` · ${progress.done}/${progress.total}` : '…'}`)}
+            {monoDigits(`Import de vos ${IMPORT_SPAN}${progress ? ` · ${progress.done}/${progress.total}` : '…'}`)}
           </p>
         </>
       )}
@@ -563,7 +566,7 @@ function FoundStep({ health, imported, onImported, installed, huawei }) {
       )}
       {facts?.length > 0 && (
         <>
-          <h2 className="onb-leaves-group">Vos 30 derniers jours</h2>
+          <h2 className="onb-leaves-group">Vos {IMPORT_SPAN}</h2>
           <ul className="onb-facts">
             {facts.map((f) => (
               <li key={f.key} className={`onb-fact onb-fact--${f.key}`}>
@@ -574,7 +577,7 @@ function FoundStep({ health, imported, onImported, installed, huawei }) {
             ))}
           </ul>
           {sharedSource && <p className="onb-facts-source">D’après {sharedSource}</p>}
-          <p className="onb-fine">Vos 30 derniers jours sont importés. {APP_NAME} les comparera à votre digestion et à votre bien-être.</p>
+          <p className="onb-fine">Vos {IMPORT_SPAN} sont importés. {APP_NAME} les comparera à votre digestion et à votre bien-être.</p>
         </>
       )}
       {entries && !facts?.length && (

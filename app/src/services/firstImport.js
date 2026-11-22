@@ -18,11 +18,18 @@ import { appLocale } from '../i18n/locale.js'
 import { totalOf } from './activityTotals'
 import { oneSourcePerWorkout } from './workoutSources'
 import { oneSleepSourcePerNight } from './sleepSources'
+import { FEATURES } from '../config/distribution'
 
 const DAY_MS = 24 * 3600 * 1000
 
 /** Jours résumés dans le « aha ». */
 export const AHA_DAYS = 30
+/**
+ * Version iOS (HealthTrack-iOS) : jours importés à l'accueil sur iPhone. HealthKit n'a pas la fenêtre de 30 jours de
+ * Health Connect : l'historique (6 mois, le choix par défaut de Sources) arrive dès l'accueil (retours du premier
+ * testeur, 06/11) ; le « aha » résume toujours les 30 derniers jours.
+ */
+export const IOS_FIRST_IMPORT_DAYS = 180
 
 /**
  * Lit Health Connect pour la première fois et enregistre le résultat comme une synchro normale.
@@ -34,7 +41,7 @@ export async function runFirstImport({ connector, onProgress, now = new Date(), 
   noteFirstGrant(connector.id, now)
   const settings = getConnectorSettings(connector.id)
   const readWindowDays = connector.readWindowDays ?? null
-  const since = syncSince({ now, settings, latestAt: null, historyDays: readWindowDays ?? AHA_DAYS, readWindowDays })
+  const since = syncSince({ now, settings, latestAt: null, historyDays: readWindowDays ?? (FEATURES.iosStore ? IOS_FIRST_IMPORT_DAYS : AHA_DAYS), readWindowDays })
   const result = await connector.sync({ since, until: now, writer, onProgress })
   if (readsAllFailed(result)) {
     setConnectorSettings(connector.id, { lastAttemptAt: now.toISOString(), lastSyncResult: result })
@@ -59,9 +66,10 @@ function sourceLine(entries) {
     const raw = e.payload?.sourceName
     return raw ? (matchHealthApp(raw)?.name || raw) : null
   }).filter(Boolean))]
-  if (!names.length) return 'Health Connect'
+  // Version iOS (HealthTrack-iOS) : l'app Santé d'Apple
+  if (!names.length) return FEATURES.iosStore ? 'App Santé' : 'Health Connect'
   const shown = names.length > 2 ? `${names.slice(0, 2).join(', ')}…` : names.join(' et ')
-  return `${shown} via Health Connect`
+  return `${shown} via ${FEATURES.iosStore ? 'l’app Santé' : 'Health Connect'}`
 }
 
 /**

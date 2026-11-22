@@ -10,6 +10,7 @@
  * affiché à part), `accept` (libellé du bouton d'accord), `decline`.
  */
 import { APP_NAME } from './brand'
+import { FEATURES } from './distribution'
 
 // Sauvegarde Android conservée (décision du 24/10) : les nombres gardés suivent la sauvegarde du téléphone si la
 // personne l'a activée ; l'app, elle, n'envoie rien (POL-PLAY-25).
@@ -131,6 +132,21 @@ export const DISCLOSURES = {
     accept: 'J’accepte, prendre la photo',
     decline: 'Pas maintenant',
   },
+}
+
+// Version iOS (HealthTrack-iOS) : l'app Santé d'Apple au lieu de Health Connect
+if (FEATURES.iosStore) {
+  DISCLOSURES.health_connect = {
+    ...DISCLOSURES.health_connect,
+    title: 'Avant d’autoriser l’app Santé',
+    points: [
+      `${APP_NAME} lit ce que votre montre, votre bague et vos applis santé écrivent dans l’app Santé : sommeil, pas, fréquence cardiaque, variabilité cardiaque, activité et quelques mesures (poids, température…). Il n’y écrit rien.`,
+      'iOS vous laisse choisir type par type : tout est facultatif.',
+      'Les 6 derniers mois sont importés tout de suite, puis les nouvelles données au fil des jours.',
+      'Elles restent dans vos données, sur le téléphone. Vous pouvez retirer l’accès à tout moment dans Réglages › Santé › Accès aux données et appareils.',
+    ],
+    accept: 'J’accepte, ouvrir l’app Santé',
+  }
 }
 
 /** La divulgation d'un accès ; erreur si l'accès n'est pas décrit (pour ne jamais demander sans prévenir). */
