@@ -24,6 +24,7 @@ import { BASELINE_METRICS, dailyValues } from './baselines'
 import { localDateKey } from './wellbeingSeries'
 import { BEHAVIOR_TAGS, measuredTagsByDay } from './behaviorTags'
 import { oneSleepSourcePerNight } from './sleepSources'
+import { radarHrvMetric } from '../ios/sdnnBaseline' // Version iOS (HealthTrack-iOS)
 
 export const RADAR_DAYS = 3
 export const RADAR_BASELINE_DAYS = 60
@@ -111,7 +112,7 @@ function meanSd(values) {
 export function computeRadar(entries, now = new Date()) {
   const series = {
     restingHeartRate: dailyValues(entries, BASELINE_METRICS.restingHeartRate),
-    heartRateVariability: dailyValues(entries, BASELINE_METRICS.heartRateVariability),
+    heartRateVariability: dailyValues(entries, radarHrvMetric()), // iPhone : VFC SDNN de l'app Santé
     sleepMinutes: nightlySleep(entries),
   }
   const evalKeys = Array.from({ length: RADAR_DAYS }, (_, i) => dayKeyOffset(now, i)) // aujourd'hui d'abord

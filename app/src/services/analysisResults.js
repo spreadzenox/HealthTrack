@@ -41,6 +41,7 @@ import { GUT_TYPE } from './today'
 import { HABIT_TYPE } from './habits'
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
+import { DISTRIBUTION } from '../config/distribution' // Version iOS (HealthTrack-iOS)
 
 export const CONTRACT_VERSION = 1
 
@@ -207,6 +208,9 @@ export const FACTORS = [
     text: (a) => `${fmtInt(a)} bpm de plus au repos` },
   { key: 'hrv_ms', label: 'Variabilité cardiaque', theme: 'body', actionable: false, unit: 'ms', step: 1,
     text: (a) => `${fmtInt(a)} ms de variabilité cardiaque de plus` },
+  // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé (SDNN), facteur à part, jamais mêlée à la RMSSD (correctif 64)
+  ...(DISTRIBUTION === 'appstore' ? [{ key: 'hrv_sdnn_ms', label: 'Variabilité cardiaque', theme: 'body', actionable: false, unit: 'ms', step: 1,
+    text: (a) => `${fmtInt(a)} ms de variabilité cardiaque de plus` }] : []),
   { key: 'weather_sunshine_h', label: 'Soleil', theme: 'context', actionable: false, unit: 'h', step: 1,
     text: (a) => `${fmtInt(a)} h de soleil de plus` },
   { key: 'weather_temp_max_c', label: 'Température', theme: 'context', actionable: false, unit: '°C', step: 1,
@@ -305,7 +309,7 @@ function factorDays(entries) {
     for (const f of FACTORS) {
       let v = r[f.key]
       // Mesures inconnues : null (jamais 0 pour du sommeil ou des pas absents).
-      if (['sleepMinutes', 'steps', 'restingHR', 'hrv_ms'].includes(f.key) && !(v > 0)) v = null
+      if (['sleepMinutes', 'steps', 'restingHR', 'hrv_ms', 'hrv_sdnn_ms' /* Version iOS, correctif 64 */].includes(f.key) && !(v > 0)) v = null
       vals[f.key] = isNum(v) ? v : null
     }
     vals._meals = r.mealCount > 0

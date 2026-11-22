@@ -6,6 +6,7 @@ import { localDateKey } from '../services/wellbeingSeries'
 import { formatDuration } from '../utils/format'
 import './HealthRadar.css'
 import { appLocale, localeDate } from '../i18n/locale.js'
+import { radarHrvMetric } from '../ios/sdnnBaseline' // Version iOS (HealthTrack-iOS)
 
 const HISTORY_DAYS = RADAR_DAYS + RADAR_BASELINE_DAYS + 2
 
@@ -56,7 +57,7 @@ export default function HealthRadar({ onStatus }) {
       const since = new Date(Date.now() - HISTORY_DAYS * 86400000).toISOString()
       const [heart, sleep, wellbeing, workouts, meals, context] = await Promise.all([
         // FC repos et VFC seulement (une valeur par jour), pas les tranches de FC / SpO₂ (perf D2)
-        listEntries({ type: 'heart_rate', subtypes: Object.keys(BASELINE_METRICS), since, limit: Infinity }),
+        listEntries({ type: 'heart_rate', subtypes: [...new Set([...Object.keys(BASELINE_METRICS), radarHrvMetric().key])], since, limit: Infinity }),
         listEntries({ type: 'sleep', since, limit: Infinity }),
         listEntries({ type: 'wellbeing', since, limit: Infinity }),
         // Séances du soir et repas tardifs comptent comme causes sans être cochés
@@ -66,7 +67,7 @@ export default function HealthRadar({ onStatus }) {
         listEntries({ type: 'context', since, limit: Infinity }),
       ])
       const entries = [...heart, ...sleep]
-      const hasData = entries.some((e) => e.type === 'sleep' || ['restingHeartRate', 'heartRateVariability'].includes(e.payload?.subtype))
+      const hasData = entries.some((e) => e.type === 'sleep' || ['restingHeartRate', 'heartRateVariability', radarHrvMetric().key].includes(e.payload?.subtype))
       const radar = computeRadar(entries)
       setState({ hasData, radar, why: explainRadar(radar, [...wellbeing, ...workouts, ...meals, ...context]) })
     } catch {

@@ -22,6 +22,7 @@ const CHIP_KEYS = {
   'Cœur au repos': 'restingHr',
   'Variabilité cardiaque': 'hrv',
   'Variabilité cardiaque, jour': 'hrvDay',
+  'Variabilité cardiaque, app Santé': 'hrvDay', // Version iOS (HealthTrack-iOS) : à côté d'une RMSSD importée, la VFC de l'app Santé prend l'icône et la couleur de la VFC, sans norme (correctif 56)
   'Oxygène du sang': 'spo2',
   Respiration: 'respiratoryRate',
   Température: 'temperatureC',
@@ -80,6 +81,7 @@ export function summaryChips(s) {
   if (s.restingHr != null) chips.push(['Cœur au repos', `${Math.round(s.restingHr)} bpm`])
   if (s.hrv != null) chips.push(['Variabilité cardiaque', `${Math.round(s.hrv)} ms`])
   if (s.hrvDay != null) chips.push(['Variabilité cardiaque, jour', `${s.hrvDay} ms`])
+  if (s.hrvSdnn != null) chips.push([s.hrv != null ? 'Variabilité cardiaque, app Santé' : 'Variabilité cardiaque', `${Math.round(s.hrvSdnn)} ms`, undefined, 'hrvSdnn'])
   if (s.spo2 != null) chips.push(['Oxygène du sang', `${frNumber(s.spo2)} %`])
   if (s.respiratoryRate != null) chips.push(['Respiration', `${frNumber(s.respiratoryRate)} /min`])
   if (s.temperatureC != null) chips.push(['Température', `${frNumber(s.temperatureC)} °C`])

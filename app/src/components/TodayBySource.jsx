@@ -82,10 +82,12 @@ export default function TodayBySource({
       <div className="today-data">
         <ul className="today-data-items">
           {items.map((i) => {
-            const n = (FROM_YESTERDAY.has(i.when) ? norms.yesterday : norms.today)[i.key]
+            // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé a sa propre habitude, en SDNN (correctif 56 ; norme : correctif 57)
+            const n = (FROM_YESTERDAY.has(i.when) ? norms.yesterday : norms.today)[i.measure ?? i.key]
             return (
               <li key={i.key} data-tone={measureTone(THEME_KEYS[i.key] ?? i.key)}>
-                <Row trend={TREND_KEYS[i.key]}>
+                {/* Version iOS (HealthTrack-iOS) : la VFC de l'app Santé ouvre sa courbe SDNN, pas la « Variabilité cardiaque » vide (correctif 56) */}
+                <Row trend={i.measure ?? TREND_KEYS[i.key]}>
                 <span className="today-data-icon"><LineIcon name={ICONS[i.key] ?? 'dots'} size={20} /></span>
                 <span className="today-data-label">
                   {i.label}

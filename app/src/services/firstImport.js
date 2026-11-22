@@ -120,6 +120,17 @@ export function summarizeImport(entries, now = new Date()) {
       source: sourceLine(hrv),
     })
   }
+  // Version iOS (HealthTrack-iOS) : sans RMSSD, la VFC de l'app Santé (SDNN), sous son nom, jamais mêlée
+  const sdnn = hrv.length ? [] : recent.filter((e) => e.type === 'heart_rate' && e.payload?.subtype === 'heartRateVariabilitySdnn'
+    && typeof e.payload.value === 'number')
+  if (sdnn.length) {
+    facts.push({
+      key: 'hrv',
+      value: `${Math.round(sdnn.reduce((s, e) => s + e.payload.value, 0) / sdnn.length)} ms`,
+      label: `de variabilité cardiaque en moyenne, sur ${sdnn.length} mesure${sdnn.length > 1 ? 's' : ''}`,
+      source: sourceLine(sdnn),
+    })
+  }
 
   const resting = recent.filter((e) => e.type === 'heart_rate' && e.payload?.subtype === 'restingHeartRate' && typeof e.payload.bpm === 'number')
   if (resting.length && facts.length < 4) {
