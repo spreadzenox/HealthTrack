@@ -668,6 +668,27 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       « Poids » de Tendances (`trendsData.js`, champ `weightKg`, rempli par Health Connect ou Santé) ; sans balance, la
       persona ne voit jamais son poids évoluer. Vérifier d'abord si une saisie manuelle de poids existe ailleurs ;
       sinon proposition avec maquette (fonction nouvelle).
+  - **Passage des personas du 22/11 08:30** (run « idées », [`synthèse`](simulations/2026-11-22-0830-synthese.md) ;
+    « Stressé et pressé » J1, iPhone + Apple Watch, et « Ventre et données » J14, Android seul) :
+    - [ ] **POLISH-SIM-139 — Digestion du matin prise pour le bilan du soir** (J14, vérifié : capture
+      `accueil-bulles.png`, `DayChecklist.jsx` 152, `CompanionHome.jsx` 233) : une gêne notée à 08:34 s'affiche sous
+      « Votre digestion ce soir » (« Noté à 08:34 : Gêne »), si bien que la persona croit sa digestion faite ; la bulle
+      Digestion reste sur l'Accueil et sa feuille ne dit que « Elle se note le soir, à partir de 18 h ». Écrire le
+      moment comme un moment (« Dans la journée : gêne à 08:34 ») et, dans la feuille, rappeler qu'un moment se note à
+      tout instant (lien vers la saisie) et que le bilan du soir arrive à 18 h. Ne change ni la règle ni les données.
+    - [ ] **POLISH-SIM-140 — Accueil, « Décochez les habitudes… » avec une seule cochée** (J1, vérifié :
+      `Onboarding.jsx` 724, capture `habitudes.png`) : Méditation seule est cochée d'office, les trois autres non.
+      Écrire « Cochez ce qui vous parle. » (ou cocher selon l'objectif, comme le texte le suppose).
+    - [ ] **POLISH-SIM-141 — « Repéré sans vous : Sport le soir » le matin** (J1, mineur ; `behaviorTags.js` 55, effet
+      le lendemain) : dans une note de 08:35, dire « Sport hier soir ».
+    - [ ] **EXPORT-CSV — l'export CSV promis n'existe pas** (vérifié : aucun `text/csv` dans `app/src`) : la décision
+      du 20/10 range « export CSV / JSON » dans le gratuit pour toujours (PRODUIT.md, modèle économique), la persona
+      « Ventre et données » le cherche pour son tableur ; c'est une décision existante, pas une fonction nouvelle (rang
+      de PROP-SIM-10 à revoir) : notes, digestion, repas et mesures du jour, une ligne par saisie, depuis Données ›
+      Sauvegarde, test d'abord.
+    - À étudier : Tendances › détail d'un jour, « Confort digestif 2,4/5 · vous avez noté « douleur » (1) · estimé
+      avec les jours voisins » ; la persona veut voir sa note telle quelle pour sa gastro-entérologue. Le lissage est
+      voulu (incertitude montrée) ; piste : tracer la note en point plein et garder l'estimation en bande.
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
