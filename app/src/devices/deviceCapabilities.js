@@ -77,7 +77,10 @@ export const CAPABILITIES = {
 }
 
 const SLEEP_STAGES = new Set(['light', 'deep', 'rem'])
-const HEART_SUBTYPES = { heartRate: 'heartRate', restingHeartRate: 'restingHeartRate', heartRateVariability: 'hrv', oxygenSaturation: 'spo2' }
+const HEART_SUBTYPES = {
+  heartRate: 'heartRate', restingHeartRate: 'restingHeartRate', heartRateVariability: 'hrv', oxygenSaturation: 'spo2',
+  heartRateVariabilitySdnn: 'hrv', // VFC de l'app Santé d'Apple (SDNN), rangée à part de la RMSSD d'Android
+}
 
 /** Mesures (ids de MEASURES) qu'apporte une entrée importée. */
 export function measuresOf(entry) {

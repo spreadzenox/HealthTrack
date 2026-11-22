@@ -781,6 +781,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   `upstream.json` (`scripts/upstream.sh --latest`).
 - [ ] **FUSION-3** : faire fondre `iphone/patches/` dans `app/src/`, un sujet par run, la variante `appstore`
   (correctif 01) d'abord ; puis `overlay/` (étape 2), puis `ios/` → `app/ios/` (étape 3).
+  22/11 05:30 : correctif 53 (VFC SDNN, `deviceCapabilities.js`) fondu, sans dépendre de la variante ; 43 restent.
+  Autres sans `FEATURES.iosStore` : 04 (`phoneApps.js`, plateforme), 43 (`HealthConnectConnector.js`, `isIos()`).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).

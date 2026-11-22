@@ -43,6 +43,14 @@ describe('measureStatuses : ce qui est arrivé d’abord, la raison ensuite', ()
     expect(res.notMeasured).toEqual(['Poids', 'Cycle'])
   })
 
+  it('VFC de l’app Santé (SDNN, iPhone) : reçue, jamais « pas mesurée » (ancien correctif iPhone 53)', () => {
+    const sdnn = e('heart_rate', { subtype: 'heartRateVariabilitySdnn', value: 48, sourceName: 'Apple Watch' })
+    expect(measuresOf(sdnn)).toEqual(['hrv'])
+    const res = measureStatuses({ entries: [sdnn] })
+    expect(statusOf(res, 'hrv').status).toBe('received')
+    expect(res.notMeasured).not.toContain(statusOf(res, 'hrv').label)
+  })
+
   it('une mesure arrivée l’emporte sur le catalogue (VFC reçue d’une autre app)', () => {
     const res = measureStatuses({ entries: [e('heart_rate', { subtype: 'heartRateVariability', sourceName: 'Oura' })], appIds: ['samsung_health'] })
     expect(statusOf(res, 'hrv').status).toBe('received')
