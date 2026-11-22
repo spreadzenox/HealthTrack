@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-22",
+  "kind": "nouveau",
+  "title": "Vos données en CSV, pour un tableur",
+  "items": [
+    "Dans Réglages › Sauvegarde, « Télécharger en CSV » enregistre toutes vos saisies dans un fichier qui s'ouvre dans Excel, Numbers ou Google Sheets : une ligne par saisie, avec la date, l'heure et le détail (aliments d'un repas, niveau de digestion, note de bien-être, mesures).",
+    "Pour restaurer vos données, c'est toujours la sauvegarde JSON qui sert."
+  ]
+}
