@@ -25,6 +25,14 @@ describe('PhoneUsageCard', () => {
     expect(screen.queryByRole('button', { name: 'Activer' })).toBeNull()
   })
 
+  it('Android : accès non pris en charge, la carte reste affichée (le retrait ne vaut que sur iPhone)', async () => {
+    const p = props({ available: false, checkAccess: vi.fn(async () => ({ granted: false, supported: false })) })
+    render(<PhoneUsageCard {...p} />)
+    await act(async () => { await p.checkAccess.mock.results[0]?.value })
+    expect(screen.getByText('Temps d’écran et sommeil')).toBeInTheDocument()
+    expect(screen.getByText('Disponible dans l’app Android.')).toBeInTheDocument()
+  })
+
   it('« Activer » sans accès : ouvre le réglage Android et affiche le guide pas à pas', async () => {
     const p = props()
     render(<PhoneUsageCard {...p} />)
