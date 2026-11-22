@@ -1,5 +1,5 @@
 /**
- * Version iOS (HealthTrack-iOS) — minutes par catégorie d'app depuis l'iPhone (I8, calculs purs), comme
+ * Version iOS — minutes par catégorie d'app depuis l'iPhone (I8, calculs purs), comme
  * `phoneApps.js` d'Android (I116).
  *
  * Le plugin natif `PhoneUsage` rend, dans chaque segment horaire, les apps utilisées :

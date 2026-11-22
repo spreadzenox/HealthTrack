@@ -135,10 +135,20 @@ export default function PhoneUsageCard({
             lit pas le contenu des apps.
           </p>
           <MethodNote summary="Détails">
-            Votre téléphone sait quand il s’allume et quelles apps sont ouvertes : {APP_NAME} en tire votre temps
-            d’écran, l’écran tard le soir, le temps passé sur les réseaux sociaux, la vidéo, les jeux… et, les nuits
-            sans montre, une estimation de votre sommeil. L’onglet Objectifs regarde comment tout cela va avec{' '}
-            <em>votre</em> bien-être, dans un sens ou dans l’autre.
+            {FEATURES.iosStore ? (
+              <>
+                L’iPhone compte, heure par heure, votre temps d’écran, vos prises en main et le temps passé dans chaque
+                app : {APP_NAME} en tire votre temps d’écran, l’écran tard le soir, le temps passé sur les réseaux
+                sociaux, la vidéo, les jeux… et, les nuits sans montre, une estimation de votre sommeil.
+              </>
+            ) : (
+              <>
+                Votre téléphone sait quand il s’allume et quelles apps sont ouvertes : {APP_NAME} en tire votre temps
+                d’écran, l’écran tard le soir, le temps passé sur les réseaux sociaux, la vidéo, les jeux… et, les nuits
+                sans montre, une estimation de votre sommeil.
+              </>
+            )}{' '}
+            L’onglet Objectifs regarde comment tout cela va avec <em>votre</em> bien-être, dans un sens ou dans l’autre.
           </MethodNote>
         </>
       )}
@@ -153,7 +163,31 @@ export default function PhoneUsageCard({
         </button>
       )}
 
-      {available && on && access && !granted && (
+      {available && on && access && !granted && FEATURES.iosStore && (
+        <div className="phone-usage-guide">
+          <ol className="phone-usage-steps">
+            <li>Touchez « Autoriser » : l’iPhone demande votre accord pour le temps d’écran (Face ID ou code).</li>
+            <li>Revenez ici : tout se met à jour seul.</li>
+          </ol>
+          <p className="my-device-meta">
+            {access.supported === false
+              ? 'Il faut iOS 26.4 ou plus : mettez à jour l’iPhone dans Réglages › Général › Mise à jour logicielle.'
+              : 'Apple ne donne ce temps d’écran aux apps que dans l’Union européenne, depuis iOS 26.4.'}
+          </p>
+          <div className="my-device-actions">
+            {access.supported !== false && (
+              <button type="button" className="btn btn-primary connector-btn" onClick={() => openSettings().catch(() => {})}>
+                Autoriser
+              </button>
+            )}
+            <button type="button" className="btn btn-secondary connector-btn" onClick={turnOff}>
+              Annuler
+            </button>
+          </div>
+        </div>
+      )}
+
+      {available && on && access && !granted && !FEATURES.iosStore && (
         <div className="phone-usage-guide">
           <ol className="phone-usage-steps">
             <li>Touchez « Ouvrir le réglage » : Android affiche « Accès aux données d’utilisation ».</li>
@@ -181,7 +215,10 @@ export default function PhoneUsageCard({
             <p className="weather-today">
               <span className="weather-today-label">Aujourd’hui</span> {formatScreenMinutes(today.screenMinutes)} d’écran
               {today.lateScreenMinutes > 0 && ` · ${formatScreenMinutes(today.lateScreenMinutes)} hier soir après 22 h`}
-              {today.unlocks > 0 && ` · ${today.unlocks} déverrouillage${today.unlocks > 1 ? 's' : ''}`}
+              {today.unlocks > 0 &&
+                (FEATURES.iosStore
+                  ? ` · ${today.unlocks} prise${today.unlocks > 1 ? 's' : ''} en main`
+                  : ` · ${today.unlocks} déverrouillage${today.unlocks > 1 ? 's' : ''}`)}
             </p>
           ) : (
             <p className="my-device-message">{busy ? 'Lecture du téléphone…' : 'Pas encore de données aujourd’hui.'}</p>

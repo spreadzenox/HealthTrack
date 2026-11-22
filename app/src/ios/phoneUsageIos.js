@@ -1,5 +1,5 @@
 /**
- * Version iOS (HealthTrack-iOS) — temps d'écran et nuit estimée depuis l'iPhone (I8, calculs purs).
+ * Version iOS — temps d'écran et nuit estimée depuis l'iPhone (I8, calculs purs).
  *
  * Android lit les allumages d'écran un à un (`phoneUsage.js`). L'iPhone ne donne que des totaux par heure
  * (`DeviceActivityData.activityData`, iOS 26.4+, appareils de l'UE, avec l'accord de la personne) : le plugin natif

@@ -149,6 +149,20 @@ if (FEATURES.iosStore) {
   }
 }
 
+// iPhone : l'autorisation Temps d'écran de l'iPhone au lieu de l'accès aux données d'utilisation
+if (FEATURES.iosStore) {
+  DISCLOSURES.usage = {
+    ...DISCLOSURES.usage,
+    title: 'Avant d’autoriser l’accès au temps d’écran',
+    points: [
+      `${APP_NAME} lit, heure par heure, votre temps d’écran, le nombre de fois où vous prenez l’iPhone en main et le temps passé par app (sans rien lire de ce que vous y faites).`,
+      'Ça sert à estimer votre temps d’écran et votre sommeil, pour les comparer à votre bien-être.',
+      'L’iPhone va vous demander votre accord (Face ID ou code). Vous pourrez le retirer dans Réglages › Temps d’écran.',
+    ],
+    accept: 'J’accepte, continuer',
+  }
+}
+
 /** La divulgation d'un accès ; erreur si l'accès n'est pas décrit (pour ne jamais demander sans prévenir). */
 export function disclosureFor(key) {
   const d = DISCLOSURES[key]
