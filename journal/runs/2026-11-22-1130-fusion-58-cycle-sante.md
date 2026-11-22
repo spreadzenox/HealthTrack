@@ -19,7 +19,7 @@
 - Rien de visible : pas de note de Nouveautés.
 
 ## Vérifications
-- Android : suite complète Vitest (voir PR), lint, build.
+- Android : suite complète Vitest 4 255 tests verts (44 sautés, comme avant), lint propre, build OK.
 - iPhone : `scripts/upstream.sh` applique les 39 correctifs ; dans `iphone/upstream/app`, les tests des dossiers
   `ios`, `connectors`, `settings`, `DayEntries` et `Connectors` passent (50 fichiers, 472 tests).
 - Build iPhone de la PR (simulateur) au passage en « prête ».
