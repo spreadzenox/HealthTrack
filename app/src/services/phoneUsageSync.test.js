@@ -38,6 +38,19 @@ describe('phoneUsageSync', () => {
     expect(getPhoneUsageSettings().lastError).toMatch(/pas encore accordé/)
   })
 
+  it('Android : lit les allumages d’écran, jamais les segments horaires de l’iPhone', async () => {
+    enablePhoneUsage()
+    const plugin = { ...fakePlugin({ events: use(t('2026-10-10', 10), 30) }), queryUsageSegments: vi.fn() }
+    const res = await syncPhoneUsage({ plugin, force: true, now: new Date(t('2026-10-11', 12)) })
+    expect(res.ran).toBe(true)
+    expect(plugin.queryScreenEvents).toHaveBeenCalled()
+    expect(plugin.queryUsageSegments).not.toHaveBeenCalled()
+    localStorage.clear()
+    enablePhoneUsage()
+    await syncPhoneUsage({ plugin: { ...plugin, checkAccess: async () => ({ granted: false, supported: true }) } })
+    expect(getPhoneUsageSettings().lastError).toBe('Accès aux données d’utilisation pas encore accordé.')
+  })
+
   it('enregistre les journées terminées et garde la journée en cours pour l’affichage', async () => {
     enablePhoneUsage()
     const events = [

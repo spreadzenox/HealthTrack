@@ -832,6 +832,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   iPhone), avec la partie `firstImport.js` du 15 (« App Santé » comme source du « aha »), fondus sous `FEATURES.iosStore`
   (`permissionDisclosures.js`, `Onboarding.jsx`, `firstImport.js`) ; tests Android (divulgation Health Connect, 30 jours
   importés) ; le 15 ne garde que `Data.jsx` et `today.js`. 29 restent. Suivant : 34 (temps d'écran iPhone) ou 06 (textes).
+  22/11 17:30 : #1199 mergée. Correctif 34 (temps d'écran de l'iPhone : segments horaires, divulgation Temps d'écran,
+  guide « Autoriser », « prises en main ») fondu sous `FEATURES.iosStore` et la plateforme (`PhoneUsageCard.jsx`,
+  `permissionDisclosures.js`, `phoneUsageSync.js`) ; `phoneUsageIos.js` et `phoneAppsIos.js` (et leurs tests) passent
+  d'`overlay/` à `app/src/ios/` ; test Android (allumages d'écran, jamais les segments). 28 restent. Suivant : 06 (textes,
+  à découper) ou 17/19/20/21/30/32/56/57/64 (VFC SDNN, à regrouper).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).

@@ -11,6 +11,7 @@ import { upsertEntries } from '../storage/localHealthStorage'
 import { phoneUsageEntries, summarizePhoneDay, dateKeyOf } from './phoneUsage'
 import { phoneAppsEntries, summarizeAppsDay } from './phoneApps'
 import { APP_NAME } from '../config/brand'
+import { readsSegments, segmentsAccessError, syncSegments } from '../ios/phoneUsageIos'
 
 const KEY = 'healthtrack_phone_usage'
 export const PHONE_USAGE_STALE_MS = 30 * 60 * 1000
@@ -58,6 +59,7 @@ export function disablePhoneUsage() {
 
 export function isPhoneUsageAvailable() {
   if (typeof window !== 'undefined' && window.__healthtrackFakePhoneUsage) return true
+  if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') return Capacitor.isPluginAvailable('PhoneUsage')
   return Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android'
 }
 
@@ -107,11 +109,16 @@ export async function syncPhoneUsage({ force = false, now = new Date(), plugin =
     try {
       const access = await checkPhoneUsageAccess(plugin)
       if (!access.granted) {
-        const error = access.supported
+        const error = readsSegments(plugin)
+          ? segmentsAccessError(access)
+          : access.supported
           ? 'Accès aux données d’utilisation pas encore accordé.'
           : `Mettez à jour ${APP_NAME} (ou Android 9+) pour cette fonction.`
         setPhoneUsageSettings({ lastError: error })
         return { ran: false, noAccess: true, error }
+      }
+      if (readsSegments(plugin)) {
+        return await syncSegments({ plugin, now, write, save: setPhoneUsageSettings, lookbackMs: LOOKBACK_MS })
       }
       const end = now.getTime()
       const res = await plugin.queryScreenEvents({ start: end - LOOKBACK_MS, end })
