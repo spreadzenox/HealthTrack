@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 
-// Version iOS (HealthTrack-iOS), CYCLE-iOS-1 (décision du propriétaire du 10/11, « Ok cycle ») : le cycle noté dans
+// iPhone seulement, CYCLE-iOS-1 (décision du propriétaire du 10/11, « Ok cycle ») : le cycle noté dans
 // l'app Santé, lu par le plugin natif `CycleHealth`, rangé avec la brique partagée d'Android (`services/cycle.js`).
 import { cycleEntriesFromSante, syncCycleFromSante, CYCLE_SANTE_SOURCE, requestSanteAuthorization, askCycleAfterOnboarding, IOS_HEALTHKIT_ASKED_KEY, IOS_CYCLE_ASKED_KEY, shouldOfferCycleSante } from './cycleSante'
 import { cycleByDay, periodEntry, symptomEntry } from '../services/cycle'
