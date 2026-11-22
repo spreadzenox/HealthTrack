@@ -1,5 +1,5 @@
 /**
- * Version iOS (HealthTrack-iOS), CYCLE-iOS-3 (décision du propriétaire du 10/11 vers 18:50, « Ok cycle » ; maquette
+ * iPhone seulement, CYCLE-iOS-3 (décision du propriétaire du 10/11 vers 18:50, « Ok cycle » ; maquette
  * `journal/maquettes/cycle-sante/`) : dans Sources, « Suivi du cycle (Santé) » propose une fois la lecture du cycle à
  * qui a « Mon cycle » et a autorisé Santé avant que le cycle y soit (la demande de l'accueil l'inclut désormais).
  * Une fois demandé, la carte disparaît ; les données reçues apparaissent dans « Mes appareils » (« cycle »).
