@@ -17,6 +17,10 @@ vi.mock('../storage/localHealthStorage', () => ({
 
 // Le rapport PDF a ses propres tests (DoctorReportCard.test.jsx)
 vi.mock('../components/DoctorReportCard', () => ({ default: () => <div>Rapport PDF pour mon médecin</div> }))
+// L'export CSV aussi (CsvExportCard.test.jsx) : ici, seulement sa place et son état (EXPORT-CSV)
+vi.mock('../components/CsvExportCard', () => ({
+  default: ({ disabled }) => <button type="button" disabled={disabled}>Télécharger en CSV</button>,
+}))
 
 vi.mock('../services/deleteAllData', () => ({
   deleteAllMyData: vi.fn(),
@@ -81,6 +85,13 @@ describe('Data page — export (web)', () => {
     renderData()
     expect(screen.getByText(/Exporter/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Télécharger la sauvegarde/i })).toBeInTheDocument()
+  })
+
+  it('propose aussi l’export CSV, sous la sauvegarde (EXPORT-CSV)', () => {
+    renderData()
+    const json = screen.getByRole('button', { name: /Télécharger la sauvegarde/i })
+    const csv = screen.getByRole('button', { name: 'Télécharger en CSV' })
+    expect(json.compareDocumentPosition(csv) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('dit le format de l’export : un fichier JSON (POLISH-SIM-37)', () => {
@@ -402,6 +413,7 @@ describe('Data page — ce que contient la sauvegarde (POL-PLAY-79)', () => {
     renderData()
     expect(await screen.findByText(/Rien à sauvegarder pour l’instant/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Télécharger la sauvegarde' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Télécharger en CSV' })).toBeDisabled()
   })
 
   it('avec des entrées : dit combien le fichier en contiendra', async () => {
@@ -410,6 +422,7 @@ describe('Data page — ce que contient la sauvegarde (POL-PLAY-79)', () => {
     renderData()
     expect(await screen.findByText(countText(/1\s918 entrées et votre profil/))).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Télécharger la sauvegarde' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Télécharger en CSV' })).toBeEnabled()
   })
 
   it('le fuseau horaire noté seul par l’app ne compte pas comme une entrée (REVUE-320-SOMBRE-2)', async () => {

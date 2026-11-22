@@ -9,6 +9,7 @@ import DoctorReportCard from '../components/DoctorReportCard'
 import '../Food.css'
 import { appLocale, localeDate } from '../i18n/locale.js'
 import { monoDigits } from '../utils/monoDigits'
+import CsvExportCard from '../components/CsvExportCard'
 
 async function isAndroidNative() {
   try {
@@ -231,6 +232,8 @@ export default function Data() {
           </button>
           {exportStatus && <p className="data-status">{exportStatus}</p>}
         </div>
+
+        <CsvExportCard disabled={nothingToExport} />
 
         <DoctorReportCard />
 
