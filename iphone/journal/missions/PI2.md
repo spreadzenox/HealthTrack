@@ -12,7 +12,7 @@
 
 ## Partie 0 — Faite par la routine, par l'API (rien à faire de votre côté)
 
-**Faite le 21/11 vers 05:33 (Paris)** (run 44866638637) : version **893** en préparation, build **1221.1221** attachée,
+**Build rattachée le 22/11 vers 06:39 (Paris)** (run 44990310513) : la version **893** a la build **1244.1244** (validée chez « Testeurs Halcya »), notes inchangées, publication manuelle ; la 844.344 est expirée. Avant : **faite le 21/11 vers 05:33 (Paris)** (run 44866638637) : version **893** en préparation, build **1221.1221** attachée,
 notes de 3 988 caractères, publication manuelle. Si une build plus récente est validée avant « 👉 PI2 prête », la
 routine la rattache et le résumé nomme la build attendue.
 

@@ -1,7 +1,8 @@
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { detectPhoneApps } from './phoneApps'
 
-// La détection des apps santé repose sur des noms de paquets Android : impossible sur iPhone (canOpenURL les refuse)
+// La détection des apps santé repose sur des noms de paquets Android : impossible sur iPhone (canOpenURL les refuse).
+// Ancien correctif iPhone 04, fondu dans le code commun le 22/11 (FUSION-3).
 describe('detectPhoneApps sur iOS', () => {
   afterEach(() => {
     delete window.Capacitor
