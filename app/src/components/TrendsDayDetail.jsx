@@ -144,7 +144,7 @@ export default function TrendsDayDetail({ face, contributions, outcome = null, v
           <h3 className="tdd-title">Humeur et éveil</h3>
           <MoodMap points={face.points} day={face.day} habit={face.habit} />
           <p className="tdd-text">
-            {[face.vaText && `${face.vaText}.`, face.habit ? 'Chaque point est une lecture ; la zone grise, votre habitude.' : 'Chaque point est une lecture.'].filter(Boolean).join(' ')}
+            {[face.vaText && `${face.vaText}.`, face.habit ? 'Chaque point est une lecture ; le cercle gris, votre habitude.' : 'Chaque point est une lecture.'].filter(Boolean).join(' ')}
           </p>
         </section>
       )}

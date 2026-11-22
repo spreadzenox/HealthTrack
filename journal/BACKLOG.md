@@ -691,20 +691,21 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       voulu (incertitude montrée) ; piste : tracer la note en point plein et garder l'estimation en bande.
   - **Passage des personas du 22/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-22-2030-synthese.md) ;
     « Prendre soin de soi » J1, iPhone seul, et « Tout mesurer » J14, Android seul) :
-    - [ ] **POLISH-SIM-142 — La visite guidée gonfle la jauge « Humeur de Pilou »** (J1, vérifié : capture
+    - [x] **POLISH-SIM-142 — La visite guidée gonfle la jauge « Humeur de Pilou »** (J1, vérifié : capture
       `accueil-apres-visite.png`, `mood.js` 40, `CompanionHome.jsx` 321) : « Exemple au jour 14 » affiche l'Accueil
       rempli de données fictives, et `dayMood` y enregistre le cran de l'exemple dans `halcya.companion.moodDay`
       (gardé pour la journée, jamais redescendu). Revenue sur son vrai Accueil, la persona voit « Ravi » avec 3 bulles
       à faire et aucune saisie. Proposition : en mode exemple, calculer le cran sans l'écrire (storage nul) ; test
-      d'abord (exemple puis vrai Accueil : « Tranquille »).
+      d'abord (exemple puis vrai Accueil : « Tranquille »). **Fait le 22/11 21:30** : `CompanionHome.jsx` passe
+      `storage: null` à `dayMood` en mode exemple ; test `CompanionHome.test.jsx`.
     - [ ] **POLISH-SIM-143 — Détail du jour, « Moins de fibres que d'habitude (3 g) » un jour sans repas** (J14, à
       vérifier avant de coder : `TrendsDayDetail.jsx`, contributions du modèle d'Analyses) : la persona n'avait encore
       rien mangé de noté le 22/11 (Repas 0/3). Soit la contribution lit la veille (délai J-1 du modèle) et le texte
       doit le dire (« la veille »), soit un jour sans repas ne doit pas avoir de fibres. Capture
       `detail-jour-fibres.png`.
-    - [ ] **POLISH-SIM-144 — « la zone grise, votre habitude » sous la carte humeur et éveil** (J14, mineur ;
+    - [x] **POLISH-SIM-144 — « la zone grise, votre habitude » sous la carte humeur et éveil** (J14, mineur ;
       `TrendsDayDetail.jsx` 147) : l'habitude est dessinée par un contour gris, pas une zone remplie. Dire « le cercle
-      gris, votre habitude ».
+      gris, votre habitude ». **Fait le 22/11 21:30** (`Trends.test.jsx`).
     - [ ] **PERSONAS-OUTIL-1 — `--goals=` des installations neuves suit encore l'ancien accueil** : `--goals=all` (Tout
       mesurer) écrit `goals: ['all']` sans `goalsVersion`, que la migration de l'étape 5a convertit en bien-être seul ;
       la persona n'avait donc pas « Confort digestif » et cherchait en vain où noter sa digestion (constat écarté : sans
