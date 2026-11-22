@@ -1,0 +1,349 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=16AFAE62-8F15-4D89-8041-9A6510AE4913 "-only-testing:HalcyaUITests/NotificationsUITests/testRepondreGeneDepuisLaBanniere"
+
+2026-11-22 04:02:02.022 xcodebuild[49866:132899] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-22 04:02:02.039 xcodebuild[49866:132899] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:16AFAE62-8F15-4D89-8041-9A6510AE4913, OS:26.2, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:16AFAE62-8F15-4D89-8041-9A6510AE4913, OS:26.2, name:iPhone 16e }
+2026-11-22 04:02:02.403 xcodebuild[49866:132899] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-22 04:02:04.406927+0000 HalcyaUITests-Runner[50527:134337] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-22 04:02:05.144.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-22 04:02:05.144.
+Test Suite 'NotificationsUITests' started at 2026-11-22 04:02:05.144.
+Test Case '-[HalcyaUITests.NotificationsUITests testRepondreGeneDepuisLaBanniere]' started.
+    t =     0.00s Start Test at 2026-11-22 04:02:05.146
+    t =     0.04s Set Up
+    t =     0.04s Waiting 90.0s for Any (First Match) to exist
+    t =     1.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     1.04s         Checking existence of `Any (First Match)`
+    t =     1.09s         Capturing element debug description
+    t =     2.05s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     2.05s         Checking existence of `Any (First Match)`
+    t =     2.10s         Capturing element debug description
+    t =     3.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.04s         Checking existence of `Any (First Match)`
+    t =     3.08s         Capturing element debug description
+    t =     4.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     4.04s         Checking existence of `Any (First Match)`
+    t =     4.08s         Capturing element debug description
+    t =     5.12s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     5.12s         Checking existence of `Any (First Match)`
+    t =     5.15s         Capturing element debug description
+    t =     6.09s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     6.09s         Checking existence of `Any (First Match)`
+    t =     6.12s         Capturing element debug description
+    t =     7.05s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     7.05s         Checking existence of `Any (First Match)`
+    t =     7.10s         Capturing element debug description
+    t =     8.05s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     8.05s         Checking existence of `Any (First Match)`
+    t =     8.07s         Capturing element debug description
+    t =     9.12s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     9.12s         Checking existence of `Any (First Match)`
+    t =     9.14s         Capturing element debug description
+    t =    10.09s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    10.09s         Checking existence of `Any (First Match)`
+    t =    10.13s         Capturing element debug description
+    t =    11.08s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    11.08s         Checking existence of `Any (First Match)`
+    t =    11.11s         Capturing element debug description
+    t =    12.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    12.04s         Checking existence of `Any (First Match)`
+    t =    12.08s         Capturing element debug description
+    t =    13.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    13.04s         Checking existence of `Any (First Match)`
+    t =    13.07s         Capturing element debug description
+    t =    14.10s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    14.10s         Checking existence of `Any (First Match)`
+    t =    14.13s         Capturing element debug description
+    t =    15.09s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    15.09s         Checking existence of `Any (First Match)`
+    t =    15.11s         Capturing element debug description
+    t =    16.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    16.05s         Checking existence of `Any (First Match)`
+    t =    16.07s         Capturing element debug description
+    t =    17.10s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    17.10s         Checking existence of `Any (First Match)`
+    t =    17.12s         Capturing element debug description
+    t =    18.06s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    18.06s         Checking existence of `Any (First Match)`
+    t =    18.08s         Capturing element debug description
+    t =    19.05s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    19.05s         Checking existence of `Any (First Match)`
+    t =    19.08s         Capturing element debug description
+    t =    20.11s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    20.11s         Checking existence of `Any (First Match)`
+    t =    20.14s         Capturing element debug description
+    t =    21.07s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    21.07s         Checking existence of `Any (First Match)`
+    t =    21.10s         Capturing element debug description
+    t =    22.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    22.04s         Checking existence of `Any (First Match)`
+    t =    22.07s         Capturing element debug description
+    t =    23.10s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    23.10s         Checking existence of `Any (First Match)`
+    t =    23.13s         Capturing element debug description
+    t =    24.07s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    24.07s         Checking existence of `Any (First Match)`
+    t =    24.10s         Capturing element debug description
+    t =    25.14s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    25.14s         Checking existence of `Any (First Match)`
+    t =    25.16s         Capturing element debug description
+    t =    26.12s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    26.12s         Checking existence of `Any (First Match)`
+    t =    26.15s         Capturing element debug description
+    t =    27.07s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    27.07s         Checking existence of `Any (First Match)`
+    t =    27.10s         Capturing element debug description
+    t =    28.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    28.04s         Checking existence of `Any (First Match)`
+    t =    28.07s         Capturing element debug description
+    t =    29.11s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    29.11s         Checking existence of `Any (First Match)`
+    t =    29.14s         Capturing element debug description
+    t =    30.09s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    30.09s         Checking existence of `Any (First Match)`
+    t =    30.12s         Capturing element debug description
+    t =    31.05s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    31.05s         Checking existence of `Any (First Match)`
+    t =    31.08s         Capturing element debug description
+    t =    32.11s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    32.11s         Checking existence of `Any (First Match)`
+    t =    32.13s         Capturing element debug description
+    t =    33.07s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    33.07s         Checking existence of `Any (First Match)`
+    t =    33.10s         Capturing element debug description
+    t =    34.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    34.04s         Checking existence of `Any (First Match)`
+    t =    34.07s         Capturing element debug description
+    t =    35.12s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    35.12s         Checking existence of `Any (First Match)`
+    t =    35.15s         Capturing element debug description
+    t =    36.09s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    36.09s         Checking existence of `Any (First Match)`
+    t =    36.12s         Capturing element debug description
+    t =    37.05s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    37.05s         Checking existence of `Any (First Match)`
+    t =    37.08s         Capturing element debug description
+    t =    38.12s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    38.12s         Checking existence of `Any (First Match)`
+    t =    38.15s         Capturing element debug description
+    t =    39.09s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    39.09s         Checking existence of `Any (First Match)`
+    t =    39.12s         Capturing element debug description
+    t =    40.06s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    40.06s         Checking existence of `Any (First Match)`
+    t =    40.08s         Capturing element debug description
+    t =    41.04s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    41.05s         Checking existence of `Any (First Match)`
+    t =    41.10s Press Any (First Match) for 1.5 seconds
+    t =    41.10s     Wait for com.apple.springboard to idle
+    t =    42.15s     Find the Any (First Match)
+    t =    42.17s     Check for interrupting elements affecting "NotificationShortLookView" BannerNotification
+    t =    42.18s         Wait for fr.jpesquet.sante to idle
+    t =    42.29s     Synthesize event
+    t =    44.04s     Wait for com.apple.springboard to idle
+    t =    45.60s Requesting snapshot of accessibility hierarchy for app with pid 19113
+    t =    46.12s Requesting snapshot of accessibility hierarchy for app with pid 19113
+Attributes: Application, 0x101a34b70, pid: 19113, label: ' '
+Element subtree:
+ →Application, 0x101a34b70, pid: 19113, label: ' '
+    Window, 0x101b31ac0, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x101b394d0, {{0.0, 0.0}, {390.0, 844.0}}
+    Window, 0x101b169c0, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x101b4bd70, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x101b18850, {{0.0, 0.0}, {390.0, 844.0}}
+          Other, 0x101b39dc0, {{0.0, 0.0}, {390.0, 844.0}}
+            Other, 0x101b4df80, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b3cd00, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b73640, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b74e40, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b74760, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b74af0, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b751d0, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b743e0, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b74060, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b739a0, {{0.0, 0.0}, {390.0, 844.0}}
+    Window, 0x101b73d00, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x101b56450, {{0.0, 0.0}, {390.0, 844.0}}
+    Window, 0x101b5b340, {{0.0, 0.0}, {390.0, 844.0}}, identifier: 'SBSwitcherWindow:Main'
+      Other, 0x101b5f890, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x101b67f90, {{0.0, 0.0}, {390.0, 844.0}}
+          Other, 0x101b689c0, {{0.0, 0.0}, {390.0, 844.0}}
+            Other, 0x101b71e50, {{0.0, 0.0}, {390.0, 844.0}}
+              ScrollView, 0x101b72f60, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b732d0, {{0.0, 0.0}, {390.0, 844.0}}, identifier: 'AppSwitcherContentView'
+                Other, 0x101b72be0, {{0.0, 0.0}, {390.0, 844.0}}
+                  Other, 0x101b72860, {{0.0, 0.0}, {390.0, 844.0}}
+                    Other, 0x101b721b0, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x101b72500, {{0.0, 0.0}, {390.0, 844.0}}, identifier: 'card:fr.jpesquet.sante:sceneID:fr.jpesquet.sante-default', label: 'Halcya'
+                  Other, 0x101b70630, {{0.0, 0.0}, {390.0, 844.0}}
+                    Other, 0x101b71770, {{0.0, 0.0}, {390.0, 844.0}}
+                      Other, 0x101b71ad0, {{0.0, 0.0}, {390.0, 844.0}}
+                        Other, 0x101b71420, {{0.0, 0.0}, {390.0, 844.0}}
+                          Other, 0x101b710a0, {{0.0, 0.0}, {390.0, 844.0}}
+                            ScrollView, 0x101b709b0, {{0.0, -422.0}, {390.0, 1266.0}}
+                              Other, 0x101b70d00, {{0.0, 0.0}, {390.0, 844.0}}
+                                Other, 0x101b6c8d0, {{0.0, 0.0}, {390.0, 844.0}}
+                                  Other, 0x101b6ff50, {{0.0, 0.0}, {390.0, 844.0}}
+                                    Other, 0x101b702a0, {{0.0, 0.0}, {390.0, 844.0}}
+                                      Other, 0x101b6e090, {{0.0, 0.0}, {390.0, 844.0}}
+                                        Other, 0x101b6f140, {{0.0, 0.0}, {390.0, 844.0}}
+                                          Other, 0x101b6fbb0, {{0.0, 0.0}, {390.0, 844.0}}
+                                            Other, 0x101b6f850, {{0.0, 0.0}, {390.0, 844.0}}
+                                              Other, 0x101b6f4c0, {{0.0, 0.0}, {390.0, 844.0}}
+                                                StatusBar, 0x101b6e3e0, {{0.0, 0.0}, {390.0, 47.0}}
+                                                  Other, 0x101b6ede0, {{0.0, 0.0}, {390.0, 47.0}}
+                                                    Other, 0x101b6ea80, {{0.0, 0.0}, {390.0, 47.0}}
+                                                      StaticText, 0x101b6e730, {{29.7, 15.7}, {44.7, 18.7}}, label: '04:02'
+                                                      Other, 0x101b6dd20, {{41.3, 12.0}, {21.3, 21.3}}
+                                                      Other, 0x101b6d9e0, {{302.3, 19.0}, {17.0, 11.3}}, label: 'Données cellulaires', value: Aucun signal
+                                                      Other, 0x101b6d680, {{324.7, 18.3}, {16.7, 12.0}}, identifier: '3 sur 3 barres Wi-Fi', value: SSID, 3 sur 3 barr...
+                                                      Other, 0x101b6d310, {{326.3, 12.0}, {21.3, 21.3}}
+                                                      Other, 0x101b6cc20, {{346.7, 18.7}, {25.0, 12.0}}, label: 'Charge de la batterie : 100 %', value: Aucune recharge en...
+                                          Other, 0x101b6cf80, {{0.0, 0.0}, {390.0, 844.0}}
+                                            Other, 0x101b6b050, {{0.0, 0.0}, {390.0, 844.0}}
+                                              Other, 0x101b6c1d0, {{0.0, 0.0}, {390.0, 844.0}}
+                                  Other, 0x101b6c550, {{0.0, 0.0}, {390.0, 844.0}}
+                                  Other, 0x101b6bb10, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x101b6be60, {{0.0, 0.0}, {390.0, 844.0}}
+                  Other, 0x101b6b790, {{0.0, 0.0}, {390.0, 844.0}}
+                    Other, 0x101b6b3f0, {{0.0, 0.0}, {390.0, 844.0}}
+                      Other, 0x101b68d30, {{0.0, 0.0}, {390.0, 844.0}}
+    Window, 0x101b6a960, {{0.0, 0.0}, {130.0, 281.3}}
+      Other, 0x101b6acd0, {{0.0, 0.0}, {130.0, 281.3}}
+        Other, 0x101b6a5f0, {{0.0, 0.0}, {130.0, 281.3}}
+    Window, 0x101b6a270, {{0.0, 0.0}, {390.0, 844.0}}
+      StatusBar, 0x101b69760, {{0.0, 0.0}, {390.0, 47.0}}
+    Window (Main), 0x101b690a0, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x101b69400, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x101b68310, {{0.0, 0.0}, {390.0, 844.0}}
+        BannerNotification, 0x101b68660, {{0.0, 0.0}, {390.0, 844.0}}
+          Other, 0x101b617b0, {{0.0, 0.0}, {390.0, 844.0}}
+            Other, 0x101b67490, {{0.0, 0.0}, {390.0, 844.0}}
+            Other, 0x101b628f0, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b65cf0, {{16.0, 67.0}, {358.0, 418.7}}, label: 'Aperçu'
+                Other, 0x101b663a0, {{16.0, 67.0}, {358.0, 418.7}}
+                  Other, 0x101b67140, {{16.0, 67.0}, {358.0, 418.7}}
+                    Other, 0x101b66de0, {{16.0, 67.0}, {358.0, 418.6}}
+                      Other, 0x101b66a80, {{16.0, 67.0}, {358.0, 418.6}}, identifier: 'notification-expanded-view'
+                        ScrollView, 0x101b66720, {{16.0, 67.0}, {358.0, 418.6}}
+                          Other, 0x101b66050, {{16.0, 67.0}, {358.0, 418.6}}
+                            Other, 0x101b644d0, {{16.0, 67.0}, {358.0, 418.6}}
+                              Button, 0x101b64bf0, {{16.0, 67.0}, {358.0, 60.6}}, identifier: 'ShortLook.Platter.Content.Seamless', label: 'maintenant, Et votre digestion aujourd’hui ?, Dans l’ensemble, d’un geste.'
+                                Other, 0x101b65990, {{16.0, 67.0}, {358.0, 60.6}}, identifier: 'ShortLook.Platter.Content.Seamless.CrossFade'
+                                  Button, 0x101b65620, {{74.7, 79.9}, {212.4, 16.5}}, identifier: 'NotificationTitle', label: 'Et votre digestion aujourd’hui ?'
+                                  Other, 0x101b652a0, {{74.7, 96.4}, {283.6, 16.5}}, identifier: 'NotificationBody.TopAligned.originalMessage'
+                                    TextView, 0x101b64f40, {{74.7, 96.4}, {283.6, 16.5}}, identifier: 'TextContent.Primary', value: Dans l’ensemble, d...
+                                      TextView, 0x101b64850, {{74.7, 96.4}, {180.3, 16.5}}, label: 'Dans l’ensemble, d’un geste.'
+                              Other, 0x101b62c60, {{16.0, 127.6}, {358.0, 358.0}}
+                                Other, 0x101b63370, {{16.0, 127.6}, {358.0, 358.0}}
+                                  Other, 0x101b64160, {{16.0, 127.6}, {358.0, 358.0}}
+                                    Other, 0x101b63de0, {{16.0, 127.6}, {358.0, 358.0}}
+                                      Other, 0x101b63a60, {{16.0, 127.6}, {358.0, 358.0}}
+                                        Other, 0x101b636f0, {{16.0, 127.6}, {358.0, 358.0}}
+                                          Other, 0x101b62fe0, {{16.0, 127.6}, {358.0, 358.0}}
+                                            Other, 0x101b62230, {{16.0, 127.6}, {358.0, 358.0}}
+                                              Other, 0x101b62590, {{16.0, 127.6}, {358.0, 358.0}}
+                                                Other, 0x101b61b20, {{16.0, 127.6}, {358.0, 358.0}}
+                                                  Other, 0x101b61ec0, {{16.0, 127.6}, {358.0, 358.0}}
+                                                    Other, 0x101b5fbf0, {{16.0, 127.6}, {358.0, 358.0}}
+                                                      Other, 0x101b5ff50, {{16.0, 127.6}, {358.0, 358.0}}
+                                                        Other, 0x101b61430, {{16.0, 127.6}, {358.0, 358.0}}
+                                                          Image, 0x101b610b0, {{16.0, 127.6}, {358.0, 358.0}}
+              Other, 0x101b60d10, {{70.0, 501.7}, {250.0, 146.0}}
+                Other, 0x101b60970, {{70.0, 501.7}, {250.0, 146.0}}
+                  Other, 0x101b60610, {{70.0, 501.7}, {250.0, 146.0}}
+                    Other, 0x101b602b0, {{70.0, 501.7}, {250.0, 146.0}}
+                    CollectionView, 0x101b5ee60, {{70.0, 501.7}, {250.0, 844.0}}
+                      Cell, 0x101b5f1d0, {{70.0, 511.7}, {250.0, 42.0}}
+                        Button, 0x101b5f540, {{70.0, 511.7}, {250.0, 42.0}}, label: 'Calme'
+                      Cell, 0x101b5eb10, {{70.0, 553.7}, {250.0, 42.0}}
+                        Button, 0x101b5e7d0, {{70.0, 553.7}, {250.0, 42.0}}, label: 'Gêne'
+                      Cell, 0x101b5e110, {{70.0, 595.7}, {250.0, 42.0}}
+                        Button, 0x101b5e460, {{70.0, 595.7}, {250.0, 42.0}}, label: 'Douleur'
+                      Other, 0x101b5d600, {{287.0, 531.7}, {30.0, 86.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                        Other, 0x101b5c830, {{314.0, 534.7}, {3.0, 80.0}}
+                      Other, 0x101b5d2b0, {{117.3, 584.7}, {202.7, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                        Other, 0x101b5cf50, {{120.3, 611.7}, {196.7, 3.0}}
+                      Other, 0x101b5cbd0, {{287.0, 531.7}, {30.0, 86.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                        Other, 0x101b5b6c0, {{314.0, 534.7}, {3.0, 80.0}}
+                      Other, 0x101b5c140, {{117.3, 584.7}, {202.7, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                        Other, 0x101b5c4c0, {{120.3, 611.7}, {196.7, 3.0}}
+          Other, 0x101b5ba60, {{8.0, 40.0}, {374.0, 66.0}}, label: 'Notification'
+            Other, 0x101b5bdc0, {{8.0, 40.0}, {374.0, 66.0}}
+              BannerNotification, 0x101b57590, {{8.0, 40.0}, {374.0, 66.0}}, identifier: 'NotificationShortLookView', label: 'HALCYA, maintenant, Et votre digestion aujourd’hui ?, Dans l’ensemble, d’un geste.'
+                Other, 0x101b5ac10, {{8.0, 40.0}, {374.0, 66.0}}, identifier: 'ShortLook.Platter'
+                  Other, 0x101b5afa0, {{8.0, 40.0}, {374.0, 66.0}}
+                  Other, 0x101b59a60, {{8.0, 40.0}, {374.0, 66.0}}
+                  Other, 0x101b5a890, {{8.0, 40.0}, {374.0, 66.0}}, identifier: 'ShortLook.Platter.Content'
+                    Button, 0x101b55d90, {{8.0, 40.0}, {374.0, 66.0}}, identifier: 'ShortLook.Platter.Content.Seamless', label: 'maintenant, Et votre digestion aujourd’hui ?, Dans l’ensemble, d’un geste.'
+                      Other, 0x101b51f80, {{8.0, 40.0}, {374.0, 66.0}}, identifier: 'ShortLook.Platter.Content.Seamless.CrossFade'
+                        StaticText, 0x101b560f0, {{72.0, 54.0}, {215.3, 18.0}}, identifier: 'NotificationTitle', label: 'Et votre digestion aujourd’hui ?'
+                        Other, 0x101b557d0, {{72.0, 72.0}, {293.0, 18.0}}, identifier: 'NotificationBody.TopAligned.originalMessage'
+                          StaticText, 0x101b75540, {{72.0, 72.0}, {293.0, 18.0}}, identifier: 'TextContent.Primary', label: 'Dans l’ensemble, d’un geste.'
+                    Other, 0x101b758b0, {{8.0, 40.0}, {374.0, 66.0}}
+                      Other, 0x101b75f60, {{8.0, 40.0}, {374.0, 66.0}}
+                        Other, 0x101b762b0, {{8.0, 40.0}, {374.0, 66.0}}
+                          Other, 0x101b75bf0, {{8.0, 40.0}, {374.0, 66.0}}
+                            Other, 0x101b76650, {{8.0, 40.0}, {374.0, 66.0}}
+                              Other, 0x101b769a0, {{8.0, 40.0}, {374.0, 66.0}}
+                          Other, 0x101b76cf0, {{8.0, 40.0}, {374.0, 66.0}}
+                            Other, 0x101b77050, {{8.0, 40.0}, {374.0, 66.0}}
+          Other, 0x101b773b0, {{0.0, 824.0}, {390.0, 20.0}}
+        Other, 0x101b77720, {{0.0, 0.0}, {390.0, 844.0}}
+          Other, 0x101b77a60, {{0.0, 0.0}, {390.0, 844.0}}
+            Other, 0x101b77db0, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b78150, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x101b784c0, {{0.0, 0.0}, {390.0, 844.0}}
+                  Other, 0x101b78810, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x101b78b90, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x101b78f00, {{0.0, 0.0}, {390.0, 844.0}}
+    Window, 0x101b79260, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x101b795e0, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x101b79950, {{0.0, 0.0}, {390.0, 844.0}}
+    Window, 0x101b7a990, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x101b7ad00, {{0.0, 0.0}, {390.0, 844.0}}
+    Window, 0x101b7b070, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x101b7b3f0, {{0.0, 0.0}, {390.0, 844.0}}
+Path to element:
+ →Application, 0x101a34b70, pid: 19113, label: ' '
+Query chain:
+ →Find: Application 'com.apple.springboard'
+  Output: {
+    Application, 0x101b69cd0, pid: 19113, label: ' '
+  }
+
+    t =    46.22s Waiting 10.0s for Any (First Match) to exist
+    t =    47.27s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    47.27s         Checking existence of `Any (First Match)`
+    t =    47.31s Tap Any (First Match)
+    t =    47.32s     Wait for com.apple.springboard to idle
+    t =    47.32s     Find the Any (First Match)
+    t =    47.36s     Check for interrupting elements affecting "Gêne" Button
+    t =    47.37s         Wait for fr.jpesquet.sante to idle
+    t =    47.46s     Synthesize event
+    t =    47.90s     Wait for com.apple.springboard to idle
+    t =    49.11s Open fr.jpesquet.sante
+    t =    49.11s     Activate fr.jpesquet.sante
+    t =    49.13s         Wait for fr.jpesquet.sante to idle
+    t =    49.24s Tear Down
+Test Case '-[HalcyaUITests.NotificationsUITests testRepondreGeneDepuisLaBanniere]' passed (49.304 seconds).
+Test Suite 'NotificationsUITests' passed at 2026-11-22 04:02:54.451.
+	 Executed 1 test, with 0 failures (0 unexpected) in 49.304 (49.306) seconds
+Test Suite 'HalcyaUITests.xctest' passed at 2026-11-22 04:02:54.452.
+	 Executed 1 test, with 0 failures (0 unexpected) in 49.304 (49.308) seconds
+Test Suite 'Selected tests' passed at 2026-11-22 04:02:54.453.
+	 Executed 1 test, with 0 failures (0 unexpected) in 49.304 (49.309) seconds
+2026-11-22 04:02:55.046 xcodebuild[49866:132899] [MT] IDETestOperationsObserverDebug: 52.638 elapsed -- Testing started completed.
+2026-11-22 04:02:55.046 xcodebuild[49866:132899] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-22 04:02:55.046 xcodebuild[49866:132899] [MT] IDETestOperationsObserverDebug: 52.638 sec, +52.638 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-ejaagdbypxwyszbwdlzrvmftmddj/Logs/Test/Test-HalcyaUITests-2026.11.22_04-02-02-+0000.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
