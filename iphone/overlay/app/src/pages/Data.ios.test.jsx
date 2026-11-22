@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
@@ -35,6 +35,13 @@ import Data from './Data'
 // « Sauvegarde sur iPhone » (Documents puis partage) : correctif 09 fondu, testé dans app/src/pages/Data.test.jsx
 
 describe('Restauration de la copie de secours sur iPhone', () => {
+  // Dans l'app iPhone, Capacitor est sur window : Sauvegarde ne monte la restauration que là (FUSION-3, correctif 12)
+  beforeEach(() => {
+    window.Capacitor = { getPlatform: () => 'ios' }
+  })
+  afterEach(() => {
+    delete window.Capacitor
+  })
   it('la copie passe par le même aperçu que « Importer »', async () => {
     Filesystem.readdir.mockResolvedValue({ files: [{ name: 'Halcya-copie-de-secours.json', mtime: Date.now() - 2 * 3600 * 1000 }] })
     Filesystem.readFile.mockResolvedValue({ data: '{"copie":true}' })

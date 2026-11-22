@@ -17,6 +17,9 @@ initTheme()
 // Langue du document (lecteurs d'écran, césure) : « fr » sauf si l'anglais est choisi (jalon 9)
 document.documentElement.lang = getLang()
 
+// iPhone : copie de secours de la base (IndexedDB n'est pas durable dans WKWebView), absente de toute autre build
+if (import.meta.env.VITE_DISTRIBUTION === 'appstore') import('./ios/snapshot.js').then((m) => m.startSnapshots())
+
 // Avant tout le reste : après une restauration de la sauvegarde Android, retire les secrets de l'ancien téléphone.
 checkRestore().finally(() => {
   const root = document.getElementById('root')

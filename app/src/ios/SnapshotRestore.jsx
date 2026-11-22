@@ -3,8 +3,8 @@ import { formatAgo } from '../utils/timeAgo'
 import { SNAPSHOT_FILE, readDeviceSnapshot } from './snapshot.js'
 
 /**
- * Version iOS (dépôt HealthTrack-iOS) : bouton « Restaurer la copie de secours » de la page Vos données. La copie
- * (overlay/app/src/ios/snapshot.js) est passée à l'import comme un fichier choisi : même aperçu, puis ajouter ou
+ * iPhone seulement : bouton « Restaurer la copie de secours » de la page Vos données. La copie
+ * (app/src/ios/snapshot.js) est passée à l'import comme un fichier choisi : même aperçu, puis ajouter ou
  * remplacer.
  * @param {{ onChoose: (file: { name: string, text: () => Promise<string> }) => void, read?: Function, now?: Date }} props
  */

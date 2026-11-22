@@ -820,6 +820,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   le message sur elle ; tests dans `Data.test.jsx`, `DoctorReportCard.test.jsx`, `createReportPdf.ios.test.js` (venu
   d'`overlay/`). Sans `FEATURES` dans `Data.jsx` : le correctif 06 l'importe encore. 37 restent. Suivant : 11 et 12
   (copie de secours, `Data.jsx` + `overlay/app/src/ios/snapshot.js`) ou 06 (textes de `Data.jsx`).
+  22/11 14:30 : correctifs 11, 12, 22 et 23 fondus (copie de secours : `app/src/ios/snapshot.js`,
+  `SnapshotRestore.jsx`, `SnapshotWelcome.jsx` et leurs tests ; lancée par `main.jsx` en appstore, restauration montée
+  par `Data.jsx` et `Onboarding.jsx` sur iOS seulement, effacée par `deleteAllData.js`, test `snapshot.android.test.jsx`) ;
+  phrase de Sauvegarde reprise dans le correctif 06 ; 33 restent. Suivant : 06 (textes) ou 13 (divulgation Santé).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).

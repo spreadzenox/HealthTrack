@@ -51,6 +51,7 @@ import {
   checkPhoneUsageAccess,
 } from '../services/phoneUsageSync'
 import { detectPhoneApps } from '../devices/phoneApps'
+import SnapshotWelcome from '../ios/SnapshotWelcome'
 import { GOLD_AI_DAILY } from '../config/premiumBenefits'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { STATUS_LABEL, measureStatuses } from '../devices/deviceCapabilities'
@@ -903,6 +904,8 @@ export default function Onboarding() {
       </div>
 
       <main className="onb-body">
+        {/* iPhone : copie de secours trouvée après que iOS a repris la base ; ailleurs, rien */}
+        {atStart && window.Capacitor?.getPlatform?.() === 'ios' && <SnapshotWelcome />}
         {step === 'intro' && <IntroStep />}
         {step === 'goal' && <GoalStep gut={gut} onGut={(on) => update(chooseObjectives(state, on))} />}
         {step === 'watch' && <WatchStep state={state} update={update} installed={installed} />}

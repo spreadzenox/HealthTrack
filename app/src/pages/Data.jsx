@@ -10,6 +10,7 @@ import '../Food.css'
 import { appLocale, localeDate } from '../i18n/locale.js'
 import { monoDigits } from '../utils/monoDigits'
 import CsvExportCard from '../components/CsvExportCard'
+import SnapshotRestore from '../ios/SnapshotRestore'
 
 /** 'android' ou 'ios' dans l'app installée (un lien de téléchargement ne fait rien sur iPhone), null ailleurs. */
 async function nativePlatform() {
@@ -275,6 +276,8 @@ export default function Data() {
               Choisir un fichier à importer
             </button>
           )}
+          {/* iPhone : la copie de secours passe par le même aperçu ; ailleurs, aucune copie, rien d'affiché */}
+          {!pending && window.Capacitor?.getPlatform?.() === 'ios' && <SnapshotRestore onChoose={(file) => handleFileChosen({ target: { files: [file] } })} />}
           {pending && (
             <div className="import-preview" aria-live="polite">
               <p className="import-preview-title">
