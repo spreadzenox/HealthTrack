@@ -95,6 +95,11 @@ describe('« Ce qui a pu peser » dit ce qui s’est passé (T4)', () => {
     // La nuit même va dans l'autre sens que la fenêtre : on garde la fenêtre (deux nuits).
     expect(contributionText({ ...c('sleepMinutes', 400, 450), dayValue: 470 })).toBe('Nuits plus courtes que d’habitude (6 h 40)')
   })
+  it('POLISH-SIM-143 : la veille seule (jour sans repas noté) se dit « La veille »', () => {
+    expect(contributionText({ ...c('fiber_g', 3, 12), eveOnly: true })).toBe('La veille, moins de fibres que d’habitude (3 g)')
+    expect(contributionText({ ...c('sleepMinutes', 381, 450), eveOnly: true })).toBe('La veille, nuit plus courte que d’habitude (6 h 21)')
+    expect(contributionText({ ...c('fiber_g', 3, 12, 'medium'), eveOnly: true })).toBe('Moins de fibres que d’habitude ces derniers jours (3 g)')
+  })
   it('alcool en verres, écran tard en durée, pas et FODMAP en quantité', () => {
     expect(contributionText(c('alcohol_g', 10, 0))).toBe('Plus d’alcool que d’habitude (1 verre)')
     expect(contributionText(c('alcohol_g', 3, 0))).toBe('Plus d’alcool que d’habitude (moins d’un verre)')

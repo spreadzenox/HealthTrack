@@ -869,6 +869,8 @@ export function dayContributions(results, entries, dateKey, { outcome = 'wellbei
     // T4-suite : au court terme, la valeur du seul jour (« Nuit plus courte que d'habitude (6 h 21) »).
     const dayValue = top.horizon === 'short' ? days.get(dateKey)?.[f.key] : null
     if (isNum(dayValue)) c.dayValue = dayValue
+    // POLISH-SIM-143 : le jour même inconnu (aucun repas noté), la fenêtre « jour même et veille » ne lit que la veille.
+    else if (top.horizon === 'short') c.eveOnly = true
     list.push(c)
   }
   return list.sort((a, b) => Math.abs(b.points) - Math.abs(a.points)).slice(0, max)

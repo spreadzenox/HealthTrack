@@ -698,11 +698,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       à faire et aucune saisie. Proposition : en mode exemple, calculer le cran sans l'écrire (storage nul) ; test
       d'abord (exemple puis vrai Accueil : « Tranquille »). **Fait le 22/11 21:30** : `CompanionHome.jsx` passe
       `storage: null` à `dayMood` en mode exemple ; test `CompanionHome.test.jsx`.
-    - [ ] **POLISH-SIM-143 — Détail du jour, « Moins de fibres que d'habitude (3 g) » un jour sans repas** (J14, à
+    - [x] **POLISH-SIM-143 — Détail du jour, « Moins de fibres que d'habitude (3 g) » un jour sans repas** (J14, à
       vérifier avant de coder : `TrendsDayDetail.jsx`, contributions du modèle d'Analyses) : la persona n'avait encore
       rien mangé de noté le 22/11 (Repas 0/3). Soit la contribution lit la veille (délai J-1 du modèle) et le texte
       doit le dire (« la veille »), soit un jour sans repas ne doit pas avoir de fibres. Capture
-      `detail-jour-fibres.png`.
+      `detail-jour-fibres.png`. **Fait le 22/11 22:30** : un jour sans repas noté, la nutrition est inconnue et la
+      fenêtre « jour même et veille » ne lit que la veille ; `dayContributions` le marque (`eveOnly`) et la ligne dit
+      « La veille, moins de fibres que d’habitude (3 g) ». Tests d'abord (`analysisResults`, `trendsDay`).
     - [x] **POLISH-SIM-144 — « la zone grise, votre habitude » sous la carte humeur et éveil** (J14, mineur ;
       `TrendsDayDetail.jsx` 147) : l'habitude est dessinée par un contour gris, pas une zone remplie. Dire « le cercle
       gris, votre habitude ». **Fait le 22/11 21:30** (`Trends.test.jsx`).
