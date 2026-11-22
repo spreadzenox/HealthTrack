@@ -74,6 +74,14 @@ describe('MyDevices', () => {
     expect(screen.queryByText(/Jamais reçu.*variabilité/)).not.toBeInTheDocument()
   })
 
+  it('Android : mesures jamais reçues, le conseil renvoie à Health Connect, jamais à l’app Santé ni à l’app Watch', async () => {
+    const day = (i) => new Date(NOW.getTime() - i * 86400000 - 3600000).toISOString()
+    const entries = [hc('Apple Watch de Julie', day(0), 'sleep'), hc('Apple Watch de Julie', day(1), 'heart_rate')]
+    render(<MyDevices detect={async () => null} loadEntries={async () => entries} now={NOW} />)
+    expect(await screen.findByText(/activez ce partage vers Health Connect dans Apple Watch de Julie\./)).toBeInTheDocument()
+    expect(screen.queryByText(/app Santé|app Watch/)).not.toBeInTheDocument()
+  })
+
   it('navigateur (pas de détection) : sources réelles seulement, sans bouton « Ouvrir »', async () => {
     render(<MyDevices detect={async () => null} loadEntries={async () => [hc('Samsung Health', '2026-10-01T05:00:00Z', 'steps')]} now={NOW} />)
     expect(await screen.findByText('En pause')).toBeInTheDocument()

@@ -11,6 +11,7 @@ import { detectPhoneApps, openPhoneApp } from '../devices/phoneApps'
 import { formatAgo } from '../utils/timeAgo'
 import { openGuide } from '../utils/openGuide'
 import { APP_NAME } from '../config/brand'
+import { FEATURES } from '../config/distribution'
 import './MyDevices.css'
 
 const SOURCE_WINDOW_DAYS = 30
@@ -63,7 +64,9 @@ export default function MyDevices({ detect = detectPhoneApps, loadEntries = defa
         <p className="my-devices-intro">Recherche de vos apps santé…</p>
       ) : rows.length === 0 ? (
         <p className="my-devices-intro">
-          {`Dans l’app Android, ${APP_NAME} repère tout seul vos apps de montre et de santé (Huawei Health, Samsung Health, Garmin…) et vous dit comment les brancher.`}
+          {FEATURES.iosStore
+            ? `Sur iPhone, ${APP_NAME} lit vos mesures dans l’app Santé d’Apple (montre, sommeil, pas…) : rien reçu ces 30 derniers jours. Voir la carte « App Santé » plus bas.`
+            : `Dans l’app Android, ${APP_NAME} repère tout seul vos apps de montre et de santé (Huawei Health, Samsung Health, Garmin…) et vous dit comment les brancher.`}
         </p>
       ) : (
         <>
@@ -103,12 +106,14 @@ export default function MyDevices({ detect = detectPhoneApps, loadEntries = defa
                   ))}
                   {missing.length > 0 && (
                     <p className="my-device-meta">
-                      Jamais reçu en 30 jours : {missing.join(', ')}. Si votre montre en est capable, activez ce partage
-                      vers Health Connect dans {row.name}.
+                      Jamais reçu en 30 jours : {missing.join(', ')}.{' '}
+                      {FEATURES.iosStore && /apple watch/i.test(row.name)
+                        ? 'Si votre montre en est capable, activez cette mesure dans l’app Watch de l’iPhone.'
+                        : `Si votre montre en est capable, activez ce partage vers ${FEATURES.iosStore ? 'l’app Santé' : 'Health Connect'} dans ${row.name}.`}
                     </p>
                   )}
                   {unshared.length > 0 && (
-                    <p className="my-device-meta">{`${row.name} ne partage pas la ${unshared.join(', ')} avec Health Connect.`}</p>
+                    <p className="my-device-meta">{`${row.name} ne partage pas la ${unshared.join(', ')} avec ${FEATURES.iosStore ? 'l’app Santé' : 'Health Connect'}.`}</p>
                   )}
                   {(showGuide || showOpen) && (
                     <div className="my-device-actions">

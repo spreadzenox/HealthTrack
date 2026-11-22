@@ -14,8 +14,9 @@ const ITEMS = [
     : 'Apparence, analyse des repas (IA), abonnement' },
   { to: '/nouveautes', icon: 'sparkle', title: 'Nouveautés', desc: 'Ce qui a changé dans l’application' },
   // Page statique (app/public), hors du routeur : aussi publiée par GitHub Pages et montrée par Health Connect
-  { href: '/privacypolicy.html', icon: 'lock', title: 'Confidentialité', desc: 'Ce qui reste sur le téléphone, ce qui en sort et quand' },
-  { href: '/conditions.html', icon: 'document', title: 'Conditions', desc: 'Utilisation, abonnement et remboursements' },
+  // (sur iPhone, leurs versions propres : app Santé, iCloud, achats intégrés de l'App Store, sans montre Huawei)
+  { href: FEATURES.iosStore ? '/confidentialite-iphone.html' : '/privacypolicy.html', icon: 'lock', title: 'Confidentialité', desc: 'Ce qui reste sur le téléphone, ce qui en sort et quand' },
+  { href: FEATURES.iosStore ? '/conditions-iphone.html' : '/conditions.html', icon: 'document', title: 'Conditions', desc: 'Utilisation, abonnement et remboursements' },
   { to: '/licences', icon: 'document', title: 'Licences', desc: 'Composants et données d’autres auteurs' },
 ]
 

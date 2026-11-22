@@ -846,6 +846,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   tests d'overlay sans variante (`TodayBySource`, `dailyJournal`, `dayDeviations`, `trendsData` `.ios.test`) aussi ;
   ceux qui forcent la variante appstore restent la preuve iPhone. Test Android `sdnnBaseline.android.test.js`. 19
   restent. Suivant : 06 (textes, à découper) ou 05/25 (visage).
+  22/11 19:30 : #1201 mergée (captures iPhone Accueil, Tendances, Objectifs relues). « Mes appareils » et liens de
+  Réglages fondus : correctif 14 (l'app Santé au lieu de Health Connect), 25 (Apple Watch : « dans l'app Watch de
+  l'iPhone »), la partie `MyDevices.jsx` du 06 et le 26 (Confidentialité et Conditions propres à l'iPhone dans
+  `More.jsx`), tous sous `FEATURES.iosStore`. Les pages `confidentialite-iphone.html` et `conditions-iphone.html`
+  restent dans `overlay/app/public/` (FUSION-4). Test Android d'abord (Apple Watch sur Android : Health Connect,
+  jamais l'app Watch). 16 restent. Suivant : 06 (partie `Data.jsx`), 18 (portion, `Layout.jsx`) ou 05 (visage).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
