@@ -31,6 +31,11 @@ export const SUBSCRIBED_ROUTES = ['/recommendations/bien-etre', '/recommendation
 // fiche Play ; l'essai n'existe que pour cette capture
 export const TRIAL_ROUTES = ['/agir']
 const TRIAL_KEY = 'halcya_ios_capture_trial'
+// REFONTE-4b-iOS : Votre bien-être vu par un abonné qui suit « Méditation » (`-habitude`), comme `--habits=history`
+// d'Android : la ligne miel des habitudes dans Objectifs ; l'habitude et ses réponses n'existent que pour cette capture
+export const HABIT_ROUTES = ['/recommendations/bien-etre']
+const HABIT_KEY = 'halcya_ios_capture_habit'
+const HABITS_SETTING = 'healthtrack_habits'
 // Pages longues : écrans suivants, défilés d'environ 80 % de l'écran chacun (`-2`, `-3`…)
 // (I6) Écran d'abonnement défilé : formules, prix, bouton, renouvellement et liens, sous le pli (capture pour Apple)
 export const SCROLLS = { '/connectors': 2, '/data': 1, '/settings': 1, '/premium': 1 }
@@ -131,7 +136,7 @@ export const MORE_ONBOARDING = [
 ]
 
 export function buildPlan(routes = ROUTES, darkRoutes = DARK_ROUTES, scrolls = SCROLLS, reveals = REVEALS, moreOnboarding = [],
-  emptyRoutes = [], emptyScrolls = {}, subscribedRoutes = [], emptyReveals = {}, trialRoutes = []) {
+  emptyRoutes = [], emptyScrolls = {}, subscribedRoutes = [], emptyReveals = {}, trialRoutes = [], habitRoutes = []) {
   const light = (route) => {
     const base = { name: `demo-clair-${pageName(route)}`, route, data: 'demo', theme: 'light' }
     const more = Array.from({ length: scrolls[route] || 0 }, (_, k) => ({ ...base, name: `${base.name}-${k + 2}`, scroll: k + 1 }))
@@ -152,6 +157,7 @@ export function buildPlan(routes = ROUTES, darkRoutes = DARK_ROUTES, scrolls = S
     ...routes.flatMap(light),
     ...subscribedRoutes.map((route) => ({ name: `demo-clair-${pageName(route)}-abonne`, route, data: 'demo', theme: 'light', subscribed: true })),
     ...trialRoutes.map((route) => ({ name: `demo-clair-${pageName(route)}-essai`, route, data: 'demo', theme: 'light', trial: 8 })),
+    ...habitRoutes.map((route) => ({ name: `demo-clair-${pageName(route)}-habitude`, route, data: 'demo', theme: 'light', subscribed: true, habits: true })),
     ...darkRoutes.map((route) => ({ name: `demo-sombre-${pageName(route)}`, route, data: 'demo', theme: 'dark' })),
   ]
 }
@@ -195,6 +201,27 @@ export function sleepTrialEntry(day = 8, now = new Date()) {
   } }
 }
 
+/**
+ * Réponses « Méditation » de démonstration, comme `npm run visual -- --habits=history` d'Android : une par jour noté,
+ * à midi, « oui » les jours dont la première note atteint la médiane (lien fabriqué pour que la ligne se voie).
+ */
+export function habitHistoryEntries(entries) {
+  const notes = entries.filter((e) => e.type === 'wellbeing' && typeof e.payload?.score === 'number')
+    .sort((a, b) => a.at.localeCompare(b.at))
+  if (!notes.length) return []
+  const median = notes.map((e) => e.payload.score).sort((a, b) => a - b)[Math.floor(notes.length / 2)]
+  const seen = new Set()
+  const out = []
+  for (const e of notes) {
+    const d = new Date(e.at)
+    if (seen.has(d.toDateString())) continue
+    seen.add(d.toDateString())
+    d.setHours(12, 1, 0, 0)
+    out.push({ type: 'habit', source: 'app_habit', at: d.toISOString(), payload: { habit: 'meditation', label: 'Méditation', done: e.payload.score >= median } })
+  }
+  return out
+}
+
 export async function prepare(step, { storage, demoEntries, latestChangelogId, localStorage, now = Date.now() }) {
   // `justNow` : accueil fini à l'instant (« Voir un exemple » n'est montré que les premiers jours)
   const { justNow, ...asked } = step.onboarding ?? {}
@@ -226,6 +253,20 @@ export async function prepare(step, { storage, demoEntries, latestChangelogId, l
     localStorage.removeItem(TRIAL_KEY)
   }
   if (step.trial && !trialId) localStorage.setItem(TRIAL_KEY, String(await storage.createEntry(sleepTrialEntry(step.trial, new Date(now)))))
+  // Habitude de la capture `-habitude` : de même, posée pour elle seule
+  const habitIds = JSON.parse(localStorage.getItem(HABIT_KEY) || 'null')
+  if (habitIds && !step.habits) {
+    for (const id of habitIds) await storage.deleteEntry(id)
+    localStorage.removeItem(HABIT_KEY)
+    localStorage.removeItem(HABITS_SETTING)
+  }
+  if (step.habits && !habitIds) {
+    const answers = habitHistoryEntries(await storage.listEntries({ type: 'wellbeing', limit: 100000 }))
+    const ids = []
+    for (const entry of answers) ids.push(await storage.createEntry(entry))
+    localStorage.setItem(HABIT_KEY, JSON.stringify(ids))
+    localStorage.setItem(HABITS_SETTING, JSON.stringify([{ id: 'meditation' }]))
+  }
   // Lu par initTheme() au démarrage : appliqué au rechargement qui suit
   if (step.theme) localStorage.setItem('healthtrack_theme', step.theme)
 }
@@ -478,7 +519,7 @@ export async function installCaptureMode() {
     const file = { directory: Directory.Documents, encoding: Encoding.UTF8 }
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
     const largeText = textSizeAdjusted()
-    const plan = largeText ? largeTextPlan() : buildPlan(ROUTES, DARK_ROUTES, SCROLLS, REVEALS, MORE_ONBOARDING, EMPTY_ROUTES, EMPTY_SCROLLS, SUBSCRIBED_ROUTES, EMPTY_REVEALS, TRIAL_ROUTES)
+    const plan = largeText ? largeTextPlan() : buildPlan(ROUTES, DARK_ROUTES, SCROLLS, REVEALS, MORE_ONBOARDING, EMPTY_ROUTES, EMPTY_SCROLLS, SUBSCRIBED_ROUTES, EMPTY_REVEALS, TRIAL_ROUTES, HABIT_ROUTES)
     const step = plan[Number(window.localStorage.getItem(STEP_KEY) ?? 0)]
     if (step?.data === 'demo') installPhoneUsageFake()
     if (needsBillingFake(step)) installBillingFake()

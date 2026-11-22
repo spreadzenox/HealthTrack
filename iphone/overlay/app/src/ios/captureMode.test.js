@@ -1,7 +1,58 @@
 import { describe, it, expect, vi } from 'vitest'
-import { buildPlan, REVEALS, EMPTY_REVEALS, findButton, clickInOrder, prepare, MORE_ONBOARDING, ROUTES, EMPTY_ROUTES, EMPTY_SCROLLS, iphoneDemoEntries, runCaptureStep, STEP_KEY, probeHealthKit, probeGutEvening, probeEveningNote, probePortionReminder, probeDataRoundtrip, probeBackup, probeVoice, probeFace, probeFileImport, IMPORT_TEST_FILE, probeShareExport, probeShareReport, probeSnapshotWelcome, probeDeleteAll, waitForAck, watchRejections, lastSeenChangelogId, androidWords, pageText, healthSampleWindow, fakePhoneUsage, installPhoneUsageFake, TRIAL_ROUTES, sleepTrialEntry } from './captureMode'
+import { buildPlan, REVEALS, EMPTY_REVEALS, findButton, clickInOrder, prepare, MORE_ONBOARDING, ROUTES, EMPTY_ROUTES, EMPTY_SCROLLS, iphoneDemoEntries, runCaptureStep, STEP_KEY, probeHealthKit, probeGutEvening, probeEveningNote, probePortionReminder, probeDataRoundtrip, probeBackup, probeVoice, probeFace, probeFileImport, IMPORT_TEST_FILE, probeShareExport, probeShareReport, probeSnapshotWelcome, probeDeleteAll, waitForAck, watchRejections, lastSeenChangelogId, androidWords, pageText, healthSampleWindow, fakePhoneUsage, installPhoneUsageFake, TRIAL_ROUTES, sleepTrialEntry, HABIT_ROUTES, habitHistoryEntries } from './captureMode'
 import { phoneUsageEntriesFromSegments, summarizeSegmentsDay } from './phoneUsageIos'
 import { summarizeSegmentsApps } from './phoneAppsIos'
+
+describe('Objectifs avec une habitude suivie, vu par un abonné (REFONTE-4b-iOS)', () => {
+  const memory = () => {
+    const map = new Map()
+    return { getItem: (k) => map.get(k) ?? null, setItem: (k, v) => map.set(k, String(v)), removeItem: (k) => map.delete(k), map }
+  }
+  const note = (iso, score) => ({ type: 'wellbeing', source: 'app_wellbeing', at: iso, payload: { score } })
+
+  it('une capture `-habitude` du bien-être, abonnée, après les pages claires', () => {
+    const steps = buildPlan(ROUTES, [], {}, {}, [], [], {}, [], {}, [], HABIT_ROUTES)
+    const habit = steps.filter((s) => s.habits)
+    expect(habit.map((s) => [s.name, s.route, s.subscribed, s.data])).toEqual([
+      ['demo-clair-recommendations-bien-etre-habitude', '/recommendations/bien-etre', true, 'demo']])
+    expect(steps.indexOf(habit[0])).toBeGreaterThan(steps.findIndex((s) => s.name === 'demo-clair-recommendations-bien-etre'))
+    expect(buildPlan().some((s) => s.habits)).toBe(false)
+  })
+
+  it('« Méditation » une fois par jour noté, à midi, « oui » les jours de meilleure note, comme `--habits=history`', () => {
+    const notes = [
+      note(new Date(2026, 10, 18, 20, 0).toISOString(), 2),
+      note(new Date(2026, 10, 18, 21, 0).toISOString(), 5),
+      note(new Date(2026, 10, 19, 20, 0).toISOString(), 4),
+      note(new Date(2026, 10, 20, 20, 0).toISOString(), 3),
+      { type: 'wellbeing', source: 'face_sense', at: new Date(2026, 10, 20, 9, 0).toISOString(), payload: { valence: 0.2 } },
+    ]
+    const out = habitHistoryEntries(notes)
+    expect(out).toHaveLength(3)
+    expect(out.every((e) => e.type === 'habit' && e.source === 'app_habit' && e.payload.habit === 'meditation' && e.payload.label === 'Méditation')).toBe(true)
+    expect(new Date(out[0].at)).toEqual(new Date(2026, 10, 18, 12, 1))
+    expect(out.map((e) => e.payload.done)).toEqual([false, true, false])
+  })
+
+  it('l’habitude et ses réponses sont posées pour cette seule capture, puis retirées', async () => {
+    const localStorage = memory()
+    let id = 100
+    const storage = {
+      upsertEntries: vi.fn(async () => {}),
+      listEntries: vi.fn(async () => [note(new Date(2026, 10, 18, 20).toISOString(), 2), note(new Date(2026, 10, 19, 20).toISOString(), 4)]),
+      createEntry: vi.fn(async () => ++id),
+      deleteEntry: vi.fn(async () => {}),
+    }
+    const base = { localStorage, latestChangelogId: 'x', storage, demoEntries: () => [] }
+    await prepare({ name: 'demo-clair-recommendations-bien-etre-habitude', route: '/recommendations/bien-etre', data: 'demo', theme: 'light', subscribed: true, habits: true }, base)
+    expect(storage.listEntries).toHaveBeenCalledWith(expect.objectContaining({ type: 'wellbeing' }))
+    expect(storage.createEntry).toHaveBeenCalledTimes(2)
+    expect(JSON.parse(localStorage.getItem('healthtrack_habits'))).toEqual([{ id: 'meditation' }])
+    await prepare({ name: 'demo-clair-agir-essai', route: '/agir', data: 'demo', theme: 'light', trial: 8 }, base)
+    expect(storage.deleteEntry.mock.calls.map((c) => c[0])).toEqual([101, 102])
+    expect(localStorage.getItem('healthtrack_habits')).toBeNull()
+  })
+})
 
 function memoryStorage(initial = {}) {
   const data = { ...initial }
