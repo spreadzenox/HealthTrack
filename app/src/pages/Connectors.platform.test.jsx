@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
-// Version iOS (HealthTrack-iOS) : la carte Santé dit pourquoi elle est indisponible (HealthKit absent de l'appareil),
+// Sur iPhone (ancien correctif 08, fondu le 22/11, FUSION-3) : la carte Santé dit pourquoi elle est indisponible (HealthKit absent de l'appareil),
 // sans renvoyer vers les réglages d'Android ni proposer de revérifier
 vi.mock('../connectors/connectorRegistry', () => ({
   CONNECTORS: [
