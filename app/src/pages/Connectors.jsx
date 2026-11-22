@@ -8,6 +8,7 @@ import DebugPanel from '../components/DebugPanel'
 import MethodNote from '../components/MethodNote'
 import WatchGuides from '../components/WatchGuides'
 import MyDevices from '../components/MyDevices'
+import CycleSanteCard from '../ios/CycleSanteCard'
 import BleDevices from '../components/BleDevices'
 import WatchDiagnostic from '../components/WatchDiagnostic'
 import WithingsSetup from '../components/WithingsSetup'
@@ -526,6 +527,8 @@ export default function Connectors() {
       </p>
 
       <MyDevices detect={detectApps} />
+      {/* iPhone seulement (CYCLE-iOS-3) : le cycle de Santé proposé une fois à qui a « Mon cycle » ; rien ailleurs. */}
+      <CycleSanteCard />
 
       {/* POL-PLAY-45 : sans titre, les sources actives (météo, Health Connect…) se lisaient comme des « appareils ». */}
       {layout.active.length > 0 && (

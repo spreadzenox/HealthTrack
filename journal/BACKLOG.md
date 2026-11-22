@@ -812,6 +812,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   22/11 11:30 : correctif 58 fondu (`app/src/ios/cycleSante.js` et son test, appel sous `isIos()` dans
   `HealthConnectConnector.js`, test `HealthConnectConnector.cycleSante.test.js`) ; 39 restent. Suivant : 61 (carte du
   cycle dans Sources, `CycleSanteCard.jsx`), puis 09 avec `saveTextFile.js`.
+  22/11 12:30 : correctif 61 fondu (`app/src/ios/CycleSanteCard.jsx` et son test, affichée par `Connectors.jsx`, vide
+  hors iPhone, test `CycleSanteCard.android.test.jsx`) ; 38 restent. Suivant : 09 avec `saveTextFile.js`.
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
