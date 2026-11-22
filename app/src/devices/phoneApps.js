@@ -17,8 +17,9 @@ export const DETECT_TIMEOUT_MS = 6_000
 /** Plugin natif AppManager, enregistré ici seulement (le diagnostic de la montre l'importe). */
 export const NativeAppManager = registerPlugin('AppManager')
 
+/** App native Android : la détection repose sur des noms de paquets Android, sans objet sur iPhone (canOpenURL les refuse). */
 function isNative() {
-  return typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
+  return typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true && window.Capacitor.getPlatform?.() !== 'ios'
 }
 
 /**
