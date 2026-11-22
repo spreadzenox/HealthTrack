@@ -71,7 +71,7 @@ describe('WellbeingPrompt (ouverte par l’appelant)', () => {
     render(<WellbeingPrompt open onClose={vi.fn()} />)
     await screen.findByRole('dialog')
     expect(screen.queryByText(/Ces tags permettent/i)).not.toBeInTheDocument()
-    expect(screen.queryByText(/Repéré sans vous/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Suivi sans vous/i)).not.toBeInTheDocument()
   })
 
   it('saves score and calls onClose when user selects and confirms', async () => {
@@ -140,7 +140,9 @@ describe('WellbeingPrompt — behaviour tags', () => {
       pickNote()
       expect(screen.queryByRole('button', { name: /Écran tard/i })).not.toBeInTheDocument()
       expect(screen.getByRole('button', { name: /Alcool/i })).toBeInTheDocument()
-      expect(screen.getByText(/Repéré sans vous : Écran tard \(≥ 30 min après 22 h\)/i)).toBeInTheDocument()
+      // POLISH-SIM-141 : une règle suivie, pas un événement (« Repéré sans vous : Sport le soir » lu le matin)
+      expect(screen.getByText('Suivi sans vous, inutile de cocher : Écran tard (≥ 30 min après 22 h).')).toBeInTheDocument()
+      expect(screen.queryByText(/Repéré sans vous/)).not.toBeInTheDocument()
     } finally {
       localStorage.removeItem('healthtrack_phone_usage')
     }

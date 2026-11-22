@@ -465,6 +465,18 @@ label.cmp-bubble {
   cursor: pointer;
 }
 
+.cmp-sheet-answers.is-single {
+  grid-template-columns: 1fr;
+  margin-top: 16px;
+}
+
+a.cmp-sheet-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .cmp-sheet-hint {
   margin: 12px 0 0;
   font-size: 0.95rem;

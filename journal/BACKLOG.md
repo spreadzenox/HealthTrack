@@ -670,16 +670,16 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       sinon proposition avec maquette (fonction nouvelle).
   - **Passage des personas du 22/11 08:30** (run « idées », [`synthèse`](simulations/2026-11-22-0830-synthese.md) ;
     « Stressé et pressé » J1, iPhone + Apple Watch, et « Ventre et données » J14, Android seul) :
-    - [ ] **POLISH-SIM-139 — Digestion du matin prise pour le bilan du soir** (J14, vérifié : capture
+    - [x] **POLISH-SIM-139 — Digestion du matin prise pour le bilan du soir** (FAIT le 22/11 09:30 : « Dans la journée : gêne à 08:34 » dans Ma journée ; feuille de la bulle : « Le bilan de la journée se note le soir, à partir de 18 h. », « Une gêne ou une douleur se note à tout moment. » et « Noter un moment » vers Ma journée ; règle et données inchangées, tests d'abord) (J14, vérifié : capture
       `accueil-bulles.png`, `DayChecklist.jsx` 152, `CompanionHome.jsx` 233) : une gêne notée à 08:34 s'affiche sous
       « Votre digestion ce soir » (« Noté à 08:34 : Gêne »), si bien que la persona croit sa digestion faite ; la bulle
       Digestion reste sur l'Accueil et sa feuille ne dit que « Elle se note le soir, à partir de 18 h ». Écrire le
       moment comme un moment (« Dans la journée : gêne à 08:34 ») et, dans la feuille, rappeler qu'un moment se note à
       tout instant (lien vers la saisie) et que le bilan du soir arrive à 18 h. Ne change ni la règle ni les données.
-    - [ ] **POLISH-SIM-140 — Accueil, « Décochez les habitudes… » avec une seule cochée** (J1, vérifié :
+    - [x] **POLISH-SIM-140 — Accueil, « Décochez les habitudes… » avec une seule cochée** (FAIT le 22/11 09:30 : « Cochez les habitudes qui vous parlent. », test d'abord) (J1, vérifié :
       `Onboarding.jsx` 724, capture `habitudes.png`) : Méditation seule est cochée d'office, les trois autres non.
       Écrire « Cochez ce qui vous parle. » (ou cocher selon l'objectif, comme le texte le suppose).
-    - [ ] **POLISH-SIM-141 — « Repéré sans vous : Sport le soir » le matin** (J1, mineur ; `behaviorTags.js` 55, effet
+    - [x] **POLISH-SIM-141 — « Repéré sans vous : Sport le soir » le matin** (FAIT le 22/11 09:30, autrement que proposé : la phrase ne dit pas qu'une séance a eu lieu, elle nomme ce que l'app repère seule (`autoDetectedTagIds` lit une capacité : des séances enregistrées ces derniers jours) ; « hier soir » aurait été faux un jour sans sport. Elle dit maintenant « Suivi sans vous, inutile de cocher : Sport le soir (séance après 18 h). », test d'abord) (J1, mineur ; `behaviorTags.js` 55, effet
       le lendemain) : dans une note de 08:35, dire « Sport hier soir ».
     - [ ] **EXPORT-CSV — l'export CSV promis n'existe pas** (vérifié : aucun `text/csv` dans `app/src`) : la décision
       du 20/10 range « export CSV / JSON » dans le gratuit pour toujours (PRODUIT.md, modèle économique), la persona

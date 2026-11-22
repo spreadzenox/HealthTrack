@@ -230,9 +230,15 @@ function ActionSheet({ sheet, onClose, onAnswer }) {
             <p className="cmp-sheet-hint">Oui ou non, les deux comptent.</p>
           </>
         ) : (
-          <p className="cmp-sheet-hint">Elle se note le soir, à partir de {GUT_EVENING_FROM_HOUR} h.</p>
+          <>
+            <p className="cmp-sheet-hint">Le bilan de la journée se note le soir, à partir de {GUT_EVENING_FROM_HOUR} h.</p>
+            <p className="cmp-sheet-hint">Une gêne ou une douleur se note à tout moment.</p>
+            <div className="cmp-sheet-answers is-single">
+              <Link ref={first} to="/ma-journee" state={{ open: 'digestion' }} className="cmp-sheet-btn">Noter un moment</Link>
+            </div>
+          </>
         )}
-        <button ref={bubble.kind === 'habit' ? undefined : first} type="button" className="cmp-sheet-close" onClick={onClose}>
+        <button type="button" className="cmp-sheet-close" onClick={onClose}>
           Fermer
         </button>
       </div>
