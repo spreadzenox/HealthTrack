@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **22/11 20:30** — **Personas du soir** (run « idées ») : Prendre soin de soi J1 (iPhone seul), Tout mesurer J14 (Android seul) ; POLISH-SIM-142 à 144 et PERSONAS-OUTIL-1 au BACKLOG ; poids sans balance à proposer avec maquette (2e persona). #1202 mergée.
 - **22/11 19:30** — **FUSION-3, correctifs iPhone 14, 25, 26 et partie `MyDevices` du 06 fondus** (rien de visible sur Android) : « Mes appareils » renvoie à l'app Santé ou à l'app Watch, et Réglages ouvre la confidentialité et les conditions propres à l'iPhone, depuis le code partagé sous `FEATURES.iosStore` ; 16 correctifs restent. #1201 (VFC SDNN) mergée.
 - **22/11 14:30** — **FUSION-3, correctifs iPhone 11, 12, 22 et 23 fondus** (rien de visible sur Android) : la copie de secours de l'iPhone (écriture, restauration depuis Sauvegarde et à l'accueil, effacement avec « Supprimer toutes mes données ») vit dans le code partagé (`app/src/ios/`), montée seulement sur iPhone ; 33 correctifs restent.
 - **22/11 13:30** — **FUSION-3, correctif iPhone 09 fondu** (rien de visible sur Android) : sur iPhone, la sauvegarde JSON et le rapport PDF passent par Documents puis la feuille de partage depuis le code partagé (condition sur la plateforme) ; 37 correctifs restent.
