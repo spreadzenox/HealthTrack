@@ -55,6 +55,13 @@ const EXTRA_READ_TYPES = [
 
 export const READ_TYPES = [...CORE_READ_TYPES, ...EXTRA_READ_TYPES]
 
+// Sur iPhone : HealthKit par le même plugin (anciens correctifs iPhone 08 et 43, fondus le 22/11). HealthKit ne dit
+// jamais si la lecture est accordée : « accordé » dès que la demande a été faite sur cet appareil.
+const IOS_ASKED_KEY = 'halcya_ios_healthkit_asked'
+const isIos = () => getPlatformSync() === 'ios'
+// VFC : SDNN sur iOS (HealthKit) contre RMSSD sur Android : lue, mais rangée à part (heartRateVariabilitySdnn)
+const HRV_SUBTYPE = () => (isIos() ? 'heartRateVariabilitySdnn' : 'heartRateVariability')
+
 /** Libellés français des types Health Connect (écran Connecteurs). */
 export const READ_TYPE_LABELS = {
   steps: 'pas',
@@ -402,11 +409,12 @@ export class HealthConnectConnector extends BaseConnector {
     super({
       id: 'health_connect',
       // POL-PLAY-28 : titre court (tenait sur 2 lignes) ; « montre, bague, balance » ouvre la description
-      name: 'Health Connect',
+      name: isIos() ? 'App Santé' : 'Health Connect',
       // VC-27 : une phrase avec des marques connues du public ; la liste complète des types vit au chevron
       // « Ce qui est importé » de la carte (`importedList`, ci-dessous)
-      description:
-        'Sommeil, cœur, pas, poids… écrits par vos apps santé : Samsung Health, Garmin, Withings, Oura.',
+      description: isIos()
+        ? 'Sommeil, cœur, pas, poids… écrits par l’Apple Watch et vos apps santé : Garmin, Withings, Oura.'
+        : 'Sommeil, cœur, pas, poids… écrits par vos apps santé : Samsung Health, Garmin, Withings, Oura.',
       dataTypes: ['steps', 'sleep', 'heart_rate', 'activity', 'calories', 'respiratory_rate', 'body_temperature', 'blood_pressure', 'blood_glucose', 'weight', 'body_composition'],
     })
     /** Tout ce que la carte peut importer, replié sous « Ce qui est importé ». */
@@ -414,7 +422,8 @@ export class HealthConnectConnector extends BaseConnector {
     /** Types demandés mais non autorisés (dernière vérification). */
     this.missingReadTypes = []
     /** Sans READ_HEALTH_DATA_HISTORY, seuls les 30 jours avant la première autorisation sont lisibles. */
-    this.readWindowDays = HEALTH_CONNECT_READ_WINDOW_DAYS
+    // Sur iPhone, l’app Santé d’Apple n’a pas cette limite : tout l’historique se lit
+    this.readWindowDays = isIos() ? null : HEALTH_CONNECT_READ_WINDOW_DAYS
   }
 
   async isAvailable() {
@@ -455,6 +464,11 @@ export class HealthConnectConnector extends BaseConnector {
     // Using sync here avoids any risk of deadlocking the WebView bridge thread.
     const platform = getPlatformSync()
     debugInfo(TAG, `Plateforme détectée (sync) : ${platform}`)
+    if (platform === 'ios') {
+      await ensureHealthPlugin()
+      const result = await getCachedHealthPlugin()?.isAvailable?.().catch(() => null)
+      return result?.available === true ? { available: true, platform } : { available: false, reason: 'ios', platform }
+    }
 
     // Collect device info early so it is logged even if something below hangs
     const deviceInfo = await collectDeviceInfo()
@@ -734,6 +748,10 @@ export class HealthConnectConnector extends BaseConnector {
       return 'not_asked'
     }
     const platform = getPlatformSync()
+    if (platform === 'ios') {
+      this.missingReadTypes = []
+      return localStorage.getItem(IOS_ASKED_KEY) ? 'granted' : 'not_asked'
+    }
     const hasCheckAuth = typeof Health.checkAuthorization === 'function'
     debugInfo(TAG, 'Vérification méthode Health.checkAuthorization', { hasCheckAuth, platform })
     if (!hasCheckAuth) {
@@ -783,6 +801,10 @@ export class HealthConnectConnector extends BaseConnector {
     try {
       debugInfo(TAG, 'Appel Health.requestAuthorization()…')
       await Health.requestAuthorization({ read: READ_TYPES, write: [] })
+      if (isIos()) {
+        localStorage.setItem(IOS_ASKED_KEY, '1')
+        return 'granted'
+      }
       debugInfo(TAG, 'requestAuthorization() terminé, vérification du résultat…')
       return await this.checkPermissions()
     } catch (e) {
@@ -1031,7 +1053,7 @@ export class HealthConnectConnector extends BaseConnector {
         payload: {
           value: s.value,
           unit: s.unit,
-          subtype: 'heartRateVariability',
+          subtype: HRV_SUBTYPE(),
           platformId: s.platformId,
           sourceName: s.sourceName,
           connector: 'health_connect',

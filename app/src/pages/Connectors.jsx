@@ -77,6 +77,18 @@ const SYSTEM_UPDATE = (
 
 /** Message affiché quand Health Connect est indisponible, selon la raison remontée par le natif. */
 const UNAVAILABLE_MESSAGES = {
+  // Sur iPhone : raison « ios » du connecteur, HealthKit absent de l’appareil
+  ios: {
+    title: 'L’app Santé n’est pas disponible sur cet appareil.',
+    body: (
+      <>
+        {APP_NAME} lit vos mesures dans l’app Santé d’Apple, où écrivent l’Apple Watch et beaucoup de montres et de
+        bagues ; vos notes et vos repas fonctionnent sans elle.
+      </>
+    ),
+    settings: false,
+    recheck: false,
+  },
   provider_update_required: {
     title: 'Health Connect nécessite une mise à jour.',
     body: (
@@ -320,9 +332,11 @@ function ConnectorCard({ connector }) {
                       Ouvrir les paramètres Health Connect
                     </button>
                   )}
-                  <button type="button" className="btn btn-secondary connector-btn" onClick={recheckAvailability}>
-                    Revérifier la disponibilité
-                  </button>
+                  {msg.recheck !== false && (
+                    <button type="button" className="btn btn-secondary connector-btn" onClick={recheckAvailability}>
+                      Revérifier la disponibilité
+                    </button>
+                  )}
                 </div>
               </div>
             )
