@@ -177,6 +177,7 @@ const PHRASES = {
   alcohol_g: { say: quantity('d’alcool', 'd’alcool'), value: verres },
   restingHR: { say: (up) => `Cœur au repos plus ${up ? 'rapide' : 'lent'}`, value: (v) => `${fmtInt(v)} bpm` },
   hrv_ms: { say: (up) => `Variabilité cardiaque plus ${up ? 'haute' : 'basse'}`, value: (v) => `${fmtInt(v)} ms` },
+  hrv_sdnn_ms: { say: (up) => `Variabilité cardiaque plus ${up ? 'haute' : 'basse'}`, value: (v) => `${fmtInt(v)} ms` }, // Version iOS : app Santé (correctif 64)
   weather_sunshine_h: { say: quantity('de soleil', 'de soleil'), value: (v) => `${fmtInt(v)} h` },
   weather_temp_max_c: { say: (up) => `Plus ${up ? 'chaud' : 'frais'}`, value: (v) => `${fmtInt(v)} °C` },
   weather_pressure_change_hpa: { say: (up) => `Pression plus ${up ? 'changeante' : 'stable'}`, value: (v) => `${fmtInt(v)} hPa` },

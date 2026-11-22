@@ -837,6 +837,15 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   `permissionDisclosures.js`, `phoneUsageSync.js`) ; `phoneUsageIos.js` et `phoneAppsIos.js` (et leurs tests) passent
   d'`overlay/` à `app/src/ios/` ; test Android (allumages d'écran, jamais les segments). 28 restent. Suivant : 06 (textes,
   à découper) ou 17/19/20/21/30/32/56/57/64 (VFC SDNN, à regrouper).
+  22/11 18:30 : #1200 mergée. Lot VFC SDNN fondu en une seule PR (un seul build iPhone) : correctifs 17, 19, 20, 21,
+  30, 32, 56, 57 et 64 appliqués tels quels dans `app/src/` (`dailyJournal.js`, `journalChips.js`, `healthApps.js`,
+  `BaselineCards.jsx`, `HealthRadar.jsx`, `radar.js`, `today.js`, `analysisEngine.js`, `firstImport.js`,
+  `TodayBySource.jsx`, `trendsData.js`, `dayDeviations.js`, `analysisResults.js`, `trendsDay.js`) : la mesure
+  `heartRateVariabilitySdnn` n'est écrite que par l'app Santé, et variables, facteurs, normes et axe du radar SDNN
+  restent derrière `DISTRIBUTION === 'appstore'`. `sdnnBaseline.js` et ses tests passent dans `app/src/ios/` ; les
+  tests d'overlay sans variante (`TodayBySource`, `dailyJournal`, `dayDeviations`, `trendsData` `.ios.test`) aussi ;
+  ceux qui forcent la variante appstore restent la preuve iPhone. Test Android `sdnnBaseline.android.test.js`. 19
+  restent. Suivant : 06 (textes, à découper) ou 05/25 (visage).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).

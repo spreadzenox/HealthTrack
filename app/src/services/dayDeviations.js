@@ -37,6 +37,8 @@ function hm(minutes) {
 const METRICS = [
   { key: 'sleep', field: 'sleepMinutes', up: 'Nuit plus longue', down: 'Nuit plus courte', minAbs: 20, fmt: hm },
   { key: 'hrv', field: 'hrv', up: 'Variabilité cardiaque de la nuit plus haute', down: 'Variabilité cardiaque de la nuit plus basse', minAbs: 4, fmt: (v) => `${Math.round(v)} ms` },
+  // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé, en SDNN, comparée à sa propre habitude, jamais à la RMSSD (correctif 57)
+  { key: 'hrvSdnn', field: 'hrvSdnn', up: 'Variabilité cardiaque plus haute', down: 'Variabilité cardiaque plus basse', minAbs: 4, fmt: (v) => `${Math.round(v)} ms` },
   { key: 'restingHr', field: 'restingHr', up: 'Cœur au repos plus rapide', down: 'Cœur au repos plus lent', minAbs: 3, fmt: (v) => `${Math.round(v)} bpm` },
   { key: 'steps', field: 'steps', up: 'Plus de pas', down: 'Moins de pas', minAbs: 1000, cumulative: true, fmt: (v) => Math.round(v).toLocaleString(appLocale()) },
   { key: 'screen', field: 'screenMinutes', up: 'Plus de temps d’écran', down: 'Moins de temps d’écran', minAbs: 20, cumulative: true, fmt: hm },
@@ -147,7 +149,7 @@ export async function readDeviationEntries(now = new Date(), extraDays = 0) {
   const lists = await Promise.all([
     listEntries({ type: 'sleep', since: sleepSince, limit: Infinity }),
     listEntries({ type: 'steps', since, limit: Infinity }),
-    listEntries({ type: 'heart_rate', subtypes: ['restingHeartRate', 'heartRateVariability'], since, limit: Infinity }),
+    listEntries({ type: 'heart_rate', subtypes: ['restingHeartRate', 'heartRateVariability', 'heartRateVariabilitySdnn' /* Version iOS, correctif 57 */], since, limit: Infinity }),
     listEntries({ type: 'phone_usage', since, limit: Infinity }),
   ])
   return lists.flat()
