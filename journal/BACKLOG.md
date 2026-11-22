@@ -658,7 +658,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **POLISH-SIM-137 — Ma journée, pas de chemin vers les repas passés** (FAIT le 22/11 00:30 : lien « Vos repas » sous les cercles, vers `/food`, test d'abord) (J45 mise à jour) : les repas notés
       avant la mise à jour ne se retrouvent que par Données › Nutrition › « Tous vos repas ». Un petit lien « Vos
       repas » sous les cercles des repas de Ma journée.
-    - [ ] **POLISH-SIM-138 — Écran d'essai, « Aujourd'hui, jour avec. » et « 1 jour avec tenu sur 5 »** (J45,
+    - [x] **POLISH-SIM-138 — Écran d'essai, « Aujourd'hui, jour avec. » et « 1 jour avec tenu sur 5 »** (FAIT le 22/11 01:30 : « Aujourd’hui : dormir au moins 7 h 30. » ou « Aujourd’hui : comme d’habitude, rien à changer. », « 2 jours réussis sur 5 », Pilou « Chaque jour réussi allume une lanterne. » et « Bravo pour vos N jours réussis. » ; tirage inchangé, test d'abord) (J45,
       mineur) : la persona ne sait pas si elle a réussi. Dire ce que le jour demande (« Aujourd'hui : dormir au moins
       7 h 30 ») et compter en mots simples ; à faire avec les lanternes (LANT-*), sans toucher au tirage.
     - À étudier (J14, « Prendre soin de soi ») : le poids noté dans le profil Nutrition n'alimente pas la mesure

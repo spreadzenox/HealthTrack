@@ -209,10 +209,10 @@ export function lanterns(status) {
 export function pilouSays(status, { started = false } = {}) {
   if (status?.done) {
     const k = status.kept ?? 0
-    const text = k > 1 ? `Bravo pour vos ${k} jours avec.` : k === 1 ? 'Bravo pour votre jour avec.' : 'Merci d’avoir essayé.'
+    const text = k > 1 ? `Bravo pour vos ${k} jours réussis.` : k === 1 ? 'Bravo pour votre jour réussi.' : 'Merci d’avoir essayé.'
     return { expr: 'content', move: 'nod', text }
   }
-  if (started) return { expr: 'content', move: 'hop', text: 'C’est parti ! Chaque jour avec tenu allume une lanterne.' }
+  if (started) return { expr: 'content', move: 'hop', text: 'C’est parti ! Chaque jour réussi allume une lanterne.' }
   return { expr: 'tranquille', move: 'none', text: null }
 }
 

@@ -29,7 +29,9 @@ describe('Un essai (ORG-8)', () => {
     renderTrial(new Date(2026, 10, 3, 10))
     // POLISH-AGIR-TITRES : la consigne est le titre ; la carte du jour ne la répète pas
     expect(await screen.findByRole('heading', { level: 1, name: 'Dormir au moins 7 h 30' })).toBeInTheDocument()
-    expect(screen.getByText('Aujourd’hui, jour avec.')).toBeInTheDocument()
+    // POLISH-SIM-138 : la carte dit ce que le jour demande, en mots simples
+    expect(screen.getByText('Aujourd’hui : dormir au moins 7 h 30.')).toBeInTheDocument()
+    expect(document.querySelector('.trial-today')).not.toHaveTextContent(/jour avec/)
     expect(screen.getByLabelText(/1 novembre : avec, tenu/)).toHaveTextContent('✓')
     expect(screen.getByText('Nous n’avons pas reçu vos données de sommeil pour hier soir.')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Oui' }))
@@ -130,9 +132,15 @@ describe('Un essai (ORG-8)', () => {
     const ten = { schedule: payload.schedule.slice(0, 10) }
     renderTrial(new Date(2026, 10, 3, 10), ten)
     expect(await screen.findByText(line('Jour 3 sur 10'))).toBeInTheDocument()
-    expect(screen.getByText(line('1 jour avec tenu sur 5'))).toBeInTheDocument()
+    expect(screen.getByText(line('1 jour réussi sur 5'))).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Les 10 jours' })).toBeInTheDocument()
     expect(screen.queryByText(/n’annule rien/)).toBeNull()
+  })
+
+  it('POLISH-SIM-138 : un jour « comme d’habitude » dit qu’il n’y a rien à changer ; deux jours réussis au pluriel', async () => {
+    renderTrial(new Date(2026, 10, 4, 10), { schedule: payload.schedule.slice(0, 10), answers: { '2026-11-01': true, '2026-11-03': true } })
+    expect(await screen.findByText('Aujourd’hui : comme d’habitude, rien à changer.')).toBeInTheDocument()
+    expect(screen.getByText(line('2 jours réussis sur 5'))).toBeInTheDocument()
   })
 
   it('LANT-1 : les lanternes des jours avec, allumées quand le jour est tenu', async () => {
@@ -149,7 +157,7 @@ describe('Un essai (ORG-8)', () => {
 
   it('REFONTE-6c-2 : un jour avec manqué est dit sans reproche', async () => {
     renderTrial(new Date(2026, 10, 5, 10), { schedule: payload.schedule.slice(0, 10), answers: { '2026-11-03': false } })
-    expect(await screen.findByText(line('1 jour avec tenu sur 5'))).toBeInTheDocument()
+    expect(await screen.findByText(line('1 jour réussi sur 5'))).toBeInTheDocument()
     expect(screen.getByText('Un jour manqué n’annule rien : l’essai continue.')).toBeInTheDocument()
   })
 
@@ -179,7 +187,7 @@ describe('Un essai (ORG-8)', () => {
   it('LANT-2 : juste après « Commencer », Pilou saute et annonce les lanternes ; ensuite il attend sans rien dire', async () => {
     const ten = { schedule: payload.schedule.slice(0, 10) }
     const { container, unmount } = renderTrial(new Date(2026, 10, 1, 10), ten, null, undefined, { started: true })
-    expect(await screen.findByText('C’est parti ! Chaque jour avec tenu allume une lanterne.')).toBeInTheDocument()
+    expect(await screen.findByText('C’est parti ! Chaque jour réussi allume une lanterne.')).toBeInTheDocument()
     expect(container.querySelector('.trial-today .pilou-figure')).toHaveClass('pilou-move-hop')
     unmount()
     const again = renderTrial(new Date(2026, 10, 3, 10), ten)
@@ -195,7 +203,7 @@ describe('Un essai (ORG-8)', () => {
     await screen.findByRole('heading', { name: 'Plutôt oui' })
     const card = container.querySelector('.trial-result')
     expect(card.querySelector('.pilou-figure')).toHaveClass('pilou-move-nod')
-    expect(card).toHaveTextContent(/Bravo pour (vos \d jours|votre jour) avec\./)
+    expect(card).toHaveTextContent(/Bravo pour (vos \d jours réussis|votre jour réussi)\./)
     expect(card.querySelector('.confetti, .pilou-move-party')).toBeNull()
   })
 })

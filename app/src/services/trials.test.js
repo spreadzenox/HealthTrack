@@ -171,15 +171,15 @@ describe('LANT-2 : ce que dit Pilou sur la page du défi', () => {
   const st = (over) => ({ done: true, bilan: 'yes', kept: 5, ...over })
   it('au bilan, il salue l’effort : même bulle et même geste quel que soit le résultat', () => {
     const yes = pilouSays(st({ bilan: 'yes' }))
-    expect(yes).toEqual({ expr: 'content', move: 'nod', text: 'Bravo pour vos 5 jours avec.' })
+    expect(yes).toEqual({ expr: 'content', move: 'nod', text: 'Bravo pour vos 5 jours réussis.' })
     for (const bilan of ['no', 'none', 'too_few']) expect(pilouSays(st({ bilan }))).toEqual(yes)
   })
   it('au bilan : un seul jour tenu, ou aucun', () => {
-    expect(pilouSays(st({ kept: 1 })).text).toBe('Bravo pour votre jour avec.')
+    expect(pilouSays(st({ kept: 1 })).text).toBe('Bravo pour votre jour réussi.')
     expect(pilouSays(st({ kept: 0 })).text).toBe('Merci d’avoir essayé.')
   })
   it('juste après « Commencer » : un saut et la promesse des lanternes ; ensuite il attend, sans bulle', () => {
-    expect(pilouSays({ done: false }, { started: true })).toEqual({ expr: 'content', move: 'hop', text: 'C’est parti ! Chaque jour avec tenu allume une lanterne.' })
+    expect(pilouSays({ done: false }, { started: true })).toEqual({ expr: 'content', move: 'hop', text: 'C’est parti ! Chaque jour réussi allume une lanterne.' })
     expect(pilouSays({ done: false })).toEqual({ expr: 'tranquille', move: 'none', text: null })
   })
 })

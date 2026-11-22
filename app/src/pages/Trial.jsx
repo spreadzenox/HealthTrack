@@ -171,11 +171,12 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
           {pilouRow}
           <p className="trial-day">Jour <span className="mono">{s.dayIndex}</span> sur <span className="mono">{s.total}</span></p>
           <p className="trial-instruction">
-            {s.todayDay?.with ? 'Aujourd’hui, jour avec.' : 'Aujourd’hui, jour sans : comme d’habitude.'}
+            {/* POLISH-SIM-138 : ce que le jour demande, en mots simples (« jour avec » ne parlait pas aux personas) */}
+            {s.todayDay?.with ? `Aujourd’hui : ${withLabel}.` : 'Aujourd’hui : comme d’habitude, rien à changer.'}
           </p>
           <TrialLanterns items={lanterns(s)} />
           <p className="act-card-detail trial-kept">
-            <span className="mono">{s.kept}</span> {s.kept > 1 ? 'jours avec tenus' : 'jour avec tenu'} sur <span className="mono">{s.goal}</span>
+            <span className="mono">{s.kept}</span> {s.kept > 1 ? 'jours réussis' : 'jour réussi'} sur <span className="mono">{s.goal}</span>
           </p>
           {s.missed > 0 && <p className="act-card-detail">Un jour manqué n’annule rien : l’essai continue.</p>}
         </article>
