@@ -109,6 +109,13 @@ describe('runFirstImport', () => {
     expect(s.lastSyncAt).toBe(NOW.toISOString())
   })
 
+  it('Android, sans fenêtre de lecture : 30 jours importés (les 6 mois sont pour l’iPhone seulement)', async () => {
+    const c = { ...fakeConnector({ synced: 1, skipped: 0, errors: [] }), readWindowDays: undefined }
+    await runFirstImport({ connector: c, now: NOW, writer: async () => {} })
+    const { since } = c.sync.mock.calls[0][0]
+    expect((NOW - since) / 86400000).toBeCloseTo(30)
+  })
+
   it('tout a échoué → lastSyncAt n’avance pas (on réessaiera depuis le même point)', async () => {
     const c = fakeConnector({ synced: 0, skipped: 0, errors: ['steps: refus'] })
     await runFirstImport({ connector: c, now: NOW, writer: async () => {} })

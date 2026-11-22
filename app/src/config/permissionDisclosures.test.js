@@ -100,3 +100,13 @@ describe('divulgation de l’analyse IA (variante play)', () => {
     }
   })
 })
+
+describe('divulgation Health Connect sur Android (le texte de l’app Santé est réservé à l’iPhone)', () => {
+  it('parle de Health Connect et des 30 derniers jours, jamais de l’app Santé', () => {
+    const d = DISCLOSURES.health_connect
+    const text = [d.title, ...d.points].join(' ')
+    expect(d.title).toBe('Avant d’autoriser Health Connect')
+    expect(text).toMatch(/30 derniers jours/)
+    expect(text).not.toMatch(/app Santé|iOS|6 derniers mois/)
+  })
+})
