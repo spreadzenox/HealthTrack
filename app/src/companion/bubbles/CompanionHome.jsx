@@ -15,6 +15,7 @@ import BubbleIcon from './BubbleIcon'
 import ScrollBanner from './ScrollBanner'
 import { homeBubbles, habitQuestion, poppedMessage, bubblesLeftText, orbitWorld, stillProject, BUBBLE_RADIUS } from './bubbles'
 import { dayMood, MOOD_TOP } from './mood'
+import { isExampleMode } from '../../storage/exampleMode'
 import { islandFlowers, flowerForBus, flowersForBus } from './flowers'
 import { firstWeek, openGift, markReadySeen, giftText, digestionCountdown, GIFTS, WEEK_DAYS, digestionMilestone,
   digestionFlowerShown, DIGESTION_FLOWER, DIGESTION_READY_TEXT } from './firstWeek'
@@ -318,7 +319,8 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
   const reduced = useReducedMotion()
   const at = now || new Date()
   const list = homeBubbles(entries, { now: at, askGut, habits })
-  const mood = dayMood(list.done, list.total, { now: at })
+  // L'exemple de la visite guidée calcule son cran sans l'écrire : la vraie jauge du jour n'en garde rien (POLISH-SIM-142)
+  const mood = dayMood(list.done, list.total, { now: at, storage: isExampleMode() ? null : undefined })
   const flowers = islandFlowers(entries, at)
   const flowerKey = flowers.today.map((f) => f.id).join('|')
   // `weekTick` relit la semaine après l'ouverture d'un cadeau

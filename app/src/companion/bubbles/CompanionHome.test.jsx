@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom'
 import CompanionHome from './CompanionHome'
 import { bus } from '../bus'
 import { habitEntry } from '../../services/habits'
+import { enterExampleMode, exitExampleMode } from '../../storage/exampleMode'
 
 const NOW = new Date(2026, 10, 16, 14, 0)
 const MED = { id: 'meditation', label: 'Méditation' }
@@ -83,6 +84,16 @@ describe('CompanionHome — les bulles', () => {
     expect(screen.getByRole('meter')).toHaveAttribute('aria-valuetext', 'De bonne humeur')
     rerenderWith({ entries: [] })
     expect(screen.getByRole('meter')).toHaveAttribute('aria-valuetext', 'De bonne humeur')
+  })
+
+  it('l’exemple de la visite guidée ne monte pas la vraie jauge du jour (POLISH-SIM-142)', () => {
+    enterExampleMode([])
+    const { unmount } = renderHome({ entries: [habitEntry(READ, '2026-11-16', true), habitEntry(MED, '2026-11-16', true)] })
+    expect(screen.getByRole('meter')).not.toHaveAttribute('aria-valuetext', 'Tranquille')
+    unmount()
+    exitExampleMode()
+    renderHome()
+    expect(screen.getByRole('meter')).toHaveAttribute('aria-valuetext', 'Tranquille')
   })
 
   it('la digestion attend le soir et le dit ; un moment se note tout de suite (POLISH-SIM-139)', () => {
