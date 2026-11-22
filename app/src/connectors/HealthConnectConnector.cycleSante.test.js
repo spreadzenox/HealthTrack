@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
-// Version iOS (HealthTrack-iOS) : le même connecteur lit HealthKit (même plugin @capgo/capacitor-health, I4).
+// iPhone : le même connecteur lit HealthKit (même plugin @capgo/capacitor-health, I4).
 // HealthKit ne dit jamais si la lecture est accordée : « accordé » dès que la demande a été faite sur cet appareil.
 // VFC : SDNN sur iOS contre RMSSD sur Android → lue sur iPhone, mais rangée à part (`heartRateVariabilitySdnn`),
 // jamais mêlée à la RMSSD (`heartRateVariability`) des analyses, des normes et du radar.
@@ -39,7 +39,7 @@ afterEach(() => {
   delete window.Capacitor
 })
 
-describe('HealthConnectConnector sur iPhone : cycle de l’app Santé (correctif 58)', () => {
+describe('HealthConnectConnector sur iPhone : cycle de l’app Santé (CYCLE-iOS)', () => {
   // CYCLE-iOS-1 (décision du propriétaire du 10/11, « Ok cycle ») : chaque synchro de Santé lit aussi le cycle
   it('la synchro lit aussi le cycle noté dans l’app Santé, sur la même période, et compte ses entrées', async () => {
     syncCycleFromSante.mockResolvedValueOnce(3)

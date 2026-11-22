@@ -24,6 +24,8 @@ import { BaseConnector } from './BaseConnector'
 import { readCycleEntries } from './healthConnectCycle'
 import { debugInfo, debugWarn, debugError, debugDebug } from '../utils/debugLog'
 import { HEALTH_CONNECT_READ_WINDOW_DAYS } from './syncWindow'
+import { requestSanteAuthorization, syncCycleFromSante } from '../ios/cycleSante' // iPhone : le cycle de l'app Santé (CYCLE-iOS)
+import { goalsOf } from '../settings/onboarding'
 
 const TAG = 'HealthConnect'
 
@@ -799,6 +801,11 @@ export class HealthConnectConnector extends BaseConnector {
       return 'denied'
     }
     try {
+      // iPhone (CYCLE-iOS-2) : avec « Mon cycle », règles et symptômes dans la même feuille d'Apple que les autres
+      // mesures ; la demande du module qui suit ne montre alors plus rien
+      if (isIos() && goalsOf().includes('cycle')) {
+        await requestSanteAuthorization({ read: READ_TYPES, cycle: true }).catch((e) => debugWarn(TAG, `Autorisation du cycle : ${e?.message || e}`))
+      }
       debugInfo(TAG, 'Appel Health.requestAuthorization()…')
       await Health.requestAuthorization({ read: READ_TYPES, write: [] })
       if (isIos()) {
@@ -1188,6 +1195,17 @@ export class HealthConnectConnector extends BaseConnector {
     } catch (e) {
       debugError(TAG, `Erreur lecture règles : ${e?.message || e}`, { error: e })
       errors.push(`menstruation: ${e.message || e}`)
+    }
+
+    // iPhone (CYCLE-iOS-1) : le cycle noté dans l'app Santé (règles, symptômes), lu par le plugin natif CycleHealth
+    // (iphone/ios), rangé avec la brique partagée du cycle ; jamais sur Android
+    if (isIos()) {
+      try {
+        synced += await syncCycleFromSante({ since, until, writer })
+      } catch (e) {
+        debugError(TAG, `Erreur lecture du cycle : ${e?.message || e}`, { error: e })
+        errors.push(`cycle: ${e.message || e}`)
+      }
     }
 
     report(null)

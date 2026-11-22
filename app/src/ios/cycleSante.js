@@ -1,7 +1,7 @@
 /**
- * Version iOS (HealthTrack-iOS), CYCLE-iOS-1 (décision du propriétaire du 10/11 vers 18:50, « Ok cycle ») : le cycle
+ * iPhone seulement, CYCLE-iOS-1 (décision du propriétaire du 10/11 vers 18:50, « Ok cycle ») : le cycle
  * noté dans l'app Santé (règles, saignements hors des règles, symptômes), lu par le plugin natif `CycleHealth`
- * (`ios/App/App/CycleHealthPlugin.swift`, correspondance dans `ios/HalcyaRules` › `CycleRule`) et rangé avec la brique
+ * (`iphone/ios/App/App/CycleHealthPlugin.swift`, correspondance dans `iphone/ios/HalcyaRules` › `CycleRule`) et rangé avec la brique
  * partagée d'Android (`services/cycle.js`) : mêmes entrées `type: 'cycle'`, mêmes heures, source `health_connect`
  * comme les autres mesures de Santé sur iPhone. Rien ne sort du téléphone. Le cycle reste un contexte, jamais une
  * cause ni un diagnostic.
@@ -68,7 +68,7 @@ export async function syncCycleFromSante({ since, until, writer, plugin }) {
 
 // ── CYCLE-iOS-2 : l'autorisation ─────────────────────────────────────────────────────────────────────────────────────
 
-/** Même clé que le connecteur (correctif 08) : Santé a été autorisée sur cet iPhone (HealthKit ne dit pas ce qui l'est). */
+/** Même clé que le connecteur (`HealthConnectConnector.js`) : Santé a été autorisée sur cet iPhone (HealthKit ne dit pas ce qui l'est). */
 export const IOS_HEALTHKIT_ASKED_KEY = 'halcya_ios_healthkit_asked'
 /** Le cycle a été demandé à Santé sur cet iPhone (accueil, Paramètres ou Sources) : ne plus le proposer (CYCLE-iOS-3). */
 export const IOS_CYCLE_ASKED_KEY = 'halcya_ios_cycle_asked'
