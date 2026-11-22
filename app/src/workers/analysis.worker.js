@@ -2,9 +2,9 @@
 import { runAnalysisTask } from './analysisTasks'
 
 self.onmessage = async (event) => {
-  const { id, task } = event.data || {}
+  const { id, task, key } = event.data || {}
   try {
-    self.postMessage({ id, result: await runAnalysisTask(task) })
+    self.postMessage({ id, result: await runAnalysisTask(task, key) })
   } catch (e) {
     self.postMessage({ id, error: String(e?.message || e) })
   }

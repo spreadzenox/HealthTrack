@@ -194,8 +194,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   journée au lieu de reposer la question (`trials.js`, `MEASURED`).
 - [ ] **REFONTE-4b-4 — Heure réelle d'une habitude** : la réponse ne dit pas quand l'habitude a eu lieu ; l'ordre
   temporel repose sur l'heure de saisie et une tolérance d'une heure. À revoir si la durée ou l'heure est demandée.
-- [ ] **REFONTE-4b-iOS — Voir les habitudes d'Objectifs sur iPhone** (**capture écrite le 22/11 03:30**, à regarder
-  au build de la PR avant de cocher : `demo-clair-recommendations-bien-etre-habitude`, abonné, « Méditation » répondue
+- [x] **REFONTE-4b-iOS — Voir les habitudes d'Objectifs sur iPhone** (**FAIT 22/11 04:30**, #1186 mergée, capture
+  regardée : carte miel « Habitudes · Méditation · Lien fort » ; **capture écrite le 22/11 03:30** : `demo-clair-recommendations-bien-etre-habitude`, abonné, « Méditation » répondue
   chaque jour noté comme `--habits=history` d'Android, posée pour cette seule capture puis retirée ; test
   `captureMode.test.js`) : les captures du simulateur montrent Objectifs
   verrouillé (carte floutée « Débloquer ») et sans habitude ; ajouter une capture avec Gold et une habitude suivie
@@ -784,8 +784,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
-- [ ] **POLISH-OBJ-LIENS** (16/11 00:30, vu sur la capture iPhone `demo-clair-recommendations-bien-etre` de #1026, identique sur main) : dans Objectifs › Votre bien-être sans abonnement, deux liens se suivent, « Comment est calculé votre bien-être ? » et « Comment c'est calculé » ; n'en garder qu'un (vérifier où mène chacun), et regarder la même vue sur Android. Petit polish, après 7b.
-- [ ] **PERF-JOUR** (16/11 02:30) : Tendances › Jour lance deux analyses complètes dans le Worker (`dayStates` à
+- [x] **POLISH-OBJ-LIENS** (**sans objet, vérifié le 22/11 04:30** : fait par POLISH-SIM-121 le 20/11, un seul « Comment c’est calculé » en bas de Votre bien-être) (16/11 00:30, vu sur la capture iPhone `demo-clair-recommendations-bien-etre` de #1026, identique sur main) : dans Objectifs › Votre bien-être sans abonnement, deux liens se suivent, « Comment est calculé votre bien-être ? » et « Comment c'est calculé » ; n'en garder qu'un (vérifier où mène chacun), et regarder la même vue sur Android. Petit polish, après 7b.
+- [x] **PERF-JOUR** (**FAIT 22/11 04:30** : les tâches du Worker de même clé de cache (`analysisCacheKey` : version, révision des données, jour) partagent une seule lecture de la base, relâchée après 60 s ; sans clé (visite guidée), lecture à chaque tâche ; lecture en échec non gardée ; aucune tâche ne modifie les saisies reçues, testé sur des saisies gelées (`analysisTasksShared.test.js`, rouge d'abord). Mesuré (3 ans de démo, `npm run perf`) : `/tendances?vue=jour` 15 795 enregistrements lus par le Worker au lieu de 31 620 ; budget ramené de 34 500 à 17 500, comme `/tendances`) (16/11 02:30) : Tendances › Jour lance deux analyses complètes dans le Worker (`dayStates` à
   l'ouverture, puis `analysisResults` pour les contributions du jour affiché) : 74 lectures, 31 620 enregistrements
   sur 3 ans de démo, contre 15 810 pour la vue Semaine. Voulu (contributions dès qu'un jour est montré), mais chaque
   tâche relit toutes les saisies : partager la lecture entre les deux tâches du Worker diviserait le coût par deux.
