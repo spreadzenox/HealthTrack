@@ -66,15 +66,15 @@ describe('saveAndShareReport (Android)', () => {
     files.written.length = 0
     files.shared.length = 0
     files.shareFails = false
-    const r = await saveAndShareReport(pdf, { native: async () => true })
-    expect(r).toEqual({ saved: 'documents', shared: true })
+    const r = await saveAndShareReport(pdf, { native: async () => 'android' })
+    expect(r).toEqual({ saved: 'documents', shared: true, platform: 'android' })
     expect(files.written[0]).toMatchObject({ path: pdf.fileName, directory: 'DOCUMENTS', data: 'AQID' })
     expect(files.shared[0].files).toEqual([`file:///storage/emulated/0/Documents/${pdf.fileName}`])
   })
 
   it('partage annulé : le fichier reste dans Documents, pas d’erreur', async () => {
     files.shareFails = true
-    const r = await saveAndShareReport(pdf, { native: async () => true })
-    expect(r).toEqual({ saved: 'documents', shared: false })
+    const r = await saveAndShareReport(pdf, { native: async () => 'android' })
+    expect(r).toEqual({ saved: 'documents', shared: false, platform: 'android' })
   })
 })

@@ -19,7 +19,7 @@ describe('Rapport PDF sur iPhone (variante appstore)', () => {
   it('abonné : indique où retrouver le fichier sur iPhone', async () => {
     localStorage.setItem('halcya_entitlement', JSON.stringify(subscribed))
     const create = vi.fn().mockResolvedValue({ fileName: 'rapport.pdf', bytes: new Uint8Array() })
-    const save = vi.fn().mockResolvedValue({ saved: 'documents', shared: true })
+    const save = vi.fn().mockResolvedValue({ saved: 'documents', shared: true, platform: 'ios' })
     render(<MemoryRouter><DoctorReportCard create={create} save={save} /></MemoryRouter>)
     fireEvent.click(screen.getByRole('button', { name: /Préparer le rapport/ }))
     fireEvent.click(screen.getByRole('button', { name: 'Créer le PDF' }))

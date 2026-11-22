@@ -38,6 +38,8 @@ vi.mock('@capacitor/filesystem', () => ({
   Directory: { Documents: 'DOCUMENTS' },
 }))
 
+vi.mock('@capacitor/share', () => ({ Share: { share: vi.fn().mockResolvedValue({}) } }))
+
 function renderData() {
   return render(
     <BrowserRouter>
@@ -205,6 +207,54 @@ describe('Data page — export (Android native)', () => {
       fireEvent.click(screen.getByRole('button', { name: /Télécharger la sauvegarde/i }))
     })
     expect(screen.getByText(/halcya-export-.*\.json enregistré dans Documents/i)).toBeInTheDocument()
+  })
+})
+
+// Correctif iPhone 09 fondu : dans l'app iPhone, un lien de téléchargement ne fait rien (WKWebView) ; la sauvegarde
+// va dans Documents puis la feuille de partage
+describe('Data page — export (iPhone)', () => {
+  beforeEach(async () => {
+    const { exportToJson } = await import('../storage/localHealthStorage')
+    exportToJson.mockResolvedValue('{"version":1,"entries":[]}')
+    const { Capacitor } = await import('@capacitor/core')
+    Capacitor.isNativePlatform.mockReturnValue(true)
+    Capacitor.getPlatform.mockReturnValue('ios')
+    const { Filesystem } = await import('@capacitor/filesystem')
+    Filesystem.writeFile.mockClear()
+    Filesystem.writeFile.mockResolvedValue({ uri: 'file:///Documents/sauvegarde.json' })
+    const { Share } = await import('@capacitor/share')
+    Share.share.mockClear()
+  })
+
+  afterEach(async () => {
+    const { Capacitor } = await import('@capacitor/core')
+    Capacitor.isNativePlatform.mockReturnValue(false)
+    Capacitor.getPlatform.mockReturnValue('web')
+    const { Filesystem } = await import('@capacitor/filesystem')
+    Filesystem.writeFile.mockResolvedValue({})
+  })
+
+  it('écrit le fichier dans Documents, ouvre la feuille de partage et dit où le retrouver', async () => {
+    renderData()
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /Télécharger la sauvegarde/i }))
+    })
+    const { Filesystem } = await import('@capacitor/filesystem')
+    const { Share } = await import('@capacitor/share')
+    expect(Filesystem.writeFile).toHaveBeenCalledWith(expect.objectContaining({ directory: 'DOCUMENTS' }))
+    expect(Share.share).toHaveBeenCalledWith(expect.objectContaining({ files: ['file:///Documents/sauvegarde.json'] }))
+    expect(await screen.findByText(new RegExp(`est aussi dans l’app Fichiers › Sur mon iPhone › ${APP_NAME}`))).toBeInTheDocument()
+  })
+
+  it('partage annulé : le fichier reste dans Documents, pas d’erreur', async () => {
+    const { Share } = await import('@capacitor/share')
+    Share.share.mockRejectedValueOnce(new Error('Share canceled'))
+    renderData()
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /Télécharger la sauvegarde/i }))
+    })
+    expect(await screen.findByText(/est aussi dans l’app Fichiers/)).toBeInTheDocument()
+    expect(screen.queryByText(/Erreur/)).toBeNull()
   })
 })
 

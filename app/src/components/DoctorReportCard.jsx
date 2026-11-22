@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { FEATURES } from '../config/distribution'
+import { APP_NAME } from '../config/brand'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { REPORT_DEFAULT_WEEKS, REPORT_PERIODS, defaultReportWeeks } from '../services/report/buildReport'
 import { createReportPdf, saveAndShareReport } from '../services/report/createReportPdf'
@@ -85,10 +86,10 @@ export default function DoctorReportCard({
     setStatus(null)
     try {
       const pdf = await create({ weeks, includeWellbeing: hasFace && wellbeing })
-      const { saved } = await save(pdf)
-      setStatus(saved === 'documents'
-        ? `${pdf.fileName} est dans Documents (app Fichiers › Documents).`
-        : `${pdf.fileName} téléchargé.`)
+      const { saved, platform } = await save(pdf)
+      if (saved !== 'documents') setStatus(`${pdf.fileName} téléchargé.`)
+      else if (platform === 'ios') setStatus(`${pdf.fileName} est aussi dans l’app Fichiers › Sur mon iPhone › ${APP_NAME}.`)
+      else setStatus(`${pdf.fileName} est dans Documents (app Fichiers › Documents).`)
     } catch (e) {
       setStatus('Le rapport n’a pas pu être créé : ' + (e?.message || 'erreur inconnue') + '.')
     } finally {

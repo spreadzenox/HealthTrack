@@ -29,19 +29,10 @@ vi.mock('../components/DoctorReportCard', () => ({ default: () => null }))
 vi.mock('../services/deleteAllData', () => ({ deleteAllMyData: vi.fn() }))
 
 import { Filesystem } from '@capacitor/filesystem'
-import { Share } from '@capacitor/share'
 import { parseBackup, countAllEntries } from '../storage/localHealthStorage'
 import Data from './Data'
 
-describe('Sauvegarde sur iPhone', () => {
-  it('écrit le fichier dans Documents, ouvre la feuille de partage et dit où le retrouver', async () => {
-    render(<MemoryRouter><Data /></MemoryRouter>)
-    fireEvent.click(screen.getByRole('button', { name: /Télécharger la sauvegarde/ }))
-    expect(await screen.findByText(/est aussi dans l’app Fichiers › Sur mon iPhone › Halcya/)).toBeInTheDocument()
-    expect(Filesystem.writeFile).toHaveBeenCalledWith(expect.objectContaining({ directory: 'DOCUMENTS' }))
-    expect(Share.share).toHaveBeenCalledWith(expect.objectContaining({ files: ['file:///Documents/sauvegarde.json'] }))
-  })
-})
+// « Sauvegarde sur iPhone » (Documents puis partage) : correctif 09 fondu, testé dans app/src/pages/Data.test.jsx
 
 describe('Restauration de la copie de secours sur iPhone', () => {
   it('la copie passe par le même aperçu que « Importer »', async () => {

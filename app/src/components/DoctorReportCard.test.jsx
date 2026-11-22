@@ -19,6 +19,15 @@ describe('DoctorReportCard', () => {
     localStorage.clear()
   })
 
+  it('sur iPhone, dit où retrouver le PDF dans l’app Fichiers (correctif iPhone 09 fondu)', async () => {
+    const save = vi.fn(async () => ({ saved: 'documents', shared: true, platform: 'ios' }))
+    renderCard({ create: vi.fn(async () => pdf), save, firstAt: async () => null })
+    fireEvent.click(screen.getByRole('button', { name: 'Préparer le rapport' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Créer le PDF' }))
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(
+      'Halcya-rapport-2026-10-27.pdf est aussi dans l’app Fichiers › Sur mon iPhone › Halcya.'))
+  })
+
   it('sideload : préparer, choisir 12 semaines et le bien-être, puis créer et ranger dans Documents', async () => {
     const create = vi.fn(async () => pdf)
     const save = vi.fn(async () => ({ saved: 'documents', shared: true }))
