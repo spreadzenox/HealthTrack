@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **22/11 02:30** — **DEM-IOS-20** (rien de visible d'habitude) : la build charge ses fichiers depuis la racine (`base: '/'`) ; un rechargement de la page sur un écran à deux niveaux (Objectifs › Votre confort digestif) ne donne plus un écran blanc. Le correctif iPhone 41, qui faisait déjà la même chose, est fondu dans le code partagé (44 correctifs).
 - **22/11 01:30** — **POLISH-SIM-138** : sur la page d'un essai, la carte du jour dit ce que le jour demande (« Aujourd’hui : dormir au moins 7 h 30. » ou « comme d’habitude, rien à changer ») et compte « 2 jours réussis sur 5 » (avant : « Aujourd’hui, jour avec. », « 1 jour avec tenu sur 5 »). Les 5 défauts du passage des personas du 21/11 sont soldés.
 - **22/11 00:30** — **POLISH-SIM-137** : dans Ma journée, un lien « Vos repas » sous les cercles des repas ouvre tous les repas notés (avant : seulement par Données › Nutrition › « Tous vos repas »).
 - **21/11 20:30** — Run « idées » : personas « Ventre, sans technique » J45 (mise à jour) et « Prendre soin de soi » J14, iPhone seul ; rien de perdu à la mise à jour ; POLISH-SIM-134 à 138 au BACKLOG (synthèse `simulations/2026-11-21-2030-synthese.md`).

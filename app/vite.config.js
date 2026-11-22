@@ -9,7 +9,9 @@ const appVersion = process.env.VITE_APP_VERSION ?? pkg.version ?? '0.0.0'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: './',
+  // Chemins absolus (DEM-IOS-20) : Android et iPhone servent l'app à la racine ; avec './', un rechargement sur une
+  // page à deux niveaux (/recommendations/ventre) cherche les fichiers sous /recommendations/assets/ (écran blanc)
+  base: '/',
   define: {
     __APP_VERSION__: JSON.stringify(appVersion),
   },
