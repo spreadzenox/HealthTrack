@@ -35,7 +35,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
 
 - [x] **CI-ECO** (#1101, mergée le 18/11 vers 18:18 ; build de PR 39 min au lieu d'environ 60) : (1) job macOS de `ios-build.yml` sauté sur une PR en brouillon (vérifié sur #1101) ; (2) build iOS de main et TestFlight une fois par soir (21:20 Paris), sautés sans changement (`iphone/scripts/main-changed.sh`) ; (3) un seul iPhone capturé sur une PR, sans grand texte. À cocher au merge, puis vérifier le premier soir (build fait ou sauté à bon escient).
 - [ ] **CI-ECO-PILE** : #1090 à #1097 regroupées dans `claude/pile-1090-1097` (4 080 tests verts) ; merger après #1101, fermer les huit PR d'origine.
-- [ ] **CI-ECO-HEURES** : chaque dimanche, heures de Mac de la semaine (durées des jobs macos-latest) dans le résumé.
+- [ ] **CI-ECO-HEURES** : chaque dimanche, heures de Mac de la semaine (durées des jobs macos-latest) dans le résumé. Relevé S47 (fait le 23/11 00:30, jobs macOS de `ios-build.yml`, `ios-testflight.yml`, `ios-face-models.yml` filtrés par date) : **147,6 h** ; depuis CI-ECO ≈ 12,8 h/jour, dont ≈ 78 % de builds de PR. Méthode : `actions/workflows/<wf>/runs?created=…` puis `runs/<id>/jobs`, labels `macos` (évite la limite de 1 000 exécutions).
 - Règles de travail : PR ouvertes en brouillon, passées « prêtes » une fois finies, puis seulement les pushes qui les débloquent ; au plus deux PR ouvertes qui lancent un build iOS.
 
 ## 🧸 Refonte « Compagnon » — décisions du propriétaire des 13, 14 et 15/11 (exception au mode polish)
