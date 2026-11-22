@@ -883,6 +883,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   `More.jsx`), tous sous `FEATURES.iosStore`. Les pages `confidentialite-iphone.html` et `conditions-iphone.html`
   restent dans `overlay/app/public/` (FUSION-4). Test Android d'abord (Apple Watch sur Android : Health Connect,
   jamais l'app Watch). 16 restent. Suivant : 06 (partie `Data.jsx`), 18 (portion, `Layout.jsx`) ou 05 (visage).
+  22/11 23:30 : #1205 (POLISH-SIM-143) mergée. Correctif 18 fondu : l'écoute du rappel de portion touché, que le
+  natif de l'iPhone signale après le retour au premier plan (`app/src/ios/portionOpen.js` et son test, venus
+  d'`overlay/`), est montée par `usePortionOpen` (`Layout.jsx`) ; sur Android l'évènement n'arrive jamais, rien ne
+  change. 15 restent, tous appliqués sans erreur. Suivant : 06 (partie `Data.jsx`) ou 05 (visage).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
