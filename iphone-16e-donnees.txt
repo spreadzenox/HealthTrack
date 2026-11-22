@@ -1,0 +1,37 @@
+== Documents
+total 1984
+drwxr-xr-x  6 runner  staff     192 Nov 22 02:13 .
+drwxr-xr-x@ 7 runner  staff     224 Nov 22 01:48 ..
+drwxr-xr-x  5 runner  staff     160 Nov 22 01:54 capture
+drwxr-xr-x@ 3 runner  staff      96 Nov 22 01:54 Copie de secours
+-rw-r--r--@ 1 runner  staff  505479 Nov 22 02:12 halcya-export-2026-11-22 2.json
+-rw-r--r--  1 runner  staff  505479 Nov 22 02:12 halcya-export-2026-11-22.json
+== Documents/Copie de secours
+total 992
+drwxr-xr-x@ 3 runner  staff      96 Nov 22 01:54 .
+drwxr-xr-x  6 runner  staff     192 Nov 22 02:13 ..
+-rw-r--r--@ 1 runner  staff  505590 Nov 22 02:15 Halcya-copie-de-secours.json
+== Library/WebKit
+Library/WebKit
+Library/WebKit/fr.jpesquet.sante
+Library/WebKit/fr.jpesquet.sante/WebsiteData
+Library/WebKit/fr.jpesquet.sante/WebsiteData/SearchHistory
+Library/WebKit/fr.jpesquet.sante/WebsiteData/IndexedDB
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeysHashSalts
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeys
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeys/v1
+Library/WebKit/fr.jpesquet.sante/WebsiteData/MediaKeys/v1/salt
+Library/WebKit/fr.jpesquet.sante/WebsiteData/DeviceIdHashSalts
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/Jx_0UiGTxowZXRrj-MVRL9_VnO_IlTKUuOLj_pDU4XE
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/Jx_0UiGTxowZXRrj-MVRL9_VnO_IlTKUuOLj_pDU4XE/Jx_0UiGTxowZXRrj-MVRL9_VnO_IlTKUuOLj_pDU4XE
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/Jx_0UiGTxowZXRrj-MVRL9_VnO_IlTKUuOLj_pDU4XE/Jx_0UiGTxowZXRrj-MVRL9_VnO_IlTKUuOLj_pDU4XE/IndexedDB
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/Jx_0UiGTxowZXRrj-MVRL9_VnO_IlTKUuOLj_pDU4XE/Jx_0UiGTxowZXRrj-MVRL9_VnO_IlTKUuOLj_pDU4XE/LocalStorage
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/Jx_0UiGTxowZXRrj-MVRL9_VnO_IlTKUuOLj_pDU4XE/Jx_0UiGTxowZXRrj-MVRL9_VnO_IlTKUuOLj_pDU4XE/origin
+Library/WebKit/fr.jpesquet.sante/WebsiteData/Default/salt
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceMonitorThrottler
+Library/WebKit/fr.jpesquet.sante/WebsiteData/LocalStorage
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics/observations.db-wal
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics/observations.db-shm
+Library/WebKit/fr.jpesquet.sante/WebsiteData/ResourceLoadStatistics/observations.db
