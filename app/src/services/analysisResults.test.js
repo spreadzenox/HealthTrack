@@ -234,6 +234,17 @@ describe('contrat des résultats d’Analyses', () => {
     for (let i = 1; i < top.length; i += 1) expect(Math.abs(top[i - 1].points)).toBeGreaterThanOrEqual(Math.abs(top[i].points))
   })
 
+  it('POLISH-SIM-143 : au court terme, un jour inconnu (sans repas noté) ne lit que la veille, et le dit', () => {
+    const f = { key: 'fiber_g', label: 'Fibres', theme: 'nutrition', horizon: 'short', inModel: true, perUnit: 0.05, center: 12 }
+    const res = { outcomes: { wellbeing: { horizons: { short: { factors: [f] } } } } }
+    const eve = dayContributions(res, [], '2026-11-22', { days: new Map([['2026-11-21', { fiber_g: 3 }], ['2026-11-22', { fiber_g: null }]]) })
+    expect(eve).toHaveLength(1)
+    expect(eve[0]).toMatchObject({ key: 'fiber_g', value: 3, eveOnly: true })
+    const both = dayContributions(res, [], '2026-11-22', { days: new Map([['2026-11-21', { fiber_g: 3 }], ['2026-11-22', { fiber_g: 5 }]]) })
+    expect(both[0].value).toBe(4)
+    expect(both[0].eveOnly).toBeUndefined()
+  })
+
   it('contributions sur le modèle : une barre par facteur, seulement les termes du modèle, tous les jours', () => {
     const { entries, steps, now } = world({ days: 70 })
     const res = computeAnalysisResults(entries, { now })

@@ -208,6 +208,11 @@ export function contributionText(c) {
     return `Nuit plus ${up ? 'longue' : 'courte'} ${HABIT} (${formatDuration(c.dayValue)})`
   }
   const shown = p.value(Math.max(0, c.value), c.horizon)
+  // POLISH-SIM-143 : le jour même inconnu (aucun repas noté), seule la veille a compté : on le dit.
+  if (c.eveOnly && c.horizon === 'short') {
+    const what = c.key === 'sleepMinutes' ? `nuit plus ${up ? 'longue' : 'courte'}` : p.say(up).replace(/^./, (x) => x.toLowerCase())
+    return `La veille, ${what} ${HABIT}${shown ? ` (${shown})` : ''}`
+  }
   return `${p.say(up)} ${HABIT}${WHEN[c.horizon] ?? ''}${shown ? ` (${shown})` : ''}`
 }
 
