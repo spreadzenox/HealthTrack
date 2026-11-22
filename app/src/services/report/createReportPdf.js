@@ -40,21 +40,25 @@ export function bytesToBase64(bytes) {
   return btoa(bin)
 }
 
-async function isAndroidNative() {
+/** 'android' ou 'ios' dans l'app installée, null dans un navigateur. */
+async function nativePlatform() {
   try {
     const { Capacitor } = await import('@capacitor/core')
-    return Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android'
+    const p = Capacitor.isNativePlatform() ? Capacitor.getPlatform() : null
+    return p === 'android' || p === 'ios' ? p : null
   } catch {
-    return false
+    return null
   }
 }
 
 /**
- * Android : écrit le PDF dans Documents puis ouvre la feuille de partage ; ailleurs : téléchargement.
- * @returns {Promise<{ saved: 'documents'|'download', shared: boolean }>}
+ * Android et iPhone (où un lien de téléchargement ne fait rien) : écrit le PDF dans Documents puis ouvre la feuille
+ * de partage ; dans un navigateur : téléchargement.
+ * @returns {Promise<{ saved: 'documents'|'download', shared: boolean, platform: string }>}
  */
-export async function saveAndShareReport({ bytes, fileName }, { native = isAndroidNative } = {}) {
-  if (await native()) {
+export async function saveAndShareReport({ bytes, fileName }, { native = nativePlatform } = {}) {
+  const platform = await native()
+  if (platform) {
     const { Filesystem, Directory } = await import('@capacitor/filesystem')
     const { uri } = await Filesystem.writeFile({
       path: fileName,
@@ -70,7 +74,7 @@ export async function saveAndShareReport({ bytes, fileName }, { native = isAndro
     } catch {
       // Partage annulé ou indisponible : le fichier reste dans Documents
     }
-    return { saved: 'documents', shared }
+    return { saved: 'documents', shared, platform }
   }
   const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }))
   const a = document.createElement('a')
@@ -80,5 +84,5 @@ export async function saveAndShareReport({ bytes, fileName }, { native = isAndro
   a.click()
   document.body.removeChild(a)
   setTimeout(() => URL.revokeObjectURL(url), 1000)
-  return { saved: 'download', shared: false }
+  return { saved: 'download', shared: false, platform: 'web' }
 }

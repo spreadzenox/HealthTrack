@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **22/11 13:30** — **FUSION-3, correctif iPhone 09 fondu** (rien de visible sur Android) : sur iPhone, la sauvegarde JSON et le rapport PDF passent par Documents puis la feuille de partage depuis le code partagé (condition sur la plateforme) ; 37 correctifs restent.
 - **22/11 12:30** — **FUSION-3, correctif iPhone 61 fondu** (rien de visible sur Android) : la carte « Suivi du cycle (Santé) » de Réglages › Sources (`app/src/ios/CycleSanteCard.jsx`) vit dans le code partagé et ne s'affiche que sur iPhone ; 38 correctifs restent.
 - **22/11 11:30** — **FUSION-3, correctif iPhone 58 fondu** (rien de visible sur Android) : la lecture du cycle dans l'app Santé (`app/src/ios/cycleSante.js`) et son appel dans le connecteur Santé vivent dans le code partagé, sous la plateforme ; 39 correctifs restent. #1193 (EXPORT-CSV) mergée, v866.
 - **22/11 10:30** — **EXPORT-CSV** (décision du 20/10, « export CSV / JSON » gratuit pour toujours) : Réglages › Sauvegarde, carte « Exporter pour un tableur », « Télécharger en CSV » : toutes les saisies, une ligne par saisie (Date ; Heure ; Quoi ; Type ; Source ; Aliments, puis une colonne par champ), lisible par Excel en français (point-virgule, virgule décimale, BOM). Fichier écrit sur le téléphone, partagé seulement sur geste : Sécurité des données inchangée. Code partagé, iPhone compris (Documents puis feuille de partage).

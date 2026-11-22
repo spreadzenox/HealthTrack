@@ -814,6 +814,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   cycle dans Sources, `CycleSanteCard.jsx`), puis 09 avec `saveTextFile.js`.
   22/11 12:30 : correctif 61 fondu (`app/src/ios/CycleSanteCard.jsx` et son test, affichée par `Connectors.jsx`, vide
   hors iPhone, test `CycleSanteCard.android.test.jsx`) ; 38 restent. Suivant : 09 avec `saveTextFile.js`.
+  22/11 13:30 : correctif 09 fondu (sauvegarde JSON et rapport PDF par Documents puis la feuille de partage sur
+  iPhone, message « … est aussi dans l’app Fichiers › Sur mon iPhone › Halcya. ») : `Data.jsx` et `createReportPdf.js`
+  passent par la plateforme (`android` ou `ios`), `saveAndShareReport` rend `platform`, `DoctorReportCard.jsx` choisit
+  le message sur elle ; tests dans `Data.test.jsx`, `DoctorReportCard.test.jsx`, `createReportPdf.ios.test.js` (venu
+  d'`overlay/`). Sans `FEATURES` dans `Data.jsx` : le correctif 06 l'importe encore. 37 restent. Suivant : 11 et 12
+  (copie de secours, `Data.jsx` + `overlay/app/src/ios/snapshot.js`) ou 06 (textes de `Data.jsx`).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).

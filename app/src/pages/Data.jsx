@@ -11,12 +11,14 @@ import { appLocale, localeDate } from '../i18n/locale.js'
 import { monoDigits } from '../utils/monoDigits'
 import CsvExportCard from '../components/CsvExportCard'
 
-async function isAndroidNative() {
+/** 'android' ou 'ios' dans l'app installée (un lien de téléchargement ne fait rien sur iPhone), null ailleurs. */
+async function nativePlatform() {
   try {
     const { Capacitor } = await import('@capacitor/core')
-    return Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android'
+    const p = Capacitor.isNativePlatform() ? Capacitor.getPlatform() : null
+    return p === 'android' || p === 'ios' ? p : null
   } catch {
-    return false
+    return null
   }
 }
 
@@ -94,16 +96,28 @@ export default function Data() {
       const json = await exportToJson()
       const filename = `${EXPORT_FILE_PREFIX}${new Date().toISOString().slice(0, 10)}.json`
 
-      if (await isAndroidNative()) {
+      const platform = await nativePlatform()
+      if (platform) {
         const { Filesystem, Directory } = await import('@capacitor/filesystem')
         // Convert JSON string to base64 for Filesystem.writeFile
         const base64 = btoa(unescape(encodeURIComponent(json)))
-        await Filesystem.writeFile({
+        const written = await Filesystem.writeFile({
           path: filename,
           data: base64,
           directory: Directory.Documents,
         })
-        setExportStatus(`${filename} enregistré dans Documents (app Fichiers > Téléphone > Documents).`)
+        if (platform === 'ios') {
+          // Feuille de partage d'iOS : l'envoyer ou l'enregistrer ailleurs (Fichiers, AirDrop, mail…)
+          try {
+            const { Share } = await import('@capacitor/share')
+            await Share.share({ title: filename, files: [written.uri], dialogTitle: 'Enregistrer la sauvegarde' })
+          } catch {
+            // Partage annulé : le fichier reste dans Documents
+          }
+          setExportStatus(`${filename} est aussi dans l’app Fichiers › Sur mon iPhone › ${APP_NAME}.`)
+        } else {
+          setExportStatus(`${filename} enregistré dans Documents (app Fichiers > Téléphone > Documents).`)
+        }
       } else {
         const blob = new Blob([json], { type: 'application/json' })
         const url = URL.createObjectURL(blob)
