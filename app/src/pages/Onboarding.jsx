@@ -721,7 +721,7 @@ function NotesStep({ gut, habits, onHabits }) {
   return (
     <>
       <h1 className="onb-title">Ce que vous noterez chaque jour</h1>
-      <p className="onb-lead">Décochez les habitudes qui ne vous parlent pas.</p>
+      <p className="onb-lead">Cochez les habitudes qui vous parlent.</p>
       <ul className="onb-notes" aria-label="Chaque jour">
         {notes.map((n) => (
           <li key={n.id} data-tone={n.tone}>

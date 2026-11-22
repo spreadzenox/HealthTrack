@@ -332,7 +332,7 @@ export default function WellbeingPrompt({ open = false, onClose, onSaved, entry,
               )
             })}
           </div>
-          {autoHints.length > 0 && <p className="wellbeing-tags-hint">Repéré sans vous : {autoHints.join(', ')}.</p>}
+          {autoHints.length > 0 && <p className="wellbeing-tags-hint">Suivi sans vous, inutile de cocher : {autoHints.join(', ')}.</p>}
 
           <label className="wellbeing-phrase">
             <span className="wellbeing-tags-title">

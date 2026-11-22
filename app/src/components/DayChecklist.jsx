@@ -150,7 +150,7 @@ export default function DayChecklist({ entries, askGut = false, habits = [], now
                 {t.habit && <HabitLine habit={t.habit} onAnswer={onHabit} />}
                 {t.id === 'gut' && (
                   <NoteLine title="Votre digestion ce soir" hint={`À partir de ${GUT_EVENING_FROM_HOUR} h`}
-                    sub={t.moment ? `Noté à ${hhmm(t.moment.at)} : ${gutLevelLabel(t.moment.payload?.level)}` : null}
+                    sub={t.moment ? `Dans la journée : ${gutLevelLabel(t.moment.payload?.level).toLowerCase()} à ${hhmm(t.moment.at)}` : null}
                     onNote={t.available ? onGut : undefined} />
                 )}
               </>

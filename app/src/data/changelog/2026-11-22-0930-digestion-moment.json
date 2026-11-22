@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-22",
+  "kind": "amélioration",
+  "title": "Une gêne notée le matin n'est plus prise pour le bilan du soir",
+  "items": [
+    "Dans Ma journée, une gêne notée dans la journée s'affiche « Dans la journée : gêne à 08:34 ». Le bilan de la digestion reste à faire le soir, à partir de 18 h.",
+    "Sur l'Accueil, la bulle Digestion le rappelle et propose « Noter un moment » : une gêne ou une douleur se note à tout moment.",
+    "Au premier lancement, l'écran des habitudes dit « Cochez les habitudes qui vous parlent. », et la note de bien-être dit « Suivi sans vous » pour ce que l'app repère seule."
+  ]
+}

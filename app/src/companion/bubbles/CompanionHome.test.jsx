@@ -85,10 +85,13 @@ describe('CompanionHome — les bulles', () => {
     expect(screen.getByRole('meter')).toHaveAttribute('aria-valuetext', 'De bonne humeur')
   })
 
-  it('la digestion attend le soir et le dit', () => {
+  it('la digestion attend le soir et le dit ; un moment se note tout de suite (POLISH-SIM-139)', () => {
     renderHome({ askGut: true })
     fireEvent.click(screen.getByRole('button', { name: /^Digestion, à partir de/ }))
-    expect(screen.getByRole('dialog')).toHaveTextContent(/se note le soir/)
+    const sheet = screen.getByRole('dialog')
+    expect(sheet).toHaveTextContent('Le bilan de la journée se note le soir, à partir de 18 h.')
+    expect(sheet).toHaveTextContent('Une gêne ou une douleur se note à tout moment.')
+    expect(within(sheet).getByRole('link', { name: 'Noter un moment' })).toHaveAttribute('href', '/ma-journee')
   })
 })
 

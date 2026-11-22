@@ -425,6 +425,9 @@ describe('Temps 4 : « Ce que vous noterez chaque jour »', () => {
   it('cocher, décocher : le réglage des habitudes suit aussitôt, le résumé aussi', () => {
     at('notes', { goals: ['wellbeing'] })
     renderAt()
+    // POLISH-SIM-140 : une seule habitude cochée d'office, le texte invite à cocher
+    expect(screen.getByText('Cochez les habitudes qui vous parlent.')).toBeInTheDocument()
+    expect(screen.queryByText(/Décochez/)).not.toBeInTheDocument()
     fireEvent.click(check('Étirements'))
     expect(getHabits().map((h) => h.id)).toEqual(['meditation', 'stretching'])
     expect(screen.getByRole('status')).toHaveTextContent('Repas, bien-être et 2 habitudes')
