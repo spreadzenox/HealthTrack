@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **22/11 23:30** — **FUSION-3, correctif iPhone 18 fondu** (rien de visible) : sur iPhone, toucher le rappel de portion ouvre la portion depuis le code partagé (`Layout.jsx`, `app/src/ios/portionOpen.js`) ; 15 correctifs restent. #1205 (« La veille » un jour sans repas) mergée.
 - **22/11 22:30** — **POLISH-SIM-143** : Tendances › Jour, un jour sans repas noté, les facteurs de nutrition ne viennent que de la veille et la ligne le dit (« La veille, moins de fibres que d’habitude (3 g) »). #1204 mergée. Code partagé, iPhone compris.
 - **22/11 21:30** — **POLISH-SIM-142 et 144** : l'exemple du jour 14 de la visite guidée ne fait plus monter la jauge « Humeur de Pilou » de la vraie journée (cran calculé sans être écrit en mode exemple) ; Tendances › Jour dit « le cercle gris, votre habitude ». Code partagé, iPhone compris.
 - **22/11 20:30** — **Personas du soir** (run « idées ») : Prendre soin de soi J1 (iPhone seul), Tout mesurer J14 (Android seul) ; POLISH-SIM-142 à 144 et PERSONAS-OUTIL-1 au BACKLOG ; poids sans balance à proposer avec maquette (2e persona). #1202 mergée.

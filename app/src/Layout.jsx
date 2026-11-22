@@ -13,6 +13,7 @@ import { takePilouWidgetOpen } from './companion/world/widgetSync'
 import { FEATURES } from './config/distribution'
 import { loadOnboarding, needsOnboarding } from './settings/onboarding'
 import { takePortionOpen } from './services/fodmapReminder'
+import { onPortionOpen } from './ios/portionOpen'
 import './App.css'
 
 /** Pendant le chargement d'une page (fichier séparé, quelques ms). */
@@ -92,7 +93,11 @@ function usePortionOpen() {
     }
     check()
     document.addEventListener('visibilitychange', check)
-    return () => document.removeEventListener('visibilitychange', check)
+    const offIos = onPortionOpen(check) // iPhone : toucher transmis après le retour au premier plan
+    return () => {
+      document.removeEventListener('visibilitychange', check)
+      offIos()
+    }
   }, [navigate])
 }
 
