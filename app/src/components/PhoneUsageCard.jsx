@@ -21,6 +21,7 @@ import { APP_CATEGORY_LABELS } from '../services/phoneApps'
 import { formatAgo } from '../utils/timeAgo'
 import useDisclosure from '../hooks/useDisclosure'
 import { APP_NAME } from '../config/brand'
+import { FEATURES } from '../config/distribution'
 import './MyDevices.css'
 import './WeatherCard.css'
 import './PhoneUsageCard.css'
@@ -115,6 +116,10 @@ export default function PhoneUsageCard({
   const night = today?.sleepEstimate
   const apps = settings.todayApps?.date === today?.date ? appsLine(settings.todayApps?.minutes) : null
 
+  // iPhone (variante appstore) : avant iOS 26.4, l'iPhone ne donne pas le temps d'écran aux apps ; la carte n'est pas
+  // proposée (retours du premier testeur, 06/11), sauf si elle avait déjà été activée (elle dit alors de mettre à jour)
+  if (FEATURES.iosStore && access?.supported === false && !on) return null
+
   return (
     <section className="weather-card" aria-labelledby="phone-usage-title">
       <div className="my-device-head">
@@ -139,7 +144,7 @@ export default function PhoneUsageCard({
       )}
 
       {!available && (
-        <p className="my-device-message">Disponible dans l’app Android.</p>
+        <p className="my-device-message">{FEATURES.iosStore ? 'Pas encore disponible sur iPhone.' : 'Disponible dans l’app Android.'}</p>
       )}
 
       {available && !on && (

@@ -824,6 +824,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   `SnapshotRestore.jsx`, `SnapshotWelcome.jsx` et leurs tests ; lancée par `main.jsx` en appstore, restauration montée
   par `Data.jsx` et `Onboarding.jsx` sur iOS seulement, effacée par `deleteAllData.js`, test `snapshot.android.test.jsx`) ;
   phrase de Sauvegarde reprise dans le correctif 06 ; 33 restent. Suivant : 06 (textes) ou 13 (divulgation Santé).
+  22/11 15:30 : #1197 mergée. Correctifs 44 et 52 (temps d'écran sur iPhone) et la partie `PhoneUsageCard.jsx` du 07
+  fondus sous `FEATURES.iosStore` (déjà utilisé par `RemindersSetting.jsx`, faux sur Android) ; le 07 ne garde que
+  `WatchDiagnostic.jsx` ; test Android dans `PhoneUsageCard.test.jsx`. 31 restent. Suivant : 34 (temps d'écran
+  iPhone, `PhoneUsageCard.jsx`, `permissionDisclosures.js`, `phoneUsageSync.js`) ou 06 (textes).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
