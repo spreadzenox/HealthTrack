@@ -42,7 +42,7 @@ index 2a7f5c1..7a31cc8 100644
 -        l’app ou de changer de téléphone.
 +        Vos données sont sur ce téléphone et passent les mises à jour.{' '}
 +        {FEATURES.iosStore ? (
-+          'Avant de réinstaller ou de changer de téléphone, exportez-les.'
++          `Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › ${APP_NAME} ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.`
 +        ) : (
 +          <>
 +            Si la sauvegarde du téléphone est activée, elles y sont copiées, chiffrées ; {APP_NAME} ne la lit pas.

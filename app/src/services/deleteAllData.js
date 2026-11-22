@@ -10,6 +10,7 @@
  * prochaine synchro. Les dates de reprise gardées font que seules les nouvelles mesures arrivent ensuite.
  */
 import { deleteAllEntries } from '../storage/localHealthStorage'
+import { deleteDeviceSnapshot } from '../ios/snapshot.js'
 
 /** Clés effacées : données de santé ou dérivées (résultats d'analyse, journaux de connexion de la montre). */
 export const DELETED_KEYS = [
@@ -63,6 +64,7 @@ function removeAll(storage, keys) {
  */
 export async function deleteAllMyData() {
   const entries = await deleteAllEntries()
+  await deleteDeviceSnapshot() // iPhone : la copie de secours de Documents, après la base (rien ailleurs)
   removeAll(globalThis.localStorage, DELETED_KEYS)
   removeAll(globalThis.sessionStorage, SESSION_KEYS)
   window.dispatchEvent(new CustomEvent('health-entries-updated'))
