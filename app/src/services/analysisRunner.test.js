@@ -26,6 +26,12 @@ describe('analysisRunner — cache', () => {
     expect(runAnalysisTask).toHaveBeenCalledTimes(1)
   })
 
+  it('passe sa clé de cache à la tâche (lecture partagée entre tâches de même révision, PERF-JOUR)', async () => {
+    const now = new Date(2026, 10, 22, 9)
+    await getAnalysis('dayStates', now)
+    expect(runAnalysisTask).toHaveBeenCalledWith('dayStates', analysisCacheKey(now))
+  })
+
   it('met en cache un résultat nul (pas assez de données) sans recalculer', async () => {
     runAnalysisTask.mockResolvedValue(null)
     expect(await getAnalysis('todayPrediction')).toBeNull()

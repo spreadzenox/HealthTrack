@@ -114,18 +114,19 @@ function getWorker() {
   return worker
 }
 
-async function runOnMainThread(task) {
+async function runOnMainThread(task, key = null) {
   const { runAnalysisTask } = await import('../workers/analysisTasks')
-  return runAnalysisTask(task)
+  return runAnalysisTask(task, key)
 }
 
-function runInWorker(task) {
+/** `key` : les tâches de même clé partagent une seule lecture de la base (PERF-JOUR, analysisTasks.js). */
+function runInWorker(task, key) {
   const w = getWorker()
-  if (!w) return runOnMainThread(task)
+  if (!w) return runOnMainThread(task, key)
   return new Promise((resolve, reject) => {
     const id = nextId++
-    pending.set(id, { resolve, reject, fallback: () => runOnMainThread(task).then(resolve, reject) })
-    w.postMessage({ id, task })
+    pending.set(id, { resolve, reject, fallback: () => runOnMainThread(task, key).then(resolve, reject) })
+    w.postMessage({ id, task, key })
   })
 }
 
@@ -143,7 +144,7 @@ export function getAnalysis(task, now = new Date()) {
   const key = analysisCacheKey(now)
   const flightKey = `${task}|${key}`
   if (inFlight.has(flightKey)) return inFlight.get(flightKey)
-  const p = runInWorker(task)
+  const p = runInWorker(task, key)
     .then((result) => {
       // Une écriture pendant le calcul change la révision : le résultat reste rangé sous l'ancienne clé
       store(task, key, result ?? null)
