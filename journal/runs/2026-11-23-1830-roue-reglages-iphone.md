@@ -1,4 +1,4 @@
-# Run 23/11 18:30 — DEM-IOS-7 : « ⚙ Réglages » sur iPhone (PR en brouillon)
+# Run 23/11 18:30 — DEM-IOS-7 : « ⚙ Réglages » sur iPhone (#1222, en brouillon)
 
 **Type** : 🔧 · **Contrôle d'intégrité** : empreinte conforme (dd430fbd…) · **Android** : main 910c1d4 (#1221),
 release v890 · **TestFlight** : 1268.1268 validée pour « Testeurs Halcya » (relevé de 07:33 UTC), 1244.1244 attachée
