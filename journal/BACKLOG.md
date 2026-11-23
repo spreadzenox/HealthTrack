@@ -740,7 +740,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       visage ce jour-là »), la ligne du jour donne un chiffre tiré de rien, alors que l'Accueil demande encore de noter.
       Ne pas afficher de valeur du jour tant que la série n'a aucune observation (ni note ni lecture) ; « Pas encore
       de note » à la place. Tests d'abord.
-    - [ ] **POLISH-SIM-148 — Le cadeau du jour cache « Bien-être » sur l'île** (J1, vérifié : capture
+    - [x] **POLISH-SIM-148 — Le cadeau du jour cache « Bien-être » sur l'île** — FAIT 23/11 10:30 (`GIFT_SPOT` de `bubbles.js` : coin bas gauche, hors de l'orbite à toutes les rotations ; test `bubbles.test.js`) (J1, vérifié : capture
       `accueil-jour1sur7.png`) : la bulle dorée se pose sur le libellé de la bulle Bien-être (île de 412 px de large).
       Décaler le cadeau (bord de l'île) ou la bulle ; capture `npm run visual` au jour 1 avant et après.
     - [x] **POLISH-SIM-149 — « analyses digestives » au 28e jour, « premier score » au 14e** — FAIT 23/11 09:30 (titre « … avant vos pistes digestives » ; test `DigestBlock`) (J1, `DigestBlock.jsx`

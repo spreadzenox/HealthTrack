@@ -13,7 +13,7 @@ import MealPhotoButton from '../../components/MealPhotoButton'
 import LineIcon from '../../components/LineIcon'
 import BubbleIcon from './BubbleIcon'
 import ScrollBanner from './ScrollBanner'
-import { homeBubbles, habitQuestion, poppedMessage, bubblesLeftText, orbitWorld, stillProject, BUBBLE_RADIUS } from './bubbles'
+import { homeBubbles, habitQuestion, poppedMessage, bubblesLeftText, orbitWorld, stillProject, BUBBLE_RADIUS, GIFT_SPOT } from './bubbles'
 import { dayMood, MOOD_TOP } from './mood'
 import { isExampleMode } from '../../storage/exampleMode'
 import { islandFlowers, flowerForBus, flowersForBus } from './flowers'
@@ -464,6 +464,7 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
   )
   const giftBubble = week?.state === 'week' && week.todayGift && (
     <button type="button" className="cmp-gift-bubble" onClick={openTodayGift}
+      style={{ left: `${GIFT_SPOT.x * 100}%`, top: `${GIFT_SPOT.y * 100}%` }}
       aria-label={`Cadeau du jour pour ${name} : touchez pour l’ouvrir`}>
       <BubbleIcon name="gift" size={24} />
     </button>

@@ -110,6 +110,13 @@ export function stillProject(x, y, z) {
   }
 }
 
+/**
+ * Place de la bulle cadeau de la première semaine (fractions du cadre de l'îlot, centre de la bulle) : coin bas
+ * gauche, hors de l'orbite à toutes les rotations, au-dessus de l'étiquette de l'îlot (POLISH-SIM-148 : posée au
+ * milieu, elle cachait la bulle du créneau de devant).
+ */
+export const GIFT_SPOT = Object.freeze({ x: 0.07, y: 0.78 })
+
 /** Place des bulles sur le cadre de repli (fractions), pour les tests et l'îlot dessiné. */
 export function orbitLayout(n, phase = 0) {
   return orbitWorld(n, phase).map((p) => {

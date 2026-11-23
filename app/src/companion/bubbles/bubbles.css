@@ -370,8 +370,7 @@ label.cmp-bubble {
 .cmp-gift-bubble {
   position: absolute;
   z-index: 4;
-  left: 50%;
-  top: 80%;
+  /* left et top : GIFT_SPOT (bubbles.js), hors de l'orbite des bulles */
   width: 54px;
   height: 54px;
   margin: -27px 0 0 -27px;
