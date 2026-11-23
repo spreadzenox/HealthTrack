@@ -1,0 +1,499 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=16AFAE62-8F15-4D89-8041-9A6510AE4913 "-only-testing:HalcyaUITests/NotificationsUITests/testToucherLeRappelDePortion"
+
+2026-11-23 21:06:56.978 xcodebuild[61524:169115] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-23 21:06:57.084 xcodebuild[61524:169115] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:16AFAE62-8F15-4D89-8041-9A6510AE4913, OS:26.2, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:16AFAE62-8F15-4D89-8041-9A6510AE4913, OS:26.2, name:iPhone 16e }
+2026-11-23 21:07:10.635 xcodebuild[61524:169115] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-23 21:07:27.315909+0000 HalcyaUITests-Runner[62499:171518] [Default] Running tests...
+2026-11-23 21:07:27.622993+0000 HalcyaUITests-Runner[62499:171912] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-11-23 21:07:27.687207+0000 HalcyaUITests-Runner[62499:171904] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-23 21:07:37.480.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-23 21:07:37.482.
+Test Suite 'NotificationsUITests' started at 2026-11-23 21:07:37.482.
+Test Case '-[HalcyaUITests.NotificationsUITests testToucherLeRappelDePortion]' started.
+    t =     0.02s Start Test at 2026-11-23 21:07:37.497
+    t =     0.46s Set Up
+    t =     0.47s Pressing Home button
+    t =     1.28s Waiting 90.0s for Any (First Match) to exist
+    t =     2.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     2.32s         Checking existence of `Any (First Match)`
+    t =     3.62s         Capturing element debug description
+    t =     4.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     4.29s         Checking existence of `Any (First Match)`
+    t =     4.53s         Capturing element debug description
+    t =     5.31s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     5.31s         Checking existence of `Any (First Match)`
+    t =     5.52s         Capturing element debug description
+    t =     6.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     6.30s         Checking existence of `Any (First Match)`
+    t =     6.51s         Capturing element debug description
+    t =     7.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     7.32s         Checking existence of `Any (First Match)`
+    t =     7.58s         Capturing element debug description
+    t =     8.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     8.32s         Checking existence of `Any (First Match)`
+    t =     8.56s         Capturing element debug description
+    t =     9.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     9.30s         Checking existence of `Any (First Match)`
+    t =     9.48s         Capturing element debug description
+    t =    10.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    10.29s         Checking existence of `Any (First Match)`
+    t =    10.54s         Capturing element debug description
+    t =    11.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    11.30s         Checking existence of `Any (First Match)`
+    t =    11.53s         Capturing element debug description
+    t =    12.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    12.35s         Checking existence of `Any (First Match)`
+    t =    12.57s         Capturing element debug description
+    t =    13.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    13.32s         Checking existence of `Any (First Match)`
+    t =    13.55s         Capturing element debug description
+    t =    14.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    14.30s         Checking existence of `Any (First Match)`
+    t =    14.50s         Capturing element debug description
+    t =    15.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    15.35s         Checking existence of `Any (First Match)`
+    t =    15.54s         Capturing element debug description
+    t =    16.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    16.29s         Checking existence of `Any (First Match)`
+    t =    16.56s         Capturing element debug description
+    t =    17.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    17.30s         Checking existence of `Any (First Match)`
+    t =    17.59s         Capturing element debug description
+    t =    18.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    18.32s         Checking existence of `Any (First Match)`
+    t =    18.59s         Capturing element debug description
+    t =    19.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    19.32s         Checking existence of `Any (First Match)`
+    t =    19.54s         Capturing element debug description
+    t =    20.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    20.32s         Checking existence of `Any (First Match)`
+    t =    20.58s         Capturing element debug description
+    t =    21.31s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    21.32s         Checking existence of `Any (First Match)`
+    t =    21.58s         Capturing element debug description
+    t =    22.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    22.32s         Checking existence of `Any (First Match)`
+    t =    22.51s         Capturing element debug description
+    t =    23.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    23.35s         Checking existence of `Any (First Match)`
+    t =    23.64s         Capturing element debug description
+    t =    24.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    24.32s         Checking existence of `Any (First Match)`
+    t =    24.53s         Capturing element debug description
+    t =    25.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    25.35s         Checking existence of `Any (First Match)`
+    t =    25.59s         Capturing element debug description
+    t =    26.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    26.32s         Checking existence of `Any (First Match)`
+    t =    26.56s         Capturing element debug description
+    t =    27.31s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    27.31s         Checking existence of `Any (First Match)`
+    t =    27.56s         Capturing element debug description
+    t =    28.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    28.30s         Checking existence of `Any (First Match)`
+    t =    28.56s         Capturing element debug description
+    t =    29.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    29.29s         Checking existence of `Any (First Match)`
+    t =    29.52s         Capturing element debug description
+    t =    30.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    30.29s         Checking existence of `Any (First Match)`
+    t =    30.52s         Capturing element debug description
+    t =    31.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    31.35s         Checking existence of `Any (First Match)`
+    t =    31.53s         Capturing element debug description
+    t =    32.36s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    32.36s         Checking existence of `Any (First Match)`
+    t =    32.60s         Capturing element debug description
+    t =    33.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    33.32s         Checking existence of `Any (First Match)`
+    t =    33.54s         Capturing element debug description
+    t =    34.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    34.35s         Checking existence of `Any (First Match)`
+    t =    34.58s         Capturing element debug description
+    t =    35.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    35.32s         Checking existence of `Any (First Match)`
+    t =    35.53s         Capturing element debug description
+    t =    36.33s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    36.33s         Checking existence of `Any (First Match)`
+    t =    36.58s         Capturing element debug description
+    t =    37.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    37.32s         Checking existence of `Any (First Match)`
+    t =    37.56s         Capturing element debug description
+    t =    38.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    38.33s         Checking existence of `Any (First Match)`
+    t =    38.61s         Capturing element debug description
+    t =    39.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    39.32s         Checking existence of `Any (First Match)`
+    t =    39.58s         Capturing element debug description
+    t =    40.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    40.32s         Checking existence of `Any (First Match)`
+    t =    40.62s         Capturing element debug description
+    t =    41.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    41.35s         Checking existence of `Any (First Match)`
+    t =    41.62s         Capturing element debug description
+    t =    42.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    42.36s         Checking existence of `Any (First Match)`
+    t =    42.61s         Capturing element debug description
+    t =    43.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    43.35s         Checking existence of `Any (First Match)`
+    t =    43.65s         Capturing element debug description
+    t =    44.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    44.29s         Checking existence of `Any (First Match)`
+    t =    44.59s         Capturing element debug description
+    t =    45.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    45.32s         Checking existence of `Any (First Match)`
+    t =    45.57s         Capturing element debug description
+    t =    46.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    46.30s         Checking existence of `Any (First Match)`
+    t =    46.56s         Capturing element debug description
+    t =    47.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    47.30s         Checking existence of `Any (First Match)`
+    t =    47.59s         Capturing element debug description
+    t =    48.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    48.32s         Checking existence of `Any (First Match)`
+    t =    48.59s         Capturing element debug description
+    t =    49.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    49.32s         Checking existence of `Any (First Match)`
+    t =    49.63s         Capturing element debug description
+    t =    50.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    50.35s         Checking existence of `Any (First Match)`
+    t =    50.58s         Capturing element debug description
+    t =    51.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    51.30s         Checking existence of `Any (First Match)`
+    t =    51.55s         Capturing element debug description
+    t =    52.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    52.29s         Checking existence of `Any (First Match)`
+    t =    52.54s         Capturing element debug description
+    t =    53.36s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    53.36s         Checking existence of `Any (First Match)`
+    t =    53.60s         Capturing element debug description
+    t =    54.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    54.32s         Checking existence of `Any (First Match)`
+    t =    54.59s         Capturing element debug description
+    t =    55.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    55.30s         Checking existence of `Any (First Match)`
+    t =    55.62s         Capturing element debug description
+    t =    56.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    56.32s         Checking existence of `Any (First Match)`
+    t =    56.53s         Capturing element debug description
+    t =    57.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    57.32s         Checking existence of `Any (First Match)`
+    t =    57.59s         Capturing element debug description
+    t =    58.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    58.32s         Checking existence of `Any (First Match)`
+    t =    58.53s         Capturing element debug description
+    t =    59.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    59.32s         Checking existence of `Any (First Match)`
+    t =    59.63s         Capturing element debug description
+    t =    60.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    60.32s         Checking existence of `Any (First Match)`
+    t =    60.62s         Capturing element debug description
+    t =    61.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    61.35s         Checking existence of `Any (First Match)`
+    t =    61.59s         Capturing element debug description
+    t =    62.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    62.32s         Checking existence of `Any (First Match)`
+    t =    62.59s         Capturing element debug description
+    t =    63.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    63.32s         Checking existence of `Any (First Match)`
+    t =    63.65s         Capturing element debug description
+    t =    64.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    64.30s         Checking existence of `Any (First Match)`
+    t =    64.51s         Capturing element debug description
+    t =    65.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    65.32s         Checking existence of `Any (First Match)`
+    t =    65.51s         Capturing element debug description
+    t =    66.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    66.32s         Checking existence of `Any (First Match)`
+    t =    66.48s         Capturing element debug description
+    t =    67.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    67.32s         Checking existence of `Any (First Match)`
+    t =    67.51s         Capturing element debug description
+    t =    68.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    68.32s         Checking existence of `Any (First Match)`
+    t =    68.57s         Capturing element debug description
+    t =    69.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    69.31s         Checking existence of `Any (First Match)`
+    t =    69.61s         Capturing element debug description
+    t =    70.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    70.32s         Checking existence of `Any (First Match)`
+    t =    70.51s         Capturing element debug description
+    t =    71.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    71.31s         Checking existence of `Any (First Match)`
+    t =    71.63s         Capturing element debug description
+    t =    72.37s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    72.37s         Checking existence of `Any (First Match)`
+    t =    72.61s         Capturing element debug description
+    t =    73.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    73.32s         Checking existence of `Any (First Match)`
+    t =    73.60s         Capturing element debug description
+    t =    74.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    74.32s         Checking existence of `Any (First Match)`
+    t =    74.62s         Capturing element debug description
+    t =    75.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    75.32s         Checking existence of `Any (First Match)`
+    t =    75.57s         Capturing element debug description
+    t =    76.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    76.30s         Checking existence of `Any (First Match)`
+    t =    76.57s         Capturing element debug description
+    t =    77.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    77.30s         Checking existence of `Any (First Match)`
+    t =    77.52s         Capturing element debug description
+    t =    78.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    78.32s         Checking existence of `Any (First Match)`
+    t =    78.55s         Capturing element debug description
+    t =    79.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    79.32s         Checking existence of `Any (First Match)`
+    t =    79.69s         Capturing element debug description
+    t =    80.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    80.32s         Checking existence of `Any (First Match)`
+    t =    80.57s         Capturing element debug description
+    t =    81.29s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    81.30s         Checking existence of `Any (First Match)`
+    t =    81.61s         Capturing element debug description
+    t =    82.35s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    82.35s         Checking existence of `Any (First Match)`
+    t =    82.68s         Capturing element debug description
+    t =    83.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    83.32s         Checking existence of `Any (First Match)`
+    t =    83.63s         Capturing element debug description
+    t =    84.37s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    84.37s         Checking existence of `Any (First Match)`
+    t =    84.61s         Capturing element debug description
+    t =    85.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    85.32s         Checking existence of `Any (First Match)`
+    t =    85.60s         Capturing element debug description
+    t =    86.33s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    86.34s         Checking existence of `Any (First Match)`
+    t =    86.58s         Capturing element debug description
+    t =    87.30s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    87.30s         Checking existence of `Any (First Match)`
+    t =    87.50s         Capturing element debug description
+    t =    88.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    88.32s         Checking existence of `Any (First Match)`
+    t =    88.60s         Capturing element debug description
+    t =    89.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    89.33s         Checking existence of `Any (First Match)`
+    t =    89.59s         Capturing element debug description
+    t =    90.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    90.32s         Checking existence of `Any (First Match)`
+    t =    90.58s         Capturing element debug description
+    t =    91.32s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    91.32s         Checking existence of `Any (First Match)`
+    t =    91.48s         Capturing element debug description
+    t =    91.48s     Checking existence of `Any (First Match)`
+    t =    91.68s Collecting debug information to assist test failure triage
+    t =    91.69s     Requesting snapshot of accessibility hierarchy for app with pid 11105
+    t =    92.31s Requesting snapshot of accessibility hierarchy for app with pid 11105
+    t =    93.62s Requesting snapshot of accessibility hierarchy for app with pid 11105
+Attributes: Application, 0x10434fd50, pid: 11105, label: ' '
+Element subtree:
+ →Application, 0x10434fd50, pid: 11105, label: ' '
+    Window, 0x10462a1f0, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x104644d80, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x104649c60, {{0.0, 0.0}, {390.0, 844.0}}
+          Other, 0x104644c30, {{0.0, 0.0}, {390.0, 100.0}}
+        Other, 0x10462a310, {{0.0, 0.0}, {390.0, 844.0}}, identifier: 'Home screen icons'
+          Other, 0x104649d80, {{0.0, 0.0}, {390.0, 844.0}}
+            Other, 0x104649ea0, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x10464a1c0, {{390.0, 0.0}, {390.0, 844.0}}
+              Icon, 0x10464a2e0, {{0.0, 0.0}, {0.0, 0.0}}
+                Icon, 0x10464a400, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'Plans', label: 'Plans'
+                Icon, 0x10464a520, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'Calendrier', label: 'Calendrier'
+                Icon, 0x10464a7a0, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'Calendrier', label: 'Calendrier', value: lundi 23 novembre
+                Icon, 0x10464a8c0, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'Photos', label: 'Photos'
+                Icon, 0x10464a9e0, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'Rappels', label: 'Rappels'
+                Icon, 0x10464ab00, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'News', label: 'News'
+                Icon, 0x10464ac20, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'Plans', label: 'Plans'
+                Icon, 0x10464ad40, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'Santé', label: 'Santé'
+                Icon, 0x10464ae60, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'Cartes', label: 'Cartes'
+                Icon, 0x10464af80, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'Réglages', label: 'Réglages'
+              Icon, 0x10464c740, {{0.0, 0.0}, {0.0, 0.0}}
+                Icon, 0x10464c860, {{26.0, 65.0}, {68.0, 90.7}}, identifier: 'Fitness', label: 'Fitness'
+                  Other, 0x10464c980, {{28.0, 67.0}, {64.0, 78.0}}
+                    Other, 0x10464caa0, {{28.0, 67.0}, {64.0, 64.0}}
+                      Other, 0x10464cbc0, {{28.0, 67.0}, {64.0, 64.0}}
+                        Other, 0x10464cce0, {{28.0, 67.0}, {64.0, 64.0}}
+                    Other, 0x10464ce00, {{31.0, 134.0}, {57.7, 19.7}}, identifier: 'label-view'
+                      Other, 0x10464cf20, {{31.0, 134.0}, {57.7, 19.7}}
+                      Other, 0x10464d040, {{31.0, 134.0}, {57.7, 19.7}}
+                        Image, 0x10464d160, {{22.0, 124.0}, {75.7, 39.7}}
+                        Image, 0x10464d280, {{31.0, 134.0}, {57.7, 19.7}}
+                Icon, 0x10464d3a0, {{116.0, 65.0}, {68.0, 90.7}}, identifier: 'Watch', label: 'Watch'
+                  Other, 0x10464d4c0, {{118.0, 67.0}, {64.0, 78.0}}
+                    Other, 0x10464d5e0, {{118.0, 67.0}, {64.0, 64.0}}
+                      Other, 0x10464d700, {{118.0, 67.0}, {64.0, 64.0}}
+                        Other, 0x10464d820, {{118.0, 67.0}, {64.0, 64.0}}
+                    Other, 0x10464d940, {{123.3, 134.0}, {52.7, 19.7}}, identifier: 'label-view'
+                      Other, 0x10464da60, {{123.3, 134.0}, {52.7, 19.7}}
+                      Other, 0x10464db80, {{123.3, 134.0}, {52.7, 19.7}}
+                        Image, 0x10464dca0, {{114.3, 124.0}, {70.7, 39.7}}
+                        Image, 0x10464ddc0, {{123.3, 134.0}, {52.7, 19.7}}
+                Icon, 0x10464dee0, {{203.7, 65.0}, {72.3, 90.7}}, identifier: 'Contacts', label: 'Contacts'
+                  Other, 0x10464e000, {{208.0, 67.0}, {64.0, 78.0}}
+                    Other, 0x10464e120, {{208.0, 67.0}, {64.0, 64.0}}
+                      Other, 0x10464e240, {{208.0, 67.0}, {64.0, 64.0}}
+                        Other, 0x10464e360, {{208.0, 67.0}, {64.0, 64.0}}
+                    Other, 0x10464e480, {{205.7, 134.0}, {68.3, 19.7}}, identifier: 'label-view'
+                      Other, 0x10464e5a0, {{205.7, 134.0}, {68.3, 19.7}}
+                      Other, 0x10464e6c0, {{205.7, 134.0}, {68.3, 19.7}}
+                        Image, 0x10464e7e0, {{180.3, 124.0}, {118.7, 39.7}}
+                        Image, 0x10464e900, {{205.7, 134.0}, {68.3, 19.7}}
+                Icon, 0x10464ea20, {{296.0, 65.0}, {68.0, 90.7}}, identifier: 'Fichiers', label: 'Fichiers'
+                  Other, 0x10464eb40, {{298.0, 67.0}, {64.0, 78.0}}
+                    Other, 0x10464ec60, {{298.0, 67.0}, {64.0, 64.0}}
+                      Other, 0x10464ed80, {{298.0, 67.0}, {64.0, 64.0}}
+                        Other, 0x10464eea0, {{298.0, 67.0}, {64.0, 64.0}}
+                    Other, 0x10464efc0, {{299.0, 134.0}, {61.3, 19.7}}, identifier: 'label-view'
+                      Other, 0x10464f0e0, {{299.0, 134.0}, {61.3, 19.7}}
+                      Other, 0x10464f200, {{299.0, 134.0}, {61.3, 19.7}}
+                        Image, 0x10464f320, {{270.3, 124.0}, {118.7, 39.7}}
+                        Image, 0x10464f440, {{299.0, 134.0}, {61.3, 19.7}}
+                Icon, 0x10464f560, {{26.0, 163.0}, {68.0, 90.7}}, identifier: 'Aperçu', label: 'Aperçu'
+                  Other, 0x10464f680, {{28.0, 165.0}, {64.0, 78.0}}
+                    Other, 0x10464f7a0, {{28.0, 165.0}, {64.0, 64.0}}
+                      Other, 0x10464f8c0, {{28.0, 165.0}, {64.0, 64.0}}
+                        Other, 0x10464f9e0, {{28.0, 165.0}, {64.0, 64.0}}
+                    Other, 0x10464fb00, {{31.0, 232.0}, {57.3, 19.7}}, identifier: 'label-view'
+                      Other, 0x10464fc20, {{31.0, 232.0}, {57.3, 19.7}}
+                      Other, 0x10464fd40, {{31.0, 232.0}, {57.3, 19.7}}
+                        Image, 0x10464fe60, {{21.7, 222.0}, {75.7, 39.7}}
+                        Image, 0x10464ff80, {{31.0, 232.0}, {57.3, 19.7}}
+                Icon, 0x1046500a0, {{112.0, 163.0}, {75.7, 90.7}}, identifier: 'Utilitaires', label: 'dossier Utilitaires', value: 2 apps
+                  Icon, 0x1046501c0, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'Raccourcis', label: 'Raccourcis'
+                  Icon, 0x1046502e0, {{0.0, 0.0}, {0.0, 0.0}}, identifier: 'Mots de passe', label: 'Mots de passe'
+                Icon, 0x104650400, {{206.0, 163.0}, {68.0, 90.7}}, identifier: 'Halcya', label: 'Halcya'
+                  Other, 0x104650520, {{208.0, 165.0}, {64.0, 78.0}}
+                    Other, 0x104650640, {{208.0, 165.0}, {64.0, 64.0}}
+                      Other, 0x104650760, {{208.0, 165.0}, {64.0, 64.0}}
+                        Other, 0x104650880, {{208.0, 165.0}, {64.0, 64.0}}
+                    Other, 0x1046509a0, {{212.0, 232.0}, {55.3, 19.7}}, identifier: 'label-view'
+                      Other, 0x104650ac0, {{212.0, 232.0}, {55.3, 19.7}}
+                      Other, 0x104650be0, {{212.0, 232.0}, {55.3, 19.7}}
+                        Image, 0x104650d00, {{202.7, 222.0}, {73.7, 39.7}}
+                        Image, 0x104650e20, {{212.0, 232.0}, {55.3, 19.7}}
+                Icon, 0x104650f40, {{278.0, 163.0}, {103.3, 90.7}}, identifier: 'HalcyaUITests-Runner', label: 'HalcyaUITests-Runner'
+                  Other, 0x104651060, {{298.0, 165.0}, {64.0, 78.0}}
+                    Other, 0x104651180, {{298.0, 165.0}, {64.0, 64.0}}
+                      Other, 0x1046512a0, {{298.0, 165.0}, {64.0, 64.0}}
+                        Other, 0x1046513c0, {{298.0, 165.0}, {64.0, 64.0}}
+                    Other, 0x1046514e0, {{280.0, 232.0}, {99.3, 19.7}}, identifier: 'label-view'
+                      Other, 0x104651600, {{280.0, 232.0}, {99.3, 19.7}}
+                      Other, 0x104651720, {{280.0, 232.0}, {99.3, 19.7}}
+                        Image, 0x104651840, {{271.0, 222.0}, {117.3, 39.7}}
+                        Image, 0x104651960, {{280.0, 232.0}, {99.3, 19.7}}
+              Other, 0x104651a80, {{145.3, 688.0}, {99.3, 30.0}}, identifier: 'spotlight-pill', label: 'Rechercher', value: Page 2 sur 2
+                PageIndicator, 0x104651ba0, {{145.3, 688.0}, {99.3, 35.0}}, identifier: 'Page control', value: Page 2 sur 2
+                Other, 0x104651cc0, {{145.3, 688.0}, {99.3, 30.0}}, identifier: 'spotlight-pill'
+                  Other, 0x104651de0, {{145.3, 688.0}, {99.3, 30.0}}
+                    Image, 0x104651f00, {{157.0, 697.3}, {11.3, 10.7}}, identifier: 'magnifyingglass', label: 'Rechercher'
+                    StaticText, 0x104652020, {{171.3, 695.7}, {61.7, 14.3}}, label: 'Recherche'
+              Other, 0x104652140, {{0.0, 736.0}, {390.0, 108.0}}
+                Other, 0x104652260, {{12.0, 736.0}, {366.0, 96.0}}
+                  Other, 0x104652380, {{0.0, 736.0}, {390.0, 96.0}}, label: 'Dock'
+                    Other, 0x1046524a0, {{0.0, 736.0}, {390.0, 96.0}}
+                    Icon, 0x1046525c0, {{116.0, 750.0}, {68.0, 68.0}}, identifier: 'Safari', label: 'Safari'
+                      Other, 0x1046526e0, {{118.0, 752.0}, {64.0, 64.0}}
+                        Other, 0x104652800, {{118.0, 752.0}, {64.0, 64.0}}
+                          Other, 0x104652920, {{118.0, 752.0}, {64.0, 64.0}}
+                            Other, 0x104652a40, {{118.0, 752.0}, {64.0, 64.0}}
+                    Icon, 0x104652b60, {{206.0, 750.0}, {68.0, 68.0}}, identifier: 'Messages', label: 'Messages'
+                      Other, 0x104652c80, {{208.0, 752.0}, {64.0, 64.0}}
+                        Other, 0x104652da0, {{208.0, 752.0}, {64.0, 64.0}}
+                          Other, 0x104652ec0, {{208.0, 752.0}, {64.0, 64.0}}
+                            Other, 0x104652fe0, {{208.0, 752.0}, {64.0, 64.0}}
+          Other, 0x104653100, {{0.0, 0.0}, {390.0, 844.0}}
+            Other, 0x104653220, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x104653340, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x104653460, {{0.0, 0.0}, {390.0, 844.0}}
+                  Other, 0x104653580, {{0.0, 0.0}, {390.0, 844.0}}
+                    Other, 0x1046536a0, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x1046537c0, {{0.0, 0.0}, {390.0, 844.0}}
+                  Other, 0x1046538e0, {{0.0, 0.0}, {390.0, 844.0}}
+            Other, 0x104653a00, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x104653b20, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x104653c40, {{0.0, 0.0}, {390.0, 844.0}}
+                  Other, 0x104653d60, {{0.0, 0.0}, {390.0, 844.0}}
+                    Other, 0x104653e80, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x104653fa0, {{0.0, 0.0}, {390.0, 844.0}}
+                  Other, 0x1046540c0, {{0.0, 0.0}, {390.0, 844.0}}
+            Other, 0x1046541e0, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x104654300, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x104654420, {{0.0, 0.0}, {390.0, 844.0}}
+                  Other, 0x104654540, {{0.0, 0.0}, {390.0, 844.0}}
+                    Other, 0x104654660, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x104654780, {{0.0, 0.0}, {390.0, 844.0}}
+                  Other, 0x1046548a0, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x1046549c0, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x104654ae0, {{125.7, 835.7}, {139.0, 5.0}}
+          Other, 0x104654c00, {{125.7, 835.7}, {139.0, 5.0}}
+            Other, 0x104654d20, {{125.7, 835.7}, {139.0, 5.0}}
+    Window, 0x104654e40, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x104654f60, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x104655080, {{0.0, 0.0}, {390.0, 844.0}}
+          Other, 0x1046551a0, {{0.0, 0.0}, {390.0, 844.0}}
+            Other, 0x1046552c0, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x1046553e0, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x104655500, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x104655620, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x104655740, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x104655860, {{0.0, 0.0}, {390.0, 844.0}}
+              Other, 0x104655980, {{0.0, 0.0}, {390.0, 844.0}}
+    Window (Main), 0x104655aa0, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x104655bc0, {{0.0, 0.0}, {390.0, 844.0}}
+    Window, 0x104655ce0, {{0.0, 0.0}, {130.0, 281.3}}
+      Other, 0x104655e00, {{0.0, 0.0}, {130.0, 281.3}}
+        Other, 0x104655f20, {{0.0, 0.0}, {130.0, 281.3}}
+    Window, 0x104656040, {{0.0, 0.0}, {390.0, 844.0}}
+      StatusBar, 0x104656160, {{0.0, 0.0}, {390.0, 47.0}}
+        Other, 0x104656280, {{0.0, 0.0}, {390.0, 47.0}}
+          Other, 0x1046563a0, {{0.0, 0.0}, {390.0, 47.0}}
+            StaticText, 0x1046564c0, {{31.0, 15.7}, {42.0, 18.7}}, label: '21:09'
+            Other, 0x1046565e0, {{302.3, 19.0}, {17.0, 11.3}}, label: 'Données cellulaires', value: Aucun signal
+            Other, 0x104656700, {{324.7, 18.3}, {16.7, 12.0}}, identifier: '3 sur 3 barres Wi-Fi', value: SSID, 3 sur 3 barr...
+            Other, 0x104656820, {{346.7, 18.7}, {25.0, 12.0}}, label: 'Charge de la batterie : 100 %', value: Aucune recharge en...
+    Window, 0x104656940, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x104656a60, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x104656b80, {{0.0, 0.0}, {390.0, 844.0}}
+    Window, 0x104656ca0, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x104656dc0, {{0.0, 0.0}, {390.0, 844.0}}
+    Window, 0x104656ee0, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x104657000, {{0.0, 0.0}, {390.0, 844.0}}
+Path to element:
+ →Application, 0x10434fd50, pid: 11105, label: ' '
+Query chain:
+ →Find: Application 'com.apple.springboard'
+  Output: {
+    Application, 0x10433a6e0, pid: 11105, label: ' '
+  }
+
+/Users/runner/work/HealthTrack/HealthTrack/iphone/uitests/HalcyaUITests/SanteUITests.swift:119: error: -[HalcyaUITests.NotificationsUITests testToucherLeRappelDePortion] : failed - bannière « Votre portion du jour » jamais apparue
+    t =    94.16s Open fr.jpesquet.sante
+    t =    94.16s     Activate fr.jpesquet.sante
+    t =    94.77s         Wait for fr.jpesquet.sante to idle
+    t =    96.11s Tear Down
+Test Case '-[HalcyaUITests.NotificationsUITests testToucherLeRappelDePortion]' failed (98.559 seconds).
+Test Suite 'NotificationsUITests' failed at 2026-11-23 21:09:16.062.
+	 Executed 1 test, with 1 failure (0 unexpected) in 98.559 (98.580) seconds
+Test Suite 'HalcyaUITests.xctest' failed at 2026-11-23 21:09:16.073.
+	 Executed 1 test, with 1 failure (0 unexpected) in 98.559 (98.592) seconds
+Test Suite 'Selected tests' failed at 2026-11-23 21:09:16.077.
+	 Executed 1 test, with 1 failure (0 unexpected) in 98.559 (98.598) seconds
+2026-11-23 21:11:08.280 xcodebuild[61524:169115] [MT] IDETestOperationsObserverDebug: 237.597 elapsed -- Testing started completed.
+2026-11-23 21:11:08.284 xcodebuild[61524:169115] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-23 21:11:08.284 xcodebuild[61524:169115] [MT] IDETestOperationsObserverDebug: 237.597 sec, +237.597 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-grzrkofdeoxqjjadorqbhkoxzigh/Logs/Test/Test-HalcyaUITests-2026.11.23_21-06-57-+0000.xcresult
+
+Failing tests:
+	NotificationsUITests.testToucherLeRappelDePortion()
+
+** TEST EXECUTE FAILED **
+
+Testing started
