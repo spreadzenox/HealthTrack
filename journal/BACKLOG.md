@@ -717,7 +717,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - À étudier (2e persona qui le cherche, après celle du 21/11) : noter son poids à la main sans balance. Rien dans
       Ma journée › Autre chose ni dans Objectifs ; le poids du profil Nutrition n'alimente pas Tendances. Fonction
       nouvelle hors du brief : proposition avec maquette au propriétaire, pas de code.
-    - À étudier : « Ma note 4/5 et 4 lectures du visage à 2,8 donnent 3,7 ? » La page « Comment c'est calculé » dit que
+    - [x] FAIT 23/11 19:30 (#1222 : une phrase tirée de `OBS_SD` de `stateSpace.js`, « Votre note compte environ 5 fois plus que le visage au départ, puis selon l’accord des deux chez vous » ; test `Recommendations.test.jsx`). « Ma note 4/5 et 4 lectures du visage à 2,8 donnent 3,7 ? » La page « Comment c'est calculé » dit que
       les deux sources sont réunies sans dire leur poids ; une phrase sur le poids de la note du jour aiderait la
       persona « Tout mesurer ».
   - **Passage des personas du 23/11 08:30** (run « idées », [`synthèse`](simulations/2026-11-23-0830-synthese.md) ;

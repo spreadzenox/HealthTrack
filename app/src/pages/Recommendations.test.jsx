@@ -184,6 +184,9 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     fireEvent.click(links[0])
     const source = screen.getByTestId('reco-how-wellbeing')
     expect(source).toHaveTextContent('votre note et la lecture du visage, si vous l’utilisez')
+    // « Ma note 4/5 et le visage à 2,8 donnent 3,7 ? » (personas du 22/11) : le poids de la note est dit, tiré des
+    // précisions du modèle (OBS_SD : 0,35 pour la note, 0,8 pour le visage au départ, soit environ 5 fois plus)
+    expect(source).toHaveTextContent('Votre note compte environ 5 fois plus que le visage au départ')
     const simple = screen.getByTestId('reco-how-simple')
     // D'où vient le chiffre, puis comment il est comparé
     expect(source.compareDocumentPosition(simple) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
