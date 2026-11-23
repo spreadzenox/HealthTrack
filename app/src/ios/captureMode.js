@@ -952,11 +952,16 @@ export async function probeShareExport({ log, signal, waitAck, wait, navigate, r
  * touche « Créer le PDF » (fichier écrit dans Documents puis feuille de partage), « Enregistrer dans Fichiers », le
  * dossier Halcya, « Enregistrer » puis « Garder les deux » : une 2e copie apparaît dans Documents. La sonde compte les
  * fichiers `Halcya-rapport-*.pdf` avant et après (+2 attendus), lit la taille du premier et le message de la carte.
+ * Le rapport est réservé aux abonnés : depuis la fin de la période de lancement iPhone (6/11), le relais ne donne plus
+ * Gold au simulateur et la carte montrait « Débloquer » (geste réel en échec, parcours qui manquait de temps) ; la
+ * sonde pose donc les droits d'abonné des captures `-abonne` le temps de l'essai, puis les retire.
  * Résultats dans la console (`[rapport] …`).
  */
-export async function probeShareReport({ log, signal, waitAck, wait, navigate, click, reveal, list, size, status }) {
+export async function probeShareReport({ log, signal, waitAck, wait, navigate, click, reveal, list, size, status,
+  subscribe = installSubscriptionFake, unsubscribe = removeSubscriptionFake }) {
   const say = (what, value) => log(`[rapport] ${what} ${typeof value === 'string' ? value : JSON.stringify(value)}`)
   try {
+    subscribe()
     const fs = async () => import('@capacitor/filesystem')
     const names =
       list ??
@@ -993,6 +998,8 @@ export async function probeShareReport({ log, signal, waitAck, wait, navigate, c
     say('partage', { préparer, bouton, avant, après: après.length, octets: après.length ? await bytes(après[0]) : null, message })
   } catch (e) {
     say('échec', e?.message || String(e))
+  } finally {
+    unsubscribe()
   }
 }
 
