@@ -34,11 +34,14 @@ const DAY_MS = 86_400_000
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v)
 const n0 = (v) => Math.round(v).toLocaleString(appLocale())
 
-/** Facteurs mesurés par l'app (le reste se demande) : champ du résumé du jour et façon de l'écrire. */
+/**
+ * Facteurs mesurés par l'app (le reste se demande) : champ du résumé du jour et façon de l'écrire. `round` : la cible
+ * s'arrondit (8 700 pas plutôt que 8 683, POLISH-SIM-150) ; l'écart au calcul reste petit devant le changement visé.
+ */
 const MEASURED = {
-  sleepMinutes: { field: 'sleepMinutes', fmt: (v) => formatDuration(v), missing: 'Nous n’avons pas reçu vos données de sommeil pour hier soir.', more: 'Dormir au moins', less: 'Dormir moins de' },
-  steps: { field: 'steps', fmt: (v) => `${n0(v)} pas`, missing: 'Nous n’avons pas reçu vos pas d’hier.', more: 'Faire au moins', less: 'Faire moins de' },
-  screen_minutes: { field: 'screenMinutes', fmt: (v) => formatDuration(v), missing: 'Nous n’avons pas reçu votre temps d’écran d’hier.', more: 'Au moins', less: 'Moins de', suffix: ' d’écran' },
+  sleepMinutes: { field: 'sleepMinutes', fmt: (v) => formatDuration(v), missing: 'Nous n’avons pas reçu vos données de sommeil pour hier soir.', more: 'Dormir au moins', less: 'Dormir moins de', round: 5 },
+  steps: { field: 'steps', fmt: (v) => `${n0(v)} pas`, missing: 'Nous n’avons pas reçu vos pas d’hier.', more: 'Faire au moins', less: 'Faire moins de', round: 100 },
+  screen_minutes: { field: 'screenMinutes', fmt: (v) => formatDuration(v), missing: 'Nous n’avons pas reçu votre temps d’écran d’hier.', more: 'Au moins', less: 'Moins de', suffix: ' d’écran', round: 5 },
 }
 
 /** REFONTE-4b-3 : facteur « habitude » (habit_<id> d'Analyses), lu dans les réponses oui / non de Ma journée. */
@@ -74,7 +77,7 @@ export function createTrial(factor, { now = new Date(), rng = Math.random } = {}
   return {
     factor: { key: factor.key, label: factor.label, theme: factor.theme, outcome: factor.outcome, effect: factor.effect, center: factor.center ?? null, change },
     direction,
-    threshold: isNum(threshold) ? Math.max(0, Math.round(threshold)) : null,
+    threshold: isNum(threshold) ? Math.max(0, Math.round(threshold / (m.round ?? 1)) * (m.round ?? 1)) : null,
     schedule: flags.map((w, i) => ({ date: addDays(start, i), with: w })),
     answers: {},
     startedAt: now.toISOString(),

@@ -747,7 +747,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       133, `firstWeek.js` 53) : deux échéances voulues (brief § 3.5, `firstResults.js`), mais nommées sans lien ; la
       persona lit trois délais (7, 14, 28). Dans Ma journée, nommer la seconde comme Objectifs et la visite
       (« vos pistes digestives ») ; texte seulement, test SLOP et test de `firstResults` d'abord.
-    - [ ] **POLISH-SIM-150 — Agir : « Faire au moins 8 683 pas », l'Accueil dit « d'habitude 6 327 »** (J14, mineur ;
+    - [x] **POLISH-SIM-150 — Agir : « Faire au moins 8 683 pas », l'Accueil dit « d'habitude 6 327 »** — FAIT EN PARTIE 23/11 15:30 (cible arrondie : pas à la centaine, sommeil et écran à 5 min, `MEASURED.round` de `trials.js` ; test `trials`). Reste à étudier : partir de la même habitude que l'Accueil (médiane de 14 jours) au lieu du centre du modèle, ce qui change la cible des essais (banc à écrire d'abord) (J14, mineur ;
       `trials.js` 73 : seuil = centre du modèle + 2 000 ; l'Accueil lit la médiane récente, `dayDeviations.js` 114) :
       deux « habitudes » pour la même mesure (méta-leçon 3). Partir de la même habitude que l'Accueil, ou arrondir la
       cible (8 700) et dire « environ 2 000 de plus que d'habitude ». À vérifier contre le banc des essais.
