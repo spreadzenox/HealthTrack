@@ -498,3 +498,29 @@ describe('REFONTE-7b-2 (2) : l’exemple de la visite se charge sans montrer l�
     expect(screen.getByRole('img', { name: 'Courbe de Bien-être' })).toBeInTheDocument()
   })
 })
+
+describe('POLISH-SIM-151 : « Poids » de l’Accueil avant la 3ᵉ pesée', () => {
+  const steps = [4, 5, 6, 7].map((d) => ({ dateKey: `2026-11-0${d}`, summary: { steps: 6000 + d } }))
+  const weighIns = [6, 7].map((d, i) => ({ dateKey: `2026-11-0${d}`, summary: { weightKg: [78.2, 77.9][i] } }))
+  const open = (d) => render(
+    <MemoryRouter initialEntries={['/tendances?mesure=weight']}>
+      <Trends now={NOW} readDays={async () => d} readDayStates={async () => null}
+        readFaceEntries={async () => []} readDayContributions={async () => null} readDayChanges={async () => null} />
+    </MemoryRouter>,
+  )
+  it('deux pesées : la page dit quand la courbe arrive, au-dessus des autres courbes', async () => {
+    open([...steps.slice(0, 2), ...steps.slice(2).map((s, i) => ({ ...s, summary: { ...s.summary, ...weighIns[i].summary } }))])
+    expect(await screen.findByText('Poids : la courbe arrive à 3 pesées.')).toBeInTheDocument()
+    expect(screen.getByText('Choisissez une courbe')).toBeInTheDocument()
+  })
+  it('une seule pesée et rien d’autre : la même phrase, à la place du message général', async () => {
+    open(weighIns.slice(0, 1))
+    expect(await screen.findByText('Poids : la courbe arrive à 3 pesées.')).toBeInTheDocument()
+    expect(screen.queryByText('Vos courbes apparaîtront après 3 jours de mesures.')).toBeNull()
+  })
+  it('trois pesées : la courbe, sans la phrase', async () => {
+    open([...weighIns, { dateKey: '2026-11-05', summary: { weightKg: 78.4 } }])
+    expect(await screen.findByRole('img', { name: 'Courbe de Poids' })).toBeInTheDocument()
+    expect(screen.queryByText(/la courbe arrive/)).toBeNull()
+  })
+})
