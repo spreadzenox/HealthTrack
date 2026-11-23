@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { homeBubbles, habitQuestion, poppedMessage, bubblesLeftText, orbitLayout } from './bubbles'
+import { homeBubbles, habitQuestion, poppedMessage, bubblesLeftText, orbitLayout, GIFT_SPOT } from './bubbles'
 import { habitEntry } from '../../services/habits'
 
 const at = (h, m = 0) => new Date(2026, 10, 16, h, m).toISOString()
@@ -96,5 +96,24 @@ describe('orbitLayout', () => {
     expect(front.back).toBe(false)
     expect(back.scale).toBeLessThan(front.scale)
     expect(back.y).toBeLessThan(front.y)
+  })
+})
+
+describe('GIFT_SPOT', () => {
+  it('la bulle cadeau ne se pose jamais sur une bulle de l’orbite, quelle que soit la rotation (POLISH-SIM-148)', () => {
+    // bulle cadeau : 54 px sur un cadre de 412 px, soit un rayon de 0,066 ; même mesure que le test de l'orbite
+    for (let n = 1; n <= 9; n++) {
+      for (let phase = 0; phase < 2 * Math.PI; phase += 0.05) {
+        for (const p of orbitLayout(n, phase)) {
+          const d = Math.hypot(p.x - GIFT_SPOT.x, (p.y - GIFT_SPOT.y) * 0.9)
+          expect(d).toBeGreaterThan(0.105 * p.scale + 0.066)
+        }
+      }
+    }
+  })
+
+  it('reste dans le cadre, au-dessus de l’étiquette de l’îlot', () => {
+    expect(GIFT_SPOT.x - 0.066).toBeGreaterThan(0)
+    expect(GIFT_SPOT.y + 0.085).toBeLessThan(0.87)
   })
 })
