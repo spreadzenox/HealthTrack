@@ -368,3 +368,111 @@ describe('Achats terminés hors du parcours d’achat (jalon 6c-3c)', () => {
     expect(refresh).not.toHaveBeenCalled()
   })
 })
+
+// Correctif iPhone 24 fondu (23/11) : produits StoreKit 2 rendus sous la forme des ProductDetails de PlayBilling
+const fromStoreKit = [
+  {
+    productId: 'halcya_premium',
+    offers: [
+      {
+        basePlanId: 'annuel',
+        offerToken: 'halcya_premium_annuel',
+        phases: [
+          { priceMicros: 0, formattedPrice: '', billingPeriod: 'P2W', currency: 'EUR' },
+          { priceMicros: 29_990_000, formattedPrice: '29,99 €', billingPeriod: 'P1Y', currency: 'EUR' },
+        ],
+      },
+      {
+        basePlanId: 'mensuel',
+        offerToken: 'halcya_premium_mensuel',
+        phases: [{ priceMicros: 2_990_000, formattedPrice: '2,99 €', billingPeriod: 'P1M', currency: 'EUR' }],
+      },
+    ],
+  },
+  {
+    productId: 'halcya_gold',
+    offers: [
+      {
+        basePlanId: 'mensuel',
+        offerToken: 'halcya_gold_mensuel',
+        phases: [{ priceMicros: 9_990_000, formattedPrice: '9,99 €', billingPeriod: 'P1M', currency: 'EUR' }],
+      },
+    ],
+  },
+]
+
+describe('plugin natif selon la plateforme', () => {
+  it('sur Android (variante play), toujours le plugin PlayBilling', async () => {
+    vi.resetModules()
+    vi.doMock('../config/distribution', async (orig) => ({ ...(await orig()), FEATURES: { billing: true } }))
+    const registered = []
+    vi.doMock('@capacitor/core', () => ({
+      Capacitor: { isNativePlatform: () => true, getPlatform: () => 'android', isPluginAvailable: (n) => n === 'PlayBilling' },
+      registerPlugin: (name) => {
+        registered.push(name)
+        return { getProducts: async () => ({ products: [] }) }
+      },
+    }))
+    const { loadBillingPlugin } = await import('./playBilling')
+    expect(await loadBillingPlugin()).not.toBeNull()
+    expect(registered).toEqual(['PlayBilling'])
+    vi.doUnmock('@capacitor/core')
+    vi.doUnmock('../config/distribution')
+  })
+
+  it('sans abonnement dans la variante (sideload), aucun plugin, même sur iPhone', async () => {
+    vi.resetModules()
+    vi.doMock('../config/distribution', async (orig) => ({ ...(await orig()), FEATURES: { billing: false } }))
+    const registered = []
+    vi.doMock('@capacitor/core', () => ({
+      Capacitor: { isNativePlatform: () => true, getPlatform: () => 'ios', isPluginAvailable: () => true },
+      registerPlugin: (name) => registered.push(name),
+    }))
+    const { loadBillingPlugin } = await import('./playBilling')
+    expect(await loadBillingPlugin()).toBeNull()
+    expect(registered).toEqual([])
+    vi.doUnmock('@capacitor/core')
+    vi.doUnmock('../config/distribution')
+  })
+
+  it('l’app iPhone prend le plugin StoreKit 2 (`AppStoreBilling`), de même forme que PlayBilling', async () => {
+    vi.resetModules()
+    vi.doMock('../config/distribution', async (orig) => ({ ...(await orig()), FEATURES: { billing: true } }))
+    const registered = []
+    vi.doMock('@capacitor/core', () => ({
+      Capacitor: { isNativePlatform: () => true, getPlatform: () => 'ios', isPluginAvailable: (n) => n === 'AppStoreBilling' },
+      registerPlugin: (name) => {
+        registered.push(name)
+        return { getProducts: async () => ({ products: fromStoreKit }) }
+      },
+    }))
+    const { loadBillingPlugin, loadPlans } = await import('./playBilling')
+    const plugin = await loadBillingPlugin()
+    expect(registered).toEqual(['AppStoreBilling'])
+    expect((await loadPlans({ native: plugin })).map((p) => `${p.tier}:${p.basePlanId}`)).toEqual(['silver:annuel', 'silver:mensuel', 'gold:mensuel'])
+    vi.doUnmock('@capacitor/core')
+    vi.doUnmock('../config/distribution')
+  })
+
+  // Build de captures de la PR #473 : un registerPlugin('AppStoreBilling') à chaque appel faisait écrire à Capacitor
+  // « plugin "AppStoreBilling" already registered » (Premium, Réglages, l'abonnement relu au retour dans l'app)
+  it('le plugin StoreKit 2 n’est enregistré qu’une fois, quel que soit le nombre d’appels', async () => {
+    vi.resetModules()
+    vi.doMock('../config/distribution', async (orig) => ({ ...(await orig()), FEATURES: { billing: true } }))
+    const registered = []
+    vi.doMock('@capacitor/core', () => ({
+      Capacitor: { isNativePlatform: () => true, getPlatform: () => 'ios', isPluginAvailable: (n) => n === 'AppStoreBilling' },
+      registerPlugin: (name) => {
+        registered.push(name)
+        return { getProducts: async () => ({ products: fromStoreKit }) }
+      },
+    }))
+    const { loadBillingPlugin } = await import('./playBilling')
+    const first = await loadBillingPlugin()
+    const second = await loadBillingPlugin()
+    expect(registered).toEqual(['AppStoreBilling'])
+    expect(second).toBe(first)
+    vi.doUnmock('@capacitor/core')
+    vi.doUnmock('../config/distribution')
+  })
+})

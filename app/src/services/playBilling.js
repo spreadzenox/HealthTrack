@@ -115,14 +115,26 @@ export function annualSavingPercent(plans) {
   return pct >= 5 ? pct : null
 }
 
-/** Le plugin natif, dans la seule variante play sur Android ; sinon null (sideload, navigateur, tests). */
+/** iPhone : le plugin StoreKit 2, enregistré une seule fois (Capacitor écrit « already registered » sinon). */
+let appStoreBilling = null
+
+/**
+ * Le plugin natif des variantes avec abonnement : PlayBilling sur Android, AppStoreBilling (StoreKit 2, même forme,
+ * iphone/ios/App/App/AppStoreBillingPlugin.swift) sur iPhone ; sinon null (sideload, navigateur, tests).
+ */
 export async function loadBillingPlugin() {
   if (!FEATURES.billing) return null
-  // Captures (npm run visual -- --play --billing) : faux plugin, jamais en production
-  if (import.meta.env?.DEV && typeof window !== 'undefined' && window.__HT_PLAY_BILLING__) return window.__HT_PLAY_BILLING__
+  // Captures (npm run visual -- --play --billing, ou build de captures de l'iPhone VITE_IOS_CAPTURE) : faux plugin,
+  // jamais en production
+  if ((import.meta.env?.DEV || import.meta.env?.VITE_IOS_CAPTURE) && typeof window !== 'undefined' && window.__HT_PLAY_BILLING__) return window.__HT_PLAY_BILLING__
   try {
     const { Capacitor, registerPlugin } = await import('@capacitor/core')
-    if (!Capacitor?.isNativePlatform?.() || Capacitor.getPlatform?.() !== 'android') return null
+    if (!Capacitor?.isNativePlatform?.()) return null
+    if (Capacitor.getPlatform?.() === 'ios') {
+      if (!Capacitor.isPluginAvailable?.('AppStoreBilling')) return null
+      return (appStoreBilling ??= notThenable(registerPlugin('AppStoreBilling')))
+    }
+    if (Capacitor.getPlatform?.() !== 'android') return null
     if (Capacitor.isPluginAvailable && !Capacitor.isPluginAvailable('PlayBilling')) return null
     return notThenable(registerPlugin('PlayBilling'))
   } catch {

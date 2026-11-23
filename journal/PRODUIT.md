@@ -420,6 +420,8 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **23/11 06:30** — **FUSION-3, correctif iPhone 24 fondu** (choix du plugin d'abonnement StoreKit 2 sur iPhone, rien de visible) dans #1211, passée en « prête » pour un seul build iPhone ; 5 correctifs restent.
+- **23/11 05:30** — **#1210 mergée** (correctifs iPhone 05, 10, 16 ; captures iPhone de Sources relues). **FUSION-3, correctif 28 fondu** (Nouveautés de l'iPhone, rien de visible) en brouillon ; 6 correctifs restent.
 - **23/11 04:30** — **FUSION-3, correctif iPhone 16 fondu** (guides des montres par l'app Santé, rien de visible sur Android) dans #1210, passée en « prête » pour un seul build iPhone ; 7 correctifs restent. Alpha de la nuit partie (03:09 UTC, verte).
 - **23/11 03:30** — **#1209 mergée ; FUSION-3, correctifs iPhone 05 et 10 fondus** (rien de visible) : plugins natifs absents sur iPhone (visage, note du soir, rappels, voix, montre) détectés dans le code partagé ; 8 correctifs restent. TestFlight **1268.1268** validée pour « Testeurs Halcya » ; rien à expirer.
 - **23/11 02:30** — **FUSION-3, correctifs iPhone 47 et 39 fondus** (rien de visible) : message « notifications refusées » propre à l'iPhone et page « Licences » de l'iPhone dans le code partagé ; 10 correctifs restent. TestFlight **1268.1268** ajoutée à « Testeurs Halcya » et soumise à l'examen bêta.

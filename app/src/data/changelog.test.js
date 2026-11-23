@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { ALL_CHANGELOG, PLAY_CHANGELOG_SINCE, changelogFor } from './changelog'
+import { ALL_CHANGELOG, APPSTORE_CHANGELOG_SINCE, APPSTORE_HIDDEN, PLAY_CHANGELOG_SINCE, changelogFor } from './changelog'
 
 const LOG = [
   { id: '2026-10-25-0100-c', variants: ['sideload'] },
@@ -67,5 +67,21 @@ describe('changelog par variante (VC-5)', () => {
 describe('notes à la une (REFONTE-UPG-2)', () => {
   it('la note de la nouvelle navigation est à la une, et elle seule', () => {
     expect(ALL_CHANGELOG.filter((e) => e.aLaUne).map((e) => e.id)).toEqual(['2026-11-15-0435-refonte-navigation'])
+  })
+
+  it('les règles de l’iPhone (date de départ, notes cachées) ne retirent rien à Google Play ni à la version hors store', () => {
+    const log = [
+      { id: '2026-10-31-0100-ios', variants: ['appstore'] },
+      { id: '2026-10-30-2233-commune' },
+      { id: '2026-10-29-0533-paywall-lancement' },
+      { id: '2026-10-25-0100-avant-iphone' },
+    ]
+    expect(APPSTORE_CHANGELOG_SINCE).toBe('2026-10-30-2100')
+    expect(APPSTORE_HIDDEN.has('2026-10-29-0533-paywall-lancement')).toBe(true)
+    // Le filtre appstore lui-même est vérifié avec le correctif 01 (iphone/overlay/…/changelog.appstore.test.js)
+    expect(changelogFor(log, 'play').map((e) => e.id)).toEqual(['2026-10-30-2233-commune', '2026-10-29-0533-paywall-lancement', '2026-10-25-0100-avant-iphone'])
+    expect(changelogFor(log, 'sideload')).toHaveLength(3)
+    const play = changelogFor(ALL_CHANGELOG, 'play').map((e) => e.id)
+    for (const id of APPSTORE_HIDDEN) expect(play, id).toContain(id)
   })
 })

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { describePlans, annualSavingPercent } from './playBilling'
 
 // Version iOS (HealthTrack-iOS), étape I6 : le plugin Swift rend les produits de StoreKit 2 sous la forme des
@@ -56,45 +56,4 @@ describe('formules App Store lues par describePlans (contrat avec BillingRule.sw
   })
 })
 
-describe('plugin natif sur iPhone', () => {
-  it('l’app iPhone prend le plugin StoreKit 2 (`AppStoreBilling`), de même forme que PlayBilling', async () => {
-    vi.resetModules()
-    vi.doMock('../config/distribution', async (orig) => ({ ...(await orig()), FEATURES: { billing: true } }))
-    const registered = []
-    vi.doMock('@capacitor/core', () => ({
-      Capacitor: { isNativePlatform: () => true, getPlatform: () => 'ios', isPluginAvailable: (n) => n === 'AppStoreBilling' },
-      registerPlugin: (name) => {
-        registered.push(name)
-        return { getProducts: async () => ({ products: fromStoreKit }) }
-      },
-    }))
-    const { loadBillingPlugin, loadPlans } = await import('./playBilling')
-    const plugin = await loadBillingPlugin()
-    expect(registered).toEqual(['AppStoreBilling'])
-    expect((await loadPlans({ native: plugin })).map((p) => `${p.tier}:${p.basePlanId}`)).toEqual(['silver:annuel', 'silver:mensuel', 'gold:mensuel'])
-    vi.doUnmock('@capacitor/core')
-    vi.doUnmock('../config/distribution')
-  })
-
-  // Build de captures de la PR #473 : un registerPlugin('AppStoreBilling') à chaque appel faisait écrire à Capacitor
-  // « plugin "AppStoreBilling" already registered » (Premium, Réglages, l'abonnement relu au retour dans l'app)
-  it('le plugin StoreKit 2 n’est enregistré qu’une fois, quel que soit le nombre d’appels', async () => {
-    vi.resetModules()
-    vi.doMock('../config/distribution', async (orig) => ({ ...(await orig()), FEATURES: { billing: true } }))
-    const registered = []
-    vi.doMock('@capacitor/core', () => ({
-      Capacitor: { isNativePlatform: () => true, getPlatform: () => 'ios', isPluginAvailable: (n) => n === 'AppStoreBilling' },
-      registerPlugin: (name) => {
-        registered.push(name)
-        return { getProducts: async () => ({ products: fromStoreKit }) }
-      },
-    }))
-    const { loadBillingPlugin } = await import('./playBilling')
-    const first = await loadBillingPlugin()
-    const second = await loadBillingPlugin()
-    expect(registered).toEqual(['AppStoreBilling'])
-    expect(second).toBe(first)
-    vi.doUnmock('@capacitor/core')
-    vi.doUnmock('../config/distribution')
-  })
-})
+// Le choix du plugin StoreKit 2 (`AppStoreBilling`) sur iPhone est testé dans le code commun (app/src/services/playBilling.test.js)
