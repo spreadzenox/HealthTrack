@@ -1,8 +1,8 @@
 # Run 23/11 03:30 — #1209 mergée, 1268.1268 validée, FUSION-3 : correctifs 05 et 10 (PR en brouillon)
 
 **Type** : 🔧 run de code (code partagé, rien de visible sur Android) · **Contrôle d'intégrité** : empreinte conforme
-(dd430fbd…) · **Android** : main 7058de4 (#1209), Build & Release en cours à 02:35 UTC (dernière release publiée
-v879, APK 35,7 Mo, merge de #1208) · **TestFlight** : **1268.1268** validée (examen APPROVED, en test chez « Testeurs
+(dd430fbd…) · **Android** : main 7058de4 (#1209), release **v880** (APK 35,7 Mo, 02:34 UTC), Tests et
+Play — AAB verts · **TestFlight** : **1268.1268** validée (examen APPROVED, en test chez « Testeurs
 Halcya ») ; 1244.1244 reste attachée à la version 893 · **Parité** : 70 % (33/47), 8 correctifs iPhone restent
 
 ## Contexte
@@ -35,7 +35,7 @@ Halcya ») ; 1244.1244 reste attachée à la version 893 · **Parité** : 70 % (
 ## Suite
 1. Run suivant : fondre 16 dans la même branche, passer la PR en « prête », puis build iPhone, captures (Sources, carte
    Visage), merge.
-2. Relever l'Alpha de la nuit et la release de #1209.
+2. Relever l'Alpha de la nuit.
 3. 27 (lien « Envoyer un avis » vers l'ancien dépôt iOS) attend une décision ; 01 (variante `appstore`) en dernier.
 
 ## Pour le propriétaire
