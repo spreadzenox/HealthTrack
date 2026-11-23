@@ -4,7 +4,7 @@
 // Secure Enclave (plugin Swift `AppAttest`), attestée une fois sur un défi à usage unique du relais, puis une assertion
 // par requête sensible (analyse, crédits) sur « halcya-assert:<installation>:<horodatage ms>:<SHA-256 du corps> ».
 // Aucune donnée de santé : la clé est tirée au hasard, le corps n'entre que par son condensat. Branché sur l'analyse
-// des repas par le correctif 38 (aiRelay.js › postRelay), sur iPhone seulement. Côté relais, App Attest est en
+// des repas, des selles et l'avis (aiRelay.js › postRelay, sendFeedback ; ancien correctif 38), sur iPhone seulement. Côté relais, App Attest est en
 // observation depuis Android v721 (APP_ATTEST_MODE=observe et le Team ID, 2/11) ; si l'enregistrement échoue, il est
 // retenté au plus une fois par heure, sans requête de plus à chaque analyse. Le relais reconnaît l'iPhone à
 // `X-Platform: ios`, qu'aiRelay.js d'Android ajoute à chaque appel depuis v722 (`platformHeaders`).
@@ -89,7 +89,7 @@ export async function appAttestHeaders({ plugin, installId, body = '', now = Dat
 
 let nativePlugin = null
 
-/** Pour aiRelay.js (correctif 38) : en-têtes App Attest sur iPhone seulement ; ailleurs ou en cas d'erreur, rien. */
+/** Pour aiRelay.js : en-têtes App Attest sur iPhone seulement ; ailleurs ou en cas d'erreur, rien. */
 export async function iosAttestHeaders({ platform, plugin, ...rest } = {}) {
   try {
     const core = platform && plugin ? null : await import('@capacitor/core')

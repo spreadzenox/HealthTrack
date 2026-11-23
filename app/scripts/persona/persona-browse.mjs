@@ -60,7 +60,8 @@ async function loadPlaywright() {
 
 const vite = spawn(join(APP_DIR, 'node_modules/.bin/vite'), ['--port', String(vitePort), '--strictPort', '--host', '127.0.0.1'], {
   cwd: APP_DIR, stdio: ['ignore', 'ignore', 'pipe'],
-  env: { ...process.env, BROWSER: 'none', ...(args.sideload ? {} : { VITE_DISTRIBUTION: 'play' }) },
+  // iPhone : --store=appstore joue la build iPhone (variante appstore, textes de l'App Store)
+  env: { ...process.env, BROWSER: 'none', ...(args.store === 'appstore' ? { VITE_DISTRIBUTION: 'appstore', VITE_STORE: 'appstore' } : args.sideload ? {} : { VITE_DISTRIBUTION: 'play' }) },
 })
 process.on('exit', () => vite.kill('SIGTERM'))
 const base = `http://127.0.0.1:${vitePort}`
@@ -73,7 +74,8 @@ const { chromium } = await loadPlaywright()
 // Les champs date et heure natifs suivent la langue du système, pas celle du contexte : téléphone en français.
 const browser = await chromium.launch({ env: { ...process.env, LANG: 'fr_FR.UTF-8', LANGUAGE: 'fr' } })
 const context = await browser.newContext({
-  viewport: { width: 412, height: 915 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true,
+  // iPhone : l'iPhone 12 du propriétaire (390 × 844 points) avec --store=appstore
+  viewport: args.store === 'appstore' ? { width: 390, height: 844 } : { width: 412, height: 915 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true,
   locale: 'fr-FR', timezoneId: 'Europe/Paris', colorScheme: args.dark ? 'dark' : 'light',
 })
 const json = (route, body) => route.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(body) })
