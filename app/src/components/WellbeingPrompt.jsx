@@ -25,6 +25,7 @@ import {
   setEveningNoteMinute,
 } from '../services/eveningNote'
 import { APP_NAME } from '../config/brand'
+import { FEATURES } from '../config/distribution'
 import LineIcon from './LineIcon'
 import { NOTE_CHOICES, choiceToScore, scoreToChoice } from '../services/mood/wellbeingScale'
 
@@ -169,7 +170,9 @@ export default function WellbeingPrompt({ open = false, onClose, onSaved, entry,
       const res = await setEveningNoteEnabled(on)
       setEvening(await getEveningNoteStatus())
       if (res.blocked) {
-        setEveningHint(`Notifications refusées : autorisez-les pour ${APP_NAME} dans les réglages Android.`)
+        setEveningHint(FEATURES.iosStore
+          ? `Notifications refusées : autorisez-les dans Réglages › Notifications › ${APP_NAME}.`
+          : `Notifications refusées : autorisez-les pour ${APP_NAME} dans les réglages Android.`)
       } else if (on) {
         close()
       }

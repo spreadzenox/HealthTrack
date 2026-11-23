@@ -7,6 +7,7 @@
  */
 import { useEffect, useState } from 'react'
 import { APP_NAME } from '../config/brand'
+import { FEATURES } from '../config/distribution'
 import { formatMinute } from '../services/eveningNote'
 import {
   GUT_DEFAULT_MINUTE,
@@ -16,7 +17,10 @@ import {
   setGutEveningEnabled,
 } from '../services/gutEvening'
 
-const BLOCKED = `Notifications refusées : autorisez-les pour ${APP_NAME} dans les réglages Android.`
+// Sur iPhone, les notifications se rétablissent dans les Réglages du système
+const BLOCKED = FEATURES.iosStore
+  ? `Notifications refusées : autorisez-les dans Réglages › Notifications › ${APP_NAME}.`
+  : `Notifications refusées : autorisez-les pour ${APP_NAME} dans les réglages Android.`
 
 export default function GutEveningReminder({ variant = 'offer' }) {
   const available = !!gutEveningPlugin()

@@ -45,7 +45,10 @@ export const ANDROID_LICENSES = [
 ]
 
 /** Bibliothèques natives de l'app iPhone (hors npm), ajoutées seulement quand le magasin est l'App Store. */
-export const IOS_LICENSES = []
+export const IOS_LICENSES = [
+  { name: 'TensorFlow Lite C', license: 'Apache-2.0', note: 'Moteur des modèles du visage, sur le téléphone.' },
+  { name: 'Capacitor pour iOS', license: 'MIT', note: 'Paquet Swift capacitor-swift-pm.' },
+]
 
 function faceModels(features) {
   const named = features?.aiModelName
@@ -85,7 +88,11 @@ export function licenseSections(features = {}, store = STORE) {
     : ANDROID_LICENSES.filter((a) => !a.play || isPlay)
   return [
     { title: 'Bibliothèques', items: [...NPM_LICENSES, ...native] },
-    { title: 'Lecture du visage', items: faceModels(features) },
+    // Sur iPhone, valence et éveil sont éteints : seule la détection du visage est embarquée
+    {
+      title: 'Lecture du visage',
+      items: store?.id === 'appstore' ? faceModels(features).slice(0, 1) : faceModels(features),
+    },
     { title: 'Données sur les aliments', items: dataSources() },
   ].map((s) => ({ ...s, items: s.items.map(({ name, license, note }) => ({ name, license, note })) }))
 }

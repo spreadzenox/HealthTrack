@@ -63,6 +63,11 @@ describe('licences des composants de tiers (LICENCES-TIERCES)', () => {
     expect(text).toMatch(/Nunito/)
   })
 
+  it('Android : les deux modèles du visage restent cités (seul l’iPhone tait valence et éveil)', () => {
+    const face = licenseSections(featuresFor('play'), storeFor('play')).find((s) => s.title === 'Lecture du visage')
+    expect(face.items).toHaveLength(2)
+  })
+
   it('Android : la variante play garde ses bibliothèques Android avec le magasin par défaut', () => {
     const text = JSON.stringify(licenseSections(featuresFor('play'), storeFor('play')))
     expect(text).toMatch(/AndroidX/)

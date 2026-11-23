@@ -2,13 +2,12 @@ import { describe, it, expect } from 'vitest'
 import { featuresFor, storeFor } from '../config/distribution'
 import { licenseSections, IOS_LICENSES, LICENSE_URLS } from './thirdPartyLicenses'
 
-// Version iOS (HealthTrack-iOS) : la page « Licences » d'Android (v716, #632 ; v717, #633 : rien d'Android sur l'App
-// Store) liste sur iPhone ses bibliothèques natives (correctif 39) et tait les modèles valence / éveil, éteints sur
-// iPhone tant que la licence de leurs poids n'est pas tranchée (journal/DEMANDES.md).
+// Page « Licences » de l'app iPhone : ses bibliothèques natives, et la détection du visage seule (valence et éveil
+// sont éteints sur iPhone tant que la licence de leurs poids n'est pas tranchée, DEM-IOS-9 du BACKLOG).
 const sections = () => licenseSections(featuresFor('appstore'), storeFor('appstore'))
 const section = (title) => sections().find((s) => s.title === title).items
 
-describe('page « Licences » sur iPhone (correctif 39)', () => {
+describe('page « Licences » sur iPhone', () => {
   it('bibliothèques natives de l’iPhone, avec leur licence connue de la page', () => {
     expect(IOS_LICENSES.map((l) => [l.name, l.license])).toEqual([
       ['TensorFlow Lite C', 'Apache-2.0'],
