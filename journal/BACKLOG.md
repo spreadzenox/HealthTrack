@@ -751,7 +751,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `trials.js` 73 : seuil = centre du modèle + 2 000 ; l'Accueil lit la médiane récente, `dayDeviations.js` 114) :
       deux « habitudes » pour la même mesure (méta-leçon 3). Partir de la même habitude que l'Accueil, ou arrondir la
       cible (8 700) et dire « environ 2 000 de plus que d'habitude ». À vérifier contre le banc des essais.
-    - [ ] **PERSONAS-OUTIL-2 — L'analyse factice rend toujours « Pâtes à la carbonara »** (`persona-browse.mjs` 87) :
+    - [x] **PERSONAS-OUTIL-2 — L'analyse factice rend toujours « Pâtes à la carbonara »** — FAIT 23/11 13:30 (`scripts/persona/fakeMeal.mjs` : une description écrite revient avec ses aliments, cherchés dans la table par leur premier mot, « tartine » → pain ; photo ou rien de reconnu : le plat d'exemple ; test `fakeMeal.test.mjs` ; `brief.md` dit que l'analyse est simulée) (`persona-browse.mjs` 87) :
       une persona qui décrit « 2 tartines, café au lait » croit à une erreur de l'IA. Faire reprendre au faux relais
       les mots de la description (un aliment par mot connu de la table), et dire dans `brief.md` que l'analyse est
       simulée.

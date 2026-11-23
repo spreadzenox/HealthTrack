@@ -28,7 +28,7 @@
  */
 import { spawn } from 'node:child_process'
 import { createServer } from 'node:http'
-import { mkdirSync, readdirSync } from 'node:fs'
+import { mkdirSync, readdirSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
@@ -36,6 +36,7 @@ import { execSync } from 'node:child_process'
 import { generateDemoEntries } from '../visual/demoData.mjs'
 import { gotoRoute } from '../visual/navigate.mjs'
 import { personaEntries, legacyLastSeen, legacyOnboarding, legacyTrial } from './personaData.mjs'
+import { buildIndex, fakeMealFromDescription, DEFAULT_MEAL } from './fakeMeal.mjs'
 
 const APP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const args = Object.fromEntries(process.argv.slice(2).map((a) => {
@@ -86,8 +87,15 @@ await context.route('https://*.open-meteo.com/**', (r) => r.abort())
 const LAUNCH_UNTIL = new Date(Date.now() + 20 * 86400000).toISOString()
 await context.route('**/v1/subscription/verify', (r) => json(r, { ok: true, premium: true, source: 'launch', launchUntil: LAUNCH_UNTIL }))
 await context.route('**/v1/credits', (r) => json(r, { credits: { plan: 'premium', tier: 'gold', remaining: 20, daily: 20, resetAt: new Date(Date.now() + 86400000).toISOString(), state: 'x' } }))
-const FAKE_MEAL = { dish: 'Pâtes à la carbonara', ingredients: [{ ingredient: 'Pâtes cuites', quantity_g: 220 }, { ingredient: 'Lardon fumé, cuit', quantity_g: 50 }, { ingredient: 'Oeuf cru', quantity_g: 50 }, { ingredient: 'Parmesan', quantity_g: 15 }] }
-await context.route('**/v1/meal/analyze', (r) => json(r, { parsed: FAKE_MEAL, quota: { remaining: 19, resetAt: new Date(Date.now() + 6 * 3600000).toISOString() } }))
+// Analyse factice : une description écrite revient avec ses propres aliments (PERSONAS-OUTIL-2) ; une photo, le plat
+// de démonstration
+const mealIndex = buildIndex(Object.keys(JSON.parse(readFileSync(join(APP_DIR, 'src/data/ingredientsNutrition.json'), 'utf8'))))
+await context.route('**/v1/meal/analyze', (r) => {
+  let body = {}
+  try { body = r.request().postDataJSON() || {} } catch { /* corps illisible : plat de démonstration */ }
+  const parsed = body.kind === 'text' ? fakeMealFromDescription(body.description, mealIndex) : DEFAULT_MEAL
+  return json(r, { parsed, quota: { remaining: 19, resetAt: new Date(Date.now() + 6 * 3600000).toISOString() } })
+})
 // Faux Play Billing (aucun achat) : comme sur le téléphone, l'app relit ses droits au démarrage auprès du relais
 // (période de lancement : Gold offert). Sans lui, le navigateur restait en gratuit (constat des simulations du 08/11).
 await context.addInitScript(() => {
