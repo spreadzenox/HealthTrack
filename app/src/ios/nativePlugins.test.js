@@ -8,10 +8,11 @@ import { markerPlugin } from '../services/restoreGuard'
 import { vaultPlugin } from '../services/watchVault'
 import { companionPlugin } from '../services/watchPresence'
 import { capturePlugin } from '../services/watchCaptures'
+import { faceSensePlugin } from '../services/faceSense'
 
-// Version iOS (HealthTrack-iOS) : un plugin maison d'Android absent côté Swift = pas de plugin pour le service
+// iPhone : un plugin maison d'Android absent côté Swift = pas de plugin pour le service
 // (sinon ses réglages s'affichent et ne font rien : interrupteur qui revient, rappel jamais posé)
-const ACCESSORS = { eveningNotePlugin, gutEveningPlugin, portionReminderPlugin, voiceProbePlugin, markerPlugin, vaultPlugin, companionPlugin, capturePlugin }
+const ACCESSORS = { eveningNotePlugin, gutEveningPlugin, portionReminderPlugin, voiceProbePlugin, markerPlugin, vaultPlugin, companionPlugin, capturePlugin, faceSensePlugin }
 const capacitor = (platform, available) => ({ isNativePlatform: () => true, getPlatform: () => platform, isPluginAvailable: () => available })
 
 afterEach(() => {

@@ -6,6 +6,7 @@
  * sauf « gardée ou non ». Ne lève jamais.
  */
 import { registerPlugin } from '@capacitor/core'
+import { missingOnIos } from '../ios/nativePlugins.js'
 
 const NativeVault = registerPlugin('WatchVault')
 
@@ -14,7 +15,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
 /** Plugin natif dans l'app, faux plugin des tests / captures, sinon aucun. */
 export function vaultPlugin() {
   if (typeof window !== 'undefined' && window.__healthtrackFakeWatchVault) return window.__healthtrackFakeWatchVault
-  return isNative() ? NativeVault : null
+  return isNative() && !missingOnIos('WatchVault') ? NativeVault : null
 }
 
 /**

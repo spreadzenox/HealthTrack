@@ -12,6 +12,7 @@ import { registerPlugin } from '@capacitor/core'
 import { listEntries, upsertEntries } from '../storage/localHealthStorage'
 import { localDateKey } from './wellbeingSeries'
 import { choiceToScore } from './mood/wellbeingScale'
+import { missingOnIos } from '../ios/nativePlugins.js'
 
 export const DEFAULT_MINUTE = 21 * 60
 const EARLIEST_MINUTE = 18 * 60
@@ -33,7 +34,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
 /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */
 export function eveningNotePlugin() {
   if (typeof window !== 'undefined' && window.__healthtrackFakeEveningNote) return window.__healthtrackFakeEveningNote
-  return isNative() ? NativeEveningNote : null
+  return isNative() && !missingOnIos('EveningNote') ? NativeEveningNote : null
 }
 
 const minuteOf = (iso) => {

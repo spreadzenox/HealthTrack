@@ -15,6 +15,7 @@ import { localDateKey } from './wellbeingSeries'
 import { GUT_DAY_SCOPE, GUT_LEVELS, GUT_SOURCE, GUT_TYPE, isGutDayNote } from './today'
 import { drainNativeInbox, learnEveningMinute } from './eveningNote'
 import { gutCardMode, loadOnboarding } from '../settings/onboarding'
+import { missingOnIos } from '../ios/nativePlugins.js'
 
 export const GUT_DEFAULT_MINUTE = 20 * 60
 const LEARN_DAYS = 14
@@ -28,7 +29,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
 /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */
 export function gutEveningPlugin() {
   if (typeof window !== 'undefined' && window.__healthtrackFakeGutEvening) return window.__healthtrackFakeGutEvening
-  return isNative() ? NativeGutEvening : null
+  return isNative() && !missingOnIos('GutEvening') ? NativeGutEvening : null
 }
 
 /** Choix de la personne (allumé / éteint), indépendant de l'objectif. */

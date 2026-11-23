@@ -10,6 +10,7 @@
 import { registerPlugin } from '@capacitor/core'
 import { syncWatchIfStale } from './watchAutoSync'
 import { getBackgroundSync, requestWatchNotifications } from './watchCaptures'
+import { missingOnIos } from '../ios/nativePlugins.js'
 
 const NativeCompanion = registerPlugin('Companion')
 
@@ -18,7 +19,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
 /** Plugin natif dans l'app, faux plugin des captures (`npm run visual -- --companion`), sinon aucun. */
 export function companionPlugin() {
   if (typeof window !== 'undefined' && window.__healthtrackFakeCompanion) return window.__healthtrackFakeCompanion
-  return isNative() ? NativeCompanion : null
+  return isNative() && !missingOnIos('Companion') ? NativeCompanion : null
 }
 
 const sameDevice = (a, b) => !!a && !!b && String(a).toLowerCase() === String(b).toLowerCase()
