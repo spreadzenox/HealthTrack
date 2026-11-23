@@ -909,6 +909,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   la PR en « prête » pour un seul build iPhone. Les notes `["appstore"]` restent dans `overlay/` jusqu'à 01.
   23/11 06:30 : correctif 24 (plugin StoreKit 2 choisi dans `playBilling.js`) ajouté à la même PR (#1211), passée en
   « prête » ; 5 restent (01, 02, 27, 38, 49). Suivant : 38 (App Attest) ou 49 (personas), 02, 27 (décision), 01 en dernier.
+  23/11 07:30 : #1211 mergée (captures iPhone de Nouveautés et Premium relues). Correctifs 38 (App Attest sur l'analyse,
+  les selles et « Votre avis » : `app/src/ios/appAttest.js` et ses tests passent d'`overlay/` au code commun, appel dans
+  `aiRelay.js`, rien hors iPhone : test `aiRelay.attest-android.test.js`) et 49 (`npm run persona -- --store=appstore`,
+  écran 390 × 844) fondus dans une même PR ; 3 restent (01, 02, 27). Suivant : 02 (mode captures), 27 (décision), 01 en dernier.
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
