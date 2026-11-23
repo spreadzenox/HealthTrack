@@ -720,6 +720,49 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - À étudier : « Ma note 4/5 et 4 lectures du visage à 2,8 donnent 3,7 ? » La page « Comment c'est calculé » dit que
       les deux sources sont réunies sans dire leur poids ; une phrase sur le poids de la note du jour aiderait la
       persona « Tout mesurer ».
+  - **Passage des personas du 23/11 08:30** (run « idées », [`synthèse`](simulations/2026-11-23-0830-synthese.md) ;
+    « Ventre, sans technique » J1, iPhone + bracelet d'une autre marque, et « Stressé et pressé » J14 après mise à
+    jour, iPhone seul ; joués sur l'apparence Android) :
+    - [ ] **POLISH-SIM-145 — Galet noir à côté de Pilou dans « Par famille »** (J14, vérifié : capture
+      `bien-etre-familles.png`, `companion/life/Cairn.jsx` 19, `theme/tokens.css`) : le galet de la famille Activité
+      est peint `var(--lilac-label)`, qui n'existe pas (le lilas n'a que `bg`, `text`, `bar`, `track` ; ailleurs
+      `--tone-label` du lilas vaut `--lilac-bar`), d'où un ovale noir en clair comme en sombre dès qu'Activité a un lien.
+      Correctif : `--lilac-label: var(--lilac-bar)` dans les deux thèmes (ou le galet passe par `data-tone`), et un test
+      qui vérifie que chaque teinte des familles a sa variable `-label` et `-track`. Le plus visible et le plus petit.
+    - [ ] **POLISH-SIM-146 — « Moins de pas que d'habitude (4 374) » le matin, l'Accueil dit 162 pas** (J14, vérifié :
+      capture `tendances-jour.png`, `analysisResults.js` 869, `trendsDay.js` 213) : au court terme, la valeur dite est
+      la moyenne du jour même et de la veille ((162 + ~8 590) / 2) ; le jour en cours, un cumul (pas, activité, écran)
+      n'est que partiel à 08:33. Proposition : pour aujourd'hui, un cumul du jour ne compte pas encore (fenêtre lue sur
+      la veille, ligne « La veille, moins de pas… » comme POLISH-SIM-143), ou la ligne dit « hier et aujourd'hui ».
+      Vérifier d'abord au banc que l'effet ne change pas les jours passés ; tests d'abord.
+    - [ ] **POLISH-SIM-147 — « Bien-être 3,4/5 estimé » au jour 1, sans note ni lecture** (J1, vérifié : capture
+      `tendances-bienetre-estime.png`, `trendsData.js` 213 `detailSource`) : sur la courbe vide (« Aucune lecture du
+      visage ce jour-là »), la ligne du jour donne un chiffre tiré de rien, alors que l'Accueil demande encore de noter.
+      Ne pas afficher de valeur du jour tant que la série n'a aucune observation (ni note ni lecture) ; « Pas encore
+      de note » à la place. Tests d'abord.
+    - [ ] **POLISH-SIM-148 — Le cadeau du jour cache « Bien-être » sur l'île** (J1, vérifié : capture
+      `accueil-jour1sur7.png`) : la bulle dorée se pose sur le libellé de la bulle Bien-être (île de 412 px de large).
+      Décaler le cadeau (bord de l'île) ou la bulle ; capture `npm run visual` au jour 1 avant et après.
+    - [ ] **POLISH-SIM-149 — « analyses digestives » au 28e jour, « premier score » au 14e** (J1, `DigestBlock.jsx`
+      133, `firstWeek.js` 53) : deux échéances voulues (brief § 3.5, `firstResults.js`), mais nommées sans lien ; la
+      persona lit trois délais (7, 14, 28). Dans Ma journée, nommer la seconde comme Objectifs et la visite
+      (« vos pistes digestives ») ; texte seulement, test SLOP et test de `firstResults` d'abord.
+    - [ ] **POLISH-SIM-150 — Agir : « Faire au moins 8 683 pas », l'Accueil dit « d'habitude 6 327 »** (J14, mineur ;
+      `trials.js` 73 : seuil = centre du modèle + 2 000 ; l'Accueil lit la médiane récente, `dayDeviations.js` 114) :
+      deux « habitudes » pour la même mesure (méta-leçon 3). Partir de la même habitude que l'Accueil, ou arrondir la
+      cible (8 700) et dire « environ 2 000 de plus que d'habitude ». À vérifier contre le banc des essais.
+    - [ ] **PERSONAS-OUTIL-2 — L'analyse factice rend toujours « Pâtes à la carbonara »** (`persona-browse.mjs` 87) :
+      une persona qui décrit « 2 tartines, café au lait » croit à une erreur de l'IA. Faire reprendre au faux relais
+      les mots de la description (un aliment par mot connu de la table), et dire dans `brief.md` que l'analyse est
+      simulée.
+    - Écartés, avec la raison, dans la synthèse : jauge de Pilou après une note de 2/5 (déjà écarté le 22/11 : elle
+      suit les bulles faites) ; deux essais en même temps (voulu, ORG-1b) ; « Version installée : 0.0.0 » (build web
+      de l'outil) ; écran Gold après « 4 sur 4 », nom en deux temps, visite en 10 bulles (déjà écartés) ; « Voir un
+      exemple » au 14e jour (voulu, sans délai écrit).
+    - À étudier : l'objectif « stress » de l'ancienne version devient « Bien-être » sans un mot à la mise à jour
+      (REFONTE-UPG) ; une ligne dans la carte « Nouveau » suffirait. « Cœur » listé à l'étape 3 de l'accueil alors que
+      le bracelet n'en donne pas (liste générale, pour information) : dire « selon votre montre ». Mots FODMAP
+      (fructanes, GOS…) sans aliment entre parenthèses hors de la carte des pistes.
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.

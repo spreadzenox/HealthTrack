@@ -40,7 +40,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v881** (APK 35,7 Mo, 23/11 04:35 UTC, merge de #1210) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1268.1268** (build du 22/11 au soir) chez « Testeurs Halcya », en examen bêta depuis le 23/11 02:32 ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
+| Dernière version | release **v881** (APK 35,7 Mo, 23/11 04:35 UTC, merge de #1210) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1268.1268** (build du 22/11 au soir) **validée** pour « Testeurs Halcya » (relevé du 23/11 07:33 UTC) ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; 3 correctifs propres à l'iPhone restent à fondre dans le code commun (FUSION-3) |
 
@@ -61,6 +61,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 23/11 08:30 — [Personas du matin, #1212 mergée](runs/2026-11-23-0830-personas-2311-matin.md) | 💡 | Deux personas jouées (« Ventre, sans technique » au 1er jour avec un bracelet sur iPhone, « Stressé et pressé » au 14e jour après la mise à jour) : 6 défauts vérifiés au backlog, dont un galet noir à côté de Pilou dans « Votre bien-être » et un bien-être « 3,4/5 estimé » au 1er jour sans aucune note. Build iPhone 1268.1268 validée pour les testeurs. **#1212 mergée** (signature App Attest des analyses sur iPhone ; un émulateur relancé après un délai dépassé). 3 correctifs iPhone restent. Rien à faire de votre côté |
 | 23/11 07:30 — [#1211 mergée, FUSION-3 : 38 et 49](runs/2026-11-23-0730-fusion-app-attest.md) | 🔧 | **#1211 mergée** (captures iPhone de Nouveautés et Premium relues : prix lus dans StoreKit). Correctifs iPhone 38 (signature App Attest des analyses et de l'avis) et 49 (outil des personas iPhone) fondus dans le code commun, une seule PR donc un seul build iPhone ; rien ne change sur Android (tests). 3 correctifs restent. Rien à faire de votre côté |
 | 23/11 06:30 — [FUSION-3 : correctif 24, #1211 prête](runs/2026-11-23-0630-fusion-abonnement.md) | 🔧 | Correctif iPhone 24 (l'iPhone prend son plugin d'abonnement App Store) fondu dans le code commun, ajouté à #1211 qui passe en « prête » : un seul build iPhone pour deux correctifs. Android inchangé (tests). 5 correctifs restent. Rien à faire de votre côté |
 | 23/11 05:30 — [#1210 mergée, FUSION-3 : correctif 28](runs/2026-11-23-0530-fusion-nouveautes.md) | 🔧 | **#1210 mergée** (captures iPhone de Sources relues : guides des montres par l'app Santé, carte Visage), release **v881** (35,7 Mo). Correctif iPhone 28 (quelles notes de « Nouveautés » l'iPhone montre) fondu dans le code commun ; PR en brouillon pour grouper le build iPhone avec le correctif suivant. 6 correctifs restent. Rien à faire de votre côté |
