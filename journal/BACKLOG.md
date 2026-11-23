@@ -899,6 +899,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   (`Data.jsx`, `WatchDiagnostic.jsx`, `today.js`) ; tests Android dans `Data.test.jsx`, `WatchDiagnostic.test.jsx`,
   `today.test.js` ; les tests d'overlay `.appstore` restent la preuve iPhone. 12 restent (01, 02, 05, 10, 16, 24, 27,
   28, 38, 39, 47, 49). Suivant : 05 (visage) ou 47 (notifications refusées).
+  23/11 03:30 : correctifs 05 (visage) et 10 (plugins absents) fondus, `missingOnIos()` dans `app/src/ios/nativePlugins.js` ;
+  8 restent (01, 02, 16, 24, 27, 28, 38, 49). PR en brouillon : le run suivant y ajoute 16 (guides des montres) puis la
+  passe en « prête » pour un seul build iPhone. 27 attend une décision (lien « Envoyer un avis »).
+  23/11 04:30 : correctif 16 (guides des montres par l'app Santé) fondu dans la même PR (#1210), passée en « prête » ;
+  7 restent (01, 02, 24, 27, 28, 38, 49). Suivant : 28 (Nouveautés iPhone) ou 24 (abonnement App Store), 01 en dernier.
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).

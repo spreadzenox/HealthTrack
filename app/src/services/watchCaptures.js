@@ -9,6 +9,7 @@ import { registerPlugin } from '@capacitor/core'
 import { importWatchCapture, SYNC_STATE_VERSION } from './watchSync'
 import { isValidCapture } from '../devices/huawei/capture'
 import { DICT_CLASS } from '../devices/huawei/p2p'
+import { missingOnIos } from '../ios/nativePlugins.js'
 
 const NativeCapture = registerPlugin('WatchCapture')
 
@@ -17,7 +18,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
 /** Plugin natif dans l'app, faux plugin des tests, sinon aucun. */
 export function capturePlugin() {
   if (typeof window !== 'undefined' && window.__healthtrackFakeWatchCapture) return window.__healthtrackFakeWatchCapture
-  return isNative() ? NativeCapture : null
+  return isNative() && !missingOnIos('WatchCapture') ? NativeCapture : null
 }
 
 /** Clé de synchro de la montre (adresse telle que le JS la connaît, casse comprise) : celle de l'état déjà gardé si elle existe. */

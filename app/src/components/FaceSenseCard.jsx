@@ -367,7 +367,7 @@ export default function FaceSenseCard({
         </>
       )}
 
-      {!available && <p className="my-device-message">Disponible dans l’app Android.</p>}
+      {!available && <p className="my-device-message">{FEATURES.iosStore ? 'Bientôt sur iPhone.' : 'Disponible dans l’app Android.'}</p>}
       {available && !loaded && <p className="my-device-message">Lecture de l’état…</p>}
       {available && loaded && d.state === 'unavailable' && (
         <>

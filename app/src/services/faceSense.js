@@ -14,6 +14,7 @@ import { registerPlugin } from '@capacitor/core'
 import { eveningNoteDiagnostic, eveningNotePlugin } from './eveningNote'
 import { voiceProbeDiagnostic, voiceProbeLine } from './voiceProbe'
 import { appLocale } from '../i18n/locale.js'
+import { missingOnIos } from '../ios/nativePlugins.js'
 
 const KEY = 'healthtrack_face_sense'
 const NativeFaceSense = registerPlugin('FaceSense')
@@ -23,7 +24,8 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
 /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */
 export function faceSensePlugin() {
   if (typeof window !== 'undefined' && window.__healthtrackFakeFaceSense) return window.__healthtrackFakeFaceSense
-  return isNative() ? NativeFaceSense : null
+  // iPhone : le plugin n'existe pas encore en Swift, comme hors de l'app
+  return isNative() && !missingOnIos('FaceSense') ? NativeFaceSense : null
 }
 
 export function isFaceSenseAvailable() {

@@ -11,6 +11,7 @@
 import { registerPlugin } from '@capacitor/core'
 import { withTimeout } from '../utils/withTimeout'
 import { markWatchRestored } from './watchAutoSync'
+import { missingOnIos } from '../ios/nativePlugins.js'
 
 const NativeMarker = registerPlugin('BackupMarker')
 
@@ -29,7 +30,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
 
 export function markerPlugin() {
   if (typeof window !== 'undefined' && window.__healthtrackFakeBackupMarker) return window.__healthtrackFakeBackupMarker
-  return isNative() ? NativeMarker : null
+  return isNative() && !missingOnIos('BackupMarker') ? NativeMarker : null
 }
 
 /** Rend `{ restored: false }`, `{ restored: true, removed }` ou `{ restored: false, unavailable: true }`. */

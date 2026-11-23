@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import WatchGuides from './WatchGuides'
-import { WATCH_GUIDES, watchGuidesFor } from '../data/watchGuides'
+import { WATCH_GUIDES, IOS_WATCH_GUIDES, watchGuidesFor } from '../data/watchGuides'
 import { featuresFor } from '../config/distribution'
 
 describe('WatchGuides', () => {
@@ -43,5 +43,12 @@ describe('WatchGuides', () => {
     // VC-7 : pas de renvoi vers la carte Withings, masquée en play
     const other = play.find((g) => g.id === 'other')
     expect(other.steps.length).toBe(WATCH_GUIDES.find((g) => g.id === 'other').steps.length - 1)
+  })
+
+  it('les guides de l’app Santé ne servent que sur iPhone (FUSION-3, correctif 16)', () => {
+    for (const d of ['play', 'sideload']) expect(watchGuidesFor(featuresFor(d))).not.toBe(IOS_WATCH_GUIDES)
+    expect(watchGuidesFor({ ...featuresFor('play'), iosStore: true })).toBe(IOS_WATCH_GUIDES)
+    render(<WatchGuides />)
+    expect(screen.getByText(/envoyer ses mesures vers Health Connect/)).toBeInTheDocument()
   })
 })

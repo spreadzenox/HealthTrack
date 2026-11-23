@@ -12,6 +12,7 @@ import { registerPlugin } from '@capacitor/core'
 import { listEntries } from '../storage/localHealthStorage'
 import { GUT_TYPE } from './today'
 import { CHALLENGE_DAYS, FODMAP_CHALLENGE_TYPE, calmDaysLeftText, currentChallenge, findFood, formatAmount } from './fodmapChallenge'
+import { missingOnIos } from '../ios/nativePlugins.js'
 
 export const PORTION_DEFAULT_MINUTE = 12 * 60
 const KEY = 'halcya_portion_reminder'
@@ -24,7 +25,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
 /** Plugin natif dans l'app (deux variantes), faux plugin des captures / tests, sinon aucun. */
 export function portionReminderPlugin() {
   if (typeof window !== 'undefined' && window.__healthtrackFakePortionReminder) return window.__healthtrackFakePortionReminder
-  return isNative() ? NativePortionReminder : null
+  return isNative() && !missingOnIos('PortionReminder') ? NativePortionReminder : null
 }
 
 export const portionReminderAvailable = () => Boolean(portionReminderPlugin())

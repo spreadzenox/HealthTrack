@@ -6,6 +6,7 @@
  * permission demandée, aucun son ni aucune humeur dans le résultat.
  */
 import { registerPlugin } from '@capacitor/core'
+import { missingOnIos } from '../ios/nativePlugins.js'
 
 const NativeVoiceProbe = registerPlugin('VoiceProbe')
 const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNativePlatform?.() === true
@@ -13,7 +14,7 @@ const isNative = () => typeof window !== 'undefined' && window?.Capacitor?.isNat
 /** Plugin natif dans l'app, faux plugin des captures / tests, sinon aucun. */
 export function voiceProbePlugin() {
   if (typeof window !== 'undefined' && window.__healthtrackFakeVoiceProbe) return window.__healthtrackFakeVoiceProbe
-  return isNative() ? NativeVoiceProbe : null
+  return isNative() && !missingOnIos('VoiceProbe') ? NativeVoiceProbe : null
 }
 
 /** Résultat brut de la sonde, ou null hors de l'app Android. Ne lève jamais. */

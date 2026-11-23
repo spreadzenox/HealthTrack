@@ -420,6 +420,8 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **23/11 04:30** — **FUSION-3, correctif iPhone 16 fondu** (guides des montres par l'app Santé, rien de visible sur Android) dans #1210, passée en « prête » pour un seul build iPhone ; 7 correctifs restent. Alpha de la nuit partie (03:09 UTC, verte).
+- **23/11 03:30** — **#1209 mergée ; FUSION-3, correctifs iPhone 05 et 10 fondus** (rien de visible) : plugins natifs absents sur iPhone (visage, note du soir, rappels, voix, montre) détectés dans le code partagé ; 8 correctifs restent. TestFlight **1268.1268** validée pour « Testeurs Halcya » ; rien à expirer.
 - **23/11 02:30** — **FUSION-3, correctifs iPhone 47 et 39 fondus** (rien de visible) : message « notifications refusées » propre à l'iPhone et page « Licences » de l'iPhone dans le code partagé ; 10 correctifs restent. TestFlight **1268.1268** ajoutée à « Testeurs Halcya » et soumise à l'examen bêta.
 - **23/11 01:30** — **FUSION-3, correctifs iPhone 06, 07 et 15 fondus** (rien de visible) : textes propres à l'iPhone de Sauvegarde, de la montre Huawei et du nom « app Santé » dans le code partagé ; 12 correctifs restent.
 - **23/11 00:30** — **Archive S47** (journal seulement) : résumé S47 archivé dans `semaines/2026-S47.md` (liens recalés), résumé S48 ouvert ; heures de Mac de S47 : 147,6 h (cible 3 h par jour), décision sur la règle du build iOS de PR toujours en attente ; #1206 (correctif iPhone 18) mergée.
