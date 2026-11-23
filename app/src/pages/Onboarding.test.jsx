@@ -208,7 +208,7 @@ describe('Temps 1 : « Qu’est-ce qui vous amène ? »', () => {
 
   it('aucun texte ne renvoie à « Paramètres » seul (POLISH-SIM-44)', () => {
     // L'écran du visage n'existe pas en jsdom (pas de lecture du visage) : on lit ses textes dans la source.
-    expect(onboardingSource).toContain("'à tout moment, dans Réglages › Paramètres'")
+    expect(onboardingSource).toContain('`à tout moment, dans ${IN_APP_SETTINGS} › Paramètres`')
     expect(onboardingSource).not.toMatch(/dans Paramètres/)
   })
 })

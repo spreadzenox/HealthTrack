@@ -16,7 +16,7 @@ import {
 import { listEntries } from '../storage/localHealthStorage'
 import { getHabits, setHabits } from '../settings/habits'
 import { CUSTOM_PREFIX, MAX_HABIT_LABEL, SUGGESTED_HABITS, customHabit } from '../services/habits'
-import { FEATURES } from '../config/distribution'
+import { FEATURES, IN_APP_SETTINGS } from '../config/distribution'
 import Premium from './Premium'
 import { AHA_DAYS, summarizeImport } from '../services/firstImport'
 import {
@@ -150,7 +150,7 @@ function GoalStep({ gut, onGut }) {
         })}
       </fieldset>
       <p className="onb-fine">Inclus : le bien-être + 1 objectif.</p>
-      <p className="onb-fine">Vous pourrez le changer dans Réglages › Paramètres (roue en haut à droite).</p>
+      <p className="onb-fine">Vous pourrez le changer dans {IN_APP_SETTINGS} › Paramètres (roue en haut à droite).</p>
     </>
   )
 }
@@ -208,7 +208,7 @@ function HealthCard({ health, onHealth, phone = false }) {
   if (health === 'unavailable') {
     return (
       <p className="onb-quiet" role="status">
-        {name} n’est pas sur ce téléphone. Vous pourrez le relier plus tard dans Réglages › Sources.
+        {name} n’est pas sur ce téléphone. Vous pourrez le relier plus tard dans {IN_APP_SETTINGS} › Sources.
       </p>
     )
   }
@@ -318,7 +318,7 @@ function WeatherRow({ weather, onWeather }) {
         <span className="onb-row-detail">
           votre ville, à quelques kilomètres près : le téléphone demande votre position approximative
         </span>
-        {weather === 'unavailable' && <span className="onb-row-detail">Position indisponible. Choisissez une ville dans Réglages › Sources.</span>}
+        {weather === 'unavailable' && <span className="onb-row-detail">Position indisponible. Choisissez une ville dans {IN_APP_SETTINGS} › Sources.</span>}
       </div>
       <Switch checked={on} onChange={toggle} disabled={busy} label="Météo" />
     </div>
@@ -403,13 +403,13 @@ function WatchStep({ state, update, installed }) {
           {huaweiFound && <HuaweiCard huawei={state.huawei} onHuawei={(huawei) => update({ huawei })} />}
           {/* POLISH-SIM-115 : le poids d'une balance arrive par la même source et se voit dans Tendances */}
           <p className="onb-quiet">Une balance connectée ? Votre poids arrive aussi par {name}, à voir dans Tendances.</p>
-          <p className="onb-fine">Une seule fois. Ensuite, vos sources se gèrent dans Réglages › Sources.</p>
+          <p className="onb-fine">Une seule fois. Ensuite, vos sources se gèrent dans {IN_APP_SETTINGS} › Sources.</p>
         </>
       )}
       {watch === 'no' && (
         <>
           <HealthCard phone health={state.health} onHealth={(health) => update({ health })} />
-          <p className="onb-fine">Une seule fois. Ensuite, vos sources se gèrent dans Réglages › Sources.</p>
+          <p className="onb-fine">Une seule fois. Ensuite, vos sources se gèrent dans {IN_APP_SETTINGS} › Sources.</p>
         </>
       )}
       <h2 className="onb-leaves-group">Sur ce téléphone</h2>
@@ -464,7 +464,7 @@ function AutoStep({ watch, health, weather, screen, children }) {
             : 'Rien à cocher : tout se fait en arrière-plan.'}
         </p>
       )}
-      {off.length > 0 && <p className="onb-quiet">Activables dans Réglages › Sources : {off.join(', ')}.</p>}
+      {off.length > 0 && <p className="onb-quiet">Activables dans {IN_APP_SETTINGS} › Sources : {off.join(', ')}.</p>}
       {later.length > 0 && <p className="onb-quiet">Avec une montre ou un bracelet : {later.join(', ')}.</p>}
       {children}
     </>
@@ -587,7 +587,7 @@ function FoundStep({ health, imported, onImported, installed, huawei }) {
       )}
       {error && (
         <p className="onb-note" role="status">
-          L’import n’a pas abouti. {APP_NAME} réessaiera seule, ou relancez-le depuis Réglages › Sources.
+          L’import n’a pas abouti. {APP_NAME} réessaiera seule, ou relancez-le depuis {IN_APP_SETTINGS} › Sources.
         </p>
       )}
     </>
@@ -601,7 +601,7 @@ const FACE_LINES = [
   { title: 'Ce qui est gardé', text: 'l’image est effacée aussitôt, seul le score de la lecture reste' },
   { title: 'Où', text: 'sur ce téléphone, et dans sa sauvegarde si elle est activée' },
   { title: 'Ce que c’est', text: 'une estimation de votre bien-être par un modèle, pas un avis médical' },
-  { title: 'Comment l’arrêter', text: 'à tout moment, dans Réglages › Paramètres' },
+  { title: 'Comment l’arrêter', text: `à tout moment, dans ${IN_APP_SETTINGS} › Paramètres` },
 ]
 
 function FaceStep({ face, onFace, onLater }) {
@@ -677,12 +677,12 @@ function FaceStep({ face, onFace, onLater }) {
       )}
       {face === 'denied' && (
         <p className="onb-note" role="status">
-          Accès à la caméra refusé : rien n’est activé. Vous pourrez revenir dessus depuis Réglages › Sources.
+          Accès à la caméra refusé : rien n’est activé. Vous pourrez revenir dessus depuis {IN_APP_SETTINGS} › Sources.
         </p>
       )}
       {face === 'failed' && (
         <p className="onb-note" role="status">
-          La lecture n’a pas démarré. Vous pourrez réessayer depuis Réglages › Sources.
+          La lecture n’a pas démarré. Vous pourrez réessayer depuis {IN_APP_SETTINGS} › Sources.
         </p>
       )}
       {face !== 'on' && !already && (modes.length > 0 || !appOpen) && (
