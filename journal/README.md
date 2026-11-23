@@ -40,7 +40,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v881** (APK 35,7 Mo, 23/11 04:35 UTC, merge de #1210) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1268.1268** (build du 22/11 au soir) **validée** pour « Testeurs Halcya » (relevé du 23/11 07:33 UTC) ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
+| Dernière version | release **v883** (APK 35,7 Mo, 23/11 07:45 UTC, merge de #1212) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1268.1268** (build du 22/11 au soir) **validée** pour « Testeurs Halcya » (relevé du 23/11 07:33 UTC) ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; 3 correctifs propres à l'iPhone restent à fondre dans le code commun (FUSION-3) |
 
