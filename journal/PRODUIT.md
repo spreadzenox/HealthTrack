@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **23/11 07:30** — **#1211 mergée** (correctifs iPhone 28 et 24 ; captures iPhone de Nouveautés et Premium relues). **FUSION-3, correctifs 38 (App Attest) et 49 (personas iPhone) fondus**, rien de visible ; 3 correctifs restent.
 - **23/11 06:30** — **FUSION-3, correctif iPhone 24 fondu** (choix du plugin d'abonnement StoreKit 2 sur iPhone, rien de visible) dans #1211, passée en « prête » pour un seul build iPhone ; 5 correctifs restent.
 - **23/11 05:30** — **#1210 mergée** (correctifs iPhone 05, 10, 16 ; captures iPhone de Sources relues). **FUSION-3, correctif 28 fondu** (Nouveautés de l'iPhone, rien de visible) en brouillon ; 6 correctifs restent.
 - **23/11 04:30** — **FUSION-3, correctif iPhone 16 fondu** (guides des montres par l'app Santé, rien de visible sur Android) dans #1210, passée en « prête » pour un seul build iPhone ; 7 correctifs restent. Alpha de la nuit partie (03:09 UTC, verte).
