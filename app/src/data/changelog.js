@@ -27,12 +27,28 @@ export const ALL_CHANGELOG = Object.entries(modules)
  */
 export const PLAY_CHANGELOG_SINCE = '2026-10-24-0000'
 
+/**
+ * App iPhone (variante appstore) : première entrée montrée, celle du premier TestFlight (30/10, build 616.97) ; avant,
+ * l'historique parle de « HealthTrack », de la clé Gemini, de la mise à jour par APK ou de la montre en Bluetooth.
+ */
+export const APPSTORE_CHANGELOG_SINCE = '2026-10-30-2100'
+/** Notes communes fausses sur iPhone (période de lancement, grande police d'Android…), cachées dans la variante appstore. */
+export const APPSTORE_HIDDEN = new Set([
+  '2026-10-29-0533-paywall-lancement', '2026-10-30-0933-sommeil-une-source',
+  '2026-11-01-0233-textes-notifications', '2026-11-01-0333-slop-fiche-site',
+  '2026-11-01-0533-sources-relues', '2026-11-01-0733-premiers-pas-relus', '2026-11-04-0235-bouton-bienvenue',
+  '2026-11-04-1435-grande-police', '2026-11-06-1335-grande-police',
+  '2026-11-06-1935-ventre-grande-police', '2026-11-06-2135-onboarding-reperes', '2026-11-08-1830-nouvel-accueil',
+  '2026-11-10-0935-mono-mots-3', '2026-11-10-1635-journal-tuiles', '2026-11-11-1635-noter-objectif',
+])
+
 /** Entrées qui concernent une variante, de la plus récente à la plus ancienne. */
 export function changelogFor(entries, distribution) {
   const d = resolveDistribution(distribution)
   return entries.filter(
     (e) =>
-      (!Array.isArray(e.variants) || e.variants.includes(d)) && (d !== 'play' || e.id >= PLAY_CHANGELOG_SINCE),
+      (!Array.isArray(e.variants) || e.variants.includes(d)) && (d !== 'play' || e.id >= PLAY_CHANGELOG_SINCE) &&
+      (d !== 'appstore' || (e.id >= APPSTORE_CHANGELOG_SINCE && !APPSTORE_HIDDEN.has(e.id))),
   )
 }
 
