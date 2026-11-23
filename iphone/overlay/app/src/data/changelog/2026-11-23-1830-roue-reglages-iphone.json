@@ -4,6 +4,6 @@
   "variants": ["appstore"],
   "title": "Les réglages de Halcya, pas ceux de l’iPhone",
   "items": [
-    "Quand un texte vous renvoie aux réglages de l’app, il écrit « ⚙ Réglages › Sources » : c’est la roue en haut à droite, pas l’app Réglages de l’iPhone."
+    "Quand un texte vous renvoie aux réglages de l’app, il écrit « Réglages de l’app › Sources » : c’est la roue en haut à droite, pas l’app Réglages de l’iPhone."
   ]
 }

@@ -66,12 +66,14 @@ describe('magasin d’applications (I6-RELAIS-6)', () => {
 })
 
 describe('nom des réglages de l’app dans les textes (DEM-IOS-7)', () => {
-  it('« Réglages » sur Android, « ⚙ Réglages » sur iPhone, où Réglages est aussi l’app du système', async () => {
+  it('« Réglages » sur Android, « Réglages de l’app » sur iPhone, où Réglages est aussi l’app du système', async () => {
     const { inAppSettingsFor, IN_APP_SETTINGS } = await import('./distribution')
     expect(inAppSettingsFor({})).toBe('Réglages')
     expect(inAppSettingsFor({ iosStore: false })).toBe('Réglages')
-    expect(inAppSettingsFor({ iosStore: true })).toBe('⚙ Réglages')
+    expect(inAppSettingsFor({ iosStore: true })).toBe('Réglages de l’app')
     expect(IN_APP_SETTINGS).toBe('Réglages')
+    // aucun emoji : iOS dessine « ⚙ » en emoji couleur
+    expect(inAppSettingsFor({ iosStore: true })).not.toMatch(/\p{Extended_Pictographic}/u)
   })
 
   it('aucun texte de l’app n’écrit « Réglages › » en dur, hors chemins des réglages du système', async () => {
