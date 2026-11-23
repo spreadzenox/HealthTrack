@@ -245,6 +245,21 @@ describe('contrat des résultats d’Analyses', () => {
     expect(both[0].eveOnly).toBeUndefined()
   })
 
+  it('POLISH-SIM-146 : le jour du calcul, un cumul partiel (pas, activité, écran) ne compte pas, seule la veille', () => {
+    const steps = { key: 'steps', label: 'Pas', theme: 'activity', horizon: 'short', inModel: true, perUnit: 0.0001, center: 6000 }
+    const fiber = { key: 'fiber_g', label: 'Fibres', theme: 'nutrition', horizon: 'short', inModel: true, perUnit: 0.05, center: 8 }
+    const days = new Map([['2026-11-21', { steps: 8590, fiber_g: 10 }], ['2026-11-22', { steps: 162, fiber_g: 14 }]])
+    const res = { computedFor: '2026-11-22', outcomes: { wellbeing: { horizons: { short: { factors: [steps, fiber] } } } } }
+    const today = dayContributions(res, [], '2026-11-22', { days })
+    expect(today.find((c) => c.key === 'steps')).toMatchObject({ value: 8590, eveOnly: true })
+    expect(today.find((c) => c.key === 'steps').dayValue).toBeUndefined()
+    // Ce qui n'est pas un cumul mesuré par le téléphone garde le jour même et la veille
+    expect(today.find((c) => c.key === 'fiber_g').value).toBe(12)
+    // Un jour passé n'est pas touché : la moyenne des deux jours, avec la valeur du jour
+    const past = dayContributions({ ...res, computedFor: '2026-11-23' }, [], '2026-11-22', { days })
+    expect(past.find((c) => c.key === 'steps')).toMatchObject({ value: (8590 + 162) / 2, dayValue: 162 })
+  })
+
   it('contributions sur le modèle : une barre par facteur, seulement les termes du modèle, tous les jours', () => {
     const { entries, steps, now } = world({ days: 70 })
     const res = computeAnalysisResults(entries, { now })
