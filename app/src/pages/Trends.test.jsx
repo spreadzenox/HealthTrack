@@ -230,6 +230,19 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(detail.textContent).not.toMatch(/cause|à cause|parce que/i)
   })
 
+  it('POLISH-SIM-147 : sans aucune note ni lecture, le jour ne donne pas de bien-être estimé', async () => {
+    const never = { ...states, days: states.days.map((d) => ({ ...d, observed: { wellbeing: false, digestion: false } })) }
+    render(
+      <MemoryRouter initialEntries={['/tendances?vue=jour']}>
+        <Trends now={NOW} readDays={async () => days} readDayStates={async () => never}
+          readFaceEntries={async () => []} readDayContributions={async () => ({})} readDayChanges={async () => ({})} />
+      </MemoryRouter>,
+    )
+    const detail = await screen.findByRole('group', { name: /Détail du samedi 7 novembre/ })
+    expect(detail).toHaveTextContent('Pas encore de note')
+    expect(detail.textContent).not.toMatch(/estimé|3,0/)
+  })
+
   // Correction T2 du propriétaire (07/11 vers 23:50) : la vue Jour de la maquette, l'ancien historique retiré
   it('T2/T3 : ?vue=jour ouvre le dernier jour qui a une lecture ; › jusqu’à aujourd’hui ; lectures en points, note en losange', async () => {
     renderAt('/tendances?vue=jour')

@@ -130,7 +130,7 @@ export default function DigestBlock({ onNote, read = readGutNotes, summary: summ
       ) : (
         <>
           <h2 id="digest-title" className="digest-title">
-            {keepWhole(`Encore ${bar.remaining} jour${bar.remaining > 1 ? 's' : ''} noté${bar.remaining > 1 ? 's' : ''} avant vos analyses digestives`)}
+            {keepWhole(`Encore ${bar.remaining} jour${bar.remaining > 1 ? 's' : ''} noté${bar.remaining > 1 ? 's' : ''} avant vos pistes digestives`)}
           </h2>
           <p className="digest-text">
             {APP_NAME} cherchera quels facteurs sont statistiquement liés à votre confort digestif.
@@ -142,7 +142,8 @@ export default function DigestBlock({ onNote, read = readGutNotes, summary: summ
           <p className="digest-count">
             <span className="mono">{bar.days}/{bar.target}</span> jours notés, pas forcément d’affilée
           </p>
-          {/* POLISH-SIM-102, UPG-7 : les deux paliers nommés, comme dans Objectifs */}
+          {/* POLISH-SIM-102, UPG-7 : les deux paliers nommés, comme dans Objectifs ; POLISH-SIM-149 : le titre dit
+              « pistes » comme ce palier et la visite */}
           <p className="digest-steps">
             {bar.days < FIRST_SCORE_DAY.digestion
               ? `Premier score au ${FIRST_SCORE_DAY.digestion}e jour noté, pistes au ${bar.target}e.`

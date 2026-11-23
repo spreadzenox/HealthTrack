@@ -30,7 +30,7 @@ describe('DigestBlock (AUJ-4)', () => {
   it('avant les analyses : le compte à rebours, ce qu’elles cherchent, N/28 et « Noter ma digestion »', async () => {
     const onNote = vi.fn()
     wrap({ onNote, read: async () => [note(1), note(2), note(3, 'pain')] })
-    expect(await screen.findByRole('heading', { name: 'Encore 25 jours notés avant vos analyses digestives' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Encore 25 jours notés avant vos pistes digestives' })).toBeInTheDocument()
     expect(screen.getByText(/cherchera quels facteurs sont statistiquement liés à votre confort digestif\./)).toBeInTheDocument()
     expect(screen.getByText('3/28')).toBeInTheDocument()
     // POLISH-SIM-32 : quelle fenêtre ? Aucune : tous les jours notés comptent, d'affilée ou non
@@ -44,7 +44,7 @@ describe('DigestBlock (AUJ-4)', () => {
 
   it('POLISH-SIM-102 : après 14 jours notés, le score est dans Objectifs, les pistes au 28e', async () => {
     wrap({ read: async () => Array.from({ length: 15 }, (_, i) => note(i + 1)) })
-    await screen.findByRole('heading', { name: 'Encore 13 jours notés avant vos analyses digestives' })
+    await screen.findByRole('heading', { name: 'Encore 13 jours notés avant vos pistes digestives' })
     expect(screen.getByText('Votre score de confort est dans Objectifs. Pistes au 28e jour noté.')).toBeInTheDocument()
     expect(screen.queryByText(/Premier score au 14e/)).toBeNull()
   })

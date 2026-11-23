@@ -78,7 +78,7 @@ const stateValue = (b) => (b && isNum(b.mean) ? { value: toDisplay(b.mean), low:
  * @param {{ states: object | null, days: { dateKey: string, summary: object }[], period: 'week'|'month', now?: Date }} input
  *   `states` : sortie d'estimateStates (TS-1) ; `days` : buildDailyJournal.
  * @returns {{ dates: string[], today: string, series: Record<string, Array<{ date, value, low?, high?, observed, future }>>,
- *   available: string[] }}
+ *   available: string[], observedAny: Record<string, boolean> }}
  */
 export function buildTrendSeries({ states = null, days = [], period = 'week', now = new Date() }) {
   const { dates, today } = periodDates(period, now)
@@ -117,7 +117,11 @@ export function buildTrendSeries({ states = null, days = [], period = 'week', no
     return n >= TREND_MIN_POINTS
   }
   const available = TREND_MEASURES.filter(enough).map((m) => m.key)
-  return { dates, today, series, available }
+  // POLISH-SIM-147 : sans aucune observation (ni note ni lecture), le chiffre d'un état ne vient que du départ du
+  // modèle ; le détail du jour ne le donne pas
+  const observedAny = Object.fromEntries(TREND_MEASURES.filter((m) => m.state)
+    .map((m) => [m.key, (states?.days || []).some((d) => d.observed?.[m.key])]))
+  return { dates, today, series, available, observedAny }
 }
 
 /** Unités des mesures choisies : un axe par unité, deux au plus (gauche, droite). */

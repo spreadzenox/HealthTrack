@@ -42,6 +42,7 @@
   --lilac-bg: #ece9ff; /* lilas = activité et sport */
   --lilac-text: #3e3870;
   --lilac-bar: #4b3fc9;
+  --lilac-label: #4b3fc9; /* = lilac-bar : étiquette et galet du cairn (POLISH-SIM-145) */
   --lilac-track: #c6bff5; /* rail de la barre de progression (≥ 1,4:1 sur lilas) */
   --night-bg: #e4eaf7; /* bleu nuit = sommeil */
   --night-text: #26324f;
@@ -167,6 +168,7 @@
   --lilac-bg: #27244a;
   --lilac-text: #dcd8ff;
   --lilac-bar: #a99fff;
+  --lilac-label: #a99fff; /* = lilac-bar (POLISH-SIM-145) */
   --lilac-track: #48428a;
   --mint-track: #2c6b56;
   --peach-track: #6e4630;
@@ -217,7 +219,7 @@
 [data-tone='mint'] { --tone-bg: var(--mint-bg); --tone-text: var(--mint-text); --tone-label: var(--mint-label); --tone-track: var(--mint-track); }
 [data-tone='peach'] { --tone-bg: var(--peach-bg); --tone-text: var(--peach-text); --tone-label: var(--peach-label); --tone-track: var(--peach-track); }
 [data-tone='honey'] { --tone-bg: var(--honey-bg); --tone-text: var(--honey-text); --tone-label: var(--honey-label); --tone-track: var(--honey-track); }
-[data-tone='lilac'] { --tone-bg: var(--lilac-bg); --tone-text: var(--lilac-text); --tone-label: var(--lilac-bar); --tone-track: var(--lilac-track); }
+[data-tone='lilac'] { --tone-bg: var(--lilac-bg); --tone-text: var(--lilac-text); --tone-label: var(--lilac-label); --tone-track: var(--lilac-track); }
 [data-tone='night'] { --tone-bg: var(--night-bg); --tone-text: var(--night-text); --tone-label: var(--night-label); --tone-track: var(--night-track); }
 [data-tone='rose'] { --tone-bg: var(--rose-bg); --tone-text: var(--rose-text); --tone-label: var(--rose-label); --tone-track: var(--rose-track); }
 [data-tone='stone'] { --tone-bg: var(--stone-bg); --tone-text: var(--stone-text); --tone-label: var(--stone-label); --tone-track: var(--stone-track); }

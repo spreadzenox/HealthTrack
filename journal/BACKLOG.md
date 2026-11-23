@@ -723,7 +723,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - **Passage des personas du 23/11 08:30** (run « idées », [`synthèse`](simulations/2026-11-23-0830-synthese.md) ;
     « Ventre, sans technique » J1, iPhone + bracelet d'une autre marque, et « Stressé et pressé » J14 après mise à
     jour, iPhone seul ; joués sur l'apparence Android) :
-    - [ ] **POLISH-SIM-145 — Galet noir à côté de Pilou dans « Par famille »** (J14, vérifié : capture
+    - [x] **POLISH-SIM-145 — Galet noir à côté de Pilou dans « Par famille »** — FAIT 23/11 09:30 (PR du run : `--lilac-label` dans les deux thèmes, `[data-tone=lilac]` passe par elle, test « chaque teinte a son `-label` et son `-track` ») (J14, vérifié : capture
       `bien-etre-familles.png`, `companion/life/Cairn.jsx` 19, `theme/tokens.css`) : le galet de la famille Activité
       est peint `var(--lilac-label)`, qui n'existe pas (le lilas n'a que `bg`, `text`, `bar`, `track` ; ailleurs
       `--tone-label` du lilas vaut `--lilac-bar`), d'où un ovale noir en clair comme en sombre dès qu'Activité a un lien.
@@ -735,7 +735,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       n'est que partiel à 08:33. Proposition : pour aujourd'hui, un cumul du jour ne compte pas encore (fenêtre lue sur
       la veille, ligne « La veille, moins de pas… » comme POLISH-SIM-143), ou la ligne dit « hier et aujourd'hui ».
       Vérifier d'abord au banc que l'effet ne change pas les jours passés ; tests d'abord.
-    - [ ] **POLISH-SIM-147 — « Bien-être 3,4/5 estimé » au jour 1, sans note ni lecture** (J1, vérifié : capture
+    - [x] **POLISH-SIM-147 — « Bien-être 3,4/5 estimé » au jour 1, sans note ni lecture** — FAIT 23/11 09:30 (`observedAny` de `buildTrendSeries` ; détail du jour « Pas encore de note » ; tests `trendsData` et `Trends`) (J1, vérifié : capture
       `tendances-bienetre-estime.png`, `trendsData.js` 213 `detailSource`) : sur la courbe vide (« Aucune lecture du
       visage ce jour-là »), la ligne du jour donne un chiffre tiré de rien, alors que l'Accueil demande encore de noter.
       Ne pas afficher de valeur du jour tant que la série n'a aucune observation (ni note ni lecture) ; « Pas encore
@@ -743,7 +743,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [ ] **POLISH-SIM-148 — Le cadeau du jour cache « Bien-être » sur l'île** (J1, vérifié : capture
       `accueil-jour1sur7.png`) : la bulle dorée se pose sur le libellé de la bulle Bien-être (île de 412 px de large).
       Décaler le cadeau (bord de l'île) ou la bulle ; capture `npm run visual` au jour 1 avant et après.
-    - [ ] **POLISH-SIM-149 — « analyses digestives » au 28e jour, « premier score » au 14e** (J1, `DigestBlock.jsx`
+    - [x] **POLISH-SIM-149 — « analyses digestives » au 28e jour, « premier score » au 14e** — FAIT 23/11 09:30 (titre « … avant vos pistes digestives » ; test `DigestBlock`) (J1, `DigestBlock.jsx`
       133, `firstWeek.js` 53) : deux échéances voulues (brief § 3.5, `firstResults.js`), mais nommées sans lien ; la
       persona lit trois délais (7, 14, 28). Dans Ma journée, nommer la seconde comme Objectifs et la visite
       (« vos pistes digestives ») ; texte seulement, test SLOP et test de `firstResults` d'abord.

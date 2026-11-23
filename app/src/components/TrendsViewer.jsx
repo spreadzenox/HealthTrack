@@ -222,6 +222,16 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
           const m = trendMeasure(k)
           const p = data.series[k].find((q) => q.date === date)
           if (!p) return null
+          // POLISH-SIM-147 : un état jamais observé (ni note ni lecture) n'a pas encore de chiffre à donner
+          if (!future && m.state && data.observedAny?.[k] === false) {
+            return (
+              <li key={k} data-tone={m.tone}>
+                <span className="trends-chip-dot" aria-hidden="true" />
+                <span className="trends-detail-label">{m.label}</span>
+                <span className="trends-detail-range">Pas encore de note</span>
+              </li>
+            )
+          }
           return (
             <li key={k} data-tone={m.tone}>
               <span className="trends-chip-dot" aria-hidden="true" />

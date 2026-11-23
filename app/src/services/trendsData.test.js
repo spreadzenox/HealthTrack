@@ -27,6 +27,14 @@ describe('Tendances (ORG-3)', () => {
     expect(r.available).toContain('wellbeing')
   })
 
+  it('POLISH-SIM-147 : dit si un état a déjà été observé (une note ou une lecture), sinon pas de chiffre du jour', () => {
+    const none = { showDigestiveCurve: true, days: [state('2026-11-06'), state('2026-11-07')] }
+    expect(buildTrendSeries({ states: none, period: 'week', now: NOW }).observedAny).toEqual({ wellbeing: false, digestion: false })
+    const one = { showDigestiveCurve: true, days: [state('2026-11-06', { observed: true }), state('2026-11-07')] }
+    expect(buildTrendSeries({ states: one, period: 'week', now: NOW }).observedAny.wellbeing).toBe(true)
+    expect(buildTrendSeries({ period: 'week', now: NOW }).observedAny).toEqual({ wellbeing: false, digestion: false })
+  })
+
   it('confort digestif : sans courbe validée, seulement les jours notés (information digestive seule)', () => {
     const days = [state('2026-11-06'), { ...state('2026-11-07'), observed: { wellbeing: false, digestion: true } }]
     const r = buildTrendSeries({ states: { showDigestiveCurve: false, days }, period: 'week', now: NOW })
