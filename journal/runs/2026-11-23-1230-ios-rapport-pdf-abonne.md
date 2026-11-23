@@ -33,7 +33,8 @@
   min de plus.
 
 ## Vérifications
-`npm run test` : voir ci-dessous ; eslint sur les deux fichiers : 0 erreur. Pas de `npm run visual` : aucun écran de
+`npm run test` : 407 fichiers, 4 469 tests verts ; eslint sur les deux fichiers : 0 erreur. Après le merge de #1216 :
+Build & Release **v886** publiée (APK 35 672 949 octets, 11:32 UTC). Pas de `npm run visual` : aucun écran de
 l'app ne change (le code n'entre que dans la build de captures du simulateur, `VITE_IOS_CAPTURE=1`).
 
 ## Suite
