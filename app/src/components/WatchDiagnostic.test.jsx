@@ -31,6 +31,12 @@ describe('WatchDiagnostic', () => {
     expect(screen.queryByRole('button', { name: /Tester/ })).toBeNull()
   })
 
+  it('hors app Android, sur Android et en sideload : renvoie à l’app Android, jamais au message de l’iPhone (FUSION-3, correctif 07)', () => {
+    render(<WatchDiagnostic available={false} />)
+    expect(screen.getByText(/Dans l’app Android, .* lit directement les mesures d’une montre Huawei/)).toBeInTheDocument()
+    expect(screen.queryByText(/sur iPhone/)).toBeNull()
+  })
+
   it('lance le test, affiche étapes et verdict, garde le rapport et l’exporte', async () => {
     const run = vi.fn(async (onUpdate) => {
       onUpdate({ ...REPORT, finishedAt: undefined, verdict: null })

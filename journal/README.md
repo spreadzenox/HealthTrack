@@ -42,7 +42,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 |---|---|---|
 | Dernière version | release **v878** (APK 35,7 Mo, 22/11 23:35 UTC, merge de #1206) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1244.1244** (refonte) chez « Testeurs Halcya » et attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
-| Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; 15 correctifs propres à l'iPhone restent à fondre dans le code commun (FUSION-3) |
+| Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; 12 correctifs propres à l'iPhone restent à fondre dans le code commun (FUSION-3) |
 
 **🧸 Refonte « Compagnon »** : étapes 1 à 7 faites (4 onglets, Ma journée, accueil en 4 temps, Objectifs, Données sur
 Tendances, Nunito et fond crème) ; étapes 8 à 14 livrées pendant le sprint du 16-17/11 (scène 3D, Pilou, bulles, vie,
@@ -61,6 +61,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 23/11 01:30 — [FUSION-3 : correctifs 06, 07, 15](runs/2026-11-23-0130-fusion-textes.md) | 🔧 | Trois correctifs propres à l'iPhone (texte de Sauvegarde, montre Huawei, « app Santé ») fondus dans le code commun en une seule PR, donc un seul build iPhone ; rien ne change sur Android (tests). 12 correctifs restent. PR à merger au run suivant après le build iPhone. Rien à faire de votre côté |
 | 23/11 00:30 — [Archive S47, #1206 mergée](runs/2026-11-23-0030-archive-s47.md) | 📝 | **#1206 mergée** (correctif iPhone 18, rappel de portion, dans le code commun ; captures iPhone relues), release **v878** (35,7 Mo). Résumé S47 archivé dans `semaines/2026-S47.md`, résumé S48 ouvert, bilan des heures de Mac de S47 (147,6 h). Build iPhone et Alpha de la nuit pas encore partis à 00:30 (cron en retard comme d'habitude). Rien à faire de votre côté |
 
 ---

@@ -202,6 +202,8 @@ export const SOURCE_LABELS = {
   scale: 'Balance connectée',
   phone_usage: 'Téléphone',
 }
+// App iPhone (variante appstore) : le même connecteur lit l'app Santé d'Apple
+if (FEATURES.iosStore) SOURCE_LABELS.health_connect = 'App Santé'
 
 /** Source lisible d'une entrée : l'appli d'origine quand Health Connect la donne (« Health Connect · Garmin »). */
 export function entrySourceLabel(e) {

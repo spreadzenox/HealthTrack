@@ -5,6 +5,7 @@ import { fixWatchKcalOnce } from '../services/watchKcalFix'
 import { deleteAllMyData } from '../services/deleteAllData'
 import { activityLevel } from '../services/nutrientReferenceIntakes'
 import { APP_NAME, EXPORT_FILE_PREFIX } from '../config/brand'
+import { FEATURES } from '../config/distribution'
 import DoctorReportCard from '../components/DoctorReportCard'
 import '../Food.css'
 import { appLocale, localeDate } from '../i18n/locale.js'
@@ -226,9 +227,15 @@ export default function Data() {
     <section className="food-page">
       <h2 className="page-title">Sauvegarde</h2>
       <p className="page-intro">
-        Vos données sont sur ce téléphone et passent les mises à jour. Si la sauvegarde du téléphone est
-        activée, elles y sont copiées, chiffrées ; {APP_NAME} ne la lit pas. Exportez-les avant de réinstaller
-        l’app ou de changer de téléphone.
+        Vos données sont sur ce téléphone et passent les mises à jour.{' '}
+        {FEATURES.iosStore ? (
+          `Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › ${APP_NAME} ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.`
+        ) : (
+          <>
+            Si la sauvegarde du téléphone est activée, elles y sont copiées, chiffrées ; {APP_NAME} ne la lit pas.
+            Exportez-les avant de réinstaller l’app ou de changer de téléphone.
+          </>
+        )}
       </p>
 
       <div className="data-actions">
@@ -369,7 +376,7 @@ export default function Data() {
                 C’est définitif : exportez-les d’abord si vous voulez les garder.
               </p>
               <p className="data-hint">
-                Restent : vos réglages, vos connexions (montre, Health Connect), votre abonnement et vos crédits IA.
+                Restent : vos réglages, vos connexions (montre, {FEATURES.iosStore ? 'app Santé' : 'Health Connect'}), votre abonnement et vos crédits IA.
               </p>
               <div className="import-preview-actions">
                 <button type="button" className="btn btn-secondary" onClick={handleExport} disabled={wipe.running}>
