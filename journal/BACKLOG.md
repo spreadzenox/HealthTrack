@@ -887,6 +887,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   natif de l'iPhone signale après le retour au premier plan (`app/src/ios/portionOpen.js` et son test, venus
   d'`overlay/`), est montée par `usePortionOpen` (`Layout.jsx`) ; sur Android l'évènement n'arrive jamais, rien ne
   change. 15 restent, tous appliqués sans erreur. Suivant : 06 (partie `Data.jsx`) ou 05 (visage).
+  23/11 01:30 : correctifs 06 (texte de Sauvegarde : copie de secours dans l'app Fichiers sur iPhone), 07 (montre
+  Huawei : « pas encore possible sur iPhone », sans test ni connexion) et 15 (« app Santé » au lieu de Health Connect
+  dans la suppression des données et le nom de source) fondus ensemble, un seul build iPhone, sous `FEATURES.iosStore`
+  (`Data.jsx`, `WatchDiagnostic.jsx`, `today.js`) ; tests Android dans `Data.test.jsx`, `WatchDiagnostic.test.jsx`,
+  `today.test.js` ; les tests d'overlay `.appstore` restent la preuve iPhone. 12 restent (01, 02, 05, 10, 16, 24, 27,
+  28, 38, 39, 47, 49). Suivant : 05 (visage) ou 47 (notifications refusées).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).

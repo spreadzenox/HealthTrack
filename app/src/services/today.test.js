@@ -174,6 +174,8 @@ describe('entrySourceLabel', () => {
   it('nomme la source et l’app d’origine', () => {
     expect(entrySourceLabel({ source: 'withings', payload: {} })).toBe('Withings Body Scan')
     expect(entrySourceLabel({ source: 'autre' })).toBe('autre')
+    // FUSION-3, correctif 15 : « App Santé » seulement dans l’app iPhone (variante appstore)
+    expect(entrySourceLabel({ source: 'health_connect', payload: {} })).toBe('Health Connect')
   })
 })
 

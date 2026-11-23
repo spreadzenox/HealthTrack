@@ -8,6 +8,7 @@
 import { useState } from 'react'
 import { Link, useInRouterContext } from 'react-router-dom'
 import { getClient, isBleAvailable, ready } from '../devices/ble/bleService'
+import { FEATURES } from '../config/distribution'
 import { runHuaweiDiagnostic, STEPS } from '../devices/huawei/diagnostic'
 import { detectPhoneApps, NativeAppManager } from '../devices/phoneApps'
 import { CURRENT_VERSION } from '../services/updateCheck'
@@ -107,7 +108,7 @@ async function defaultBackground() {
   return watch ? getBackgroundSync({ deviceId: watch.deviceId }) : null
 }
 
-export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable(), save = defaultSave, copy = defaultCopy, setup, connect, background = defaultBackground, busy = isWatchBusy, maxMs = TEST_MAX_MS, troubleshooting = true }) {
+export default function WatchDiagnostic({ run = defaultRun, available = isBleAvailable() && !FEATURES.iosStore, save = defaultSave, copy = defaultCopy, setup, connect, background = defaultBackground, busy = isWatchBusy, maxMs = TEST_MAX_MS, troubleshooting = true }) {
   const connectFn = connect === undefined ? (classicPlugin() ? defaultConnect : null) : connect
   const setupDeps = setup === undefined ? { detectApps: detectPhoneApps, classic: classicPlugin(), appManager: appManagerPlugin() } : setup
   const [report, setReport] = useState(loadLast)
@@ -180,7 +181,9 @@ export default function WatchDiagnostic({ run = defaultRun, available = isBleAva
     <>
       {!available ? (
         <p className="my-devices-intro">
-          Dans l’app Android, {APP_NAME} lit directement les mesures d’une montre Huawei compatible, allumée près du téléphone.
+          {FEATURES.iosStore
+            ? 'La lecture directe des montres Huawei n’est pas encore possible sur iPhone.'
+            : `Dans l’app Android, ${APP_NAME} lit directement les mesures d’une montre Huawei compatible, allumée près du téléphone.`}
         </p>
       ) : (
         <>

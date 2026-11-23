@@ -105,6 +105,8 @@ describe('Data page — export (web)', () => {
     const { container } = renderData()
     expect(container.textContent).toMatch(/sauvegarde du téléphone est activée/)
     expect(container.textContent).not.toMatch(/sauvegarde Google/)
+    // FUSION-3, correctif 06 : la phrase de la copie de secours (app Fichiers) est réservée à l’app iPhone
+    expect(container.textContent).not.toMatch(/app Fichiers|Sur mon iPhone/)
   })
 
   it('reste court : pas de mode d’emploi navigateur ni de chemin de fichier avant l’export (D1)', () => {
@@ -414,6 +416,8 @@ describe('Data page — supprimer toutes mes données (VC-10)', () => {
     expect(deleteAllMyData).not.toHaveBeenCalled()
     expect(await screen.findByText(/42 entrées seront supprimées/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Exporter d’abord' })).toBeInTheDocument()
+    // FUSION-3, correctif 15 : sur Android, la connexion qui reste est Health Connect (« app Santé » sur iPhone)
+    expect(screen.getByText(/vos connexions \(montre, Health Connect\)/)).toBeInTheDocument()
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'Supprimer définitivement' }))
     })
