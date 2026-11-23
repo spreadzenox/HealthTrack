@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **23/11 14:30** — **#1218 mergée** (PERSONAS-OUTIL-2) ; **POLISH-SIM-146** : le jour en cours, les cumuls du téléphone (pas, activité, écrans) ne lisent que la veille dans « Ce qui a pu jouer ce jour-là ».
 - **23/11 13:30** — **#1217 mergée** (rapport PDF passé sur le simulateur iPhone, `après` = 2, captures de restauration présentes) ; **PERSONAS-OUTIL-2** : l'analyse de repas simulée des personas reprend les aliments décrits au lieu d'un plat fixe (outillage, rien dans l'app).
 - **23/11 12:30** — **#1216 mergée** (captures iPhone relues) ; **IOS-RAPPORT-ABONNE** : sur le simulateur iPhone, le geste réel du rapport PDF échouait depuis la fin de la période de lancement iPhone (carte « Débloquer ») ; la sonde pose les droits d'abonné des captures le temps de l'essai, limite du parcours portée à 30 min. Rien de visible dans l'app.
 - **23/11 11:30** — **#1215 mergée** (captures iPhone de l'Accueil relues) ; **FUSION-3, correctif iPhone 02 fondu** (rien de visible sur Android) : le mode captures du simulateur iPhone vit dans le code partagé, chargé seulement par la build de captures ; 2 correctifs restent (01, 27).

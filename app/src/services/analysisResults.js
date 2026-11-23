@@ -827,6 +827,9 @@ export function analyzeMatrix({ series, days }, { today, factors = FACTORS } = {
   return { contractVersion: CONTRACT_VERSION, method: 'org5', computedFor: today ?? null, outcomes }
 }
 
+/** Cumuls du jour mesurés par le téléphone : partiels tant que le jour n'est pas fini (POLISH-SIM-146). */
+const PARTIAL_TODAY_KEYS = new Set(['steps', 'activityCalories', 'screen_minutes', 'screen_late_minutes', 'social_minutes'])
+
 /**
  * Les plus grandes contributions d'un jour (« Ce qui a pu peser ce jour-là ») sur le modèle régularisé (ORG-5c) :
  * pour chaque terme du modèle (facteur × horizon), coefficient × (valeur du facteur sur la fenêtre ce jour-là −
@@ -844,11 +847,16 @@ export function dayContributions(results, entries, dateKey, { outcome = 'wellbei
   if (!out) return []
   const terms = Object.values(out.horizons).flatMap((h) => h.factors.filter((f) => f.inModel && !f.outOfScale))
   if (!terms.length) return []
-  const days = givenDays ?? factorDays(entries)
+  const allDays = givenDays ?? factorDays(entries)
+  // POLISH-SIM-146 : le jour du calcul, un cumul mesuré par le téléphone (pas, activité, écran) n'est que partiel
+  // (162 pas à 08:33) : il ne compte pas encore, la fenêtre « jour même et veille » ne lit que la veille.
+  const partialToday = results.computedFor === dateKey
+  const withoutToday = { get: (k) => (k === dateKey ? undefined : allDays.get(k)) }
   const num = dayNum(dateKey)
   const byKey = new Map()
   for (const f of terms) {
     const horizon = HORIZONS.find((h) => h.id === f.horizon)
+    const days = partialToday && PARTIAL_TODAY_KEYS.has(f.key) ? withoutToday : allDays
     const value = windowValue(days, f.key, num, horizon)
     if (value === null) continue
     const pts = f.perUnit * (value - f.center)
@@ -867,7 +875,7 @@ export function dayContributions(results, entries, dateKey, { outcome = 'wellbei
     if (points === 0) continue
     const c = { key: f.key, label: f.label, theme: f.theme, horizon: top.horizon, points, value: top.value, usual: top.usual, net: netKeys.has(f.key) }
     // T4-suite : au court terme, la valeur du seul jour (« Nuit plus courte que d'habitude (6 h 21) »).
-    const dayValue = top.horizon === 'short' ? days.get(dateKey)?.[f.key] : null
+    const dayValue = top.horizon === 'short' && !(partialToday && PARTIAL_TODAY_KEYS.has(f.key)) ? allDays.get(dateKey)?.[f.key] : null
     if (isNum(dayValue)) c.dayValue = dayValue
     // POLISH-SIM-143 : le jour même inconnu (aucun repas noté), la fenêtre « jour même et veille » ne lit que la veille.
     else if (top.horizon === 'short') c.eveOnly = true

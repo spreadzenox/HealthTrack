@@ -729,7 +729,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `--tone-label` du lilas vaut `--lilac-bar`), d'où un ovale noir en clair comme en sombre dès qu'Activité a un lien.
       Correctif : `--lilac-label: var(--lilac-bar)` dans les deux thèmes (ou le galet passe par `data-tone`), et un test
       qui vérifie que chaque teinte des familles a sa variable `-label` et `-track`. Le plus visible et le plus petit.
-    - [ ] **POLISH-SIM-146 — « Moins de pas que d'habitude (4 374) » le matin, l'Accueil dit 162 pas** (J14, vérifié :
+    - [x] **POLISH-SIM-146 — « Moins de pas que d'habitude (4 374) » le matin, l'Accueil dit 162 pas** — FAIT 23/11 14:30 (`dayContributions` : le jour du calcul, pas, activité et écrans ne lisent que la veille, « La veille, moins de pas… » ; jours passés inchangés ; test `analysisResults`) (J14, vérifié :
       capture `tendances-jour.png`, `analysisResults.js` 869, `trendsDay.js` 213) : au court terme, la valeur dite est
       la moyenne du jour même et de la veille ((162 + ~8 590) / 2) ; le jour en cours, un cumul (pas, activité, écran)
       n'est que partiel à 08:33. Proposition : pour aujourd'hui, un cumul du jour ne compte pas encore (fenêtre lue sur
