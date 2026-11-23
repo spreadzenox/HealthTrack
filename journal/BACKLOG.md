@@ -907,6 +907,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   23/11 05:30 : #1210 mergée ; correctif 28 (Nouveautés iPhone) fondu dans `app/src/data/changelog.js`, PR en brouillon ;
   6 restent (01, 02, 24, 27, 38, 49). Le run suivant y ajoute 24 (abonnement App Store) s'il tient en un run, puis passe
   la PR en « prête » pour un seul build iPhone. Les notes `["appstore"]` restent dans `overlay/` jusqu'à 01.
+  23/11 06:30 : correctif 24 (plugin StoreKit 2 choisi dans `playBilling.js`) ajouté à la même PR (#1211), passée en
+  « prête » ; 5 restent (01, 02, 27, 38, 49). Suivant : 38 (App Attest) ou 49 (personas), 02, 27 (décision), 01 en dernier.
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
