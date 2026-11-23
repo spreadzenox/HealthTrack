@@ -6,6 +6,10 @@ import { appLocale } from '../i18n/locale.js'
 
 const STEP_G = 10
 const DEFAULT_G = 100
+/** Au-delà, une portion fait demander « c'est bien ça ? », sans rien bloquer (POLISH-SIM-153). */
+export const IMPLAUSIBLE_G = 2000
+
+const kgText = (g) => (g / 1000).toLocaleString(appLocale(), { maximumFractionDigits: 1 })
 
 /**
  * Liste d'ingrédients modifiable avant enregistrement : grammes, suppression, ajout et
@@ -73,6 +77,9 @@ export default function MealEditor({ items, onChange, disabled = false }) {
                     </button>
                   )}
                 </p>
+              )}
+              {item.quantity_g > IMPLAUSIBLE_G && (
+                <p className="mei-warn" role="status">{kgText(item.quantity_g)} kg, c’est bien ça ?</p>
               )}
               <div className="mei-controls">
                 <button

@@ -122,14 +122,31 @@ describe('DayChecklist : habitudes (refonte étape 4)', () => {
     expect(onHabit).toHaveBeenCalledWith(habits[1], false)
   })
 
-  it('« non » fait partir la ligne comme « oui », avec le même mot', async () => {
+  it('une habitude répondue reste à sa place tant qu’il en reste à répondre, la liste ne remonte pas (POLISH-SIM-152)', async () => {
     const { again } = show({ habits, onHabit: vi.fn() })
-    again({ entries: [answer(habits[1], false)] })
+    again({ entries: [answer(habits[0], false)] })
+    const first = screen.getByRole('group', { name: 'Méditation' })
+    expect(within(first).getByText('Noté')).toBeInTheDocument()
+    expect(first.className).not.toContain('is-leaving')
+    expect(within(first).queryByRole('button', { name: 'Non' })).not.toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Méditation : noté. Encore 3 choses aujourd’hui.')
+    await new Promise((r) => setTimeout(r, 1000))
+    expect(screen.getByRole('group', { name: 'Méditation' })).toBeInTheDocument()
+    const groups = screen.getAllByRole('group').map((g) => g.getAttribute('aria-label'))
+    expect(groups.indexOf('Méditation')).toBeLessThan(groups.indexOf('Lecture'))
+  })
+
+  it('« non » fait partir la ligne comme « oui », avec le même mot ; la dernière réponse range toutes les habitudes', async () => {
+    const { again } = show({ habits, onHabit: vi.fn() })
+    again({ entries: [answer(habits[0], true)] })
+    again({ entries: [answer(habits[0], true), answer(habits[1], false)] })
     const line = screen.getByRole('group', { name: 'Lecture' })
     expect(line.className).toContain('is-leaving')
+    expect(screen.getByRole('group', { name: 'Méditation' }).className).toContain('is-leaving')
     expect(within(line).getByText('Noté')).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('Lecture : noté. Encore 3 choses aujourd’hui.')
+    expect(screen.getByRole('status')).toHaveTextContent('Lecture : noté. Encore 2 choses aujourd’hui.')
     await waitFor(() => expect(screen.queryByRole('group', { name: 'Lecture' })).not.toBeInTheDocument(), { timeout: 2000 })
+    expect(screen.queryByRole('group', { name: 'Méditation' })).not.toBeInTheDocument()
   })
 
   it('« Déjà noté » dit la réponse et permet de la changer', () => {

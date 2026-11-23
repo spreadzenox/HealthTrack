@@ -287,6 +287,11 @@
   animation: day-line-leave 700ms var(--ease-sortie) forwards;
 }
 
+/* POLISH-SIM-152 : une habitude répondue attend les autres sur place, un peu effacée. */
+.day-line.is-answered {
+  opacity: 0.7;
+}
+
 .day-finished {
   animation: day-finished-in 400ms cubic-bezier(.34, 1.56, .64, 1);
 }
