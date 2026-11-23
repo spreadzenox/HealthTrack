@@ -16,7 +16,7 @@
 - **Mergée en squash (8abf151)**, titre et message écrits à la main, sans ligne d'attribution.
 - **Build & Release de 8abf151 en échec** : Gradle n'a pas pu lire `error_prone_annotations-2.3.1.pom`, Maven Central
   a répondu **429 Too Many Requests** (limite de débit, pas le code ; Tests et Play — AAB du même commit verts).
-  Job relancé (`rerun-failed-jobs`) ; résultat au bas de ce compte rendu.
+  Job relancé (`rerun-failed-jobs`) : **vert**, release **v885** publiée (APK 35 673 017 octets, 10:42 UTC).
 
 ## FUSION-3, correctif 02
 - `iphone/overlay/app/src/ios/captureMode.js` et ses deux tests passent dans `app/src/ios/` (`git mv`) ;
