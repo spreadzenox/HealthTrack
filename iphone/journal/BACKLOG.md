@@ -34,6 +34,12 @@
 > 15/11 09:25 : l'étape 4b est embarquée (#1005 mergée, code v1080, 51 correctifs sans retouche) ; Objectifs vu sur simulateur, verrouillé sans Gold : lignes miel non vues (REFONTE-4b-iOS, `journal/BACKLOG.md`).
 > 15/11 08:35 : **en PR** : code embarqué v1080 (étape 4b, #1004), 51 correctifs sans retouche ; à finir : build simulateur, captures d'Objectifs regardées, merge.
 
+- [ ] **IOS-RAPPORT-ABONNE** (23/11 12:30, en PR) : `DonneesUITests/testEnregistrerLeRapportDansFichiers` échouait
+  sur tous les builds (« Créer le PDF » introuvable, avertissement seulement) : depuis la fin de la période de
+  lancement iPhone (6/11), le relais ne donne plus Gold au simulateur et la carte du rapport montre « Débloquer ».
+  `probeShareReport` pose les droits d'abonné des captures `-abonne` le temps de l'essai ; limite du parcours portée de
+  25 à 30 min (#1216 l'avait touchée : restauration non capturée). À vérifier sur la build de la PR : test passé,
+  `[rapport] partage` avec `après` = 2, captures de restauration présentes.
 - [ ] **IOS-CAPTURES-1 — Première capture en double sur iPhone 17 Pro** (vu le 15/11 sur `captures/pr-1011`) :
   `iphone-17-pro-vierge-onboarding.png` est identique à `-vierge-onboarding-objectifs.png` ; sur iPhone 16e la
   première capture montre bien la carte d'ouverture. Chercher dans l'outil (ordre signal, capture, accusé), pas dans

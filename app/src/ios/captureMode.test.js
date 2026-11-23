@@ -893,7 +893,7 @@ describe('mode captures iOS : données de démo de l’iPhone', () => {
 })
 
 describe('sonde du rapport PDF pour le médecin (N6b, correctif 09)', () => {
-  it('ouvre Vos données, prépare le rapport ; le test d’interface touche « Créer le PDF » puis l’enregistre dans Fichiers', async () => {
+  it('ouvre Vos données en abonné, prépare le rapport ; le test d’interface touche « Créer le PDF » puis l’enregistre dans Fichiers', async () => {
     let names = ['Halcya-copie-de-secours.json', 'healthtrack-export-2026-10-28.json']
     const calls = []
     const logs = []
@@ -912,20 +912,27 @@ describe('sonde du rapport PDF pour le médecin (N6b, correctif 09)', () => {
       list: async () => names,
       size: async (name) => (name === 'Halcya-rapport-2026-10-29.pdf' ? 48213 : 0),
       status: () => 'Halcya-rapport-2026-10-29.pdf est aussi dans l’app Fichiers › Sur mon iPhone › Halcya.',
+      subscribe: () => calls.push('droits d’abonné'),
+      unsubscribe: () => calls.push('droits retirés'),
     })
-    expect(calls).toEqual(['page /data', 'touché Préparer le rapport', 'montré Créer le PDF', 'capture rapport-partage'])
+    // Depuis la fin de la période de lancement iPhone (6/11), le relais ne donne plus Gold au simulateur : sans les
+    // droits d'abonné, la carte montre « Débloquer » et le test d'interface ne trouve pas « Créer le PDF »
+    expect(calls).toEqual(['droits d’abonné', 'page /data', 'touché Préparer le rapport', 'montré Créer le PDF',
+      'capture rapport-partage', 'droits retirés'])
     expect(logs).toEqual([
       '[rapport] partage {"préparer":true,"bouton":true,"avant":0,"après":2,"octets":48213,' +
         '"message":"Halcya-rapport-2026-10-29.pdf est aussi dans l’app Fichiers › Sur mon iPhone › Halcya."}',
     ])
   })
 
-  it('sans PDF, ou si la sonde échoue : le dit', async () => {
+  it('sans PDF, ou si la sonde échoue : le dit, et retire toujours les droits d’abonné', async () => {
     const logs = []
+    const unsubscribe = vi.fn()
     const base = { log: (m) => logs.push(m), signal: async () => {}, waitAck: async () => true, wait: async () => {},
-      navigate: () => {}, click: () => false, reveal: () => false, status: () => null }
+      navigate: () => {}, click: () => false, reveal: () => false, status: () => null, subscribe: () => {}, unsubscribe }
     await probeShareReport({ ...base, list: async () => [] })
     await probeShareReport({ ...base, list: async () => { throw new Error('Documents illisible') } })
+    expect(unsubscribe).toHaveBeenCalledTimes(2)
     expect(logs).toEqual([
       '[rapport] partage {"préparer":false,"bouton":false,"avant":0,"après":0,"octets":null,"message":null}',
       '[rapport] échec Documents illisible',

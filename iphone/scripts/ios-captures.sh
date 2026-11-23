@@ -111,8 +111,9 @@ run_device() { # <udid> <nom> [taille du texte d'iOS, pour le passage en grand t
   : > "$data/Documents/capture/ack.txt"
   xcrun simctl launch --console-pty --terminate-running-process "$udid" "$BUNDLE" > "$log" 2>&1 &
   pid=$!
-  # 25 min par iPhone : le parcours et les trois essais de notifications (bannières attendues 45 s) en prennent ~19
-  deadline=$((SECONDS + 1500)); last=""
+  # 30 min par iPhone au plus (une limite, pas une attente) : le parcours en prend ~22 (23/11) et le démarrage à froid
+  # de l'app varie de 6 à 10 min ; à 25 min, #1216 a perdu la fin du parcours (restauration, suppression)
+  deadline=$((SECONDS + 1800)); last=""
   while [ "$SECONDS" -lt "$deadline" ]; do
     page="$(cat "$data/Documents/capture/ready.txt" 2>/dev/null || true)"
     if [ -n "$page" ] && [ "$page" != "$last" ]; then
