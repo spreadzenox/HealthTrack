@@ -887,6 +887,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   natif de l'iPhone signale après le retour au premier plan (`app/src/ios/portionOpen.js` et son test, venus
   d'`overlay/`), est montée par `usePortionOpen` (`Layout.jsx`) ; sur Android l'évènement n'arrive jamais, rien ne
   change. 15 restent, tous appliqués sans erreur. Suivant : 06 (partie `Data.jsx`) ou 05 (visage).
+  23/11 02:30 : correctifs 47 (« Notifications refusées : autorisez-les dans Réglages › Notifications › Halcya. » sur
+  iPhone, `GutEveningReminder.jsx` et `WellbeingPrompt.jsx`) et 39 (`IOS_LICENSES` et détection du visage seule sur
+  l'App Store, `thirdPartyLicenses.js`) fondus ensemble, un seul build iPhone ; test Android ajouté
+  (`thirdPartyLicenses.test.js`) ; `thirdPartyLicenses.appstore.test.js` reste dans l'overlay (il dépend de la
+  variante `appstore` du correctif 01). 10 restent (01, 02, 05, 10, 16, 24, 27, 28, 38, 49). Suivant : 05 (visage) ;
+  27 (avis) demande une décision : ses tickets visent l'ancien dépôt iOS, qui ne reçoit plus rien.
   23/11 01:30 : correctifs 06 (texte de Sauvegarde : copie de secours dans l'app Fichiers sur iPhone), 07 (montre
   Huawei : « pas encore possible sur iPhone », sans test ni connexion) et 15 (« app Santé » au lieu de Health Connect
   dans la suppression des données et le nom de source) fondus ensemble, un seul build iPhone, sous `FEATURES.iosStore`
