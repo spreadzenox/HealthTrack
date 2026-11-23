@@ -763,6 +763,28 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       (REFONTE-UPG) ; une ligne dans la carte « Nouveau » suffirait. « Cœur » listé à l'étape 3 de l'accueil alors que
       le bracelet n'en donne pas (liste générale, pour information) : dire « selon votre montre ». Mots FODMAP
       (fructanes, GOS…) sans aliment entre parenthèses hors de la carte des pistes.
+  - **Passage des personas du 23/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-23-2030-synthese.md) ;
+    « Tout mesurer » J1, Samsung + Galaxy Watch, et « Prendre soin de soi » J14, Android seul) :
+    - [ ] **POLISH-SIM-151 — « Poids » de l'Accueil ouvre Tendances sans courbe Poids** (J14, vérifié : capture
+      `poids-sans-courbe.png` ; `TodayBySource.jsx` 125 fait un lien dès une pesée, `trendsData.js` ne propose le
+      poids qu'à 3 pesées dans le mois) : ne faire le lien que si la mesure est dans `available`, ou dire dans
+      Tendances « Poids : la courbe arrive à 3 pesées ». Test d'abord.
+    - [ ] **POLISH-SIM-152 — Ma journée : la liste remonte sous le doigt** (J1, capture `journee-liste-decalee.png`) :
+      une habitude répondue disparaît aussitôt, le toucher suivant valide la ligne d'après (« Café » au lieu
+      d'« Étirements »). Garder la ligne répondue sur place un court instant (état « fait ») avant de la ranger.
+    - [ ] **POLISH-SIM-153 — Portion invraisemblable acceptée sans un mot** (J14, capture `pates-5000g.png`) : 5 000 g
+      et 5 800 kcal s'enregistrent. Alerte douce au-delà d'un plafond par aliment (« 5 kg, c'est bien ça ? »).
+    - [ ] **POLISH-SIM-154 — Pilou coupé derrière la carte de Tendances** (J1 et J14, captures
+      `tendances-pas-auj.png`, `poids-sans-courbe.png`) : seul le haut de la tête dépasse.
+    - [ ] **PERSONAS-OUTIL-3 — Faux relais des repas** (`scripts/persona/fakeMeal.mjs`) : « pâtes » reconnu comme
+      « Pâté breton », grammes écrits ignorés (« 200 g de saumon » → 500 g), description entière gardée comme nom.
+    - Écartés, avec la raison, dans la synthèse : pas du jour absents du graphique (voulu, POLISH-SIM-127) ; trois
+      délais (déjà POLISH-SIM-149) ; « selon votre montre » (déjà à étudier) ; bien-être 2,9 / 3,0 ; onglet Données
+      surligné pendant la saisie d'un repas.
+    - À étudier : FC moyenne, oxygène du sang et phases de sommeil reçus mais visibles nulle part (le « + » de
+      Tendances n'a que Sommeil et Pas pour une Galaxy Watch) : proposition au propriétaire. Poids, 3e persona qui le
+      cherche (21, 22 et 23/11) : pesée seulement dans Données › Nutrition › Compléter mon profil, rien dans Ma
+      journée › Autre chose ni dans Objectifs ; proposition avec maquette au prochain run « idées ».
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
