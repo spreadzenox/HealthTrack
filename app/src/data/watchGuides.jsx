@@ -120,8 +120,74 @@ export const HUAWEI_DIRECT_GUIDE = {
   ],
 }
 
+// Version iOS (HealthTrack-iOS) : sur iPhone, les montres passent par l'app Santé d'Apple ; ni Health Connect, ni
+// Gadgetbridge, ni connexion Bluetooth directe. Sources et prudences : journal/RECHERCHE.md (27/10/2026).
+const SANTE_IN_HALCYA =
+  'Dans ' + APP_NAME + ', carte App Santé ci-dessus : activez-la, « Demander les autorisations », puis « Mettre à jour ».'
+const SANTE_APPS =
+  <>Vous pourrez changer ce qui est partagé dans l’app <strong>Santé</strong> : votre photo → <em>Apps</em> → l’app de la montre.</>
+
+export const IOS_WATCH_GUIDES = [
+  {
+    id: 'apple',
+    title: 'Apple Watch',
+    intro: 'L’Apple Watch écrit directement dans l’app Santé : rien à installer.',
+    steps: [SANTE_IN_HALCYA],
+  },
+  {
+    id: 'huawei',
+    title: 'Huawei / Honor (Watch GT, Watch Fit, Band…)',
+    intro:
+      'Huawei Health peut partager une partie de vos mesures avec l’app Santé (pas, fréquence cardiaque, sommeil ' +
+      'ou entraînements, selon les modèles).',
+    steps: [
+      <>Dans <strong>Huawei Health</strong>, cherchez le partage avec <strong>Santé</strong> dans les réglages de votre profil → activez, puis autorisez les types proposés par l’iPhone.</>,
+      SANTE_APPS,
+      SANTE_IN_HALCYA,
+    ],
+  },
+  {
+    id: 'samsung',
+    title: 'Samsung (Galaxy Watch, Galaxy Fit, Galaxy Ring)',
+    intro:
+      'Les Galaxy Watch récentes (Watch4 et suivantes) ne s’associent pas à un iPhone, d’après Samsung : leurs ' +
+      'mesures ne peuvent pas arriver dans l’app Santé.',
+    steps: [],
+  },
+  {
+    id: 'xiaomi',
+    title: 'Xiaomi / Redmi / Amazfit',
+    intro: 'Mi Fitness (Xiaomi, Redmi) et Zepp (Amazfit) savent écrire dans l’app Santé.',
+    steps: [
+      <>Dans <strong>Mi Fitness</strong> : Profil → Données tierces → <strong>Santé</strong> → activez.</>,
+      <>Dans <strong>Zepp</strong> : cherchez « Santé » dans votre profil (comptes ou applis tierces) → activez.</>,
+      SANTE_IN_HALCYA,
+    ],
+  },
+  {
+    id: 'garmin',
+    title: 'Garmin',
+    intro: 'Garmin Connect partage avec l’app Santé vos pas, vos entraînements, votre fréquence cardiaque et votre sommeil.',
+    steps: [
+      <>Dans <strong>Garmin Connect</strong>, cherchez « Santé » dans les applications connectées → activez, puis autorisez les types proposés par l’iPhone.</>,
+      'Garmin Connect n’envoie ses données que lorsqu’il est ouvert : ouvrez-le de temps en temps.',
+      SANTE_IN_HALCYA,
+    ],
+  },
+  {
+    id: 'other',
+    title: 'Withings, Oura, Polar, Fitbit, Coros…',
+    intro: 'La plupart de ces apps savent écrire dans l’app Santé.',
+    steps: [
+      <>Dans l’app de l’appareil, cherchez « Santé » ou « Apple Santé » dans les réglages ou les partenaires → activez.</>,
+      SANTE_IN_HALCYA,
+    ],
+  },
+]
+
 /** Guides à afficher selon la variante. */
 export function watchGuidesFor(features = FEATURES) {
+  if (features.iosStore) return IOS_WATCH_GUIDES
   if (features.gadgetbridgeGuide && features.withingsApi) return WATCH_GUIDES
   return WATCH_GUIDES.map((g) => {
     if (g.id === 'huawei' && !features.gadgetbridgeGuide) return HUAWEI_DIRECT_GUIDE

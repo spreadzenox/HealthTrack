@@ -42,7 +42,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 |---|---|---|
 | Dernière version | release **v878** (APK 35,7 Mo, 22/11 23:35 UTC, merge de #1206) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1268.1268** (build du 22/11 au soir) chez « Testeurs Halcya », en examen bêta depuis le 23/11 02:32 ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
-| Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; 10 correctifs propres à l'iPhone restent à fondre dans le code commun (FUSION-3) |
+| Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; 7 correctifs propres à l'iPhone restent à fondre dans le code commun (FUSION-3) |
 
 **🧸 Refonte « Compagnon »** : étapes 1 à 7 faites (4 onglets, Ma journée, accueil en 4 temps, Objectifs, Données sur
 Tendances, Nunito et fond crème) ; étapes 8 à 14 livrées pendant le sprint du 16-17/11 (scène 3D, Pilou, bulles, vie,
@@ -61,6 +61,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 23/11 04:30 — [FUSION-3 : correctif 16, #1210 prête](runs/2026-11-23-0430-fusion-guides-montres.md) | 🔧 | Correctif iPhone 16 (guides « Votre montre n’apparaît pas ? » par l’app Santé) fondu dans le code commun, ajouté à #1210 qui passe en « prête » : un seul build iPhone pour trois correctifs. Alpha de la nuit partie (verte). 7 correctifs restent. Rien à faire de votre côté |
 | 23/11 03:30 — [#1209 mergée, FUSION-3 : 05 et 10](runs/2026-11-23-0330-fusion-plugins.md) | 🔧 | **#1209 mergée** (captures iPhone de Licences relues). TestFlight **1268.1268** validée pour « Testeurs Halcya », rien à expirer. Correctifs iPhone 05 et 10 (plugins natifs absents sur iPhone) fondus dans le code commun ; PR en brouillon pour grouper le build iPhone avec le correctif suivant. 8 correctifs restent. Rien à faire de votre côté |
 | 23/11 02:30 — [FUSION-3 : correctifs 47, 39 ; #1208 mergée](runs/2026-11-23-0230-fusion-notifs-licences.md) | 🔧 | **#1208 mergée** (captures iPhone relues). TestFlight **1268.1268** ajoutée à « Testeurs Halcya » et soumise à l'examen bêta. Deux correctifs iPhone de plus fondus (message « notifications refusées », page Licences) ; rien ne change sur Android. 10 restent. Rien à faire de votre côté |
 | 23/11 01:30 — [FUSION-3 : correctifs 06, 07, 15](runs/2026-11-23-0130-fusion-textes.md) | 🔧 | Trois correctifs propres à l'iPhone (texte de Sauvegarde, montre Huawei, « app Santé ») fondus dans le code commun en une seule PR, donc un seul build iPhone ; rien ne change sur Android (tests). 12 correctifs restent. Mergée au run suivant (#1208). Rien à faire de votre côté |
