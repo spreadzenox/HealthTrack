@@ -93,3 +93,14 @@ export function storeOfPurchase(source, store = STORE) {
 }
 
 export const STORE = storeFor(import.meta.env?.VITE_STORE)
+
+/**
+ * Nom des réglages de l'app (la roue en haut à droite) dans les textes qui y renvoient (DEM-IOS-7). Sur iPhone,
+ * « Réglages » est aussi l'app du système : la roue le précise. Les chemins des réglages du système (Notifications,
+ * Santé, Temps d'écran) gardent « Réglages » seul.
+ */
+export function inAppSettingsFor(features) {
+  return features?.iosStore ? '⚙ Réglages' : 'Réglages'
+}
+
+export const IN_APP_SETTINGS = inAppSettingsFor(FEATURES)

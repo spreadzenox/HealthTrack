@@ -7,7 +7,7 @@
  */
 import { useEffect, useState } from 'react'
 import { APP_NAME } from '../config/brand'
-import { FEATURES } from '../config/distribution'
+import { FEATURES, IN_APP_SETTINGS } from '../config/distribution'
 import { formatMinute } from '../services/eveningNote'
 import {
   GUT_DEFAULT_MINUTE,
@@ -75,7 +75,7 @@ export default function GutEveningReminder({ variant = 'offer' }) {
   return (
     <>
       {wanted ? (
-        <p className="gut-evening-reminder-done">C’est noté : rappel chaque soir vers {time}. À changer dans Réglages › Paramètres.</p>
+        <p className="gut-evening-reminder-done">C’est noté : rappel chaque soir vers {time}. À changer dans {IN_APP_SETTINGS} › Paramètres.</p>
       ) : (
         <button type="button" className="gut-evening-reminder" onClick={() => toggle(true)}>
           Me le demander chaque soir par notification

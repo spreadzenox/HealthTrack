@@ -10,7 +10,7 @@
  * affiché à part), `accept` (libellé du bouton d'accord), `decline`.
  */
 import { APP_NAME } from './brand'
-import { FEATURES } from './distribution'
+import { FEATURES, IN_APP_SETTINGS } from './distribution'
 
 // Sauvegarde Android conservée (décision du 24/10) : les nombres gardés suivent la sauvegarde du téléphone si la
 // personne l'a activée ; l'app, elle, n'envoie rien (POL-PLAY-25).
@@ -66,7 +66,7 @@ export const DISCLOSURES = {
       `À chaque déverrouillage du téléphone, et quand vous ouvrez ${APP_NAME} (au plus une fois par demi-heure), la caméra frontale prend 3 images de votre visage, en une à deux secondes. Le témoin vert de la caméra d’Android s’allume.`,
       'Un système d’IA de reconnaissance des émotions les analyse sur le téléphone et en tire quelques nombres (expression, plaisir, énergie) : l’estimation de votre bien-être.',
       'Seuls ces nombres sont gardés, dans vos données. Aucune image n’est conservée.',
-      'Une notification « Lecture du visage active » reste affichée tant que la lecture au déverrouillage est en marche, avec un bouton « Arrêter ». Vous pouvez tout couper à tout moment dans Réglages › Sources.',
+      `Une notification « Lecture du visage active » reste affichée tant que la lecture au déverrouillage est en marche, avec un bouton « Arrêter ». Vous pouvez tout couper à tout moment dans ${IN_APP_SETTINGS} › Sources.`,
       `Après un redémarrage du téléphone, la lecture au déverrouillage ne reprend pas toute seule : il faudra rouvrir ${APP_NAME}.`,
     ],
     leaves: CAMERA_LEAVES,

@@ -46,7 +46,7 @@ import { GUT_LEVELS, GUT_TYPE } from '../services/today'
 import { localDateKey } from '../services/analysisEngine'
 import { eveningNotePlugin } from '../services/eveningNote'
 import { APP_NAME } from '../config/brand'
-import { FEATURES } from '../config/distribution'
+import { FEATURES, IN_APP_SETTINGS } from '../config/distribution'
 import { FIRST_RESULTS_DAY, FIRST_SCORE_DAY } from '../config/firstResults'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { gutCardMode } from '../settings/onboarding'
@@ -592,7 +592,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       {/* Pendant l'exemple (« Voir un exemple »), la digestion fictive s'affiche : pas de bandeau « masqué » (POLISH-SIM-37b) */}
       {outcome === 'digestion' && !showGut && !isExampleMode() && (
         <p className="reco-intro" data-testid="gut-off">
-          Le suivi digestif est masqué. Pour le retrouver : Réglages › Paramètres › <Link to="/settings">Ce qui vous amène</Link>.
+          Le suivi digestif est masqué. Pour le retrouver : {IN_APP_SETTINGS} › Paramètres › <Link to="/settings">Ce qui vous amène</Link>.
         </p>
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}
