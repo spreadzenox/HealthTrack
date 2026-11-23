@@ -84,7 +84,7 @@ Santé s'appelle « Variabilité cardiaque » (Aujourd'hui, Journal, Tendances, 
 `hrvSdnn` (correctifs 17, 30, 32, 56, 57). Parité inchangée : 70 %. Avant, de
 v1033 à v1034 : #955 (POLISH-SIM-70, Agir vide suit l'objectif) et #956 (POLISH-SIM-69, Analyses sans lien net, barres
 repliées) : code partagé, repris tel quel ; les 52 correctifs s'appliquent sans retouche. La sonde de l'export
-(`overlay/app/src/ios/captureMode.js`) compte aussi les fichiers `halcya-export-*`, nom de la sauvegarde à partir de
+(`app/src/ios/captureMode.js`) compte aussi les fichiers `halcya-export-*`, nom de la sauvegarde à partir de
 la v1035 (POLISH-SIM-73). Parité inchangée : 70 %. Build TestFlight 1032.1033 (code de la v1032) envoyée le 14/11 à
 01:41 ; 1030.1031 chez les testeurs externes depuis le 14/11 à 00:33.
 Avant : Livré par Android de v1031 à v1032 : #954 (POLISH-SIM-68, bilan du jour de la digestion sur Aujourd'hui : code partagé, repris tel quel ;

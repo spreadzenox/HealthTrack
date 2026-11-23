@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **23/11 11:30** — **#1215 mergée** (captures iPhone de l'Accueil relues) ; **FUSION-3, correctif iPhone 02 fondu** (rien de visible sur Android) : le mode captures du simulateur iPhone vit dans le code partagé, chargé seulement par la build de captures ; 2 correctifs restent (01, 27).
 - **23/11 10:30** — **#1214 mergée** (captures iPhone relues) ; **POLISH-SIM-148** : la bulle cadeau de la première semaine se pose dans le coin bas gauche de l'îlot, hors de l'orbite des bulles, et ne cache plus « Bien-être ». PR prête, merge au run suivant après le build iPhone.
 - **23/11 09:30** — **POLISH-SIM-145, 147, 149** : galet Activité lilas (plus noir) dans Objectifs › Votre bien-être ; Tendances › Jour dit « Pas encore de note » tant que le bien-être n'a ni note ni lecture ; Ma journée dit « vos pistes digestives ». PR prête, merge au run suivant après le build iPhone.
 - **23/11 08:30** — Run « idées » : personas « Ventre, sans technique » J1 et « Stressé et pressé » J14 (mise à jour) ; POLISH-SIM-145 à 150 et PERSONAS-OUTIL-2 au BACKLOG. 1268.1268 validée pour « Testeurs Halcya ». **#1212 mergée** (émulateur API 35 relancé, vert).
