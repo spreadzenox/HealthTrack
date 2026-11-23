@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **23/11 09:30** — **POLISH-SIM-145, 147, 149** : galet Activité lilas (plus noir) dans Objectifs › Votre bien-être ; Tendances › Jour dit « Pas encore de note » tant que le bien-être n'a ni note ni lecture ; Ma journée dit « vos pistes digestives ». PR prête, merge au run suivant après le build iPhone.
 - **23/11 08:30** — Run « idées » : personas « Ventre, sans technique » J1 et « Stressé et pressé » J14 (mise à jour) ; POLISH-SIM-145 à 150 et PERSONAS-OUTIL-2 au BACKLOG. 1268.1268 validée pour « Testeurs Halcya ». **#1212 mergée** (émulateur API 35 relancé, vert).
 - **23/11 07:30** — **#1211 mergée** (correctifs iPhone 28 et 24 ; captures iPhone de Nouveautés et Premium relues). **FUSION-3, correctifs 38 (App Attest) et 49 (personas iPhone) fondus**, rien de visible ; 3 correctifs restent.
 - **23/11 06:30** — **FUSION-3, correctif iPhone 24 fondu** (choix du plugin d'abonnement StoreKit 2 sur iPhone, rien de visible) dans #1211, passée en « prête » pour un seul build iPhone ; 5 correctifs restent.

@@ -35,7 +35,7 @@ const TEXT_ON = {
   'mint-bg': ['mint-text', 'mint-label', 'color-ink', 'color-ink-2'],
   'peach-bg': ['peach-text', 'peach-label', 'color-ink', 'color-ink-2'],
   'honey-bg': ['honey-text', 'honey-label', 'color-ink', 'color-ink-2'],
-  'lilac-bg': ['lilac-text', 'lilac-bar', 'color-ink', 'color-ink-2'],
+  'lilac-bg': ['lilac-text', 'lilac-bar', 'lilac-label', 'color-ink', 'color-ink-2'],
   'night-bg': ['night-text', 'night-label', 'color-ink', 'color-ink-2'],
   'rose-bg': ['rose-text', 'rose-label', 'color-ink', 'color-ink-2'],
   'stone-bg': ['stone-text', 'stone-label', 'color-ink', 'color-ink-2'],
@@ -71,6 +71,14 @@ describe('tokens de design', () => {
         expect(theme[`${t}-track`], t).toBeDefined()
         expect(contrast(theme[`${t}-track`], theme[`${t}-bg`]), t).toBeGreaterThanOrEqual(1.4)
         expect(contrast(theme[`${t}-${strong}`], theme[`${t}-track`]), t).toBeGreaterThanOrEqual(3)
+      }
+    })
+
+    it(`donnent à chaque thème une étiquette et un rail, peints par le cairn des familles (thème ${name})`, () => {
+      // POLISH-SIM-145 : Cairn.jsx peint `var(--<teinte>-label)` ; une variable absente donnait un galet noir.
+      for (const t of Object.keys(THEMES)) {
+        expect(theme[`${t}-label`], `${t}-label`).toBeDefined()
+        expect(theme[`${t}-track`], `${t}-track`).toBeDefined()
       }
     })
 
