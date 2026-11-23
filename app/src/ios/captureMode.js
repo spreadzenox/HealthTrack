@@ -1,5 +1,5 @@
 /**
- * Mode « captures » de la version iOS (dépôt HealthTrack-iOS), compilé seulement quand VITE_IOS_CAPTURE=1 : la build
+ * Mode « captures » de la version iPhone, chargé par main.jsx seulement quand VITE_IOS_CAPTURE=1 : la build
  * simulateur du workflow ios-build, jamais une build envoyée aux utilisateurs.
  *
  * L'app parcourt elle-même un plan de pages (le simulateur affiche « Ouvrir dans Halcya ? » pour tout lien externe,

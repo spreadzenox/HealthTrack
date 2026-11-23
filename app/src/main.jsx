@@ -14,6 +14,8 @@ import { getLang } from './i18n/locale.js'
 import { installFrenchSpacing } from './utils/frenchSpacing'
 
 initTheme()
+// iPhone : mode « captures » du simulateur (build de ios-build.yml, VITE_IOS_CAPTURE=1), absent de toute autre build
+if (import.meta.env.VITE_IOS_CAPTURE === '1') import('./ios/captureMode.js').then((m) => m.installCaptureMode())
 // Langue du document (lecteurs d'écran, césure) : « fr » sauf si l'anglais est choisi (jalon 9)
 document.documentElement.lang = getLang()
 

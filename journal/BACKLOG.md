@@ -956,6 +956,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   les selles et « Votre avis » : `app/src/ios/appAttest.js` et ses tests passent d'`overlay/` au code commun, appel dans
   `aiRelay.js`, rien hors iPhone : test `aiRelay.attest-android.test.js`) et 49 (`npm run persona -- --store=appstore`,
   écran 390 × 844) fondus dans une même PR ; 3 restent (01, 02, 27). Suivant : 02 (mode captures), 27 (décision), 01 en dernier.
+  23/11 11:30 : #1215 (POLISH-SIM-148) mergée. Correctif 02 fondu : `main.jsx` charge `app/src/ios/captureMode.js`
+  (venu d'`overlay/` avec ses deux tests, qui tournent désormais aussi dans les tests d'Android) sous
+  `VITE_IOS_CAPTURE === '1'` seulement ; test `captureMode.gate.test.js` ; la build Android n'en contient rien
+  (vérifié dans `dist/`). 2 restent (01, 27). Suivant : 27 (décision), 01 en dernier.
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
