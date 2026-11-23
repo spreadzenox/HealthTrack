@@ -20,6 +20,16 @@ describe('Essais (ORG-8)', () => {
     expect(instruction(createTrial({ ...sleep, key: 'alcohol_g', label: 'Alcool', effect: -0.5 }, { now: START }))).toBe('Un peu moins d’alcool que d’habitude')
   })
 
+  it('POLISH-SIM-150 : une cible arrondie (pas à la centaine, durées à 5 min), sans fausse précision', () => {
+    const steps = { key: 'steps', label: 'Pas', theme: 'activity', outcome: 'wellbeing', effect: 0.3, center: 6683.4, usualChange: { amount: 2000, unit: 'pas', text: '2 000 pas de plus' } }
+    expect(createTrial(steps, { now: START }).threshold).toBe(8700)
+    expect(instruction(createTrial(steps, { now: START }))).toBe('Faire au moins 8\u202f700 pas')
+    expect(createTrial({ ...steps, effect: -0.3 }, { now: START }).threshold).toBe(4700)
+    expect(createTrial({ ...sleep, center: 423 }, { now: START }).threshold).toBe(455)
+    const screen = { key: 'screen_minutes', label: 'Temps d’écran', theme: 'context', outcome: 'wellbeing', effect: -0.2, center: 187, usualChange: { amount: 30, unit: 'min', text: '30 min d’écran de plus' } }
+    expect(createTrial(screen, { now: START }).threshold).toBe(155)
+  })
+
   it('la tenue vient des données ; la question seulement si elles manquent', () => {
     const t = { ...createTrial(sleep, { now: START }), schedule: [...Array(14)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 })) }
     const summaries = new Map([['2026-11-01', { sleepMinutes: 460 }], ['2026-11-02', { sleepMinutes: 470 }]])
