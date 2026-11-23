@@ -17,6 +17,8 @@ import { monoDigits } from '../utils/monoDigits'
 const W = 340
 const H = 190
 const PAD = { l: 30, r: 30, t: 14, b: 26 }
+// POLISH-SIM-151 : quand arrive la courbe d'une mesure espacée (trendsData, SPARSE_MEASURES : 3 points sur le Mois)
+const SPARSE_WAIT = { weight: 'à 3 pesées' }
 
 const shortDay = (k) => {
   const d = new Date(`${k}T12:00:00`)
@@ -337,12 +339,27 @@ export default function TrendsViewer({
   const sel = selected && chartData.dates.includes(selected) ? selected : null
   // TS-2 : repères « changement » en vue Mois
   const marks = period === 'month' ? changeMarks(changes, shown, data.dates) : []
+  // POLISH-SIM-151 : une mesure demandée (« Poids » de l'Accueil) qui n'a de courbe ni en Semaine ni en Mois dit quand
+  // elle en aura une, au lieu de disparaître sans un mot
+  const requested = keys.join(' ')
+  const waiting = useMemo(() => {
+    if (!requested) return []
+    const month = buildTrendSeries({ states, days, period: 'month', now: now || new Date() }).available
+    return requested.split(' ').filter((k) => trendMeasure(k) && !month.includes(k))
+  }, [requested, states, days, now])
+  const waitingNote = !isDay && !shown.length && waiting.length ? (
+    <ul className="trends-waiting">
+      {waiting.map((k) => (
+        <li key={k}>{trendMeasure(k).label} : la courbe arrive {SPARSE_WAIT[k] ?? 'après 3 jours de mesures'}.</li>
+      ))}
+    </ul>
+  ) : null
   // Revue du 09/11 : historique vierge (aucune courbe, aucune lecture ni note) → le message seul, sans Jour / Semaine /
   // Mois qui ne montreraient rien
   if (!data.available.length && !initialDay) {
     return (
       <article className="today-card trends-card">
-        <p className="trends-empty">Vos courbes apparaîtront après 3 jours de mesures.</p>
+        {waitingNote ?? <p className="trends-empty">Vos courbes apparaîtront après 3 jours de mesures.</p>}
       </article>
     )
   }
@@ -468,6 +485,7 @@ export default function TrendsViewer({
       ) : data.available.length ? (
         // T1 : aucune mesure choisie → les courbes disponibles en grandes puces, bien visibles
         <div className="trends-pick">
+          {waitingNote}
           <p className="trends-pick-title">Choisissez une courbe</p>
           <ul className="trends-pick-list" aria-label="Courbes disponibles">
             {data.available.map((k) => {
@@ -483,7 +501,7 @@ export default function TrendsViewer({
           </ul>
         </div>
       ) : (
-        <p className="trends-empty">Vos courbes apparaîtront après 3 jours de mesures.</p>
+        waitingNote ?? <p className="trends-empty">Vos courbes apparaîtront après 3 jours de mesures.</p>
       )}
     </article>
   )

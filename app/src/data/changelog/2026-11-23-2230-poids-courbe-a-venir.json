@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-23",
+  "kind": "correctif",
+  "title": "Poids : quand arrive la courbe",
+  "items": [
+    "Toucher « Poids » sur l’Accueil avant la troisième pesée ouvrait Tendances sans courbe Poids. La page dit maintenant « Poids : la courbe arrive à 3 pesées. »"
+  ]
+}

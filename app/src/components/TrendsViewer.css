@@ -227,6 +227,19 @@ button.trends-chip {
   color: var(--text-muted);
 }
 
+/* POLISH-SIM-151 : la mesure demandée dit quand sa courbe arrive */
+.trends-waiting {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.trends-waiting:last-child {
+  margin-bottom: 0;
+}
+
 /* POLISH-SIM-6 : nom en toutes lettres des abréviations affichées */
 .trends-gloss {
   margin: 10px 0 0;
