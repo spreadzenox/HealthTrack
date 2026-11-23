@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { personaEntries, keepForEquipment } from './personaData.mjs'
+import { personaEntries, keepForEquipment, freshOnboarding } from './personaData.mjs'
+import { migrateGoals } from '../../src/settings/onboarding.js'
 import { generateDemoEntries } from '../visual/demoData.mjs'
 import { summarizeHealthConnectSources, missingWatchMetrics } from '../../src/devices/healthApps.js'
 
@@ -207,5 +208,23 @@ describe('legacy (mise à jour depuis la version des testeurs d\'avant la refont
     expect(s.done).toBe(true)
     expect(s.goals).toEqual(['sport', 'cycle'])
     expect(s.goalsVersion).toBeUndefined()
+  })
+})
+
+describe('freshOnboarding (PERSONAS-OUTIL-1)', () => {
+  const doneAt = '2026-11-01T09:00:00.000Z'
+  it('installation neuve après la refonte : objectifs de la refonte, version 2, que la migration laisse tels quels', () => {
+    for (const [goals, want] of [[['all'], ['wellbeing', 'gut']], [['gut'], ['wellbeing', 'gut']], [['care'], ['wellbeing']], [['stress'], ['wellbeing']], [[], ['wellbeing']]]) {
+      const o = freshOnboarding({ goals, doneAt })
+      expect(o.goals).toEqual(want)
+      expect(o.goalsVersion).toBe(2)
+      expect(o.done).toBe(true)
+      expect(migrateGoals(o).goals).toEqual(want)
+    }
+  })
+  it('« Tout mesurer » note aussi son ventre (objectif Confort digestif)', () => {
+    const o = freshOnboarding({ goals: ['all'], doneAt })
+    const gut = (goals) => personaEntries(demo, { day: 14, equipment: 'full', goals, now }).filter((e) => e.type === 'gut').length
+    expect(gut(o.goals)).toBeGreaterThan(gut(['wellbeing']))
   })
 })

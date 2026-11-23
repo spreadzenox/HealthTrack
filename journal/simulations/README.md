@@ -32,10 +32,12 @@ testeur qui avait la version d'avant la refonte « Compagnon » : accueil fini d
 Nouveautés lues jusqu'au 14/11, un essai d'Agir en cours (jour 4 sur 10), aucune habitude. Exemple :
 `npm run persona -- --day=45 --equipment=watch --goals=sport,cycle --legacy --port=7811 --out=<dossier>`.
 
-**Objectif et saisie (POLISH-SIM-7 et 9, 09/11)** : `--goals=` coche les objectifs de l'accueil pour un jour > 1
-(`gut`, `cycle`, `stress`, `sport`, `care`, `all` ; au jour 1 l'agent les choisit lui-même). Correspondance :
-Ventre (1, 2) → `gut` ; Endométriose → `cycle,gut` ; Tout mesurer → `all` ; Sportif → `sport` ; Prendre soin de soi →
-`care` ; Stressé et pressé → `stress`. **Cycle (11/11)** : avec `--goals=cycle` et un jour > 1, la persona a aussi ses règles notées à la main (5 jours tous
+**Objectif et saisie (POLISH-SIM-7 et 9, 09/11 ; PERSONAS-OUTIL-1, 23/11)** : `--goals=` donne les objectifs de la
+persona pour un jour > 1 (`gut`, `cycle`, `stress`, `sport`, `care`, `all` ; au jour 1 l'agent les choisit lui-même).
+Sans `--legacy`, l'outil écrit l'accueil de la refonte (`goalsVersion: 2`) : bien-être toujours, plus confort
+digestif pour `gut`, `all` ou `cycle` ; avec `--legacy`, les objectifs d'alors tels quels. Correspondance :
+Ventre (1, 2) → `gut` ; Tout mesurer → `all` (bien-être et confort digestif) ; Prendre soin de soi → `care` ;
+Stressé et pressé → `stress` (bien-être seul). **Cycle (11/11)** : avec `--goals=cycle` et un jour > 1, la persona a aussi ses règles notées à la main (5 jours tous
 les 28 jours, les dernières finies il y a 3 jours, crampes et ballonnements les premiers jours), au format de la saisie
 de l'app. **Brief** : remplacer `__PORT__`, `OUTFILE` et `SIMID` (un `sed s/PORT/…/` abîmait « RAPPORT »).
 `--notes=few` (Stressé et pressé) : aucun repas ni ventre, une note de

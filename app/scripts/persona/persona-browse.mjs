@@ -6,8 +6,9 @@
  * renvoie une capture de l'écran : l'agent qui simule la persona ne voit que ces captures, jamais le code.
  *
  *   node scripts/persona/persona-browse.mjs --day=14 --equipment=watch --port=7801 --out=/tmp/sim-1 [--dark] [--sideload]
- *     [--goals=care,stress]   objectifs cochés à l'accueil (jour > 1 ; au jour 1 l'agent les choisit lui-même) :
- *                             gut, cycle, stress, sport, care, all (POLISH-SIM-7)
+ *     [--goals=care,stress]   objectifs de la persona (jour > 1 ; au jour 1 l'agent les choisit lui-même) :
+ *                             gut, cycle, stress, sport, care, all (POLISH-SIM-7). Sans --legacy, l'accueil de la
+ *                             refonte est écrit : bien-être, plus confort digestif pour gut, all ou cycle (PERSONAS-OUTIL-1)
  *     [--legacy]              mise à jour depuis la version des testeurs d'avant la refonte (jour > 1) : accueil
  *                             d'alors (objectifs de --goals, ex. sport,cycle, sans version d'objectifs), Nouveautés
  *                             vues jusqu'au 14/11, un essai d'Agir en cours ; aucune habitude
@@ -35,7 +36,7 @@ import { createRequire } from 'node:module'
 import { execSync } from 'node:child_process'
 import { generateDemoEntries } from '../visual/demoData.mjs'
 import { gotoRoute } from '../visual/navigate.mjs'
-import { personaEntries, legacyLastSeen, legacyOnboarding, legacyTrial } from './personaData.mjs'
+import { personaEntries, legacyLastSeen, legacyOnboarding, legacyTrial, freshOnboarding } from './personaData.mjs'
 import { buildIndex, fakeMealFromDescription, DEFAULT_MEAL } from './fakeMeal.mjs'
 
 const APP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -124,7 +125,7 @@ if (day > 1) {
     if (!localStorage.getItem('healthtrack_onboarding')) {
       // Une persona qui note ses repas depuis des jours a déjà accepté l'analyse par l'IA (POLISH-SIM-78)
       if (mealConsent) localStorage.setItem('halcya_ai_meal_consent', '1')
-      localStorage.setItem('healthtrack_onboarding', JSON.stringify(onboarding || { done: true, endedBy: 'completed', doneAt, step: 6, maxStep: 6, goals, flow: 2 }))
+      localStorage.setItem('healthtrack_onboarding', JSON.stringify(onboarding))
       // L'onboarding marque toutes les Nouveautés comme lues : pas de « 258 autres changements » (artefact du 08/11)
       localStorage.setItem('healthtrack-whats-new-last-seen', latestId)
       // Pilou rencontré pendant l'accueil (lot VIE), jour 7 déjà fêté : la persona voit l'app de tous les jours
@@ -133,12 +134,12 @@ if (day > 1) {
       localStorage.setItem('healthtrack_weather', JSON.stringify({ enabled: true, location: { lat: 48.9, lon: 2.3, name: 'Paris' }, lastSyncAt: new Date().toISOString(), today: { date: new Date().toISOString().slice(0, 10), tempMaxC: 12, tempMinC: 5, precipMm: 0, sunshineH: 3, pressureHpa: 1016, pressureChangeHpa: null, aqi: 22, pollen: {}, pollenMax: 0 } }))
     }
   }, { doneAt: new Date(Date.now() - (day - 1) * 86400000).toISOString(), latestId, goals, mealConsent: notes === 'full',
-    onboarding: legacy ? legacyOnboarding({ goals, doneAt: new Date(Date.now() - (day - 1) * 86400000).toISOString() }) : null })
+    onboarding: (legacy ? legacyOnboarding : freshOnboarding)({ goals, doneAt: new Date(Date.now() - (day - 1) * 86400000).toISOString() }) })
 }
 const page = await context.newPage()
 await page.goto(base, { waitUntil: 'load' })
 const sourceName = args.source ? String(args.source) : undefined
-const entries = personaEntries(generateDemoEntries(), { day, equipment, notes, goals, sourceName })
+const entries = personaEntries(generateDemoEntries(), { day, equipment, notes, goals: legacy ? goals : [...goals, ...freshOnboarding({ goals }).goals], sourceName })
   .concat(legacy && day > 1 ? [legacyTrial()] : [])
 await page.evaluate(async (list) => {
   await new Promise((res) => { const q = indexedDB.deleteDatabase('HealthTrack'); q.onsuccess = q.onerror = q.onblocked = () => res() })

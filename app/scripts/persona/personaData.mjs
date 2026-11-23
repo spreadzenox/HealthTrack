@@ -200,3 +200,17 @@ export function legacyTrial({ now = new Date() } = {}) {
     },
   }
 }
+
+// --- Installation neuve après la refonte (PERSONAS-OUTIL-1) ---
+
+/** Choix de `--goals` qui veulent le confort digestif : Ventre (1, 2), Tout mesurer, et l'ancien cycle. */
+const GUT_CHOICES = new Set(['gut', 'all', 'cycle'])
+
+/**
+ * Accueil terminé dans la version de la refonte (étape 5b) : bien-être toujours, confort digestif selon la persona,
+ * `goalsVersion: 2` comme l'écrit `chooseObjectives` (src/settings/onboarding.js) ; la migration n'y touche plus.
+ */
+export function freshOnboarding({ goals, doneAt }) {
+  const gut = goals.some((g) => GUT_CHOICES.has(g))
+  return { done: true, endedBy: 'completed', doneAt, step: 6, maxStep: 6, goals: ['wellbeing', ...(gut ? ['gut'] : [])], goalsVersion: 2, flow: 2 }
+}

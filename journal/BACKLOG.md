@@ -708,7 +708,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **POLISH-SIM-144 — « la zone grise, votre habitude » sous la carte humeur et éveil** (J14, mineur ;
       `TrendsDayDetail.jsx` 147) : l'habitude est dessinée par un contour gris, pas une zone remplie. Dire « le cercle
       gris, votre habitude ». **Fait le 22/11 21:30** (`Trends.test.jsx`).
-    - [ ] **PERSONAS-OUTIL-1 — `--goals=` des installations neuves suit encore l'ancien accueil** : `--goals=all` (Tout
+    - [x] **PERSONAS-OUTIL-1 — `--goals=` des installations neuves suit encore l'ancien accueil** — FAIT 23/11 16:30 (`freshOnboarding` de `personaData.mjs` : `wellbeing`, plus `gut` pour gut, all ou cycle, `goalsVersion: 2` ; `--legacy` inchangé ; test `personaData` ; essai réel `--goals=all` au 14e jour : bulle Digestion présente) : `--goals=all` (Tout
       mesurer) écrit `goals: ['all']` sans `goalsVersion`, que la migration de l'étape 5a convertit en bien-être seul ;
       la persona n'avait donc pas « Confort digestif » et cherchait en vain où noter sa digestion (constat écarté : sans
       cet objectif, l'app ne demande jamais le ventre, brief § 3.2). Pour un jour > 1 sans `--legacy`, écrire les
