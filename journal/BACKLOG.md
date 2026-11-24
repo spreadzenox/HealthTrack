@@ -1017,6 +1017,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   les notes `["appstore"]` et leur test** (`changelog.appstore.test.js`, qui a besoin de ces notes) : chemin fixé par
   le prompt. Suite : étape 3, `ios/` → `app/ios/` (à décider : elle demande que les notes iPhone vivent dans
   `app/src/data/changelog/`, contraire au chemin du prompt ; question à l'orchestrateur).
+  24/11 15:30 : `cameraPermission.js` tranché : **à retirer** (avec son test, et `requestCamera` de
+  `FaceSensePlugin.swift` s'il ne sert à rien d'autre). Il servait l'étape « Ce que Halcya peut utiliser »
+  (`ios/PermissionsStep.jsx`, correctif 46), retirée le 08/11 avec le nouvel accueil (PARITE.md, ligne du 8/11 19:00) :
+  l'appareil photo se demande à l'activation de la lecture du visage. À faire dans la prochaine PR qui lance de toute
+  façon un build iPhone (pas de build de Mac pour du code mort seul : CI économe).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
@@ -1618,8 +1623,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **POLISH-SIM-74** (à vérifier ; Tout mesurer J45) Analyses, long terme : « −2,1 pt pour 150 kcal d'activité de
   plus » sur une note sur 5, hachuré. Vérifier le calcul sur les données de la persona ; un chiffre pas net aussi
   grand doit-il s'afficher ?
-- [ ] **POLISH-SIM-75** (à vérifier ; Tout mesurer J45) Tendances › Jour : Sommeil choisi, l'app repasse sur
+- [x] **POLISH-SIM-75** (à vérifier ; Tout mesurer J45) Tendances › Jour : Sommeil choisi, l'app repasse sur
   Bien-être sans le dire (T2 prévoit la puce grisée « une valeur par jour »).
+  **Soldée le 24/11 15:30** : déjà réglée par POLISH-SIM-107 (19/11) : en Jour, la mesure choisie reste
+  (`TrendsViewer.jsx`, `dayKeys`), test « POLISH-SIM-107 » de `Trends.test.jsx`.
 - [ ] **POLISH-SIM-76** (à vérifier ; Tout mesurer J45) Objectif « tout comprendre » et digestion notée : Analyses
   n'a que l'onglet Bien-être.
 - [x] **POLISH-SIM-77** (Ventre sans technique J45) Repas, encadré « Riche en fructanes » : « ≈ 0,73 g · repère
@@ -1743,9 +1750,13 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   **Fait le 15/11 00:35** : quand seul le jour en cours est saisi, la page écrit « ≈ … kcal aujourd'hui, journée en
   cours. » et la légende « incertain : journée en cours » ; l'avertissement revient dès qu'un autre jour est saisi.
   Le repère de calories par jour demandé par la persona reste une proposition, pas faite. iPhone : au prochain suivi.
-- [ ] **POLISH-SIM-98** (à vérifier sur captures ; Maigrir J1) Accueil : compteur « 01/06 » sur les trois premiers
+- [x] **POLISH-SIM-98** (à vérifier sur captures ; Maigrir J1) Accueil : compteur « 01/06 » sur les trois premiers
   écrans ; explication de l'envoi à l'IA lue trois fois ; visite guidée : « + 1 cigarette » montré à qui n'a pas
   parlé de tabac.
+  **Soldée le 24/11 15:30 (relue dans le code)** : l'accueil de la refonte (étape 5) n'a plus ce compteur
+  (« 1 sur 4 », segments de `TEMPS`) ni d'explication de l'envoi à l'IA (`Onboarding.jsx`) ; la visite guidée
+  (`tourData.js`, `tour.js`, `GuidedTour.jsx`) ne montre plus de cigarette, et « + 1 cigarette » n'est proposé
+  qu'une fois le compteur activé (POLISH-SIM-42, `AddStrip.jsx`).
 - POLISH-SIM-80 et POLISH-SIM-88 (ouverts) : revus par une 2e persona le 14/11 20:35 (synthèse du jour).
 - [ ] **PROP-SIM-17** (proposition avec maquette, pas de code sans accord) Bilan digestif simple avant le 28e jour :
   jours calmes, de gêne, de douleur, et repas des jours de douleur, sans statistique. **Maquette faite le 14/11
