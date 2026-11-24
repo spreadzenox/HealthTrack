@@ -163,10 +163,10 @@ export function formatPace(secondsPerKm) {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} /km`
 }
 
-/** Détails d'une séance lus par la montre (M7) : « FC moy. 135 bpm », allure moyenne des kilomètres complets. */
+/** Détails d'une séance lus par la montre (M7) : « cœur 135 bpm en moyenne », allure moyenne des kilomètres complets. */
 export function workoutDetailParts(payload) {
   const out = []
-  if (payload?.avgHeartRate) out.push(`FC moy. ${payload.avgHeartRate} bpm`)
+  if (payload?.avgHeartRate) out.push(`cœur ${payload.avgHeartRate} bpm en moyenne`)
   const splits = payload?.paceSplitsSecPerKm
   if (Array.isArray(splits) && splits.length) out.push(formatPace(splits.reduce((a, x) => a + x, 0) / splits.length))
   return out

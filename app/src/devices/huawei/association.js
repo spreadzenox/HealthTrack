@@ -237,7 +237,7 @@ export async function runAssociation(
   await ask('date_format', 'format de date', DEVICE_CONFIG, ASSOC.DATE_FORMAT, dateFormatTlvs())
 
   if (firstTime) {
-    if (canAsk(caps, FITNESS, FIT_ASSOC.AUTO_HR)) await ask('auto_hr', 'FC automatique activée', FITNESS, FIT_ASSOC.AUTO_HR, [{ tag: 1, value: [1] }])
+    if (canAsk(caps, FITNESS, FIT_ASSOC.AUTO_HR)) await ask('auto_hr', 'Fréquence cardiaque automatique activée', FITNESS, FIT_ASSOC.AUTO_HR, [{ tag: 1, value: [1] }])
     if (canAsk(caps, FITNESS, FIT_ASSOC.AUTO_SPO2)) await ask('auto_spo2', 'Oxygène du sang automatique activé', FITNESS, FIT_ASSOC.AUTO_SPO2, [{ tag: 1, value: [1] }])
   }
 

@@ -17,7 +17,7 @@ const CHIP_KEYS = {
   Sommeil: 'sleepMinutes',
   'Sommeil (estimé)': 'sleepMinutes',
   'Score de nuit': 'watchSleepScore',
-  'FC nuit': 'sleepHr',
+  'Cœur la nuit': 'sleepHr',
   Pas: 'steps',
   'Cœur au repos': 'restingHr',
   'Variabilité cardiaque': 'hrv',
@@ -30,7 +30,7 @@ const CHIP_KEYS = {
   Stress: 'watchStress',
   Tension: 'bloodPressure',
   Glycémie: 'glucoseMgDl',
-  FC: 'heartRate',
+  Cœur: 'heartRate',
   Dépense: 'burnedKcal',
   Séance: 'workouts',
   Séances: 'workouts',
@@ -76,7 +76,7 @@ export function summaryChips(s) {
   const fr = (v) => v.toLocaleString(appLocale())
   if (s.sleepMinutes != null) chips.push([s.sleepEstimated ? 'Sommeil (estimé)' : 'Sommeil', formatDuration(s.sleepMinutes)])
   if (s.watchSleepScore != null) chips.push(['Score de nuit', `${s.watchSleepScore} / 100`])
-  if (s.sleepHr != null) chips.push(['FC nuit', `${s.sleepHr} bpm`])
+  if (s.sleepHr != null) chips.push(['Cœur la nuit', `${s.sleepHr} bpm`])
   if (s.steps != null) chips.push(['Pas', fr(Math.round(s.steps))])
   if (s.restingHr != null) chips.push(['Cœur au repos', `${Math.round(s.restingHr)} bpm`])
   if (s.hrv != null) chips.push(['Variabilité cardiaque', `${Math.round(s.hrv)} ms`])
@@ -93,7 +93,7 @@ export function summaryChips(s) {
   }
   if (s.heartRate) {
     const { min, max } = s.heartRate
-    chips.push(['FC', min === max ? `${Math.round(min)} bpm` : `${Math.round(min)} à ${Math.round(max)} bpm`])
+    chips.push(['Cœur', min === max ? `${Math.round(min)} bpm` : `${Math.round(min)} à ${Math.round(max)} bpm`])
   }
   if (s.burnedKcal != null) chips.push(['Dépense', `${fr(s.burnedKcal)} kcal`])
   if (s.workouts) {

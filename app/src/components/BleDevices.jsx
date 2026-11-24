@@ -315,7 +315,7 @@ export default function BleDevices({
           {result.summary ? (
             <>
               <p className="ble-live-title">
-                Enregistré : FC moyenne {result.summary.meanBpm} bpm (de {result.summary.minBpm} à {result.summary.maxBpm})
+                Enregistré : cœur à {result.summary.meanBpm} bpm en moyenne (de {result.summary.minBpm} à {result.summary.maxBpm})
                 {result.summary.rmssdMs != null && ` · variabilité cardiaque (RMSSD) ${Math.round(result.summary.rmssdMs)} ms`}
               </p>
               {result.summary.rmssdMs == null && <p className="my-device-message">{HRV_REASONS[result.summary.quality]}</p>}

@@ -19,7 +19,6 @@ public class FaceSensePlugin: CAPPlugin, CAPBridgedPlugin {
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "status", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "start", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "requestCamera", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "stop", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "stopUnlock", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "test", returnType: CAPPluginReturnPromise),
@@ -98,17 +97,6 @@ public class FaceSensePlugin: CAPPlugin, CAPBridgedPlugin {
         case .authorized: enable(true)
         case .notDetermined: AVCaptureDevice.requestAccess(for: .video) { granted in enable(granted) }
         default: enable(false)
-        }
-    }
-
-    /// Accès à l'appareil photo seul, sans activer la lecture du visage : demandé à l'accueil, avec la position, pour les
-    /// photos de repas et de selles (retours du premier testeur, 06/11). `{ granted }` ; refusé avant : rien ne s'affiche,
-    /// l'iPhone ne redemande pas (Réglages › Halcya).
-    @objc func requestCamera(_ call: CAPPluginCall) {
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .authorized: call.resolve(["granted": true])
-        case .notDetermined: AVCaptureDevice.requestAccess(for: .video) { granted in call.resolve(["granted": granted]) }
-        default: call.resolve(["granted": false])
         }
     }
 
