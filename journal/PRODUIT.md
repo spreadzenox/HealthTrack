@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **24/11 20:30** — Run « idées » (sans code produit) : personas « Ventre et données » J45 (Android seul) et « Tout mesurer » J14 après mise à jour (Amazfit par Zepp), [synthèse](simulations/2026-11-24-2030-synthese.md) ; **POLISH-SIM-158 à 161** au BACKLOG (Pas masqué dans « + » de Tendances, « 1 jour réussi sur 5 » de l'essai, facteurs du Sommeil non nommés, « Ce qui a pu jouer » sans le ventre). #1244 mergée au run de 19:30, main vert (v907).
 - **24/11 19:30** — #1244 : la note de Nouveautés de l'iPhone ne nomme plus Android (deux checks rouges : test des notes appstore et contrôle des textes des captures). Nouveau build iPhone, merge au run suivant.
 - **24/11 18:30** — **POLISH-SIM-72-iOS-c** (iPhone) : « Variabilité cardiaque, app Santé » au lieu de « … (SDNN) » dans Tendances, la carte des normes et Analyses, distincte de la RMSSD d'une sauvegarde Android ; test de garde. PR prête, merge au run suivant après le build iPhone.
 - **24/11 16:30** — **POLISH-SIM-86b** : plus aucun « FC » visible (« Cœur », « Cœur la nuit », « fréquence cardiaque », comme Sources), test de garde ; `cameraPermission.js` et `requestCamera` natif retirés (code mort). PR prête, merge au run suivant après le build iPhone.
