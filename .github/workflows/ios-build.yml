@@ -14,7 +14,7 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
-    paths: ["iphone/**", "app/**", "relay/**", ".github/workflows/ios-build.yml", "!app/android/**", "!app/store/**", "!app/**.md", "!iphone/journal/**", "!iphone/**.md", "!iphone/store/**", "!iphone/site/**", "!iphone/scripts/site.mjs", "!iphone/scripts/store-*.mjs", "!iphone/fusion/**"]
+    paths: ["iphone/**", "app/**", "relay/**", ".github/workflows/ios-build.yml", "!app/android/**", "!app/store/**", "!app/**.md", "!app/scripts/persona/**", "!iphone/journal/**", "!iphone/**.md", "!iphone/store/**", "!iphone/site/**", "!iphone/scripts/site.mjs", "!iphone/scripts/store-*.mjs", "!iphone/fusion/**"]
   schedule:
     - cron: "20 20 * * *" # 21:20 à Paris (heure d'hiver) : une heure de build, fini avant l'Alpha de 23:45
   workflow_dispatch:
