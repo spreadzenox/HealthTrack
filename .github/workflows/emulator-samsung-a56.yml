@@ -103,6 +103,7 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "21"
+          cache: "gradle"
 
       - name: Configurer Android SDK
         uses: android-actions/setup-android@v3
@@ -265,6 +266,7 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "21"
+          cache: "gradle"
 
       - name: Configurer Android SDK
         uses: android-actions/setup-android@v3
@@ -443,6 +445,7 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "21"
+          cache: "gradle"
 
       - name: Configurer Android SDK
         uses: android-actions/setup-android@v3
