@@ -1617,6 +1617,8 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   (`hrv_sdnn_ms`, correctif 32) et dans la liste des données de l'app Santé (`healthApps.js`, correctif 19) ; aucun
   de ces écrans ne reconnaît la mesure à son libellé. Dans Tendances, si une RMSSD importée d'Android existe aussi,
   le sélecteur propose deux « Variabilité cardiaque » : les distinguer (« , app Santé »).
+  24/11 19:30 : la note de Nouveautés de l'iPhone ne doit jamais nommer Android (test `changelog.appstore` et contrôle
+  des textes des captures) ; reformulée dans #1244.
   **Fait le 24/11 18:30** : « Variabilité cardiaque, app Santé » dans Tendances (courbe, puces, détail), la carte
   des normes et les Analyses (`VARIABLE_META`) ; « variabilité cardiaque » dans « qui envoie quoi » ; note de Tendances
   « telle que la mesure l’app Santé, en millisecondes ». Les phrases (« Variabilité cardiaque plus haute… ») gardent le

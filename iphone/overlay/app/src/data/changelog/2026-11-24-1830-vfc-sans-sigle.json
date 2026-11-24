@@ -4,6 +4,6 @@
   "variants": ["appstore"],
   "title": "Variabilité cardiaque, sans sigle",
   "items": [
-    "La variabilité cardiaque de l’app Santé ne porte plus le sigle « SDNN » : « Variabilité cardiaque, app Santé » dans Tendances, votre norme et Analyses, pour la distinguer de celle d’une sauvegarde Android."
+    "La variabilité cardiaque de l’app Santé ne porte plus le sigle « SDNN » : « Variabilité cardiaque, app Santé » dans Tendances, votre norme et Analyses, pour la distinguer de celle d’une ancienne sauvegarde importée."
   ]
 }
