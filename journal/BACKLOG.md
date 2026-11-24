@@ -774,7 +774,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       d'« Étirements »). Garder la ligne répondue sur place un court instant (état « fait ») avant de la ranger.
     - [x] **POLISH-SIM-153 — Portion invraisemblable acceptée sans un mot** (FAIT le 24/11 à 00:30 : au-delà de 2 kg pour un aliment, « 5 kg, c’est bien ça ? » sous la ligne, sans rien bloquer ; un seul plafond, pas un par aliment ; `MealEditor.jsx`, test `MealEditor.test.jsx`) (J14, capture `pates-5000g.png`) : 5 000 g
       et 5 800 kcal s'enregistrent. Alerte douce au-delà d'un plafond par aliment (« 5 kg, c'est bien ça ? »).
-    - [ ] **POLISH-SIM-154 — Pilou coupé derrière la carte de Tendances** (J1 et J14, captures
+    - [x] **POLISH-SIM-154 — Pilou coupé derrière la carte de Tendances** (FAIT le 24/11 à 01:30 : fenêtre de la petite tête passée de 34 à 48 px dans `Guide.css`, la tête entière dépasse, une main posée sur le bord de la carte ; captures clair et sombre, démo et pesée seule) (J1 et J14, captures
       `tendances-pas-auj.png`, `poids-sans-courbe.png`) : seul le haut de la tête dépasse.
     - [ ] **PERSONAS-OUTIL-3 — Faux relais des repas** (`scripts/persona/fakeMeal.mjs`) : « pâtes » reconnu comme
       « Pâté breton », grammes écrits ignorés (« 200 g de saumon » → 500 g), description entière gardée comme nom.
