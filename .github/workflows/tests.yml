@@ -61,6 +61,14 @@ jobs:
           distribution: temurin
           java-version: "21"
 
+      # JUnit et Hamcrest gardés d'un run à l'autre : Maven Central refuse parfois (404 le 31/10, 429 le 24/11),
+      # et java-protocol-test.sh réutilise les jars déjà présents dans .java-test/lib.
+      - name: Cache des jars de test (JUnit, Hamcrest)
+        uses: actions/cache@v4
+        with:
+          path: app/.java-test/lib
+          key: java-test-lib-junit-4.13.2-hamcrest-1.3
+
       - name: Run Java protocol tests (JUnit, sans SDK Android)
         run: |
           cd app
