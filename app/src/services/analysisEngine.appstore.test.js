@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 
 // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé est en SDNN (`heartRateVariabilitySdnn`). Les Analyses la
-// prennent comme une variable à part, « Variabilité cardiaque (SDNN) », jamais mêlée à la RMSSD d'Android : une
+// prennent comme une variable à part, « Variabilité cardiaque, app Santé », jamais mêlée à la RMSSD d'Android : une
 // personne passée d'Android à l'iPhone aurait sinon un saut de niveau dans sa série, pris pour un lien (correctif 32)
 vi.mock('../config/distribution', async (importOriginal) => {
   const actual = await importOriginal()
