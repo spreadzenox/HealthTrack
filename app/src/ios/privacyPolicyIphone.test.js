@@ -7,7 +7,7 @@ import { join } from 'node:path'
 // Version iOS (HealthTrack-iOS) : Réglages → Confidentialité ouvre sur iPhone sa propre page
 // (public/confidentialite-iphone.html, correctif 26), réécrite d'après celle d'Android. Celle d'Android évolue avec
 // l'app : quand elle change, ce test échoue pour que la page iPhone soit relue avant de suivre la nouvelle version.
-// Vitest tourne depuis upstream/app, où scripts/upstream.sh a copié overlay/
+// Vitest tourne depuis app/ (pages dans app/public/ depuis FUSION-3)
 const read = (p) => readFileSync(join(process.cwd(), p), 'utf8')
 const iphone = read('public/confidentialite-iphone.html')
 const text = iphone.replace(/<!--[\s\S]*?-->/g, '').replace(/<style>[\s\S]*?<\/style>/, '').replace(/<[^>]+>/g, ' ')

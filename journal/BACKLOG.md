@@ -1002,6 +1002,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   n'est importé par aucun écran (seul son test l'appelle) : à brancher ou retirer, à trancher. Restent dans `overlay/` :
   les 40 notes `["appstore"]` (le prompt leur donne ce chemin), les 12 tests qui relisent des fichiers de `iphone/`
   ou des workflows (avec l'étape `ios/` → `app/ios/`), les 2 pages publiques (FUSION-4) et les 2 images de Pilou.
+  24/11 10:30 : `overlay/app/public/` vidé : les 2 images de Pilou des notifications du soir (`companion/`, lues par
+  `EveningPlugins.swift`) et les 2 pages publiques de l'iPhone (`conditions-iphone.html`, `confidentialite-iphone.html`)
+  passent dans `app/public/`, avec leurs 2 tests (`app/src/ios/conditionsIphone.test.js`, `privacyPolicyIphone.test.js`,
+  12 tests verts). `iphone/scripts/site.mjs` et `ios-site.yml` lisent `app/public/`. L'APK embarque ces 4 fichiers
+  (≈ 52 Ko, jamais liés hors iPhone : `More.jsx` ne les montre qu'avec `FEATURES.iosStore`). Restent dans `overlay/` :
+  les 40 notes `["appstore"]` et 11 tests qui relisent `iphone/` ou les workflows.
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).

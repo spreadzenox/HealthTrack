@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Site de l'app iPhone, publié par GitHub Pages (.github/workflows/pages.yml) : les deux adresses exigées par la
 // fiche App Store (I9).
-//   /confidentialite/  politique de confidentialité (source : overlay/app/public/confidentialite-iphone.html,
+//   /confidentialite/  politique de confidentialité (source : app/public/confidentialite-iphone.html,
 //                      la même que celle embarquée dans l'app, sans son lien de retour vers l'app)
-//   /conditions/       conditions d'utilisation (source : overlay/app/public/conditions-iphone.html, de même)
+//   /conditions/       conditions d'utilisation (source : app/public/conditions-iphone.html, de même)
 //   /assistance/       assistance (source : site/assistance.html), aussi servie à la racine
 // Usage : node scripts/site.mjs <dossier de sortie>
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -19,7 +19,7 @@ const BACK = /\s*<!-- L'iPhone n'a pas de bouton retour[^>]*-->\s*<a class="back
 const strip = (html) => html.replace(/[ \t]*<!--[\s\S]*?-->\n?/g, '')
 // Page de l'app, sans son lien de retour vers l'app ; ses liens vers l'autre page de l'app deviennent ceux du site
 const fromApp = (file) => {
-  const html = readFileSync(join(root, 'overlay/app/public', file), 'utf8')
+  const html = readFileSync(join(root, '../app/public', file), 'utf8')
   if (!BACK.test(html)) throw new Error(`Lien de retour vers l’app introuvable dans ${file}`)
   return strip(html.replace(BACK, '')).replaceAll('href="/confidentialite-iphone.html"', 'href="../confidentialite/"')
 }

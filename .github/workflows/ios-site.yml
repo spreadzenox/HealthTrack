@@ -8,10 +8,10 @@ name: iOS — site (contrôle)
 on:
   pull_request:
     branches: [main]
-    paths: ["iphone/overlay/app/public/confidentialite-iphone.html", "iphone/overlay/app/public/conditions-iphone.html", "iphone/site/**", "iphone/scripts/site.mjs", ".github/workflows/ios-site.yml"]
+    paths: ["app/public/confidentialite-iphone.html", "app/public/conditions-iphone.html", "iphone/site/**", "iphone/scripts/site.mjs", ".github/workflows/ios-site.yml"]
   push:
     branches: [main]
-    paths: ["iphone/overlay/app/public/confidentialite-iphone.html", "iphone/overlay/app/public/conditions-iphone.html", "iphone/site/**", "iphone/scripts/site.mjs", ".github/workflows/ios-site.yml"]
+    paths: ["app/public/confidentialite-iphone.html", "app/public/conditions-iphone.html", "iphone/site/**", "iphone/scripts/site.mjs", ".github/workflows/ios-site.yml"]
 
 permissions:
   contents: read
@@ -28,7 +28,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: iphone
+          sparse-checkout: |
+            iphone
+            app/public
       - uses: actions/setup-node@v4
         with:
           node-version: "20.19"

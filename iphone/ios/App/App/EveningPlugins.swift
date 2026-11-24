@@ -239,7 +239,7 @@ final class HalcyaNotificationHandler: NSObject, UNUserNotificationCenterDelegat
 }
 
 /// Vignette de Pilou dans les notifications du soir (étape 13 de la refonte « Compagnon », comme `PilouNotice` sur
-/// Android) : l'image pré-rendue est dans le site de l'app (`public/companion/`, ajoutée par `overlay/`) ; iOS déplace
+/// Android) : l'image pré-rendue est dans le site de l'app (`app/public/companion/`) ; iOS déplace
 /// le fichier joint, donc on en joint une copie. Sans image, la notification reste la même ; le texte dit tout.
 enum PilouNotice {
     static func attachments(_ name: String) -> [UNNotificationAttachment] {
