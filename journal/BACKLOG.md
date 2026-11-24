@@ -996,6 +996,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   (vérifié dans `dist/`). 2 restent (01, 27). Suivant : 27 (décision), 01 en dernier.
   24/11 07:30 : correctifs 01 (variante `appstore`) et 27 (« Votre avis » sur iPhone vers le dépôt unique) fondus :
   **`iphone/patches/` est vide**. Suite : `overlay/` (93 fichiers), puis `ios/` → `app/ios/`.
+  24/11 09:30 : `overlay/`, 1er sujet : les 34 tests de l'iPhone qui ne lisent aucun fichier (`*.appstore.test.*`,
+  `*.ios.test.*`, tests de `ios/` sans lecture de fichier) et `ios/cameraPermission.js` passent dans `app/src/` ; ils
+  tournent maintenant aussi dans les tests d'Android (97 tests, tous verts sans changement). `cameraPermission.js`
+  n'est importé par aucun écran (seul son test l'appelle) : à brancher ou retirer, à trancher. Restent dans `overlay/` :
+  les 40 notes `["appstore"]` (le prompt leur donne ce chemin), les 12 tests qui relisent des fichiers de `iphone/`
+  ou des workflows (avec l'étape `ios/` → `app/ios/`), les 2 pages publiques (FUSION-4) et les 2 images de Pilou.
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
