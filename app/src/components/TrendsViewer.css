@@ -481,6 +481,11 @@ button.trends-chip {
 /* POLISH-SIM-94 : mesure relevée qui n'a pas encore sa courbe, visible mais sans effet */
 .trends-chip.is-pending {
   cursor: default;
+  color: var(--text-muted);
+}
+
+.trends-chip.is-pending .trends-chip-dot {
+  background: var(--text-muted);
 }
 
 .trends-add-caption {

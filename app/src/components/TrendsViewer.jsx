@@ -23,11 +23,12 @@ const waitText = (k) => SPARSE_WAIT[k] ?? 'après 3 jours de mesures'
 // POLISH-SIM-94 : une mesure qui a déjà des valeurs mais pas encore sa courbe reste visible, grisée, dans « + »
 const pendingChip = (k) => (k === 'weight' ? 'dès 3 pesées' : 'dès 3 jours')
 
-function PendingChip({ k }) {
+// pick : sous « Choisissez une courbe », à la taille des puces de choix ; sinon à celle des puces de « + »
+function PendingChip({ k, pick = false }) {
   const m = trendMeasure(k)
   return (
     <li>
-      <button type="button" className="trends-chip is-daily is-pending" aria-disabled="true"
+      <button type="button" className={`trends-chip is-pending${pick ? ' trends-pick-chip' : ''}`} aria-disabled="true"
         aria-label={`${m.label}, la courbe arrive ${waitText(k)}`}>
         <span className="trends-chip-dot" aria-hidden="true" />{m.label} · {pendingChip(k)}
       </button>
@@ -515,7 +516,7 @@ export default function TrendsViewer({
                 </li>
               )
             })}
-            {pendingChips.map((k) => <PendingChip key={k} k={k} />)}
+            {pendingChips.map((k) => <PendingChip key={k} k={k} pick />)}
           </ul>
         </div>
       ) : (
