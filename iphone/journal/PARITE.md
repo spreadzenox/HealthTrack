@@ -16,6 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+24/11 14:30 : #1239 mergée (build iPhone vert, captures de Tendances relues en clair et en sombre). POLISH-SIM-88 : Tendances lit les notes d’avant la première lecture du visage, code partagé. Parité inchangée (70 %).
 24/11 13:30 : #1238 mergée (build iPhone vert, capture de Tendances relue) ; retouche de taille de la puce « Poids · dès 3 pesées » dans le code partagé. Parité inchangée (70 %).
 24/11 12:30 : POLISH-SIM-94 (Tendances : « Poids · dès 3 pesées » grisé dans « + ») dans le code partagé, vérifié par le build iPhone de la PR. Parité inchangée (70 %).
 24/11 11:30 : FUSION-3 : les 10 derniers tests de l’iPhone qui relisaient des fichiers (projet natif, fiche App Store, workflows) passent d’`overlay/` à `app/src/`, avec `app/src/ios/iphonePaths.js` pour trouver ces fichiers depuis les deux arbres ; ils tournent aussi dans les tests d’Android. `overlay/` ne garde que les notes de Nouveautés `["appstore"]` et leur test. Rien ne change sur l’iPhone ; parité inchangée : 70 %.
