@@ -799,15 +799,17 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       journée › Autre chose ni dans Objectifs ; maquette faite le 24/11 08:30 (PROP-SIM-19, `maquettes/poids/`).
   - **Passage des personas du 24/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-24-2030-synthese.md) ;
     « Ventre et données » J45, Android seul, et « Tout mesurer » J14 après mise à jour, Android + Amazfit par Zepp) :
-    - [ ] **POLISH-SIM-158 — Tendances : « Pas » disparaît de « + » sans un mot** (J14, capture
+    - [x] **POLISH-SIM-158 — Tendances : « Pas » disparaît de « + » sans un mot** (J14, capture
       `tendances-selecteur.png` ; `canAddMeasure` de `trendsData.js` 133 : deux unités au plus) : avec Bien-être (/5)
       et Sommeil (h), Pas n'est plus proposé. Le montrer grisé avec « Deux unités au plus : retirez une courbe ». Test
       `Trends.test.jsx` d'abord.
-    - [ ] **POLISH-SIM-159 — Essai : « Jour 4 sur 10 » puis « 1 jour réussi sur 5 »** (J14, capture `essai-jour4.png` ;
+    - [x] **POLISH-SIM-159 — Essai : « Jour 4 sur 10 » puis « 1 jour réussi sur 5 »** (J14, capture `essai-jour4.png` ;
       `Trial.jsx` 179, `goal` = jours « avec » du tirage) : deux totaux côte à côte. Dire ce que compte le second
       (« 1 jour à 7 h 30 réussi sur 5 prévus », ou « lanternes : 1 sur 5 ») ; texte seulement, test SLOP d'abord.
       Vérifier au passage pourquoi la ligne « Sans » reste vide au jour 4 (jours 2 et 3 « comme d'habitude ») : outil
       `--legacy` sans note les lendemains, ou défaut.
+      → 24/11 22:30 : 158 et 159 faits (texte « Consigne tenue 1 jour sur 5 prévus »). Reste à vérifier : la ligne
+      « Sans » vide au jour 4 (outil `--legacy` ou défaut), au prochain run « idées ».
     - [x] **POLISH-SIM-160 — Objectifs › Sommeil : « 2 facteurs comparés » sans les nommer** (J14, capture
       `objectifs-sommeil-vide.png` ; `FamilyDetail` de `Recommendations.jsx` 367, cas sans barres) : nommer les
       facteurs (« durée du sommeil, heure du coucher »). Test `Recommendations.test.jsx` d'abord. **Fait le 24/11

@@ -176,7 +176,8 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
           </p>
           <TrialLanterns items={lanterns(s)} />
           <p className="act-card-detail trial-kept">
-            <span className="mono">{s.kept}</span> {s.kept > 1 ? 'jours réussis' : 'jour réussi'} sur <span className="mono">{s.goal}</span>
+            {/* POLISH-SIM-159 : le second total ne compte que les jours où la consigne s'applique ; on le dit */}
+            Consigne tenue <span className="mono">{s.kept}</span> {s.kept > 1 ? 'jours' : 'jour'} sur <span className="mono">{s.goal}</span> prévus
           </p>
           {s.missed > 0 && <p className="act-card-detail">Un jour manqué n’annule rien : l’essai continue.</p>}
         </article>
