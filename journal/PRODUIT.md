@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **24/11 08:30** — Run « idées » : **maquette de PROP-SIM-19** (noter son poids en un geste depuis Ma journée › Autre chose, et sa courbe lissée avec sa marge dans Tendances ; ni cible, ni IMC jugé) : `maquettes/poids/README.md`, en attente de la réponse du propriétaire (« PROP-SIM-19 oui », « saisie seulement » ou « non »). #1233 mergée par le run de 07:30, main vert.
 - **24/11 06:30** — **#1231 mergée** (POLISH-SIM-157). Pas de nouveau code (build iPhone du soir en cours). Alpha du 23/11 au soir pas encore partie à 05:40 UTC.
 - **24/11 05:30** — **#1230 mergée** (POLISH-SIM-156). **POLISH-SIM-157** : dans Objectifs › « Ce qui a été comparé », chaque groupe FODMAP dit ses aliments (« sorbitol (FODMAP : pruneaux, prunes) »). Build TestFlight **1290.1290** soumise à l'examen bêta et mise chez « Testeurs Halcya », anciennes builds expirées.
 - **24/11 07:30** — **FUSION-3, derniers correctifs iPhone 01 et 27 fondus** : la variante `appstore` vit dans le code commun, et sur iPhone le lien de secours de « Votre avis » ouvre un ticket de ce dépôt (titré « pour iPhone ») au lieu de l'ancien dépôt iOS. `iphone/patches/` est vide. Rien ne change sur Android. PR en brouillon puis prête, merge au run suivant après le build iPhone.

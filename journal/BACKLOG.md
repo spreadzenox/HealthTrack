@@ -796,7 +796,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - À étudier : FC moyenne, oxygène du sang et phases de sommeil reçus mais visibles nulle part (le « + » de
       Tendances n'a que Sommeil et Pas pour une Galaxy Watch) : proposition au propriétaire. Poids, 3e persona qui le
       cherche (21, 22 et 23/11) : pesée seulement dans Données › Nutrition › Compléter mon profil, rien dans Ma
-      journée › Autre chose ni dans Objectifs ; proposition avec maquette au prochain run « idées ».
+      journée › Autre chose ni dans Objectifs ; maquette faite le 24/11 08:30 (PROP-SIM-19, `maquettes/poids/`).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
@@ -1722,7 +1722,11 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   (Sportif J45, Maigrir J1) : repère de calories par jour, « mangé / dépensé ». Maquette à faire.
 - [ ] **PROP-SIM-19** (proposition, pas de code sans accord ; Maigrir J1 deux fois, Sportif J1) Se peser en un geste
   depuis Aujourd'hui quand l'objectif « poids » est coché (la pesée à la main n'existe que dans Journal › Nutrition ›
-  profil). Maquette à faire, avec PROP-SIM-18.
+  profil). Maquette à faire, avec PROP-SIM-18. **Maquette faite le 24/11 08:30** (sans PROP-SIM-18, qui reste à
+  faire) : `maquettes/poids/README.md` : « Noter mon poids » dans Ma journée › Autre chose, feuille de saisie
+  (dernier poids repris, ± 100 g), Tendances › Poids avec ligne lissée et bande de marge ; ni cible, ni IMC jugé,
+  ni rappel. Réponse attendue : « PROP-SIM-19 oui », « saisie seulement » ou « non » (dans ce cas, retirer
+  « poids » de `handNotes`, l'accueil ne doit plus le promettre).
 - [ ] **PROP-SIM-16** (proposition avec maquette, pas de code sans accord ; Tout mesurer J45) Tendances n'offre que 5
   mesures (FC, dépense, oxygène, poids, calories absents) ; Journal › Jours sans saut à une date ; carte d'appareil
   de Sources sans la liste complète de ses mesures (température, phases). Rappels PROP-SIM-10 confirmés : essai lancé

@@ -52,6 +52,7 @@ polissage (personas) et à la soumission App Store ; cette semaine : vos retours
 puis la fin de FUSION-3 et les restes de la refonte.
 
 **Toujours en attente de vous**
+- **PROP-SIM-19** (poids, 24/11) : maquette dans [`maquettes/poids/README.md`](maquettes/poids/README.md) ; répondez « PROP-SIM-19 oui », « saisie seulement » ou « non ». Aussi en attente : PROP-SIM-17 (bilan digestif avant le 28e jour).
 - **P32** (pays de vente) : le jour de la production, 2 min, geste exact dans [`PRODUIT.md`](PRODUIT.md) §4.
 - **iPhone** : la décision sur la licence des poids du visage (DEM-IOS-9 du backlog) ; les essais sur l'iPhone 12.
 
@@ -61,6 +62,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 24/11 08:30 — [Maquette « noter son poids »](runs/2026-11-24-0830-maquette-poids.md) | 💡 | Proposition **PROP-SIM-19** avec maquette : « Noter mon poids » dans Ma journée › Autre chose, une feuille qui reprend le dernier poids, et dans Tendances une courbe lissée avec sa marge ; ni cible, ni IMC jugé, ni rappel. L'accueil promet déjà le poids à « Prendre soin de moi » sans place simple pour le noter. #1233 mergée, main vert. **Votre réponse en un mot** : « PROP-SIM-19 oui », « saisie seulement » ou « non » |
 | 24/11 07:30 — [Derniers correctifs iPhone fondus](runs/2026-11-24-0730-fusion-01-27.md) | 🔧 | FUSION-3 : les correctifs iPhone 01 (variante App Store) et 27 (« Votre avis » sur iPhone) passent dans le code commun, `iphone/patches/` est vide. Sur iPhone, le lien de secours de « Votre avis » ouvre un ticket de ce dépôt au lieu de l'ancien dépôt iOS ; rien ne change sur Android. Alpha du 23/11 partie à 06:26 UTC. PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 24/11 06:30 — [#1231 mergée](runs/2026-11-24-0630-merge-fodmap-aliments.md) | 🔧 | **#1231 mergée** (POLISH-SIM-157 : dans Objectifs › « Ce qui a été comparé », chaque groupe FODMAP nomme ses aliments ; captures iPhone relues), release **v898**. Pas de nouveau code pour ne pas relancer de build iPhone pendant celui du soir. L'Alpha du 23/11 au soir n'était pas encore partie à 05:40 UTC (cron en retard). Rien à faire de votre côté |
 | 24/11 05:30 — [#1230 mergée, aliments FODMAP](runs/2026-11-24-0530-fodmap-aliments.md) | 🔧 | **#1230 mergée** (« Cœur » selon la montre ; capture iPhone de l'accueil relue). TestFlight **1290.1290** chez « Testeurs Halcya » et soumise à l'examen bêta, anciennes builds expirées. POLISH-SIM-157 : dans Objectifs › « Ce qui a été comparé », chaque groupe FODMAP dit ses aliments (« sorbitol (FODMAP : pruneaux, prunes) »). Alpha du 23/11 pas encore partie à 04:45 UTC. PR prête, merge au run suivant. Rien à faire de votre côté |
