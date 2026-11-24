@@ -40,7 +40,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v896** (#1229, APK 35,7 Mo, 24/11 03:35 UTC) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1268.1268** (build du 22/11 au soir) **validée** pour « Testeurs Halcya » (relevé du 23/11 07:33 UTC) ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
+| Dernière version | release **v897** (#1230, 24/11 04:34 UTC) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1290.1290** (build du 23/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 24/11 04:32 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; 2 correctifs propres à l'iPhone restent à fondre dans le code commun (FUSION-3) |
 
@@ -61,6 +61,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 24/11 05:30 — [#1230 mergée, aliments FODMAP](runs/2026-11-24-0530-fodmap-aliments.md) | 🔧 | **#1230 mergée** (« Cœur » selon la montre ; capture iPhone de l'accueil relue). TestFlight **1290.1290** chez « Testeurs Halcya » et soumise à l'examen bêta, anciennes builds expirées. POLISH-SIM-157 : dans Objectifs › « Ce qui a été comparé », chaque groupe FODMAP dit ses aliments (« sorbitol (FODMAP : pruneaux, prunes) »). Alpha du 23/11 pas encore partie à 04:45 UTC. PR prête, merge au run suivant. Rien à faire de votre côté |
 | 24/11 04:30 — [#1229 mergée, cœur selon la montre](runs/2026-11-24-0430-coeur-selon-montre.md) | 🔧 | **#1229 mergée** (ancien objectif « stress » ; Réglages relus sur Android et iPhone). POLISH-SIM-156 : à l'étape 3 de l'accueil, « Cœur » passe dans « Selon votre montre », plus promis aux bracelets qui ne l'envoient pas. TestFlight du soir lancé à la main : le cron de 20:20 UTC n'était pas parti à 03:30 UTC ; l'Alpha de 23:45 pas encore partie non plus. PR prête, merge au run suivant. |
 | 24/11 03:30 — [Ancien objectif « stress »](runs/2026-11-24-0330-ancien-objectif-stress.md) | 🔧 | POLISH-SIM-155 : Réglages › Vos objectifs dit à qui suivait « Mon stress et mon sommeil » que Bien-être le remplace, le sommeil compris. PR prête ; merge au run suivant après le build iPhone. Build du soir et TestFlight pas encore partis à 02:30 UTC. Rien à faire de votre côté |
 | 24/11 02:30 — [#1227 mergée, faux repas des personas](runs/2026-11-24-0230-merge-pilou-faux-repas.md) | 🔧 | **#1227 mergée** (la tête entière de Pilou dépasse de la carte de Tendances ; captures iPhone relues en clair, sombre et vide). Outil des personas : leurs repas décrits par écrit sont mieux lus (« pâtes » n'est plus du pâté, « 200 g » compte). Les PR qui ne touchent que cet outil ne lancent plus de build iPhone. Rien à faire de votre côté |

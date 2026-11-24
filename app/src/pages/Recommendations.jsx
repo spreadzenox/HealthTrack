@@ -276,7 +276,7 @@ const PLAIN_SUBJECT = { wellbeing: 'vous allez', digestion: 'votre digestion va'
  * piste à vérifier par un essai. Le chiffre, son unité et son délai restent derrière le chevron.
  */
 function pistePlain(f) {
-  const change = (f.usualChange?.text ?? f.label).replace(' (FODMAP)', '')
+  const change = (f.usualChange?.text ?? f.label).replace(/ \(FODMAP[^)]*\)/, '')
   const hint = FODMAP_HINTS[f.key]
   const subject = PLAIN_SUBJECT[f.outcome] ?? PLAIN_SUBJECT.wellbeing
   return `Avec ${change}${hint ? ` (${hint})` : ''}, ${subject} plutôt ${f.effect > 0 ? 'mieux' : 'moins bien'}.`

@@ -416,7 +416,7 @@ describe('REFONTE-6e : la réintroduction guidée sous Confort digestif', () => 
     const gut = JSON.parse(JSON.stringify(readyResults.outcomes.wellbeing))
     gut.horizons.short.factors = [{
       ...f('fodmap_fructans', 'Fructanes', -2.7, { theme: 'nutrition' }), outcome: 'digestion',
-      usualChange: { amount: 1, unit: 'repas', text: '1 repas riche en fructanes (FODMAP) de plus' },
+      usualChange: { amount: 1, unit: 'repas', text: '1 repas riche en fructanes (FODMAP : blé, oignon, ail) de plus' },
     }]
     gut.horizons.medium.factors = []
     gutPage(async () => ({ challenges: [], gut: [] }), { outcomes: { wellbeing: readyResults.outcomes.wellbeing, digestion: gut } })
@@ -424,7 +424,7 @@ describe('REFONTE-6e : la réintroduction guidée sous Confort digestif', () => 
     expect(pistes).toHaveTextContent('Avec 1 repas riche en fructanes de plus (blé, oignon, ail), votre digestion va plutôt moins bien.')
     expect(pistes).not.toHaveTextContent(/pt|point sur 5|FODMAP/)
     fireEvent.click(within(pistes).getByRole('button', { name: 'Afficher les détails' }))
-    expect(pistes).toHaveTextContent('−2,7 point sur 5 pour 1 repas riche en fructanes (FODMAP) de plus (court terme)')
+    expect(pistes).toHaveTextContent('−2,7 point sur 5 pour 1 repas riche en fructanes (FODMAP : blé, oignon, ail) de plus (court terme)')
   })
 
   it('un test en cours se retrouve ici même avant les premiers résultats', async () => {

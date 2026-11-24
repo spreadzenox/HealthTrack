@@ -767,8 +767,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       tuiles sûres à la ligne « Selon votre montre : cœur, variabilité cardiaque, respiration, température de la
       peau. », comme la VFC ; PERSONAS.md : FC partielle ou absente chez plusieurs bracelets qui écrivent dans Santé
       ou Health Connect ; `onboardingFlow.js` (`maybe: true`), tests `Onboarding.test.jsx`).
-    - À étudier : mots FODMAP
-      (fructanes, GOS…) sans aliment entre parenthèses hors de la carte des pistes.
+    - [x] **POLISH-SIM-157 — Mots FODMAP sans aliment hors de la carte des pistes** (FAIT le 24/11 à 05:30 : dans
+      « Ce qui a été comparé » d'Objectifs, chaque groupe FODMAP dit ses aliments, « 1 repas riche en sorbitol
+      (FODMAP : pruneaux, prunes) de plus » ; le mot FODMAP reste (POLISH-SIM-55) ; aliments repris des repères de
+      `fodmapChallenge.js`, une seule liste ; `analysisResults.js`, `pistePlain` de `Recommendations.jsx` inchangé
+      à l'écran ; tests `analysisResults` et `Recommendations`). La carte d'un repas nomme déjà l'aliment
+      (« Riche en fructanes pain blanc ») : laissée telle quelle (N4, demande du propriétaire du 26/10).
   - **Passage des personas du 23/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-23-2030-synthese.md) ;
     « Tout mesurer » J1, Samsung + Galaxy Watch, et « Prendre soin de soi » J14, Android seul) :
     - [x] **POLISH-SIM-151 — « Poids » de l'Accueil ouvre Tendances sans courbe Poids** (FAIT le 23/11 à 22:30 : Tendances dit « Poids : la courbe arrive à 3 pesées. » quand la mesure demandée n'a de courbe ni en Semaine ni en Mois ; `TrendsViewer.jsx`, test `Trends.test.jsx`) (J14, vérifié : capture
