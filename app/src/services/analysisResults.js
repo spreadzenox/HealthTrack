@@ -32,6 +32,7 @@ import { buildDailyDataset, localDateKey, ratingCutoffs, VARIABLE_META } from '.
 import { isWeekendKey, residualize } from './statistics'
 import { faceMoodDays } from './mood/faceMoodDays'
 import { FODMAP_SUBGROUPS } from './fodmapGroups'
+import { FODMAP_GROUPS } from './fodmapChallenge'
 import { fodmapGroupOf, mealFactors } from './gutWindows'
 import { measuredTagsByDay } from './behaviorTags'
 import { estimateStates, GUT_VALUE, OBS_SD, observationsFromEntries } from './method/stateSpace'
@@ -175,6 +176,9 @@ const FODMAP_TEXT = {
   mannitol: 'mannitol',
 }
 
+/** POLISH-SIM-157 (« Ventre, sans technique » : « GOS, sorbitol… c'est du chinois ») : des aliments à côté du mot. */
+const FODMAP_FOODS = Object.fromEntries(FODMAP_GROUPS.map((g) => [g.id, g.hint]))
+
 const fmtInt = (v) => Math.round(v).toLocaleString(appLocale())
 
 /**
@@ -220,7 +224,7 @@ export const FACTORS = [
   // ORG-5b : FODMAP par sous-groupe (repas au-dessus du repère par portion, hypothèse de départ, fodmapGroups.js).
   ...FODMAP_SUBGROUPS.map((g) => ({
     key: `fodmap_${g}`, label: FODMAP_LABELS[g], theme: 'nutrition', actionable: true, unit: 'repas', step: 1,
-    text: (a) => `${fmtInt(a)} repas riche${a > 1 ? 's' : ''} en ${FODMAP_TEXT[g]} (FODMAP) de plus`,
+    text: (a) => `${fmtInt(a)} repas riche${a > 1 ? 's' : ''} en ${FODMAP_TEXT[g]} (FODMAP : ${FODMAP_FOODS[g]}) de plus`,
   })),
 ]
 
