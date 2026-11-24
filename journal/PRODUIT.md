@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **24/11 12:30** — **#1237 mergée** (10 derniers tests de l'iPhone hors d'`overlay/` ; build iPhone vert). **POLISH-SIM-94** : dans Tendances, une mesure qui a des valeurs sans ses 3 points (une première pesée) apparaît grisée dans « + » : « Poids · dès 3 pesées » ; POLISH-SIM-95 constatée déjà faite (POLISH-SIM-127). PR prête, merge au run suivant après le build iPhone.
 - **24/11 11:30** — **#1236 mergée** (images de Pilou et pages publiques de l'iPhone dans `app/public/` ; build iPhone vert). **FUSION-3** : les 10 derniers tests de l'iPhone qui relisent des fichiers sortent d'`overlay/` (chemins par `app/src/ios/iphonePaths.js`) ; `overlay/` ne garde que les notes de Nouveautés de l'iPhone. Rien de visible. PR prête, merge au run suivant après le build iPhone.
 - **24/11 10:30** — **#1235 mergée** (34 tests de l'iPhone dans le code commun ; build iPhone vert). **FUSION-3** : les 2 images de Pilou et les 2 pages publiques de l'iPhone sortent d'`overlay/` pour `app/public/` ; rien de visible. PR prête, merge au run suivant après le build iPhone.
 - **24/11 08:30** — Run « idées » : **maquette de PROP-SIM-19** (noter son poids en un geste depuis Ma journée › Autre chose, et sa courbe lissée avec sa marge dans Tendances ; ni cible, ni IMC jugé) : `maquettes/poids/README.md`, en attente de la réponse du propriétaire (« PROP-SIM-19 oui », « saisie seulement » ou « non »). #1233 mergée par le run de 07:30, main vert.

@@ -524,3 +524,44 @@ describe('POLISH-SIM-151 : « Poids » de l’Accueil avant la 3ᵉ pesée', () 
     expect(screen.queryByText(/la courbe arrive/)).toBeNull()
   })
 })
+
+describe('POLISH-SIM-94 : une mesure qui n’a pas encore sa courbe reste visible, grisée', () => {
+  const steps = [4, 5, 6, 7].map((d) => ({ dateKey: `2026-11-0${d}`, summary: { steps: 6000 + d } }))
+  const withToday = (extra) => [...steps.slice(0, 3), { ...steps[3], summary: { ...steps[3].summary, ...extra } }]
+  const open = (d) => render(
+    <MemoryRouter initialEntries={['/tendances']}>
+      <Trends now={NOW} readDays={async () => d} readDayStates={async () => null}
+        readFaceEntries={async () => []} readDayContributions={async () => null} readDayChanges={async () => null} />
+    </MemoryRouter>,
+  )
+  it('une première pesée : « + » propose « Poids · dès 3 pesées », grisé, sans effet', async () => {
+    open(withToday({ weightKg: 78.2 }))
+    await screen.findByRole('img', { name: 'Courbe de Pas' })
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une mesure' }))
+    const menu = screen.getByRole('list', { name: 'Mesures à ajouter' })
+    const chip = within(menu).getByRole('button', { name: 'Poids, la courbe arrive à 3 pesées' })
+    expect(chip).toHaveAttribute('aria-disabled', 'true')
+    expect(chip).toHaveTextContent('Poids · dès 3 pesées')
+    fireEvent.click(chip)
+    expect(screen.getByRole('img', { name: 'Courbe de Pas' })).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Mesures à ajouter' })).toBeInTheDocument()
+  })
+  it('une autre mesure trop jeune : « dès 3 jours »', async () => {
+    open(withToday({ weightKg: 78.2, sleepMinutes: 420 }))
+    await screen.findByRole('img', { name: 'Courbe de Pas' })
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une mesure' }))
+    const menu = screen.getByRole('list', { name: 'Mesures à ajouter' })
+    expect(within(menu).getByRole('button', { name: 'Sommeil, la courbe arrive après 3 jours de mesures' }))
+      .toHaveTextContent('Sommeil · dès 3 jours')
+  })
+  it('rien en attente : pas de « + » quand aucune autre courbe n’existe', async () => {
+    open(steps)
+    await screen.findByRole('img', { name: 'Courbe de Pas' })
+    expect(screen.queryByRole('button', { name: 'Ajouter une mesure' })).toBeNull()
+  })
+  it('une seule pesée et rien d’autre, sans venir de l’Accueil : la phrase du poids au lieu du message général', async () => {
+    open([{ dateKey: '2026-11-06', summary: { weightKg: 78.2 } }])
+    expect(await screen.findByText('Poids : la courbe arrive à 3 pesées.')).toBeInTheDocument()
+    expect(screen.queryByText('Vos courbes apparaîtront après 3 jours de mesures.')).toBeNull()
+  })
+})
