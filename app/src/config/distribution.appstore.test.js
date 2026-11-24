@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { resolveDistribution, featuresFor, DISTRIBUTIONS, storeFor, storeOfPurchase } from './distribution'
 
-// Variante iOS (App Store), ajoutée par le dépôt HealthTrack-iOS (patches/01-variante-appstore.patch)
+// Variante iPhone (App Store) : ancien correctif iphone/patches/01, fondu le 24/11 (FUSION-3)
 describe('variante appstore (iOS)', () => {
   it('est reconnue, sans tenir compte de la casse ni des espaces', () => {
     expect(DISTRIBUTIONS).toContain('appstore')
