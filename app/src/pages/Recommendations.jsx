@@ -63,6 +63,11 @@ const WORDS = {
 }
 
 /** POLISH-SIM-62 : jusqu'où remontent les délais comparés (le plus long prêt). */
+/** POLISH-SIM-160 : « a, b et c », chaque nom commençant par une minuscule (les sigles gardent leurs capitales). */
+const listFr = (names) => {
+  const low = names.map((n) => n.charAt(0).toLocaleLowerCase('fr') + n.slice(1))
+  return low.length > 1 ? `${low.slice(0, -1).join(', ')} et ${low[low.length - 1]}` : low[0]
+}
 const COMPARED_UP_TO = { short: 'à la veille', medium: 'à 6 jours avant', long: 'à 27 jours avant' }
 
 const pts = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleString(appLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`
@@ -364,7 +369,9 @@ function FamilyDetail({ outcome, detail }) {
       )}
       {!detail.bars && (
         <p className="reco-next" data-testid="reco-family-compared">
-          <span className="mono">{detail.count}</span> facteur{detail.count > 1 ? 's comparés' : ' comparé'} à {w.what} dans cette famille.
+          <span className="mono">{detail.count}</span> facteur{detail.count > 1 ? 's comparés' : ' comparé'} à {w.what} dans cette famille
+          {/* POLISH-SIM-160 : sans barres, les nommer */}
+          {detail.names?.length ? ` : ${listFr(detail.names)}.` : '.'}
         </p>
       )}
     </>

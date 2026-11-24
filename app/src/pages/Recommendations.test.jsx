@@ -137,6 +137,14 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(screen.queryByRole('button', { name: 'Comment est calculé votre bien-être ?' })).toBeNull()
   })
 
+  it('POLISH-SIM-160 : sans barres, la famille nomme les facteurs comparés', async () => {
+    const results = structuredClone(readyResults)
+    results.outcomes.wellbeing.beatsPersistence = false
+    renderAt('/recommendations/bien-etre/famille/sleep', results)
+    await screen.findByRole('heading', { level: 2, name: 'Sommeil' })
+    expect(screen.getByTestId('reco-family-compared')).toHaveTextContent(/^1 facteur comparé à votre bien-être dans cette famille : sommeil\.$/)
+  })
+
   it('REFONTE-6c : une famille sans lien net le dit, sans carte de piste', async () => {
     const results = structuredClone(readyResults)
     results.outcomes.wellbeing.horizons.short.factors[0].net = false
