@@ -124,6 +124,8 @@ function SubscriptionBlock() {
 
 /** POLISH-SIM-100 : après la refonte (étape 5a), une phrase par ancien objectif retiré, pour dire où il est passé. */
 const FORMER_GOALS = [
+  // POLISH-SIM-155 : « Mon stress et mon sommeil » (ou « energy » du premier accueil) devenu Bien-être sans un mot
+  { id: 'stress', text: 'Mon stress et mon sommeil : Bien-être le remplace, le sommeil en fait partie.' },
   { id: 'sport', text: 'Sport : vos séances comptent dans la famille Activité d’Objectifs.' },
   { id: 'cycle', text: 'Mon cycle : notez vos règles dans Ma journée › Règles. Confort digestif le remplace.' },
 ]

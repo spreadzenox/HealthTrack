@@ -129,11 +129,11 @@ describe('Settings — Vos objectifs (refonte étape 5a)', () => {
       .toBeInTheDocument()
   })
 
-  it('POLISH-SIM-100 : ancien « Mon sport » seul, avant la migration du démarrage : une seule ligne', () => {
+  it('POLISH-SIM-100 : anciens « Mon stress » et « Mon sport », avant la migration du démarrage : une ligne chacun', () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['stress', 'sport'] }))
     renderSettings()
     const note = screen.getByRole('list', { name: 'Vos anciens objectifs' })
-    expect(within(note).getAllByRole('listitem')).toHaveLength(1)
+    expect(within(note).getAllByRole('listitem')).toHaveLength(2)
     expect(within(note).queryByText(/Mon cycle/)).toBeNull()
   })
 
@@ -143,10 +143,26 @@ describe('Settings — Vos objectifs (refonte étape 5a)', () => {
     expect(screen.queryByRole('list', { name: 'Vos anciens objectifs' })).toBeNull()
     unmount()
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({
-      done: true, goals: ['wellbeing'], goalsBefore: ['stress', 'care'], goalsVersion: 2,
+      done: true, goals: ['wellbeing'], goalsBefore: ['care', 'all'], goalsVersion: 2,
     }))
     renderSettings()
     expect(screen.queryByRole('list', { name: 'Vos anciens objectifs' })).toBeNull()
+  })
+
+  it('POLISH-SIM-155 : l’ancien « Mon stress et mon sommeil » (ou « energy » du tout premier accueil) dit où il est passé', () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({
+      done: true, goals: ['wellbeing'], goalsBefore: ['stress', 'care'], goalsVersion: 2,
+    }))
+    const { unmount } = renderSettings()
+    const note = screen.getByRole('list', { name: 'Vos anciens objectifs' })
+    expect(within(note).getAllByRole('listitem')).toHaveLength(1)
+    expect(within(note).getByText('Mon stress et mon sommeil : Bien-être le remplace, le sommeil en fait partie.'))
+      .toBeInTheDocument()
+    unmount()
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goal: 'energy' }))
+    renderSettings()
+    expect(within(screen.getByRole('list', { name: 'Vos anciens objectifs' })).getByText(/^Mon stress et mon sommeil :/))
+      .toBeInTheDocument()
   })
 
   it('sans Confort digestif, pas de rappel du soir', () => {
