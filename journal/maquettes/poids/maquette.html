@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette — noter son poids (PROP-POIDS)</title>
+<!--
+  Maquette statique d'une PROPOSITION (PROP-POIDS, run « idées » du 24/11 08:30) : rien n'est codé dans l'app sans
+  l'accord du propriétaire. Données synthétiques.
+  Paramètres : ?state=autre|saisie|tendances|tendances2  ?theme=dark
+  Rendu : node journal/maquettes/poids/render.mjs (depuis la racine du dépôt, app/ installé).
+-->
+<link rel="stylesheet" href="../../../app/src/theme/tokens.css">
+<style>
+  @font-face { font-family: 'Nunito Variable'; font-weight: 200 1000;
+    src: url('../../../app/node_modules/@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'IBM Plex Mono'; font-weight: 400;
+    src: url('../../../app/node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-ink); font-family: var(--font-sans); }
+  .screen { width: 412px; min-height: 851px; margin: 0 auto; padding: 0 var(--gutter) 28px; position: relative; }
+  .mono { font-family: var(--font-mono); }
+  .top { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+  .top h1 { font-size: 24px; font-weight: 800; margin: 0; }
+  .gear { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--color-ink-2); opacity: .6; }
+  .card { background: var(--color-surface, #fff); border-radius: var(--radius-card); padding: 16px 18px; margin-bottom: 14px;
+    border: 1px solid var(--color-border); }
+  .muted { color: var(--color-ink-2); }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 16px; }
+  .chip { padding: 10px 14px; border-radius: 16px; background: var(--color-surface, #fff); border: 1px solid var(--color-border);
+    font-weight: 700; font-size: 14px; }
+  .chip.on { border-color: var(--color-brand); }
+  .habit { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-border); font-size: 15px; }
+  .habit:last-child { border: 0; }
+
+  /* Feuille du bas */
+  .veil { position: absolute; inset: 0; background: rgba(10, 20, 16, .38); }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--color-bg); border-radius: 26px 26px 0 0;
+    padding: 12px var(--gutter) 30px; }
+  .grab { width: 44px; height: 5px; border-radius: 3px; background: var(--color-border); margin: 0 auto 14px; }
+  .sheet h2 { font-size: 19px; font-weight: 800; margin: 0 0 14px; }
+  .item { display: flex; align-items: center; gap: 12px; padding: 15px 4px; font-size: 16px; font-weight: 600;
+    border-bottom: 1px solid var(--color-border); }
+  .item:last-child { border: 0; }
+  .item i { width: 22px; height: 22px; border-radius: 7px; border: 2px solid var(--color-ink-2); opacity: .7; flex: none; }
+  .item.new { color: var(--rose-label); }
+  .item.new i { border-color: var(--rose-label); opacity: 1; }
+  .new-tag { margin-left: auto; font-size: 11px; font-weight: 800; background: var(--rose-bg); color: var(--rose-label);
+    padding: 3px 8px; border-radius: 10px; }
+
+  /* Saisie */
+  .scale { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 8px 0 6px; }
+  .step { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--rose-track); color: var(--rose-label);
+    font-size: 28px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .value { background: var(--rose-bg); color: var(--rose-text); border-radius: 18px; padding: 12px 22px; text-align: center; min-width: 170px; }
+  .value b { font-size: 40px; font-weight: 800; color: var(--rose-label); }
+  .value span { font-size: 18px; font-weight: 700; margin-left: 4px; }
+  .when { text-align: center; font-size: 14px; margin: 10px 0 18px; }
+  .when u { text-decoration-thickness: 1px; }
+  .last { font-size: 13px; text-align: center; margin-bottom: 18px; }
+  .btn { display: block; text-align: center; background: var(--color-brand); color: #fff; font-weight: 800; font-size: 16px;
+    padding: 15px; border-radius: 16px; }
+  [data-theme='dark'] .btn { color: #0c1915; }
+
+  /* Tendances */
+  .seg { display: flex; background: var(--color-surface, #fff); border: 1px solid var(--color-border); border-radius: 14px; padding: 4px; margin-bottom: 14px; }
+  .seg div { flex: 1; text-align: center; padding: 8px 0; font-weight: 700; font-size: 14px; color: var(--color-ink-2); border-radius: 10px; }
+  .seg .on { background: var(--color-bg); color: var(--color-ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 14px; font-weight: 800; font-size: 14px;
+    background: var(--rose-bg); color: var(--rose-label); margin-bottom: 12px; }
+  .pill::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--rose-label); }
+  .big { font-size: 30px; font-weight: 800; margin: 2px 0 0; }
+  .big small { font-size: 16px; font-weight: 700; color: var(--color-ink-2); margin-left: 6px; }
+  .delta { font-size: 15px; margin: 4px 0 10px; }
+  svg.chart { display: block; width: 100%; height: 210px; }
+  .axis { font-family: var(--font-mono); font-size: 10px; fill: var(--color-ink-2); }
+  .note { font-size: 13px; line-height: 1.45; margin-top: 10px; }
+  .row { display: flex; justify-content: space-between; font-size: 15px; padding: 9px 0; border-bottom: 1px solid var(--color-border); }
+  .row:last-child { border: 0; }
+  .row .mono { font-size: 13px; color: var(--color-ink-2); }
+
+  .nav { position: absolute; left: 0; right: 0; bottom: 0; height: 64px; background: var(--color-bg);
+    border-top: 1px solid var(--color-border); display: flex; }
+  .nav div { flex: 1; text-align: center; font-size: 11px; padding-top: 36px; color: var(--color-ink-2); position: relative; }
+  .nav div::before { content: ''; position: absolute; left: 50%; top: 10px; width: 22px; height: 22px; margin-left: -11px; border-radius: 7px;
+    border: 2px solid currentColor; opacity: .7; }
+  .nav .on { color: var(--color-brand); font-weight: 800; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<script>
+  const q = new URLSearchParams(location.search)
+  if (q.get('theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark')
+  window.STATE = q.get('state') || 'autre'
+</script>
+
+<!-- Écrans 1 et 2 : Ma journée, puis la feuille « Autre chose », puis la saisie -->
+<div class="screen" id="journee">
+  <div class="top"><h1>Ma journée</h1><div class="gear"></div></div>
+  <div class="chips"><div class="chip">Repas</div><div class="chip">Bien-être</div><div class="chip on">Autre chose</div></div>
+  <div class="card">
+    <div style="font-weight:800;margin-bottom:6px">Vos habitudes du jour</div>
+    <div class="habit"><span>Marcher 20 minutes</span><span class="muted">Noté</span></div>
+    <div class="habit"><span>Boire un grand verre d’eau le matin</span><span class="muted">À noter</span></div>
+  </div>
+  <div class="card"><div style="font-weight:800">Ce soir</div><div class="muted" style="font-size:14px;margin-top:4px">Dîner pas encore noté</div></div>
+  <div class="nav"><div>Accueil</div><div class="on">Ma journée</div><div>Données</div><div>Objectifs</div></div>
+  <div class="veil"></div>
+
+  <div class="sheet" id="sheet-autre">
+    <div class="grab"></div>
+    <h2>Autre chose</h2>
+    <div class="item new"><i></i>Noter mon poids<span class="new-tag">proposé</span></div>
+    <div class="item"><i></i>Décrire un repas</div>
+    <div class="item"><i></i>Je fume : compter mes cigarettes</div>
+  </div>
+
+  <div class="sheet" id="sheet-saisie">
+    <div class="grab"></div>
+    <h2>Mon poids</h2>
+    <div class="scale">
+      <div class="step">−</div>
+      <div class="value"><b class="mono">72,4</b><span>kg</span></div>
+      <div class="step">+</div>
+    </div>
+    <div class="when">Aujourd’hui, <u>8 h 12</u></div>
+    <div class="last muted">Dernière pesée : <span class="mono">72,8 kg</span>, jeudi</div>
+    <div class="btn">Enregistrer</div>
+  </div>
+</div>
+
+<!-- Écran 3 : Tendances › Poids (Mois) -->
+<div class="screen hidden" id="tendances">
+  <div class="top"><h1>Tendances</h1><div class="gear"></div></div>
+  <div class="seg"><div>Jour</div><div>Semaine</div><div class="on">Mois</div></div>
+  <div class="pill">Poids</div>
+  <div class="card" id="card-courbe">
+    <div class="muted" style="font-size:13px">Tendance, moyenne de vos pesées</div>
+    <div class="big mono">72,6<small>kg</small></div>
+    <div class="delta muted"><span class="mono">−0,6 kg</span> en 4 semaines</div>
+    <svg class="chart" viewBox="0 0 372 210" id="chart"></svg>
+    <div class="note muted">Les points sont vos pesées. La ligne lisse les écarts d’un jour (eau, repas) ; la bande montre sa marge.</div>
+  </div>
+  <div class="card" id="card-peu" style="display:none">
+    <div class="big mono">72,4<small>kg</small></div>
+    <div class="delta muted">2 pesées ce mois-ci. La courbe arrive à 3 pesées.</div>
+    <svg class="chart" viewBox="0 0 372 210" id="chart2"></svg>
+  </div>
+  <div class="card">
+    <div style="font-weight:800;margin-bottom:4px">Vos pesées</div>
+    <div class="row"><span>Mar. 24/11</span><span class="mono">72,4 kg</span></div>
+    <div class="row"><span>Jeu. 19/11</span><span class="mono">72,8 kg</span></div>
+    <div class="row" id="row3"><span>Lun. 16/11 <span class="muted" style="font-size:12px">balance Withings</span></span><span class="mono">72,1 kg</span></div>
+  </div>
+  <div class="nav"><div>Accueil</div><div>Ma journée</div><div class="on">Données</div><div>Objectifs</div></div>
+</div>
+
+<script>
+  const s = window.STATE
+  const $ = (id) => document.getElementById(id)
+  if (s === 'tendances' || s === 'tendances2') { $('journee').classList.add('hidden'); $('tendances').classList.remove('hidden') }
+  if (s === 'autre') $('sheet-saisie').classList.add('hidden')
+  if (s === 'saisie') $('sheet-autre').classList.add('hidden')
+  if (s === 'tendances2') { $('card-courbe').style.display = 'none'; $('card-peu').style.display = 'block'; $('row3').style.display = 'none' }
+
+  // Données synthétiques : 11 pesées sur 30 jours, lissage exponentiel (α = 0,1 par jour, R#8 du BACKLOG)
+  const css = getComputedStyle(document.documentElement)
+  const rose = css.getPropertyValue('--rose-label').trim()
+  const track = css.getPropertyValue('--rose-track').trim()
+  const border = css.getPropertyValue('--color-border').trim()
+  const W = 372, H = 210, L = 34, R = 8, T = 10, B = 26
+  const x = (d) => L + (d / 29) * (W - L - R)
+  const y = (v) => T + (73.8 - v) / (73.8 - 71.6) * (H - T - B)
+  function axes(svg, days) {
+    let out = ''
+    for (const v of [72, 73]) out += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${border}" stroke-dasharray="3 4"/><text class="axis" x="0" y="${y(v) + 3}">${v} kg</text>`
+    for (const [d, lab] of days) out += `<text class="axis" text-anchor="${d === 29 ? 'end' : 'middle'}" x="${x(d)}" y="${H - 6}">${lab}</text>`
+    svg.innerHTML += out
+  }
+  const days = [[0, '26/10'], [10, '05/11'], [20, '15/11'], [29, '24/11']]
+  const w = [[0, 73.3], [3, 72.9], [5, 73.4], [8, 73.0], [11, 72.6], [14, 73.1], [17, 72.5], [21, 72.1], [23, 72.9], [26, 72.8], [29, 72.4]]
+  const chart = $('chart')
+  axes(chart, days)
+  // Poids interpolé jour par jour entre deux pesées, puis lissage exponentiel (α = 0,15) ; bande ± 0,4 kg
+  const daily = []
+  for (let d = 0; d <= 29; d++) {
+    const i = w.findIndex(([wd]) => wd >= d)
+    const [d1, v1] = w[i], [d0, v0] = w[Math.max(0, i - 1)]
+    daily.push(d1 === d0 ? v1 : v0 + (v1 - v0) * (d - d0) / (d1 - d0))
+  }
+  let e = daily.slice(0, 5).reduce((a, b) => a + b) / 5
+  const trend = daily.map((v) => (e = e + 0.15 * (v - e)))
+  const line = trend.map((v, d) => `${x(d).toFixed(1)},${y(v).toFixed(1)}`)
+  const up = trend.map((v, d) => `${x(d).toFixed(1)},${y(v + 0.4).toFixed(1)}`)
+  const lo = trend.map((v, d) => `${x(d).toFixed(1)},${y(v - 0.4).toFixed(1)}`).reverse()
+  chart.innerHTML += `<polygon points="${up.concat(lo).join(' ')}" fill="${track}" opacity=".35"/>`
+  chart.innerHTML += `<polyline points="${line.join(' ')}" fill="none" stroke="${rose}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`
+  for (const [d, v] of w) chart.innerHTML += `<circle cx="${x(d)}" cy="${y(v)}" r="4.5" fill="${track}" stroke="${rose}" stroke-width="1.5"/>`
+  const c2 = $('chart2')
+  axes(c2, days)
+  for (const [d, v] of [[24, 72.8], [29, 72.4]]) c2.innerHTML += `<circle cx="${x(d)}" cy="${y(v)}" r="5" fill="${track}" stroke="${rose}" stroke-width="1.5"/>`
+</script>
+</body>
+</html>
