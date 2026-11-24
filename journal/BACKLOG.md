@@ -1720,10 +1720,16 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   aujourd'hui ; une lecture du visage ne compte pas comme une note. iPhone : au prochain suivi du code embarqué.
 - [ ] **POLISH-SIM-93** (à vérifier ; Sportif J45) Analyses n'a que l'onglet « Bien-être » avec l'objectif sport,
   alors que la digestion est notée chaque jour : l'onglet doit suivre les données, pas seulement l'objectif.
-- [ ] **POLISH-SIM-94** (Maigrir J1) Tendances après une première pesée : « Choisissez une courbe » sans « Poids ».
+- [x] **POLISH-SIM-94** (Maigrir J1) Tendances après une première pesée : « Choisissez une courbe » sans « Poids ».
   Puce grisée « Poids · dès 3 pesées », comme « Poids · en Mois » (POLISH-SIM-81b).
-- [ ] **POLISH-SIM-95** (Sportif J45) Tendances › Mois : le point du jour en cours fait plonger la courbe des pas.
+  **Fait le 24/11 12:30** : une mesure relevée ce mois-ci sans ses 3 points apparaît grisée, sans effet, dans « + »
+  et sous « Choisissez une courbe » (« Poids · dès 3 pesées », sinon « · dès 3 jours ») ; « + » s'affiche aussi
+  quand seule une mesure en attente peut s'y ajouter (avec les seuls Pas, il manquait) ; sans aucune courbe, une
+  seule pesée dit « Poids : la courbe arrive à 3 pesées. » au lieu du message général. iPhone : code partagé.
+- [x] **POLISH-SIM-95** (Sportif J45) Tendances › Mois : le point du jour en cours fait plonger la courbe des pas.
   Le dessiner comme partiel (point creux) ou l'écarter du tracé.
+  **Déjà fait par POLISH-SIM-127 (20/11)** : pas et écran (`cumulative`) n'ont pas de point aujourd'hui en Semaine
+  ni en Mois ; constaté le 24/11 12:30 dans `trendsData.js`.
 - [ ] **POLISH-SIM-96** (à vérifier) Journal › Jours : tuile « FC » (écrire « Cœur ») ; étiquette « Écran tard »
   d'une note de bien-être sans origine.
 - [x] **POLISH-SIM-97** (Maigrir J1) Nutrition au 1er jour : « des repas manquent sans doute, apports sous-estimés »

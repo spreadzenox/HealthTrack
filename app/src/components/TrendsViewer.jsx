@@ -6,7 +6,7 @@
  * jour ouvre son détail ; un jour futur montre l'attendu et sa fourchette, jamais un « attendu » sur le passé.
  */
 import { useMemo, useState } from 'react'
-import { buildTrendSeries, canAdd, changeMarks, detailSource, trendMeasure, unitsOf } from '../services/trendsData'
+import { TREND_MEASURES, buildTrendSeries, canAdd, changeMarks, detailSource, trendMeasure, unitsOf } from '../services/trendsData'
 import { appLocale } from '../i18n/locale.js'
 import { niceAxis } from '../services/niceAxis'
 import LineIcon from './LineIcon'
@@ -19,6 +19,21 @@ const H = 190
 const PAD = { l: 30, r: 30, t: 14, b: 26 }
 // POLISH-SIM-151 : quand arrive la courbe d'une mesure espacée (trendsData, SPARSE_MEASURES : 3 points sur le Mois)
 const SPARSE_WAIT = { weight: 'à 3 pesées' }
+const waitText = (k) => SPARSE_WAIT[k] ?? 'après 3 jours de mesures'
+// POLISH-SIM-94 : une mesure qui a déjà des valeurs mais pas encore sa courbe reste visible, grisée, dans « + »
+const pendingChip = (k) => (k === 'weight' ? 'dès 3 pesées' : 'dès 3 jours')
+
+function PendingChip({ k }) {
+  const m = trendMeasure(k)
+  return (
+    <li>
+      <button type="button" className="trends-chip is-daily is-pending" aria-disabled="true"
+        aria-label={`${m.label}, la courbe arrive ${waitText(k)}`}>
+        <span className="trends-chip-dot" aria-hidden="true" />{m.label} · {pendingChip(k)}
+      </button>
+    </li>
+  )
+}
 
 const shortDay = (k) => {
   const d = new Date(`${k}T12:00:00`)
@@ -319,12 +334,15 @@ export default function TrendsViewer({
   const dailyPeriod = (k) => (weekAvailable.includes(k) ? 'week' : 'month')
   // POLISH-SIM-81b : en Semaine, une mesure choisie qui n'a de courbe qu'en Mois reste dans les puces, grisée ;
   // la toucher ramène au Mois (elle disparaissait sans un mot, jusqu'à « Choisissez une courbe »)
-  const absent = period === 'week' ? keys.filter((k) => !data.available.includes(k)).join(' ') : ''
-  const monthOnly = useMemo(() => {
-    if (!absent) return []
-    const month = buildTrendSeries({ states, days, period: 'month', now: now || new Date() }).available
-    return absent.split(' ').filter((k) => month.includes(k))
-  }, [absent, states, days, now])
+  const absent = period === 'week' ? keys.filter((k) => !data.available.includes(k)) : []
+  const month = useMemo(
+    () => buildTrendSeries({ states, days, period: 'month', now: now || new Date() }),
+    [states, days, now],
+  )
+  const monthOnly = absent.filter((k) => month.available.includes(k))
+  // POLISH-SIM-94 : mesures relevées (au moins une valeur ce mois-ci) qui n'ont pas encore leurs 3 points
+  const pending = TREND_MEASURES.filter((m) => !m.state && !month.available.includes(m.key)
+    && month.series[m.key].some((p) => !p.future)).map((m) => m.key)
   const choosePeriod = (id) => {
     if (id === 'day') setDayDate(selected && selected <= data.today ? selected : null)
     onPeriod(id)
@@ -341,19 +359,17 @@ export default function TrendsViewer({
   const marks = period === 'month' ? changeMarks(changes, shown, data.dates) : []
   // POLISH-SIM-151 : une mesure demandée (« Poids » de l'Accueil) qui n'a de courbe ni en Semaine ni en Mois dit quand
   // elle en aura une, au lieu de disparaître sans un mot
-  const requested = keys.join(' ')
-  const waiting = useMemo(() => {
-    if (!requested) return []
-    const month = buildTrendSeries({ states, days, period: 'month', now: now || new Date() }).available
-    return requested.split(' ').filter((k) => trendMeasure(k) && !month.includes(k))
-  }, [requested, states, days, now])
+  const requested = keys.filter((k) => trendMeasure(k) && !month.available.includes(k))
+  // Aucune courbe du tout : les mesures en attente disent aussi quand elles arrivent (une seule pesée, POLISH-SIM-94)
+  const waiting = data.available.length ? requested : [...new Set([...requested, ...pending])]
   const waitingNote = !isDay && !shown.length && waiting.length ? (
     <ul className="trends-waiting">
       {waiting.map((k) => (
-        <li key={k}>{trendMeasure(k).label} : la courbe arrive {SPARSE_WAIT[k] ?? 'après 3 jours de mesures'}.</li>
+        <li key={k}>{trendMeasure(k).label} : la courbe arrive {waitText(k)}.</li>
       ))}
     </ul>
   ) : null
+  const pendingChips = pending.filter((k) => !shown.includes(k) && !(waitingNote && waiting.includes(k)))
   // Revue du 09/11 : historique vierge (aucune courbe, aucune lecture ni note) → le message seul, sans Jour / Semaine /
   // Mois qui ne montreraient rien
   if (!data.available.length && !initialDay) {
@@ -390,7 +406,7 @@ export default function TrendsViewer({
               </button>
             </li>
           ))}
-          {(isDay ? dayAddable.length > 0 : addable.length > 0 && shown.length > 0) && (
+          {(isDay ? dayAddable.length > 0 : (addable.length > 0 || pendingChips.length > 0) && shown.length > 0) && (
             <li>
               <button type="button" className="trends-add" aria-label="Ajouter une mesure" aria-expanded={adding}
                 onClick={() => setAdding(!adding)}>
@@ -444,6 +460,7 @@ export default function TrendsViewer({
               </li>
             )
           })}
+          {pendingChips.map((k) => <PendingChip key={k} k={k} />)}
         </ul>
       )}
       {isDay ? (
@@ -498,6 +515,7 @@ export default function TrendsViewer({
                 </li>
               )
             })}
+            {pendingChips.map((k) => <PendingChip key={k} k={k} />)}
           </ul>
         </div>
       ) : (

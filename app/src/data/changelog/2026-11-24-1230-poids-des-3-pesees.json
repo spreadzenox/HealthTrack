@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-24",
+  "kind": "correctif",
+  "title": "Le poids visible dans Tendances dès la première pesée",
+  "items": [
+    "Tendances › « + » montre « Poids · dès 3 pesées » en gris tant que la courbe n’a pas ses 3 pesées, et « dès 3 jours » pour les autres mesures qui commencent."
+  ]
+}
