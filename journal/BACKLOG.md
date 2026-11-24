@@ -776,7 +776,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       et 5 800 kcal s'enregistrent. Alerte douce au-delà d'un plafond par aliment (« 5 kg, c'est bien ça ? »).
     - [x] **POLISH-SIM-154 — Pilou coupé derrière la carte de Tendances** (FAIT le 24/11 à 01:30 : fenêtre de la petite tête passée de 34 à 48 px dans `Guide.css`, la tête entière dépasse, une main posée sur le bord de la carte ; captures clair et sombre, démo et pesée seule) (J1 et J14, captures
       `tendances-pas-auj.png`, `poids-sans-courbe.png`) : seul le haut de la tête dépasse.
-    - [ ] **PERSONAS-OUTIL-3 — Faux relais des repas** (`scripts/persona/fakeMeal.mjs`) : « pâtes » reconnu comme
+    - [x] **PERSONAS-OUTIL-3 — Faux relais des repas** (FAIT le 24/11 à 02:30 : premier mot cherché accents compris
+      puis sans accents, « 200 g » ou « 1,5 kg » font la quantité, le nom du plat est le premier morceau sans sa
+      quantité ; 3 tests ; `app/scripts/persona/**` ne lance plus le build iPhone de PR) (`scripts/persona/fakeMeal.mjs`) : « pâtes » reconnu comme
       « Pâté breton », grammes écrits ignorés (« 200 g de saumon » → 500 g), description entière gardée comme nom.
     - Écartés, avec la raison, dans la synthèse : pas du jour absents du graphique (voulu, POLISH-SIM-127) ; trois
       délais (déjà POLISH-SIM-149) ; « selon votre montre » (déjà à étudier) ; bien-être 2,9 / 3,0 ; onglet Données
