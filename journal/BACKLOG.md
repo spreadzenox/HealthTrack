@@ -763,8 +763,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       Réglages › Vos objectifs, liste « Vos anciens objectifs » de POLISH-SIM-100, ligne « Mon stress et mon sommeil :
       Bien-être le remplace, le sommeil en fait partie. », aussi pour l'ancien `goal: 'energy'` ; `Settings.jsx`, tests
       `Settings.test.jsx` ; la carte « Nouveau » reste générale, plutôt qu'une note de plus pour une seule cohorte).
-    - À étudier : « Cœur » listé à l'étape 3 de l'accueil alors que
-      le bracelet n'en donne pas (liste générale, pour information) : dire « selon votre montre ». Mots FODMAP
+    - [x] **POLISH-SIM-156 — « Cœur » promis à l'étape 3 de l'accueil** (FAIT le 24/11 à 04:30 : « Cœur » passe des
+      tuiles sûres à la ligne « Selon votre montre : cœur, variabilité cardiaque, respiration, température de la
+      peau. », comme la VFC ; PERSONAS.md : FC partielle ou absente chez plusieurs bracelets qui écrivent dans Santé
+      ou Health Connect ; `onboardingFlow.js` (`maybe: true`), tests `Onboarding.test.jsx`).
+    - À étudier : mots FODMAP
       (fructanes, GOS…) sans aliment entre parenthèses hors de la carte des pistes.
   - **Passage des personas du 23/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-23-2030-synthese.md) ;
     « Tout mesurer » J1, Samsung + Galaxy Watch, et « Prendre soin de soi » J14, Android seul) :
