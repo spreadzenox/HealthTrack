@@ -767,7 +767,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       tuiles sûres à la ligne « Selon votre montre : cœur, variabilité cardiaque, respiration, température de la
       peau. », comme la VFC ; PERSONAS.md : FC partielle ou absente chez plusieurs bracelets qui écrivent dans Santé
       ou Health Connect ; `onboardingFlow.js` (`maybe: true`), tests `Onboarding.test.jsx`).
-    - [x] **POLISH-SIM-157 — Mots FODMAP sans aliment hors de la carte des pistes** (FAIT le 24/11 à 05:30 : dans
+    - [x] **POLISH-SIM-157 — Mots FODMAP sans aliment hors de la carte des pistes** (FAIT le 24/11 à 05:30, mergée #1231 à 06:30 : dans
       « Ce qui a été comparé » d'Objectifs, chaque groupe FODMAP dit ses aliments, « 1 repas riche en sorbitol
       (FODMAP : pruneaux, prunes) de plus » ; le mot FODMAP reste (POLISH-SIM-55) ; aliments repris des repères de
       `fodmapChallenge.js`, une seule liste ; `analysisResults.js`, `pistePlain` de `Recommendations.jsx` inchangé

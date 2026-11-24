@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **24/11 06:30** — **#1231 mergée** (POLISH-SIM-157). Pas de nouveau code (build iPhone du soir en cours). Alpha du 23/11 au soir pas encore partie à 05:40 UTC.
 - **24/11 05:30** — **#1230 mergée** (POLISH-SIM-156). **POLISH-SIM-157** : dans Objectifs › « Ce qui a été comparé », chaque groupe FODMAP dit ses aliments (« sorbitol (FODMAP : pruneaux, prunes) »). Build TestFlight **1290.1290** soumise à l'examen bêta et mise chez « Testeurs Halcya », anciennes builds expirées.
 - **24/11 04:30** — **#1229 mergée** (POLISH-SIM-155). **POLISH-SIM-156** : à l'étape 3 de l'accueil, « Cœur » rejoint la ligne « Selon votre montre » (certains bracelets ne l'envoient pas). PR prête, merge au run suivant après le build iPhone. TestFlight du soir lancé à la main (cron du 23/11 pas parti à 03:30 UTC).
 - **24/11 03:30** — **POLISH-SIM-155** : Réglages › Vos objectifs dit à qui suivait « Mon stress et mon sommeil » que Bien-être le remplace, le sommeil compris. PR prête, merge au run suivant après le build iPhone.
