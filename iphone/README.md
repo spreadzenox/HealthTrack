@@ -84,6 +84,8 @@ puis changer les adresses de la fiche à la version suivante de l'App Store.
 
 ## Avant d'archiver le dépôt iOS
 
-Le correctif 27 envoie « Votre avis » de l'iPhone vers les tickets de `HealthTrack-iOS`, et un dépôt archivé
-n'accepte plus de ticket. Tant que des testeurs ont une build qui pointe là-bas, le dépôt iOS reste ouvert, avec un
-README qui renvoie ici ; on l'archive quand les avis de l'iPhone arrivent ailleurs et que les pages ont déménagé.
+Jusqu'au 24/11, le correctif 27 envoyait « Votre avis » de l'iPhone vers les tickets de `HealthTrack-iOS`, et un
+dépôt archivé n'accepte plus de ticket. Depuis sa fusion (24/11 07:30, `app/src/config/feedback.js`), le lien de
+secours ouvre un ticket de ce dépôt, titré « Avis — Halcya pour iPhone v… ». Tant que des testeurs ont une build
+d'avant, le dépôt iOS reste ouvert, avec un README qui renvoie ici ; on l'archive quand ces builds sont expirées et
+que les pages ont déménagé.

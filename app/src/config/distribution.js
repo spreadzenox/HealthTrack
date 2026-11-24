@@ -5,10 +5,11 @@
  * - `play` : la version Google Play — pas d'auto-mise à jour (interdite par les règles Play, c'est le Store qui
  *   met à jour), pas de permission REQUEST_INSTALL_PACKAGES côté Android ; lecture du visage à l'ouverture de l'app
  *   seulement, sans service caméra en arrière-plan (journal/PLAY-CONFORMITE.md, option B).
+ * - `appstore` : la version iPhone (dossier iphone/ du dépôt), comme play ; abonnement App Store (StoreKit 2).
  *
  * Toute valeur inconnue retombe sur `sideload` : c'est la version que le propriétaire installe aujourd'hui.
  */
-export const DISTRIBUTIONS = ['sideload', 'play']
+export const DISTRIBUTIONS = ['sideload', 'play', 'appstore']
 
 export function resolveDistribution(value) {
   const v = String(value ?? '').trim().toLowerCase()
@@ -24,13 +25,14 @@ export function featuresFor(distribution) {
     // Lecture du visage au déverrouillage, app fermée (service caméra de premier plan, BuildConfig.FACE_UNLOCK)
     faceUnlock: d === 'sideload',
     // … ou, en play, à l'ouverture de l'app (app à l'écran, indicateur visible) : l'une ou l'autre, jamais les deux
-    faceAppOpen: d === 'play',
+    faceAppOpen: d === 'play' || d === 'appstore',
     // Analyse IA des repas par le relais Halcya (Vertex AI, UE, sans clé dans l'app) ; en sideload, la clé
     // Gemini saisie dans les Paramètres
-    aiRelay: d === 'play',
+    aiRelay: d === 'play' || d === 'appstore',
     // Abonnement Google Play (droits établis par le relais, jalon 6c) ; la sideload n'a pas Play Billing et ne perd
     // aucune fonction
-    billing: d === 'play',
+    // Sur iPhone, abonnement App Store (StoreKit 2), vérifié par le même relais (v689)
+    billing: d === 'play' || d === 'appstore',
     // Réglage « Mode diagnostic » affiché d'emblée ; en play, caché derrière 7 touches sur le numéro de version
     // (Paramètres), pour le support et les testeurs (VC-4)
     debugMenu: d === 'sideload',
@@ -45,6 +47,8 @@ export function featuresFor(distribution) {
     cigaretteSetting: d === 'sideload',
     // Nom technique du modèle d'IA (détails de la carte de résultat) : jamais dans la variante play (31/10)
     aiModelName: d === 'sideload',
+    // Version iPhone : textes propres à l'iPhone là où Android parle de Google Play ou d'Android
+    iosStore: d === 'appstore',
   }
 }
 
@@ -53,7 +57,7 @@ export const FEATURES = featuresFor(DISTRIBUTION)
 
 /**
  * Magasin d'applications qui vend l'abonnement (I6-RELAIS-6), fixé au build (`VITE_STORE`) : `play` (défaut, Android)
- * ou `appstore` (app iPhone, spreadzenox/HealthTrack-iOS, qui réutilise ce code). Les textes visibles prennent leur
+ * ou `appstore` (app iPhone, dossier iphone/, qui réutilise ce code). Les textes visibles prennent leur
  * nom ici au lieu de l'écrire en dur ; un achat garde le magasin d'où il vient (`source` rendu par le relais).
  */
 export const STORES = ['play', 'appstore']

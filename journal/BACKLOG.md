@@ -994,6 +994,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   (venu d'`overlay/` avec ses deux tests, qui tournent désormais aussi dans les tests d'Android) sous
   `VITE_IOS_CAPTURE === '1'` seulement ; test `captureMode.gate.test.js` ; la build Android n'en contient rien
   (vérifié dans `dist/`). 2 restent (01, 27). Suivant : 27 (décision), 01 en dernier.
+  24/11 07:30 : correctifs 01 (variante `appstore`) et 27 (« Votre avis » sur iPhone vers le dépôt unique) fondus :
+  **`iphone/patches/` est vide**. Suite : `overlay/` (93 fichiers), puis `ios/` → `app/ios/`.
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).

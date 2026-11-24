@@ -42,7 +42,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 |---|---|---|
 | Dernière version | release **v897** (#1230, 24/11 04:34 UTC) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1290.1290** (build du 23/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 24/11 04:32 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
-| Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; 2 correctifs propres à l'iPhone restent à fondre dans le code commun (FUSION-3) |
+| Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; plus aucun correctif propre à l'iPhone une fois #1233 mergée (FUSION-3 : reste le dossier `overlay/`) |
 
 **🧸 Refonte « Compagnon »** : étapes 1 à 7 faites (4 onglets, Ma journée, accueil en 4 temps, Objectifs, Données sur
 Tendances, Nunito et fond crème) ; étapes 8 à 14 livrées pendant le sprint du 16-17/11 (scène 3D, Pilou, bulles, vie,
@@ -61,6 +61,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 24/11 07:30 — [Derniers correctifs iPhone fondus](runs/2026-11-24-0730-fusion-01-27.md) | 🔧 | FUSION-3 : les correctifs iPhone 01 (variante App Store) et 27 (« Votre avis » sur iPhone) passent dans le code commun, `iphone/patches/` est vide. Sur iPhone, le lien de secours de « Votre avis » ouvre un ticket de ce dépôt au lieu de l'ancien dépôt iOS ; rien ne change sur Android. Alpha du 23/11 partie à 06:26 UTC. PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 24/11 06:30 — [#1231 mergée](runs/2026-11-24-0630-merge-fodmap-aliments.md) | 🔧 | **#1231 mergée** (POLISH-SIM-157 : dans Objectifs › « Ce qui a été comparé », chaque groupe FODMAP nomme ses aliments ; captures iPhone relues), release **v898**. Pas de nouveau code pour ne pas relancer de build iPhone pendant celui du soir. L'Alpha du 23/11 au soir n'était pas encore partie à 05:40 UTC (cron en retard). Rien à faire de votre côté |
 | 24/11 05:30 — [#1230 mergée, aliments FODMAP](runs/2026-11-24-0530-fodmap-aliments.md) | 🔧 | **#1230 mergée** (« Cœur » selon la montre ; capture iPhone de l'accueil relue). TestFlight **1290.1290** chez « Testeurs Halcya » et soumise à l'examen bêta, anciennes builds expirées. POLISH-SIM-157 : dans Objectifs › « Ce qui a été comparé », chaque groupe FODMAP dit ses aliments (« sorbitol (FODMAP : pruneaux, prunes) »). Alpha du 23/11 pas encore partie à 04:45 UTC. PR prête, merge au run suivant. Rien à faire de votre côté |
 | 24/11 04:30 — [#1229 mergée, cœur selon la montre](runs/2026-11-24-0430-coeur-selon-montre.md) | 🔧 | **#1229 mergée** (ancien objectif « stress » ; Réglages relus sur Android et iPhone). POLISH-SIM-156 : à l'étape 3 de l'accueil, « Cœur » passe dans « Selon votre montre », plus promis aux bracelets qui ne l'envoient pas. TestFlight du soir lancé à la main : le cron de 20:20 UTC n'était pas parti à 03:30 UTC ; l'Alpha de 23:45 pas encore partie non plus. PR prête, merge au run suivant. |

@@ -18,7 +18,9 @@ export function feedbackLink(distribution, version) {
       hint: 'Sur la page Halcya du Play Store : « Envoyer des commentaires privés au développeur » pendant le test, « Noter cette application » ensuite.',
     }
   }
-  const title = `Avis — ${APP_NAME} v${version}`
+  // Sur iPhone, même dépôt (fusion du 13/11), titre « pour iPhone » pour trier les avis
+  const appstore = resolveDistribution(distribution) === 'appstore'
+  const title = `Avis — ${APP_NAME}${appstore ? ' pour iPhone' : ''} v${version}`
   return {
     url: `${GITHUB_ISSUES_URL}?${new URLSearchParams({ title })}`,
     label: 'Envoyer un avis',

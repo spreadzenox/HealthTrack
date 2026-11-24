@@ -93,7 +93,8 @@ shopt -s nullglob
 PATCHES=("$ROOT"/patches/*.patch)
 # Application directe (pas de fusion à trois) : un correctif qui ne s'applique plus tel quel est à refaire.
 # Pour le refaire : git -C upstream apply --3way <correctif>, puis git -C upstream diff.
-for patch in "${PATCHES[@]}"; do
+# ${PATCHES[@]+…} : le bash 3.2 des Mac, avec set -u, refuse « ${PATCHES[@]} » quand patches/ est vide (24/11)
+for patch in ${PATCHES[@]+"${PATCHES[@]}"}; do
   if ! git -C "$DEST" apply --index --whitespace=nowarn "$patch"; then
     echo "::error::Le correctif $(basename "$patch") ne s'applique plus sur v$COUNT : le refaire (git apply --3way, puis git diff)" >&2
     exit 1
@@ -117,4 +118,6 @@ for wf in "$REPO"/.github/workflows/ios-*.yml; do
   cp "$wf" "$ROOT/.github/workflows/$(basename "$wf" | sed 's/^ios-//')"
 done
 
-echo "upstream/ prêt : v$COUNT ($SHA), ${#PATCHES[@]} correctif(s)"
+NPATCHES=0
+[ -n "${PATCHES[*]+x}" ] && NPATCHES=${#PATCHES[@]}
+echo "upstream/ prêt : v$COUNT ($SHA), $NPATCHES correctif(s)"
