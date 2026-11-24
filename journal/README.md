@@ -42,7 +42,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 |---|---|---|
 | Dernière version | release **v897** (#1230, 24/11 04:34 UTC) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1290.1290** (build du 23/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 24/11 04:32 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
-| Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; plus aucun correctif propre à l'iPhone une fois #PR mergée (FUSION-3 : reste le dossier `overlay/`) |
+| Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; plus aucun correctif propre à l'iPhone une fois #1233 mergée (FUSION-3 : reste le dossier `overlay/`) |
 
 **🧸 Refonte « Compagnon »** : étapes 1 à 7 faites (4 onglets, Ma journée, accueil en 4 temps, Objectifs, Données sur
 Tendances, Nunito et fond crème) ; étapes 8 à 14 livrées pendant le sprint du 16-17/11 (scène 3D, Pilou, bulles, vie,
