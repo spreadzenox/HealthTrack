@@ -1,6 +1,6 @@
 /**
  * Lecture IndexedDB des entrées de l'humeur estimée (budget de lectures D2) : toutes les rafales du visage, et les
- * notes de bien-être **seulement depuis le jour de la première rafale** — une note plus ancienne n'a aucune lecture
+ * notes de bien-être **seulement depuis le jour de la première rafale** (sauf `notesAlways`, Tendances) — une note plus ancienne n'a aucune lecture
  * à qui être comparée (gateDays, calibration), la lire coûterait des années d'historique à chaque ouverture.
  */
 import { listEntries } from '../../storage/localHealthStorage'
@@ -26,13 +26,16 @@ export async function loadFaceMoodEntries({ list = listEntries, withStool = fals
     return { bursts, notes: [...(wellbeing || []), ...(gut || [])] }
   }
   const first = bursts.reduce((min, b) => (b.at < min ? b.at : min), bursts[0].at)
-  const since = new Date(first)
-  since.setHours(0, 0, 0, 0)
+  const sinceDay = new Date(first)
+  sinceDay.setHours(0, 0, 0, 0)
+  // POLISH-SIM-88 : Tendances (notesAlways) lit aussi les notes d'avant la caméra, sinon un jour noté avant la
+  // première lecture du visage dit « Aucune lecture du visage ce jour-là » sans montrer la note.
+  const since = notesAlways ? undefined : sinceDay.toISOString()
   const [wellbeing, gut, stool] = await Promise.all([
-    list({ type: 'wellbeing', since: since.toISOString(), limit: Infinity }),
+    list({ type: 'wellbeing', since, limit: Infinity }),
     // Notes digestives et selles : observations du modèle à espace d'états (TS-1), lié au bien-être.
-    list({ type: GUT_TYPE, since: since.toISOString(), limit: Infinity }),
-    withStool ? list({ type: STOOL_TYPE, since: since.toISOString(), limit: Infinity }) : [],
+    list({ type: GUT_TYPE, since, limit: Infinity }),
+    withStool ? list({ type: STOOL_TYPE, since, limit: Infinity }) : [],
   ])
   return { bursts, notes: [...wellbeing, ...(gut || []), ...(stool || [])] }
 }

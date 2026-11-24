@@ -1698,9 +1698,13 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   Connect (carte Withings absente, POLISH-SIM-89) : à vérifier, puis une ligne courte près de « Connecter Health
   Connect » (« montre, bague, balance »). iPhone : code partagé, les correctifs 23, 45, 52 et 55 ne touchent pas ces lignes ; arrive au prochain
   suivi du code embarqué.
-- [ ] **POLISH-SIM-88** (à vérifier) Tendances › Jour dit « Aucune lecture du visage ce jour-là » alors qu'une note
+- [x] **POLISH-SIM-88** (à vérifier) Tendances › Jour dit « Aucune lecture du visage ce jour-là » alors qu'une note
   existe ; « + » rond de la carte Pas d'Aujourd'hui sans effet visible ; « repas incomplets ? » du Journal ne réagit
   pas ; « Dépense 2 352 kcal » sans explication.
+  **Fait le 24/11 14:30** : le cas sans caméra était réglé par POLISH-SIM-117 ; restait une note d'avant la première
+  lecture du visage (caméra activée plus tard), jamais lue par Tendances. `loadFaceMoodEntries({ notesAlways })` lit
+  maintenant toutes les notes de bien-être et digestives, test dans `faceMoodData.test.js`. Les trois autres points
+  ont disparu avec la refonte (Aujourd'hui, Journal et la ligne « Dépense » n'existent plus). iPhone : code partagé.
 - [x] **POLISH-SIM-90** Tendances, fiche d'un jour : « Confort digestif 2,4/5, estimé, avec votre note « douleur » »
   sous la légende « Douleur 1 », et « Bien-être 3,2/5, votre note 3,4 et le visage » alors que la saisie n'accepte
   que des entiers : montrer la note telle qu'elle a été donnée, et l'estimation à part (suite de POLISH-SIM-71). **Fait le 14/11 13:35** :

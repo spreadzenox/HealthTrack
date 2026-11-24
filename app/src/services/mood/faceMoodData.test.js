@@ -18,6 +18,14 @@ describe('loadFaceMoodEntries', () => {
     expect(list.mock.calls[1][0].since).toBeUndefined()
   })
 
+  it('POLISH-SIM-88 : notesAlways lit aussi les notes d’avant la première lecture du visage', async () => {
+    const bursts = [{ type: 'face_burst', at: '2026-11-20T09:00:00.000Z' }]
+    const list = vi.fn(async (opts) => (opts.type === 'face_burst' ? bursts : [{ type: opts.type }]))
+    const out = await loadFaceMoodEntries({ list, notesAlways: true })
+    expect(out.notes.map((e) => e.type)).toEqual(['wellbeing', 'gut'])
+    expect(list.mock.calls.filter((c) => c[0].type !== 'face_burst').map((c) => c[0].since)).toEqual([undefined, undefined])
+  })
+
   it('reads notes only from the day of the first face reading', async () => {
     const bursts = [{ type: 'face_burst', at: '2026-10-18T09:00:00.000Z' }, { type: 'face_burst', at: '2026-10-10T15:00:00.000Z' }]
     const list = vi.fn(async (opts) => (opts.type === 'face_burst' ? bursts : [{ type: opts.type }]))
