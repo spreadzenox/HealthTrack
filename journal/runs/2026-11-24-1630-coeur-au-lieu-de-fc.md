@@ -22,7 +22,7 @@
   l'appelait depuis le retrait de `PermissionsStep.jsx` le 08/11). Le build iPhone de cette PR le vérifie.
 
 ## Vérifications
-- `npm run test` : 4 642 verts ; `npm run lint` : 0 erreur ; `npm run build` vert ; `npm run visual` (voir PR).
+- `npm run test` : 4 642 verts ; `npm run lint` : 0 erreur ; `npm run build` vert ; `npm run visual` : toutes les pages ok, aucune erreur JS ; captures `montre-1` et `montre-2` regardées (« Séances : Course à pied · 32 min · cœur 143 bpm en moyenne · 5:37 /km »).
 - Note de Nouveautés `2026-11-24-1630-coeur-au-lieu-de-fc.json` (code partagé, Android et iPhone).
 
 ## Suite
