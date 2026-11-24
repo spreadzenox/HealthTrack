@@ -317,6 +317,8 @@ export default function TrendsViewer({
   )
   const shown = keys.filter((k) => data.available.includes(k))
   const addable = data.available.filter((k) => canAdd(shown, k))
+  // POLISH-SIM-158 : une mesure d'une troisième unité ne disparaît plus de « + » : grisée, avec la raison
+  const blocked = data.available.filter((k) => !shown.includes(k) && !canAdd(shown, k))
   const isDay = period === 'day'
   // Jour affiché : celui touché en Semaine ou Mois s'il n'est pas futur, sinon le dernier jour qui a une lecture ou
   // une note (aujourd'hui dès sa première lecture ; T3), sinon aujourd'hui
@@ -407,7 +409,7 @@ export default function TrendsViewer({
               </button>
             </li>
           ))}
-          {(isDay ? dayAddable.length > 0 : (addable.length > 0 || pendingChips.length > 0) && shown.length > 0) && (
+          {(isDay ? dayAddable.length > 0 : (addable.length > 0 || blocked.length > 0 || pendingChips.length > 0) && shown.length > 0) && (
             <li>
               <button type="button" className="trends-add" aria-label="Ajouter une mesure" aria-expanded={adding}
                 onClick={() => setAdding(!adding)}>
@@ -449,6 +451,10 @@ export default function TrendsViewer({
         </>
       )}
       {adding && !isDay && (
+        <>
+        {blocked.length > 0 && (
+          <p className="trends-add-caption">Deux unités au plus : retirez une courbe pour en ajouter une autre.</p>
+        )}
         <ul className="trends-add-menu" aria-label="Mesures à ajouter">
           {addable.map((k) => {
             const m = trendMeasure(k)
@@ -461,8 +467,17 @@ export default function TrendsViewer({
               </li>
             )
           })}
+          {blocked.map((k) => (
+            <li key={k}>
+              <button type="button" className="trends-chip is-pending" aria-disabled="true"
+                aria-label={`${trendMeasure(k).label}, deux unités au plus : retirez une courbe`}>
+                <span className="trends-chip-dot" aria-hidden="true" />{trendMeasure(k).label}
+              </button>
+            </li>
+          ))}
           {pendingChips.map((k) => <PendingChip key={k} k={k} />)}
         </ul>
+        </>
       )}
       {isDay ? (
         <>

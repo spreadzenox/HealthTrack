@@ -132,7 +132,7 @@ describe('Un essai (ORG-8)', () => {
     const ten = { schedule: payload.schedule.slice(0, 10) }
     renderTrial(new Date(2026, 10, 3, 10), ten)
     expect(await screen.findByText(line('Jour 3 sur 10'))).toBeInTheDocument()
-    expect(screen.getByText(line('1 jour réussi sur 5'))).toBeInTheDocument()
+    expect(screen.getByText(line('Consigne tenue 1 jour sur 5 prévus'))).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Les 10 jours' })).toBeInTheDocument()
     expect(screen.queryByText(/n’annule rien/)).toBeNull()
   })
@@ -140,7 +140,7 @@ describe('Un essai (ORG-8)', () => {
   it('POLISH-SIM-138 : un jour « comme d’habitude » dit qu’il n’y a rien à changer ; deux jours réussis au pluriel', async () => {
     renderTrial(new Date(2026, 10, 4, 10), { schedule: payload.schedule.slice(0, 10), answers: { '2026-11-01': true, '2026-11-03': true } })
     expect(await screen.findByText('Aujourd’hui : comme d’habitude, rien à changer.')).toBeInTheDocument()
-    expect(screen.getByText(line('2 jours réussis sur 5'))).toBeInTheDocument()
+    expect(screen.getByText(line('Consigne tenue 2 jours sur 5 prévus'))).toBeInTheDocument()
   })
 
   it('LANT-1 : les lanternes des jours avec, allumées quand le jour est tenu', async () => {
@@ -157,7 +157,7 @@ describe('Un essai (ORG-8)', () => {
 
   it('REFONTE-6c-2 : un jour avec manqué est dit sans reproche', async () => {
     renderTrial(new Date(2026, 10, 5, 10), { schedule: payload.schedule.slice(0, 10), answers: { '2026-11-03': false } })
-    expect(await screen.findByText(line('1 jour réussi sur 5'))).toBeInTheDocument()
+    expect(await screen.findByText(line('Consigne tenue 1 jour sur 5 prévus'))).toBeInTheDocument()
     expect(screen.getByText('Un jour manqué n’annule rien : l’essai continue.')).toBeInTheDocument()
   })
 

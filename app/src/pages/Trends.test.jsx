@@ -592,3 +592,32 @@ describe('POLISH-SIM-94 : une mesure qui n’a pas encore sa courbe reste visibl
     expect(screen.queryByText('Vos courbes apparaîtront après 3 jours de mesures.')).toBeNull()
   })
 })
+
+describe('POLISH-SIM-158 : une mesure d’une troisième unité reste visible dans « + », grisée', () => {
+  const days = [4, 5, 6, 7].map((d) => ({ dateKey: `2026-11-0${d}`, summary: { steps: 6000 + d, sleepMinutes: 420 + d, restingHr: 58 + d } }))
+  const open = () => render(
+    <MemoryRouter initialEntries={['/tendances']}>
+      <Trends now={NOW} readDays={async () => days} readDayStates={async () => null}
+        readFaceEntries={async () => []} readDayContributions={async () => null} readDayChanges={async () => null} />
+    </MemoryRouter>,
+  )
+  it('deux unités affichées : la troisième est grisée, avec la raison, et ne fait rien', async () => {
+    open()
+    await screen.findByRole('img', { name: /Courbe de/ })
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une mesure' }))
+    let menu = screen.getByRole('list', { name: 'Mesures à ajouter' })
+    const shownFirst = ['Pas', 'Sommeil', 'Cœur au repos'].filter((l) => screen.queryByRole('img', { name: `Courbe de ${l}` }))
+    expect(shownFirst).toHaveLength(1)
+    const second = ['Pas', 'Sommeil', 'Cœur au repos'].find((l) => !shownFirst.includes(l))
+    fireEvent.click(within(menu).getByRole('button', { name: second }))
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter une mesure' }))
+    menu = screen.getByRole('list', { name: 'Mesures à ajouter' })
+    const third = ['Pas', 'Sommeil', 'Cœur au repos'].find((l) => l !== second && !shownFirst.includes(l))
+    const chip = within(menu).getByRole('button', { name: `${third}, deux unités au plus : retirez une courbe` })
+    expect(chip).toHaveAttribute('aria-disabled', 'true')
+    expect(chip).toHaveTextContent(third)
+    expect(screen.getByText('Deux unités au plus : retirez une courbe pour en ajouter une autre.')).toBeInTheDocument()
+    fireEvent.click(chip)
+    expect(screen.queryByRole('img', { name: `Courbe de ${third}` })).toBeNull()
+  })
+})

@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-24",
+  "kind": "correctif",
+  "title": "Tendances et essais plus clairs",
+  "items": [
+    "Tendances : avec deux unités déjà affichées, les autres mesures restent dans « + », grisées, et l’app dit d’abord retirer une courbe.",
+    "Page d’un essai : « Consigne tenue 1 jour sur 5 prévus » remplace « 1 jour réussi sur 5 », qui se confondait avec le numéro du jour."
+  ]
+}
