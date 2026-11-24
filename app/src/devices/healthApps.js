@@ -126,7 +126,7 @@ export const METRICS = [
   { key: 'heartRate', label: 'cœur', watch: true },
   { key: 'restingHeartRate', label: 'cœur au repos', watch: true },
   { key: 'heartRateVariability', label: 'variabilité cardiaque', watch: true },
-  { key: 'heartRateVariabilitySdnn', label: 'variabilité cardiaque (SDNN)' }, // Version iOS : VFC de l'app Santé, à part
+  { key: 'heartRateVariabilitySdnn', label: 'variabilité cardiaque' }, // Version iOS : VFC de l'app Santé, à part (POLISH-SIM-72-iOS-c : sans sigle)
   { key: 'oxygenSaturation', label: 'oxygène du sang', watch: true },
   { key: 'sleep', label: 'sommeil', watch: true },
   { key: 'steps', label: 'pas', watch: true },
