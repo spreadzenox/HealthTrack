@@ -769,10 +769,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `poids-sans-courbe.png` ; `TodayBySource.jsx` 125 fait un lien dès une pesée, `trendsData.js` ne propose le
       poids qu'à 3 pesées dans le mois) : ne faire le lien que si la mesure est dans `available`, ou dire dans
       Tendances « Poids : la courbe arrive à 3 pesées ». Test d'abord.
-    - [ ] **POLISH-SIM-152 — Ma journée : la liste remonte sous le doigt** (J1, capture `journee-liste-decalee.png`) :
+    - [x] **POLISH-SIM-152 — Ma journée : la liste remonte sous le doigt** (FAIT le 24/11 à 00:30 : une habitude répondue reste sur place, « Noté », tant qu'il en reste à répondre, et la dernière réponse les range toutes ; effet avant l'affichage, plus de saut d'une image ; `DayChecklist.jsx`, test `DayChecklist.test.jsx`) (J1, capture `journee-liste-decalee.png`) :
       une habitude répondue disparaît aussitôt, le toucher suivant valide la ligne d'après (« Café » au lieu
       d'« Étirements »). Garder la ligne répondue sur place un court instant (état « fait ») avant de la ranger.
-    - [ ] **POLISH-SIM-153 — Portion invraisemblable acceptée sans un mot** (J14, capture `pates-5000g.png`) : 5 000 g
+    - [x] **POLISH-SIM-153 — Portion invraisemblable acceptée sans un mot** (FAIT le 24/11 à 00:30 : au-delà de 2 kg pour un aliment, « 5 kg, c’est bien ça ? » sous la ligne, sans rien bloquer ; un seul plafond, pas un par aliment ; `MealEditor.jsx`, test `MealEditor.test.jsx`) (J14, capture `pates-5000g.png`) : 5 000 g
       et 5 800 kcal s'enregistrent. Alerte douce au-delà d'un plafond par aliment (« 5 kg, c'est bien ça ? »).
     - [ ] **POLISH-SIM-154 — Pilou coupé derrière la carte de Tendances** (J1 et J14, captures
       `tendances-pas-auj.png`, `poids-sans-courbe.png`) : seul le haut de la tête dépasse.

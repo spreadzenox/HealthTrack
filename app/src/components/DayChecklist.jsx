@@ -8,8 +8,10 @@
  * Aucune calorie ici, aucun compteur de jours manqués (brief § 5).
  * Étape 11 (lot VIE) : la bannière de Pilou remplace « Encore N choses » et répond à chaque saisie ; la fin de
  * journée est la sienne (fête sobre, ou le calme du soir à partir de 21 h).
+ * POLISH-SIM-152 : une habitude répondue reste à sa place (« Noté ») tant qu'il en reste à répondre, pour que la
+ * ligne suivante ne remonte pas sous le doigt ; la dernière réponse les range toutes ensemble.
  */
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { dayChecklist } from '../services/dayChecklist'
 import { GUT_EVENING_FROM_HOUR, gutLevelLabel } from '../services/today'
@@ -101,27 +103,42 @@ export default function DayChecklist({ entries, askGut = false, habits = [], now
   const at = now || new Date()
   const list = dayChecklist(entries, { now: at, askGut, habits })
   const [notedOpen, setNotedOpen] = useState(false)
-  // Une ligne faite sous nos yeux reste le temps de dire « Noté », puis part (spec § 2).
+  // Une ligne faite sous nos yeux reste le temps de dire « Noté », puis part (spec § 2). Une habitude répondue
+  // attend les autres sur place (POLISH-SIM-152). Effet avant l'affichage : la ligne ne disparaît pas une image.
   const pendingBefore = useRef(null)
+  const timers = useRef([])
   const [leaving, setLeaving] = useState([])
+  const [held, setHeld] = useState([])
   const [said, setSaid] = useState('')
   // « id, tabulation, titre » par ligne à faire : une ligne qui part garde son titre, habitude comprise
   const pendingKey = list.tasks.filter((t) => !t.done).map((t) => `${t.id}\t${metaOf(t).title}`).join('\n')
-  useEffect(() => {
+  useLayoutEffect(() => {
     const before = pendingBefore.current
     const pending = pendingKey ? pendingKey.split('\n').map((line) => line.split('\t')) : []
     pendingBefore.current = pending
-    if (!before) return undefined
+    if (!before) return
     const gone = before.filter(([id]) => !pending.some(([p]) => p === id))
-    if (!gone.length) return undefined
-    const ids = gone.map(([id]) => id)
-    setLeaving((l) => [...new Set([...l, ...ids])])
+    if (!gone.length) return
+    const isHabit = (id) => id.startsWith('habit:')
+    const habitsLeft = pending.some(([id]) => isHabit(id))
+    const goneIds = gone.map(([id]) => id)
+    let ids = goneIds
+    if (habitsLeft) {
+      setHeld((h) => [...new Set([...h, ...goneIds.filter(isHabit)])])
+      ids = goneIds.filter((id) => !isHabit(id))
+    } else {
+      // Plus aucune habitude à répondre : celles qui attendaient partent avec la dernière.
+      ids = [...new Set([...goneIds, ...held])]
+      setHeld([])
+    }
     setSaid(`${gone.map(([, title]) => title).join(', ')} : noté. ${pending.length ? `${remainingText(pending.length)}.` : 'Plus rien à faire.'}`)
-    const t = setTimeout(() => setLeaving((l) => l.filter((id) => !ids.includes(id))), LEAVE_MS)
-    return () => clearTimeout(t)
-  }, [pendingKey])
+    if (!ids.length) return
+    setLeaving((l) => [...new Set([...l, ...ids])])
+    timers.current.push(setTimeout(() => setLeaving((l) => l.filter((id) => !ids.includes(id))), LEAVE_MS))
+  }, [pendingKey]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
-  const shown = list.tasks.filter((t) => !t.done || leaving.includes(t.id))
+  const shown = list.tasks.filter((t) => !t.done || leaving.includes(t.id) || held.includes(t.id))
   const finished = list.allDone && !leaving.length
   useDayDone(finished)
 
@@ -134,10 +151,11 @@ export default function DayChecklist({ entries, askGut = false, habits = [], now
       )}
       {shown.map((t) => {
         const gone = t.done
+        const waits = gone && !leaving.includes(t.id)
         const meta = metaOf(t)
         return (
           <div key={t.id} role="group" aria-label={meta.title} data-tone={meta.tone}
-            className={`day-line${gone ? ' is-leaving' : ''}${t.id === 'gut' && !t.available && !gone ? ' is-waiting' : ''}`}>
+            className={`day-line${gone ? (waits ? ' is-answered' : ' is-leaving') : ''}${t.id === 'gut' && !t.available && !gone ? ' is-waiting' : ''}`}>
             {gone ? (
               <div className="day-line-row">
                 <span className="day-line-title">{meta.title}</span>

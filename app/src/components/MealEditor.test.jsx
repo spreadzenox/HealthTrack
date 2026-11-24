@@ -107,4 +107,15 @@ describe('MealEditor', () => {
     expect(kcal.closest('.mei-head')).not.toBeNull()
     expect(kcal.closest('.mei-controls')).toBeNull()
   })
+
+  it('une portion invraisemblable demande une confirmation douce, sans bloquer (POLISH-SIM-153)', () => {
+    render(<Harness initial={[cheese]} />)
+    expect(screen.queryByText(/c’est bien ça/)).not.toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('Grammes de Abondance'), { target: { value: '5000' } })
+    expect(screen.getByText('5 kg, c’est bien ça ?')).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('Grammes de Abondance'), { target: { value: '2500' } })
+    expect(screen.getByText('2,5 kg, c’est bien ça ?')).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('Grammes de Abondance'), { target: { value: '1500' } })
+    expect(screen.queryByText(/c’est bien ça/)).not.toBeInTheDocument()
+  })
 })
