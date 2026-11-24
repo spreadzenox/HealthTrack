@@ -15,7 +15,7 @@
 .pilou-peek {
   position: relative;
   z-index: 1;
-  height: 34px;
+  height: 48px;
   margin: -6px 0 -2px 18px;
   overflow: hidden;
   pointer-events: none;
