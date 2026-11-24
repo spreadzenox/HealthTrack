@@ -3,11 +3,12 @@ import process from 'node:process'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { SLOP_WORDING } from '../data/wordingRules.js'
+import { iphoneDir } from './iphonePaths.js'
 
 // Version iOS (HealthTrack-iOS) : Android teste ses formules bannies (SLOP-1) sur ses pages, sa fiche Play et ses
 // notes ; l'iPhone a ses propres pages (conditions, confidentialité) et sa propre fiche App Store, relues avec les
-// mêmes règles. Vitest tourne depuis upstream/app, où scripts/upstream.sh a copié overlay/ ; la fiche est à la racine
-// du dépôt (store/app-store/fr-FR).
+// mêmes règles. Pages dans app/public ; fiche dans iphone/store/app-store/fr-FR
+// (iphonePaths.js).
 const read = (p) => readFileSync(join(process.cwd(), p), 'utf8')
 const pageText = (html) => html
   .replace(/<title>[\s\S]*?<\/title>|<style[\s\S]*?<\/style>|<!--[\s\S]*?-->/g, ' ')
@@ -20,7 +21,7 @@ const PAGES = {
   'confidentialite-iphone.html': pageText(read('public/confidentialite-iphone.html')),
 }
 const FICHE = Object.fromEntries(['description', 'promotional-text', 'subtitle', 'name'].map((f) => [f,
-  read(`../../store/app-store/fr-FR/${f}.txt`)]))
+  readFileSync(join(iphoneDir(), `store/app-store/fr-FR/${f}.txt`), 'utf8')]))
 
 describe("textes propres à l'iPhone : mêmes règles d'écriture qu'Android (SLOP-1)", () => {
   for (const [name, text] of Object.entries(PAGES)) {

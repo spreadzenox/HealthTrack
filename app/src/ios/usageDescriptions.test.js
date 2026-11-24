@@ -2,13 +2,14 @@ import { describe, it, expect } from 'vitest'
 import process from 'node:process'
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
+import { iosDir } from './iphonePaths.js'
 
 // Version iOS (HealthTrack-iOS) : iOS ferme l'app qui ouvre la caméra sans phrase d'usage dans Info.plist, et refuse la
 // position sans la sienne. Toute fonction du code partagé qui y touche (photo du repas, météo) doit avoir sa phrase,
 // en français, vraie sur iPhone.
-// Vitest tourne depuis upstream/app, où scripts/upstream.sh a copié ios/
+// Projet natif lu par iosDir() (iphonePaths.js)
 const src = join(process.cwd(), 'src')
-const plist = readFileSync(join(process.cwd(), 'ios/App/App/Info.plist'), 'utf8')
+const plist = readFileSync(join(iosDir(), 'App/App/Info.plist'), 'utf8')
 
 function files(dir) {
   return readdirSync(dir).flatMap((name) => {
@@ -18,7 +19,7 @@ function files(dir) {
   })
 }
 const code = files(src).map((p) => readFileSync(p, 'utf8')).join('\n')
-// Sources Swift de l'app (copiées dans upstream/app/ios), hors tests des paquets
+// Sources Swift de l'app, hors tests des paquets
 function swiftFiles(dir) {
   return readdirSync(dir).flatMap((name) => {
     const p = join(dir, name)
@@ -65,7 +66,7 @@ describe('phrases d’usage de l’iPhone (Info.plist)', () => {
       Photos: 'NSPhotoLibraryUsageDescription', CoreBluetooth: 'NSBluetoothAlwaysUsageDescription',
       CoreLocation: 'NSLocationWhenInUseUsageDescription', HealthKit: 'NSHealthShareUsageDescription',
     }
-    const swift = swiftFiles(join(process.cwd(), 'ios')).map((p) => readFileSync(p, 'utf8')).join('\n')
+    const swift = swiftFiles(iosDir()).map((p) => readFileSync(p, 'utf8')).join('\n')
     const imported = Object.keys(NEEDS).filter((fw) => new RegExp(`^import ${fw}$`, 'm').test(swift))
     expect(imported).toContain('Speech')
     for (const fw of imported) expect(usage(NEEDS[fw]), `${fw} → ${NEEDS[fw]}`).toBeTruthy()

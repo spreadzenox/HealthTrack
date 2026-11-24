@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import process from 'node:process'
 import { readFileSync, existsSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { join } from 'node:path'
+import { iosDir } from './iphonePaths.js'
 
-// Projet iOS copié dans upstream/app/ios par scripts/upstream.sh (les tests tournent depuis upstream/app)
-const app = (name) => resolve(process.cwd(), 'ios/App/App', name)
+// Projet iOS : app/ios dans la build iOS, iphone/ios depuis les tests d'Android (iphonePaths.js)
+const app = (name) => join(iosDir(), 'App/App', name)
 
 /** Valeur d'une clé de premier niveau d'un plist XML (assez pour ces vérifications). */
 const plistValue = (xml, key) => xml.match(new RegExp(`<key>${key}</key>\\s*(<[^>]+>)`))?.[1] ?? null

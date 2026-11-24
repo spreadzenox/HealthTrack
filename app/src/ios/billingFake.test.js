@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
-import process from 'node:process'
 import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { join } from 'node:path'
+import { iphoneDir } from './iphonePaths.js'
 import { fakeAppStoreBilling, installBillingFake, needsBillingFake, buildPlan, ROUTES, DARK_ROUTES, SCROLLS, REVEALS, MORE_ONBOARDING, EMPTY_ROUTES, EMPTY_SCROLLS } from './captureMode.js'
 import { describePlans, loadPlans } from '../services/playBilling'
 
@@ -15,7 +15,7 @@ describe('faux plugin d’achat des captures', () => {
     const gold = describePlans(products, 'halcya_gold')
     expect(silver.map((p) => [p.offerToken, p.price, p.trialDays])).toEqual([['halcya_premium_annuel', '29,99 €', 14], ['halcya_premium_mensuel', '4,99 €', null]])
     expect(gold.map((p) => [p.offerToken, p.price, p.trialDays])).toEqual([['halcya_gold_mensuel', '9,99 €', null]])
-    const md = readFileSync(resolve(process.cwd(), '../../store/app-store/abonnements.md'), 'utf8')
+    const md = readFileSync(join(iphoneDir(), 'store/app-store/abonnements.md'), 'utf8')
     for (const price of ['29,99 €', '4,99 €', '9,99 €']) expect(md).toContain(price)
     expect(await loadPlans({ native: fakeAppStoreBilling() })).toHaveLength(3)
   })
