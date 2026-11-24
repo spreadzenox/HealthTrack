@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **24/11 04:30** — **#1229 mergée** (POLISH-SIM-155). **POLISH-SIM-156** : à l'étape 3 de l'accueil, « Cœur » rejoint la ligne « Selon votre montre » (certains bracelets ne l'envoient pas). PR prête, merge au run suivant après le build iPhone. TestFlight du soir lancé à la main (cron du 23/11 pas parti à 03:30 UTC).
 - **24/11 03:30** — **POLISH-SIM-155** : Réglages › Vos objectifs dit à qui suivait « Mon stress et mon sommeil » que Bien-être le remplace, le sommeil compris. PR prête, merge au run suivant après le build iPhone.
 - **23/11 20:30** — Run « idées » : personas « Tout mesurer » J1 (Samsung + Galaxy Watch) et « Prendre soin de soi » J14 (Android seul) ; POLISH-SIM-151 à 154 et PERSONAS-OUTIL-3 au BACKLOG ; 3e persona qui cherche le poids : proposition avec maquette à faire. #1222 reste ouverte : sur iPhone, « ⚙ » s'affiche en emoji couleur (critère du run de 19:30), correction au prochain run de code.
 - **23/11 14:30** — **#1218 mergée** (PERSONAS-OUTIL-2) ; **POLISH-SIM-146** : le jour en cours, les cumuls du téléphone (pas, activité, écrans) ne lisent que la veille dans « Ce qui a pu jouer ce jour-là ».

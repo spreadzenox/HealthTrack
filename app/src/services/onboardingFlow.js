@@ -48,13 +48,14 @@ export function stepsFor() {
  * Temps 3 : ce que Halcya suit sans rien demander (brief § 3.3 ; le « stress » de la montre n'y est pas). Sans
  * montre, les pas, le temps d'écran et la météo viennent du téléphone : le reste est annoncé pour plus tard.
  * POLISH-SIM-105 : `maybe` = beaucoup de montres ne l'envoient pas (PERSONAS.md), dit « selon votre montre » ;
- * `phone` = seulement s'il a été allumé à l'écran d'avant, sinon dit « activable ».
+ * `phone` = seulement s'il a été allumé à l'écran d'avant, sinon dit « activable ». POLISH-SIM-156 : le cœur aussi (bracelets
+ * qui écrivent dans Santé ou Health Connect : FC partielle ou absente).
  */
 export const AUTO_TILES = [
   { id: 'sleep', label: 'Sommeil', tone: 'night', watch: true },
   { id: 'steps', label: 'Pas', tone: 'lilac', watch: true, phoneLabel: 'Pas (votre téléphone)' },
   { id: 'workouts', label: 'Séances de sport', tone: 'lilac', watch: true },
-  { id: 'heart', label: 'Cœur', tone: 'rose', watch: true },
+  { id: 'heart', label: 'Cœur', tone: 'rose', watch: true, maybe: true },
   { id: 'hrv', label: 'Variabilité cardiaque', tone: 'rose', watch: true, maybe: true },
   { id: 'breath', label: 'Respiration', tone: 'rose', watch: true, maybe: true },
   { id: 'skin', label: 'Température de la peau', tone: 'rose', watch: true, maybe: true },

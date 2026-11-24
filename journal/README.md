@@ -40,7 +40,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v892** (#1224, APK 35,7 Mo, 23/11 22:35 UTC) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1268.1268** (build du 22/11 au soir) **validée** pour « Testeurs Halcya » (relevé du 23/11 07:33 UTC) ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
+| Dernière version | release **v896** (#1229, APK 35,7 Mo, 24/11 03:35 UTC) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1268.1268** (build du 22/11 au soir) **validée** pour « Testeurs Halcya » (relevé du 23/11 07:33 UTC) ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; 2 correctifs propres à l'iPhone restent à fondre dans le code commun (FUSION-3) |
 
@@ -61,6 +61,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 24/11 04:30 — [#1229 mergée, cœur selon la montre](runs/2026-11-24-0430-coeur-selon-montre.md) | 🔧 | **#1229 mergée** (ancien objectif « stress » ; Réglages relus sur Android et iPhone). POLISH-SIM-156 : à l'étape 3 de l'accueil, « Cœur » passe dans « Selon votre montre », plus promis aux bracelets qui ne l'envoient pas. TestFlight du soir lancé à la main : le cron de 20:20 UTC n'était pas parti à 03:30 UTC ; l'Alpha de 23:45 pas encore partie non plus. PR prête, merge au run suivant. |
 | 24/11 03:30 — [Ancien objectif « stress »](runs/2026-11-24-0330-ancien-objectif-stress.md) | 🔧 | POLISH-SIM-155 : Réglages › Vos objectifs dit à qui suivait « Mon stress et mon sommeil » que Bien-être le remplace, le sommeil compris. PR prête ; merge au run suivant après le build iPhone. Build du soir et TestFlight pas encore partis à 02:30 UTC. Rien à faire de votre côté |
 | 24/11 02:30 — [#1227 mergée, faux repas des personas](runs/2026-11-24-0230-merge-pilou-faux-repas.md) | 🔧 | **#1227 mergée** (la tête entière de Pilou dépasse de la carte de Tendances ; captures iPhone relues en clair, sombre et vide). Outil des personas : leurs repas décrits par écrit sont mieux lus (« pâtes » n'est plus du pâté, « 200 g » compte). Les PR qui ne touchent que cet outil ne lancent plus de build iPhone. Rien à faire de votre côté |
 | 24/11 01:30 — [#1226 mergée, Pilou dans Tendances](runs/2026-11-24-0130-pilou-tendances.md) | 🔧 | **#1226 mergée** (habitudes sur place, portion de plus de 2 kg à confirmer ; captures Ma journée et Repas relues sur iPhone et Android). POLISH-SIM-154 : dans Tendances, la tête entière de Pilou dépasse de la carte (elle était coupée aux yeux) ; PR prête, merge au run suivant après le build iPhone. Build du soir et TestFlight pas encore partis à 00:40 UTC. Rien à faire de votre côté |
