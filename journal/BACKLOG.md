@@ -759,8 +759,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       suit les bulles faites) ; deux essais en même temps (voulu, ORG-1b) ; « Version installée : 0.0.0 » (build web
       de l'outil) ; écran Gold après « 4 sur 4 », nom en deux temps, visite en 10 bulles (déjà écartés) ; « Voir un
       exemple » au 14e jour (voulu, sans délai écrit).
-    - À étudier : l'objectif « stress » de l'ancienne version devient « Bien-être » sans un mot à la mise à jour
-      (REFONTE-UPG) ; une ligne dans la carte « Nouveau » suffirait. « Cœur » listé à l'étape 3 de l'accueil alors que
+    - [x] **POLISH-SIM-155 — L'ancien objectif « stress » devenu « Bien-être » sans un mot** (FAIT le 24/11 à 03:30 :
+      Réglages › Vos objectifs, liste « Vos anciens objectifs » de POLISH-SIM-100, ligne « Mon stress et mon sommeil :
+      Bien-être le remplace, le sommeil en fait partie. », aussi pour l'ancien `goal: 'energy'` ; `Settings.jsx`, tests
+      `Settings.test.jsx` ; la carte « Nouveau » reste générale, plutôt qu'une note de plus pour une seule cohorte).
+    - À étudier : « Cœur » listé à l'étape 3 de l'accueil alors que
       le bracelet n'en donne pas (liste générale, pour information) : dire « selon votre montre ». Mots FODMAP
       (fructanes, GOS…) sans aliment entre parenthèses hors de la carte des pistes.
   - **Passage des personas du 23/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-23-2030-synthese.md) ;
