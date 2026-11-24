@@ -279,8 +279,8 @@ function DayDetail({ data, keys, date, onClose = null, extra = null, marks = [],
         </div>
       ))}
       {!future && extra && (
-        <TrendsDayDetail face={keys.includes('wellbeing') ? face : null} contributions={extra.contributions}
-          outcome={extra.outcome ?? null} value={data.series[extra.outcome]?.find((q) => q.date === date)?.value ?? null} />
+        <TrendsDayDetail face={keys.includes('wellbeing') ? face : null}
+          weighs={(extra.weighs ?? []).map((w) => ({ ...w, value: data.series[w.outcome]?.find((q) => q.date === date)?.value ?? null }))} />
       )}
       {/* Refonte, étape 7a : ce qui ne se faisait que dans le Journal (modifier ou supprimer une saisie passée, les
           règles, les habitudes) vit ici, sous les mesures du jour */}

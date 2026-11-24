@@ -76,6 +76,8 @@ describe('familles de ce qui va avec un objectif (refonte « Compagnon », étap
     // Un lien net par facteur, au délai où il est le plus fort, le plus fort d'abord
     expect(d.pistes.map((x) => [x.key, x.effect])).toEqual([['sleepMinutes', 0.6], ['screen_late_minutes', -0.5]])
     expect(d.count).toBe(3)
+    // POLISH-SIM-160 : leurs noms, une fois chacun
+    expect(d.names).toEqual(['Sommeil', 'Écran tard le soir', 'Régularité du coucher'])
   })
 
   it('REFONTE-6c : un délai sans facteur de la famille n’apparaît pas ; pas de barres si la méthode ne prévoit pas mieux', () => {

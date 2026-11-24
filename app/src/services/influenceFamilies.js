@@ -59,7 +59,7 @@ export function influenceFamilies(outcome) {
  * Ses facteurs, délai prêt par délai prêt, et ses liens nets (un par facteur, au délai où il est le plus fort).
  * `bars` suit la règle de « Ce qui va avec » : les barres ne se montrent que si la méthode prévoit mieux que
  * « demain comme aujourd'hui ». Null pour une famille inconnue, avant les résultats ou sans facteur comparé.
- * @returns {{ id, label, tone, bars: boolean, count: number, horizons: { id, label, window, factors: object[] }[], pistes: object[] } | null}
+ * @returns {{ id, label, tone, bars: boolean, count: number, names: string[], horizons: { id, label, window, factors: object[] }[], pistes: object[] } | null}
  */
 export function familyDetail(outcome, familyId) {
   const fam = FAMILIES.find((x) => x.id === familyId)
@@ -77,6 +77,7 @@ export function familyDetail(outcome, familyId) {
     }
   }
   const pistes = [...best.values()].sort((a, b) => Math.abs(b.effect) - Math.abs(a.effect))
-  const count = new Set(horizons.flatMap((h) => h.factors.map((f) => f.key))).size
-  return { id: fam.id, label: fam.label, tone: fam.tone, bars: outcome.beatsPersistence === true, count, horizons, pistes }
+  // POLISH-SIM-160 : les facteurs comparés par leur nom, une fois chacun, dans l'ordre où ils apparaissent
+  const names = [...new Map(horizons.flatMap((h) => h.factors.map((f) => [f.key, f.label]))).values()]
+  return { id: fam.id, label: fam.label, tone: fam.tone, bars: outcome.beatsPersistence === true, count: names.length, names, horizons, pistes }
 }

@@ -92,6 +92,26 @@ describe('TrendsDayDetail, « Ce qui a pu jouer ce jour-là » (POLISH-SIM-71)',
     expect(region().textContent).not.toMatch(/explique|marquant/)
   })
 
+  it('POLISH-SIM-161 : bien-être et confort digestif affichés, chacun dit ce qui a pu jouer sur lui', () => {
+    render(<TrendsDayDetail face={null} weighs={[
+      { outcome: 'wellbeing', contributions: [c('sleepMinutes', -0.4)], value: 3 },
+      { outcome: 'digestion', contributions: [c('restingHR', -0.02)], value: 1.5 },
+    ]} />)
+    expect(region()).toHaveTextContent('Sur votre bien-être, en points sur 5.')
+    // le confort digestif dit sa note même sans barre
+    expect(region()).toHaveTextContent('Sur votre confort digestif, en points sur 5.Rien de marquant ce jour-là')
+    expect(within(region()).getAllByRole('listitem')).toHaveLength(1)
+  })
+
+  it('POLISH-SIM-161 : une seule note calculée parmi les deux : son bloc seul, comme avant', () => {
+    render(<TrendsDayDetail face={null} weighs={[
+      { outcome: 'wellbeing', contributions: null, value: 3 },
+      { outcome: 'digestion', contributions: [c('sleepMinutes', -0.4)], value: 2 },
+    ]} />)
+    expect(region()).toHaveTextContent('Sur votre confort digestif')
+    expect(region().textContent).not.toMatch(/bien-être/)
+  })
+
   it('sans contribution calculée, le bloc reste absent', () => {
     render(<TrendsDayDetail face={null} contributions={[]} outcome="wellbeing" value={1.4} />)
     expect(screen.queryByRole('region', { name: 'Ce qui a pu jouer ce jour-là' })).toBeNull()

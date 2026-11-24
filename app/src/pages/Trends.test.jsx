@@ -206,6 +206,30 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(detail.textContent).not.toMatch(/diagnostic|cause/i)
   })
 
+  it('POLISH-SIM-161 : bien-être et confort digestif affichés, le jour dit ce qui a pu jouer sur les deux', async () => {
+    const both = { ...contributions, digestion: { '2026-11-05': [
+      { key: 'fodmapFructans', label: 'Fructanes', theme: 'nutrition', horizon: 'short', points: -0.6, value: 2, usual: 0.5 },
+    ] } }
+    const gut = { ...states, showDigestiveCurve: true, days: states.days.map((d) => ({ ...d, observed: { ...d.observed, digestion: !d.future } })) }
+    render(
+      <MemoryRouter initialEntries={['/tendances']}>
+        <Trends now={NOW} readDays={async () => days} readDayStates={async () => gut}
+          readFaceEntries={async () => face} readDayContributions={async () => both} readDayChanges={async () => changes} />
+      </MemoryRouter>,
+    )
+    await screen.findByRole('img', { name: /Courbe/ })
+    if (!screen.queryByRole('img', { name: /Confort digestif/ })) {
+      fireEvent.click(screen.getByRole('button', { name: 'Ajouter une mesure' }))
+      fireEvent.click(within(screen.getByRole('list', { name: 'Mesures à ajouter' })).getByRole('button', { name: /Confort digestif/ }))
+    }
+    expect(screen.getByRole('img', { name: 'Courbe de Bien-être, Confort digestif' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'jeudi 5 novembre' }))
+    const detail = screen.getByRole('group', { name: /Détail du jeudi 5 novembre/ })
+    const weigh = await within(detail).findByRole('region', { name: 'Ce qui a pu jouer ce jour-là' })
+    await waitFor(() => expect(weigh).toHaveTextContent('Sur votre confort digestif'))
+    expect(weigh).toHaveTextContent('Sur votre bien-être')
+  })
+
   it('POLISH-SIM-34 : sous « Sommeil » seul, ni lectures du visage ni facteurs du bien-être', async () => {
     renderAt('/tendances?mesure=sleep')
     await screen.findByRole('img', { name: /Courbe de Sommeil/ })

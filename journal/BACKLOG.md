@@ -808,14 +808,16 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       (« 1 jour à 7 h 30 réussi sur 5 prévus », ou « lanternes : 1 sur 5 ») ; texte seulement, test SLOP d'abord.
       Vérifier au passage pourquoi la ligne « Sans » reste vide au jour 4 (jours 2 et 3 « comme d'habitude ») : outil
       `--legacy` sans note les lendemains, ou défaut.
-    - [ ] **POLISH-SIM-160 — Objectifs › Sommeil : « 2 facteurs comparés » sans les nommer** (J14, capture
+    - [x] **POLISH-SIM-160 — Objectifs › Sommeil : « 2 facteurs comparés » sans les nommer** (J14, capture
       `objectifs-sommeil-vide.png` ; `FamilyDetail` de `Recommendations.jsx` 367, cas sans barres) : nommer les
-      facteurs (« durée du sommeil, heure du coucher »). Test `Recommendations.test.jsx` d'abord.
-    - [ ] **POLISH-SIM-161 — Tendances › Jour : « Ce qui a pu jouer » ignore le ventre quand les deux courbes sont là**
+      facteurs (« durée du sommeil, heure du coucher »). Test `Recommendations.test.jsx` d'abord. **Fait le 24/11
+      21:30** : « 2 facteurs comparés à votre bien-être dans cette famille : sommeil et écran tard le soir. »
+    - [x] **POLISH-SIM-161 — Tendances › Jour : « Ce qui a pu jouer » ignore le ventre quand les deux courbes sont là**
       (J45, capture `jour-23-ce-qui-a-joue.png` ; `Trends.jsx` 97 : le bien-être passe toujours devant) : avec
       Bien-être et Confort digestif affichés, une persona « Ventre » ouvre son jour de douleur et ne lit que son
       bien-être. Donner les deux blocs (un par mesure, chacun son titre), ou le confort digestif d'abord pour qui a
-      cet objectif. Tests `Trends.test.jsx` d'abord.
+      cet objectif. Tests `Trends.test.jsx` d'abord. **Fait le 24/11 21:30** : un bloc par note affichée, dans
+      l'ordre des courbes, chacun sous « Sur votre … » (même sans barre).
     - Écartés, avec la raison, dans la synthèse : signes opposés d'un délai à l'autre (POLISH-SIM-128, tout hachuré) ;
       PDF sans partage (propre à la version web de l'outil) ; version 0.0.0 ; essai libre sans piste (fonction
       nouvelle) ; « Objectifs » sans objectif (nom du propriétaire).

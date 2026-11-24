@@ -156,3 +156,8 @@
   margin: 0 0 8px;
   color: var(--text-muted);
 }
+
+/* POLISH-SIM-161 : bien-être et confort digestif ensemble, un petit écart entre les deux */
+.tdd-weigh + .tdd-weigh {
+  margin-top: 14px;
+}

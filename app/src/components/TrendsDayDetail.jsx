@@ -113,19 +113,25 @@ export function ContributionBars({ items }) {
   )
 }
 
-/**
- * @param {{ face: ReturnType<typeof import('../services/trendsDay').dayFaceDetail> | null,
- *   contributions: object[] | null, outcome?: 'wellbeing'|'digestion'|null, value?: number|null }} props
- */
 const WEIGH_ON = { wellbeing: 'Sur votre bien-être, en points sur 5.', digestion: 'Sur votre confort digestif, en points sur 5.' }
 const WEIGH_NOTE = {
   none: `Rien de marquant ce jour-là parmi ce que ${APP_NAME} compare.`,
   unexplained: `Rien de ce que ${APP_NAME} compare n’explique cette note basse.`,
 }
 
-export default function TrendsDayDetail({ face, contributions, outcome = null, value = null }) {
+/**
+ * @param {{ face: ReturnType<typeof import('../services/trendsDay').dayFaceDetail> | null,
+ *   weighs?: { outcome: 'wellbeing'|'digestion', contributions: object[] | null, value?: number|null }[],
+ *   contributions?: object[] | null, outcome?: 'wellbeing'|'digestion'|null, value?: number|null }} props
+ *   `weighs` : une entrée par note affichée (POLISH-SIM-161) ; sinon `contributions`, `outcome` et `value` pour une seule.
+ */
+export default function TrendsDayDetail({ face, weighs = null, contributions = null, outcome = null, value = null }) {
   // POLISH-SIM-71 : sur quelle note, sans les effets négligeables, et une phrase quand rien ne pèse
-  const weigh = weighView(contributions, value)
+  const views = (weighs ?? [{ outcome, contributions, value }])
+    .map((w) => ({ outcome: w.outcome, weigh: weighView(w.contributions, w.value ?? null) }))
+    .filter((w) => w.weigh)
+  // POLISH-SIM-161 : deux notes, chacune dit la sienne, même sans barre
+  const both = views.length > 1
   return (
     <>
       {face?.mix && (
@@ -148,12 +154,16 @@ export default function TrendsDayDetail({ face, contributions, outcome = null, v
           </p>
         </section>
       )}
-      {weigh && (
+      {views.length > 0 && (
         <section className="tdd-block" aria-label="Ce qui a pu jouer ce jour-là">
           <h3 className="tdd-title">Ce qui a pu jouer ce jour-là</h3>
-          {weigh.items.length > 0 && WEIGH_ON[outcome] && <p className="tdd-text tdd-weigh-on">{WEIGH_ON[outcome]}</p>}
-          {weigh.items.length > 0 && <ContributionBars items={weigh.items} />}
-          {weigh.note && <p className="tdd-text">{WEIGH_NOTE[weigh.note]}</p>}
+          {views.map(({ outcome: o, weigh }) => (
+            <div key={o ?? 'one'} className="tdd-weigh" data-outcome={o ?? undefined}>
+              {(both || weigh.items.length > 0) && WEIGH_ON[o] && <p className="tdd-text tdd-weigh-on">{WEIGH_ON[o]}</p>}
+              {weigh.items.length > 0 && <ContributionBars items={weigh.items} />}
+              {weigh.note && <p className="tdd-text">{WEIGH_NOTE[weigh.note]}</p>}
+            </div>
+          ))}
         </section>
       )}
     </>
