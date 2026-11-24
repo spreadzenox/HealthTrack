@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **24/11 18:30** — **POLISH-SIM-72-iOS-c** (iPhone) : « Variabilité cardiaque, app Santé » au lieu de « … (SDNN) » dans Tendances, la carte des normes et Analyses, distincte de la RMSSD d'une sauvegarde Android ; test de garde. PR prête, merge au run suivant après le build iPhone.
 - **24/11 16:30** — **POLISH-SIM-86b** : plus aucun « FC » visible (« Cœur », « Cœur la nuit », « fréquence cardiaque », comme Sources), test de garde ; `cameraPermission.js` et `requestCamera` natif retirés (code mort). PR prête, merge au run suivant après le build iPhone.
 - **24/11 15:30** — **#1240 mergée** (POLISH-SIM-88 ; 15 checks verts dont le build iPhone, captures iPhone de Tendances relues en clair et en sombre). Run de journal seulement, aucun build de Mac : POLISH-SIM-75 (déjà réglée par POLISH-SIM-107) et POLISH-SIM-98 (disparue avec l'accueil de la refonte) soldées ; `cameraPermission.js` (code mort depuis le 08/11) à retirer dans la prochaine PR qui lance un build iPhone.
 - **24/11 14:30** — **#1239 mergée** (puce « Poids · dès 3 pesées » à la taille de ses voisines ; 15 checks verts dont le build iPhone, captures iPhone de Tendances relues en clair et en sombre). **POLISH-SIM-88** soldée : une note de bien-être d'avant la première lecture du visage apparaît dans Tendances › Jour ; les autres points ont disparu avec la refonte. PR prête, merge au run suivant après le build iPhone.

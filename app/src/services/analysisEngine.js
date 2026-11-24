@@ -171,7 +171,7 @@ export const VARIABLE_META = {
   },
   // Version iOS (HealthTrack-iOS) : VFC de l'app Santé (SDNN), variable à part, jamais mêlée à la RMSSD
   ...(DISTRIBUTION === 'appstore' ? {
-    hrv_sdnn_ms: { label: 'Variabilité cardiaque (SDNN)', unit: 'ms', format: (v) => `${Math.round(v)} ms`, direction: 'higher_better', group: 'lifestyle' },
+    hrv_sdnn_ms: { label: 'Variabilité cardiaque, app Santé', unit: 'ms', format: (v) => `${Math.round(v)} ms`, direction: 'higher_better', group: 'lifestyle' },
   } : {}),
   spo2_pct: {
     label: 'Oxygène du sang',

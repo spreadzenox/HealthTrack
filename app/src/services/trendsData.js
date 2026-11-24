@@ -37,8 +37,9 @@ export const TREND_MEASURES = [
   { key: 'hrv', label: 'Variabilité cardiaque', unit: 'ms', tone: 'rose', field: 'hrv', fmt: (v) => `${n0(v)} ms`,
     gloss: 'mesurée pendant la nuit, en millisecondes' },
   // Version iOS (HealthTrack-iOS) : la VFC de l'app Santé, en SDNN, sa propre courbe, jamais mêlée à la RMSSD (correctif 56)
-  { key: 'hrvSdnn', label: 'Variabilité cardiaque', unit: 'ms', tone: 'rose', field: 'hrvSdnn', fmt: (v) => `${n0(v)} ms`,
-    gloss: 'en millisecondes (SDNN), telle que la mesure l’app Santé' },
+  // POLISH-SIM-72-iOS-c : « , app Santé » la distingue de la RMSSD importée d'Android, sans sigle
+  { key: 'hrvSdnn', label: 'Variabilité cardiaque, app Santé', unit: 'ms', tone: 'rose', field: 'hrvSdnn', fmt: (v) => `${n0(v)} ms`,
+    gloss: 'telle que la mesure l’app Santé, en millisecondes' },
   { key: 'restingHr', label: 'Cœur au repos', unit: 'bpm', tone: 'rose', field: 'restingHr', fmt: (v) => `${n0(v)} bpm`,
     gloss: 'fréquence cardiaque au repos, en battements par minute' },
   { key: 'screen', label: 'Écran', unit: 'h', tone: 'stone', field: 'screenMinutes', cumulative: true, scale: 1 / 60, fmt: (v) => formatDuration(v * 60) },

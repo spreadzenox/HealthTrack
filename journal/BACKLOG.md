@@ -1613,10 +1613,14 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   correctif 32) ; sous la courbe de Tendances : « en millisecondes (SDNN), telle que la mesure l'app Santé ». Si un
   fichier importé d'Android apporte une RMSSD le même jour, la tuile du Journal de l'app Santé dit
   « Variabilité cardiaque, app Santé ». Code embarqué v1037 → v1040.
-- [ ] **POLISH-SIM-72-iOS-c** iPhone : « (SDNN) » reste dans la carte des normes (`sdnnBaseline.js`), dans Analyses
+- [x] **POLISH-SIM-72-iOS-c** iPhone : « (SDNN) » reste dans la carte des normes (`sdnnBaseline.js`), dans Analyses
   (`hrv_sdnn_ms`, correctif 32) et dans la liste des données de l'app Santé (`healthApps.js`, correctif 19) ; aucun
   de ces écrans ne reconnaît la mesure à son libellé. Dans Tendances, si une RMSSD importée d'Android existe aussi,
   le sélecteur propose deux « Variabilité cardiaque » : les distinguer (« , app Santé »).
+  **Fait le 24/11 18:30** : « Variabilité cardiaque, app Santé » dans Tendances (courbe, puces, détail), la carte
+  des normes et les Analyses (`VARIABLE_META`) ; « variabilité cardiaque » dans « qui envoie quoi » ; note de Tendances
+  « telle que la mesure l’app Santé, en millisecondes ». Les phrases (« Variabilité cardiaque plus haute… ») gardent le
+  nom court. Test de garde dans `trendsData.ios.test.js`. Rien ne change sur Android.
 - [x] **POLISH-SIM-73** (Tout mesurer J45) La sauvegarde s'appelle `healthtrack-export-AAAA-MM-JJ.json` : nom de la
   marque (`config/brand.js`) ; l'import d'anciens fichiers ne dépend pas du nom (à vérifier par test).
   **Fait le 14/11 02:35** : `halcya-export-AAAA-MM-JJ.json` (`EXPORT_FILE_PREFIX`, dérivé de `APP_NAME`) ; l'import

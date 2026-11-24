@@ -62,6 +62,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 24/11 18:30 — [Variabilité cardiaque sans sigle](runs/2026-11-24-1830-vfc-sans-sigle.md) | 🔧 | POLISH-SIM-72-iOS-c : sur iPhone, le sigle « SDNN » disparaît ; la mesure de l'app Santé s'appelle « Variabilité cardiaque, app Santé » dans Tendances, votre norme et Analyses (elle se distingue de celle d'une sauvegarde Android). Android inchangé. PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 24/11 17:30 — [#1242 mergée](runs/2026-11-24-1730-merge-coeur.md) | 📓 | **#1242 mergée** : « Cœur » remplace « FC » partout dans l'app (build iPhone vert, captures iPhone de Ma journée et de Tendances › Jour relues). Run court de journal, sans build de Mac. Rien à faire de votre côté |
 | 24/11 16:30 — [« Cœur » au lieu de « FC »](runs/2026-11-24-1630-coeur-au-lieu-de-fc.md) | 🔧 | POLISH-SIM-86b : le sigle « FC » disparaît de l'app (« Cœur », « Cœur la nuit », « fréquence cardiaque », comme dans Sources). Code mort de l'appareil photo de l'iPhone retiré. PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 24/11 15:30 — [#1240 mergée, backlog relu](runs/2026-11-24-1530-backlog-releve.md) | 📓 | **#1240 mergée** (vos notes d'avant la caméra dans Tendances › Jour ; build iPhone vert, captures relues). Run de journal sans build de Mac : deux défauts signalés par les personas étaient déjà réglés ou ont disparu avec la refonte, rayés du backlog. Rien à faire de votre côté |

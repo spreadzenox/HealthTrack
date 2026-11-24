@@ -17,7 +17,7 @@ const hrv = (day, value, subtype) => ({
 
 describe('Analyses sur iPhone : la VFC de l’app Santé (SDNN)', () => {
   it('est une variable à part, mesurée (inconnue un jour sans valeur, pas 0)', () => {
-    expect(VARIABLE_META.hrv_sdnn_ms).toMatchObject({ label: 'Variabilité cardiaque (SDNN)', unit: 'ms', direction: 'higher_better' })
+    expect(VARIABLE_META.hrv_sdnn_ms).toMatchObject({ label: 'Variabilité cardiaque, app Santé', unit: 'ms', direction: 'higher_better' })
     expect(MEASURED_KEYS).toContain('hrv_sdnn_ms')
   })
 

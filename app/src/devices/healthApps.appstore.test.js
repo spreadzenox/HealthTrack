@@ -10,11 +10,11 @@ describe('« qui envoie quoi » avec la VFC de l’app Santé (SDNN, iPhone)', (
     expect(metricKey({ type: 'heart_rate', payload: { subtype: 'heartRateVariabilitySdnn' } })).toBe('heartRateVariabilitySdnn')
   })
 
-  it('libellée « variabilité cardiaque (SDNN) », jamais réclamée à une montre (aucune montre Android n’en envoie)', () => {
+  it('libellée « variabilité cardiaque », sans sigle,, jamais réclamée à une montre (aucune montre Android n’en envoie)', () => {
     const now = new Date('2026-10-28T08:00:00Z')
     const cov = sourceCoverage([{ at: '2026-10-28T06:00:00Z', type: 'heart_rate', payload: { subtype: 'heartRateVariabilitySdnn', value: 48 } }], now)
     expect(cov).toHaveLength(1)
-    expect(cov[0]).toMatchObject({ key: 'heartRateVariabilitySdnn', label: 'variabilité cardiaque (SDNN)' })
+    expect(cov[0]).toMatchObject({ key: 'heartRateVariabilitySdnn', label: 'variabilité cardiaque' })
     expect(METRICS.find((m) => m.key === 'heartRateVariabilitySdnn').watch).toBeFalsy()
   })
 
