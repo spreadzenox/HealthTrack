@@ -109,14 +109,9 @@ if [ -d "$ROOT/ios" ]; then
   cp -R "$ROOT/ios" "$DEST/app/ios"
 fi
 
-# Des tests de overlay/ relisent les workflows par leur chemin du dépôt iOS (../../.github/workflows depuis
-# upstream/app, soit iphone/.github/workflows) : copie de ceux de la racine, sous leurs deux noms (ignorée par git)
+# Les tests de l'iPhone lisent désormais les workflows à la racine du dépôt (app/src/ios/iphonePaths.js, 24/11) :
+# l'ancienne copie dans iphone/.github n'a plus lieu d'être
 rm -rf "$ROOT/.github"
-mkdir -p "$ROOT/.github/workflows"
-for wf in "$REPO"/.github/workflows/ios-*.yml; do
-  cp "$wf" "$ROOT/.github/workflows/$(basename "$wf")"
-  cp "$wf" "$ROOT/.github/workflows/$(basename "$wf" | sed 's/^ios-//')"
-done
 
 NPATCHES=0
 [ -n "${PATCHES[*]+x}" ] && NPATCHES=${#PATCHES[@]}

@@ -3,12 +3,13 @@ import process from 'node:process'
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { stripComments } from '../data/wordingRules.js'
+import { iosDir } from './iphonePaths.js'
 
 // Version iOS (HealthTrack-iOS, Android v765, WEBVIEW-MIN) : le code partagé utilise des fonctions récentes que Vite
 // ne transpile pas (`Object.hasOwn`, `.at()`…). Android déclare la WebView qui les porte (`minWebViewVersion`) ; sur
 // iPhone, c'est la version d'iOS minimale de l'app (`IPHONEOS_DEPLOYMENT_TARGET`), sans quoi l'app resterait blanche
 // sur un iPhone plus ancien. Même liste qu'Android, avec la version d'iOS (Safari) qui apporte chaque fonction.
-// Vitest tourne depuis upstream/app, où scripts/upstream.sh a copié ios/
+// Projet natif lu par iosDir() : depuis app/ (tests d'Android) comme depuis upstream/app (build iOS)
 const RUNTIME_APIS = [
   { re: /\bObject\.hasOwn\(/, ios: [15, 4] },
   { re: /\.at\(-?\d/, ios: [15, 4] },
@@ -22,7 +23,7 @@ const RUNTIME_APIS = [
 ]
 const ge = ([a, b], [c, d]) => a > c || (a === c && b >= d)
 
-const pbxproj = readFileSync(join(process.cwd(), 'ios/App/App.xcodeproj/project.pbxproj'), 'utf8')
+const pbxproj = readFileSync(join(iosDir(), 'App/App.xcodeproj/project.pbxproj'), 'utf8')
 const targets = [...pbxproj.matchAll(/IPHONEOS_DEPLOYMENT_TARGET = (\d+)\.(\d+);/g)].map((m) => [Number(m[1]), Number(m[2])])
 
 function sourceFiles(dir) {

@@ -1008,6 +1008,15 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   12 tests verts). `iphone/scripts/site.mjs` et `ios-site.yml` lisent `app/public/`. L'APK embarque ces 4 fichiers
   (≈ 52 Ko, jamais liés hors iPhone : `More.jsx` ne les montre qu'avec `FEATURES.iosStore`). Restent dans `overlay/` :
   les 40 notes `["appstore"]` et 11 tests qui relisent `iphone/` ou les workflows.
+  24/11 11:30 : les 10 derniers tests de l'iPhone sortent d'`overlay/` (`app/src/ios/` : abonnements, version d'iOS
+  minimale, manifeste de confidentialité, dossier de la copie de secours, nom du magasin, textes, phrases d'usage ;
+  `app/src/pages/*.css.appstore.test.js` ; `app/src/settings/onboarding.appstore.test.js`). Ils trouvent le projet
+  natif, la fiche App Store et les workflows par `app/src/ios/iphonePaths.js` (app/ios s'il existe, sinon
+  iphone/ios ; racine du dépôt = premier parent qui contient iphone/ios) : 248 tests verts depuis `app/` comme depuis
+  `iphone/upstream/app`. `upstream.sh` ne copie plus les workflows dans `iphone/.github`. **`overlay/` ne garde que
+  les notes `["appstore"]` et leur test** (`changelog.appstore.test.js`, qui a besoin de ces notes) : chemin fixé par
+  le prompt. Suite : étape 3, `ios/` → `app/ios/` (à décider : elle demande que les notes iPhone vivent dans
+  `app/src/data/changelog/`, contraire au chemin du prompt ; question à l'orchestrateur).
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
