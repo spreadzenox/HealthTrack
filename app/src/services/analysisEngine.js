@@ -156,7 +156,7 @@ export const VARIABLE_META = {
     group: 'lifestyle',
   },
   avgHR: {
-    label: 'FC moyenne (journée)',
+    label: 'Cœur, moyenne du jour',
     unit: 'bpm',
     format: (v) => `${Math.round(v)} bpm`,
     direction: 'neutral',
@@ -484,7 +484,7 @@ export const VARIABLE_META = {
     group: 'body',
   },
   standing_hr_bpm: {
-    label: 'FC debout (balance)',
+    label: 'Cœur debout (balance)',
     unit: 'bpm',
     format: (v) => `${Math.round(v)} bpm`,
     direction: 'neutral',

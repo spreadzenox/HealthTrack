@@ -14,7 +14,7 @@ describe('Journal : VFC en SDNN (iPhone)', () => {
     expect(day.summary.hrv).toBeNull()
     const chips = summaryChips(day.summary)
     expect(chips).toContainEqual(['Variabilité cardiaque', '48 ms', undefined, 'hrvSdnn'])
-    expect(chips).toContainEqual(['FC', '70 bpm']) // la SDNN n'entre pas dans la fréquence cardiaque
+    expect(chips).toContainEqual(['Cœur', '70 bpm']) // la SDNN n'entre pas dans la fréquence cardiaque
     expect(chips.map(([label]) => label)).not.toContain('VFC')
   })
 
@@ -67,7 +67,7 @@ describe('Journal : pas de score de nuit sans montre qui le donne (iPhone)', () 
       const labels = summaryChips(day.summary).map(([label]) => label)
       expect(labels).toContain('Sommeil')
       expect(labels).not.toContain('Score montre')
-      expect(labels).not.toContain('FC nuit')
+      expect(labels).not.toContain('Cœur la nuit')
     }
   })
 })

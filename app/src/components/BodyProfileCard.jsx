@@ -31,7 +31,7 @@ const COMPOSITION_FIELDS = [
   ['bmrKcal', 'Métabolisme basal', 'kcal'],
   ['visceralFatIndex', 'Graisse viscérale', ''],
   ['vascularAgeYears', 'Âge vasculaire', 'ans'],
-  ['standingHrBpm', 'FC debout', 'bpm'],
+  ['standingHrBpm', 'Cœur debout', 'bpm'],
   ['pwvMps', 'Vitesse d’onde de pouls', 'm/s'],
 ]
 

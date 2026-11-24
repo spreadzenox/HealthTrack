@@ -974,7 +974,7 @@ export class HealthConnectConnector extends BaseConnector {
       // tout l'historique) ; avant, une seule lecture gardait les 2 000 plus anciens échantillons.
       const hrStart = isHistorical ? new Date(Date.parse(endDate) - 30 * DAY_MS).toISOString() : startDate
       const samples = await readSamplesInWindows(Health, { dataType: 'heartRate', startDate: hrStart, endDate, limit: 2000 })
-      debugInfo(TAG, `FC : ${samples.length} entrées récupérées`)
+      debugInfo(TAG, `Fréquence cardiaque : ${samples.length} entrées récupérées`)
       const entries = samples.map((s) => ({
         type: 'heart_rate',
         source: 'health_connect',
@@ -991,7 +991,7 @@ export class HealthConnectConnector extends BaseConnector {
       await writer(entries)
       synced += entries.length
     } catch (e) {
-      debugError(TAG, `Erreur lecture FC : ${e?.message || e}`, { error: e })
+      debugError(TAG, `Erreur lecture fréquence cardiaque : ${e?.message || e}`, { error: e })
       errors.push(`heartRate: ${e.message || e}`)
     }
 

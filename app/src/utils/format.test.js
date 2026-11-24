@@ -152,7 +152,7 @@ describe('séances de la montre (M7)', () => {
   it('allure en min:s par km, FC moyenne, rien si la montre n’a rien envoyé', () => {
     expect(formatPace(324)).toBe('5:24 /km')
     expect(formatPace(299.6)).toBe('5:00 /km')
-    expect(workoutDetailParts({ avgHeartRate: 135, paceSplitsSecPerKm: [330, 318] })).toEqual(['FC moy. 135 bpm', '5:24 /km'])
+    expect(workoutDetailParts({ avgHeartRate: 135, paceSplitsSecPerKm: [330, 318] })).toEqual(['cœur 135 bpm en moyenne', '5:24 /km'])
     expect(workoutDetailParts({ workoutType: 'yoga' })).toEqual([])
     expect(workoutDetailParts(null)).toEqual([])
   })

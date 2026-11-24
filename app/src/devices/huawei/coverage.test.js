@@ -57,7 +57,7 @@ describe('watchCoverage (écran « Montre », M5)', () => {
     // Le total du jour rendu par la montre l'emporte sur la somme des heures
     expect(row(rows, 'steps')).toMatchObject({ count: 1, unit: 'jour', last: { value: '4 321 pas' } })
     expect(row(rows, 'calories').last.value).toBe('210 kcal')
-    expect(row(rows, 'workouts').last.value).toBe('Course à pied · 45 min · FC moy. 142 bpm · 5:24 /km')
+    expect(row(rows, 'workouts').last.value).toBe('Course à pied · 45 min · cœur 142 bpm en moyenne · 5:24 /km')
   })
 
   it('ne compte que la montre en direct, et dit « plus ancien » au-delà de 7 jours', () => {

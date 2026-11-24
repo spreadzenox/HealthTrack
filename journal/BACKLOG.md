@@ -1022,6 +1022,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   (`ios/PermissionsStep.jsx`, correctif 46), retirée le 08/11 avec le nouvel accueil (PARITE.md, ligne du 8/11 19:00) :
   l'appareil photo se demande à l'activation de la lecture du visage. À faire dans la prochaine PR qui lance de toute
   façon un build iPhone (pas de build de Mac pour du code mort seul : CI économe).
+  **Fait le 24/11 16:30** : `ios/cameraPermission.js`, son test et `requestCamera` de `FaceSensePlugin.swift` retirés
+  (rien d'autre ne l'appelait), dans la PR de POLISH-SIM-86b.
 - [ ] **FUSION-4** : pages publiques de l'iPhone servies par le site de ce dépôt (`/HealthTrack/iphone/`, `pages.yml`),
   adresses de la fiche App Store changées à la version suivante ; « Votre avis » de l'iPhone (correctif 27) vers ce
   dépôt ; ensuite seulement, l'ancien dépôt peut être archivé (geste du propriétaire, à préparer en mission).
@@ -1696,8 +1698,13 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   repos », « SpO₂ », « Saturation en oxygène ») ; les correctifs 20 et 21 et deux tests de l'overlay ne les disent
   qu'en commentaire ; test de garde vert sur le code embarqué (3902 tests). Reste à regarder les captures iPhone du
   Journal avant le merge de #970.
-- [ ] **POLISH-SIM-86b** « FC » (tuile du Journal, « FC nuit », « FC automatique ») à côté de « fréquence cardiaque »
+- [x] **POLISH-SIM-86b** « FC » (tuile du Journal, « FC nuit », « FC automatique ») à côté de « fréquence cardiaque »
   et « cœur » dans Sources : choisir un nom, même méthode.
+  **Fait le 24/11 16:30** : plus aucun « FC » dans les textes de `src/` (hors commentaires et `huawei/sync.js`) :
+  « Cœur » (fourchette du jour), « Cœur la nuit », « Cœur, moyenne du jour » et « Cœur debout (balance) » (Analyses),
+  « Cœur debout » (balance), « cœur 135 bpm en moyenne » (séances de la montre), « cœur à … bpm en moyenne »
+  (capteur Bluetooth), « fréquence cardiaque » dans le guide Health Connect, le journal technique et l'association de
+  la montre. Test de garde `measureNames.test.js` (`/\bFC\b/`). iPhone : code partagé.
 - [x] **POLISH-SIM-87** Accueil, écran 04/06 : bouton « Continuer sans » (sans quoi ?) ; l'écran 01 parle de « votre
   montre » à tout le monde. **Fait le 14/11 15:35** : le bouton dit « Continuer » ; la première phrase dit « vos
   appareils » et la pastille de l'illustration « Appareils » (`Onboarding.jsx`). Reste **POLISH-SIM-87b** : l'écran 04/06 ne dit
@@ -1743,7 +1750,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   Le dessiner comme partiel (point creux) ou l'écarter du tracé.
   **Déjà fait par POLISH-SIM-127 (20/11)** : pas et écran (`cumulative`) n'ont pas de point aujourd'hui en Semaine
   ni en Mois ; constaté le 24/11 12:30 dans `trendsData.js`.
-- [ ] **POLISH-SIM-96** (à vérifier) Journal › Jours : tuile « FC » (écrire « Cœur ») ; étiquette « Écran tard »
+- [ ] **POLISH-SIM-96** (à vérifier) Journal › Jours : tuile « FC » (écrire « Cœur » : **fait le 24/11 16:30, POLISH-SIM-86b**) ; étiquette « Écran tard »
   d'une note de bien-être sans origine.
 - [x] **POLISH-SIM-97** (Maigrir J1) Nutrition au 1er jour : « des repas manquent sans doute, apports sous-estimés »
   après un seul repas noté. Ne pas l'afficher le premier jour de saisie.
