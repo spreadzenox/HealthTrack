@@ -1726,6 +1726,8 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   et sous « Choisissez une courbe » (« Poids · dès 3 pesées », sinon « · dès 3 jours ») ; « + » s'affiche aussi
   quand seule une mesure en attente peut s'y ajouter (avec les seuls Pas, il manquait) ; sans aucune courbe, une
   seule pesée dit « Poids : la courbe arrive à 3 pesées. » au lieu du message général. iPhone : code partagé.
+  **24/11 13:30** : #1238 mergée ; la puce grisée reprenait `is-daily` (44 px de haut) au milieu des puces de 32 px
+  de « + » : elle a désormais son propre style (`is-pending`), à la taille de la liste où elle se trouve.
 - [x] **POLISH-SIM-95** (Sportif J45) Tendances › Mois : le point du jour en cours fait plonger la courbe des pas.
   Le dessiner comme partiel (point creux) ou l'écarter du tracé.
   **Déjà fait par POLISH-SIM-127 (20/11)** : pas et écran (`cumulative`) n'ont pas de point aujourd'hui en Semaine
