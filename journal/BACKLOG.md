@@ -797,6 +797,32 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       Tendances n'a que Sommeil et Pas pour une Galaxy Watch) : proposition au propriétaire. Poids, 3e persona qui le
       cherche (21, 22 et 23/11) : pesée seulement dans Données › Nutrition › Compléter mon profil, rien dans Ma
       journée › Autre chose ni dans Objectifs ; maquette faite le 24/11 08:30 (PROP-SIM-19, `maquettes/poids/`).
+  - **Passage des personas du 24/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-24-2030-synthese.md) ;
+    « Ventre et données » J45, Android seul, et « Tout mesurer » J14 après mise à jour, Android + Amazfit par Zepp) :
+    - [ ] **POLISH-SIM-158 — Tendances : « Pas » disparaît de « + » sans un mot** (J14, capture
+      `tendances-selecteur.png` ; `canAddMeasure` de `trendsData.js` 133 : deux unités au plus) : avec Bien-être (/5)
+      et Sommeil (h), Pas n'est plus proposé. Le montrer grisé avec « Deux unités au plus : retirez une courbe ». Test
+      `Trends.test.jsx` d'abord.
+    - [ ] **POLISH-SIM-159 — Essai : « Jour 4 sur 10 » puis « 1 jour réussi sur 5 »** (J14, capture `essai-jour4.png` ;
+      `Trial.jsx` 179, `goal` = jours « avec » du tirage) : deux totaux côte à côte. Dire ce que compte le second
+      (« 1 jour à 7 h 30 réussi sur 5 prévus », ou « lanternes : 1 sur 5 ») ; texte seulement, test SLOP d'abord.
+      Vérifier au passage pourquoi la ligne « Sans » reste vide au jour 4 (jours 2 et 3 « comme d'habitude ») : outil
+      `--legacy` sans note les lendemains, ou défaut.
+    - [ ] **POLISH-SIM-160 — Objectifs › Sommeil : « 2 facteurs comparés » sans les nommer** (J14, capture
+      `objectifs-sommeil-vide.png` ; `FamilyDetail` de `Recommendations.jsx` 367, cas sans barres) : nommer les
+      facteurs (« durée du sommeil, heure du coucher »). Test `Recommendations.test.jsx` d'abord.
+    - [ ] **POLISH-SIM-161 — Tendances › Jour : « Ce qui a pu jouer » ignore le ventre quand les deux courbes sont là**
+      (J45, capture `jour-23-ce-qui-a-joue.png` ; `Trends.jsx` 97 : le bien-être passe toujours devant) : avec
+      Bien-être et Confort digestif affichés, une persona « Ventre » ouvre son jour de douleur et ne lit que son
+      bien-être. Donner les deux blocs (un par mesure, chacun son titre), ou le confort digestif d'abord pour qui a
+      cet objectif. Tests `Trends.test.jsx` d'abord.
+    - Écartés, avec la raison, dans la synthèse : signes opposés d'un délai à l'autre (POLISH-SIM-128, tout hachuré) ;
+      PDF sans partage (propre à la version web de l'outil) ; version 0.0.0 ; essai libre sans piste (fonction
+      nouvelle) ; « Objectifs » sans objectif (nom du propriétaire).
+    - À étudier : cœur et oxygène du sang reçus mais visibles nulle part (2ᵉ persona : proposition avec maquette au
+      prochain run « idées ») ; une seule note « Douleur » (1) lissée à 2,5 (banc avant tout changement) ; onglet
+      Données allumé pendant un repas ouvert depuis Ma journée (2ᵉ persona) ; puces « Hier midi / Hier soir » pour
+      l'heure d'un repas ; l'export CSV ne dit pas ce qu'il contient.
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
