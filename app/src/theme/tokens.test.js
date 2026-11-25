@@ -88,6 +88,20 @@ describe('tokens de design', () => {
       expect(contrast(theme['lilac-track'], theme['lilac-bg'])).toBeGreaterThanOrEqual(1.4)
       expect(contrast(theme['lilac-bar'], theme['lilac-track'])).toBeGreaterThanOrEqual(3)
     })
+
+    it(`gardent le texte d'un bouton secondaire touché lisible sur son fond teinté (thème ${name}, POLISH-CONTRASTE-FOCUS)`, () => {
+      // Après un toucher, le bouton reste « survolé » : fond teinté de la marque, texte de la règle :hover.
+      const css = readFileSync(join(SRC, 'App.css'), 'utf8')
+      const rule = css.slice(css.indexOf('.btn-secondary:hover'), css.indexOf('}', css.indexOf('.btn-secondary:hover')))
+      const alpha = Number(rule.match(/rgba\(var\(--brand-rgb\),\s*([\d.]+)\)/)[1])
+      const alias = { accent: 'color-brand', 'accent-dim': 'color-ok' }
+      const textVar = rule.match(/\bcolor:\s*var\(--([\w-]+)\)/)?.[1] ?? 'accent'
+      const text = theme[alias[textVar] ?? textVar]
+      const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16))
+      const [b, s] = [hex(theme['color-brand']), hex(theme['color-surface'])]
+      const tinted = '#' + b.map((v, i) => Math.round(v * alpha + s[i] * (1 - alpha)).toString(16).padStart(2, '0')).join('')
+      expect(contrast(text, tinted)).toBeGreaterThanOrEqual(4.5)
+    })
   }
 
   it('sont la seule source de couleurs des feuilles de style', () => {
