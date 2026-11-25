@@ -13,6 +13,8 @@
  *                             d'alors (objectifs de --goals, ex. sport,cycle, sans version d'objectifs), Nouveautés
  *                             vues jusqu'au 14/11, un essai d'Agir en cours ; aucune habitude
  *     [--notes=few]           profil de saisie : full (défaut) ou few (persona pressée, presque rien de noté)
+ *     [--face=off]            persona qui n'a jamais activé la lecture du visage : aucune lecture (POLISH-SIM-65) ;
+ *                             à tirer pour une part des personas « téléphone seul » (défaut : on)
  *     [--source=Zepp]         app qui écrit dans Health Connect, selon le téléphone ou la montre tirés (Pixel : « Google Fit » ;
  *                             Amazfit : Zepp ; Xiaomi : Mi Fitness) ; défaut selon --equipment (Samsung Health, Fitbit…)
  *
@@ -139,7 +141,8 @@ if (day > 1) {
 const page = await context.newPage()
 await page.goto(base, { waitUntil: 'load' })
 const sourceName = args.source ? String(args.source) : undefined
-const entries = personaEntries(generateDemoEntries(), { day, equipment, notes, goals: legacy ? goals : [...goals, ...freshOnboarding({ goals }).goals], sourceName })
+const face = String(args.face || 'on')
+const entries = personaEntries(generateDemoEntries(), { day, equipment, notes, goals: legacy ? goals : [...goals, ...freshOnboarding({ goals }).goals], sourceName, face })
   .concat(legacy && day > 1 ? [legacyTrial()] : [])
 await page.evaluate(async (list) => {
   await new Promise((res) => { const q = indexedDB.deleteDatabase('HealthTrack'); q.onsuccess = q.onerror = q.onblocked = () => res() })

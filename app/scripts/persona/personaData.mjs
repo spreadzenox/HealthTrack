@@ -113,14 +113,19 @@ function keepForNotes(entry, notes) {
  * Jour d'usage : jour 1 = installation du jour (aucune saisie dans l'app, l'onboarding n'est pas fait ; une montre
  * apporte ses 30 derniers jours importés) ; jour N = N jours de données (aujourd'hui compris).
  */
-export function personaEntries(entries, { day, equipment, notes = 'full', goals = [], sourceName, now = new Date() }) {
+/** Lecture du visage : `on` (défaut) ou `off` pour une persona qui n'a jamais activé la caméra (POLISH-SIM-65). */
+export const FACE = ['on', 'off']
+
+export function personaEntries(entries, { day, equipment, notes = 'full', goals = [], sourceName, face = 'on', now = new Date() }) {
   if (!NOTES.includes(notes)) throw new Error(`Profil de saisie inconnu : ${notes} (attendu : ${NOTES.join(', ')})`)
+  if (!FACE.includes(face)) throw new Error(`Lecture du visage inconnue : ${face} (attendu : ${FACE.join(', ')})`)
   const start = (n) => { const d = new Date(now); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (n - 1)); return d }
   const from = day <= 1 ? start(30) : start(day)
   return entries.filter((e) => {
     const at = new Date(e.at)
     if (at < from || at > now) return false
     if (day <= 1 && (APP_TYPES.has(e.type) || CONTEXT_TYPES.has(e.type))) return false
+    if (face === 'off' && e.type === 'face_burst') return false
     return keepForEquipment(e, equipment) && keepForNotes(e, notes)
   }).map((e) => withSourceName(e, equipment, sourceName))
     .concat(spo2Entries({ from, now, equipment, sourceName }))

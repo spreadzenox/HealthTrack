@@ -1680,7 +1680,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   une ligne ce qui a été comparé.
 - [x] **POLISH-SIM-63** ✅ 13/11 20:35 (`keepForEquipment` écarte toute cigarette ; test) (Outil, Sportif J14) La persona voit « Cigarettes 3 » sans avoir activé le compteur
   (POLISH-SIM-42 : opt-in) : `personaData` garde les cigarettes de la démo. Les retirer sauf objectif tabac.
-- [ ] **POLISH-SIM-65** (Outil, 12/11 17:35) `personaData` donne des lectures du visage à toutes les personas, même
+- [x] **POLISH-SIM-65** (Outil, 12/11 17:35 ; **fait le 26/11 00:30** : option `face: 'off'` de `personaEntries` et `--face=off` de `persona-browse.mjs`, aucune entrée `face_burst`, le reste identique ; test `personaData.test.mjs` ; tirage dans `PERSONAS.md`) `personaData` donne des lectures du visage à toutes les personas, même
   « téléphone seul » qui dit n'avoir jamais activé la caméra : une option `--face=off` (aucune entrée `face_burst`),
   tirée pour une part des personas, pour voir l'app sans bien-être lu.
 - [ ] **JOURNAL-CAPTURES-1** (12/11 17:35) 16 captures citées dans le résumé S46 (12/11 00:35 à 15:35) ne sont pas
@@ -1690,7 +1690,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   mesure de Tendances (durée par jour, superposable au bien-être) : nouvelle mesure, donc à proposer au propriétaire.
 - [x] **POLISH-SIM-66** ✅ 13/11 20:35 (`SCALE_TYPES` : ni `weight` ni `body_composition` hors `full` ; test) (Outil, 13/11 17:45) `keepForEquipment('watch')` écarte `weight` mais garde `body_composition` :
   la persona Galaxy Watch sans balance voit une « Pesée Withings Body Scan ». L'écarter aussi (et pour `watch-hrv`, `huawei`).
-- [ ] **POLISH-SIM-64** (Outil) `persona-browse.mjs --dark` ne règle que le `colorScheme` du navigateur : l'app reste en
+- [x] **POLISH-SIM-64** (Outil ; **soldée le 26/11 00:30** : déjà fait par POLISH-SIM-81b, `persona-browse.mjs` écrit `healthtrack_theme=dark`) `persona-browse.mjs --dark` ne règle que le `colorScheme` du navigateur : l'app reste en
   clair. Régler aussi le thème de l'app (comme `visual-check --dark`).
 - **Simulations du 13/11 20:35** ([synthèse](simulations/2026-11-13-2035-synthese.md) ; Ventre sans technique J45,
   Tout mesurer J45). Ordre proposé : 67, 68, 69, 70, 71, puis le reste après vérification.
