@@ -1,90 +1,106 @@
 // Les six poses pré-rendues du widget de Pilou (specs/journee.SPEC.md § 9 ; brief § 7.9 : images pré-rendues depuis
-// la scène, pas un second canevas). Rendues dans Chromium depuis le code du kit (rendu/figurine), puis cadrées,
-// teintées (soir orangé, nuit bleutée), arrondies et écrites en WebP 288 px dans res/drawable-nodpi.
+// la scène, pas un second canevas). Rendues dans Chromium depuis le vrai modèle (src/companion/pilou/createPilou.js,
+// par son banc d'essai servi par Vite), puis posées sur le fond crème, cadrées, teintées (soir orangé, nuit bleutée),
+// arrondies et écrites en WebP 288 px dans res/drawable-nodpi (WIDGET-POSES). Les deux vignettes des notifications de
+// l'iPhone (public/companion/pilou_pose_content.jpg et pilou_pose_soir.jpg) sont tirées des mêmes images.
+// Le widget garde le Pilou d'origine (sans les traits du Studio) tant que l'aperçu 3D du Studio n'est pas tranché.
 //
-// Usage (depuis app/) : node scripts/companion/render-widget-poses.mjs [--three <dossier build de three@0.187.0>]
-// Sans --three : node_modules/three/build. Demande ImageMagick (`convert`) et le Chromium de Playwright.
-// Quand le module du lot PILOU (src/companion/pilou/) sera sur main, ce script pourra le prendre à la place du kit.
+// Usage (depuis app/) :
+//   node scripts/companion/render-widget-poses.mjs           # écrit les 6 WebP et les 2 JPEG
+//   node scripts/companion/render-widget-poses.mjs --check   # rend deux fois sans rien écrire : mêmes octets ?
+// Demande ImageMagick (`convert`) et le Chromium de Playwright.
 import { createRequire } from 'node:module'
-import { createServer } from 'node:http'
-import { copyFileSync, cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createServer } from 'vite'
 
 const require = createRequire(import.meta.url)
 const { chromium } = require('playwright')
 const APP = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
-const KIT = path.resolve(APP, '../journal/maquettes/compagnon/rendu/figurine')
 const OUT = path.join(APP, 'android/app/src/main/res/drawable-nodpi')
-const args = process.argv.slice(2)
-const threeDir = args.includes('--three') ? args[args.indexOf('--three') + 1] : path.join(APP, 'node_modules/three/build')
+const JPEG = path.join(APP, 'public/companion')
+const check = process.argv.includes('--check')
 
-// pose du widget → expression de anim.js, instant de son animation propre (ms), lueur du point ambre
+// pose du widget → expression de animateur.js, instant de l'image figée (ms depuis le début de l'expression)
 const POSES = {
-  content: ['content', null, null],
-  'se-reveille': ['reveil', 1150, null],
-  rassasie: ['rassasie', 400, null],
-  soir: ['tranquille', null, 0.9],
-  dort: ['endormi', null, 1.0],
-  fete: ['rayonnant', 300, null],
+  content: ['content', 2200],
+  'se-reveille': ['reveil', 1150],
+  rassasie: ['rassasie', 2200],
+  soir: ['tranquille', 2200],
+  dort: ['endormi', 2200],
+  fete: ['rayonnant', 1900],
 }
 // teinte multipliée par-dessus (dégradé haut → bas), comme la lumière du cycle du jour (world/daylight.js)
 const TINTS = { soir: ['#E8B4E0', '#FFD2A8', '100,105'], dort: ['#5E68A8', '#8C8CC8', '125,90'] }
+const FOND = '#F6E7D8'
+const TAILLE = 288 // px CSS du canevas du banc ; rendu en dpr 2 → 576 × 634
 
-const PAGE = `<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#F6E7D8}#c{width:390px;height:330px;display:block}</style></head>
-<body><canvas id="c"></canvas><script type="module">
-import { createFigurine } from './figurine.js';
-import { preset, EXPR } from './anim.js';
-const fig = createFigurine({ canvas: document.getElementById('c'), width: 390, height: 330, pixelRatio: 2, mode: 'petit' });
-const az = -.1, el = .16, d = 7.2, look = [0, .8, 0];
-const cam = { pos: [d * Math.cos(el) * Math.sin(az), look[1] + d * Math.sin(el), d * Math.cos(el) * Math.cos(az)], look, fov: 20 };
-window.pose = (name, u, glow) => { const P = preset(name); if (u != null && EXPR[name].anim) EXPR[name].anim(P, u, 1); if (glow != null) P.glow = glow;
-  fig.render({ t: 2, pose: P, cam, drop: { grow: 0, fall: -1 }, exposure: 1.02, shadowR: .23 }); return true; };
-window.__ready = true;
-</script></body></html>`
+async function renderAll(dir) {
+  const server = await createServer({ root: APP, logLevel: 'error', server: { port: 0, host: '127.0.0.1' } })
+  await server.listen()
+  const base = server.resolvedUrls.local[0].replace(/\/$/, '')
+  const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] })
+  const errors = []
+  const page = await browser.newPage({ viewport: { width: TAILLE, height: Math.ceil(TAILLE * 1.1) }, deviceScaleFactor: 1 })
+  page.on('pageerror', (e) => errors.push(String(e)))
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()) })
+  const files = {}
+  try {
+    for (const [pose, [expr, t]] of Object.entries(POSES)) {
+      const q = new URLSearchParams({ expr, t, taille: TAILLE, dpr: 2, capture: 1, camera: 1 })
+      await page.goto(`${base}/src/companion/pilou/banc/index.html?${q}`)
+      await page.waitForFunction(() => window.banc?.pret, null, { timeout: 120000 })
+      const data = await page.evaluate(() => document.getElementById('vue').toDataURL('image/png'))
+      const raw = path.join(dir, `${pose}.png`)
+      writeFileSync(raw, Buffer.from(data.split(',')[1], 'base64'))
+      // fond crème sous l'image transparente, carré du haut (Pilou entier, pieds et antenne compris)
+      const sq = path.join(dir, `${pose}-sq.png`)
+      execFileSync('convert', ['-size', '576x634', `xc:${FOND}`, raw, '-compose', 'over', '-composite', '-crop', '576x576+0+40', '+repage', sq])
+      if (TINTS[pose]) {
+        const [top, bottom, mod] = TINTS[pose]
+        execFileSync('convert', [sq, '(', '-size', '576x576', `gradient:${top}-${bottom}`, ')', '-compose', 'multiply', '-composite', '-modulate', mod, sq])
+      }
+      const name = `pilou_pose_${pose.replace(/-/g, '_')}`
+      const webp = path.join(dir, `${name}.webp`)
+      execFileSync('convert', [sq, '-filter', 'Lanczos', '-resize', '288x288', '-alpha', 'set',
+        '(', '-size', '288x288', 'xc:none', '-fill', 'white', '-draw', 'roundrectangle 0,0,287,287,40,40', ')',
+        '-compose', 'DstIn', '-composite', '-strip', '-quality', '88', '-define', 'webp:method=6', webp])
+      files[`${name}.webp`] = webp
+      if (pose === 'content' || pose === 'soir') {
+        // vignette des notifications de l'iPhone : carrée, sans coins arrondis (iOS les arrondit lui-même)
+        const jpg = path.join(dir, `${name}.jpg`)
+        execFileSync('convert', [sq, '-filter', 'Lanczos', '-resize', '288x288', '-strip', '-quality', '86', jpg])
+        files[`${name}.jpg`] = jpg
+      }
+    }
+  } finally {
+    await browser.close()
+    await server.close()
+  }
+  if (errors.length) throw new Error(`Erreurs JS dans le banc : ${errors.join(' | ')}`)
+  return files
+}
 
 const work = mkdtempSync(path.join(tmpdir(), 'pilou-poses-'))
-const site = path.join(work, 'site')
-mkdirSync(path.join(site, '_partage/three-0.187.0/build'), { recursive: true })
-for (const f of ['three.module.js', 'three.core.js']) copyFileSync(path.join(threeDir, f), path.join(site, '_partage/three-0.187.0/build', f))
-cpSync(KIT, path.join(site, 'fig'), { recursive: true, filter: (p) => !/\.(mp4|jpg|png)$/.test(p) })
-writeFileSync(path.join(site, 'fig/poses.html'), PAGE)
-
-const server = createServer((req, res) => {
-  try {
-    const file = path.join(site, decodeURIComponent(new URL(req.url, 'http://x').pathname))
-    res.writeHead(200, { 'content-type': file.endsWith('.js') ? 'text/javascript' : 'text/html' })
-    res.end(readFileSync(file))
-  } catch {
-    res.writeHead(404).end()
+try {
+  mkdirSync(path.join(work, 'a'))
+  const a = await renderAll(path.join(work, 'a'))
+  if (check) {
+    mkdirSync(path.join(work, 'b'))
+    const b = await renderAll(path.join(work, 'b'))
+    const diff = Object.keys(a).filter((k) => !readFileSync(a[k]).equals(readFileSync(b[k])))
+    if (diff.length) { console.error('Rendus différents :', diff.join(', ')); process.exitCode = 1 } else console.log('Deux rendus, mêmes octets :', Object.keys(a).length, 'fichiers')
+  } else {
+    mkdirSync(OUT, { recursive: true })
+    for (const [name, file] of Object.entries(a)) {
+      const dest = path.join(name.endsWith('.jpg') ? JPEG : OUT, name)
+      copyFileSync(file, dest)
+      console.log(name, '→', path.relative(APP, dest), readFileSync(dest).length, 'octets')
+    }
   }
-}).listen(0, '127.0.0.1')
-const port = await new Promise((r) => server.on('listening', () => r(server.address().port)))
-
-const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] })
-const page = await browser.newPage({ viewport: { width: 390, height: 330 }, deviceScaleFactor: 2 })
-page.on('pageerror', (e) => { throw e })
-await page.goto(`http://127.0.0.1:${port}/fig/poses.html`)
-await page.waitForFunction(() => window.__ready === true, null, { timeout: 120000 })
-mkdirSync(OUT, { recursive: true })
-for (const [pose, [expr, u, glow]] of Object.entries(POSES)) {
-  await page.evaluate(([n, uu, g]) => window.pose(n, uu, g), [expr, u, glow])
-  const raw = path.join(work, `${pose}.png`)
-  await page.locator('#c').screenshot({ path: raw })
-  const sq = path.join(work, `${pose}-sq.png`)
-  execFileSync('convert', [raw, '-crop', '540x540+120+40', '+repage', sq])
-  if (TINTS[pose]) {
-    const [top, bottom, mod] = TINTS[pose]
-    execFileSync('convert', [sq, '(', '-size', '540x540', `gradient:${top}-${bottom}`, ')', '-compose', 'multiply', '-composite', '-modulate', mod, sq])
-  }
-  const out = path.join(OUT, `pilou_pose_${pose.replace(/-/g, '_')}.webp`)
-  execFileSync('convert', [sq, '-filter', 'Lanczos', '-resize', '288x288', '-alpha', 'set',
-    '(', '-size', '288x288', 'xc:none', '-fill', 'white', '-draw', 'roundrectangle 0,0,287,287,40,40', ')',
-    '-compose', 'DstIn', '-composite', '-quality', '88', '-define', 'webp:method=6', out])
-  console.log('pose', pose, '→', path.relative(APP, out))
+} finally {
+  rmSync(work, { recursive: true, force: true })
 }
-await browser.close()
-server.close()
-rmSync(work, { recursive: true, force: true })

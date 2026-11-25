@@ -951,6 +951,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     lanterne qui s'allume le matin sur l'îlot (aucune lecture de plus) ; LANT-4 rituel du soir, piste d'écran seulement
     (2D ou 3D à trancher : proposition 2D, le tiroir 3D mesuré à 61 200 triangles pour une cible de 25 000) ;
     WIDGET-POSES poses rendues depuis `companion/pilou/`. Tout en code partagé, aucun correctif iPhone touché (vérifié).
+  - [x] **WIDGET-POSES — Les poses du widget depuis le vrai Pilou** (FAIT le 25/11 15:30, PR « [Auto] » du run) :
+    `scripts/companion/render-widget-poses.mjs` rend les 6 poses par le banc de `src/companion/pilou/` (Vite, Chromium,
+    `createPilou.js`) au lieu du kit de maquettes ; fond crème, mêmes teintes du soir et de la nuit, 288 px, WebP, et les
+    deux JPEG des notifications de l'iPhone (`public/companion/`) tirés des mêmes images. Pilou entier (pieds et antenne),
+    sans l'herbe du kit. `--check` rend deux fois et compare : mêmes octets (8 fichiers). Images plus légères (3 à 4 Ko
+    au lieu de 5 à 7). Mise en page du widget inchangée (même taille d'image). Sans les traits du Studio (REFONTE-14).
   - [ ] **REFONTE-RESTES-SPRINT** (après POLISH-MEET-DARK, un sujet par run) : ~~nom choisi dans l'étiquette de l'île~~
     (déjà fait : `CompanionHome` lit `useCompanionNameSafe()` sans prop, vérifié le 17/11 04:30) ; ~~nom choisi dans le widget~~
     (17/11 04:30, PR « widget-nom » : `syncPilouWidget` envoie `companionNameNow()`, test rouge puis vert) ; `growthAt` et `loadWorldContext()` branchés dans la scène ; poses du
