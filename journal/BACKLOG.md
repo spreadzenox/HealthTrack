@@ -855,7 +855,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **PERSONAS-OUTIL-2 — Les pesées de l'outil passaient par la connexion Withings directe** (FAIT le 25/11 à
       20:30, outillage : `personaData.mjs`, test `personaData.test.mjs`) : absente de la variante play, Sources ne
       pouvait pas montrer la balance ; elles arrivent maintenant par Health Connect au nom de « Withings ».
-    - [x] **POLISH-SIM-165 — Tendances : 100 g de poids ressemblent à une forte montée** FAIT le 25/11 à 21:30 : `services/trendsAxis.js`, écart minimal par unité (2 kg, 10 bpm, 20 ms, 2 h, 2 000 pas), centré ; axe 76 → 79 kg dans la capture ; (J45, capture
+    - [x] **POLISH-SIM-165 — Tendances : 100 g de poids ressemblent à une forte montée** FAIT le 25/11 à 21:30 (165 à 167 : #1270, mergée à 22:30) : `services/trendsAxis.js`, écart minimal par unité (2 kg, 10 bpm, 20 ms, 2 h, 2 000 pas), centré ; axe 76 → 79 kg dans la capture ; (J45, capture
       `poids-semaine.png` ; `TrendsViewer.jsx` 50-55, `domainOf` sans écart minimal) : axe 77,05 → 77,25 kg en
       Semaine. Écart minimal par unité (2 kg pour le poids, à régler pour les autres unités), centré sur les valeurs.
       Test `TrendsViewer` d'abord.
