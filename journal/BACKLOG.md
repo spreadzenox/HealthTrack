@@ -1700,7 +1700,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [x] **POLISH-SIM-68** (fait le 13/11 23:35 : « Bilan du jour : Gêne » dans le bloc digestion d'Aujourd'hui ; la fenêtre ne dit plus « Dernière note … hier » après le bilan ; reste possible : un titre « À l'instant » sur la rangée des moments) (Ventre sans technique J45) Après « Bilan du jour : Gêne », la fenêtre « Ma digestion » garde
   « Dernière note : Douleur, hier » et aucun bouton marqué ; l'accueil dit toujours « Noter ma digestion » sans la
   note du jour. Montrer la note du jour aux deux endroits.
-- [ ] **POLISH-SIM-69** (deux personas J45) Analyses sans lien net : la liste hachurée est lue comme un résultat
+- [x] **POLISH-SIM-69** (deux personas J45 ; **soldée le 25/11 23:30** : l'explication d'un terme avec des aliments est faite par POLISH-SIM-157, « 1 repas riche en sorbitol (FODMAP : pruneaux, prunes) de plus ») Analyses sans lien net : la liste hachurée est lue comme un résultat
   (« Lactose −0,8 pt : j'arrête le lait ou pas ? »). La replier par défaut quand rien n'est net ; dire en tête ce qui
   manque (le compte « encore N jours » n'est dit qu'en bas, pour le long terme). Une ligne touchée ne fait rien :
   explication courte du terme (GOS, sorbitol) avec des aliments.
@@ -1761,7 +1761,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   **Fait le 14/11 02:35** : `halcya-export-AAAA-MM-JJ.json` (`EXPORT_FILE_PREFIX`, dérivé de `APP_NAME`) ; l'import
   ne lit pas le nom (testé avec trois noms). Les fichiers du mode diagnostic caché (`healthtrack-visage-…`,
   `healthtrack-journal-montre-…`, `healthtrack-debug-…`) gardent leur nom.
-- [ ] **POLISH-SIM-74** (à vérifier ; Tout mesurer J45) Analyses, long terme : « −2,1 pt pour 150 kcal d'activité de
+- [x] **POLISH-SIM-74** (à vérifier ; Tout mesurer J45 ; **soldée le 25/11 23:30** : au long terme, une ligne pas nette ne montre plus que sa fourchette et « pas assez net », METHODE-BIAIS-4, `isRangeOnly` de `resultsView.js`) Analyses, long terme : « −2,1 pt pour 150 kcal d'activité de
   plus » sur une note sur 5, hachuré. Vérifier le calcul sur les données de la persona ; un chiffre pas net aussi
   grand doit-il s'afficher ?
 - [x] **POLISH-SIM-75** (à vérifier ; Tout mesurer J45) Tendances › Jour : Sommeil choisi, l'app repasse sur
@@ -1822,8 +1822,11 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   au suivi d'après) ; restent : pas de « d'habitude » pour le poids ; un poids saisi à la main dans une autre app de santé est dit
   « votre balance ». iPhone : code partagé, les 52 correctifs s'appliquent encore sur `app/src` avec ce changement
   (15, 30 et 56 touchent ces fichiers) ; arrive au suivi d'après.
-- [ ] **POLISH-SIM-85** Visite guidée d'Agir : « Exemple au jour 14 » montré à une personne qui est à son 14e jour ;
+- [x] **POLISH-SIM-85** Visite guidée d'Agir : « Exemple au jour 14 » montré à une personne qui est à son 14e jour ;
   « un jour sur deux tiré au sort » pas compris.
+  **Fait le 25/11 à 23:30** : « Voir un exemple » (`stillEmpty`, `services/tour.js`) se montre du 1er au 13e jour
+  après l'accueil, plus au 14e ; test `SeeExample.test.jsx`. « Un jour sur deux tiré au sort » n'est plus dans la
+  visite (« dix jours d'essai, puis compare les jours avec et les jours sans »).
 - [x] **POLISH-SIM-86** Journal : tuiles « SpO₂ » et « FC au repos », alors que Sources dit « oxygène du sang » et
   « cœur au repos » : un seul nom par mesure (comme POLISH-SIM-72), avec un test de garde. **Fait le 14/11 12:35
   (Android)** : « Cœur au repos » et « Oxygène du sang » dans tous les textes de `src/` (tuiles du Journal,
@@ -1867,7 +1870,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   personas. iPhone : code partagé, arrive au prochain suivi.
 - [ ] **POLISH-SIM-89** (Outil) Config 5 : faire arriver les pesées par Health Connect (aujourd'hui `source:
   'withings'`, carte absente de la variante play) pour que Sources puisse les attribuer.
-- [ ] **POLISH-SIM-91** (Sportif J45 ; 3e persona J45) Analyses sans lien net : le bloc « Long terme » affiche
+- [x] **POLISH-SIM-91** (Sportif J45 ; 3e persona J45 ; **soldée le 25/11 23:30** : long terme pas net = fourchette et « pas assez net » sans chiffre (METHODE-BIAIS-4) ; plus grand que la note = « pas assez de données » (POLISH-SIM-16) ; rien de net = barres repliées (POLISH-SIM-69)) Analyses sans lien net : le bloc « Long terme » affiche
   « +2,3 pt », « −2,1 pt », « +1,9 pt » sur une note sur 5, sous « Rien n'est net pour l'instant ». Ne pas montrer
   un chiffre de cette taille pour un lien pas net (le sens seulement, ou rien) ; à traiter avec la fin de
   POLISH-SIM-69. Capture : `simulations/captures/2026-11-14-2035-sportif-J45/analyses-rien-de-net.png`.

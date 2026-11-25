@@ -72,10 +72,13 @@ export function tourSteps({ hc, face, gut }) {
 }
 
 
-/** Écrans « encore vides » : les 14 premiers jours après l'accueil, « Voir un exemple » y relance la visite. */
+/**
+ * Écrans « encore vides » : du 1er au 13e jour après l'accueil, « Voir un exemple » y relance la visite.
+ * POLISH-SIM-85 : au 14e jour (FIRST_RESULTS_DAY.wellbeing), « Exemple au jour 14 » ne se propose plus à qui y est.
+ */
 export function stillEmpty(s = loadOnboarding(), now = Date.now()) {
   if (!s.done || s.endedBy !== 'completed' || !s.doneAt) return false
   const since = now - Date.parse(s.doneAt)
-  return Number.isFinite(since) && since < FIRST_RESULTS_DAY.wellbeing * 86_400_000
+  return Number.isFinite(since) && since < (FIRST_RESULTS_DAY.wellbeing - 1) * 86_400_000
 }
 

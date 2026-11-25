@@ -16,6 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+25/11 23:30 : POLISH-SIM-85 (« Voir un exemple » du 1er au 13e jour, `services/tour.js`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).
 25/11 21:30 : POLISH-SIM-165 à 167 (axe du poids d'au moins 2 kg, balance « à jour » 14 jours dans Sources, carte Agir sans essai) dans le code partagé (`trendsAxis.js`, `healthApps.js`, `trials.js`, `Dashboard.jsx`), aucun correctif iPhone. Captures de Tendances et de l'Accueil relues au build de la PR (propres) ; #1270 mergée au run de 22:30. Parité inchangée (70 %).
 
 25/11 18:30 : LANT-2b (au bilan d'un essai, les lanternes et « Consigne tenue N jours sur M prévus » restent dans la carte du résultat ; le lendemain d'un jour « avec » manqué, Pilou hausse les épaules, « Pas grave : la prochaine lanterne vous attend. ») dans le code partagé (`trials.js`, `Trial.jsx`), aucun correctif iPhone. Captures de la page d'un essai à relire au build de la PR. Parité inchangée (70 %).
