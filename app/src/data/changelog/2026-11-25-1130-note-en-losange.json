@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-25",
+  "kind": "amélioration",
+  "title": "Votre note sur la courbe",
+  "items": [
+    "Dans Tendances, en Semaine et en Mois, un losange montre la note que vous avez donnée quand la courbe s’en écarte : une « douleur » reste à 1, même si l’estimation du jour, qui tient compte des jours voisins, est plus haute."
+  ]
+}

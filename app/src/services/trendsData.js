@@ -7,6 +7,7 @@
  * passé. Les autres mesures viennent des résumés du jour (montre, téléphone).
  */
 import { toDisplay } from './mood/wellbeingScale'
+import { GUT_SCORE } from './trendsDay'
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
 
@@ -73,6 +74,18 @@ export function periodDates(period, now = new Date()) {
   return { dates: out, today: keyOf(base) }
 }
 
+/**
+ * POLISH-NOTE-LOSANGE (personas « Ventre et données » des 22 et 24/11) : la note du jour telle que donnée (bien-être
+ * de 1 à 5, ventre calme 5, gêne 3, douleur 1), tracée en losange quand l'estimation lissée s'en écarte d'au moins
+ * NOTE_APART ; la ligne et sa fourchette restent l'estimation. Affichage seulement : le modèle ne change pas.
+ */
+export const NOTE_APART = 0.25
+function notedValue(key, noted) {
+  if (key === 'wellbeing') return isNum(noted?.wellbeing) ? toDisplay(noted.wellbeing) : null
+  if (key === 'digestion') return GUT_SCORE[noted?.digestion] ?? null
+  return null
+}
+
 const stateValue = (b) => (b && isNum(b.mean) ? { value: toDisplay(b.mean), low: toDisplay(b.low), high: toDisplay(b.high) } : null)
 
 /**
@@ -99,7 +112,9 @@ export function buildTrendSeries({ states = null, days = [], period = 'week', no
         const band = m.key === 'digestion' && !states.showDigestiveCurve ? d.digestionOwn : d[m.key]
         const v = stateValue(band)
         if (!v) continue
-        pts.push({ date, ...v, observed: Boolean(d.observed?.[m.key]), future: Boolean(d.future) })
+        const note = d.future ? null : notedValue(m.key, d.noted)
+        pts.push({ date, ...v, observed: Boolean(d.observed?.[m.key]), future: Boolean(d.future),
+          ...(isNum(note) && Math.abs(note - v.value) >= NOTE_APART ? { note } : {}) })
       } else if (date < today || (date === today && !m.cumulative)) {
         // POLISH-SIM-127 : un cumul (pas, écran) n'a pas sa valeur du jour tant que la journée n'est pas finie
         const raw = byDate.get(date)?.[m.field]

@@ -129,6 +129,34 @@ describe('Journal › Tendances (ORG-3)', () => {
     expect(gloss).toEqual(['Confort digestif : Calme 5, Gêne 3, Douleur 1'])
   })
 
+  it('POLISH-NOTE-LOSANGE : une « douleur » lissée vers 2,5 garde sa note (1) en losange sur la courbe, avec sa légende', async () => {
+    // trois jours notés (la courbe vient à 3 points) : deux « calme » où l'estimation y est, une « douleur » lissée
+    const gutDay = (d, level, mean) => ({ ...d, observed: { wellbeing: false, digestion: true }, noted: { wellbeing: null, digestion: level }, digestionOwn: band(mean) })
+    const gutStates = { ...states, showDigestiveCurve: false, days: states.days.map((d) => (
+      { '2026-11-04': gutDay(d, 'calm', 5), '2026-11-05': gutDay(d, 'calm', 5), '2026-11-06': gutDay(d, 'pain', 1.9) }[d.date] ?? d)) }
+    const { container } = render(
+      <MemoryRouter initialEntries={['/tendances?mesure=digestion']}>
+        <Trends now={NOW} readDays={async () => days} readDayStates={async () => gutStates}
+          readFaceEntries={async () => []} readDayContributions={async () => null} readDayChanges={async () => null} />
+      </MemoryRouter>,
+    )
+    const chart = await screen.findByRole('img', { name: 'Courbe de Confort digestif' })
+    const notes = chart.querySelectorAll('.trends-note')
+    expect(notes).toHaveLength(1)
+    const dot = chart.querySelectorAll('.trends-dot.is-full')[2]
+    expect(Number(notes[0].getAttribute('y'))).toBeGreaterThan(Number(dot.getAttribute('cy')))
+    const legend = within(container.querySelector('.trends-legend.is-period'))
+    expect(legend.getByText('votre note')).toBeInTheDocument()
+    expect(legend.getByText('l’estimation du jour')).toBeInTheDocument()
+  })
+
+  it('POLISH-NOTE-LOSANGE : sans écart entre note et estimation, ni losange ni légende', async () => {
+    const { container } = renderAt('/tendances')
+    await screen.findByRole('img', { name: 'Courbe de Bien-être' })
+    expect(container.querySelector('.trends-chart .trends-note')).toBeNull()
+    expect(container.querySelector('.trends-legend.is-period')).toBeNull()
+  })
+
   it('POLISH-SIM-28 : la grille suit chaque graduation de l’axe de gauche, aucune ligne grise isolée', async () => {
     const { container } = renderAt('/tendances')
     await screen.findByRole('img', { name: 'Courbe de Bien-être' })

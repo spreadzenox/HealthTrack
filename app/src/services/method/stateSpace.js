@@ -90,7 +90,8 @@ export function observationsFromEntries(entries) {
   }
   for (const [dk, a] of notes) at(wellbeing, dk).note = mean(a)
   for (const d of faceMoodDays(entries || [])) at(wellbeing, d.date).face = d.note
-  for (const [dk, lvl] of gut) at(digestion, dk).gut = GUT_VALUE[lvl]
+  // POLISH-NOTE-LOSANGE : le niveau noté reste lisible tel quel (la courbe de Tendances le montre à côté de l'estimation)
+  for (const [dk, lvl] of gut) Object.assign(at(digestion, dk), { gut: GUT_VALUE[lvl], level: lvl })
   for (const [dk, a] of stool) at(digestion, dk).stool = mean(a)
   return { wellbeing, digestion }
 }
@@ -306,6 +307,7 @@ function digestiveCurveCheck(obs, p, offsets, first, last) {
  * @returns {{
  *   params: object,
  *   days: Array<{ date: string, future: boolean, observed: { wellbeing: boolean, digestion: boolean },
+ *     noted: { wellbeing: number|null, digestion: 'calm'|'discomfort'|'pain'|null },
  *     wellbeing: {mean, low, high, sd}, digestion: {mean, low, high, sd}, digestionOwn: {mean, low, high, sd} }>,
  *   showDigestiveCurve: boolean, curveCheck: object,
  *   noteRequest: { wellbeing: boolean, digestion: boolean }
@@ -343,6 +345,7 @@ export function estimateStates(allObs, { today, ahead = 7 } = {}) {
       date: dk,
       future: false,
       observed: { wellbeing: obs.wellbeing.has(dk), digestion: isNum(obs.digestion.get(dk)?.gut) },
+      noted: { wellbeing: isNum(obs.wellbeing.get(dk)?.note) ? obs.wellbeing.get(dk).note : null, digestion: obs.digestion.get(dk)?.level ?? null },
       wellbeing: band(s.m[0] + s.m[2] + offsets.w[wd], s.P[0][0] + s.P[2][2] + 2 * s.P[0][2]),
       digestion: band(s.m[1] + s.m[3] + offsets.d[wd], s.P[1][1] + s.P[3][3] + 2 * s.P[1][3]),
       digestionOwn: band(o.m[1] + o.m[3] + ownOffsets.d[wd], o.P[1][1] + o.P[3][3] + 2 * o.P[1][3]),
@@ -359,6 +362,7 @@ export function estimateStates(allObs, { today, ahead = 7 } = {}) {
       date: dk,
       future: true,
       observed: { wellbeing: false, digestion: false },
+      noted: { wellbeing: null, digestion: null },
       wellbeing: band(end.m[0] + offsets.w[wd], end.P[0][0] + grow + p.sw ** 2),
       digestion: band(end.m[1] + offsets.d[wd], end.P[1][1] + grow + p.sd ** 2),
       digestionOwn: band(endOwn.m[1] + ownOffsets.d[wd], endOwn.P[1][1] + grow + p.sd ** 2),

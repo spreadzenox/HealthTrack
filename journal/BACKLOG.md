@@ -689,6 +689,17 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - À étudier : Tendances › détail d'un jour, « Confort digestif 2,4/5 · vous avez noté « douleur » (1) · estimé
       avec les jours voisins » ; la persona veut voir sa note telle quelle pour sa gastro-entérologue. Le lissage est
       voulu (incertitude montrée) ; piste : tracer la note en point plein et garder l'estimation en bande.
+      → **POLISH-NOTE-LOSANGE, fait le 25/11 11:30** : en Semaine et en Mois, la note telle que donnée en losange
+      (même signe que dans la vue Jour) quand l'estimation s'en écarte d'au moins 0,25 point (`NOTE_APART`,
+      `trendsData.js`) ; légende « votre note · l'estimation du jour » seulement si un losange est tracé ; `noted` par
+      jour dans `estimateStates` (note moyenne du jour, niveau du ventre le plus fort). Affichage seulement. Tests
+      `stateSpace`, `trendsData`, `Trends` d'abord ; captures clair, sombre, bien-être relues.
+    - [ ] **METHODE-ECHELLE-VENTRE — Échelle du ventre dans TS-1** (né de POLISH-NOTE-LOSANGE, 25/11 11:30 ; run
+      « idées », banc avant tout changement) : `GUT_VALUE` (calme 4,5, gêne 2,5, douleur 1 en interne) donne à
+      l'écran 4,6 / 3 / 1,8, alors que l'app dit « Calme 5, Gêne 3, Douleur 1 » ; un jour de douleur ne peut pas
+      descendre sous 1,8 et un jour calme jamais atteindre 5. Mesurer au banc (vérité connue) ce que donnerait
+      5 / 2,5 / 0 en interne : erreur du jour, fourchette juste, tailles d'effet de digestion (`GUT_SPAN`,
+      METHODE-BIAIS-5) et visite guidée du jour 28. Ne rien changer au modèle sans ce banc.
   - **Passage des personas du 22/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-22-2030-synthese.md) ;
     « Prendre soin de soi » J1, iPhone seul, et « Tout mesurer » J14, Android seul) :
     - [x] **POLISH-SIM-142 — La visite guidée gonfle la jauge « Humeur de Pilou »** (J1, vérifié : capture
@@ -836,7 +847,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       nouvelle) ; « Objectifs » sans objectif (nom du propriétaire).
     - À étudier : cœur et oxygène du sang reçus mais visibles nulle part (2ᵉ persona ; **25/11 08:30 : la maquette existe
       déjà**, [`maquettes/tendances-courbes/`](maquettes/tendances-courbes/README.md) du 19/11, réponse attendue « go
-      courbes », « go phases » ou « non » ; remise en tête du résumé, 3 personas la demandent désormais) ; une seule note « Douleur » (1) lissée à 2,5 (banc avant tout changement) ; ~~onglet
+      courbes », « go phases » ou « non » ; remise en tête du résumé, 3 personas la demandent désormais) ; ~~une seule note « Douleur » (1) lissée à 2,5~~ (POLISH-NOTE-LOSANGE, 25/11 11:30 : la note en losange ; reste METHODE-ECHELLE-VENTRE) ; ~~onglet
       Données allumé pendant un repas ouvert depuis Ma journée (2ᵉ persona)~~ (POLISH-SIM-162) ; ~~puces « Hier midi /
       Hier soir » pour l'heure d'un repas~~ (POLISH-SIM-164) ; ~~l'export CSV ne dit pas ce qu'il contient~~ (POLISH-SIM-163).
     - [x] **POLISH-SIM-163 — L'export CSV ne dit pas ce qu'il contient** (FAIT le 25/11 à 03:30, #1252 mergée à 04:30 ; « Tout mesurer » J14 :
