@@ -1,5 +1,5 @@
 /**
- * « Voir un exemple » (ACC-8), en bas des écrans encore vides : relance la visite guidée. Montré les 14 premiers jours
+ * « Voir un exemple » (ACC-8), en bas des écrans encore vides : relance la visite guidée. Montré du 1er au 13e jour
  * après l'accueil (FIRST_RESULTS_DAY.wellbeing), tant que les premiers résultats ne sont pas là.
  */
 import { useLocation } from 'react-router-dom'

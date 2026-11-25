@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-25",
+  "kind": "correctif",
+  "title": "« Voir un exemple » s’arrête au 14e jour",
+  "items": [
+    "Le bouton « Voir un exemple » ne propose plus l’exemple du jour 14 à qui y est déjà : il reste du 1er au 13e jour."
+  ]
+}
