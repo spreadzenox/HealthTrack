@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **25/11 17:30** — **LANT-4, question au propriétaire** : maquette du rituel du soir en 2D dans une feuille (`maquettes/rituel-soir/README.md`), face à la 3D sur l'îlot (tiroir mesuré à 61 200 triangles pour 25 000). Réponse attendue : « rituel 2D », « rituel 3D » ou « pas de rituel ». #1265 fermée (son contenu était déjà sur main malgré l'erreur 500). Aucun code, aucun build de Mac.
 - **25/11 15:30** — **WIDGET-POSES** (reste de la refonte, `DECOUPAGE-RITUEL-LANTERNES.md`) : les 6 poses du widget Android et les 2 vignettes des notifications de l'iPhone sont rendues depuis le vrai Pilou (`createPilou.js`, par son banc) au lieu du kit de maquettes ; rendu reproductible au bit près (`--check`). **#1264 mergée** au run de 16:30 (build iPhone vert, console du simulateur propre).
 - **25/11 14:30** — main rouge (job « Budget de lectures », `socket hang up` ponctuel du serveur de prévisualisation) : job relancé, et le banc de perf refait un essai au lieu de planter (CI-PERF-HANGUP). Aucun changement dans l'app, aucun build de Mac.
 - **25/11 13:30** — **#1261 mergée** (LANT-3, la lanterne du matin sur l'îlot ; build iPhone vert, captures de l'Accueil relues en clair et en sombre), release **v918**. Run de journal, sans build de Mac de plus.

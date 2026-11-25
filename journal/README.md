@@ -53,6 +53,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 **Toujours en attente de vous**
 - **Courbes de la montre dans Tendances** (cœur, oxygène la nuit, phases du sommeil ; maquette du 19/11, [`maquettes/tendances-courbes/`](maquettes/tendances-courbes/README.md)) : trois personas les cherchent sans les trouver. Répondez « go courbes », « go phases » ou « non ».
+- **Rituel du soir (LANT-4, 25/11)** : pendant un essai « pas d'écran après 22 h », Pilou range son téléphone dans un tiroir et s'endort. Maquette en 2D dans une feuille, [`maquettes/rituel-soir/`](maquettes/rituel-soir/README.md) (la 3D sur l'îlot demanderait 2,5 fois le budget de triangles). Répondez « rituel 2D », « rituel 3D » ou « pas de rituel ».
 - **PROP-SIM-19** (poids, 24/11) : maquette dans [`maquettes/poids/README.md`](maquettes/poids/README.md) ; répondez « PROP-SIM-19 oui », « saisie seulement » ou « non ». Aussi en attente : PROP-SIM-17 (bilan digestif avant le 28e jour).
 - **P32** (pays de vente) : le jour de la production, 2 min, geste exact dans [`PRODUIT.md`](PRODUIT.md) §4.
 - **iPhone** : la décision sur la licence des poids du visage (DEM-IOS-9 du backlog) ; les essais sur l'iPhone 12.
@@ -63,6 +64,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 25/11 17:30 — [Rituel du soir : la question](runs/2026-11-25-1730-lant4-question.md) | 💡 | LANT-4 : maquette du rituel du soir en 2D (Pilou range son téléphone, « Bonne nuit. »), question 2D / 3D posée plus haut. #1265 (journal du run précédent) fermée : son contenu était déjà sur main. Aucun code, aucun build de Mac. **Une réponse attendue de vous** |
 | 25/11 16:30 — [#1264 mergée](runs/2026-11-25-1630-merge-1264.md) | 📓 | **#1264 mergée** : le Pilou du widget Android et des rappels du soir sur iPhone est celui de l'app (build iPhone vert, planche avant / après et console du simulateur relues). Run court de journal, sans build de Mac. Rien à faire de votre côté |
 | 25/11 15:30 — [Le vrai Pilou dans le widget](runs/2026-11-25-1530-widget-poses.md) | 🔧 | WIDGET-POSES : le Pilou du widget Android et des rappels du soir sur iPhone est maintenant celui de l'app (même modèle 3D, entier, sur fond crème), au lieu de l'ancienne figurine des maquettes. Rendu reproductible au bit près. Mergée au run suivant (#1264). Rien à faire de votre côté |
 | 25/11 14:30 — [Banc de perf plus solide](runs/2026-11-25-1430-perf-hangup.md) | 🔧 | main était rouge pour une coupure ponctuelle pendant le banc de lectures (rien dans l'app) : job relancé, et le banc refait un essai au lieu de s'arrêter. Aucun changement dans l'app, aucun build de Mac. Rien à faire de votre côté |

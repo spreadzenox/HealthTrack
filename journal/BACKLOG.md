@@ -947,6 +947,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     `journal/maquettes/compagnon/DECOUPAGE-RITUEL-LANTERNES.md`) : soldent « rituel du soir et lanternes » et « poses du
     widget » de REFONTE-RESTES-SPRINT, après MONDE-4b. Les lanternes suivent le tirage au sort gardé par le propriétaire
     (15/11) : **5 lanternes = les 5 jours « avec »**, allumées quand le jour est tenu, pas « 5 soirs réussis » de la SPEC.
+    **LANT-4 en attente du propriétaire (25/11 17:30)** : maquette de l'option 2D, `maquettes/rituel-soir/README.md` ;
+    réponse « rituel 2D », « rituel 3D » ou « pas de rituel ». Rien à coder avant.
     LANT-1 lanternes sur la page du défi ; LANT-2 Pilou sur la page du défi et au bilan (il salue l'effort) ; LANT-3
     lanterne qui s'allume le matin sur l'îlot (aucune lecture de plus) ; LANT-4 rituel du soir, piste d'écran seulement
     (2D ou 3D à trancher : proposition 2D, le tiroir 3D mesuré à 61 200 triangles pour une cible de 25 000) ;

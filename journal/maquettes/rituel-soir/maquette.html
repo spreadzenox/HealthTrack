@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette — rituel du soir (LANT-4)</title>
+<!--
+  Maquette statique de LANT-4, option A (2D dans une feuille), pour la question 2D / 3D au propriétaire.
+  Rien n'est codé dans l'app. Données synthétiques.
+  Paramètres : ?state=bulle|debut|range|fin  ?theme=dark
+  Rendu : node journal/maquettes/rituel-soir/render.mjs (depuis la racine du dépôt, app/ installé).
+-->
+<link rel="stylesheet" href="../../../app/src/theme/tokens.css">
+<style>
+  @font-face { font-family: 'Nunito Variable'; font-weight: 200 1000;
+    src: url('../../../app/node_modules/@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2') format('woff2'); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-ink); font-family: var(--font-sans); }
+  .screen { width: 412px; height: 851px; margin: 0 auto; position: relative; overflow: hidden; }
+  .top { display: flex; justify-content: space-between; align-items: center; height: 64px; padding: 0 var(--gutter); }
+  .top h1 { font-size: 24px; font-weight: 800; margin: 0; }
+  .gear { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--color-ink-2); opacity: .6; }
+  .scene { margin: 0 var(--gutter); height: 350px; border-radius: var(--radius-card); overflow: hidden; position: relative;
+    background: #18214a url('../../../app/src/companion/scene/stills/soir.webp') center / cover; }
+  .label { margin: 12px var(--gutter) 0; font-size: 15px; font-weight: 700; color: var(--color-ink-2); }
+  .bubble { position: absolute; left: 50%; top: 34px; transform: translateX(-50%); background: #fff; color: #26324f;
+    border-radius: 20px; padding: 12px 18px; font-size: 16px; font-weight: 800; box-shadow: 0 6px 18px rgba(0,0,0,.25);
+    display: flex; gap: 8px; align-items: center; white-space: nowrap; }
+  .bubble::after { content: ''; position: absolute; left: 50%; bottom: -9px; margin-left: -9px; border: 9px solid transparent;
+    border-bottom: 0; border-top-color: #fff; }
+  .touch { position: absolute; left: 262px; top: 22px; width: 44px; height: 44px; border-radius: 50%;
+    border: 3px solid rgba(255,255,255,.9); box-shadow: 0 0 0 8px rgba(255,255,255,.25); }
+  .cards { margin: 16px var(--gutter); }
+  .card { background: var(--color-surface, #fff); border: 1px solid var(--color-border); border-radius: var(--radius-card);
+    padding: 14px 16px; margin-bottom: 12px; font-size: 15px; }
+  .muted { color: var(--color-ink-2); }
+  .tabs { position: absolute; left: 0; right: 0; bottom: 0; height: 70px; border-top: 1px solid var(--color-border);
+    display: flex; justify-content: space-around; align-items: center; font-size: 12px; font-weight: 700; color: var(--color-ink-2);
+    background: var(--color-bg); }
+  .tabs b { color: var(--color-brand); }
+
+  .veil { position: absolute; inset: 0; background: rgba(8, 12, 30, .45); }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; height: 560px; border-radius: 26px 26px 0 0;
+    background: linear-gradient(#18214a, #4a4f8c); color: #eef1ff; padding: 12px var(--gutter) 28px; overflow: hidden; }
+  .grab { width: 44px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.35); margin: 0 auto 10px; }
+  .stars i { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #fff; opacity: .7; }
+  .stage { position: relative; height: 330px; margin-top: 8px; }
+  .pilou { position: absolute; left: 62px; bottom: 22px; width: 190px; -webkit-mask-image: radial-gradient(circle at 50% 52%, #000 52%, transparent 70%); mask-image: radial-gradient(circle at 50% 52%, #000 52%, transparent 70%); }
+  .phone { z-index: 1; position: absolute; width: 26px; height: 44px; border-radius: 6px; background: #222a44; border: 3px solid #2e3757; }
+  .phone::after { content: ''; position: absolute; inset: 3px; border-radius: 3px; background: #a8d0ff; box-shadow: 0 0 26px 10px rgba(168,208,255,.55); }
+  .phone.off::after { background: #1b2238; box-shadow: none; }
+  .commode { z-index: 2; position: absolute; right: 18px; bottom: 30px; width: 108px; height: 96px; border-radius: 12px; background: #9a6b4a;
+    box-shadow: inset 0 -6px 0 #7f573b; }
+  .drawer { position: absolute; left: 10px; right: 10px; top: 14px; height: 34px; border-radius: 8px; background: #b5825d;
+    box-shadow: inset 0 -4px 0 #946546; }
+  .drawer::after { content: ''; position: absolute; left: 50%; top: 13px; width: 22px; height: 6px; margin-left: -11px; border-radius: 3px; background: #6f4a31; }
+  .drawer.open { transform: translateY(18px) scale(1.08); box-shadow: inset 0 -4px 0 #946546, 0 -14px 0 #3b2818; }
+  .ground { position: absolute; left: -20px; right: -20px; bottom: 0; height: 36px; border-radius: 50% 50% 0 0; background: #2b3566; }
+  .lantern { position: absolute; left: 30px; bottom: 30px; width: 26px; height: 40px; border-radius: 8px 8px 6px 6px; background: #3a3f5e; }
+  .lantern.on { background: var(--accent-amber); box-shadow: 0 0 34px 16px rgba(255,184,77,.55); }
+  .yawn { position: absolute; left: 170px; top: 40px; font-size: 15px; font-weight: 700; opacity: .85; }
+  .zz { position: absolute; left: 210px; top: 70px; font-size: 22px; font-weight: 800; opacity: .8; }
+  .line { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0 4px; }
+  .sub { text-align: center; font-size: 15px; opacity: .8; margin: 0 0 18px; }
+  .btn { display: block; width: 100%; text-align: center; padding: 15px; border-radius: 18px; font-size: 16px; font-weight: 800;
+    background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+  .steps { display: flex; justify-content: center; gap: 8px; margin: 0 0 14px; }
+  .steps span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.3); }
+  .steps span.on { background: #fff; }
+</style>
+</head>
+<body>
+<div class="screen" id="s"></div>
+<script>
+const q = new URLSearchParams(location.search)
+if (q.get('theme') === 'dark') document.documentElement.dataset.theme = 'dark'
+const state = q.get('state') || 'bulle'
+const pose = (n) => `../../../app/android/app/src/main/res/drawable-nodpi/pilou_pose_${n}.webp`
+const home = (extra = '') => `
+  <div class="top"><h1>Pilou</h1><div class="gear"></div></div>
+  <div class="scene">${extra}</div>
+  <div class="label">Pilou est tranquille · 22:05</div>
+  <div class="cards">
+    <div class="card"><b>Piste en cours</b> · Pas d'écran après 22 h<br><span class="muted">Jour 3 sur 10 · ce soir : jour avec</span></div>
+  </div>
+  <div class="tabs"><b>Pilou</b><span>Ma journée</span><span>Objectifs</span><span>Données</span></div>`
+const stars = Array.from({ length: 18 }, (_, i) => `<i style="left:${(i * 53) % 370 + 10}px;top:${(i * 37) % 160 + 20}px"></i>`).join('')
+const sheet = ({ step, img, phone, drawer, lantern, extra, line, sub, btn }) => `
+  <div class="veil"></div>
+  <div class="sheet">
+    <div class="grab"></div><div class="stars">${stars}</div>
+    <div class="stage">
+      <div class="ground"></div>
+      <div class="lantern ${lantern ? 'on' : ''}"></div>
+      <img class="pilou" src="${pose(img)}">
+      <div class="commode"><div class="drawer ${drawer ? 'open' : ''}"></div></div>
+      ${phone}
+      ${extra || ''}
+    </div>
+    <div class="steps">${[0, 1, 2].map((i) => `<span class="${i === step ? 'on' : ''}"></span>`).join('')}</div>
+    <p class="line">${line}</p><p class="sub">${sub}</p>
+    <span class="btn">${btn}</span>
+  </div>`
+const views = {
+  bulle: () => home(`<div class="bubble">🌙 Ranger le téléphone ?</div><div class="touch"></div>`),
+  debut: () => home() + sheet({ step: 0, img: 'soir', drawer: false, lantern: false,
+    phone: `<div class="phone" style="left:210px;bottom:120px"></div>`, extra: `<div class="yawn">(il bâille)</div>`,
+    line: 'Il est l\'heure', sub: 'Pilou range son téléphone.', btn: 'Passer' }),
+  range: () => home() + sheet({ step: 1, img: 'soir', drawer: true, lantern: false,
+    phone: '',
+    line: 'Dans le tiroir', sub: 'L\'écran s\'éteint.', btn: 'Passer' }),
+  fin: () => home() + sheet({ step: 2, img: 'dort', drawer: false, lantern: true, phone: '',
+    line: 'Bonne nuit.', sub: 'Demain matin, on regarde si le soir est tenu.', btn: 'Fermer' }),
+}
+document.getElementById('s').innerHTML = (views[state] || views.bulle)()
+</script>
+</body>
+</html>
