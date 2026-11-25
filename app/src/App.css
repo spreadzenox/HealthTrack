@@ -200,8 +200,10 @@
   border: 2px solid var(--accent);
 }
 
+/* Touché, le bouton reste survolé : texte un cran plus foncé pour garder 4,5:1 sur le fond teinté (POLISH-CONTRASTE-FOCUS). */
 .btn-secondary:hover:not(:disabled) {
   background: rgba(var(--brand-rgb), 0.12);
+  color: var(--accent-dim);
 }
 
 .loading {
