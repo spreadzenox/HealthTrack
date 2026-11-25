@@ -1,0 +1,30 @@
+⚡️  [error] - {"errorMessage":"Authorization session timed out","message":"Authorization session timed out"}
+⚡️  [error] - {"errorMessage":"Authorization is not determined","message":"Authorization is not determined"}
+⚡️  [error] - {"message":"Authorization is not determined","errorMessage":"Authorization is not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"message":"Authorization not determined","errorMessage":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
+⚡️  [error] - {"errorMessage":"Authorization not determined","message":"Authorization not determined"}
