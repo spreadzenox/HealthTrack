@@ -253,6 +253,18 @@ export function homeTrial(rows, now = new Date(), { outcome = null } = {}) {
 }
 
 /**
+ * POLISH-SIM-167 : sous-titre de la carte Agir de l'Accueil sans essai en cours. Il dit ce que la page Agir montrera
+ * (brief § 4 : « Agir : 3 pistes à tester ») au lieu de promettre un essai quand il n'y a rien. `pistes` : le résumé
+ * mémorisé par Analyses (readPistesSummary), sans aucun calcul de plus.
+ */
+export function homeActIdle(rows, pistes) {
+  const n = (pistes?.gut?.length ?? 0) + (pistes?.levers?.length ?? 0)
+  if (n) return n === 1 ? '1 piste à tester' : `${n} pistes à tester`
+  const anyTrial = (rows ?? []).some((e) => e?.type === TRIAL_TYPE && !e.payload?.removedAt)
+  return anyTrial ? 'Vérifier une piste par un essai' : 'Aucune piste à tester pour l’instant'
+}
+
+/**
  * LANT-3 (DECOUPAGE-RITUEL-LANTERNES.md) : la lanterne de l'îlot s'allume le matin quand hier était un jour « avec »
  * tenu (d'après les données ou la réponse « c'était tenu ? »). `summaries` : résumés des jours que l'Accueil a déjà
  * lus (aucune lecture de plus). Retourne `{ date: hier, key: aujourd'hui }` (une fois par jour) ou null.

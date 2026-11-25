@@ -267,24 +267,34 @@ export function summarizeHealthConnectSources(entries, now = new Date()) {
 }
 
 const RECENT_MS = 3 * 24 * 3600 * 1000
+/** Mesures ponctuelles (balance, tensiomètre, glycémie) : une pesée tous les 3 ou 4 jours est normale (POLISH-SIM-166). */
+const SPOT_TYPES = new Set(['weight', 'body_composition', 'blood_pressure', 'blood_glucose'])
+const SPOT_RECENT_MS = 14 * 24 * 3600 * 1000
+const isSpotOnly = (s) => Array.isArray(s?.types) && s.types.length > 0 && s.types.every((t) => SPOT_TYPES.has(t))
 
 /**
  * Une ligne par app détectée ou par source réelle, avec ce qu'il reste à faire.
- * status : 'ok' (données récentes), 'stale' (plus de données depuis 3 jours), 'action' (à brancher),
+ * status : 'ok' (données récentes), 'stale' (plus de données depuis 3 jours, 14 pour une balance seule), 'action' (à brancher),
  * 'bridged' (couverte par une passerelle qui envoie déjà ses données). message : null quand 'ok' (le badge suffit).
  * @param {{ installed: object[], sources: object[], now?: Date }} args
  */
 export function adviseDevices({ installed = [], sources = [], now = new Date() }) {
   const sourceById = new Map(sources.filter((s) => s.app).map((s) => [s.app.id, s]))
   const installedIds = new Set(installed.map((a) => a.id))
-  const isRecent = (s) => s && now.getTime() - new Date(s.lastAt).getTime() <= RECENT_MS
+  const isRecent = (s) => s && now.getTime() - new Date(s.lastAt).getTime() <= (isSpotOnly(s) ? SPOT_RECENT_MS : RECENT_MS)
+  const staleMessage = (s, installedApp) =>
+    isSpotOnly(s)
+      ? 'Aucune mesure depuis plus de deux semaines.'
+      : installedApp
+        ? 'Plus de données depuis quelques jours : ouvrez l’app pour synchroniser la montre.'
+        : 'Plus de données depuis quelques jours.'
   const rows = []
 
   for (const app of installed) {
     const src = sourceById.get(app.id)
     const base = { id: app.id, name: app.name, package: app.package, guideId: app.guideId, source: src || null }
     if (src) {
-      rows.push({ ...base, status: isRecent(src) ? 'ok' : 'stale', message: isRecent(src) ? null : 'Plus de données depuis quelques jours : ouvrez l’app pour synchroniser la montre.' })
+      rows.push({ ...base, status: isRecent(src) ? 'ok' : 'stale', message: isRecent(src) ? null : staleMessage(src, true) })
       continue
     }
     const bridges = installed.filter((b) => b.bridgeFor?.includes(app.id))
@@ -316,7 +326,7 @@ export function adviseDevices({ installed = [], sources = [], now = new Date() }
       guideId: src.app?.guideId || null,
       source: src,
       status: isRecent(src) ? 'ok' : 'stale',
-      message: isRecent(src) ? null : 'Plus de données depuis quelques jours.',
+      message: isRecent(src) ? null : staleMessage(src, false),
     })
   }
 
