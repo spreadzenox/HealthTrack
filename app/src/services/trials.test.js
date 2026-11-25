@@ -81,6 +81,28 @@ describe('Essais (ORG-8)', () => {
       expect(bilanWords(s).note).not.toMatch(/jours avec/)
     })
 
+    it('POLISH-ESSAI-SANS : les lendemains comptent par calendrier, que le jour ait été tenu ou non', () => {
+      // jours sans (2, 4) au-dessus du seuil : « comme d'habitude » était la consigne, ils comptent quand même ;
+      // jour avec (3) manqué : il compte aussi (le tirage au sort protège, pas la tenue)
+      const summaries = new Map([['2026-11-01', { sleepMinutes: 470 }], ['2026-11-02', { sleepMinutes: 479 }], ['2026-11-03', { sleepMinutes: 380 }], ['2026-11-04', { sleepMinutes: 461 }]])
+      const outcome = new Map([['2026-11-02', 4], ['2026-11-03', 3], ['2026-11-04', 3.5], ['2026-11-05', 2.5]])
+      const s = trialStatus(ten, { summaries, outcome, now: new Date(2026, 10, 5, 10) })
+      expect(s.calendar.slice(0, 4).map((d) => d.held)).toEqual([true, false, false, false])
+      expect(s.result.with).toEqual([4, 3.5])
+      expect(s.result.without).toEqual([3, 2.5])
+      // la tenue reste pour les lanternes et « Consigne tenue »
+      expect(s).toMatchObject({ kept: 1, missed: 1 })
+    })
+
+    it('POLISH-ESSAI-SANS : tout tenu, bilan inchangé', () => {
+      const summaries = new Map()
+      for (let d = 1; d <= 10; d += 1) summaries.set(`2026-11-${String(d).padStart(2, '0')}`, { sleepMinutes: d % 2 === 1 ? 470 : 420 })
+      const s = trialStatus(ten, { summaries, outcome: series(4, 2.5), now: END })
+      expect(s).toMatchObject({ bilan: 'yes', kept: 5, missed: 0 })
+      expect(s.result.with).toHaveLength(5)
+      expect(s.result.without).toHaveLength(5)
+    })
+
     it('fini, moins bien les lendemains des jours avec : « Plutôt non », jamais « vérifié »', () => {
       const s = trialStatus(ten, { outcome: series(2.5, 4), now: END })
       expect(s.bilan).toBe('no')

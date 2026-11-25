@@ -16,6 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+25/11 09:30 : POLISH-ESSAI-SANS (le résultat d'un essai compte tous les jours du calendrier, tenus ou non) dans le code partagé (`trials.js`), aucun correctif iPhone touché. À regarder au build de la PR : aucune capture d'essai dans le build iPhone, rien de visible hors des chiffres. Parité inchangée (70 %).
 25/11 06:30 : POLISH-SIM-164 (« Hier midi » et « Hier soir » sous l'heure d'un nouveau repas sans photo) dans le code partagé ; sur iPhone, mêmes boutons sous le sélecteur de date natif. À regarder au build de la PR. #1254 mergée (capture `/data` iPhone relue). Parité inchangée (70 %).
 25/11 05:30 : POLISH-CONTRASTE-FOCUS (texte d'un bouton secondaire touché un cran plus foncé, 4,86:1 au lieu de 3,98:1) dans le code partagé ; même règle CSS sur iPhone. À regarder au build de la PR : capture `/data`. Parité inchangée (70 %).
 25/11 03:30 : POLISH-SIM-163 (l'export CSV dit ce qu'il contient ; oxygène, variabilité et cœur au repos nommés dans le fichier) dans le code partagé ; l'enregistrement du fichier sur iPhone ne change pas. À regarder au build de la PR : capture `/data`. Parité inchangée (70 %).

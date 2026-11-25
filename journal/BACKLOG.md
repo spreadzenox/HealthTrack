@@ -813,14 +813,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       → 25/11 08:30 (run « idées ») : **défaut réel**, pas l'outil. Les jours « sans » dont la nuit dépasse 7 h 30
       sont comptés « non tenus » et écartés, alors que l'écran demandait « comme d'habitude ». Banc à vérité connue :
       [`methode/ESSAI-SANS.md`](methode/ESSAI-SANS.md) → **POLISH-ESSAI-SANS** ci-dessous.
-    - [ ] **POLISH-ESSAI-SANS — Compter les lendemains par calendrier** (banc du 25/11 08:30, `methode/ESSAI-SANS.md` ;
+    - [x] **POLISH-ESSAI-SANS — Compter les lendemains par calendrier** (banc du 25/11 08:30, `methode/ESSAI-SANS.md` ;
       `trials.js` `pick`) : la règle actuelle ne garde que les jours « tenus » ; elle ne conclut qu'un essai de 10
       jours sur deux (47 %), gonfle l'écart (0,70 pour 0,30) et, sans effet réel mais avec un facteur caché, penche
       vers « Plutôt oui » (+0,14). Compter tous les jours passés selon le calendrier tiré au sort : 100 % concluent,
       écart sans biais, fausses alertes symétriques (≈ 4 %). La tenue reste pour les lanternes et « Consigne tenue ».
       Tests `trials.test.js` d'abord (jour sans au-dessus du seuil compté, jour avec manqué compté, cas tout tenu
-      inchangé). Aucun changement de schéma ; code commun, iPhone dans la même PR. **Prêt pour le prochain run de
-      code.**
+      inchangé). Aucun changement de schéma ; code commun, iPhone dans la même PR. **Fait le 25/11 09:30** : `pick`
+      garde tous les jours passés du calendrier ; deux tests (`trials.test.js`) ; capture de l'essai au jour 8 relue.
     - [x] **POLISH-SIM-160 — Objectifs › Sommeil : « 2 facteurs comparés » sans les nommer** (J14, capture
       `objectifs-sommeil-vide.png` ; `FamilyDetail` de `Recommendations.jsx` 367, cas sans barres) : nommer les
       facteurs (« durée du sommeil, heure du coucher »). Test `Recommendations.test.jsx` d'abord. **Fait le 24/11

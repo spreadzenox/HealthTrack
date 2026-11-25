@@ -161,8 +161,9 @@ export function trialStatus(trial, { summaries = new Map(), outcome = new Map(),
   const ask = yday && yday.held === null
     ? { date: yesterday, missing: MEASURED[trial.factor.key]?.missing ?? null, question: `Hier, ${instruction(trial, yday.with).charAt(0).toLowerCase()}${instruction(trial, yday.with).slice(1)} : c’était tenu ?` }
     : null
-  // Lendemain des jours tenus (ou dont la tenue est inconnue) : le résultat suivi
-  const pick = (w) => calendar.filter((d) => d.with === w && d.held !== false && d.date < today).map((d) => outcome.get(addDays(d.date, 1))).filter(isNum)
+  // POLISH-ESSAI-SANS : le lendemain de chaque jour passé, selon le calendrier tiré au sort, tenu ou non. C'est le
+  // tirage qui protège des facteurs cachés ; ne garder que les jours tenus le défaisait (banc journal/methode/ESSAI-SANS.md).
+  const pick = (w) => calendar.filter((d) => d.with === w && d.date < today).map((d) => outcome.get(addDays(d.date, 1))).filter(isNum)
   const withV = pick(true)
   const withoutV = pick(false)
   let result = { with: withV, without: withoutV, meanWith: null, meanWithout: null, diff: null, low: null, high: null }

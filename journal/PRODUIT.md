@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **25/11 09:30** — **POLISH-ESSAI-SANS** : le résultat d'un essai compte le lendemain de chaque jour du calendrier tiré au sort, tenu ou non (avant : seulement les jours tenus, d'où une ligne « Sans » vide et un biais vers « Plutôt oui », banc [`methode/ESSAI-SANS.md`](methode/ESSAI-SANS.md)). La tenue reste pour les lanternes et « Consigne tenue ». PR prête, merge au run suivant après le build iPhone.
 - **25/11 08:30** — Run « idées » (sans code) : la ligne « Sans » vide d'un essai au jour 4 est un **défaut réel** (jours « sans » au-dessus du seuil écartés alors que l'écran dit « comme d'habitude »). Banc à vérité connue ([`methode/ESSAI-SANS.md`](methode/ESSAI-SANS.md)) : compter par calendrier conclut 100 % des essais au lieu de 47 % et supprime un biais vers « Plutôt oui ». **POLISH-ESSAI-SANS** prêt pour le prochain run de code. Maquette cœur / oxygène déjà faite le 19/11 (`maquettes/tendances-courbes/`), remise en tête du résumé.
 - **25/11 06:30** — **POLISH-SIM-164** : « Hier midi » et « Hier soir » sous l'heure d'un nouveau repas sans photo (hier 12:30 ou 19:30). **#1255 mergée au run de 07:30** (release v915).
 - **25/11 05:30** — **POLISH-CONTRASTE-FOCUS** : un bouton secondaire qu'on vient de toucher garde un texte à 4,86:1 en clair (3,98:1 avant) ; test de contraste qui lit la règle CSS. TestFlight 1313.1313 chez « Testeurs Halcya », en examen bêta. **#1254 mergée au run de 06:30.**
