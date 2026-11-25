@@ -57,6 +57,9 @@ moment, comme le fera la routine. » Le tirage est :
 - **persona** : uniforme parmi les 7 ;
 - **configuration** : pondérée par le poids (colonne « Poids » ci-dessous, total = 100 %) ;
 - **moment** : uniforme parmi « premier jour », « 14e jour », « 45e jour ».
+- **lecture du visage** (POLISH-SIM-65, 26/11) : coupée (`--face=off` de `persona-browse.mjs`) pour environ une
+  persona sur trois dont la fiche dit qu'elle n'a jamais activé la caméra (« téléphone seul », « sans technique »),
+  pour voir l'app sans bien-être lu.
 
 ## Les 15 configurations et ce qui arrive dans Halcya
 

@@ -110,6 +110,15 @@ describe('personaEntries', () => {
     expect(types(few).has('sleep')).toBe(true)
   })
 
+  it('POLISH-SIM-65 : visage coupé (« jamais activé la caméra ») : aucune lecture du visage, le reste gardé', () => {
+    const on = personaEntries(demo, { day: 45, equipment: 'phone', now })
+    const off = personaEntries(demo, { day: 45, equipment: 'phone', now, face: 'off' })
+    expect(on.some((e) => e.type === 'face_burst')).toBe(true)
+    expect(off.some((e) => e.type === 'face_burst')).toBe(false)
+    expect(off.length).toBe(on.filter((e) => e.type !== 'face_burst').length)
+    expect(() => personaEntries(demo, { day: 45, equipment: 'phone', now, face: 'peut-être' })).toThrow(/visage/i)
+  })
+
   it('objectif « cycle » (jour > 1) : des règles notées tous les 28 jours environ, avec symptômes', () => {
     const list = personaEntries(demo, { day: 45, equipment: 'phone', now, goals: ['cycle', 'gut'] })
     const periods = list.filter((e) => e.type === 'cycle' && e.payload.subtype === 'period')
