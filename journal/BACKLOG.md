@@ -951,7 +951,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     lanterne qui s'allume le matin sur l'îlot (aucune lecture de plus) ; LANT-4 rituel du soir, piste d'écran seulement
     (2D ou 3D à trancher : proposition 2D, le tiroir 3D mesuré à 61 200 triangles pour une cible de 25 000) ;
     WIDGET-POSES poses rendues depuis `companion/pilou/`. Tout en code partagé, aucun correctif iPhone touché (vérifié).
-  - [x] **WIDGET-POSES — Les poses du widget depuis le vrai Pilou** (FAIT le 25/11 15:30, PR « [Auto] » du run) :
+  - [x] **WIDGET-POSES — Les poses du widget depuis le vrai Pilou** (FAIT le 25/11 15:30, **#1264 mergée** le 25/11 16:30) :
     `scripts/companion/render-widget-poses.mjs` rend les 6 poses par le banc de `src/companion/pilou/` (Vite, Chromium,
     `createPilou.js`) au lieu du kit de maquettes ; fond crème, mêmes teintes du soir et de la nuit, 288 px, WebP, et les
     deux JPEG des notifications de l'iPhone (`public/companion/`) tirés des mêmes images. Pilou entier (pieds et antenne),
