@@ -116,6 +116,7 @@ sans donnée de santé brute au-delà de ce qui est écrit ici, sans contenu de 
 | `mood:changed` | BULLES | `{ value, word, done, planned }` | humeur 0…1 (ne redescend jamais dans la journée), mot (« Tranquille »…) |
 | `gift:opened` | BULLES | `{ day, item }` | Pilou Surpris ; la scène joue la cérémonie (SPEC île § 7) : la boîte tombe devant Pilou et s'ouvre (≈ 4,5 s) ; BULLES émet `gift:placed` vers 2 100 ms pour que l'accessoire sorte de la boîte |
 | `gift:placed` | BULLES | `{ day, item, items, at }` | l'accessoire est à sa place ; `items` = tous les cadeaux reçus (rejouable à l'ouverture) ; la scène anime `item` si `at` a moins de 5 s, sinon pose tout d'un coup |
+| `gift:lantern-lit` | Accueil (LANT-3) | `{ date, at }` | hier, un jour « avec » d'un essai a été tenu : le matin, la lanterne de l'îlot vacille, monte puis s'éteint (2,6 s ; fondu en mouvements réduits), Pilou la regarde et fait un petit saut ; une fois par jour ; rejouable, la scène n'agit que si `at` a moins de 20 s ; rien sans lanterne sur l'île |
 | `meal:logged` | VIE / Ma journée | `{ slot, count, total }` | `slot` ∈ `breakfast`, `lunch`, `dinner`, `snack` ; jamais le contenu de l'assiette ; Pilou mâchouille puis Rassasié |
 | `wellbeing:noted` | VIE / Ma journée | `{ level, difficult, source }` | `level` 1…5, `difficult` = level ≤ 2 → Réconfortant ; `source` ∈ `note`, `face` |
 | `habit:noted` | VIE / Ma journée | `{ habitId, answer }` | `answer` ∈ `yes`, `no` : même récompense |
@@ -189,3 +190,4 @@ Chaque lot qui garde quelque chose le met dans l'export JSON et accepte les anci
   (`moodWord(m)` : « tranquille » < 0,2 ≤ « content » < 0,9 ≤ « rayonnant », `moodExpression(m)`) utilisable par tous.
 - 16/11 22:00 — `gift:placed` porte `at` (animation seulement si récent) ; la scène pose les 7 cadeaux en 3D
   (`scene/gifts.js`) et met l'écharpe à Pilou (`setAccessory('echarpe', true)`).
+- 25/11 12:30 — `gift:lantern-lit` (LANT-3, la lanterne du matin ; `gifts.lightLantern(t)`).

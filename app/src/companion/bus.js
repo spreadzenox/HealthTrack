@@ -19,6 +19,7 @@ export const EVENTS = Object.freeze({
   MOOD_CHANGED: 'mood:changed',
   GIFT_OPENED: 'gift:opened',
   GIFT_PLACED: 'gift:placed',
+  LANTERN_LIT: 'gift:lantern-lit',
   // Saisies (lot VIE ; Ma journée)
   MEAL_LOGGED: 'meal:logged',
   WELLBEING_NOTED: 'wellbeing:noted',

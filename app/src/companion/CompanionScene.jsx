@@ -372,6 +372,7 @@ export default function CompanionScene({
         let backTimer = null
         // la nuit, le repos de Pilou est le sommeil : aucune réaction ne le laisse les yeux ouverts
         let asleepNow = false
+        let lanternSeen = null
         const rest = () => restExpression(asleepNow, bus.last(EVENTS.MOOD_CHANGED)?.value ?? 0)
         const backToMood = (ms) => {
           clearTimeout(backTimer)
@@ -423,6 +424,20 @@ export default function CompanionScene({
             if (p?.item) {
               if (fresh) live.gifts.place(p.item, loop.time)
               else live.gifts.setItems([p.item])
+            }
+            poke()
+          }, { replay: true }),
+          // LANT-3 : hier tenu, la lanterne s'allume ce matin ; Pilou la regarde et fait un petit saut. Rejoué pour une
+          // scène montée après l'Accueil, seulement s'il est récent (une seule fois par charge utile).
+          bus.on(EVENTS.LANTERN_LIT, (p) => {
+            if (!p || p === lanternSeen || p.at == null || Date.now() - p.at > 20000) return
+            lanternSeen = p
+            if (!live.gifts.lightLantern(loop.time)) return
+            const spot = live.gifts.lanternSpot()
+            if (spot && !asleepNow) {
+              P().lookAt?.(spot)
+              setTimeout(() => P().jump?.({ height: 0.12 }), live.reducedMotion ? 0 : 450)
+              setTimeout(() => P().lookAt?.('camera'), 2800)
             }
             poke()
           }, { replay: true }),

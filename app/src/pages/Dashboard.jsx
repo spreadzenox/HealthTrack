@@ -33,6 +33,8 @@ import { goalsOf } from '../settings/onboarding'
 import { TRIAL_TYPE, homeTrial } from '../services/trials'
 import { syncPilouWidget } from '../companion/world/widgetSync'
 import CompanionHome from '../companion/bubbles/CompanionHome'
+import { lanternToShow, markLanternShown } from '../companion/bubbles/morningLantern'
+import { bus, EVENTS } from '../companion/bus'
 import { useFirstWeekInputs } from '../companion/bubbles/useFirstWeekInputs'
 
 /**
@@ -125,11 +127,12 @@ export default function Dashboard({ view = 'home' }) {
 
   // UPG-1 : l'essai en cours, dit sur la carte Agir (Agir n'a plus d'onglet depuis la refonte)
   const [trial, setTrial] = useState(null)
+  const [trialRows, setTrialRows] = useState(null)
   useEffect(() => {
     if (!home) return undefined
     let cancelled = false
     const load = () => listEntries({ type: TRIAL_TYPE, limit: Infinity })
-      .then((rows) => { if (!cancelled) setTrial(homeTrial(rows)) })
+      .then((rows) => { if (!cancelled) { setTrial(homeTrial(rows)); setTrialRows(rows) } })
       .catch(() => {})
     load()
     window.addEventListener('health-entries-updated', load)
@@ -138,6 +141,14 @@ export default function Dashboard({ view = 'home' }) {
       window.removeEventListener('health-entries-updated', load)
     }
   }, [home])
+  // LANT-3 : hier, un jour « avec » tenu : la lanterne de l'îlot s'allume ce matin (une fois par jour, aucune lecture de plus)
+  useEffect(() => {
+    if (!home || loading || error || !trialRows) return
+    const lit = lanternToShow({ trials: trialRows, entries })
+    if (!lit) return
+    markLanternShown(lit.key)
+    bus.emit(EVENTS.LANTERN_LIT, { date: lit.date, at: Date.now() })
+  }, [home, loading, error, trialRows, entries])
   const actLink = (
     <Link to={trial?.to ?? '/agir'} className="more-item home-act-link">
       <span className="more-text">

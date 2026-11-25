@@ -952,6 +952,18 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     widget re-rendues avec le module PILOU ; rituel du soir et lanternes du défi des 5 soirs (SPEC journée § 7) ;
     première série `captures/main` d'après le sprint à regarder ; palier de qualité sur un vrai téléphone ; #1072 si
     elle est encore ouverte après 03:00 (son équipier est arrêté : la routine la finit).
+  - [x] **LANT-3 — La lanterne du matin sur l'îlot** (FAIT le 25/11 12:30, PR à merger au run suivant après le build
+    iPhone) : `morningLantern(rows, { summaries, now })` (`services/trials.js`) dit si hier était un jour « avec » tenu
+    (données ou réponse « c'était tenu ? »), y compris le dernier jour d'un essai qui vient de finir ;
+    `companion/bubbles/morningLantern.js` en tire les résumés depuis les saisies que l'Accueil a déjà lues (aucune
+    lecture de plus) et garde la clé du jour (`halcya.lantern.morningSeen`, une fois par jour) ; `Dashboard.jsx` émet
+    `gift:lantern-lit` (`{ date, at }`, CONTRAT.md) ; la scène (`CompanionScene.jsx`) allume la lanterne
+    (`gifts.lightLantern`, courbe `lanternMorning` : vacille 120 ms, monte en 400 ms, tient, s'éteint à 2,6 s ; fondu
+    de 300 ms en mouvements réduits), Pilou la regarde (`gifts.lanternSpot()`) et fait un petit saut, sauf s'il dort ;
+    rien sans lanterne sur l'île. Tests d'abord (`trials.test.js`, `three.test.js`, `morningLantern.test.js`), puis
+    `Dashboard.test.jsx`. Constat : la sonde Playwright locale tombe en palier « bas » (image fixe, SwiftShader trop
+    lent) : l'allumage n'a pas pu être filmé ici ; à voir sur un vrai téléphone. Suite : LANT-4 (question 2D / 3D au
+    propriétaire), WIDGET-POSES.
   - [x] **LANT-1** (mergée dans #1102 le 18/11 vers 19:00 ; 18/11 00:30, PR ouverte, pas mergée : GitHub Actions bloqué, P50) : une lanterne par jour « avec » sur la page du défi (`lanterns(status)` dans `services/trials.js`, `components/TrialLanterns.jsx`, ambre `--accent-amber`, halo qui respire, fixe si mouvements réduits) ; tests rouges puis verts ; captures `/agir` essai jour 8 relues en clair et en sombre. Découpage : `journal/maquettes/compagnon/DECOUPAGE-RITUEL-LANTERNES.md` (branche de #1091). Suite : LANT-2.
   - [x] **LANT-2** (mergée dans #1102 le 18/11 vers 19:00 ; 18/11 01:30, PR ouverte, empilée sur LANT-1, pas mergée : Actions bloqué, P50 ; toujours bloqué au run de 05:30, Alpha du 17/11 non envoyée) : Pilou (80 px) dans la carte du jour du défi ; saut et « C’est parti ! Chaque jour avec tenu allume une lanterne. » juste après « Commencer » (état de navigation `started`, pas refait au retour sur la page) ; sinon il attend sans bulle ; au bilan, deux signes de tête (`pilou-move-nod`, coupé si mouvements réduits) et « Bravo pour vos N jours avec. » quel que soit le résultat (`pilouSays(status)`, `services/trials.js`). Reste de la SPEC § 7 pour plus tard : les 5 lanternes dans le bilan, le haussement d’épaules d’un jour manqué. Écart des chiffres du bilan corrigé le 18/11 02:30 dans la même PR : la réserve dit « N lendemains mesurés, c’est encore peu » (`bilanWords`), la bulle garde « Bravo pour vos N jours avec. ». Suite : LANT-3.
   - [x] **VISUAL-NOW** (18/11 03:30 ; constaté fait le 20/11 18:30 : `scripts/visual/clock.mjs`, `--now` et `--usage-days`) : `npm run visual` sans option d'horloge ; l'Accueil de démo dépend de l'heure du run (la nuit : image de nuit, croissance invisible ; à la première ouverture la croissance arrive 4 s après la capture). Ajouter `--now=<ISO>` (Playwright `context.clock.install` puis `resume`) et `--usage-days=N` (clé `halcya.world.usageDays`). Outillage seul.
