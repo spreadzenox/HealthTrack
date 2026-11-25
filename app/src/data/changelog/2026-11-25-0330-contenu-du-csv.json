@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-25",
+  "kind": "correctif",
+  "title": "L’export CSV dit ce qu’il contient",
+  "items": [
+    "Réglages › Sauvegarde : après « Télécharger en CSV », le nombre de lignes, la période couverte et le compte de chaque mesure (cœur, sommeil, pas, repas…).",
+    "Dans le fichier, l’oxygène du sang, la variabilité cardiaque et le cœur au repos ont chacun leur nom, au lieu de « Fréquence cardiaque »."
+  ]
+}

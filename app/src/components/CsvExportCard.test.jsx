@@ -35,6 +35,23 @@ describe('CsvExportCard (EXPORT-CSV)', () => {
     expect(text).toContain('2026-11-21;19:05;Digestion;gut;app_gut;;calme')
   })
 
+  it('POLISH-SIM-163 : après l’export, dit combien de lignes, sur quelle période et ce qu’il y a dedans', async () => {
+    const at = (d, h) => new Date(2026, 10, d, h, 0).toISOString()
+    exportToJson.mockResolvedValueOnce(JSON.stringify({ version: 1, entries: [
+      { type: 'heart_rate', source: 'health_connect', at: at(20, 9), payload: { subtype: 'oxygenSaturation', value: 97 } },
+      { type: 'heart_rate', source: 'health_connect', at: at(21, 9), payload: { subtype: 'heartRate', value: 60 } },
+      { type: 'heart_rate', source: 'health_connect', at: at(22, 9), payload: { subtype: 'heartRate', value: 61 } },
+    ] }))
+    render(<CsvExportCard />)
+    fireEvent.click(screen.getByRole('button', { name: 'Télécharger en CSV' }))
+    expect((await screen.findByTestId('csv-contents')).textContent).toBe('3 lignes, du 20/11/2026 au 22/11/2026 : Cœur 2\u00a0· Oxygène du sang 1')
+  })
+
+  it('le texte de la carte dit que les mesures des montres sont dedans', () => {
+    render(<CsvExportCard />)
+    expect(screen.getByText(/mesures de vos montres/)).toBeInTheDocument()
+  })
+
   it('Android : « dans Documents » ; iPhone : « dans l’app Fichiers »', async () => {
     saveTextFile.mockResolvedValueOnce({ saved: 'documents', platform: 'android', shared: true })
     const { unmount } = render(<CsvExportCard />)
