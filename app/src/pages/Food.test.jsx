@@ -79,6 +79,24 @@ describe('Food', () => {
     }
   })
 
+  it('« Hier soir » met l’heure du repas à hier 19:30, en un geste (simulation du 24/11)', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2026, 10, 25, 8, 10))
+    try {
+      render(<MemoryRouter initialEntries={[{ pathname: '/food', state: { describeMeal: true } }]}><Food /></MemoryRouter>)
+      const field = await screen.findByLabelText('Heure du repas')
+      expect(field).toHaveValue('2026-11-25T08:10')
+      fireEvent.click(screen.getByRole('button', { name: 'Hier soir' }))
+      expect(field).toHaveValue('2026-11-24T19:30')
+      expect(screen.getByRole('button', { name: 'Hier soir' })).toHaveAttribute('aria-pressed', 'true')
+      fireEvent.click(screen.getByRole('button', { name: 'Hier midi' }))
+      expect(field).toHaveValue('2026-11-24T12:30')
+      expect(screen.getByRole('button', { name: 'Hier soir' })).toHaveAttribute('aria-pressed', 'false')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('renders food page title', () => {
     render(
       <BrowserRouter>

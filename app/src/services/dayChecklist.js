@@ -44,6 +44,20 @@ export function pastSlotAt(slotId, now = new Date()) {
   return d.toISOString()
 }
 
+/**
+ * Simulation du 24/11 (« Ventre et données » J45, trois essais dans le champ date) : heure d'un repas d'hier, au milieu
+ * du créneau (« Hier midi » → hier 12:30), au format d'un champ `datetime-local`.
+ */
+export function yesterdaySlotInput(slotId, now = new Date()) {
+  const slot = slotById(slotId)
+  if (!slot) return null
+  const d = new Date(now)
+  d.setDate(d.getDate() - 1)
+  d.setHours(slot.mid[0], slot.mid[1], 0, 0)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
 /** Heure proposée pour un repas noté depuis un cercle : le milieu d'un créneau passé, sinon maintenant. */
 export function slotMealAt(slotId, now = new Date()) {
   return pastSlotAt(slotId, now) ?? now.toISOString()

@@ -825,8 +825,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       nouvelle) ; « Objectifs » sans objectif (nom du propriétaire).
     - À étudier : cœur et oxygène du sang reçus mais visibles nulle part (2ᵉ persona : proposition avec maquette au
       prochain run « idées ») ; une seule note « Douleur » (1) lissée à 2,5 (banc avant tout changement) ; ~~onglet
-      Données allumé pendant un repas ouvert depuis Ma journée (2ᵉ persona)~~ (POLISH-SIM-162) ; puces « Hier midi /
-      Hier soir » pour l'heure d'un repas ; ~~l'export CSV ne dit pas ce qu'il contient~~ (POLISH-SIM-163).
+      Données allumé pendant un repas ouvert depuis Ma journée (2ᵉ persona)~~ (POLISH-SIM-162) ; ~~puces « Hier midi /
+      Hier soir » pour l'heure d'un repas~~ (POLISH-SIM-164) ; ~~l'export CSV ne dit pas ce qu'il contient~~ (POLISH-SIM-163).
     - [x] **POLISH-SIM-163 — L'export CSV ne dit pas ce qu'il contient** (FAIT le 25/11 à 03:30, #1252 mergée à 04:30 ; « Tout mesurer » J14 :
       « sans savoir si cœur et oxygène sont dedans ») : après « Télécharger en CSV », la carte dit « 1 851 lignes, du
       10/09/2026 au 24/11/2026 : Cœur 198 · Température 198 · … » (`csvContents` de `services/csvExport.js`, même
@@ -844,6 +844,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `/data` après le clic, clair et sombre : plus d'alerte de contraste. Une seule règle commune : tous les boutons
       secondaires de l'app en profitent. Les autres fonds teintés à 12-15 % (onglets, suggestions du repas, Sources)
       ne sont pas signalés par la vérification visuelle.
+    - [x] **POLISH-SIM-164 — Heure d'un repas d'hier : trois essais dans le champ date** (FAIT le 25/11 à 06:30, PR du
+      run ; « Ventre et données » J45) : sous « Heure du repas » d'un nouveau repas sans photo (`NewMealForm.jsx`),
+      deux boutons « Hier midi » et « Hier soir » mettent hier 12:30 ou 19:30 (milieu du créneau, `yesterdaySlotInput`
+      de `services/dayChecklist.js`) ; `aria-pressed` montre celui qui est choisi ; heure changée = repas rangé selon
+      son heure, comme une saisie à la main. 44 px de haut. Test d'abord (`Food.test.jsx`), captures `/food` clair et
+      sombre relues. La modification d'un repas enregistré (`SavedMealEditor`) garde son seul champ.
     - [x] **POLISH-SIM-162 — Onglet « Données » allumé pendant un repas noté depuis Ma journée** (FAIT le 25/11 à
       01:30 ; vu par deux personas, 23/11 « Tout mesurer » J1 et 24/11 « Ventre et données » J45 : « je ne sais plus
       où je suis ») : la page Repas est rangée sous Données, donc la barre allumait Données et la page montrait les

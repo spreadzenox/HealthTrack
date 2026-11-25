@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createEntry } from '../storage/localHealthStorage'
 import { atToLocalInput, dishToSave, itemForStorage, itemsForEditing, localInputToAt } from '../services/mealEditing'
 import { mealTimeError } from '../services/quickMeals'
-import { pastSlotAt } from '../services/dayChecklist'
+import { pastSlotAt, yesterdaySlotInput } from '../services/dayChecklist'
 import { MEAL_TEXT_MAX_LENGTH } from '../services/geminiStandalone'
 import {
   aiPrivacyHint, analyzeMealDescription, canAnalyzeMeals, describeButtonLabel, needsAiConsent, rememberAiConsent,
@@ -185,6 +185,23 @@ function NewMealFormForm({ title, dish, initialItems, onSaved, onCancel, autoFoc
           disabled={saving}
           onChange={(e) => setTime(e.target.value)}
         />
+      </div>
+      <div className="sme-time-shortcuts">
+        {[['noon', 'Hier midi'], ['evening', 'Hier soir']].map(([id, label]) => {
+          const value = yesterdaySlotInput(id)
+          return (
+            <button
+              key={id}
+              type="button"
+              className="sme-time-chip"
+              aria-pressed={time === value}
+              disabled={saving}
+              onClick={() => setTime(value)}
+            >
+              {label}
+            </button>
+          )
+        })}
       </div>
       <MealEditor items={items} onChange={changeItems} disabled={saving || describing} />
       {showFodmap && <MealFodmapLine items={items} />}
