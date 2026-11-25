@@ -62,6 +62,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 25/11 02:30 — [#1250 mergée](runs/2026-11-25-0230-merge-1250.md) | 🔧 | **#1250 mergée** : en notant un repas depuis Ma journée ou l'Accueil, l'onglet d'où vous venez reste allumé (build iPhone vert, captures relues sur les deux ; un job d'émulateur Android bloqué 30 min a été relancé, vert). Rien à faire de votre côté |
 | 25/11 01:30 — [Un repas garde son onglet](runs/2026-11-25-0130-onglet-des-repas.md) | 🔧 | POLISH-SIM-162 : en notant un repas depuis Ma journée ou l'Accueil, l'onglet d'où vous venez reste allumé en bas, au lieu de « Données » (deux personas ne savaient plus où elles étaient). PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 25/11 00:30 — [Cache Gradle](runs/2026-11-25-0030-cache-gradle.md) | 🔧 | L'envoi en test interne de main avait échoué sur un refus passager de Maven Central (429) : relancé, et les builds Android gardent désormais leurs dépendances Gradle en cache (moins de téléchargements, aucune minute Mac). Rien à faire de votre côté |
 | 24/11 21:30 — [Le jour parle aussi du ventre](runs/2026-11-24-2130-jour-ventre-et-facteurs.md) | 🔧 | POLISH-SIM-161 : dans Tendances, avec Bien-être et Confort digestif affichés, le détail d'un jour dit ce qui a pu jouer sur les deux, chacun sous sa note (il ne parlait que du bien-être). POLISH-SIM-160 : dans Objectifs, une famille sans graphique nomme ses facteurs comparés. PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
