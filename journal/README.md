@@ -40,7 +40,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v913** (#1252, 25/11 03:33 UTC) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1290.1290** (build du 23/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 24/11 04:32 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
+| Dernière version | release **v913** (#1252, 25/11 03:33 UTC) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1313.1313** (build du 24/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 25/11 04:31 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; plus aucun correctif propre à l'iPhone ; `overlay/` ne garde que les notes de Nouveautés de l'iPhone (FUSION-3 : reste `ios/` → `app/ios/`) |
 
@@ -62,6 +62,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 25/11 05:30 — [Bouton touché lisible, TestFlight 1313](runs/2026-11-25-0530-contraste-bouton-touche.md) | 🔧 | TestFlight **1313.1313** (build de cette nuit) chez « Testeurs Halcya » et soumise à l'examen bêta, anciennes builds expirées. POLISH-CONTRASTE-FOCUS : un bouton secondaire qu'on vient de toucher (« Télécharger en CSV », etc.) garde un texte lisible (3,98:1 → 4,86:1 en clair). PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 25/11 04:30 — [#1252 mergée](runs/2026-11-25-0430-merge-1252.md) | 🔧 | **#1252 mergée** : après « Télécharger en CSV », l'app dit ce que contient le fichier (lignes, période, compte de chaque mesure) ; build iPhone vert, captures relues sur les deux. Aucun build iPhone de plus. Rien à faire de votre côté |
 | 25/11 03:30 — [L'export CSV dit ce qu'il contient](runs/2026-11-25-0330-contenu-du-csv.md) | 🔧 | POLISH-SIM-163 : après « Télécharger en CSV » (Réglages › Sauvegarde), l'app dit le nombre de lignes, la période et le compte de chaque mesure ; dans le fichier, l'oxygène du sang, la variabilité cardiaque et le cœur au repos ont leur nom (tout s'appelait « Fréquence cardiaque »). PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 25/11 02:30 — [#1250 mergée](runs/2026-11-25-0230-merge-1250.md) | 🔧 | **#1250 mergée** : en notant un repas depuis Ma journée ou l'Accueil, l'onglet d'où vous venez reste allumé (build iPhone vert, captures relues sur les deux ; un job d'émulateur Android bloqué 30 min a été relancé, vert). Rien à faire de votre côté |

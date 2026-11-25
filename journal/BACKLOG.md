@@ -837,6 +837,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       sang). Tests d'abord (`csvExport`, `CsvExportCard`), captures `/data` après le clic en clair et sombre. Au passage :
       la vérification visuelle signale « Télécharger en CSV 3,98:1 » une fois le bouton touché (fond du bouton
       secondaire au focus, CSS non touché par ce run) : à vérifier sur les autres boutons secondaires (POLISH-CONTRASTE-FOCUS).
+    - [x] **POLISH-CONTRASTE-FOCUS — Bouton secondaire touché à 3,98:1** (FAIT le 25/11 à 05:30, PR du run) : après un
+      toucher, `.btn-secondary` reste survolé (fond `rgba(brand, 0.12)` sur la carte) et son texte vert de la marque
+      tombait à 3,98:1 en clair. Le texte passe à `--accent-dim` au survol (4,86:1 en clair, 7,63:1 en sombre). Test
+      d'abord dans `tokens.test.js` (lit la règle d'`App.css`, mélange le fond, ≥ 4,5:1 dans les deux thèmes). Captures
+      `/data` après le clic, clair et sombre : plus d'alerte de contraste. Une seule règle commune : tous les boutons
+      secondaires de l'app en profitent. Les autres fonds teintés à 12-15 % (onglets, suggestions du repas, Sources)
+      ne sont pas signalés par la vérification visuelle.
     - [x] **POLISH-SIM-162 — Onglet « Données » allumé pendant un repas noté depuis Ma journée** (FAIT le 25/11 à
       01:30 ; vu par deux personas, 23/11 « Tout mesurer » J1 et 24/11 « Ventre et données » J45 : « je ne sais plus
       où je suis ») : la page Repas est rangée sous Données, donc la barre allumait Données et la page montrait les

@@ -16,6 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+25/11 05:30 : POLISH-CONTRASTE-FOCUS (texte d'un bouton secondaire touché un cran plus foncé, 4,86:1 au lieu de 3,98:1) dans le code partagé ; même règle CSS sur iPhone. À regarder au build de la PR : capture `/data`. Parité inchangée (70 %).
 25/11 03:30 : POLISH-SIM-163 (l'export CSV dit ce qu'il contient ; oxygène, variabilité et cœur au repos nommés dans le fichier) dans le code partagé ; l'enregistrement du fichier sur iPhone ne change pas. À regarder au build de la PR : capture `/data`. Parité inchangée (70 %).
 24/11 16:30 : POLISH-SIM-86b (« Cœur » au lieu de « FC ») dans le code partagé ; `ios/cameraPermission.js` et `requestCamera` natif (code mort depuis le 08/11) retirés. Parité inchangée (70 %).
 24/11 14:30 : #1239 mergée (build iPhone vert, captures de Tendances relues en clair et en sombre). POLISH-SIM-88 : Tendances lit les notes d’avant la première lecture du visage, code partagé. Parité inchangée (70 %).
