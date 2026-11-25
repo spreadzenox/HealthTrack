@@ -420,7 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
-- **25/11 06:30** — **POLISH-SIM-164** : « Hier midi » et « Hier soir » sous l'heure d'un nouveau repas sans photo (hier 12:30 ou 19:30). PR prête, merge au run suivant après le build iPhone.
+- **25/11 06:30** — **POLISH-SIM-164** : « Hier midi » et « Hier soir » sous l'heure d'un nouveau repas sans photo (hier 12:30 ou 19:30). **#1255 mergée au run de 07:30** (release v915).
 - **25/11 05:30** — **POLISH-CONTRASTE-FOCUS** : un bouton secondaire qu'on vient de toucher garde un texte à 4,86:1 en clair (3,98:1 avant) ; test de contraste qui lit la règle CSS. TestFlight 1313.1313 chez « Testeurs Halcya », en examen bêta. **#1254 mergée au run de 06:30.**
 - **25/11 03:30** — **POLISH-SIM-163** : après « Télécharger en CSV », Réglages › Sauvegarde dit le nombre de lignes, la période et le compte de chaque mesure ; dans le fichier, l'oxygène du sang, la variabilité cardiaque et le cœur au repos ne s'appellent plus « Fréquence cardiaque ». PR prête, merge au run suivant après le build iPhone. **#1252 mergée au run de 04:30.**
 - **25/11 01:30** — **POLISH-SIM-162** : un repas noté depuis Ma journée ou l'Accueil garde cet onglet allumé, sans les sous-onglets de Données (deux personas s'y perdaient). **#1250 mergée au run de 02:30** (émulateur API 36 relancé après un dépassement de délai, build iPhone vert, captures relues). (25/11 00:30 : « Play — AAB » relancé après un 429 de Maven Central, cache Gradle dans les workflows Android, #1249.)

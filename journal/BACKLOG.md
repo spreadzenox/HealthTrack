@@ -844,7 +844,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `/data` après le clic, clair et sombre : plus d'alerte de contraste. Une seule règle commune : tous les boutons
       secondaires de l'app en profitent. Les autres fonds teintés à 12-15 % (onglets, suggestions du repas, Sources)
       ne sont pas signalés par la vérification visuelle.
-    - [x] **POLISH-SIM-164 — Heure d'un repas d'hier : trois essais dans le champ date** (FAIT le 25/11 à 06:30, PR du
+    - [x] **POLISH-SIM-164 — Heure d'un repas d'hier : trois essais dans le champ date** (FAIT le 25/11 à 06:30, #1255 mergée à 07:30, PR du
       run ; « Ventre et données » J45) : sous « Heure du repas » d'un nouveau repas sans photo (`NewMealForm.jsx`),
       deux boutons « Hier midi » et « Hier soir » mettent hier 12:30 ou 19:30 (milieu du créneau, `yesterdaySlotInput`
       de `services/dayChecklist.js`) ; `aria-pressed` montre celui qui est choisi ; heure changée = repas rangé selon
