@@ -52,6 +52,7 @@ polissage (personas) et à la soumission App Store ; cette semaine : vos retours
 puis la fin de FUSION-3 et les restes de la refonte.
 
 **Toujours en attente de vous**
+- **Courbes de la montre dans Tendances** (cœur, oxygène la nuit, phases du sommeil ; maquette du 19/11, [`maquettes/tendances-courbes/`](maquettes/tendances-courbes/README.md)) : trois personas les cherchent sans les trouver. Répondez « go courbes », « go phases » ou « non ».
 - **PROP-SIM-19** (poids, 24/11) : maquette dans [`maquettes/poids/README.md`](maquettes/poids/README.md) ; répondez « PROP-SIM-19 oui », « saisie seulement » ou « non ». Aussi en attente : PROP-SIM-17 (bilan digestif avant le 28e jour).
 - **P32** (pays de vente) : le jour de la production, 2 min, geste exact dans [`PRODUIT.md`](PRODUIT.md) §4.
 - **iPhone** : la décision sur la licence des poids du visage (DEM-IOS-9 du backlog) ; les essais sur l'iPhone 12.
@@ -62,6 +63,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 25/11 08:30 — [Essai : jours « sans » perdus](runs/2026-11-25-0830-idees-essai-sans.md) | 💡 | Run « idées », sans code. Un essai écarte les jours « sans » où la mesure dépasse le seuil, alors que l'écran demandait « comme d'habitude » : banc à vérité connue, compter par calendrier conclut 100 % des essais (47 % aujourd'hui) sans pencher vers « Plutôt oui ». Correctif prêt pour le prochain run de code. La maquette des courbes de la montre (19/11) attend votre réponse. Aucun build de Mac |
 | 25/11 07:30 — [#1255 mergée](runs/2026-11-25-0730-merge-1255.md) | 📓 | **#1255 mergée** : en notant un repas sans photo, « Hier midi » et « Hier soir » règlent l'heure en un geste (build iPhone vert, captures relues). Run court de journal, sans build de Mac. Rien à faire de votre côté |
 | 25/11 06:30 — [#1254 mergée, repas d'hier en un geste](runs/2026-11-25-0630-repas-d-hier.md) | 🔧 | **#1254 mergée** (bouton secondaire touché lisible ; captures `/data` iPhone relues). Nouveau repas sans photo : boutons « Hier midi » et « Hier soir » sous l'heure (hier 12:30 ou 19:30), demandés par la persona « Ventre et données » qui s'y reprenait à trois fois dans le champ date. PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 25/11 05:30 — [Bouton touché lisible, TestFlight 1313](runs/2026-11-25-0530-contraste-bouton-touche.md) | 🔧 | TestFlight **1313.1313** (build de cette nuit) chez « Testeurs Halcya » et soumise à l'examen bêta, anciennes builds expirées. POLISH-CONTRASTE-FOCUS : un bouton secondaire qu'on vient de toucher (« Télécharger en CSV », etc.) garde un texte lisible (3,98:1 → 4,86:1 en clair). PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
