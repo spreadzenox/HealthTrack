@@ -150,6 +150,21 @@ describe('TS-1 : modèle à espace d’états bien-être + confort digestif', ()
     expect(estimateStatesFromEntries([], {})).toBeNull()
   })
 
+  it('POLISH-NOTE-LOSANGE : chaque jour garde la note telle que donnée (bien-être moyen, ventre le plus fort)', () => {
+    const entries = [
+      { type: 'wellbeing', at: '2026-03-02T21:00:00', payload: { score: 4 } },
+      { type: 'wellbeing', at: '2026-03-02T09:00:00', payload: { score: 2 } },
+      { type: 'gut', at: '2026-03-02T10:00:00', payload: { level: 'calm' } },
+      { type: 'gut', at: '2026-03-02T15:00:00', payload: { level: 'pain' } },
+      { type: 'stool', at: '2026-03-03T08:00:00', payload: { form: 'loose' } },
+    ]
+    const res = estimateStatesFromEntries(entries, { now: new Date('2026-03-03T22:00:00') })
+    const day = (dk) => res.days.find((d) => d.date === dk && !d.future)
+    expect(day('2026-03-02').noted).toEqual({ wellbeing: 3, digestion: 'pain' })
+    expect(day('2026-03-03').noted).toEqual({ wellbeing: null, digestion: null })
+    expect(res.days.filter((d) => d.future).every((d) => d.noted.wellbeing == null && d.noted.digestion == null)).toBe(true)
+  })
+
   it('banc, règle 5 : un facteur qui ne touche que le bien-être ne devient pas un facteur digestif', () => {
     // Les analyses digestives prennent digestionOwn, jamais la série jointe.
     let leakOwn = 0

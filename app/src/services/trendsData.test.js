@@ -41,6 +41,31 @@ describe('Tendances (ORG-3)', () => {
     expect(r.series.digestion.map((p) => p.date)).toEqual(['2026-11-07'])
   })
 
+  it('POLISH-NOTE-LOSANGE : la note du jour, telle que donnée, quand l’estimation s’en écarte', () => {
+    const pain = { ...state('2026-11-06'), observed: { wellbeing: true, digestion: true },
+      noted: { wellbeing: 3.75, digestion: 'pain' }, wellbeing: band(3.8), digestionOwn: band(1.9) }
+    const calm = { ...state('2026-11-07'), observed: { wellbeing: false, digestion: true },
+      noted: { wellbeing: null, digestion: 'calm' }, digestionOwn: band(5) }
+    const r = buildTrendSeries({ states: { showDigestiveCurve: false, days: [state('2026-11-05'), pain, calm] }, period: 'week', now: NOW })
+    const gut = r.series.digestion
+    expect(gut.map((p) => p.date)).toEqual(['2026-11-06', '2026-11-07'])
+    // douleur = 1 (même échelle que « vous avez noté « douleur » (1) »), l'estimation reste la ligne
+    expect(gut[0].note).toBe(1)
+    expect(gut[0].value).toBeGreaterThan(2)
+    // calme = 5 et l'estimation y est : pas de second point
+    expect(gut[1].note).toBeUndefined()
+    // bien-être : note 3,75 en interne (affichée 4), estimation affichée 4,04 : trop proche pour un second point
+    expect(r.series.wellbeing.find((p) => p.date === '2026-11-06').note).toBeUndefined()
+    expect(r.series.wellbeing.find((p) => p.date === '2026-11-05').note).toBeUndefined()
+  })
+
+  it('POLISH-NOTE-LOSANGE : une note de bien-être loin de l’estimation (visage) a son point', () => {
+    const d = { ...state('2026-11-06'), observed: { wellbeing: true, digestion: false },
+      noted: { wellbeing: 5, digestion: null }, wellbeing: band(3) }
+    const r = buildTrendSeries({ states: { showDigestiveCurve: false, days: [d] }, period: 'week', now: NOW })
+    expect(r.series.wellbeing[0].note).toBe(5)
+  })
+
   it('une mesure n’est proposée qu’à partir de 3 points', () => {
     const days = [5, 6, 7].map((d) => ({ dateKey: `2026-11-0${d}`, summary: { sleepMinutes: 420, steps: d === 7 ? 5000 : null } }))
     const r = buildTrendSeries({ days, period: 'week', now: NOW })

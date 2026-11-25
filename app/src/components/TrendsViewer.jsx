@@ -135,6 +135,12 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
               <circle key={p.date} className={`trends-dot${p.observed ? ' is-full' : ''}`} cx={x(p.date)} cy={y(p.value)}
                 r={selected === p.date ? 5 : 3.2} />
             ))}
+            {/* POLISH-NOTE-LOSANGE : la note telle que donnée, en losange (comme dans la vue Jour), quand l'estimation
+                s'en écarte ; la ligne reste l'estimation */}
+            {past.filter((p) => Number.isFinite(p.note)).map((p) => (
+              <rect key={`note-${p.date}`} className="trends-note" x={x(p.date) - 4} y={y(p.note) - 4} width={8} height={8}
+                transform={`rotate(45 ${x(p.date)} ${y(p.note)})`} />
+            ))}
           </g>
         )
       })}
@@ -356,6 +362,9 @@ export default function TrendsViewer({
   // confort digestif estimé) ; sinon la période s'arrête à aujourd'hui, sans jours vides
   const hasFuture = shown.some((k) => data.series[k].some((p) => p.future))
   const chartData = hasFuture ? data : { ...data, dates: data.dates.filter((d) => d <= data.today) }
+  // POLISH-NOTE-LOSANGE : la légende du losange, seulement si la courbe en montre un (couleur de sa mesure)
+  const noteKey = shown.find((k) => data.series[k].some((p) => !p.future && Number.isFinite(p.note)))
+  const noteTone = noteKey ? trendMeasure(noteKey).tone : null
   // Un jour futur touché ne reste pas ouvert quand la courbe qui portait son attendu est retirée
   const sel = selected && chartData.dates.includes(selected) ? selected : null
   // TS-2 : repères « changement » en vue Mois
@@ -498,6 +507,12 @@ export default function TrendsViewer({
       ) : shown.length ? (
         <>
           <Chart data={chartData} keys={shown} selected={sel} onSelect={setSelected} marks={marks} />
+          {noteTone && (
+            <ul className="trends-legend is-period" aria-label="Légende" data-tone={noteTone}>
+              <li><span className="trends-legend-note" aria-hidden="true" />votre note</li>
+              <li><span className="trends-legend-dot" aria-hidden="true" />l’estimation du jour</li>
+            </ul>
+          )}
           {hasFuture && (
             <p className="trends-future-legend">
               <span className="trends-future-swatch" aria-hidden="true" />attendu d’après vos habitudes
