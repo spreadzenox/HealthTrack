@@ -246,6 +246,19 @@ export function homeTrial(rows, now = new Date(), { outcome = null } = {}) {
   }
 }
 
+/**
+ * LANT-3 (DECOUPAGE-RITUEL-LANTERNES.md) : la lanterne de l'îlot s'allume le matin quand hier était un jour « avec »
+ * tenu (d'après les données ou la réponse « c'était tenu ? »). `summaries` : résumés des jours que l'Accueil a déjà
+ * lus (aucune lecture de plus). Retourne `{ date: hier, key: aujourd'hui }` (une fois par jour) ou null.
+ */
+export function morningLantern(rows, { summaries = new Map(), now = new Date() } = {}) {
+  const yesterday = addDays(keyOfDate(now), -1)
+  const held = (rows ?? [])
+    .filter((e) => e?.type === TRIAL_TYPE && Array.isArray(e.payload?.schedule) && !e.payload.removedAt)
+    .some((e) => trialStatus(e.payload, { summaries, now }).calendar.some((d) => d.date === yesterday && d.with && d.held === true))
+  return held ? { date: yesterday, key: keyOfDate(now) } : null
+}
+
 const BILAN_TITLES = { yes: 'Plutôt oui', no: 'Plutôt non', none: 'Pas de différence nette', too_few: 'Trop peu de jours pour conclure' }
 
 /** Le bilan d'un essai fini, en mots : un titre, et la réserve qui va avec (ou null). */

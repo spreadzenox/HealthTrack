@@ -40,7 +40,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v916** (#1258, 25/11 09:33 UTC, APK 35,7 Mo) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1313.1313** (build du 24/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 25/11 04:31 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
+| Dernière version | release **v917** (#1260, 25/11 11:08 UTC) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1313.1313** (build du 24/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 25/11 04:31 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; plus aucun correctif propre à l'iPhone ; `overlay/` ne garde que les notes de Nouveautés de l'iPhone (FUSION-3 : reste `ios/` → `app/ios/`) |
 
@@ -63,6 +63,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 25/11 12:30 — [La lanterne du matin](runs/2026-11-25-1230-lanterne-du-matin.md) | 🔧 | **#1260 mergée** (votre note en losange dans Tendances), release v917. LANT-3 : pendant un essai, le matin qui suit un jour réussi, la lanterne de l'îlot s'allume un instant sur l'Accueil et Pilou la regarde, une fois par jour. PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 25/11 11:30 — [Votre note sur la courbe](runs/2026-11-25-1130-note-en-losange.md) | 🔧 | POLISH-NOTE-LOSANGE : dans Tendances, en Semaine et en Mois, la note que vous avez donnée apparaît en losange quand la courbe lissée s'en écarte (une « douleur » reste à 1 au lieu de se fondre vers 2,5), avec la légende « votre note · l'estimation du jour ». Le modèle ne change pas ; son échelle du ventre, plus serrée que celle affichée, passera au banc. PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 25/11 10:30 — [#1258 mergée](runs/2026-11-25-1030-merge-1258.md) | 📓 | **#1258 mergée** : le bilan d'un essai compte tous les jours tirés au sort, tenus ou non (build iPhone vert, capture Agir relue sur iPhone). Release v916. Run court de journal, sans build de Mac. Rien à faire de votre côté |
 | 25/11 09:30 — [Un essai compte tous ses jours](runs/2026-11-25-0930-essai-par-calendrier.md) | 🔧 | POLISH-ESSAI-SANS : le résultat d'un essai compte le lendemain de chaque jour tiré au sort, que la consigne ait été tenue ou non (les jours « comme d'habitude » un peu au-dessus du seuil disparaissaient, et le bilan penchait vers « Plutôt oui »). PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |

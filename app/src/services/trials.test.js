@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, lanterns, pilouSays } from './trials'
+import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, lanterns, pilouSays, morningLantern } from './trials'
 
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30, unit: 'min', text: '30 min de sommeil de plus' } }
 const START = new Date(2026, 10, 1, 9)
@@ -246,5 +246,39 @@ describe('REFONTE-4b-3 : essai sur une habitude', () => {
     const summaries = new Map([['2026-11-13', { habits: { meditation: true } }]])
     const st = habitStatus(t, { summaries, now: new Date(2026, 10, 14, 10) })
     expect(st.days.at(-1)).toEqual({ date: '2026-11-13', held: true })
+  })
+})
+
+describe('LANT-3 : la lanterne du matin sur l’îlot', () => {
+  const sleep = { key: 'sleepMinutes', label: 'Sommeil', outcome: 'wellbeing', effect: 0.4, direction: 'more', threshold: 450 }
+  const START = new Date(2026, 10, 1, 9)
+  const days = [...Array(10)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 }))
+  const t10 = { ...createTrial(sleep, { now: START }), threshold: 450, direction: 'more', schedule: days }
+  const row = (id, payload) => ({ id, type: 'trial', at: START.toISOString(), payload })
+
+  it('hier, jour « avec » tenu d’après la montre : la lanterne s’allume ce matin (une clé par jour)', () => {
+    const summaries = new Map([['2026-11-03', { sleepMinutes: 470 }]])
+    expect(morningLantern([row(7, t10)], { summaries, now: new Date(2026, 10, 4, 8) })).toEqual({ date: '2026-11-03', key: '2026-11-04' })
+  })
+
+  it('hier tenu d’après la réponse « c’était tenu ? » (sans mesure)', () => {
+    const answered = { ...t10, answers: { '2026-11-03': true } }
+    expect(morningLantern([row(7, answered)], { now: new Date(2026, 10, 4, 8) })).toMatchObject({ date: '2026-11-03' })
+  })
+
+  it('rien : hier pas tenu, tenue inconnue, jour « sans », essai retiré ou pas d’essai', () => {
+    const now = new Date(2026, 10, 4, 8)
+    expect(morningLantern([row(7, t10)], { summaries: new Map([['2026-11-03', { sleepMinutes: 400 }]]), now })).toBeNull()
+    expect(morningLantern([row(7, t10)], { now })).toBeNull()
+    expect(morningLantern([row(7, t10)], { summaries: new Map([['2026-11-04', { sleepMinutes: 470 }]]), now: new Date(2026, 10, 5, 8) })).toBeNull()
+    expect(morningLantern([row(7, { ...t10, removedAt: '2026-11-03' })], { summaries: new Map([['2026-11-03', { sleepMinutes: 470 }]]), now })).toBeNull()
+    expect(morningLantern([], { now })).toBeNull()
+    expect(morningLantern(null, { now })).toBeNull()
+  })
+
+  it('le dernier jour « avec » d’un essai qui vient de finir allume encore sa lanterne le lendemain', () => {
+    const last = { ...t10, schedule: days.map((d, i) => ({ ...d, with: i === 9 })) }
+    const summaries = new Map([['2026-11-10', { sleepMinutes: 470 }]])
+    expect(morningLantern([row(7, last)], { summaries, now: new Date(2026, 10, 11, 8) })).toMatchObject({ date: '2026-11-10' })
   })
 })

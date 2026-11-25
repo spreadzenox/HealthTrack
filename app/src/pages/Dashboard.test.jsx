@@ -134,6 +134,36 @@ describe('Dashboard', () => {
     expect(data2.compareDocumentPosition(quiet) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
+  it('LANT-3 : hier, jour « avec » tenu : l’Accueil allume la lanterne de l’îlot, une fois par jour', async () => {
+    const { listEntries } = await import('../storage/localHealthStorage')
+    const { bus, EVENTS } = await import('../companion/bus')
+    localStorage.removeItem('halcya.lantern.morningSeen')
+    const now = new Date()
+    const key = (offset) => {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset)
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    }
+    const trial = {
+      id: 9, type: 'trial', source: 'app_trial', at: now.toISOString(),
+      payload: {
+        factor: { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, change: 30 },
+        direction: 'more', threshold: 450, startedAt: now.toISOString(), answers: { [key(-1)]: true },
+        schedule: [...Array(10)].map((_, i) => ({ date: key(i - 3), with: i % 2 === 0 })),
+      },
+    }
+    listEntries.mockImplementation(async ({ type } = {}) => (type === 'trial' ? [trial] : []))
+    const lit = vi.fn()
+    const off = bus.on(EVENTS.LANTERN_LIT, lit)
+    const { unmount } = renderDashboard()
+    await waitFor(() => expect(lit).toHaveBeenCalledTimes(1))
+    expect(lit.mock.calls[0][0]).toMatchObject({ date: key(-1) })
+    unmount()
+    renderDashboard()
+    await screen.findByRole('link', { name: /Dormir au moins 7 h 30/ })
+    expect(lit).toHaveBeenCalledTimes(1)
+    off()
+  })
+
   it('Ma journée : le titre, puis le bandeau d’ajout ; ni bien-être du jour ni mesures (refonte étape 2)', async () => {
     renderDashboard('day')
     const title = screen.getByRole('heading', { level: 1, name: 'Ma journée' })

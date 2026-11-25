@@ -176,6 +176,39 @@ describe('les cadeaux de la première semaine (SPEC île § 7)', async () => {
     g.update(0)
     expect(mat.emissiveIntensity).toBeGreaterThan(day + 1)
   })
+
+  it('LANT-3 : le matin, la lanterne vacille, monte, tient puis s’éteint (2,6 s) ; en mouvements réduits, un fondu', async () => {
+    const { lanternMorning, LANTERN_MORNING_MS } = await import('./gifts')
+    expect(LANTERN_MORNING_MS).toBe(2600)
+    expect(lanternMorning(null)).toBe(0)
+    expect(lanternMorning(-1)).toBe(0)
+    expect(lanternMorning(40)).toBeGreaterThan(0) // vacille pendant 120 ms
+    expect(lanternMorning(100)).toBe(0)
+    expect(lanternMorning(320)).toBeGreaterThan(0.3)
+    expect(lanternMorning(320)).toBeLessThan(1)
+    expect(lanternMorning(520)).toBe(1)
+    expect(lanternMorning(2000)).toBe(1)
+    expect(lanternMorning(2600)).toBe(0)
+    expect(lanternMorning(150, { reducedMotion: true })).toBeCloseTo(0.5)
+    expect(lanternMorning(1000, { reducedMotion: true })).toBe(1)
+    expect(lanternMorning(2600, { reducedMotion: true })).toBe(0)
+  })
+
+  it('LANT-3 : lightLantern allume la lanterne de jour, puis elle redevient éteinte ; sans lanterne, rien', () => {
+    const g = createGifts()
+    expect(g.lightLantern(0)).toBe(false)
+    expect(g.lanternSpot()).toBeNull()
+    g.setItems(['lanterne'])
+    g.update(0)
+    const mat = g.group.getObjectByName('lanterne').userData.lightMat
+    const day = mat.emissiveIntensity
+    expect(g.lightLantern(1000)).toBe(true)
+    expect(g.lanternSpot().x).toBeGreaterThan(0.5) // à droite de Pilou (SPEC île § 7)
+    expect(g.update(1000 + 1000)).toBe(true)
+    expect(mat.emissiveIntensity).toBeGreaterThan(day + 1)
+    g.update(1000 + 3000)
+    expect(mat.emissiveIntensity).toBeCloseTo(day)
+  })
 })
 
 describe('la boîte de la cérémonie (SPEC île § 7)', async () => {

@@ -36,6 +36,21 @@ export function giftArrival(item, ms, { reducedMotion = false } = {}) {
   }
 }
 
+/** LANT-3 : durée de l'allumage du matin (la lanterne s'éteint ensuite : il fait jour). */
+export const LANTERN_MORNING_MS = 2600
+
+/**
+ * LANT-3 : allumage du matin, 0 → 1 (ms depuis l'allumage) : la flamme vacille 120 ms, monte en 400 ms, tient, puis
+ * s'éteint à 2,6 s. En mouvements réduits : fondu de 300 ms à l'entrée et à la sortie.
+ */
+export function lanternMorning(ms, { reducedMotion = false } = {}) {
+  if (ms == null || ms < 0 || ms >= LANTERN_MORNING_MS) return 0
+  const end = LANTERN_MORNING_MS
+  if (reducedMotion) return Math.min(seg(ms, 0, 300), 1 - seg(ms, end - 300, end))
+  if (ms < 120) return ms < 60 ? 0.6 : 0
+  return Math.min(EASE.io(seg(ms, 120, 520)), 1 - EASE.io(seg(ms, end - 400, end)))
+}
+
 function glaze(color, extra = {}) {
   return new THREE.MeshPhysicalMaterial({ color, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.12, ...extra })
 }
@@ -263,6 +278,7 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
   let season = 'printemps-ete'
   let shrubScale = 1
   let tree = false
+  let litAt = null
 
   function add(item, t) {
     if (!GIFT_ITEMS.includes(item) || placed.has(item)) return
@@ -340,6 +356,20 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
     get isTree() {
       return tree
     },
+    /** LANT-3 : la lanterne s'allume ce matin (`t` = temps de la scène) ; false sans lanterne sur l'île. */
+    lightLantern(t) {
+      if (!placed.get('lanterne')?.obj) return false
+      litAt = t
+      return true
+    },
+    /** Où regarder la lanterne (repère du monde, haut de la flamme), ou null sans lanterne. */
+    lanternSpot() {
+      const o = placed.get('lanterne')?.obj
+      if (!o) return null
+      const v = new THREE.Vector3(0.08, 0.3, 0)
+      o.localToWorld(v)
+      return { x: v.x, y: v.y, z: v.z }
+    },
     setEvening(v) {
       evening = Math.max(0, Math.min(1, v))
     },
@@ -385,7 +415,9 @@ export function createGifts({ topY = () => 0, pilou = () => null, reducedMotion 
         if (p.item === 'lanterne') {
           // le soir, la lanterne s'allume ; scintillement ±8 %
           const flick = rm ? 1 : 1 + 0.08 * Math.sin(t / 130) * Math.sin(t / 370)
-          o.userData.lightMat.emissiveIntensity = 0.15 + 1.4 * evening * flick
+          const morning = lanternMorning(litAt == null ? null : t - litAt, { reducedMotion: rm })
+          if (morning > 0) moving = true
+          o.userData.lightMat.emissiveIntensity = 0.15 + 1.4 * Math.max(evening * flick, morning)
         }
         if (p.item === 'papillon') {
           const tip = pilou()?.anchors?.antennaTip
