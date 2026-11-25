@@ -157,6 +157,12 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
       {pilou.text && <p className="trial-pilou-says" role="status">{pilou.text}</p>}
     </div>
   )
+  const keptLine = (
+    <p className="act-card-detail trial-kept">
+      {/* POLISH-SIM-159 : le second total ne compte que les jours où la consigne s'applique ; on le dit */}
+      Consigne tenue <span className="mono">{s.kept}</span> {s.kept > 1 ? 'jours' : 'jour'} sur <span className="mono">{s.goal}</span> prévus
+    </p>
+  )
   return (
     <section className="act-page trial-page" data-tone={THEME_TONE[t.factor.theme] ?? 'stone'}>
       {/* POLISH-SIM-108 : l'essai est rangé sous Objectifs (onglet allumé) ; on revient à l'objectif qu'il suit */}
@@ -175,10 +181,7 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
             {s.todayDay?.with ? `Aujourd’hui : ${withLabel}.` : 'Aujourd’hui : comme d’habitude, rien à changer.'}
           </p>
           <TrialLanterns items={lanterns(s)} />
-          <p className="act-card-detail trial-kept">
-            {/* POLISH-SIM-159 : le second total ne compte que les jours où la consigne s'applique ; on le dit */}
-            Consigne tenue <span className="mono">{s.kept}</span> {s.kept > 1 ? 'jours' : 'jour'} sur <span className="mono">{s.goal}</span> prévus
-          </p>
+          {keptLine}
           {s.missed > 0 && <p className="act-card-detail">Un jour manqué n’annule rien : l’essai continue.</p>}
         </article>
       )}
@@ -194,6 +197,9 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
       )}
       <article className="today-card trial-result" aria-label="Résultat">
         {s.done && pilouRow}
+        {/* LANT-2b (SPEC § 7, « Bilan de votre piste ») : les lanternes du défi restent dans la carte du bilan */}
+        {s.done && <TrialLanterns items={lanterns(s)} />}
+        {s.done && keptLine}
         <h2 className="act-section-title">
           {bilan ? bilan.title : 'Résultat en cours'}
         </h2>
