@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import Trial from './Trial'
 import { createTrial } from '../services/trials'
@@ -205,6 +205,22 @@ describe('Un essai (ORG-8)', () => {
     expect(card.querySelector('.pilou-figure')).toHaveClass('pilou-move-nod')
     expect(card).toHaveTextContent(/Bravo pour (vos \d jours réussis|votre jour réussi)\./)
     expect(card.querySelector('.confetti, .pilou-move-party')).toBeNull()
+  })
+
+  it('LANT-2b : au bilan, les lanternes et la consigne tenue restent dans la carte du résultat', async () => {
+    const { container } = renderTrial(new Date(2026, 10, 12, 10), { schedule: payload.schedule.slice(0, 10), answers: { '2026-11-01': true, '2026-11-03': false, '2026-11-05': true } })
+    const card = await screen.findByRole('article', { name: 'Résultat' })
+    const row = within(card).getByRole('list', { name: 'Lanternes des jours avec' })
+    expect(row.querySelectorAll('li')).toHaveLength(5)
+    expect(row.querySelectorAll('.is-lit')).toHaveLength(2)
+    expect(within(card).getByText(line('Consigne tenue 2 jours sur 5 prévus'))).toBeInTheDocument()
+    expect(container.querySelector('.trial-today')).toBeNull()
+  })
+
+  it('LANT-2b : le lendemain d’un jour avec manqué, Pilou hausse les épaules sans reproche', async () => {
+    const { container } = renderTrial(new Date(2026, 10, 4, 10), { schedule: payload.schedule.slice(0, 10), answers: { '2026-11-01': true, '2026-11-03': false } })
+    expect(await screen.findByText('Pas grave : la prochaine lanterne vous attend.')).toBeInTheDocument()
+    expect(container.querySelector('.trial-today .pilou-figure')).toHaveClass('pilou-move-shrug')
   })
 })
 

@@ -214,6 +214,15 @@ describe('LANT-2 : ce que dit Pilou sur la page du défi', () => {
     expect(pilouSays({ done: false }, { started: true })).toEqual({ expr: 'content', move: 'hop', text: 'C’est parti ! Chaque jour réussi allume une lanterne.' })
     expect(pilouSays({ done: false })).toEqual({ expr: 'tranquille', move: 'none', text: null })
   })
+  it('LANT-2b : le lendemain d’un jour avec manqué, il hausse doucement les épaules en souriant ; rien ne repart à zéro', () => {
+    const cal = (held, w = true) => [{ date: '2026-11-03', with: w, held }, { date: '2026-11-04', with: false, held: null, today: true }]
+    expect(pilouSays({ done: false, calendar: cal(false) })).toEqual({ expr: 'content', move: 'shrug', text: 'Pas grave : la prochaine lanterne vous attend.' })
+    expect(pilouSays({ done: false, calendar: cal(true) }).move).toBe('none')
+    expect(pilouSays({ done: false, calendar: cal(null) }).move).toBe('none')
+    expect(pilouSays({ done: false, calendar: cal(false, false) }).move).toBe('none')
+    // juste après « Commencer », le saut passe avant
+    expect(pilouSays({ done: false, calendar: cal(false) }, { started: true }).move).toBe('hop')
+  })
 })
 
 describe('REFONTE-4b-3 : essai sur une habitude', () => {

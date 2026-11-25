@@ -206,7 +206,7 @@ export function lanterns(status) {
 
 /**
  * LANT-2 (specs/comprendre.SPEC.md § 6.5 et § 7) : Pilou sur la page du défi. Juste après « Commencer », un saut et la
- * promesse des lanternes ; en cours, il attend sans bulle ; au bilan, deux signes de tête et un mot qui salue l'effort,
+ * promesse des lanternes ; en cours, il attend sans bulle (sauf le lendemain d'un jour avec manqué : LANT-2b) ; au bilan, deux signes de tête et un mot qui salue l'effort,
  * le même quel que soit le résultat (ni fête, ni tristesse).
  * @returns {{ expr: string, move: string, text: string | null }}
  */
@@ -217,6 +217,12 @@ export function pilouSays(status, { started = false } = {}) {
     return { expr: 'content', move: 'nod', text }
   }
   if (started) return { expr: 'content', move: 'hop', text: 'C’est parti ! Chaque jour réussi allume une lanterne.' }
+  // LANT-2b (SPEC § 6.5, « soir manqué ») : le lendemain d'un jour avec pas tenu, un haussement d'épaules souriant ;
+  // la lanterne reste éteinte, rien ne repart à zéro
+  const cal = status?.calendar ?? []
+  const t = cal.findIndex((d) => d.today)
+  const yday = t > 0 ? cal[t - 1] : null
+  if (yday?.with && yday.held === false) return { expr: 'content', move: 'shrug', text: 'Pas grave : la prochaine lanterne vous attend.' }
   return { expr: 'tranquille', move: 'none', text: null }
 }
 
