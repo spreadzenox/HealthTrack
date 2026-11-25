@@ -952,8 +952,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     widget re-rendues avec le module PILOU ; rituel du soir et lanternes du défi des 5 soirs (SPEC journée § 7) ;
     première série `captures/main` d'après le sprint à regarder ; palier de qualité sur un vrai téléphone ; #1072 si
     elle est encore ouverte après 03:00 (son équipier est arrêté : la routine la finit).
-  - [x] **LANT-3 — La lanterne du matin sur l'îlot** (FAIT le 25/11 12:30, PR à merger au run suivant après le build
-    iPhone) : `morningLantern(rows, { summaries, now })` (`services/trials.js`) dit si hier était un jour « avec » tenu
+  - [x] **LANT-3 — La lanterne du matin sur l'îlot** (FAIT le 25/11 12:30, **mergée** dans #1261 le 25/11 13:30 après le
+    build iPhone vert, release v918) : `morningLantern(rows, { summaries, now })` (`services/trials.js`) dit si hier était un jour « avec » tenu
     (données ou réponse « c'était tenu ? »), y compris le dernier jour d'un essai qui vient de finir ;
     `companion/bubbles/morningLantern.js` en tire les résumés depuis les saisies que l'Accueil a déjà lues (aucune
     lecture de plus) et garde la clé du jour (`halcya.lantern.morningSeen`, une fois par jour) ; `Dashboard.jsx` émet
