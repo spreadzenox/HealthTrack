@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-25",
+  "kind": "amélioration",
+  "title": "Un essai compte tous ses jours",
+  "items": [
+    "Le résultat d’un essai compte le lendemain de chaque jour tiré au sort, que la consigne ait été tenue ou non. Les jours « comme d’habitude » ne disparaissent plus, et le bilan est plus juste."
+  ]
+}
