@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { entriesToCsv, csvFileName } from './csvExport'
+import { entriesToCsv, csvFileName, csvContents } from './csvExport'
 
 // Les heures sont lues dans le fuseau du téléphone : on construit les dates en heure locale.
 const local = (y, mo, d, h, mi) => new Date(y, mo - 1, d, h, mi).toISOString()
@@ -75,5 +75,34 @@ describe('entriesToCsv (EXPORT-CSV)', () => {
 describe('csvFileName', () => {
   it('« halcya-donnees-AAAA-MM-JJ.csv »', () => {
     expect(csvFileName(new Date(2026, 10, 22, 10, 0))).toBe('halcya-donnees-2026-11-22.csv')
+  })
+})
+
+describe('POLISH-SIM-163 : ce que contient le CSV', () => {
+  const hr = (subtype, value, day) => ({ type: 'heart_rate', source: 'health_connect', at: local(2026, 11, day, 9, 0), payload: { subtype, value } })
+
+  it('nomme chaque mesure cardiaque au lieu de tout appeler « fréquence cardiaque »', () => {
+    const rows = lines(entriesToCsv([
+      hr('heartRate', 62, 20), hr('restingHeartRate', 55, 20), hr('heartRateVariability', 41, 20),
+      hr('heartRateVariabilitySdnn', 48, 20), hr('oxygenSaturation', 97, 20),
+    ])).slice(1).map((r) => r.split(';')[2])
+    expect(rows).toEqual(['Cœur', 'Cœur au repos', 'Variabilité cardiaque', 'Variabilité cardiaque, app Santé', 'Oxygène du sang'])
+  })
+
+  it('compte les lignes, donne la période et chaque sorte de saisie, la plus fréquente d’abord', () => {
+    const c = csvContents([
+      hr('oxygenSaturation', 97, 21), hr('heartRate', 62, 20), hr('heartRate', 64, 22),
+      { type: 'steps', source: 'health_connect', at: local(2026, 11, 19, 23, 0), payload: { count: 8000 } },
+      { type: 'context', source: 'app', at: local(2026, 11, 1, 0, 0), payload: { tz: 'Europe/Paris' } },
+      { type: 'gut', source: 'app_gut', at: 'pas une date', payload: {} },
+    ])
+    expect(c.rows).toBe(4)
+    expect(c.from).toBe('2026-11-19')
+    expect(c.to).toBe('2026-11-22')
+    expect(c.kinds).toEqual([{ label: 'Cœur', count: 2 }, { label: 'Oxygène du sang', count: 1 }, { label: 'Pas', count: 1 }])
+  })
+
+  it('rien à exporter : zéro ligne, sans période', () => {
+    expect(csvContents([])).toEqual({ rows: 0, from: null, to: null, kinds: [] })
   })
 })

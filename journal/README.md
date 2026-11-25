@@ -62,6 +62,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 25/11 03:30 — [L'export CSV dit ce qu'il contient](runs/2026-11-25-0330-contenu-du-csv.md) | 🔧 | POLISH-SIM-163 : après « Télécharger en CSV » (Réglages › Sauvegarde), l'app dit le nombre de lignes, la période et le compte de chaque mesure ; dans le fichier, l'oxygène du sang, la variabilité cardiaque et le cœur au repos ont leur nom (tout s'appelait « Fréquence cardiaque »). PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 25/11 02:30 — [#1250 mergée](runs/2026-11-25-0230-merge-1250.md) | 🔧 | **#1250 mergée** : en notant un repas depuis Ma journée ou l'Accueil, l'onglet d'où vous venez reste allumé (build iPhone vert, captures relues sur les deux ; un job d'émulateur Android bloqué 30 min a été relancé, vert). Rien à faire de votre côté |
 | 25/11 01:30 — [Un repas garde son onglet](runs/2026-11-25-0130-onglet-des-repas.md) | 🔧 | POLISH-SIM-162 : en notant un repas depuis Ma journée ou l'Accueil, l'onglet d'où vous venez reste allumé en bas, au lieu de « Données » (deux personas ne savaient plus où elles étaient). PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 25/11 00:30 — [Cache Gradle](runs/2026-11-25-0030-cache-gradle.md) | 🔧 | L'envoi en test interne de main avait échoué sur un refus passager de Maven Central (429) : relancé, et les builds Android gardent désormais leurs dépendances Gradle en cache (moins de téléchargements, aucune minute Mac). Rien à faire de votre côté |

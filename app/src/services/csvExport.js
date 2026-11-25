@@ -24,7 +24,7 @@ const TYPE_LABELS = {
   period: 'Règles',
   steps: 'Pas',
   sleep: 'Sommeil',
-  heart_rate: 'Fréquence cardiaque',
+  heart_rate: 'Cœur',
   weight: 'Poids',
   height: 'Taille',
   body_composition: 'Composition corporelle',
@@ -42,6 +42,17 @@ const TYPE_LABELS = {
   fodmap_challenge: 'Réintroduction',
   note: 'Note',
 }
+
+// Une entrée `heart_rate` porte aussi l'oxygène et la variabilité (POLISH-SIM-163) : son sous-type la nomme.
+const HEART_SUBTYPES = {
+  heartRate: 'Cœur',
+  restingHeartRate: 'Cœur au repos',
+  heartRateVariability: 'Variabilité cardiaque',
+  heartRateVariabilitySdnn: 'Variabilité cardiaque, app Santé',
+  oxygenSaturation: 'Oxygène du sang',
+}
+
+const kindOf = (e) => (e.type === 'heart_rate' && HEART_SUBTYPES[e.payload?.subtype]) || TYPE_LABELS[e.type] || e.type
 
 const pad = (n) => String(n).padStart(2, '0')
 const dayOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
@@ -98,25 +109,50 @@ function cell(text) {
   return /[";\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
 }
 
-/**
- * @param {Array<{type: string, source: string, at: string, payload?: object}>} entries
- * @returns {string} CSV avec BOM, lignes séparées par CRLF
- */
-export function entriesToCsv(entries) {
+/** Les saisies qui font une ligne, dans l'ordre chronologique. */
+function exportedRows(entries) {
   const rows = []
   for (const e of entries || []) {
     if (!e || SKIPPED_TYPES.has(e.type)) continue
     const date = new Date(e.at)
     if (!e.at || Number.isNaN(date.getTime())) continue
+    rows.push({ date, e })
+  }
+  return rows.sort((a, b) => a.date - b.date)
+}
+
+/**
+ * Ce que contient le fichier, dit après l'export (POLISH-SIM-163 : « sans savoir si cœur et oxygène sont dedans »).
+ * @returns {{ rows: number, from: string|null, to: string|null, kinds: Array<{label: string, count: number}> }}
+ */
+export function csvContents(entries) {
+  const rows = exportedRows(entries)
+  const counts = new Map()
+  for (const { e } of rows) counts.set(kindOf(e), (counts.get(kindOf(e)) || 0) + 1)
+  const kinds = [...counts].map(([label, count]) => ({ label, count }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'fr'))
+  return {
+    rows: rows.length,
+    from: rows.length ? dayOf(rows[0].date) : null,
+    to: rows.length ? dayOf(rows[rows.length - 1].date) : null,
+    kinds,
+  }
+}
+
+/**
+ * @param {Array<{type: string, source: string, at: string, payload?: object}>} entries
+ * @returns {string} CSV avec BOM, lignes séparées par CRLF
+ */
+export function entriesToCsv(entries) {
+  const rows = exportedRows(entries).map(({ date, e }) => {
     const payload = e.payload && typeof e.payload === 'object' ? e.payload : {}
     const { items, ...rest } = payload
-    rows.push({ date, e, meal: e.type === 'food' ? mealText(items) : '', fields: flatten(e.type === 'food' ? rest : payload) })
-  }
-  rows.sort((a, b) => a.date - b.date)
+    return { date, e, meal: e.type === 'food' ? mealText(items) : '', fields: flatten(e.type === 'food' ? rest : payload) }
+  })
   const keys = [...new Set(rows.flatMap((r) => Object.keys(r.fields)))].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
   const lines = [[...FIXED, ...keys].map(cell).join(SEP)]
   for (const { date, e, meal, fields } of rows) {
-    const values = [dayOf(date), timeOf(date), TYPE_LABELS[e.type] || e.type, e.type, e.source || '', meal, ...keys.map((k) => fields[k] ?? '')]
+    const values = [dayOf(date), timeOf(date), kindOf(e), e.type, e.source || '', meal, ...keys.map((k) => fields[k] ?? '')]
     lines.push(values.map(cell).join(SEP))
   }
   return `\uFEFF${lines.join('\r\n')}\r\n`

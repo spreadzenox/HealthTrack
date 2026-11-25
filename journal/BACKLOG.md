@@ -826,7 +826,17 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - À étudier : cœur et oxygène du sang reçus mais visibles nulle part (2ᵉ persona : proposition avec maquette au
       prochain run « idées ») ; une seule note « Douleur » (1) lissée à 2,5 (banc avant tout changement) ; ~~onglet
       Données allumé pendant un repas ouvert depuis Ma journée (2ᵉ persona)~~ (POLISH-SIM-162) ; puces « Hier midi /
-      Hier soir » pour l'heure d'un repas ; l'export CSV ne dit pas ce qu'il contient.
+      Hier soir » pour l'heure d'un repas ; ~~l'export CSV ne dit pas ce qu'il contient~~ (POLISH-SIM-163).
+    - [x] **POLISH-SIM-163 — L'export CSV ne dit pas ce qu'il contient** (FAIT le 25/11 à 03:30 ; « Tout mesurer » J14 :
+      « sans savoir si cœur et oxygène sont dedans ») : après « Télécharger en CSV », la carte dit « 1 851 lignes, du
+      10/09/2026 au 24/11/2026 : Cœur 198 · Température 198 · … » (`csvContents` de `services/csvExport.js`, même
+      filtre que le fichier ; `CsvExportCard.jsx`, « · » insécable pour ne jamais commencer une ligne) ; le texte de la
+      carte dit « et mesures de vos montres ». Défaut trouvé en lisant le code : dans le fichier, toute entrée
+      `heart_rate` s'appelait « Fréquence cardiaque », oxygène du sang et variabilité compris ; la colonne « Quoi » suit
+      maintenant le sous-type (Cœur, Cœur au repos, Variabilité cardiaque, Variabilité cardiaque, app Santé, Oxygène du
+      sang). Tests d'abord (`csvExport`, `CsvExportCard`), captures `/data` après le clic en clair et sombre. Au passage :
+      la vérification visuelle signale « Télécharger en CSV 3,98:1 » une fois le bouton touché (fond du bouton
+      secondaire au focus, CSS non touché par ce run) : à vérifier sur les autres boutons secondaires (POLISH-CONTRASTE-FOCUS).
     - [x] **POLISH-SIM-162 — Onglet « Données » allumé pendant un repas noté depuis Ma journée** (FAIT le 25/11 à
       01:30 ; vu par deux personas, 23/11 « Tout mesurer » J1 et 24/11 « Ventre et données » J45 : « je ne sais plus
       où je suis ») : la page Repas est rangée sous Données, donc la barre allumait Données et la page montrait les
