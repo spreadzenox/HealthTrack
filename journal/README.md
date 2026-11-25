@@ -40,7 +40,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v920** (#1264, 25/11 15:33 UTC, APK 35,7 Mo) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1313.1313** (build du 24/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 25/11 04:31 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
+| Dernière version | release **v921** (#1267, 25/11 18:31 UTC, APK 35,7 Mo) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1313.1313** (build du 24/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 25/11 04:31 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; plus aucun correctif propre à l'iPhone ; `overlay/` ne garde que les notes de Nouveautés de l'iPhone (FUSION-3 : reste `ios/` → `app/ios/`) |
 
@@ -64,6 +64,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 25/11 20:30 — [Personas du soir](runs/2026-11-25-2030-personas-2511-soir.md) | 💡 | Run « idées », sans code produit. Deux personas jouées : « Ventre, sans technique » au 14ᵉ jour après la mise à jour et « Stressé et pressé » au 45ᵉ jour avec une balance. À corriger : dans Tendances, 100 g de poids ressemblent à une forte montée ; dans Sources, une balance passe « En pause » après 3 jours sans pesée ; sur l'Accueil, la carte « Agir » mène à une page vide quand rien n'est à tester. Aucun build de Mac. Rien à faire de votre côté |
 | 25/11 19:30 — [#1267 mergée](runs/2026-11-25-1930-merge-1267.md) | 📓 | **#1267 mergée** : à la fin d'un essai, le bilan garde ses lanternes ; le lendemain d'un jour manqué, Pilou hausse les épaules en souriant (build iPhone vert, captures relues). Run court de journal, sans build de Mac. Rien à faire de votre côté |
 | 25/11 18:30 — [Les lanternes du bilan](runs/2026-11-25-1830-lanternes-du-bilan.md) | 🔧 | LANT-2b : à la fin d'un essai, le bilan garde ses lanternes et « Consigne tenue N jours sur 5 prévus » ; le lendemain d'un jour manqué, Pilou hausse les épaules en souriant (« Pas grave : la prochaine lanterne vous attend. »). Mergée au run suivant (#1267). Rien à faire de votre côté |
 | 25/11 17:30 — [Rituel du soir : la question](runs/2026-11-25-1730-lant4-question.md) | 💡 | LANT-4 : maquette du rituel du soir en 2D (Pilou range son téléphone, « Bonne nuit. »), question 2D / 3D posée plus haut. #1265 (journal du run précédent) fermée : son contenu était déjà sur main. Aucun code, aucun build de Mac. **Une réponse attendue de vous** |

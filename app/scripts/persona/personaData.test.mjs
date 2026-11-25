@@ -175,6 +175,14 @@ describe('personaEntries', () => {
     expect(day1.has('weight') || day1.has('body_composition')).toBe(true) // historique importé de la balance
   })
 
+  it('les pesées arrivent par Health Connect au nom de « Withings » (PERSONAS-OUTIL-2 : la variante play n’a pas de connexion Withings directe)', () => {
+    for (const equipment of ['phone-scale', 'full']) {
+      const weighIns = personaEntries(demo, { day: 45, equipment, now }).filter((e) => ['weight', 'body_composition'].includes(e.type))
+      expect(weighIns.length).toBeGreaterThan(0)
+      expect(weighIns.every((e) => e.source === 'health_connect' && e.payload.sourceName === 'Withings')).toBe(true)
+    }
+  })
+
   it('refuse un profil de saisie inconnu', () => {
     expect(() => personaEntries(demo, { day: 14, equipment: 'phone', now, notes: 'jamais' })).toThrow(/inconnu/)
   })

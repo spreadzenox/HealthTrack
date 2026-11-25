@@ -850,6 +850,28 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       courbes », « go phases » ou « non » ; remise en tête du résumé, 3 personas la demandent désormais) ; ~~une seule note « Douleur » (1) lissée à 2,5~~ (POLISH-NOTE-LOSANGE, 25/11 11:30 : la note en losange ; reste METHODE-ECHELLE-VENTRE) ; ~~onglet
       Données allumé pendant un repas ouvert depuis Ma journée (2ᵉ persona)~~ (POLISH-SIM-162) ; ~~puces « Hier midi /
       Hier soir » pour l'heure d'un repas~~ (POLISH-SIM-164) ; ~~l'export CSV ne dit pas ce qu'il contient~~ (POLISH-SIM-163).
+  - **Passage des personas du 25/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-25-2030-synthese.md) ;
+    « Ventre, sans technique » J14 après mise à jour, Android seul, et « Stressé et pressé » J45, téléphone + balance) :
+    - [x] **PERSONAS-OUTIL-2 — Les pesées de l'outil passaient par la connexion Withings directe** (FAIT le 25/11 à
+      20:30, outillage : `personaData.mjs`, test `personaData.test.mjs`) : absente de la variante play, Sources ne
+      pouvait pas montrer la balance ; elles arrivent maintenant par Health Connect au nom de « Withings ».
+    - [ ] **POLISH-SIM-165 — Tendances : 100 g de poids ressemblent à une forte montée** (J45, capture
+      `poids-semaine.png` ; `TrendsViewer.jsx` 50-55, `domainOf` sans écart minimal) : axe 77,05 → 77,25 kg en
+      Semaine. Écart minimal par unité (2 kg pour le poids, à régler pour les autres unités), centré sur les valeurs.
+      Test `TrendsViewer` d'abord.
+    - [ ] **POLISH-SIM-166 — Sources : une balance « En pause » après 3 jours sans pesée** (outil rejoué ; `healthApps.js`
+      287 et 318, `isRecent`) : « Plus de données depuis quelques jours : ouvrez l'app pour synchroniser la montre »
+      pour une balance qui pèse tous les 3 jours. Une source qui n'envoie que des mesures ponctuelles (poids, masse
+      grasse, tension, glycémie) n'est pas en pause à 3 jours, et le message ne parle pas de montre. Tests
+      `healthApps.test.js` d'abord.
+    - [ ] **POLISH-SIM-167 — Accueil : « Vérifier une piste par un essai » mène à une page vide** (J45, capture
+      `agir-vide.png` ; `Dashboard.jsx` 158) : sans essai ni piste, le sous-titre dit l'état (« Aucune piste à tester
+      pour l'instant ») ou la carte se retire (brief § 4 : « Agir : 3 pistes à tester »). Test `Dashboard` d'abord.
+    - Écartés, avec la raison, dans la synthèse : note « Douleur » estimée 2,4 (POLISH-NOTE-LOSANGE) ; essai sommeil
+      gardé par la mise à jour (voulu) ; « Où en sont vos analyses » → « Objectifs » (nom du propriétaire) ; version 0.0.0.
+    - À étudier : carte Confort digestif sous l'île de l'Accueil pour qui a l'objectif digestion (à vérifier en code) ;
+      détail FODMAP d'un repas déplié trop technique ; familles « Pas assez de données » sans action ; ordre de
+      grandeur des exemples du 28e jour (« Fructanes −3,5 pt »).
     - [x] **POLISH-SIM-163 — L'export CSV ne dit pas ce qu'il contient** (FAIT le 25/11 à 03:30, #1252 mergée à 04:30 ; « Tout mesurer » J14 :
       « sans savoir si cœur et oxygène sont dedans ») : après « Télécharger en CSV », la carte dit « 1 851 lignes, du
       10/09/2026 au 24/11/2026 : Cœur 198 · Température 198 · … » (`csvContents` de `services/csvExport.js`, même
