@@ -61,6 +61,11 @@ export function keepForEquipment(entry, equipment) {
 const SOURCE_NAME = { phone: 'Samsung Health', watch: 'Samsung Health', 'watch-hrv': 'Fitbit', huawei: 'Samsung Health', full: 'Withings', 'apple-watch': 'Apple Watch', 'phone-scale': 'Samsung Health' }
 
 function withSourceName(entry, equipment, sourceName) {
+  // PERSONAS-OUTIL-2 : la démo range les pesées sous la connexion Withings directe, absente de la variante play ;
+  // une vraie balance les écrit dans Health Connect, au nom de son app (Sources la montre alors dans « Mes appareils »).
+  if (SCALE_TYPES.has(entry.type) && entry.source === 'withings') {
+    return { ...entry, source: 'health_connect', payload: { ...entry.payload, connector: 'health_connect', sourceName: 'Withings' } }
+  }
   if (entry.source !== 'health_connect' || !entry.payload?.sourceName) return entry
   return { ...entry, payload: { ...entry.payload, sourceName: sourceName || SOURCE_NAME[equipment] } }
 }
