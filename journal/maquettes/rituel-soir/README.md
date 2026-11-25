@@ -5,9 +5,10 @@
 > joue. Maquette statique de l'option A : `maquette.html` (`?state=bulle|debut|range|fin`, `?theme=dark`), captures
 > par `node journal/maquettes/rituel-soir/render.mjs`. Run du 25/11 17:30.
 
-| 1. La bulle (22:05, jour « avec ») | 2. Il bâille, téléphone allumé | 3. Le tiroir | 4. « Bonne nuit. » | 4. Sombre |
-|---|---|---|---|---|
-| ![](1-bulle.jpg) | ![](2-debut.jpg) | ![](3-range.jpg) | ![](4-fin.jpg) | ![](4-fin-sombre.jpg) |
+![Planche : 1. la bulle (22:05, jour « avec ») · 2. il bâille, téléphone allumé · 3. le tiroir · 4. « Bonne nuit. » · 4. en sombre](planche.png)
+
+De gauche à droite : la bulle sur l'îlot, il bâille téléphone allumé, le tiroir, « Bonne nuit. », la même en sombre
+(captures JPEG détaillées : `render.mjs`, non versionnées).
 
 ## Quand
 Seulement pendant un essai sur le temps d'écran (« Pas d'écran après 22 h »), un jour « avec » tiré au sort, entre
