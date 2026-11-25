@@ -827,7 +827,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       prochain run « idées ») ; une seule note « Douleur » (1) lissée à 2,5 (banc avant tout changement) ; ~~onglet
       Données allumé pendant un repas ouvert depuis Ma journée (2ᵉ persona)~~ (POLISH-SIM-162) ; puces « Hier midi /
       Hier soir » pour l'heure d'un repas ; ~~l'export CSV ne dit pas ce qu'il contient~~ (POLISH-SIM-163).
-    - [x] **POLISH-SIM-163 — L'export CSV ne dit pas ce qu'il contient** (FAIT le 25/11 à 03:30 ; « Tout mesurer » J14 :
+    - [x] **POLISH-SIM-163 — L'export CSV ne dit pas ce qu'il contient** (FAIT le 25/11 à 03:30, #1252 mergée à 04:30 ; « Tout mesurer » J14 :
       « sans savoir si cœur et oxygène sont dedans ») : après « Télécharger en CSV », la carte dit « 1 851 lignes, du
       10/09/2026 au 24/11/2026 : Cœur 198 · Température 198 · … » (`csvContents` de `services/csvExport.js`, même
       filtre que le fichier ; `CsvExportCard.jsx`, « · » insécable pour ne jamais commencer une ligne) ; le texte de la
