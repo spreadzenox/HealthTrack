@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **25/11 15:30** — **WIDGET-POSES** (reste de la refonte, `DECOUPAGE-RITUEL-LANTERNES.md`) : les 6 poses du widget Android et les 2 vignettes des notifications de l'iPhone sont rendues depuis le vrai Pilou (`createPilou.js`, par son banc) au lieu du kit de maquettes ; rendu reproductible au bit près (`--check`). PR prête, merge au run suivant après le build iPhone.
 - **25/11 14:30** — main rouge (job « Budget de lectures », `socket hang up` ponctuel du serveur de prévisualisation) : job relancé, et le banc de perf refait un essai au lieu de planter (CI-PERF-HANGUP). Aucun changement dans l'app, aucun build de Mac.
 - **25/11 13:30** — **#1261 mergée** (LANT-3, la lanterne du matin sur l'îlot ; build iPhone vert, captures de l'Accueil relues en clair et en sombre), release **v918**. Run de journal, sans build de Mac de plus.
 - **25/11 12:30** — **#1260 mergée** (POLISH-NOTE-LOSANGE, par le run de 11:30), release **v917**. **LANT-3** (reste de la refonte, `DECOUPAGE-RITUEL-LANTERNES.md`) : pendant un essai, le matin qui suit un jour « avec » tenu, la lanterne de l'îlot s'allume 2,6 s sur l'Accueil, Pilou la regarde et fait un petit saut ; une fois par jour, aucune lecture de plus. PR prête, merge au run suivant après le build iPhone.
