@@ -40,7 +40,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v918** (#1261, 25/11 12:34 UTC, APK 35,7 Mo) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1313.1313** (build du 24/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 25/11 04:31 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
+| Dernière version | release **v920** (#1264, 25/11 15:33 UTC, APK 35,7 Mo) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1313.1313** (build du 24/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 25/11 04:31 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; plus aucun correctif propre à l'iPhone ; `overlay/` ne garde que les notes de Nouveautés de l'iPhone (FUSION-3 : reste `ios/` → `app/ios/`) |
 
@@ -63,7 +63,8 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
-| 25/11 15:30 — [Le vrai Pilou dans le widget](runs/2026-11-25-1530-widget-poses.md) | 🔧 | WIDGET-POSES : le Pilou du widget Android et des rappels du soir sur iPhone est maintenant celui de l'app (même modèle 3D, entier, sur fond crème), au lieu de l'ancienne figurine des maquettes. Rendu reproductible au bit près. PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
+| 25/11 16:30 — [#1264 mergée](runs/2026-11-25-1630-merge-1264.md) | 📓 | **#1264 mergée** : le Pilou du widget Android et des rappels du soir sur iPhone est celui de l'app (build iPhone vert, planche avant / après et console du simulateur relues). Run court de journal, sans build de Mac. Rien à faire de votre côté |
+| 25/11 15:30 — [Le vrai Pilou dans le widget](runs/2026-11-25-1530-widget-poses.md) | 🔧 | WIDGET-POSES : le Pilou du widget Android et des rappels du soir sur iPhone est maintenant celui de l'app (même modèle 3D, entier, sur fond crème), au lieu de l'ancienne figurine des maquettes. Rendu reproductible au bit près. Mergée au run suivant (#1264). Rien à faire de votre côté |
 | 25/11 14:30 — [Banc de perf plus solide](runs/2026-11-25-1430-perf-hangup.md) | 🔧 | main était rouge pour une coupure ponctuelle pendant le banc de lectures (rien dans l'app) : job relancé, et le banc refait un essai au lieu de s'arrêter. Aucun changement dans l'app, aucun build de Mac. Rien à faire de votre côté |
 | 25/11 13:30 — [#1261 mergée](runs/2026-11-25-1330-merge-1261.md) | 📓 | **#1261 mergée** : pendant un essai, le matin qui suit un jour réussi, la lanterne de l'îlot s'allume un instant sur l'Accueil (build iPhone vert, captures de l'Accueil relues sur iPhone en clair et en sombre). Release v918. Run court de journal, sans build de Mac. Rien à faire de votre côté |
 | 25/11 12:30 — [La lanterne du matin](runs/2026-11-25-1230-lanterne-du-matin.md) | 🔧 | **#1260 mergée** (votre note en losange dans Tendances), release v917. LANT-3 : pendant un essai, le matin qui suit un jour réussi, la lanterne de l'îlot s'allume un instant sur l'Accueil et Pilou la regarde, une fois par jour. PR prête, merge au run suivant après le build iPhone. Rien à faire de votre côté |
