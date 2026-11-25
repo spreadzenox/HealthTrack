@@ -810,6 +810,17 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `--legacy` sans note les lendemains, ou défaut.
       → 24/11 22:30 : 158 et 159 faits (texte « Consigne tenue 1 jour sur 5 prévus »). Reste à vérifier : la ligne
       « Sans » vide au jour 4 (outil `--legacy` ou défaut), au prochain run « idées ».
+      → 25/11 08:30 (run « idées ») : **défaut réel**, pas l'outil. Les jours « sans » dont la nuit dépasse 7 h 30
+      sont comptés « non tenus » et écartés, alors que l'écran demandait « comme d'habitude ». Banc à vérité connue :
+      [`methode/ESSAI-SANS.md`](methode/ESSAI-SANS.md) → **POLISH-ESSAI-SANS** ci-dessous.
+    - [ ] **POLISH-ESSAI-SANS — Compter les lendemains par calendrier** (banc du 25/11 08:30, `methode/ESSAI-SANS.md` ;
+      `trials.js` `pick`) : la règle actuelle ne garde que les jours « tenus » ; elle ne conclut qu'un essai de 10
+      jours sur deux (47 %), gonfle l'écart (0,70 pour 0,30) et, sans effet réel mais avec un facteur caché, penche
+      vers « Plutôt oui » (+0,14). Compter tous les jours passés selon le calendrier tiré au sort : 100 % concluent,
+      écart sans biais, fausses alertes symétriques (≈ 4 %). La tenue reste pour les lanternes et « Consigne tenue ».
+      Tests `trials.test.js` d'abord (jour sans au-dessus du seuil compté, jour avec manqué compté, cas tout tenu
+      inchangé). Aucun changement de schéma ; code commun, iPhone dans la même PR. **Prêt pour le prochain run de
+      code.**
     - [x] **POLISH-SIM-160 — Objectifs › Sommeil : « 2 facteurs comparés » sans les nommer** (J14, capture
       `objectifs-sommeil-vide.png` ; `FamilyDetail` de `Recommendations.jsx` 367, cas sans barres) : nommer les
       facteurs (« durée du sommeil, heure du coucher »). Test `Recommendations.test.jsx` d'abord. **Fait le 24/11
@@ -823,8 +834,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - Écartés, avec la raison, dans la synthèse : signes opposés d'un délai à l'autre (POLISH-SIM-128, tout hachuré) ;
       PDF sans partage (propre à la version web de l'outil) ; version 0.0.0 ; essai libre sans piste (fonction
       nouvelle) ; « Objectifs » sans objectif (nom du propriétaire).
-    - À étudier : cœur et oxygène du sang reçus mais visibles nulle part (2ᵉ persona : proposition avec maquette au
-      prochain run « idées ») ; une seule note « Douleur » (1) lissée à 2,5 (banc avant tout changement) ; ~~onglet
+    - À étudier : cœur et oxygène du sang reçus mais visibles nulle part (2ᵉ persona ; **25/11 08:30 : la maquette existe
+      déjà**, [`maquettes/tendances-courbes/`](maquettes/tendances-courbes/README.md) du 19/11, réponse attendue « go
+      courbes », « go phases » ou « non » ; remise en tête du résumé, 3 personas la demandent désormais) ; une seule note « Douleur » (1) lissée à 2,5 (banc avant tout changement) ; ~~onglet
       Données allumé pendant un repas ouvert depuis Ma journée (2ᵉ persona)~~ (POLISH-SIM-162) ; ~~puces « Hier midi /
       Hier soir » pour l'heure d'un repas~~ (POLISH-SIM-164) ; ~~l'export CSV ne dit pas ce qu'il contient~~ (POLISH-SIM-163).
     - [x] **POLISH-SIM-163 — L'export CSV ne dit pas ce qu'il contient** (FAIT le 25/11 à 03:30, #1252 mergée à 04:30 ; « Tout mesurer » J14 :
