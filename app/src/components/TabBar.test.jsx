@@ -52,6 +52,22 @@ describe('TabBar', () => {
     expect(within(nav).getAllByRole('link').filter((a) => a.getAttribute('aria-current'))).toHaveLength(1)
   })
 
+  // POLISH-SIM-162 : un repas noté depuis Ma journée (ou l'Accueil) garde l'onglet d'où il vient.
+  it.each([
+    ['/ma-journee', 'Ma journée'],
+    ['/', 'Accueil'],
+    ['/inconnu', 'Données'],
+  ])('on the meals page opened from %s, marks %s', (tab, label) => {
+    render(
+      <MemoryRouter initialEntries={[{ pathname: '/food', state: { tab } }]}>
+        <TabBar />
+      </MemoryRouter>
+    )
+    expect(screen.getByRole('link', { name: label })).toHaveAttribute('aria-current', 'page')
+    const nav = screen.getByRole('navigation', { name: 'Principal' })
+    expect(within(nav).getAllByRole('link').filter((a) => a.getAttribute('aria-current'))).toHaveLength(1)
+  })
+
   it.each(['/premium', '/plus', '/data', '/settings', '/nouveautes', '/connectors', '/connectors/withings/callback', '/montre'])('highlights no tab on settings page %s', (path) => {
     renderAt(path)
     const nav = screen.getByRole('navigation', { name: 'Principal' })

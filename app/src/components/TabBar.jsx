@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import { TABS, activeTab } from './tabs'
 import './TabBar.css'
 
 const ICONS = {
@@ -32,25 +33,16 @@ const ICONS = {
  * Navigation en 4 onglets : Accueil, Ma journée, Objectifs, Données (refonte « Compagnon », étape 2 du 15/11 ; avant :
  * Aujourd'hui, Journal, Analyses, Agir). Le contenu existant est rangé dans les nouveaux onglets, aucune adresse ne
  * change. Les réglages passent par le bouton en haut à droite (SettingsButton) : aucun onglet n'y est actif.
- * `exact` : pages de l'onglet à cette adresse précise (« Agir » sous Accueil, mais un essai sous Objectifs) ;
- * `paths` : préfixes de pages rangées sous l'onglet.
+ * Onglets et règle de l'onglet allumé : `tabs.js`.
  */
-const TABS = [
-  { to: '/', label: 'Accueil', icon: 'home', exact: ['/', '/agir'] },
-  { to: '/ma-journee', label: 'Ma journée', icon: 'day', paths: ['/ma-journee'] },
-  { to: '/recommendations', label: 'Objectifs', icon: 'goals', paths: ['/recommendations', '/reintroduction', '/agir/essai'] },
-  { to: '/tendances', label: 'Données', icon: 'data', paths: ['/tendances', '/nutrition', '/food', '/bien-etre'] },
-]
-
 export default function TabBar() {
-  const { pathname } = useLocation()
-  const isUnder = (p) => pathname === p || pathname.startsWith(p + '/')
-  const isActive = (tab) => (tab.exact || []).includes(pathname) || (tab.paths || []).some(isUnder)
+  const { pathname, state } = useLocation()
+  const current = activeTab(pathname, state)
 
   return (
     <nav className="tabbar" aria-label="Principal">
       {TABS.map((tab) => {
-        const active = isActive(tab)
+        const active = tab.to === current
         return (
           <Link
             key={tab.to}

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
 import { setPendingMealPhoto } from '../services/mealPhotoHandoff'
 import LineIcon from './LineIcon'
+import { useCurrentTab } from './tabs'
 
 /**
  * Bouton « photo du repas » hors de la page Repas (TESTEUR-4b) : c'est le libellé d'un champ photo
@@ -12,6 +13,7 @@ import LineIcon from './LineIcon'
  * de décrire le repas à la place, au lieu de ne rien montrer.
  * POLISH-SIM-122 : `slot` (cercle Matin, Midi ou Soir de Ma journée) suit la photo ou la description jusqu'à la page
  * Repas, qui range le repas dans ce cercle.
+ * POLISH-SIM-162 : l'onglet d'où vient le geste (`state.tab`) reste allumé sur la page Repas.
  * POLISH-SIM-134 : le bandeau est rendu dans `document.body` ; dans la scène de l'île (parent transformé), un
  * `position: fixed` se plaçait par rapport à la scène et sortait de l'écran à gauche.
  */
@@ -20,6 +22,7 @@ const HINT_MS = 8000
 export default function MealPhotoButton({ className, children, theme, ariaLabel, slot }) {
   const id = `meal-photo-${useId().replace(/:/g, '')}`
   const navigate = useNavigate()
+  const tab = useCurrentTab()
   const inputRef = useRef(null)
   const [missed, setMissed] = useState(false)
   // L'événement `cancel` d'un champ fichier n'a pas d'attribut React : écouteur posé à la main.
@@ -47,8 +50,7 @@ export default function MealPhotoButton({ className, children, theme, ariaLabel,
     if (!f) { setMissed(true); return }
     setMissed(false)
     setPendingMealPhoto(f)
-    if (slot) navigate('/food', { state: { mealSlot: slot } })
-    else navigate('/food')
+    navigate('/food', { state: { ...(slot ? { mealSlot: slot } : {}), tab } })
   }
   return (
     <>
@@ -58,7 +60,7 @@ export default function MealPhotoButton({ className, children, theme, ariaLabel,
       {missed && createPortal(
         <div className="meal-photo-missed" role="status">
           <span>Aucune photo prise.</span>
-          <Link to="/food" state={{ describeMeal: true, ...(slot ? { mealSlot: slot } : {}) }} className="meal-photo-missed-link">Décrire le repas</Link>
+          <Link to="/food" state={{ describeMeal: true, ...(slot ? { mealSlot: slot } : {}), tab }} className="meal-photo-missed-link">Décrire le repas</Link>
           <button type="button" className="meal-photo-missed-close" aria-label="Fermer" onClick={() => setMissed(false)}>
             <LineIcon name="close" size={18} />
           </button>

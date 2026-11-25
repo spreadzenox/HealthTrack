@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-25",
+  "kind": "correctif",
+  "title": "Un repas noté depuis Ma journée reste dans Ma journée",
+  "items": [
+    "En notant un repas depuis Ma journée ou l’Accueil, l’onglet d’où vous venez reste allumé en bas de l’écran, au lieu de « Données »."
+  ]
+}

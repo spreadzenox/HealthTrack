@@ -67,19 +67,19 @@ describe('AddStrip (nouvel écran Aujourd’hui du 07/11) : le seul endroit pour
   it('« Décrire un repas » ouvre directement le champ de description (POLISH-SIM-25)', () => {
     function FoodProbe() {
       const { state } = useLocation()
-      return <p>food {state?.describeMeal ? 'décrire' : 'page'}</p>
+      return <p>food {state?.describeMeal ? 'décrire' : 'page'} {state?.tab}</p>
     }
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/ma-journee']}>
         <Routes>
-          <Route path="/" element={<AddStrip onWellbeing={() => {}} />} />
+          <Route path="/ma-journee" element={<AddStrip onWellbeing={() => {}} />} />
           <Route path="/food" element={<FoodProbe />} />
         </Routes>
       </MemoryRouter>,
     )
     fireEvent.click(screen.getByRole('button', { name: 'Autre chose' }))
     fireEvent.click(screen.getByRole('link', { name: /Décrire un repas/ }))
-    expect(screen.getByText('food décrire')).toBeInTheDocument()
+    expect(screen.getByText('food décrire /ma-journee')).toBeInTheDocument()
   })
 
   it('sans fenêtre de digestion fournie, pas de bouton « Digestion »', () => {
