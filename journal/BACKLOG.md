@@ -813,7 +813,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       → 25/11 08:30 (run « idées ») : **défaut réel**, pas l'outil. Les jours « sans » dont la nuit dépasse 7 h 30
       sont comptés « non tenus » et écartés, alors que l'écran demandait « comme d'habitude ». Banc à vérité connue :
       [`methode/ESSAI-SANS.md`](methode/ESSAI-SANS.md) → **POLISH-ESSAI-SANS** ci-dessous.
-    - [x] **POLISH-ESSAI-SANS — Compter les lendemains par calendrier** (banc du 25/11 08:30, `methode/ESSAI-SANS.md` ;
+    - [x] **POLISH-ESSAI-SANS — Compter les lendemains par calendrier** (**MERGÉE 25/11 10:30, #1258, v916** ; banc du 25/11 08:30, `methode/ESSAI-SANS.md` ;
       `trials.js` `pick`) : la règle actuelle ne garde que les jours « tenus » ; elle ne conclut qu'un essai de 10
       jours sur deux (47 %), gonfle l'écart (0,70 pour 0,30) et, sans effet réel mais avec un facteur caché, penche
       vers « Plutôt oui » (+0,14). Compter tous les jours passés selon le calendrier tiré au sort : 100 % concluent,
