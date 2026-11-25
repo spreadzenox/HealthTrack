@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, lanterns, pilouSays, morningLantern } from './trials'
+import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, homeActIdle, lanterns, pilouSays, morningLantern } from './trials'
 
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30, unit: 'min', text: '30 min de sommeil de plus' } }
 const START = new Date(2026, 10, 1, 9)
@@ -154,6 +154,16 @@ describe('UPG-1 : l’essai en cours sur la carte Agir de l’Accueil', () => {
     expect(homeTrial([row(1, { ...ten, removedAt: '2026-11-03' })], new Date(2026, 10, 4, 10))).toBeNull()
     expect(homeTrial([row(1, { ...ten, kept: true, endedAt: '2026-11-03' })], new Date(2026, 10, 4, 10))).toBeNull()
     expect(homeTrial([{ id: 2, type: 'habit', payload: { habit: 'reading' } }], new Date(2026, 10, 4, 10))).toBeNull()
+  })
+
+  it('sans essai en cours, le sous-titre dit l’état de la page Agir (POLISH-SIM-167)', () => {
+    expect(homeActIdle([], null)).toBe('Aucune piste à tester pour l’instant')
+    expect(homeActIdle([], { gut: [], levers: [] })).toBe('Aucune piste à tester pour l’instant')
+    expect(homeActIdle([row(1, { ...ten, removedAt: '2026-11-03' })], null)).toBe('Aucune piste à tester pour l’instant')
+    expect(homeActIdle([], { gut: [], levers: ['Dormir plus'] })).toBe('1 piste à tester')
+    expect(homeActIdle([], { gut: ['Oignon → digestion'], levers: ['Dormir plus', 'Marcher'] })).toBe('3 pistes à tester')
+    // un essai fini ou une habitude gardée : la page n'est pas vide
+    expect(homeActIdle([row(1, ten)], null)).toBe('Vérifier une piste par un essai')
   })
 
   it('un jour « avec » : la consigne et le jour ; il ouvre la page de l’essai', () => {

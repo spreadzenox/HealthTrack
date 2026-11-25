@@ -163,6 +163,34 @@ describe('adviseDevices', () => {
     ])
   })
 
+  it('balance pesée il y a 5 jours : pas « en pause » (mesures ponctuelles, POLISH-SIM-166)', () => {
+    const scale = summarizeHealthConnectSources([
+      hc('Withings', '2026-10-07T07:00:00Z', 'weight'),
+      hc('Withings', '2026-10-07T07:00:00Z', 'body_composition'),
+    ])[0]
+    const rows = adviseDevices({ installed: [app('withings')], sources: [scale], now: NOW })
+    expect(rows.map((r) => [r.id, r.status])).toEqual([['withings', 'ok']])
+  })
+
+  it('balance sans pesée depuis 3 semaines : en pause, sans parler de montre', () => {
+    const scale = summarizeHealthConnectSources([hc('Withings', '2026-09-20T07:00:00Z', 'weight')])[0]
+    const [row] = adviseDevices({ installed: [app('withings')], sources: [scale], now: NOW })
+    expect(row.status).toBe('stale')
+    expect(row.message).not.toMatch(/montre/)
+    const [other] = adviseDevices({ installed: [], sources: [summarizeHealthConnectSources([hc('Balance XYZ', '2026-09-20T07:00:00Z', 'weight')])[0]], now: NOW })
+    expect(other.status).toBe('stale')
+  })
+
+  it('montre qui envoie aussi le poids : reste en pause après 3 jours sans cœur', () => {
+    const watch = summarizeHealthConnectSources([
+      hc('Samsung Health', '2026-10-07T07:00:00Z'),
+      hc('Samsung Health', '2026-10-07T07:00:00Z', 'weight'),
+    ])[0]
+    const [row] = adviseDevices({ installed: [app('samsung_health')], sources: [watch], now: NOW })
+    expect(row.status).toBe('stale')
+    expect(row.message).toMatch(/montre/)
+  })
+
   it('app qui écrit dans Health Connect mais rien reçu : rappelle où l’activer', () => {
     const [row] = adviseDevices({ installed: [app('garmin')], sources: [], now: NOW })
     expect(row.status).toBe('action')

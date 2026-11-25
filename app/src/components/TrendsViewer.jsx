@@ -8,7 +8,7 @@
 import { useMemo, useState } from 'react'
 import { TREND_MEASURES, buildTrendSeries, canAdd, changeMarks, detailSource, trendMeasure, unitsOf } from '../services/trendsData'
 import { appLocale } from '../i18n/locale.js'
-import { niceAxis } from '../services/niceAxis'
+import { trendDomain } from '../services/trendsAxis'
 import LineIcon from './LineIcon'
 import TrendsDayDetail from './TrendsDayDetail'
 import DayEntries from './DayEntries'
@@ -42,19 +42,6 @@ const shortDay = (k) => {
 }
 const longDay = (k) => new Date(`${k}T12:00:00`).toLocaleDateString(appLocale(), { weekday: 'long', day: 'numeric', month: 'long' })
 
-/**
- * Domaine et graduations d'une unité : 1 à 5 pour les notes, sinon les valeurs visibles avec une petite marge,
- * étendues à des graduations rondes (POLISH-SIM-3b : « 4 000 / 8 000 / 12 000 » plutôt que « 4 651 / 11 759 »).
- */
-function domainOf(unit, values) {
-  if (unit === '/5') return { lo: 1, hi: 5, ticks: [1, 3, 5] }
-  if (!values.length) return { lo: 0, hi: 1, ticks: [0, 1] }
-  const lo = Math.min(...values)
-  const hi = Math.max(...values)
-  const pad = (hi - lo) * 0.05
-  return niceAxis(Math.max(0, lo - pad), hi + pad)
-}
-
 function Chart({ data, keys, selected, onSelect, marks = [] }) {
   const { dates, today, series } = data
   const units = unitsOf(keys)
@@ -62,7 +49,7 @@ function Chart({ data, keys, selected, onSelect, marks = [] }) {
   const yOf = {}
   for (const u of units) {
     const vals = keys.filter((k) => trendMeasure(k).unit === u).flatMap((k) => series[k].flatMap((p) => [p.value, p.low, p.high])).filter(Number.isFinite)
-    const { lo, hi, ticks } = domainOf(u, vals)
+    const { lo, hi, ticks } = trendDomain(u, vals)
     yOf[u] = { lo, hi, ticks, y: (v) => PAD.t + (1 - (v - lo) / (hi - lo || 1)) * (H - PAD.t - PAD.b) }
   }
   const step = dates.length > 14 ? 7 : 1

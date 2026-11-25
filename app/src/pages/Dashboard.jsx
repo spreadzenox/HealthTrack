@@ -30,7 +30,8 @@ import { habitEntry, yesterdayCatchUp, skipYesterday } from '../services/habits'
 import { getHabits } from '../settings/habits'
 import { CYCLE_TYPE, cycleVisible } from '../services/cycle'
 import { goalsOf } from '../settings/onboarding'
-import { TRIAL_TYPE, homeTrial } from '../services/trials'
+import { TRIAL_TYPE, homeActIdle, homeTrial } from '../services/trials'
+import { readPistesSummary } from '../services/pistesSummary'
 import { syncPilouWidget } from '../companion/world/widgetSync'
 import CompanionHome from '../companion/bubbles/CompanionHome'
 import { lanternToShow, markLanternShown } from '../companion/bubbles/morningLantern'
@@ -155,7 +156,7 @@ export default function Dashboard({ view = 'home' }) {
         {/* POLISH-SIM-126 : pendant un essai, la carte garde le mot « Agir » au-dessus du titre */}
         {trial && <span className="home-act-kicker">Agir</span>}
         <span className="more-title">{trial?.title ?? 'Agir'}</span>
-        <span className="more-desc">{trial?.detail ?? 'Vérifier une piste par un essai'}</span>
+        <span className="more-desc">{trial?.detail ?? (trialRows ? homeActIdle(trialRows, readPistesSummary()) : 'Vérifier une piste par un essai')}</span>
       </span>
       <LineIcon name="chevron" size={20} className="more-chevron" />
     </Link>

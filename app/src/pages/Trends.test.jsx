@@ -444,7 +444,8 @@ describe('POLISH-SIM-47 : le poids dans Tendances', () => {
 })
 
 describe('POLISH-SIM-47 : graduations du poids', () => {
-  it('un pas de 0,25 kg s’écrit en entier (77,25, jamais « 77,3 »)', async () => {
+  // POLISH-SIM-165 : l'axe du poids couvre au moins 2 kg, donc un pas de 0,5 kg (le pas de 0,25 n'arrive plus)
+  it('graduations rondes sur au moins 2 kg (77,5, jamais « 77,3 »)', async () => {
     const weighIns = [5, 6, 7].map((d, i) => ({ dateKey: `2026-11-0${d}`, summary: { weightKg: [77.9, 77.4, 77.1][i] } }))
     const { container } = render(
       <MemoryRouter initialEntries={['/tendances?mesure=weight']}>
@@ -454,8 +455,10 @@ describe('POLISH-SIM-47 : graduations du poids', () => {
     )
     await waitFor(() => expect(container.querySelector('.trends-axis.mono')).not.toBeNull())
     const labels = [...container.querySelectorAll('.trends-axis.mono')].map((t) => t.textContent)
-    expect(labels).toContain('77,25')
+    expect(labels).toContain('77,5')
     expect(labels).not.toContain('77,3')
+    const nums = labels.map((t) => Number(t.replace(',', '.'))).filter(Number.isFinite)
+    expect(Math.max(...nums) - Math.min(...nums)).toBeGreaterThanOrEqual(2)
   })
 })
 

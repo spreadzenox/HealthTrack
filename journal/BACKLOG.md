@@ -855,16 +855,16 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **PERSONAS-OUTIL-2 — Les pesées de l'outil passaient par la connexion Withings directe** (FAIT le 25/11 à
       20:30, outillage : `personaData.mjs`, test `personaData.test.mjs`) : absente de la variante play, Sources ne
       pouvait pas montrer la balance ; elles arrivent maintenant par Health Connect au nom de « Withings ».
-    - [ ] **POLISH-SIM-165 — Tendances : 100 g de poids ressemblent à une forte montée** (J45, capture
+    - [x] **POLISH-SIM-165 — Tendances : 100 g de poids ressemblent à une forte montée** FAIT le 25/11 à 21:30 : `services/trendsAxis.js`, écart minimal par unité (2 kg, 10 bpm, 20 ms, 2 h, 2 000 pas), centré ; axe 76 → 79 kg dans la capture ; (J45, capture
       `poids-semaine.png` ; `TrendsViewer.jsx` 50-55, `domainOf` sans écart minimal) : axe 77,05 → 77,25 kg en
       Semaine. Écart minimal par unité (2 kg pour le poids, à régler pour les autres unités), centré sur les valeurs.
       Test `TrendsViewer` d'abord.
-    - [ ] **POLISH-SIM-166 — Sources : une balance « En pause » après 3 jours sans pesée** (outil rejoué ; `healthApps.js`
+    - [x] **POLISH-SIM-166 — Sources : une balance « En pause » après 3 jours sans pesée** FAIT le 25/11 à 21:30 : une source qui n'envoie que poids, masse grasse, tension ou glycémie reste « à jour » 14 jours ; ensuite « Aucune mesure depuis plus de deux semaines. », sans parler de montre ; (outil rejoué ; `healthApps.js`
       287 et 318, `isRecent`) : « Plus de données depuis quelques jours : ouvrez l'app pour synchroniser la montre »
       pour une balance qui pèse tous les 3 jours. Une source qui n'envoie que des mesures ponctuelles (poids, masse
       grasse, tension, glycémie) n'est pas en pause à 3 jours, et le message ne parle pas de montre. Tests
       `healthApps.test.js` d'abord.
-    - [ ] **POLISH-SIM-167 — Accueil : « Vérifier une piste par un essai » mène à une page vide** (J45, capture
+    - [x] **POLISH-SIM-167 — Accueil : « Vérifier une piste par un essai » mène à une page vide** FAIT le 25/11 à 21:30 : `homeActIdle` (trials.js) lit le résumé des pistes d'Analyses : « N pistes à tester », sinon « Aucune piste à tester pour l'instant » ; « Vérifier une piste par un essai » reste quand un essai fini ou une habitude remplit la page ; (J45, capture
       `agir-vide.png` ; `Dashboard.jsx` 158) : sans essai ni piste, le sous-titre dit l'état (« Aucune piste à tester
       pour l'instant ») ou la carte se retire (brief § 4 : « Agir : 3 pistes à tester »). Test `Dashboard` d'abord.
     - Écartés, avec la raison, dans la synthèse : note « Douleur » estimée 2,4 (POLISH-NOTE-LOSANGE) ; essai sommeil
