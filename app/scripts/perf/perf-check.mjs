@@ -250,9 +250,19 @@ async function main() {
     }, latestChangelogId())
     await context.addInitScript(instrument)
     // Le Worker n'hérite pas des scripts injectés : son fichier est servi précédé de l'instrumentation
+    // Une coupure ponctuelle du serveur de prévisualisation (« socket hang up », main du 25/11) ne fait plus
+    // planter le banc : un second essai. Deux échecs de suite restent une erreur (le budget ne s'assouplit pas).
     await context.route('**/assets/analysis.worker*.js', async (route) => {
-      const res = await route.fetch()
-      route.fulfill({ response: res, body: `(${instrument})();\n${await res.text()}` })
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const res = await route.fetch()
+          await route.fulfill({ response: res, body: `(${instrument})();\n${await res.text()}` })
+          return
+        } catch (e) {
+          if (attempt === 2) throw e
+          console.warn(`[perf] Worker : nouvel essai après « ${e.message.split('\n')[0]} »`)
+        }
+      }
     })
 
     const page = await context.newPage()
