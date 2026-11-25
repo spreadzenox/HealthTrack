@@ -258,7 +258,8 @@ describe('Dashboard', () => {
     expect(navigateMock).not.toHaveBeenCalled()
     const file = new File(['x'], 'repas.jpg', { type: 'image/jpeg' })
     fireEvent.change(input, { target: { files: [file] } })
-    expect(navigateMock).toHaveBeenCalledWith('/food')
+    // POLISH-SIM-162 : l'onglet d'origine suit (ici l'adresse du navigateur de test, « / »).
+    expect(navigateMock).toHaveBeenCalledWith('/food', { state: { tab: '/' } })
     const { takePendingMealPhoto } = await import('../services/mealPhotoHandoff')
     expect(takePendingMealPhoto()).toBe(file)
   })

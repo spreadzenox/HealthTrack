@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **25/11 01:30** — **POLISH-SIM-162** : un repas noté depuis Ma journée ou l'Accueil garde cet onglet allumé, sans les sous-onglets de Données (deux personas s'y perdaient). PR prête, merge au run suivant après le build iPhone. (25/11 00:30 : « Play — AAB » relancé après un 429 de Maven Central, cache Gradle dans les workflows Android, #1249.)
 - **24/11 20:30** — Run « idées » (sans code produit) : personas « Ventre et données » J45 (Android seul) et « Tout mesurer » J14 après mise à jour (Amazfit par Zepp), [synthèse](simulations/2026-11-24-2030-synthese.md) ; **POLISH-SIM-158 à 161** au BACKLOG (Pas masqué dans « + » de Tendances, « 1 jour réussi sur 5 » de l'essai, facteurs du Sommeil non nommés, « Ce qui a pu jouer » sans le ventre). #1244 mergée au run de 19:30, main vert (v907).
 - **24/11 19:30** — #1244 : la note de Nouveautés de l'iPhone ne nomme plus Android (deux checks rouges : test des notes appstore et contrôle des textes des captures). Nouveau build iPhone, merge au run suivant.
 - **24/11 23:30** — **#1247 mergée** (POLISH-SIM-158 et 159 ; checks verts dont le build iPhone, captures relues : essai sur Android, Tendances et Agir sur iPhone). main : job « Protocole montre (Java) » rouge par un 429 de Maven Central sur junit, relancé ; jars de test en cache dans `tests.yml`.

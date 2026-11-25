@@ -20,6 +20,7 @@ import { scoreToChoice } from '../services/mood/wellbeingScale'
 import { appLocale } from '../i18n/locale.js'
 import MealPhotoButton from './MealPhotoButton'
 import LineIcon from './LineIcon'
+import { useCurrentTab } from './tabs'
 import PilouBanner from '../companion/life/PilouBanner'
 import PilouFigure from '../companion/life/PilouFigure'
 import { finishedLine } from '../companion/life/lines'
@@ -44,6 +45,7 @@ const hhmm = (iso) => new Date(iso).toLocaleTimeString(appLocale(), { hour: '2-d
 const remainingText = (n) => `Encore ${n} ${n > 1 ? 'choses' : 'chose'} aujourd’hui`
 
 function MealsLine({ task }) {
+  const tab = useCurrentTab()
   return (
     <>
       <div className="day-line-head">
@@ -52,7 +54,7 @@ function MealsLine({ task }) {
       </div>
       <div className="day-meal-slots">
         {task.slots.map((s) => (s.filled ? (
-          <Link key={s.id} to="/food" className="day-meal-slot is-filled" aria-label={`${s.label} : noté`}>
+          <Link key={s.id} to="/food" state={{ tab }} className="day-meal-slot is-filled" aria-label={`${s.label} : noté`}>
             <span className="day-meal-circle"><LineIcon name="check" size={22} /></span>
             <span className="day-meal-label">{s.label}</span>
           </Link>
@@ -63,7 +65,7 @@ function MealsLine({ task }) {
           </MealPhotoButton>
         )))}
       </div>
-      <Link to="/food" className="day-meals-link">Vos repas</Link>
+      <Link to="/food" state={{ tab }} className="day-meals-link">Vos repas</Link>
     </>
   )
 }
@@ -103,6 +105,7 @@ export default function DayChecklist({ entries, askGut = false, habits = [], now
   const at = now || new Date()
   const list = dayChecklist(entries, { now: at, askGut, habits })
   const [notedOpen, setNotedOpen] = useState(false)
+  const tab = useCurrentTab()
   // Une ligne faite sous nos yeux reste le temps de dire « Noté », puis part (spec § 2). Une habitude répondue
   // attend les autres sur place (POLISH-SIM-152). Effet avant l'affichage : la ligne ne disparaît pas une image.
   const pendingBefore = useRef(null)
@@ -211,7 +214,7 @@ export default function DayChecklist({ entries, askGut = false, habits = [], now
                 )
                 return (
                   <li key={`${kind}-${entry.id ?? entry.at}`}>
-                    {kind === 'meal' && <Link to="/food" className="day-noted-item">{inner}</Link>}
+                    {kind === 'meal' && <Link to="/food" state={{ tab }} className="day-noted-item">{inner}</Link>}
                     {kind === 'wellbeing' && <button type="button" className="day-noted-item" onClick={() => onWellbeing(entry)}>{inner}</button>}
                     {(kind === 'gut' || kind === 'gutMoment') && <button type="button" className="day-noted-item" onClick={onGut}>{inner}</button>}
                     {kind === 'habit' && (

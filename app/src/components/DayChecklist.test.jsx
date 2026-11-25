@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom'
 import DayChecklist from './DayChecklist'
 
 const at = (h, m = 0) => new Date(2026, 10, 15, h, m).toISOString()
@@ -47,6 +47,23 @@ describe('DayChecklist (refonte étape 3)', () => {
     show()
     const meals = screen.getByRole('group', { name: 'Repas' })
     expect(within(meals).getByRole('link', { name: 'Vos repas' })).toHaveAttribute('href', '/food')
+  })
+
+  it('les liens vers les repas disent qu’on vient de Ma journée (POLISH-SIM-162)', () => {
+    function FoodProbe() {
+      const { state } = useLocation()
+      return <p>repas depuis {state?.tab}</p>
+    }
+    render(
+      <MemoryRouter initialEntries={['/ma-journee']}>
+        <Routes>
+          <Route path="/ma-journee" element={<DayChecklist entries={[meal(8, 'Tartines')]} askGut={false} now={NOON} onWellbeing={vi.fn()} onGut={vi.fn()} />} />
+          <Route path="/food" element={<FoodProbe />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    fireEvent.click(screen.getByRole('link', { name: 'Matin : noté' }))
+    expect(screen.getByText('repas depuis /ma-journee')).toBeInTheDocument()
   })
 
   it('avec l’objectif digestion, le ventre attend 18 h puis ouvre le bilan du jour', () => {

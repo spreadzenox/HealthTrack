@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import MealPhotoButton from './MealPhotoButton'
 import LineIcon from './LineIcon'
+import { useCurrentTab } from './tabs'
 import './AddStrip.css'
 
 function Sheet({ title, onClose, children }) {
@@ -46,6 +47,7 @@ export default function AddStrip({
   onWellbeing, digestion = null, stool = null, period = null, cigarette = null, cigaretteInStrip = false, onCountCigarettes, open: openProp, onOpenChange,
 }) {
   const [innerOpen, setInnerOpen] = useState(null)
+  const tab = useCurrentTab()
   const open = openProp !== undefined ? openProp : innerOpen
   const setOpen = onOpenChange ?? setInnerOpen
   const close = () => setOpen(null)
@@ -93,7 +95,7 @@ export default function AddStrip({
       {open === 'other' && (
         <Sheet title="Autre chose" onClose={close}>
           <div className="add-sheet-list">
-            <Link to="/food" state={{ describeMeal: true }} className="add-sheet-item">
+            <Link to="/food" state={{ describeMeal: true, tab }} className="add-sheet-item">
               <LineIcon name="pen" size={20} />
               Décrire un repas
             </Link>

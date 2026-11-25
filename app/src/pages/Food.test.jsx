@@ -719,6 +719,21 @@ describe('Food — décrire un repas en quelques mots', () => {
     expect(screen.queryByRole('button', { name: /Décrire ou saisir sans photo/i })).toBeNull()
   })
 
+  it('garde l’onglet d’origine après avoir ouvert la description (POLISH-SIM-162)', async () => {
+    const { setGeminiApiKey } = await import('../settings/geminiApiKey')
+    setGeminiApiKey('KEY')
+    const { useLocation } = await import('react-router-dom')
+    function Origin() { return <p>origine {useLocation().state?.tab ?? 'aucune'}</p> }
+    render(
+      <MemoryRouter initialEntries={[{ pathname: '/food', state: { describeMeal: true, tab: '/ma-journee' } }]}>
+        <Food />
+        <Origin />
+      </MemoryRouter>,
+    )
+    await screen.findByLabelText(/Décrivez votre repas/i)
+    expect(screen.getByText('origine /ma-journee')).toBeInTheDocument()
+  })
+
   it('affiche l’erreur de Gemini et laisse la saisie manuelle possible', async () => {
     const { setGeminiApiKey } = await import('../settings/geminiApiKey')
     setGeminiApiKey('KEY')

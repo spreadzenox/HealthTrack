@@ -824,9 +824,18 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       PDF sans partage (propre à la version web de l'outil) ; version 0.0.0 ; essai libre sans piste (fonction
       nouvelle) ; « Objectifs » sans objectif (nom du propriétaire).
     - À étudier : cœur et oxygène du sang reçus mais visibles nulle part (2ᵉ persona : proposition avec maquette au
-      prochain run « idées ») ; une seule note « Douleur » (1) lissée à 2,5 (banc avant tout changement) ; onglet
-      Données allumé pendant un repas ouvert depuis Ma journée (2ᵉ persona) ; puces « Hier midi / Hier soir » pour
-      l'heure d'un repas ; l'export CSV ne dit pas ce qu'il contient.
+      prochain run « idées ») ; une seule note « Douleur » (1) lissée à 2,5 (banc avant tout changement) ; ~~onglet
+      Données allumé pendant un repas ouvert depuis Ma journée (2ᵉ persona)~~ (POLISH-SIM-162) ; puces « Hier midi /
+      Hier soir » pour l'heure d'un repas ; l'export CSV ne dit pas ce qu'il contient.
+    - [x] **POLISH-SIM-162 — Onglet « Données » allumé pendant un repas noté depuis Ma journée** (FAIT le 25/11 à
+      01:30 ; vu par deux personas, 23/11 « Tout mesurer » J1 et 24/11 « Ventre et données » J45 : « je ne sais plus
+      où je suis ») : la page Repas est rangée sous Données, donc la barre allumait Données et la page montrait les
+      sous-onglets « Tendances · Nutrition ». Désormais les liens et le bouton photo de Ma journée et de l'Accueil
+      passent l'onglet d'origine (`state.tab`, `components/tabs.js` : `TABS`, `activeTab`, `useCurrentTab`) ; la barre
+      allume cet onglet et les sous-onglets de Données disparaissent ; la page Repas garde `tab` quand elle efface
+      l'état consommé (`describeMeal`, `redoMeal`). Ouverte depuis Données (Nutrition › Tous vos repas, adresse
+      directe), rien ne change. Tests d'abord (`TabBar`, `JournalTabs`, `MealPhotoButton`, `AddStrip`,
+      `DayChecklist`, `Food`), captures `/ma-journee` → « Vos repas » en clair et sombre, `/food` direct relues.
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.

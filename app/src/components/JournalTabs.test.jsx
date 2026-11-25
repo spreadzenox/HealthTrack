@@ -30,4 +30,14 @@ describe('JournalTabs (Données = Tendances · Nutrition, refonte « Compagnon �
     expect(screen.getByRole('link', { name: current })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('link', { name: other })).not.toHaveAttribute('aria-current')
   })
+
+  // POLISH-SIM-162 : la page Repas ouverte depuis Ma journée ou l'Accueil n'est pas dans Données.
+  it.each([['/ma-journee', false], ['/', false], ['/tendances', true]])('on the meals page opened from %s, shows the Données tabs: %s', (tab, shown) => {
+    render(
+      <MemoryRouter initialEntries={[{ pathname: '/food', state: { tab } }]}>
+        <JournalTabs />
+      </MemoryRouter>
+    )
+    expect(Boolean(screen.queryByRole('navigation', { name: 'Données' }))).toBe(shown)
+  })
 })

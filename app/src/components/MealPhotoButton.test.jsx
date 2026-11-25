@@ -25,7 +25,7 @@ describe('MealPhotoButton (TESTEUR-4b)', () => {
     renderBtn()
     const file = new File(['x'], 'repas.jpg', { type: 'image/jpeg' })
     fireEvent.change(inputOf(screen.getByRole('button')), { target: { files: [file] } })
-    expect(navigateMock).toHaveBeenCalledWith('/food')
+    expect(navigateMock).toHaveBeenCalledWith('/food', { state: { tab: '/' } })
     expect(takePendingMealPhoto()).toBe(file)
     expect(takePendingMealPhoto()).toBeNull()
   })
@@ -34,7 +34,14 @@ describe('MealPhotoButton (TESTEUR-4b)', () => {
     render(<MemoryRouter><MealPhotoButton className="btn" slot="noon">Midi</MealPhotoButton></MemoryRouter>)
     const input = inputOf(screen.getByRole('button', { name: 'Midi' }))
     fireEvent.change(input, { target: { files: [new File(['x'], 'r.jpg', { type: 'image/jpeg' })] } })
-    expect(navigateMock).toHaveBeenCalledWith('/food', { state: { mealSlot: 'noon' } })
+    expect(navigateMock).toHaveBeenCalledWith('/food', { state: { mealSlot: 'noon', tab: '/' } })
+  })
+
+  it('tells the meals page which tab it was opened from (POLISH-SIM-162)', () => {
+    render(<MemoryRouter initialEntries={['/ma-journee']}><MealPhotoButton className="btn" slot="noon">Midi</MealPhotoButton></MemoryRouter>)
+    const input = inputOf(screen.getByRole('button', { name: 'Midi' }))
+    fireEvent.change(input, { target: { files: [new File(['x'], 'r.jpg', { type: 'image/jpeg' })] } })
+    expect(navigateMock).toHaveBeenCalledWith('/food', { state: { mealSlot: 'noon', tab: '/ma-journee' } })
   })
 
   it('does nothing when the camera is closed without a photo', () => {

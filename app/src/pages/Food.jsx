@@ -121,6 +121,8 @@ export default function Food() {
     items: payload?.items,
   })
 
+  // POLISH-SIM-162 : l'état consommé est effacé, sauf l'onglet d'où vient la personne (barre d'onglets).
+  const keepTab = (state) => (state?.tab ? { tab: state.tab } : null)
   // « Refaire » depuis le tableau de bord : le repas arrive dans l'état de navigation, consommé une seule fois
   const location = useLocation()
   const navigate = useNavigate()
@@ -128,7 +130,7 @@ export default function Food() {
   useEffect(() => {
     if (!redoFromNav) return
     redo(redoFromNav)
-    navigate(location.pathname, { replace: true, state: null })
+    navigate(location.pathname, { replace: true, state: keepTab(location.state) })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [redoFromNav])
 
@@ -146,7 +148,7 @@ export default function Food() {
     if (!describeFromNav) return
     startQuickMeal(mealSlot ? { slot: mealSlot } : undefined)
     setFocusDescription(true)
-    navigate(location.pathname, { replace: true, state: null })
+    navigate(location.pathname, { replace: true, state: keepTab(location.state) })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [describeFromNav])
 
