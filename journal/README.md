@@ -22,6 +22,12 @@ Dites à Claude dans Chrome « fais la mission PI2 » ([`PI2.md`](../iphone/jour
 trois abonnements dans le brouillon et s'arrête devant **Submit for Review** ; ce bouton est le vôtre (5 min en tout).
 Si une build plus récente a été attachée d'ici là, ce résumé le dira.
 
+**👉 Le dimanche 29 ou le lundi 30/11 (2 min) : prévenir les testeurs de la fin de Gold offert (2/12).** Message prêt à
+copier : [`INVITATION-TESTEURS.md`, message E](INVITATION-TESTEURS.md) (au groupe des testeurs). Il dit que Gold continue
+jusqu'au 27/12 pour ceux qui ont analysé un repas, ce qui reste gratuit, les prix, et leur demande surtout de **rester
+inscrits** : sans ça, le décompte des 14 jours de Google ne pourra jamais aboutir. Si vous dites « prolonge Gold »
+d'ici là, ne l'envoyez pas : la routine le réécrit avec la nouvelle date.
+
 **Ensuite, 1 minute (P51)** : la Sécurité des données Google déclare maintenant « Infos de santé » pour la photo des
 selles, comme Apple. Actions → « Play — sécurité des données » → Run workflow (main).
 
@@ -64,6 +70,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/11 12:30 — [Message de fin de Gold offert](runs/2026-11-26-1230-fin-gold-message.md) | 🔧 | FIN-LANCEMENT-MSG : message E du kit des testeurs, à envoyer le 29 ou le 30/11 (Gold jusqu'au 2/12, prolongé au 27/12 pour qui a analysé un repas, ce qui reste gratuit, prix vérifiés, « restez inscrits »). Journal seulement, aucun build de Mac. **À faire de votre côté : envoyer ce message le 29 ou le 30/11** |
 | 26/11 11:30 — [Contact des pages de l'iPhone](runs/2026-11-26-1130-contact-pages-iphone.md) | 🔧 | FUSION-4 : sur iPhone, Réglages › Confidentialité et Conditions donnent l'adresse de contact de ce dépôt, plus celle de l'ancien dépôt iOS ; test d'abord. **#1285 mergée** dans le run (16 checks verts, dont le build iPhone), release v931 (APK 35,7 Mo). Rien à faire de votre côté |
 | 26/11 10:30 — [Personas sur iPhone : la bonne source](runs/2026-11-26-1030-personas-outil-3.md) | 🔧 | PERSONAS-OUTIL-3 : dans l'outil des personas, une configuration iPhone (`--store=appstore`) reçoit ses mesures de Santé (« iPhone », « Apple Watch ») et non plus de Samsung Health ; test d'abord, Sources relu. #1283 (un repas, une chose) était déjà mergée et partie (release v929). Aucun changement dans l'app, aucun build de Mac. Rien à faire de votre côté |
 | 26/11 09:30 — [Un repas, une chose](runs/2026-11-26-0930-un-repas-une-chose.md) | 🔧 | Dans Ma journée, « Encore … choses aujourd’hui » baisse à chaque repas noté (un point par repas sous Pilou, et le widget aussi) ; dans un repas, toucher les grammes sélectionne le nombre, ce qu’on tape le remplace. Tests d’abord, captures relues. Un build iPhone de PR (code partagé). Rien à faire de votre côté |
