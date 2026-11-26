@@ -16,6 +16,12 @@ describe('homeBubbles', () => {
     expect(r.done).toBe(0)
   })
 
+  it('compte ce qui reste comme Ma journée : chaque repas manquant compte (POLISH-SIM-174)', () => {
+    const r = homeBubbles([{ type: 'food', at: at(8) }], { now: NOW, habits: [MED] })
+    expect(r.bubbles).toHaveLength(3)
+    expect(r.remaining).toBe(4)
+  })
+
   it('le repas se remplit par tiers et la bulle part à 3 sur 3', () => {
     const one = homeBubbles([{ type: 'food', at: at(8) }], { now: NOW })
     const meals = one.bubbles.find((b) => b.id === 'meals')
@@ -59,8 +65,9 @@ describe('textes', () => {
   })
   it('message bref et reste à faire', () => {
     expect(poppedMessage({ kind: 'habit', label: 'Lecture' }, false)).toBe('Lecture : non, c’est noté.')
-    expect(bubblesLeftText(3)).toBe('3 bulles à faire')
-    expect(bubblesLeftText(1)).toBe('1 bulle à faire')
+    // POLISH-SIM-174 : mêmes mots que Ma journée (« Encore N choses aujourd’hui »)
+    expect(bubblesLeftText(3)).toBe('Encore 3 choses aujourd’hui')
+    expect(bubblesLeftText(1)).toBe('Encore 1 chose aujourd’hui')
     expect(bubblesLeftText(0)).toBe('Plus rien à faire aujourd’hui')
   })
 })

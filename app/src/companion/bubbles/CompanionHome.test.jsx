@@ -33,7 +33,7 @@ describe('CompanionHome — les bulles', () => {
     expect(screen.getByRole('button', { name: 'Bien-être, à faire, touchez pour noter' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Méditation, à faire, touchez pour noter' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Repas, 0 sur 3/ })).toBeInTheDocument()
-    expect(screen.getByText('Pilou est tranquille · 4 bulles à faire')).toBeInTheDocument()
+    expect(screen.getByText('Pilou est tranquille · Encore 6 choses aujourd’hui')).toBeInTheDocument()
   })
 
   it('une habitude s’ouvre en question ; « Non » est noté comme « Oui »', () => {
@@ -163,6 +163,6 @@ describe('CompanionHome — la nuit et le jour 14', () => {
 
   it('le nom choisi est celui qu’on lit partout', () => {
     renderHome({ name: 'Nuage' })
-    expect(screen.getByText('Nuage est tranquille · 4 bulles à faire')).toBeInTheDocument()
+    expect(screen.getByText('Nuage est tranquille · Encore 6 choses aujourd’hui')).toBeInTheDocument()
   })
 })

@@ -756,6 +756,8 @@ function NotesStep({ gut, habits, onHabits }) {
             placeholder="Ajouter une habitude…"
             aria-label="Ajouter une habitude"
             autoComplete="off"
+            // POLISH-SIM-175 : sous le bouton fixe « C’est parti ! », le champ remonte au toucher (scroll-margin du CSS)
+            onFocus={(e) => e.target.scrollIntoView?.({ block: 'nearest' })}
             onChange={(e) => setName(e.target.value)}
           />
           <button type="button" className="btn btn-secondary" onClick={add} disabled={!customHabit(name)}>

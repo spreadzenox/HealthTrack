@@ -789,6 +789,12 @@
   margin-top: 10px;
 }
 
+/* POLISH-SIM-175 : hauteur du pied collant (.onb-footer : bouton + 12 + 16 px) et un peu d'air, pour que le champ
+   ramené par scrollIntoView ne finisse pas sous « C’est parti ! » */
+.onb-habit-input {
+  scroll-margin-bottom: calc(var(--button-height) + 40px);
+}
+
 .onb-habit-input {
   flex: 1;
   min-width: 0;
