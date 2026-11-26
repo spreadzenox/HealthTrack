@@ -102,3 +102,11 @@
 .objectives-page .objectives-trial {
   margin-bottom: 20px;
 }
+
+/* POLISH-SIM-76 et 93 : où retrouver les notes de digestion sans l'objectif ; une ligne discrète, pas une carte */
+.objectives-gut-hidden {
+  margin: 16px 4px 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}

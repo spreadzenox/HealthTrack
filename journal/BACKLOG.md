@@ -1718,8 +1718,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   moins de 0,05 pt masqués ; « Rien de marquant ce jour-là… » si tous le sont ; « Rien de ce que Halcya compare
   n'explique cette note basse. » pour une note ≤ 2,5 sans effet négatif affiché ; « estimé, avec votre note
   « douleur » » quand le chiffre s'écarte de la note.
-- [ ] **POLISH-SIM-71b** Fiche d'un jour : lien « Voir toute la journée » vers Journal › Jours à cette date ; pour un
+- [x] **POLISH-SIM-71b** Fiche d'un jour : lien « Voir toute la journée » vers Journal › Jours à cette date ; pour un
   profil ventre, les repas de la veille (à maquetter si cela ajoute un bloc).
+  **Soldée le 26/11 01:30, sans objet** : le Journal jour par jour est supprimé (refonte, étape 7) ; le détail du jour vit dans Tendances › Jour.
 - [x] **POLISH-SIM-72** « VFC » (Aujourd'hui, Journal, Analyses) et « variabilité cardiaque » (Sources, fiche d'un
   jour) : un seul nom.
   **Fait le 14/11 04:35 (Android)** : « variabilité cardiaque » dans tous les textes de `src/` ; test de garde
@@ -1768,8 +1769,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   Bien-être sans le dire (T2 prévoit la puce grisée « une valeur par jour »).
   **Soldée le 24/11 15:30** : déjà réglée par POLISH-SIM-107 (19/11) : en Jour, la mesure choisie reste
   (`TrendsViewer.jsx`, `dayKeys`), test « POLISH-SIM-107 » de `Trends.test.jsx`.
-- [ ] **POLISH-SIM-76** (à vérifier ; Tout mesurer J45) Objectif « tout comprendre » et digestion notée : Analyses
+- [x] **POLISH-SIM-76** (à vérifier ; Tout mesurer J45) Objectif « tout comprendre » et digestion notée : Analyses
   n'a que l'onglet Bien-être.
+  **Fait le 26/11 01:30** : depuis la refonte, Objectifs a une carte par objectif ; sans « Confort digestif », les jours de digestion déjà notés n'avaient plus de chemin. Objectifs dit « Vos notes de digestion (N jours) sont gardées. Pour les retrouver : Réglages › Paramètres › Vos objectifs. » (`notedDays`, 3 tests). La migration de l'étape 5a ne change pas (elle n'ajoute pas l'objectif à qui avait choisi autre chose).
 - [x] **POLISH-SIM-77** (Ventre sans technique J45) Repas, encadré « Riche en fructanes » : « ≈ 0,73 g · repère
   0,3 g », « Varney 2017 », « Ferjančič 2024 » à première vue. Les ranger derrière un détail (la source reste citée).
   **Fait le 14/11 06:35** : ces mentions étaient déjà derrière le chevron ; c'est le détail déplié qui n'était pas
@@ -1810,9 +1812,10 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   telle que donnée, dans l'ordre) ; le bouton devient « Ajouter une note », secondaire ; l'ancienne ligne « Noté :
   4/5 » au-dessus de la carte ne reste que lorsque la note fait arriver les résultats (`Recommendations.jsx`,
   `wellbeingNotesToday`). iPhone : code partagé, aucun correctif sur ce fichier, arrive au prochain suivi.
-- [ ] **POLISH-SIM-83** (à vérifier) Objectif « Mon sport et ma récupération » : rien ne change de visible ensuite
+- [x] **POLISH-SIM-83** (à vérifier) Objectif « Mon sport et ma récupération » : rien ne change de visible ensuite
   (Aujourd'hui, Analyses, Agir). Relever ce que l'objectif règle vraiment ; s'il ne règle rien, le dire dans une
   proposition plutôt que de le laisser promettre.
+  **Soldée le 26/11 01:30, sans objet** : l'objectif « Mon sport et ma récupération » est retiré du choix depuis la refonte (étape 1, `RETIRED_GOALS`).
 - [x] **POLISH-SIM-84** Aujourd'hui avec une balance et sans montre : aucune pesée dans « Vos données du jour », et le
   seul lien est « Ajouter une montre ». **Fait le 14/11 16:35** : la dernière pesée du jour (`weight` ou
   `body_composition`) a sa ligne « Poids · à 07:30 · 72,4 kg », couleur du corps, lien vers sa courbe de Tendances ;
@@ -1878,8 +1881,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   depuis 45 jours. Ne garder la phrase que si la note du jour manque.
   **Fait le 14/11 22:35** : la phrase (bien-être ou digestion selon l'objectif) ne s'affiche que si rien n'est noté
   aujourd'hui ; une lecture du visage ne compte pas comme une note. iPhone : au prochain suivi du code embarqué.
-- [ ] **POLISH-SIM-93** (à vérifier ; Sportif J45) Analyses n'a que l'onglet « Bien-être » avec l'objectif sport,
+- [x] **POLISH-SIM-93** (à vérifier ; Sportif J45) Analyses n'a que l'onglet « Bien-être » avec l'objectif sport,
   alors que la digestion est notée chaque jour : l'onglet doit suivre les données, pas seulement l'objectif.
+  **Fait le 26/11 01:30**, avec POLISH-SIM-76 (même cause). Le bandeau « suivi digestif masqué » de Confort digestif disait « Ce qui vous amène », un nom de réglage disparu : il dit « Vos objectifs », test.
 - [x] **POLISH-SIM-94** (Maigrir J1) Tendances après une première pesée : « Choisissez une courbe » sans « Poids ».
   Puce grisée « Poids · dès 3 pesées », comme « Poids · en Mois » (POLISH-SIM-81b).
   **Fait le 24/11 12:30** : une mesure relevée ce mois-ci sans ses 3 points apparaît grisée, sans effet, dans « + »
@@ -1892,8 +1896,9 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   Le dessiner comme partiel (point creux) ou l'écarter du tracé.
   **Déjà fait par POLISH-SIM-127 (20/11)** : pas et écran (`cumulative`) n'ont pas de point aujourd'hui en Semaine
   ni en Mois ; constaté le 24/11 12:30 dans `trendsData.js`.
-- [ ] **POLISH-SIM-96** (à vérifier) Journal › Jours : tuile « FC » (écrire « Cœur » : **fait le 24/11 16:30, POLISH-SIM-86b**) ; étiquette « Écran tard »
+- [x] **POLISH-SIM-96** (à vérifier) Journal › Jours : tuile « FC » (écrire « Cœur » : **fait le 24/11 16:30, POLISH-SIM-86b**) ; étiquette « Écran tard »
   d'une note de bien-être sans origine.
+  **Soldée le 26/11 01:30, sans objet** : Journal › Jours n'existe plus (refonte, étape 7) ; « Cœur » fait le 24/11.
 - [x] **POLISH-SIM-97** (Maigrir J1) Nutrition au 1er jour : « des repas manquent sans doute, apports sous-estimés »
   après un seul repas noté. Ne pas l'afficher le premier jour de saisie.
   **Fait le 15/11 00:35** : quand seul le jour en cours est saisi, la page écrit « ≈ … kcal aujourd'hui, journée en

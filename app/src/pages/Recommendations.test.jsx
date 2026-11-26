@@ -391,7 +391,7 @@ describe('Exemple digestion sans l’objectif ventre (POLISH-SIM-37b)', () => {
     const { enterExampleMode, exitExampleMode } = await import('../storage/exampleMode')
     saveOnboarding({ goals: ['stress'] })
     renderPage({ view: 'gut' }, readyResults)
-    expect(await screen.findByTestId('gut-off')).toBeInTheDocument()
+    expect(await screen.findByTestId('gut-off')).toHaveTextContent('Paramètres › Vos objectifs')
     act(() => enterExampleMode([]))
     expect(screen.queryByTestId('gut-off')).not.toBeInTheDocument()
     act(() => exitExampleMode())
