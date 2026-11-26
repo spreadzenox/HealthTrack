@@ -41,6 +41,16 @@ describe('Un essai (ORG-8)', () => {
     expect(screen.getByText('Pourquoi des jours tirés au sort ?')).toBeInTheDocument()
   })
 
+  it('POLISH-SIM-176 : la veille répondue, la question passe à avant-hier, sans mesure', async () => {
+    saveTrial.mockClear()
+    renderTrial(new Date(2026, 10, 5, 10), { answers: { '2026-11-04': true } })
+    const group = await screen.findByRole('group', { name: 'Question sur avant-hier' })
+    expect(within(group).getByText('Avant-hier, dormir au moins 7 h 30 : c’était tenu ?')).toBeInTheDocument()
+    expect(within(group).getByText('Nous n’avons pas reçu vos données de sommeil pour cette nuit-là.')).toBeInTheDocument()
+    fireEvent.click(within(group).getByRole('button', { name: 'Non' }))
+    expect(saveTrial).toHaveBeenCalledWith(7, expect.objectContaining({ answers: { '2026-11-04': true, '2026-11-03': false } }))
+  })
+
   it('POLISH-ESSAI-GRILLE : « Les 14 jours » en deux semaines de 7, numérotées', async () => {
     renderTrial(new Date(2026, 10, 3, 10))
     expect(await screen.findByRole('heading', { name: 'Les 14 jours' })).toBeInTheDocument()

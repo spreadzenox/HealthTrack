@@ -186,7 +186,7 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
         </article>
       )}
       {s.ask && !s.done && (
-        <article className="today-card trial-ask" role="group" aria-label="Question sur hier">
+        <article className="today-card trial-ask" role="group" aria-label={`Question sur ${s.ask.when}`}>
           {s.ask.missing && <p className="act-card-detail">{s.ask.missing}</p>}
           <p className="trial-ask-q">{s.ask.question}</p>
           <div className="trial-ask-btns">

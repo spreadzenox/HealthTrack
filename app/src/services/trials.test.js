@@ -41,6 +41,24 @@ describe('Essais (ORG-8)', () => {
     expect(trialStatus({ ...t, answers: { '2026-11-03': true } }, { summaries, now: new Date(2026, 10, 4, 10) }).ask).toBeNull()
   })
 
+  it('POLISH-SIM-176 : sans mesure, les jours manqués se rattrapent jusqu’à 3 jours en arrière, un à la fois', () => {
+    const t = { ...createTrial(sleep, { now: START }), schedule: [...Array(14)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 })) }
+    const at = new Date(2026, 10, 5, 10)
+    const s1 = trialStatus(t, { now: at })
+    expect(s1.ask).toMatchObject({ date: '2026-11-04', when: 'hier', question: 'Hier, comme d’habitude : c’était tenu ?' })
+    expect(s1.ask.missing).toBe('Nous n’avons pas reçu vos données de sommeil pour hier soir.')
+    const s2 = trialStatus({ ...t, answers: { '2026-11-04': true } }, { now: at })
+    expect(s2.ask).toMatchObject({ date: '2026-11-03', when: 'avant-hier', question: 'Avant-hier, dormir au moins 7 h 30 : c’était tenu ?' })
+    expect(s2.ask.missing).toBe('Nous n’avons pas reçu vos données de sommeil pour cette nuit-là.')
+    const s3 = trialStatus({ ...t, answers: { '2026-11-04': true, '2026-11-03': false } }, { now: at })
+    expect(s3.ask).toMatchObject({ date: '2026-11-02', when: 'lundi', question: 'Lundi, comme d’habitude : c’était tenu ?' })
+    // Au-delà de 3 jours, plus de question : le 1er reste inconnu
+    expect(trialStatus({ ...t, answers: { '2026-11-04': true, '2026-11-03': false, '2026-11-02': true } }, { now: at }).ask).toBeNull()
+    // Un jour dont la mesure est arrivée ne se demande pas
+    const summaries = new Map([['2026-11-04', { sleepMinutes: 400 }]])
+    expect(trialStatus(t, { summaries, now: at }).ask.date).toBe('2026-11-03')
+  })
+
   it('résultat en cours : écart et fourchette dès 3 lendemains de chaque sorte ; verdict à la fin', () => {
     const t = { ...createTrial(sleep, { now: START }), schedule: [...Array(14)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 })) }
     const outcome = new Map()
