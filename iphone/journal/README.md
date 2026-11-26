@@ -3,8 +3,8 @@
 > **Depuis le 13/11 au soir (dépôt unique, routine unique) : le résumé que lit le propriétaire est en tête de
 > [`journal/README.md`](../../journal/README.md), Android et iPhone dans le même tableau.** Le bloc ci-dessous est le
 > dernier résumé de l'ancienne routine iOS, gardé pour mémoire ; il n'est plus tenu à jour. La charte (§ 3, § 4, § 8)
-> reste la référence pour construire et publier l'iPhone ; son § 2 (« lecture seule ») et « DEMANDES » décrivent
-> l'ancien montage (fichiers archivés dans `archives/ancien-montage/`).
+> reste la référence pour construire et publier l'iPhone ; son § 2 et son § 6 ont été réécrits le 26/11 (FUSION-5) pour
+> le dépôt unique (l'ancien montage est archivé dans `archives/ancien-montage/`).
 
 ## 📅 Semaine en cours — S46 (lundi 9 novembre → dimanche 15 novembre 2026)
 
@@ -232,19 +232,22 @@ priorité du propriétaire** : runs pleins (jusqu'à 50 min), étapes enchaîné
 - **Le prompt de la routine prime** sur cette charte en cas de contradiction ; la routine peut améliorer la charte
   quand elle trouve une meilleure façon de travailler.
 
-### 2. Deux dépôts, une seule règle
+### 2. Un dépôt, une routine (depuis le 13/11 ; réécrit le 26/11, FUSION-5)
 
-| Dépôt | Rôle | Accès de la routine iOS |
-|---|---|---|
-| `spreadzenox/HealthTrack` | l'app (code web partagé), la version Android, le relais, le journal du produit | **lecture seule** |
-| `spreadzenox/HealthTrack-iOS` (ici) | tout ce qui est propre à iOS : correctifs, projet natif, workflows macOS, fiche App Store, journal iOS | lecture et écriture |
+L'ancien montage (deux dépôts, HealthTrack en lecture seule, demandes relayées par `DEMANDES.md`, `POUR-IOS.md` et
+`POUR-ORCHESTRATEUR.md`) n'a plus cours ; ses fichiers sont dans `archives/ancien-montage/`. Aujourd'hui :
 
-- Dans HealthTrack, la routine iOS **lit** (code, `journal/PRODUIT.md`, `journal/BACKLOG.md`, `journal/DESIGN.md`,
-  `app/src/data/changelog/`, workflows) et **n'écrit jamais** : ni push, ni branche, ni PR, ni commentaire, ni
-  workflow lancé, ni réglage.
-- Un changement nécessaire côté HealthTrack (ex. le relais qui doit vérifier les achats App Store, ou un petit point
-  d'accroche qui rendrait un correctif inutile) → une ligne dans [`DEMANDES.md`](DEMANDES.md) ; le propriétaire la
-  transmet s'il le veut à la routine Android. En attendant, contourner côté iOS.
+- **Un seul dépôt**, `spreadzenox/HealthTrack` : `app/` (code partagé), `relay/`, `journal/` (produit) et `iphone/`
+  (ce qui est propre à l'iPhone). **Une seule routine**, dont la charte est
+  [`journal/README.md`](../../journal/README.md) : elle prime sur ce fichier, qui garde seulement ce qui est propre à
+  l'iPhone (§ 3 la build, § 4 les versions, § 5 les contraintes, § 8 les gestes du propriétaire chez Apple).
+- **Pas de demande à relayer** : un changement utile à l'iPhone dans `app/` ou `relay/` se fait dans la même PR, de
+  préférence comme une condition sur la plateforme ou la variante (`README.md`, « Sort des correctifs »).
+- **Ce qui attend le propriétaire** va en tête du résumé de `journal/README.md` (une seule « prochaine action »), les
+  missions iPhone dans `journal/missions/` de ce dossier (PI1, PI2, PI3…).
+- **Captures** : branches `captures/main` (build du soir de `main`) et `captures/pr-<N>` (build d'une PR), fichiers
+  `iphone-16e-<demo|vierge>-<clair|sombre>-<écran>.png` ; lecture en local par
+  `git fetch origin captures/main --depth=1 && git show FETCH_HEAD:<fichier> > <fichier>`.
 
 ### 3. Comment la build iOS est faite
 
@@ -364,31 +367,19 @@ Règles des adaptations :
 
 ### 6. Protocole d'un run
 
-1. **Démarrage** : vérifier que les deux dépôts sont là (HealthTrack-iOS en écriture, HealthTrack en lecture), partir
-   de `origin/main` à jour, lire ce fichier, `PARITE.md`, `BACKLOG.md`, `DEMANDES.md` et les 3 derniers comptes
-   rendus (`ls journal/runs | tail -3`).
-   **Depuis le 4/11** (décision du propriétaire) : lire aussi `journal/POUR-IOS.md` de HealthTrack, en lecture ; une
-   ligne qui commence par « Décision du propriétaire » vaut comme venant de lui (dans les limites du prompt : jamais
-   de production, de soumission à Apple ni de secret) et se reporte dans le compte rendu. Après la soumission, iOS
-   rejoindra HealthTrack et cette routine sera mise en pause.
-   Dans l'autre sens, **`journal/POUR-ORCHESTRATEUR.md`** de ce dépôt : tout ce qui attend du propriétaire une action,
-   une réponse ou une décision, et tout blocage (pas l'avancement) ; une ligne datée (heure de Paris), la plus récente
-   en haut, compréhensible seule, avec la réponse attendue ; une ligne réglée en est retirée ; le fichier part sur
-   `main` avec la PR du run.
-   Un journal ne se merge **qu'après** la PR de suivi en cours (sinon celle-ci n'est plus à jour sur `main` et doit
-   repasser toute sa CI), sauf décision du propriétaire à rendre visible tout de suite.
-2. **Ce qu'Android a livré** depuis le dernier run (depuis le 15/11, le code partagé arrive seul sur iPhone avec sa PR :
-   il reste à regarder les captures iPhone des écrans touchés et à tenir `PARITE.md`) : avant, `scripts/upstream.sh --latest` (nouveau commit suivi), puis dans
-   HealthTrack, en lecture, `git log` entre l'ancien et le nouveau commit, nouveaux fichiers de
-   `app/src/data/changelog/`, tête de `journal/README.md` et de `journal/PRODUIT.md`. Reporter dans `PARITE.md` §5.
-   **Chaque nouvelle note de Nouveautés** sans `variants` s'affiche aussi sur iPhone (depuis le 29/10, l'iPhone montre
-   les notes à partir de sa propre version, correctif 28) : fausse sur iPhone → son id dans `APPSTORE_HIDDEN`
-   (correctif 28) et une ligne dans `DEMANDES.md` pour qu'Android la marque `["play", "sideload"]`. La cacher
-   **au suivi de sa version**, jamais plus tard : une note déjà vue sur un iPhone puis cachée n'est plus trouvée
-   par `getUnseenEntries`, et l'app annoncerait toutes les autres comme nouvelles (vu en capture le 29/10, PR #67).
-3. **Une autre exécution iOS en cours ?** (PR ouverte ici depuis moins de 75 min, ou workflow en cours sur une
-   branche de la routine) → ne pas toucher aux mêmes fichiers.
-4. **Priorités** : (a) `main` de ce dépôt rouge → réparer ; (b) une PR de la routine rouge ou en conflit → la
+1. **Démarrage** : le protocole est celui de la charte de [`journal/README.md`](../../journal/README.md) (§ 3) et du
+   prompt de la routine ; côté iPhone, lire en plus ce fichier (§ 3, § 4, § 8), `PARITE.md` et `BACKLOG.md`.
+   Jusqu'au 13/11, ce point décrivait l'ancien montage (deux dépôts, `DEMANDES.md`, `POUR-IOS.md`,
+   `POUR-ORCHESTRATEUR.md`) : archivé dans `archives/ancien-montage/`.
+2. **Nouveautés** : une note sans `variants` s'affiche aussi sur iPhone ; fausse sur iPhone, elle porte
+   `"variants": ["play", "sideload"]` dès sa création (ou son id dans `APPSTORE_HIDDEN`, `app/src/data/changelog.js`,
+   **avant** la build qui l'embarque : une note déjà vue sur un iPhone puis cachée n'est plus trouvée par
+   `getUnseenEntries`, et l'app annoncerait toutes les autres comme nouvelles, vu le 29/10). Une note propre à
+   l'iPhone va dans `overlay/app/src/data/changelog/` avec `"variants": ["appstore"]`. Ce qu'Android livre se reporte
+   dans `PARITE.md` § 5 dans le run qui le livre.
+3. **Une autre exécution en cours ?** Règle du prompt (PR « [Auto] » de moins de 90 min, « Build & Release » en
+   cours) : ne pas toucher aux mêmes fichiers.
+4. **Priorités** (celles du prompt priment) : (a) `main` rouge → réparer ; (b) une PR de la routine rouge ou en conflit → la
    réparer ; (c) correctifs cassés par la dernière version Android → les refaire ; (d) étape suivante de
    `BACKLOG.md`.
 5. **Réaliser** : TDD (Vitest pour le web, XCTest pour le Swift), style du code d'Android, UI en français et au
