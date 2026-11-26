@@ -14,6 +14,14 @@ import { faceMoodEstimate } from './faceMood'
 import { faceMoodDays } from './faceMoodDays'
 import { wellbeingHistory } from './wellbeingHistory'
 
+/** Minuit (heure locale) du jour de la première lecture du visage, en ISO. */
+function firstBurstDay(bursts) {
+  const first = bursts.reduce((min, b) => (b.at < min ? b.at : min), bursts[0].at)
+  const day = new Date(first)
+  day.setHours(0, 0, 0, 0)
+  return day.toISOString()
+}
+
 export async function loadFaceMoodEntries({ list = listEntries, withStool = false, notesAlways = false } = {}) {
   const bursts = await list({ type: FACE_BURST_TYPE, limit: Infinity })
   if (!bursts.length) {
@@ -25,12 +33,9 @@ export async function loadFaceMoodEntries({ list = listEntries, withStool = fals
     ])
     return { bursts, notes: [...(wellbeing || []), ...(gut || [])] }
   }
-  const first = bursts.reduce((min, b) => (b.at < min ? b.at : min), bursts[0].at)
-  const sinceDay = new Date(first)
-  sinceDay.setHours(0, 0, 0, 0)
   // POLISH-SIM-88 : Tendances (notesAlways) lit aussi les notes d'avant la caméra, sinon un jour noté avant la
   // première lecture du visage dit « Aucune lecture du visage ce jour-là » sans montrer la note.
-  const since = notesAlways ? undefined : sinceDay.toISOString()
+  const since = notesAlways ? undefined : firstBurstDay(bursts)
   const [wellbeing, gut, stool] = await Promise.all([
     list({ type: 'wellbeing', since, limit: Infinity }),
     // Notes digestives et selles : observations du modèle à espace d'états (TS-1), lié au bien-être.
@@ -64,13 +69,17 @@ export function todayWellbeingState(entries, now = new Date(), cached = peekAnal
  * @returns {Promise<null | { est: object | null, days: { date: string, note: number }[] }>}
  */
 export async function loadWellbeingToday({ list = listEntries, now = new Date() } = {}) {
-  const { bursts, notes } = await loadFaceMoodEntries({ list, withStool: true })
+  // POLISH-SIM-80 : toutes les notes, comme le calcul complet de Tendances. Sinon, sans cache, le modèle estimait ses
+  // paramètres sans les notes d'avant la caméra et l'Accueil passait de 3 à 2,9 puis à 3 selon l'état du cache.
+  const { bursts, notes: allNotes } = await loadFaceMoodEntries({ list, withStool: true, notesAlways: true })
   if (!bursts.length) return null
+  const sinceDay = firstBurstDay(bursts)
+  const notes = allNotes.filter((e) => typeof e?.at === 'string' && e.at >= sinceDay)
   const entries = [...bursts, ...notes]
   // AUJ-2 : la courbe du jour de l'Accueil, les mêmes points que la vue Jour de l'historique.
   return {
     est: faceMoodEstimate(entries, { now }),
-    state: todayWellbeingState(entries, now),
+    state: todayWellbeingState([...bursts, ...allNotes], now),
     days: faceMoodDays(entries),
     today: wellbeingHistory(entries, { period: 'day', now }),
   }
