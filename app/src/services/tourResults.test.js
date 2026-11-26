@@ -77,6 +77,23 @@ describe('visite guidée : des pistes dès le jour annoncé', () => {
     }, 60_000)
   }
 
+  // POLISH-SIM-173 (« Ventre, sans technique », 25/11) : « Fructanes −3,5 pt » sur une note de 1 à 5 faisait passer un
+  // repas de calme à douleur, et « GOS +1,8 pt » laissait croire qu'un FODMAP soulage. L'exemple reste plausible :
+  // moins qu'un passage de calme à douleur (4 points), et aucun autre groupe FODMAP qui pèse plus d'un point.
+  it(`jour ${D} : des effets plausibles sur l'échelle de 1 à 5`, async () => {
+    for (const cfg of Object.values(CONFIGS)) {
+      for (const now of dates()) {
+        const gut = resultsView((await resultsFor(D, now, cfg)).outcomes.digestion)
+        const factors = gut.weigh.flatMap((h) => h.factors)
+        const fructans = factors.find((f) => f.key === 'fodmap_fructans')
+        expect(Math.abs(fructans.effect), now.toDateString()).toBeLessThanOrEqual(3)
+        for (const f of factors.filter((x) => x.key.startsWith('fodmap_') && x.key !== 'fodmap_fructans')) {
+          expect(Math.abs(f.effect), `${f.key} ${now.toDateString()}`).toBeLessThan(1)
+        }
+      }
+    }
+  }, 120_000)
+
   it('sans montre, la piste vient de ce qu’on note : le vin de certains soirs', async () => {
     const wb = (await resultsFor(W, dates()[0], CONFIGS['aucune source'])).outcomes.wellbeing
     expect(resultsView(wb).pistes.map((f) => f.key)).toContain('alcohol_g')

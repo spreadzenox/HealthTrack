@@ -144,7 +144,7 @@ export function buildTourEntries({ days, now = new Date(), received = new Set(),
     .map((e) => (e.source === 'huawei_watch' && !huawei ? { ...e, source: 'health_connect' } : e))
   markLever(kept, days, now)
   // Digestion (jour 28) : une note chaque soir, pour que ses analyses s'ouvrent comme chez quelqu'un qui note ; gêne
-  // le lendemain, douleur les soirs d'oignon cru (fructanes), calme les autres
+  // les soirs d'oignon cru (fructanes) et le lendemain, calme les autres
   if (days >= 28) {
     // Aujourd'hui : la note de la démo suit la même règle (soirée d'oignon hier : gêne ; sinon calme)
     const out = kept
@@ -162,9 +162,10 @@ export function buildTourEntries({ days, now = new Date(), received = new Set(),
     }
     for (let i = days; i >= 1; i--) {
       const d = daysBefore(now, i, 22)
-      // METHODE-BIAIS-1 : un soir d'oignon sur trois, gêne seulement (la taille montrée n'est plus rétrécie : un lien
-      // tout ou rien dépassait l'échelle et passait en « pas assez de données »)
-      const level = onionDay(i) ? (i % 3 === 0 ? 'discomfort' : 'pain') : onionDay(i + 1) ? 'discomfort' : 'calm'
+      // METHODE-BIAIS-1 : un lien tout ou rien dépassait l'échelle et passait en « pas assez de données ».
+      // POLISH-SIM-173 : gêne le soir d'oignon et le lendemain, jamais douleur ; « Fructanes −3,5 pt » (deux soirs
+      // d'oignon sur trois en douleur) faisait passer un repas de calme à douleur et sortait « GOS +1,8 pt ».
+      const level = onionDay(i) || onionDay(i + 1) ? 'discomfort' : 'calm'
       out.push({ type: 'gut', source: 'app_gut', at: d.toISOString(), payload: { level } })
     }
     return out
