@@ -241,6 +241,51 @@ Honnêteté à garder en tête (mis à jour le 18/11, refonte) : les premières 
 résultat de réintroduction (3 jours de ventre calme, puis 3 jours de test). C'est normal et
 c'est dit dans le formulaire (question 3 ci-dessous) : on préfère attendre plutôt que de montrer de faux suspects.
 
+### Message E — fin de Gold offert (à envoyer le dimanche 29 ou le lundi 30/11 ; ajouté le 26/11, FIN-LANCEMENT-MSG)
+
+> Pourquoi : Gold est offert à toute installation Google Play jusqu'au **2 décembre inclus** (`until` de
+> `relay/src/launch-period.json`). Le 3/12, un testeur qui n'a pas été prévenu verra l'écran d'achat et pourra
+> croire que le test est fini et quitter le groupe, alors que les 14 jours de Google n'ont pas encore commencé
+> (4 inscrits sur 12). L'app le dit déjà dans une carte de Ma journée, 3 jours avant la fin ; ce message le dit aussi
+> à ceux qui ouvrent peu l'app, et leur demande de **rester inscrits**.
+>
+> **Ne l'envoyez pas** si vous avez dit « prolonge Gold jusqu'au … » d'ici là : la date change, la routine réécrit ce
+> message. Destinataires : le groupe `halcya-testeurs@googlegroups.com` (Android seulement ; sur iPhone, Gold offert
+> s'est arrêté le 6/11).
+>
+> Chiffres vérifiés le 26/11 dans le code : Silver 4,99 €/mois ou 29,99 €/an avec 14 jours d'essai gratuit sur
+> l'annuel (`app/scripts/play/subscriptions.mjs`), Gold 9,99 €/mois ; gratuit : 10 analyses de repas à l'installation
+> puis 15 par mois (`relay/src/config.js`) ; prolongation P44 jusqu'au 27/12 inclus pour les installations qui ont
+> analysé au moins un repas pendant le test (inscrites par la routine le 2/12 au matin, P44-2b). Les prix sont ceux
+> de la France ; Google les affiche dans la devise du pays.
+
+Objet : Halcya, Gold offert jusqu'au 2 décembre (et après)
+
+> Bonjour à tous,
+>
+> Merci d'utiliser Halcya depuis le début du test. Une info pratique : Gold, offert pendant le test, s'arrête le
+> **2 décembre au soir**.
+>
+> Si vous avez analysé au moins un repas en photo avant cette date, **Gold continue pour vous jusqu'au 27 décembre**,
+> sans rien faire. L'app vous l'indiquera par une petite carte dans Ma journée.
+>
+> Ensuite, sans abonnement, vous gardez Pilou, votre journal, vos montres et vos mesures, le bien-être estimé,
+> Tendances et la sauvegarde. Rien n'est effacé. Vous avez aussi 15 analyses de repas par mois.
+> L'abonnement ajoute vos pistes personnelles (ce qui va avec vos bons et mauvais jours), la réintroduction guidée,
+> le rapport PDF pour votre médecin et plus d'analyses de repas : Silver à 4,99 € par mois, ou 29,99 € par an avec 14 jours d'essai gratuit ; Gold à
+> 9,99 € par mois. Vous n'êtes obligé à rien, et rien n'est prélevé sans votre accord dans Google Play.
+>
+> **Surtout, restez inscrits au test** même si vous n'achetez rien : Google ne nous laisse publier l'app que si
+> 12 testeurs restent inscrits 14 jours de suite. Si vous connaissez quelqu'un avec un Android que ça pourrait
+> intéresser, les liens sont ici :
+> 1. https://groups.google.com/g/halcya-testeurs
+> 2. https://play.google.com/apps/testing/fr.jpesquet.sante
+> 3. https://play.google.com/store/apps/details?id=fr.jpesquet.sante
+>
+> Une question, un souci : roue dentée en haut à droite → Paramètres → « Votre avis », ou répondez à ce message.
+>
+> Merci encore !
+
 ## 5. Formulaire d'accès à la production (P30) — brouillon, à compléter au jour 12
 
 > Où : Play Console → Halcya → Tableau de bord → « Demander l'accès à la production » (le bouton apparaît quand

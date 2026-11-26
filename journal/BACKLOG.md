@@ -2774,7 +2774,10 @@ Un run = une étape testable ; les runs « idées » préparent maquettes et ét
 - [x] **FIN-LANCEMENT-2** (03/11 22:35) LIVRÉ : `launchEndedNotice()` (une fois par date de fin, jusqu'à 30 jours après, jamais avec un premium actif ni sur iPhone), même `LaunchEndCard`, capture `--launch-ended=2`. Spécification : au premier lancement après la fin, une seule fois : « Le test est
   terminé. Merci ! Vos données restent sur votre téléphone, rien n'est effacé. » + « Voir les formules ». Garder
   `launch.lastUntil` pendant la période (le relais ne renvoie plus `launchUntil` après). Note Nouveautés `play`.
-- [ ] **FIN-LANCEMENT-MSG** (vers le 24/11) : message du jour ~21 dans `INVITATION-TESTEURS.md` §4 (fin de Gold
+- [x] **FIN-LANCEMENT-MSG** (26/11 12:30 : **message E** dans `INVITATION-TESTEURS.md` § 4, à envoyer par le
+  propriétaire le 29 ou le 30/11 au groupe : Gold offert jusqu'au 2/12, prolongé au 27/12 pour qui a analysé un repas
+  (P44), ce qui reste gratuit, prix et essai vérifiés dans le code, et surtout « restez inscrits » ; à réécrire si
+  `until` est prolongé) (vers le 24/11) : message du jour ~21 dans `INVITATION-TESTEURS.md` §4 (fin de Gold
   offert, ce qui reste gratuit, essai de 14 jours) ; selon la réponse à P44 (merci aux testeurs).
 - [ ] **TEST-REFUS** : si Google refuse P30, recaler `until` = jour du refus + 14 + 10 jours (sous réserve de l'accord
   du propriétaire, demandé dans le résumé du 03/11) et relancer les messages de mission.
