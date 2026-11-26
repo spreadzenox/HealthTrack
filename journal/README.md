@@ -70,6 +70,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/11 13:30 — [Charte de l'iPhone fondue](runs/2026-11-26-1330-fusion-5-charte.md) | 📓 | FUSION-5 : la charte de `iphone/journal/README.md` ne décrit plus l'ancien montage (« lecture seule », `DEMANDES.md`) ; elle renvoie à celle-ci, qui dit où regarder les captures de l'iPhone. Journal seulement, aucun build de Mac. Rien à faire de votre côté |
 | 26/11 12:30 — [Message de fin de Gold offert](runs/2026-11-26-1230-fin-gold-message.md) | 🔧 | FIN-LANCEMENT-MSG : message E du kit des testeurs, à envoyer le 29 ou le 30/11 (Gold jusqu'au 2/12, prolongé au 27/12 pour qui a analysé un repas, ce qui reste gratuit, prix vérifiés, « restez inscrits »). Journal seulement, aucun build de Mac. **À faire de votre côté : envoyer ce message le 29 ou le 30/11** |
 | 26/11 11:30 — [Contact des pages de l'iPhone](runs/2026-11-26-1130-contact-pages-iphone.md) | 🔧 | FUSION-4 : sur iPhone, Réglages › Confidentialité et Conditions donnent l'adresse de contact de ce dépôt, plus celle de l'ancien dépôt iOS ; test d'abord. **#1285 mergée** dans le run (16 checks verts, dont le build iPhone), release v931 (APK 35,7 Mo). Rien à faire de votre côté |
 | 26/11 10:30 — [Personas sur iPhone : la bonne source](runs/2026-11-26-1030-personas-outil-3.md) | 🔧 | PERSONAS-OUTIL-3 : dans l'outil des personas, une configuration iPhone (`--store=appstore`) reçoit ses mesures de Santé (« iPhone », « Apple Watch ») et non plus de Samsung Health ; test d'abord, Sources relu. #1283 (un repas, une chose) était déjà mergée et partie (release v929). Aucun changement dans l'app, aucun build de Mac. Rien à faire de votre côté |
@@ -161,7 +162,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 ## Charte
 
 Ce dossier appartient à Claude. C'est sa mémoire entre deux exécutions de la routine
-autonome (une toutes les 2 h) : chaque exécution démarre sans aucun souvenir et
+autonome (une par heure depuis le 22/10 au soir) : chaque exécution démarre sans aucun souvenir et
 **doit lire ce fichier en premier**. Claude peut et doit faire évoluer cette charte
 quand il trouve une meilleure façon de travailler (en le notant dans le compte rendu du run).
 
@@ -188,6 +189,12 @@ TestFlight. Les
 workflows qui parlent à Apple ne se lancent que sur main. Il n'y a plus de relais : ni `POUR-IOS.md`, ni
 `DEMANDES.md`, ni `POUR-ORCHESTRATEUR.md` (archivés dans `archives/ancien-montage/`). Le compte rendu donne la version
 Android, la build TestFlight et la parité.
+
+**Captures de l'iPhone** (FUSION-5, 26/11) : branches `captures/main` (build du soir de `main`) et `captures/pr-<N>`
+(build d'une PR), fichiers `iphone-16e-<demo|vierge>-<clair|sombre>-<écran>.png`. Pour en regarder une :
+`git fetch origin captures/pr-<N> --depth=1 && git show FETCH_HEAD:<fichier> > /tmp/<fichier>`. La charte de
+`iphone/journal/README.md` ne garde que ce qui est propre à l'iPhone (§ 3 build, § 4 versions, § 5 contraintes, § 8
+gestes chez Apple) ; ses § 2 et § 6 renvoient ici.
 
 **Gestes du propriétaire automatisés** (décision du 12/11 vers 16:15, `PRODUIT.md` § 4) : une action du propriétaire
 n'arrive jamais comme une simple marche à suivre. Elle a sa voie : (a) CI ou API, au besoin après un droit accordé une

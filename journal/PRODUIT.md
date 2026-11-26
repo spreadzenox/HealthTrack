@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **26/11 13:30** — **FUSION-5** : charte de `iphone/journal/README.md` remise au dépôt unique (§ 2 et § 6 renvoient à la charte de `journal/README.md`, règle des Nouveautés à jour), et la charte principale dit où regarder les captures de l'iPhone. Journal seulement, aucun build de Mac. Reste de la fusion : FUSION-3 (`ios/` → `app/ios/`) et l'archivage de l'ancien dépôt (FUSION-4).
 - **26/11 12:30** — **FIN-LANCEMENT-MSG** : message E du kit des testeurs (`INVITATION-TESTEURS.md` § 4) pour la fin de Gold offert le 2/12 : prolongation au 27/12 pour qui a analysé un repas (P44), ce qui reste gratuit, prix et essai relus dans le code, et la demande de rester inscrits (les 14 jours de Google n'ont pas commencé). À envoyer par le propriétaire le 29 ou le 30/11. Journal seulement, aucun build de Mac.
 - **26/11 11:30** — **FUSION-4, pages embarquées** : sur iPhone, Réglages › Confidentialité et Conditions renvoient aux tickets de ce dépôt (plus à l'ancien dépôt iOS) ; test d'abord, note de Nouveautés iPhone. #1285 mergée, release v931. Reste de FUSION-4 : la mission d'archivage de l'ancien dépôt.
 - **26/11 10:30** — **PERSONAS-OUTIL-3** : dans l'outil des personas, une configuration iPhone (`--store=appstore`) reçoit ses mesures de Santé (« iPhone », « Apple Watch ») au lieu de Samsung Health ; test d'abord, Sources relu. Aucun code de l'app, aucun build de Mac.

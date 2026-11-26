@@ -1216,7 +1216,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   #1026 alors qu'il était vert sur main six minutes plus tôt. Fait : ce job épinglé sur `ubuntu-24.04`. Reste :
   passer à une version de Playwright qui prend 26.04 en charge puis retirer l'épinglage ; surveiller les autres jobs
   `ubuntu-latest` (émulateurs, apt, ffmpeg) au fil de la bascule.
-- [ ] **FUSION-5** : charte de `iphone/journal/README.md` relue (§ 2 « lecture seule », « DEMANDES ») et fondue dans
+- [x] **FUSION-5** (**FAIT 26/11 13:30** : § 2 « Un dépôt, une routine » et § 6 du protocole réécrits, renvoi à la charte de `journal/README.md` ; règle des Nouveautés à jour (`APPSTORE_HIDDEN` dans `app/src/data/changelog.js`) ; paragraphe « Captures de l'iPhone » dans la charte principale) : charte de `iphone/journal/README.md` relue (§ 2 « lecture seule », « DEMANDES ») et fondue dans
   la charte de `journal/README.md` ; captures de l'iPhone liées depuis ce dépôt (branches `captures/main`).
 
 ### Demandes de l'ancienne routine iOS encore ouvertes (reprises de `DEMANDES.md` avant archivage, texte complet dans
