@@ -1,17 +1,15 @@
 # Pages publiques de la version iPhone (politique de confidentialité, conditions, assistance : les adresses de la
-# fiche App Store), construites par iphone/scripts/site.mjs. Écrit à la main pour le dépôt unique (le pages.yml du
-# dépôt HealthTrack-iOS n'est pas porté) : ce workflow CONSTRUIT et vérifie le site, il ne publie rien.
-# Les pages restent servies par le site du dépôt HealthTrack-iOS (adresses inscrites dans la fiche App Store) tant que
-# la routine n'a pas décidé de leur nouvelle adresse (iphone/README.md, « Site »).
+# fiche App Store), construites par iphone/scripts/site.mjs : ce workflow CONSTRUIT et vérifie le site, il ne publie
+# rien. La publication se fait par « Site — GitHub Pages » (pages.yml), sous /HealthTrack/iphone/ (FUSION-4, 26/11).
 name: iOS — site (contrôle)
 
 on:
   pull_request:
     branches: [main]
-    paths: ["app/public/confidentialite-iphone.html", "app/public/conditions-iphone.html", "iphone/site/**", "iphone/scripts/site.mjs", ".github/workflows/ios-site.yml"]
+    paths: ["app/public/confidentialite-iphone.html", "app/public/conditions-iphone.html", "iphone/site/**", "iphone/scripts/site.mjs", ".github/workflows/pages.yml", ".github/workflows/ios-site.yml"]
   push:
     branches: [main]
-    paths: ["app/public/confidentialite-iphone.html", "app/public/conditions-iphone.html", "iphone/site/**", "iphone/scripts/site.mjs", ".github/workflows/ios-site.yml"]
+    paths: ["app/public/confidentialite-iphone.html", "app/public/conditions-iphone.html", "iphone/site/**", "iphone/scripts/site.mjs", ".github/workflows/pages.yml", ".github/workflows/ios-site.yml"]
 
 permissions:
   contents: read
@@ -31,8 +29,11 @@ jobs:
           sparse-checkout: |
             iphone
             app/public
+            .github/workflows
       - uses: actions/setup-node@v4
         with:
           node-version: "20.19"
       - working-directory: iphone
         run: node scripts/site.mjs _site
+      - working-directory: iphone
+        run: node --test site/site.test.mjs

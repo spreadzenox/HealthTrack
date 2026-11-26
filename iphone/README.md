@@ -76,11 +76,13 @@ ne s'applique plus, c'est la PR qui l'a cassé qui le refait (ou, mieux, le remp
 
 ## Site
 
-`ios-site.yml` construit et vérifie les trois pages à chaque changement, sans rien publier. Les adresses inscrites
-dans la fiche App Store (`https://spreadzenox.github.io/HealthTrack-iOS/confidentialite/` et `/assistance/`,
-`scripts/store-push.mjs`) restent servies par le site du dépôt iOS, qui continue d'exister même archivé. Étape
-suivante pour la routine : publier ces pages avec le site de ce dépôt (sous `/HealthTrack/iphone/`, dans `pages.yml`),
-puis changer les adresses de la fiche à la version suivante de l'App Store.
+`ios-site.yml` construit et vérifie les trois pages à chaque changement (`site/site.test.mjs`), sans rien publier.
+Depuis FUSION-4 (26/11), « Site — GitHub Pages » (`pages.yml`) les publie aussi avec le site de ce dépôt, sous
+`https://spreadzenox.github.io/HealthTrack/iphone/` (`confidentialite/`, `conditions/`, `assistance/`, et
+l'assistance à la racine). Les adresses inscrites dans la fiche App Store (`https://spreadzenox.github.io/HealthTrack-iOS/…`,
+`scripts/store-push.mjs`, `store/app-store/`) restent celles du site du dépôt iOS, qui continue d'exister même
+archivé. Étape suivante : une fois les pages vérifiées en ligne, changer ces adresses (fiche, notes pour l'examen,
+description) à la version suivante de l'App Store.
 
 ## Avant d'archiver le dépôt iOS
 
