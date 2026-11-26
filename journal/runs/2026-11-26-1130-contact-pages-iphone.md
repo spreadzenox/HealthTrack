@@ -18,7 +18,7 @@ validée (inchangé ; build du soir à 21:20) · **Parité** : 70 % (33/47), inc
 
 ## Vérifications
 - `npm run test` : 4 710 tests verts (44 ignorés) ; `npm run build` vert ; `npm run lint` sans erreur ;
-  `iphone/site/site.test.mjs` vert ; `npm run visual` : voir la PR (pages statiques hors des captures).
+  `iphone/site/site.test.mjs` vert ; `npm run visual` vert (aucune erreur JS ; les deux pages sont du HTML statique, hors des captures : rien à regarder de neuf).
 - PR ouverte en brouillon puis passée prête : un seul build iPhone (fichiers de `app/public/`).
 
 ## Suite proposée
