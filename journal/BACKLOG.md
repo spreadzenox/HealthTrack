@@ -870,7 +870,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - Écartés, avec la raison, dans la synthèse : note « Douleur » estimée 2,4 (POLISH-NOTE-LOSANGE) ; essai sommeil
       gardé par la mise à jour (voulu) ; « Où en sont vos analyses » → « Objectifs » (nom du propriétaire) ; version 0.0.0.
     - À étudier : ~~carte Confort digestif sous l'île de l'Accueil pour qui a l'objectif digestion~~ (POLISH-SIM-171) ;
-      détail FODMAP d'un repas déplié trop technique ; ~~familles « Pas assez de données » sans action~~
+      ~~détail FODMAP d'un repas déplié trop technique~~ (POLISH-SIM-172) ; ~~familles « Pas assez de données » sans action~~
       (POLISH-SIM-170) ; ordre de grandeur des exemples du 28e jour (« Fructanes −3,5 pt »).
     - [x] **POLISH-SIM-171 — Accueil : pas de carte Confort digestif sous l'île** (« Ventre, sans technique », capture
       `accueil-sans-ventre.png` ; vérifié en code : seul `DigestBlock`, dans Ma journée) FAIT le 26/11 à 16:30 :
@@ -878,6 +878,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `DayStatusCard`, avec `gutCardMode() === 'show'` seulement (brief § 4) ; elle lit le dernier `dayStates` gardé,
       sans calcul (budget de lectures de l'Accueil). Tests d'abord (`HomeGutObjective`,
       `Dashboard`) ; captures claire et sombre.
+    - [x] **POLISH-SIM-172 — Repas : le détail FODMAP déplié trop technique** (« Ventre, sans technique », capture
+      `repas-fodmap-jargon.png` : « 2,3 à 6,6 g … pour un repère de 0,3 g par repas », « je voulais juste savoir si c'est
+      grave ou pas ») FAIT le 26/11 à 17:30 : `MealFodmapLine.jsx` dit sous chaque groupe « Bien plus » (au moins 3 fois
+      le repère au bas de la fourchette), « Un peu plus » ou « Peut-être plus que ce qui gêne certaines personnes » (les
+      mesures varient, ou teneur mal connue) ; la note finit par « vos repas et votre confort digestif diront ce qu'il en
+      est pour vous » ; les grammes et les repères passent sur la ligne des sources, en petit. Tests d'abord
+      (`MealFodmapLine.test.jsx`) ; capture `runs/captures/2026-11-26-1730-repas-fodmap-mots-simples.png`.
     - [x] **POLISH-SIM-170 — Objectifs : « Pas assez de données » sans dire quoi faire** (J45, capture
       `bien-etre-familles.png`) FAIT le 26/11 à 15:30 : `NODATA_ACTIONS` de `influenceFamilies.js` (nuits, repas, pas,
       « au moins un jour sur deux » = `FACTOR_MIN_COVERAGE`) ; la carte mène à Sources ou à `/food`. Tests d'abord

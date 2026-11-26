@@ -1,7 +1,7 @@
 /**
  * Carte d'un repas (N4) : « Riche en fructanes : oignon », un groupe FODMAP par ligne, simple d'abord. Le chevron
- * montre les grammes estimés (une fourchette quand les mesures publiées divergent) et le repère de départ, en une
- * phrase ; puis où se trouve le groupe et ce que le repère vaut ; les sources sur une ligne à part, en petit
+ * dit en mots si c'est un peu ou bien plus que le repère de départ ; puis où se trouve le groupe ; les grammes
+ * (une fourchette quand les mesures publiées divergent), les repères et les sources sur une ligne à part, en petit
  * (POLISH-SIM-77 : « ≈ 0,73 g · repère 0,3 g », « Varney 2017 » n'étaient pas compris). Rien quand aucun groupe ne dépasse son repère (un groupe inconnu n'est jamais présenté comme
  * bas). Repères = hypothèses de départ (règle 6). Plusieurs groupes (UPG-9, « Ventre, sans technique » : « 4 lignes
  * rouges ») : une seule phrase, « Parfois mal digérés : oignon, lentilles, pomme », et les groupes derrière « Détails ».
@@ -34,6 +34,24 @@ function citeSources(highlights) {
 }
 
 const grams = (v) => v.toLocaleString(appLocale(), { maximumFractionDigits: v < 1 ? 2 : 1 })
+/**
+ * « Bien plus que ce qui gêne certaines personnes. » (25/11, « Ventre, sans technique » : « 2,3 à 6,6 g … pour un
+ * repère de 0,3 g » ne disait pas si c'est beaucoup). Bien plus = au moins 3 fois le repère, même au bas de la
+ * fourchette ; sous le repère au bas de la fourchette, ou teneur à confiance basse : « Peut-être ».
+ */
+function amountInWords(h) {
+  if (h.g < h.cutoff) return 'Peut-être plus que ce qui gêne certaines personnes : les mesures varient.'
+  if (h.probable) return 'Peut-être plus que ce qui gêne certaines personnes : teneur mal connue.'
+  return `${h.g >= 3 * h.cutoff ? 'Bien' : 'Un peu'} plus que ce qui gêne certaines personnes.`
+}
+
+/** « Fructanes : 1,4 à 4,4 g selon les mesures, repère 0,3 g. » : les grammes, en petit, pour qui veut creuser. */
+function gramsLine(h) {
+  const label = LABELS[h.group].charAt(0).toUpperCase() + LABELS[h.group].slice(1)
+  const amount = h.high != null ? `${grams(h.g)} à ${grams(h.high)} g selon les mesures` : `environ ${grams(h.g)} g`
+  return `${label} : ${amount}, repère ${grams(h.cutoff)} g.`
+}
+
 const foodList = (foods) => foods.map((f) => shortFoodName(f).toLowerCase()).join(', ')
 
 export default function MealFodmapLine({ items }) {
@@ -58,14 +76,7 @@ export default function MealFodmapLine({ items }) {
           <li key={h.group}>
             <span className="meal-fodmap-tag">{h.probable ? 'Probablement riche' : 'Riche'} en {LABELS[h.group]}</span>
             {' '}{foodList(h.foods)}
-            {open && (
-              <span className="meal-fodmap-detail">
-                {h.high != null
-                  ? <>{grams(h.g)} à {grams(h.high)} g selon les mesures publiées</>
-                  : <>Environ {grams(h.g)} g</>}
-                , pour un repère de {grams(h.cutoff)} g par repas.{h.probable && h.high == null && ' Teneurs approchées.'}
-              </span>
-            )}
+            {open && <span className="meal-fodmap-detail">{amountInWords(h)}</span>}
           </li>
         ))}
       </ul>
@@ -74,11 +85,11 @@ export default function MealFodmapLine({ items }) {
       {open && (
         <>
           <p className="meal-fodmap-note" data-testid="meal-fodmap-note">
-            Certaines personnes digèrent mal {groupsInWords(highlights)}, d’autres très bien. Le repère est une
-            hypothèse de départ : vos propres données priment.
+            Certaines personnes digèrent mal {groupsInWords(highlights)}, d’autres très bien : vos repas et votre
+            confort digestif diront ce qu’il en est pour vous.
           </p>
           <p className="meal-fodmap-sources" data-testid="meal-fodmap-sources">
-            Repères : Varney 2017. Teneurs : {citeSources(highlights)}.
+            {highlights.map(gramsLine).join(' ')} Repères de départ : Varney 2017. Teneurs : {citeSources(highlights)}.
           </p>
         </>
       )}
