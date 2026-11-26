@@ -1164,7 +1164,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   _site/iphone`, déclencheurs sur leurs sources) ; test `iphone/site/site.test.mjs` (4 pages, liens relatifs qui
   restent sous `/iphone/`, aucune autre plateforme nommée, workflow branché), lancé par `ios-site.yml`. Aucun build
   de Mac (fichiers hors des déclencheurs de `ios-build.yml`). « Votre avis » vers ce dépôt : déjà fait le 24/11
-  (`app/src/config/feedback.js`). Reste : vérifier les 4 adresses en ligne après le merge, puis changer celles de la
+  (`app/src/config/feedback.js`). #1278 mergée, 4 adresses vérifiées en ligne (200). Reste : changer celles de la
   fiche (`store-push.mjs` `SITE`, son test, `notes-examen.md`, `description.txt`, `confidentialite.md`,
   `testflight-externe.md`) ; enfin la mission d'archivage de l'ancien dépôt quand ses builds sont expirées.
 - [x] **POLISH-OBJ-LIENS** (**sans objet, vérifié le 22/11 04:30** : fait par POLISH-SIM-121 le 20/11, un seul « Comment c’est calculé » en bas de Votre bien-être) (16/11 00:30, vu sur la capture iPhone `demo-clair-recommendations-bien-etre` de #1026, identique sur main) : dans Objectifs › Votre bien-être sans abonnement, deux liens se suivent, « Comment est calculé votre bien-être ? » et « Comment c'est calculé » ; n'en garder qu'un (vérifier où mène chacun), et regarder la même vue sur Android. Petit polish, après 7b.
