@@ -1170,8 +1170,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   26/11 07:30 : **adresses de la fiche changées** (`store-push.mjs` `SITE` = `…/HealthTrack/iphone`, description,
   notes pour l'examen, `confidentialite.md`, `testflight-externe.md`, `store/app-store/README.md`) ; la page
   d'assistance renvoie aux tickets de ce dépôt ; test rouge d'abord (`store-push.test.mjs` : plus aucune adresse
-  `github.io/HealthTrack-iOS` dans ces textes). Aucun build de Mac. Restent : lancer « Fiche App Store — envoi » sur
-  main (sans case cochée) pour que la version 893 les reçoive avant PI2 ; les pages embarquées
+  `github.io/HealthTrack-iOS` dans ces textes). Aucun build de Mac. #1280 mergée, « Fiche App Store — envoi » vert : la
+  version 893 et la confidentialité de l'app ont les nouvelles adresses. Restent : les pages embarquées
   (`app/public/confidentialite-iphone.html`, `conditions-iphone.html`) renvoient encore aux tickets du dépôt iOS, à
   changer dans la prochaine PR qui lance un build iPhone ; puis l'archivage.
 - [x] **POLISH-OBJ-LIENS** (**sans objet, vérifié le 22/11 04:30** : fait par POLISH-SIM-121 le 20/11, un seul « Comment c’est calculé » en bas de Votre bien-être) (16/11 00:30, vu sur la capture iPhone `demo-clair-recommendations-bien-etre` de #1026, identique sur main) : dans Objectifs › Votre bien-être sans abonnement, deux liens se suivent, « Comment est calculé votre bien-être ? » et « Comment c'est calculé » ; n'en garder qu'un (vérifier où mène chacun), et regarder la même vue sur Android. Petit polish, après 7b.
