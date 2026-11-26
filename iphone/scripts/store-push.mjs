@@ -27,7 +27,7 @@ export const IPAD_DISPLAY_TYPE = 'APP_IPAD_PRO_3GEN_129'
 const API = 'https://api.appstoreconnect.apple.com'
 const BUNDLE_ID = 'fr.jpesquet.sante'
 const LOCALE = 'fr-FR'
-const SITE = 'https://spreadzenox.github.io/HealthTrack-iOS'
+const SITE = 'https://spreadzenox.github.io/HealthTrack/iphone' // FUSION-4 (26/11) : site de ce dépôt
 export const PRIVACY_URL = `${SITE}/confidentialite/`
 export const SUPPORT_URL = `${SITE}/assistance/`
 /** États où App Store Connect laisse modifier la fiche d'une version. */

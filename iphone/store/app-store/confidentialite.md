@@ -27,7 +27,7 @@ Reprises de la « Sécurité des données » de Google Play d'Android (`app/stor
    - Données de diagnostic : aucun outil de suivi ni de plantages ;
    - Contacts, Historique de navigation, Identifiants publicitaires, Données financières hors achats ;
    - Lecture du visage : aucune image gardée ni envoyée.
-5. **URL de la politique de confidentialité** : https://spreadzenox.github.io/HealthTrack-iOS/confidentialite/, la
+5. **URL de la politique de confidentialité** : https://spreadzenox.github.io/HealthTrack/iphone/confidentialite/, la
    version iPhone, déjà renseignée dans la fiche par `store-push.yml`.
 
 Relu le 5/11 avec la photo des selles (Android v809) : **à cocher par le propriétaire** dans App Store Connect →

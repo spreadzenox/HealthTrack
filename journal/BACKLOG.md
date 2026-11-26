@@ -1167,6 +1167,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   (`app/src/config/feedback.js`). #1278 mergée, 4 adresses vérifiées en ligne (200). Reste : changer celles de la
   fiche (`store-push.mjs` `SITE`, son test, `notes-examen.md`, `description.txt`, `confidentialite.md`,
   `testflight-externe.md`) ; enfin la mission d'archivage de l'ancien dépôt quand ses builds sont expirées.
+  26/11 07:30 : **adresses de la fiche changées** (`store-push.mjs` `SITE` = `…/HealthTrack/iphone`, description,
+  notes pour l'examen, `confidentialite.md`, `testflight-externe.md`, `store/app-store/README.md`) ; la page
+  d'assistance renvoie aux tickets de ce dépôt ; test rouge d'abord (`store-push.test.mjs` : plus aucune adresse
+  `github.io/HealthTrack-iOS` dans ces textes). Aucun build de Mac. Restent : lancer « Fiche App Store — envoi » sur
+  main (sans case cochée) pour que la version 893 les reçoive avant PI2 ; les pages embarquées
+  (`app/public/confidentialite-iphone.html`, `conditions-iphone.html`) renvoient encore aux tickets du dépôt iOS, à
+  changer dans la prochaine PR qui lance un build iPhone ; puis l'archivage.
 - [x] **POLISH-OBJ-LIENS** (**sans objet, vérifié le 22/11 04:30** : fait par POLISH-SIM-121 le 20/11, un seul « Comment c’est calculé » en bas de Votre bien-être) (16/11 00:30, vu sur la capture iPhone `demo-clair-recommendations-bien-etre` de #1026, identique sur main) : dans Objectifs › Votre bien-être sans abonnement, deux liens se suivent, « Comment est calculé votre bien-être ? » et « Comment c'est calculé » ; n'en garder qu'un (vérifier où mène chacun), et regarder la même vue sur Android. Petit polish, après 7b.
 - [x] **PERF-JOUR** (**FAIT 22/11 04:30** : les tâches du Worker de même clé de cache (`analysisCacheKey` : version, révision des données, jour) partagent une seule lecture de la base, relâchée après 60 s ; sans clé (visite guidée), lecture à chaque tâche ; lecture en échec non gardée ; aucune tâche ne modifie les saisies reçues, testé sur des saisies gelées (`analysisTasksShared.test.js`, rouge d'abord). Mesuré (3 ans de démo, `npm run perf`) : `/tendances?vue=jour` 15 795 enregistrements lus par le Worker au lieu de 31 620 ; budget ramené de 34 500 à 17 500, comme `/tendances`) (16/11 02:30) : Tendances › Jour lance deux analyses complètes dans le Worker (`dayStates` à
   l'ouverture, puis `analysisResults` pour les contributions du jour affiché) : 74 lectures, 31 620 enregistrements

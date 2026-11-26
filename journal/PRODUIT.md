@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **26/11 07:30** — **FUSION-4, suite** : la fiche App Store, la description, les notes pour l'examen et les textes de `store/app-store/` donnent les adresses du site de ce dépôt (`/HealthTrack/iphone/…`) ; la page d'assistance renvoie aux tickets de ce dépôt. Test d'abord. Aucun build de Mac.
 - **26/11 06:30** — **FUSION-4** : « Site — GitHub Pages » publie aussi les pages de l'iPhone (confidentialité, conditions, assistance) sous `/HealthTrack/iphone/`, test `iphone/site/site.test.mjs`. Adresses de la fiche App Store changées après vérification en ligne. Aucun build de Mac.
 - **26/11 05:30** — Run de journal : REFONTE-7a-2 soldée (captures iPhone de Tendances › Jour › veille et de la visite relues, propres) ; POLISH-SIM-89 soldée (déjà faite le 25/11). Alpha du soir partie à 04:25 UTC, verte. Aucun build de Mac.
 - **26/11 04:30** — Run de journal : **#1275 mergée** (POLISH-SIM-80). TestFlight 1335.1335 au groupe externe et à l'examen bêta, nettoyage des anciennes builds.
