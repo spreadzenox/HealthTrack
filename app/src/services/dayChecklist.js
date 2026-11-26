@@ -70,6 +70,7 @@ export const mealSlotPhrase = (slotId) => slotById(slotId)?.phrase ?? null
  * @param {object[]} entries  entrées récentes (toutes dates)
  * @param {{ now?: Date, askGut?: boolean, habits?: { id: string, label: string }[] }} [opts]
  * @returns {{ tasks: object[], remaining: number, allDone: boolean, noted: { kind: string, entry: object }[] }}
+ *   `remaining` : choses à faire, un repas manquant comptant pour une (la ligne Repas peut en valoir trois).
  */
 export function dayChecklist(entries, { now = new Date(), askGut = false, habits = [] } = {}) {
   const today = localDateKey(now.toISOString())
@@ -120,6 +121,7 @@ export function dayChecklist(entries, { now = new Date(), askGut = false, habits
   ].sort((a, b) => (a.entry.at < b.entry.at ? -1 : 1))
   // Une habitude n'a pas d'heure (rangée à midi) : après les saisies horodatées, dans l'ordre de la liste
   noted.push(...habitTasks.filter((t) => t.entry).map((t) => ({ kind: 'habit', entry: t.entry, habit: t.habit })))
-  const remaining = tasks.filter((t) => !t.done).length
+  // POLISH-SIM-168 : chaque repas compte pour une chose, sinon « Encore 3 choses » ne bouge pas quand on en note un
+  const remaining = tasks.reduce((n, t) => (t.done ? n : n + (t.id === 'meals' ? t.slots.length - t.count : 1)), 0)
   return { tasks, remaining, allDone: remaining === 0, noted }
 }

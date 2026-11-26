@@ -187,8 +187,8 @@ describe('Dashboard', () => {
     const list = await screen.findByRole('region', { name: 'À noter aujourd’hui' })
     const strip = screen.getByRole('region', { name: 'Ajouter' })
     expect(list.compareDocumentPosition(strip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    // Sans l'objectif digestion : les repas seulement, le bien-être est déjà noté, le ventre n'est pas demandé
-    expect(within(list).getByText('Encore 1 chose aujourd’hui')).toBeInTheDocument()
+    // Sans l'objectif digestion : les trois repas seulement (un par chose), le bien-être est déjà noté, pas le ventre
+    expect(within(list).getByText('Encore 3 choses aujourd’hui')).toBeInTheDocument()
     expect(within(list).getByRole('group', { name: 'Repas' })).toBeInTheDocument()
     expect(within(list).queryByRole('group', { name: 'Bien-être' })).toBeNull()
     expect(within(list).queryByRole('group', { name: /digestion/ })).toBeNull()

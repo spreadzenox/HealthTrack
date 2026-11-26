@@ -9,11 +9,12 @@ const habits = [{ id: 'meditation', label: 'Méditation' }]
 afterEach(() => resetWidgetContextCache())
 
 describe('état du widget', () => {
-  it('reprend les lignes de Ma journée, dans le même ordre', () => {
+  it('reprend les lignes de Ma journée, dans le même ordre, un repas par créneau (POLISH-SIM-168)', () => {
     const entries = [{ type: 'food', source: 'app_food', at: iso(12, 15), payload: {} }]
     const s = widgetDayState(entries, { now, habits, askGut: true, context: { daysOfUse: 2, wake: 420, bedtime: 1380 } })
-    expect(s.planned).toEqual(['Repas', 'Bien-être', 'Méditation', 'Digestion'])
-    expect(s.remaining).toEqual(['Repas', 'Bien-être', 'Méditation', 'Digestion'])
+    expect(s.planned).toEqual(['Repas du matin', 'Repas de midi', 'Repas du soir', 'Bien-être', 'Méditation', 'Digestion'])
+    // le repas de midi est noté : une chose de moins, comme « Encore … choses » de Ma journée
+    expect(s.remaining).toEqual(['Repas du matin', 'Repas du soir', 'Bien-être', 'Méditation', 'Digestion'])
     expect(s.lastMealAt).toBe(new Date(iso(12, 15)).getTime())
     expect(s).toMatchObject({ day: '2026-11-19', wake: 420, bed: 1380, usageDay: 2, name: 'Pilou' })
     // même pose que la règle JS (et que PilouWidgetRule.java) : un repas il y a 45 min → rassasié
@@ -22,7 +23,7 @@ describe('état du widget', () => {
 
   it('sans objectif digestion, pas de ligne digestion ; sans saisie aujourd’hui, le jour d’usage avance', () => {
     const s = widgetDayState([], { now, context: { daysOfUse: 4 } })
-    expect(s.planned).toEqual(['Repas', 'Bien-être'])
+    expect(s.planned).toEqual(['Repas du matin', 'Repas de midi', 'Repas du soir', 'Bien-être'])
     expect(s.usageDay).toBe(5)
     expect(s.wake).toBe(-1)
   })
@@ -35,7 +36,7 @@ describe('synchronisation', () => {
     expect(await syncPilouWidget({ entries: [], now, plugin, loadContext })).toBe(true)
     expect(await syncPilouWidget({ entries: [], now, plugin, loadContext })).toBe(true)
     expect(loadContext).toHaveBeenCalledTimes(1)
-    expect(plugin.update.mock.calls[0][0].state.remaining).toEqual(['Repas', 'Bien-être'])
+    expect(plugin.update.mock.calls[0][0].state.remaining).toEqual(['Repas du matin', 'Repas de midi', 'Repas du soir', 'Bien-être'])
   })
 
   it('porte le nom choisi pour le compagnon (Réglages ou rencontre), « Pilou » sinon', async () => {

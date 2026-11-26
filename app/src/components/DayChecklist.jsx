@@ -134,7 +134,7 @@ export default function DayChecklist({ entries, askGut = false, habits = [], now
       ids = [...new Set([...goneIds, ...held])]
       setHeld([])
     }
-    setSaid(`${gone.map(([, title]) => title).join(', ')} : noté. ${pending.length ? `${remainingText(pending.length)}.` : 'Plus rien à faire.'}`)
+    setSaid(`${gone.map(([, title]) => title).join(', ')} : noté. ${list.remaining ? `${remainingText(list.remaining)}.` : 'Plus rien à faire.'}`)
     if (!ids.length) return
     setLeaving((l) => [...new Set([...l, ...ids])])
     timers.current.push(setTimeout(() => setLeaving((l) => l.filter((id) => !ids.includes(id))), LEAVE_MS))
