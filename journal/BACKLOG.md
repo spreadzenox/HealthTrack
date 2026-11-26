@@ -976,9 +976,16 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       l'étape 4 relue (clair, sombre).
     - À étudier : calories reçues sans courbe (à joindre à la proposition « go courbes ») ; « Rien à éviter » au-dessus
       de « Fructanes −1,2 pt », 3e fois chez « sans technique » (proposition avec maquette, avec le reste de
-      POLISH-SIM-173) ; « Jour 1 sur 7 » et « 0 sur 7 jours notés » ; « vous notez vous-même » à vérifier sur
-      l'émulateur ; essai sans mesure : répondre aux jours manqués, pas seulement à la veille ; jours déjà comptés du
-      long terme.
+      POLISH-SIM-173) ; « vous notez vous-même » à vérifier sur l'émulateur ; jours déjà comptés du long terme.
+    - [x] **POLISH-SIM-176 — Essai sans mesure : seule la veille se demandait** — FAIT 26/11 22:30 : quand la mesure
+      ou la réponse manque, « c’était tenu ? » se demande pour hier, puis avant-hier, puis le jour d'avant (nommé :
+      « Lundi, … »), une question à la fois (`trials.js`, `ASK_BACK_DAYS` = 3, `missingOld` « pour cette nuit-là » /
+      « de ce jour-là ») ; au-delà, le jour reste inconnu. Le résultat de l'essai ne dépend pas de ces réponses (il suit
+      le calendrier tiré au sort, POLISH-ESSAI-SANS) : elles allument les lanternes et le compte « Consigne tenue ».
+      Tests `trials.test.js` et `Trial.test.jsx` d'abord.
+    - Écarté le 26/11 22:30 : « Jour 1 sur 7 » (Accueil) et « 0 sur 7 jours notés » (Objectifs) comptent déjà la même
+      chose (`firstWeek.js` : jour en cours = jours notés + 1 tant qu'aujourd'hui n'est pas noté) ; après la note du
+      jour, les deux disent 1 sur 7.
     - Écartés, avec la raison, dans la synthèse : pas de point « auj. » (POLISH-SIM-127) ; 14 et 28 jours (deux
       jalons dits ensemble) ; détail FODMAP déplié (POLISH-SIM-172) ; deux marques de digestion (POLISH-NOTE-LOSANGE) ;
       « Pilou a bien dîné » (SPEC journée § 3.2) ; « Inclus : … » ; formulaire ouvert descendu (non vérifié).

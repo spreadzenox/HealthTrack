@@ -25,6 +25,8 @@ export const TRIAL_DAYS = 10
 export const CONFIRM_BELOW = 10
 /** Lendemains de chaque sorte avant de dessiner l'écart et sa fourchette. */
 export const RESULT_MIN_EACH = 3
+/** POLISH-SIM-176 : jusqu’à combien de jours en arrière « c’était tenu ? » se demande quand la mesure manque. */
+export const ASK_BACK_DAYS = 3
 /** Habitude : jours non tenus sur les 14 derniers avant de le dire. */
 export const DRIFT_DAYS = 9
 export const DRIFT_WINDOW = 14
@@ -39,9 +41,9 @@ const n0 = (v) => Math.round(v).toLocaleString(appLocale())
  * s'arrondit (8 700 pas plutôt que 8 683, POLISH-SIM-150) ; l'écart au calcul reste petit devant le changement visé.
  */
 const MEASURED = {
-  sleepMinutes: { field: 'sleepMinutes', fmt: (v) => formatDuration(v), missing: 'Nous n’avons pas reçu vos données de sommeil pour hier soir.', more: 'Dormir au moins', less: 'Dormir moins de', round: 5 },
-  steps: { field: 'steps', fmt: (v) => `${n0(v)} pas`, missing: 'Nous n’avons pas reçu vos pas d’hier.', more: 'Faire au moins', less: 'Faire moins de', round: 100 },
-  screen_minutes: { field: 'screenMinutes', fmt: (v) => formatDuration(v), missing: 'Nous n’avons pas reçu votre temps d’écran d’hier.', more: 'Au moins', less: 'Moins de', suffix: ' d’écran', round: 5 },
+  sleepMinutes: { field: 'sleepMinutes', fmt: (v) => formatDuration(v), missing: 'Nous n’avons pas reçu vos données de sommeil pour hier soir.', missingOld: 'Nous n’avons pas reçu vos données de sommeil pour cette nuit-là.', more: 'Dormir au moins', less: 'Dormir moins de', round: 5 },
+  steps: { field: 'steps', fmt: (v) => `${n0(v)} pas`, missing: 'Nous n’avons pas reçu vos pas d’hier.', missingOld: 'Nous n’avons pas reçu vos pas de ce jour-là.', more: 'Faire au moins', less: 'Faire moins de', round: 100 },
+  screen_minutes: { field: 'screenMinutes', fmt: (v) => formatDuration(v), missing: 'Nous n’avons pas reçu votre temps d’écran d’hier.', missingOld: 'Nous n’avons pas reçu votre temps d’écran de ce jour-là.', more: 'Au moins', less: 'Moins de', suffix: ' d’écran', round: 5 },
 }
 
 /** REFONTE-4b-3 : facteur « habitude » (habit_<id> d'Analyses), lu dans les réponses oui / non de Ma journée. */
@@ -150,17 +152,29 @@ function meanSd(xs) {
  */
 export function trialStatus(trial, { summaries = new Map(), outcome = new Map(), now = new Date() } = {}) {
   const today = keyOfDate(now)
-  const yesterday = addDays(today, -1)
   const calendar = trial.schedule.map((d) => {
     const fromData = d.date < today ? heldFromData(trial, d, summaries) : null
     const answer = trial.answers?.[d.date]
     return { ...d, future: d.date > today, today: d.date === today, held: fromData ?? (typeof answer === 'boolean' ? answer : null), fromData: fromData !== null }
   })
   const todayDay = calendar.find((d) => d.today) ?? null
-  const yday = calendar.find((d) => d.date === yesterday)
-  const ask = yday && yday.held === null
-    ? { date: yesterday, missing: MEASURED[trial.factor.key]?.missing ?? null, question: `Hier, ${instruction(trial, yday.with).charAt(0).toLowerCase()}${instruction(trial, yday.with).slice(1)} : c’était tenu ?` }
-    : null
+  // POLISH-SIM-176 : sans mesure ni réponse, la veille d'abord, puis avant-hier et le jour d'avant, un à la fois ; plus
+  // loin, le jour reste inconnu (on ne se souvient plus)
+  let ask = null
+  for (let back = 1; back <= ASK_BACK_DAYS && !ask; back += 1) {
+    const date = addDays(today, -back)
+    const day = calendar.find((d) => d.date === date)
+    if (!day || day.held !== null) continue
+    const m = MEASURED[trial.factor.key]
+    const when = back === 1 ? 'hier' : back === 2 ? 'avant-hier' : new Date(`${date}T12:00:00`).toLocaleDateString(appLocale(), { weekday: 'long' })
+    const what = instruction(trial, day.with)
+    ask = {
+      date,
+      when,
+      missing: (back === 1 ? m?.missing : m?.missingOld) ?? null,
+      question: `${when.charAt(0).toUpperCase()}${when.slice(1)}, ${what.charAt(0).toLowerCase()}${what.slice(1)} : c’était tenu ?`,
+    }
+  }
   // POLISH-ESSAI-SANS : le lendemain de chaque jour passé, selon le calendrier tiré au sort, tenu ou non. C'est le
   // tirage qui protège des facteurs cachés ; ne garder que les jours tenus le défaisait (banc journal/methode/ESSAI-SANS.md).
   const pick = (w) => calendar.filter((d) => d.with === w && d.date < today).map((d) => outcome.get(addDays(d.date, 1))).filter(isNum)

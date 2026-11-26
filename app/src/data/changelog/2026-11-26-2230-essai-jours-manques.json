@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-26",
+  "kind": "correctif",
+  "title": "Essai : rattraper les jours manqués",
+  "items": [
+    "Quand une mesure ou une réponse manque, l’essai vous demande « c’était tenu ? » pour hier, puis pour avant-hier et le jour d’avant, une question à la fois."
+  ]
+}
