@@ -965,13 +965,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       vos analyses » → Objectifs (nom du propriétaire).
   - **Passage des personas du 26/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-26-2030-synthese.md) ;
     « Tout mesurer » J1, Android seul, et « Ventre, sans technique » J45, iPhone seul, mise à jour) :
-    - [ ] **POLISH-SIM-174 — Accueil « 6 bulles à faire », Ma journée « Encore 8 choses » pour la même liste**
+    - [x] **POLISH-SIM-174 — Accueil « 6 bulles à faire », Ma journée « Encore 8 choses » pour la même liste** — FAIT 26/11 21:30 : `bubblesLeftText(list.remaining)`, « Encore N choses aujourd’hui » des deux côtés
       (J1, capture `ma-journee-8-choses.png`) : effet de bord de POLISH-SIM-168. Ma journée compte un repas manquant
       pour une chose (`dayChecklist.js`, `remaining`) ; l'Accueil compte les bulles (`CompanionHome.jsx` 460 et 509,
       `bubblesLeftText(list.bubbles.length)`, une seule bulle « Repas 0/3 »). Le même nombre des deux côtés
       (`list.remaining`, déjà renvoyé par `homeBubbles`), avec les mêmes mots (« Encore N choses aujourd'hui »).
       Tests `bubbles.test.js` et `CompanionHome` d'abord.
-    - [ ] **POLISH-SIM-175 — Accueil en 4 temps, étape 4 : champ « Ajouter une habitude… » rogné par « C'est parti ! »**
+    - [x] **POLISH-SIM-175 — Accueil en 4 temps, étape 4 : champ « Ajouter une habitude… » rogné par « C'est parti ! »** — FAIT 26/11 21:30 : le champ remonte au toucher (`scrollIntoView` + `scroll-margin-bottom`), vérifié dans Chromium
       (J1, capture `habitudes-champ-cache.png`) : marge basse de la page à la hauteur du bouton fixe. Capture de
       l'étape 4 relue (clair, sombre).
     - À étudier : calories reçues sans courbe (à joindre à la proposition « go courbes ») ; « Rien à éviter » au-dessus
