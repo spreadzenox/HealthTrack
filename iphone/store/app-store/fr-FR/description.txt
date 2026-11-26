@@ -38,7 +38,7 @@ ABONNEMENTS FACULTATIFS
 • Silver : l'analyse IA des repas jusqu'à 10 fois par jour, les pistes repas → digestion, la réintroduction FODMAP guidée et le rapport PDF. 4,99 € par mois, ou 29,99 € par an avec 2 semaines d'essai gratuit.
 • Gold : la même chose, jusqu'à 20 analyses IA par jour. 9,99 € par mois.
 • Prix de la zone euro ; en Suisse et au Canada, l'App Store indique le prix local.
-• Achat par l'App Store, renouvellement automatique, annulable dans les réglages de votre compte Apple au moins 24 heures avant la fin de la période. Conditions d'utilisation : https://spreadzenox.github.io/HealthTrack-iOS/conditions/
+• Achat par l'App Store, renouvellement automatique, annulable dans les réglages de votre compte Apple au moins 24 heures avant la fin de la période. Conditions d'utilisation : https://spreadzenox.github.io/HealthTrack/iphone/conditions/
 
 Halcya n'est pas un dispositif médical. Elle ne pose aucun diagnostic et ne remplace pas l'avis d'un professionnel de santé : parlez de vos pistes à votre médecin ou à votre diététicienne.
 

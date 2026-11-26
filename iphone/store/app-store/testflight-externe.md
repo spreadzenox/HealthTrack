@@ -26,7 +26,7 @@ Review »). Rien n'est changé dans App Store Connect par la routine : voici seu
 
 **Adresse e-mail pour les retours** (« Feedback Email ») : votre adresse de contact, celle de la page d'assistance.
 
-**Politique de confidentialité** : https://spreadzenox.github.io/HealthTrack-iOS/confidentialite/
+**Politique de confidentialité** : https://spreadzenox.github.io/HealthTrack/iphone/confidentialite/
 
 ### 2. Informations pour l'examen bêta (« Beta App Review Information »), en anglais
 - **Contact** : votre prénom, nom, téléphone et e-mail (les mêmes que pour l'examen de l'App Store).

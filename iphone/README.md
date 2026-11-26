@@ -79,10 +79,12 @@ ne s'applique plus, c'est la PR qui l'a cassé qui le refait (ou, mieux, le remp
 `ios-site.yml` construit et vérifie les trois pages à chaque changement (`site/site.test.mjs`), sans rien publier.
 Depuis FUSION-4 (26/11), « Site — GitHub Pages » (`pages.yml`) les publie aussi avec le site de ce dépôt, sous
 `https://spreadzenox.github.io/HealthTrack/iphone/` (`confidentialite/`, `conditions/`, `assistance/`, et
-l'assistance à la racine). Les adresses inscrites dans la fiche App Store (`https://spreadzenox.github.io/HealthTrack-iOS/…`,
-`scripts/store-push.mjs`, `store/app-store/`) restent celles du site du dépôt iOS, qui continue d'exister même
-archivé. Étape suivante : une fois les pages vérifiées en ligne, changer ces adresses (fiche, notes pour l'examen,
-description) à la version suivante de l'App Store.
+l'assistance à la racine). Depuis le 26/11 07:30, la fiche App Store (`scripts/store-push.mjs`), les notes pour
+l'examen, la description et les textes de `store/app-store/` donnent ces adresses (test : `scripts/store-push.test.mjs`) ;
+elles partent chez Apple au prochain lancement de « Fiche App Store — envoi ». L'ancien site
+(`https://spreadzenox.github.io/HealthTrack-iOS/…`) reste en ligne tant que des builds d'avant le citent. Reste : les
+pages embarquées (`app/public/*-iphone.html`) renvoient encore aux tickets du dépôt iOS ; à changer avec la prochaine
+PR qui lance un build iPhone.
 
 ## Avant d'archiver le dépôt iOS
 

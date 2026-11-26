@@ -64,6 +64,6 @@ meal-to-gut insights, the guided FODMAP reintroduction and the PDF report; Gold 
 Everything else stays free. To reach the subscription screen: gear icon (top right) → « Paramètres » → « Découvrir le
 premium » (« Restaurer un achat » is on the same screen). No account is needed: purchases go through the App Store.
 
-Privacy policy: https://spreadzenox.github.io/HealthTrack-iOS/confidentialite/
-Terms of use: https://spreadzenox.github.io/HealthTrack-iOS/conditions/
-Support: https://spreadzenox.github.io/HealthTrack-iOS/assistance/
+Privacy policy: https://spreadzenox.github.io/HealthTrack/iphone/confidentialite/
+Terms of use: https://spreadzenox.github.io/HealthTrack/iphone/conditions/
+Support: https://spreadzenox.github.io/HealthTrack/iphone/assistance/

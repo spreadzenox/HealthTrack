@@ -16,8 +16,18 @@ test('fiche : textes de store/app-store/fr-FR et adresses du site', () => {
   assert.ok(f.version.keywords.split(',').length > 3)
   assert.equal(f.version.supportUrl, SUPPORT_URL)
   assert.ok(f.version.promotionalText.length <= 170)
-  assert.match(PRIVACY_URL, /^https:\/\/spreadzenox\.github\.io\/HealthTrack-iOS\/confidentialite\/$/)
-  assert.match(SUPPORT_URL, /^https:\/\/spreadzenox\.github\.io\/HealthTrack-iOS\/assistance\/$/)
+  assert.match(PRIVACY_URL, /^https:\/\/spreadzenox\.github\.io\/HealthTrack\/iphone\/confidentialite\/$/)
+  assert.match(SUPPORT_URL, /^https:\/\/spreadzenox\.github\.io\/HealthTrack\/iphone\/assistance\/$/)
+})
+
+test('fiche et textes pour Apple : plus aucune adresse du site du dépôt iOS (FUSION-4, 26/11)', () => {
+  const root = new URL('../store/app-store/', import.meta.url)
+  for (const name of ['fr-FR/description.txt', 'notes-examen.md', 'confidentialite.md', 'testflight-externe.md', 'README.md']) {
+    const text = readFileSync(new URL(name, root), 'utf8')
+    assert.ok(!/github\.io\/HealthTrack-iOS/.test(text), `${name} garde une adresse de HealthTrack-iOS`)
+  }
+  const site = readFileSync(new URL('../site/assistance.html', import.meta.url), 'utf8')
+  assert.ok(!/HealthTrack-iOS/.test(site), 'assistance.html renvoie encore vers le dépôt iOS')
 })
 
 test('jwt : ES256, en-tête et charge attendus par App Store Connect, signature vérifiable', () => {
