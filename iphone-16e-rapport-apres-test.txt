@@ -1,0 +1,476 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/runner/work/_temp/dd-tests/Build/Products/HalcyaUITests_iphonesimulator26.5-arm64-x86_64.xctestrun -destination id=16AFAE62-8F15-4D89-8041-9A6510AE4913 "-only-testing:HalcyaUITests/DonneesUITests/testEnregistrerLeRapportDansFichiers"
+
+2026-11-26 00:52:25.811 xcodebuild[51898:138027] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-26 00:52:25.828 xcodebuild[51898:138027] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:16AFAE62-8F15-4D89-8041-9A6510AE4913, OS:26.2, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:16AFAE62-8F15-4D89-8041-9A6510AE4913, OS:26.2, name:iPhone 16e }
+2026-11-26 00:52:26.165 xcodebuild[51898:138027] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-11-26 00:52:27.907274+0000 HalcyaUITests-Runner[52056:138599] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-26 00:52:28.687.
+Test Suite 'HalcyaUITests.xctest' started at 2026-11-26 00:52:28.688.
+Test Suite 'DonneesUITests' started at 2026-11-26 00:52:28.689.
+Test Case '-[HalcyaUITests.DonneesUITests testEnregistrerLeRapportDansFichiers]' started.
+    t =     0.00s Start Test at 2026-11-26 00:52:28.691
+    t =     0.03s Set Up
+    t =     0.04s Open fr.jpesquet.sante
+    t =     0.04s     Activate fr.jpesquet.sante
+    t =     0.04s         Wait for fr.jpesquet.sante to idle
+    t =     0.05s Waiting 1.0s for "Annuler" Button to exist
+    t =     1.06s     Checking existence of `"Annuler" Button`
+    t =     1.12s Collecting debug information to assist test failure triage
+    t =     1.12s     Requesting snapshot of accessibility hierarchy for app with pid 9117
+    t =     1.19s Waiting 30.0s for Any (First Match) to exist
+    t =     2.27s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     2.27s         Checking existence of `Any (First Match)`
+    t =     2.32s Tap Any (First Match)
+    t =     2.32s     Wait for fr.jpesquet.sante to idle
+    t =     2.32s     Find the Any (First Match)
+    t =     2.37s     Check for interrupting elements affecting "Créer le PDF" Button
+    t =     2.42s     Synthesize event
+    t =     2.73s     Wait for fr.jpesquet.sante to idle
+    t =     2.73s Waiting 2.0s for Any (First Match) to exist
+    t =     3.76s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     3.76s         Checking existence of `Any (First Match)`
+    t =     3.88s         Capturing element debug description
+    t =     4.74s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     4.74s         Checking existence of `Any (First Match)`
+    t =     4.84s         Capturing element debug description
+    t =     4.84s     Checking existence of `Any (First Match)`
+    t =     4.94s Collecting debug information to assist test failure triage
+    t =     4.94s     Requesting snapshot of accessibility hierarchy for app with pid 9117
+    t =     5.06s Checking existence of `Any (First Match)`
+    t =     5.14s Press Any (First Match)[0.50, 0.50] for 0.2 seconds, then drag to Application 'fr.jpesquet.sante'[0.50, 0.08] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =     5.14s     Wait for fr.jpesquet.sante to idle
+    t =     5.14s     Find the Any (First Match)
+    t =     5.24s     Check for interrupting elements affecting "LP.CaptionBar.BottomCaption" Other
+    t =     5.31s     Synthesize event
+    t =     5.32s         Find the "LP.CaptionBar.BottomCaption" Other
+    t =     5.40s         Find the "LP.CaptionBar.BottomCaption" Other
+    t =     5.47s         Find the Application 'fr.jpesquet.sante'
+    t =     5.51s         Find the Application 'fr.jpesquet.sante'
+    t =     5.56s         Find the "LP.CaptionBar.BottomCaption" Other
+    t =     7.02s     Wait for fr.jpesquet.sante to idle
+    t =     7.03s Waiting 2.0s for Any (First Match) to exist
+    t =     8.11s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =     8.11s         Checking existence of `Any (First Match)`
+    t =     8.19s Checking existence of `Any (First Match)`
+    t =     8.26s Tap Any (First Match)
+    t =     8.26s     Wait for fr.jpesquet.sante to idle
+    t =     8.27s     Find the Any (First Match)
+    t =     8.34s     Check for interrupting elements affecting "actionGroupCell" Cell
+    t =     8.39s     Synthesize event
+    t =     8.69s     Wait for fr.jpesquet.sante to idle
+    t =     8.69s Waiting 20.0s for "Enregistrer" Button to exist
+    t =     9.74s     Checking `Expect predicate `existsNoRetry == 1` for object "Enregistrer" Button`
+    t =     9.74s         Checking existence of `"Enregistrer" Button`
+    t =     9.99s Waiting 3.0s for Cell (First Match) to exist
+    t =    11.04s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    11.04s         Checking existence of `Cell (First Match)`
+    t =    11.18s         Capturing element debug description
+    t =    12.02s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    12.02s         Checking existence of `Cell (First Match)`
+    t =    12.15s         Capturing element debug description
+    t =    13.00s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    13.00s         Checking existence of `Cell (First Match)`
+    t =    13.12s         Capturing element debug description
+    t =    13.12s     Checking existence of `Cell (First Match)`
+    t =    13.22s Collecting debug information to assist test failure triage
+    t =    13.22s     Requesting snapshot of accessibility hierarchy for app with pid 9117
+étape « Sur mon iPhone » absente
+    t =    13.39s Waiting 3.0s for Cell (First Match) to exist
+    t =    14.48s     Checking `Expect predicate `existsNoRetry == 1` for object Cell (First Match)`
+    t =    14.48s         Checking existence of `Cell (First Match)`
+    t =    14.59s Tap Cell (First Match)
+    t =    14.59s     Wait for fr.jpesquet.sante to idle
+    t =    14.60s     Find the Cell (First Match)
+    t =    14.70s     Check for interrupting elements affecting "Halcya-rapport-2026-11-26, pdf" Cell
+    t =    14.78s     Synthesize event
+    t =    15.10s     Wait for fr.jpesquet.sante to idle
+    t =    15.10s Requesting snapshot of accessibility hierarchy for app with pid 9117
+    t =    15.82s Requesting snapshot of accessibility hierarchy for app with pid 9117
+Attributes: Application, 0x103c31f80, pid: 9117, label: 'Halcya'
+Element subtree:
+ →Application, 0x103c31f80, pid: 9117, label: 'Halcya'
+    Window (Main), 0x103c24740, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x103c09910, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x103c239d0, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x103c27ce0, {{0.0, 0.0}, {390.0, 844.0}}
+          WebView, 0x103c150a0, {{0.0, 0.0}, {390.0, 844.0}}
+            WebView, 0x103c109a0, {{0.0, 0.0}, {390.0, 844.0}}
+              WebView, 0x103c27aa0, {{0.0, 0.0}, {390.0, 844.0}}
+                Other, 0x103c27bc0, {{0.0, 0.0}, {390.0, 844.0}}
+                  Other, 0x103c31b60, {{0.0, 0.0}, {390.0, 844.0}}
+                    Other, 0x103c31c80, {{0.0, -621.0}, {390.0, 844.0}}
+                      Other, 0x103c257c0, {{0.0, -621.0}, {390.0, 1765.0}}, label: 'Halcya – ventre et bien-être', Focused
+                        Other, 0x103c258e0, {{16.0, -574.0}, {358.0, 70.0}}, label: 'bannière', Focused
+                          Other, 0x103c25a00, {{58.0, -552.0}, {61.0, 28.0}}, label: 'Halcya', value: 1, Focused
+                            StaticText, 0x103c25b20, {{58.0, -552.0}, {61.0, 28.0}}, label: 'Halcya', value: Halcya, Focused
+                          Link, 0x103c25c40, {{330.0, -560.0}, {44.0, 44.0}}, label: 'Réglages', Focused
+                        Other, 0x103c15dd0, {{16.0, -504.0}, {358.0, 1542.0}}, label: 'principal', Focused
+                          Other, 0x103c15ef0, {{16.0, -504.0}, {358.0, 29.0}}, label: 'Sauvegarde', value: 2, Focused
+                            StaticText, 0x103c16010, {{16.0, -504.0}, {110.0, 29.0}}, label: 'Sauvegarde', value: Sauvegarde, Focused
+                          Other, 0x103c16130, {{16.0, -467.0}, {358.0, 110.0}}, Focused
+                            StaticText, 0x103c16250, {{16.0, -467.0}, {336.0, 44.0}}, label: 'Vos données sont sur ce téléphone et passent les mises à jour.', value: Vos données sont s..., Focused
+                            StaticText, 0x103c16370, {{16.0, -445.0}, {356.0, 88.0}}, label: 'Une copie de secours est tenue à jour dans l’app Fichiers › Sur mon iPhone › Halcya ; avant de réinstaller ou de changer de téléphone, exportez-les aussi.', value: Une copie de secou..., Focused
+                          Other, 0x103c16730, {{32.0, -325.0}, {326.0, 23.0}}, label: 'Exporter (sauvegarde)', value: 3, Focused
+                            StaticText, 0x103c16850, {{32.0, -325.0}, {163.0, 23.0}}, label: 'Exporter (sauvegarde)', value: Exporter (sauvegar..., Focused
+                          Other, 0x103c16970, {{32.0, -291.0}, {326.0, 21.0}}, Focused
+                            StaticText, 0x103c16a90, {{32.0, -291.0}, {235.0, 21.0}}, label: 'Un fichier JSON, à garder en lieu sûr.', value: Un fichier JSON, à..., Focused
+                          Other, 0x103c16bb0, {{32.0, -262.0}, {326.0, 19.0}}, Focused
+                            StaticText, 0x103c16cd0, {{32.0, -262.0}, {8.0, 18.0}}, label: '1', value: 1, Focused
+                            StaticText, 0x103c1d210, {{41.0, -261.0}, {3.0, 18.0}}, value:  , Focused
+                            StaticText, 0x103c1d330, {{43.0, -262.0}, {24.0, 18.0}}, label: '255', value: 255, Focused
+                            StaticText, 0x103c1d450, {{66.0, -261.0}, {47.0, 18.0}}, label: 'entrées', value:  entrées, Focused
+                            StaticText, 0x103c1d570, {{112.0, -261.0}, {82.0, 18.0}}, label: 'et votre profil', value:  et votre profil, Focused
+                          Button, 0x103c1d690, {{32.0, -231.0}, {326.0, 52.0}}, label: 'Télécharger la sauvegarde', Focused
+                          Other, 0x103c1d7b0, {{32.0, -167.0}, {326.0, 42.0}}, Focused
+                            StaticText, 0x103c1d8d0, {{32.0, -167.0}, {302.0, 42.0}}, label: 'halcya-export-2026-11-26.json est aussi dans l’app Fichiers › Sur mon iPhone › Halcya.', value: halcya-export-2026..., Focused
+                          Other, 0x103c1d9f0, {{32.0, -69.0}, {326.0, 23.0}}, label: 'Exporter pour un tableur', value: 3, Focused
+                            StaticText, 0x103c1db10, {{32.0, -69.0}, {181.0, 23.0}}, label: 'Exporter pour un tableur', value: Exporter pour un t..., Focused
+                          Other, 0x103c1dc30, {{32.0, -35.0}, {326.0, 81.0}}, Focused
+                            StaticText, 0x103c1dd50, {{32.0, -35.0}, {322.0, 81.0}}, label: 'Un fichier CSV, une ligne par saisie : repas, digestion, bien-être et mesures de vos montres. Pour restaurer vos données, gardez la sauvegarde JSON.', value: Un fichier CSV, un..., Focused
+                          Button, 0x103c1e0f0, {{32.0, 58.0}, {326.0, 52.0}}, label: 'Télécharger en CSV', Focused
+                          Other, 0x103c1e210, {{16.0, 150.0}, {358.0, 314.0}}, label: 'article', Focused
+                            StaticText, 0x103c1e330, {{34.0, 166.0}, {239.0, 23.0}}, label: 'Rapport PDF pour mon médecin', value: Rapport PDF pour m..., Focused
+                            Other, 0x103c1e450, {{34.0, 196.0}, {322.0, 61.0}}, Focused
+                              StaticText, 0x103c1e570, {{34.0, 196.0}, {318.0, 61.0}}, label: 'Deux pages à montrer à votre médecin ou à votre diététicienne. Le fichier est créé sur le téléphone, et c’est vous qui l’envoyez.', value: Deux pages à montr..., Focused
+                            Other, 0x103c1e8d0, {{34.0, 269.0}, {322.0, 71.0}}, label: 'Période', Focused
+                              Other, 0x103c1e9f0, {{34.0, 269.0}, {322.0, 21.0}}, Focused
+                                StaticText, 0x103c1eb10, {{36.0, 269.0}, {50.0, 21.0}}, label: 'Période', value: Période, Focused
+                              Other, 0x103c1ec30, {{34.0, 296.0}, {84.0, 44.0}}, Focused
+                                Other, 0x103c1ed50, {{34.0, 296.0}, {84.0, 44.0}}, label: '2 sem.', value: 0, Focused
+                                StaticText, 0x103c1ee70, {{52.0, 306.0}, {10.0, 23.0}}, label: '2', value: 2, Focused
+                                StaticText, 0x103c1ef90, {{61.0, 306.0}, {39.0, 24.0}}, label: 'sem.', value:  sem., Focused
+                              Other, 0x103c1f0b0, {{125.0, 296.0}, {85.0, 44.0}}, Focused
+                                Other, 0x103c1f1d0, {{125.0, 296.0}, {85.0, 44.0}}, label: '4 sem.', value: 1, Focused
+                                StaticText, 0x103c1f2f0, {{143.0, 306.0}, {11.0, 23.0}}, label: '4', value: 4, Focused
+                                StaticText, 0x103c1f410, {{153.0, 306.0}, {39.0, 24.0}}, label: 'sem.', value:  sem., Focused
+                              Other, 0x103c1f530, {{217.0, 296.0}, {94.0, 44.0}}, Focused
+                                Other, 0x103c1f650, {{217.0, 296.0}, {94.0, 44.0}}, label: '12 sem.', value: 0, Focused
+                                StaticText, 0x103c1f770, {{235.0, 306.0}, {20.0, 23.0}}, label: '12', value: 12, Focused
+                                StaticText, 0x103c1f890, {{254.0, 306.0}, {40.0, 24.0}}, label: 'sem.', value:  sem., Focused
+                            Other, 0x103c1f9b0, {{34.0, 344.0}, {322.0, 44.0}}, Focused
+                              Switch, 0x103c1fad0, {{34.0, 344.0}, {322.0, 44.0}}, label: 'Inclure mon bien-être estimé (caméra)', value: 0, Focused
+                              StaticText, 0x103c1fbf0, {{68.0, 355.0}, {259.0, 22.0}}, label: 'Inclure mon bien-être estimé (caméra)', value: Inclure mon bien-ê..., Focused
+                            Button, 0x103c1fd10, {{34.0, 396.0}, {322.0, 52.0}}, label: 'Création…', Focused, Disabled
+                          Other, 0x103c1fe30, {{32.0, 504.0}, {326.0, 23.0}}, label: 'Importer (restaurer)', value: 3, Focused
+                            StaticText, 0x103c1ff50, {{32.0, 504.0}, {145.0, 23.0}}, label: 'Importer (restaurer)', value: Importer (restaurer), Focused
+                          Other, 0x103c20070, {{32.0, 538.0}, {326.0, 41.0}}, Focused
+                            StaticText, 0x103c20190, {{32.0, 538.0}, {312.0, 41.0}}, label: 'Vous verrez son contenu, puis choisirez d’ajouter (sans doublons) ou de remplacer.', value: Vous verrez son co..., Focused
+                          Button, 0x103c202b0, {{16.0, 488.0}, {358.0, 10.0}}, label: 'Choisir un fichier de sauvegarde', Focused
+                          Button, 0x103c203d0, {{32.0, 591.0}, {326.0, 52.0}}, label: 'Choisir un fichier à importer', Focused
+                          Button, 0x103c204f0, {{32.0, 655.0}, {326.0, 74.0}}, label: 'Restaurer la copie de secours (il y a moins d’une heure)', Focused
+                          Other, 0x103c20610, {{32.0, 741.0}, {326.0, 42.0}}, Focused
+                            StaticText, 0x103c20730, {{32.0, 741.0}, {305.0, 42.0}}, label: '2 entrées ajoutées. Le tableau de bord se met à jour.', value: 2 entrées ajoutées..., Focused
+                          Other, 0x103c20850, {{32.0, 839.0}, {326.0, 23.0}}, label: 'Supprimer', value: 3, Focused
+                            StaticText, 0x103c20970, {{32.0, 839.0}, {77.0, 23.0}}, label: 'Supprimer', value: Supprimer, Focused
+                          Other, 0x103c20a90, {{32.0, 873.0}, {326.0, 61.0}}, Focused
+                            StaticText, 0x103c20bb0, {{32.0, 873.0}, {326.0, 61.0}}, label: 'Efface de ce téléphone vos entrées et votre profil. Notre serveur ne garde qu’un compteur d’analyses IA, anonyme, effacé après 13 mois sans analyse.', value: Efface de ce télép..., Focused
+                          Button, 0x103c20f50, {{32.0, 946.0}, {326.0, 52.0}}, label: 'Supprimer toutes mes données', Focused
+                        Other, 0x103c21070, {{0.0, 747.0}, {390.0, 97.0}}, label: 'Principal, navigation', Focused
+                          Link, 0x103c21190, {{35.0, 787.0}, {39.0, 17.0}}, label: 'Accueil', Focused
+                            StaticText, 0x103c212b0, {{35.0, 787.0}, {39.0, 17.0}}, label: 'Accueil', value: Accueil, Focused
+                          Link, 0x103c213d0, {{119.0, 787.0}, {59.0, 17.0}}, label: 'Ma journée', Focused
+                            StaticText, 0x103c214f0, {{119.0, 787.0}, {59.0, 17.0}}, label: 'Ma journée', value: Ma journée, Focused
+                          Link, 0x103c26ba0, {{218.0, 787.0}, {47.0, 17.0}}, label: 'Objectifs', Focused
+                            StaticText, 0x103c26cc0, {{218.0, 787.0}, {47.0, 17.0}}, label: 'Objectifs', value: Objectifs, Focused
+                          Link, 0x103c26de0, {{312.0, 787.0}, {47.0, 17.0}}, label: 'Données', Focused
+                            StaticText, 0x103c26f00, {{312.0, 787.0}, {47.0, 17.0}}, label: 'Données', value: Données, Focused
+              Other, 0x103c27020, {{357.0, 47.3}, {30.0, 749.3}}, label: 'Barre de défilement verticale, 3 pages', value: 67 %
+                Other, 0x103c27140, {{384.0, 312.0}, {3.0, 355.3}}
+              Other, 0x103c27260, {{47.3, 811.0}, {295.3, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103c27380, {{50.3, 838.0}, {289.3, 3.0}}
+              Other, 0x103c274a0, {{357.0, 47.3}, {30.0, 749.3}}, label: 'Barre de défilement verticale, 3 pages', value: 67 %
+                Other, 0x103c275c0, {{384.0, 312.0}, {3.0, 355.3}}
+              Other, 0x103c276e0, {{47.3, 811.0}, {295.3, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                Other, 0x103c27800, {{50.3, 838.0}, {289.3, 3.0}}
+      Other, 0x103c26610, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x103c26730, {{0.0, 0.0}, {390.0, 844.0}}, identifier: 'PopoverDismissRegion', label: 'fermer le pop-up'
+        Popover, 0x103c26850, {{0.0, 48.0}, {390.0, 796.0}}
+          Image, 0x103c32ca0, {{-150.0, -102.0}, {690.0, 1096.0}}
+          Other, 0x103c32dc0, {{0.0, 48.0}, {390.0, 796.0}}
+            Other, 0x103c32ee0, {{0.0, 48.0}, {390.0, 796.0}}
+              Other, 0x103c33000, {{0.0, 48.0}, {390.0, 796.0}}
+                Other, 0x103c33120, {{0.0, 48.0}, {390.0, 796.0}}
+                  Other, 0x103c33240, {{0.0, 48.0}, {390.0, 796.0}}
+                    Other, 0x103c33360, {{0.0, 48.0}, {390.0, 796.0}}
+                      Other, 0x103c33480, {{0.0, 48.0}, {0.0, 0.0}}
+                        Other, 0x103923b50, {{-0.0, 48.0}, {390.0, 796.0}}
+                          Other, 0x103929250, {{-0.0, 48.0}, {390.0, 796.0}}
+                            Other, 0x10391f5b0, {{-0.0, 48.0}, {390.0, 796.0}}
+                              Other, 0x103919a00, {{-0.0, 48.0}, {390.0, 796.0}}
+            Other, 0x103924060, {{0.0, 48.0}, {390.0, 796.0}}
+              Other, 0x1039203d0, {{0.0, 48.0}, {390.0, 796.0}}, identifier: 'ActivityListView'
+                Other, 0x103947220, {{0.0, 48.0}, {390.0, 796.0}}
+                Other, 0x103947340, {{0.0, 48.0}, {390.0, 796.0}}, identifier: 'ShareSheet.RemoteContainerView'
+                  Other, 0x103947460, {{0.0, 48.0}, {390.0, 796.0}}
+                    Other, 0x103947580, {{0.0, 48.0}, {390.0, 796.0}}
+                      Other, 0x1039476a0, {{0.0, 48.0}, {390.0, 796.0}}
+                        Other, 0x1039477c0, {{0.0, 48.0}, {390.0, 796.0}}
+                          Other, 0x1039478e0, {{0.0, 48.0}, {390.0, 796.0}}
+                            Other, 0x103947a00, {{0.0, 48.0}, {390.0, 796.0}}
+                              Other, 0x103947b20, {{0.0, 48.0}, {390.0, 796.0}}
+                                Other, 0x103947c40, {{0.0, 48.0}, {390.0, 796.0}}
+                                  NavigationBar, 0x103947d60, {{0.0, 58.0}, {390.0, 98.3}}, identifier: 'UIActivityContentView'
+                                    Image, 0x103947e80, {{28.3, 76.3}, {45.0, 64.0}}
+                                    Button, 0x103947fa0, {{334.0, 62.0}, {36.0, 36.0}}, identifier: 'header.closeButton', label: 'Fermer'
+                                    Other, 0x1039480c0, {{88.3, 89.3}, {226.7, 18.0}}, identifier: 'LP.CaptionBar.TopCaption', label: 'Halcya-rapport-2026-11-26'
+                                    Other, 0x1039481e0, {{88.3, 107.3}, {226.7, 20.0}}, identifier: 'LP.CaptionBar.BottomCaption', label: 'Document PDF · 24 ko'
+                                  Other, 0x103948300, {{0.0, 48.0}, {390.0, 796.0}}
+                                    Other, 0x103948420, {{0.0, 48.0}, {390.0, 796.0}}
+                                      Other, 0x103948540, {{0.0, 48.0}, {390.0, 796.0}}, identifier: 'shareSheet.activity.contentView'
+                                        CollectionView, 0x103948660, {{0.0, 48.0}, {390.0, 796.0}}, identifier: 'activityCollectionView'
+                                          Other, 0x103948780, {{0.0, 48.0}, {390.0, 796.0}}
+                                            Other, 0x1039488a0, {{0.0, 48.0}, {390.0, 163.1}}
+                                          Other, 0x1039489c0, {{0.0, 48.0}, {390.0, 796.0}}
+                                          ScrollView, 0x103948ae0, {{20.7, 156.3}, {348.7, 120.0}}
+                                            Cell, 0x103948c00, {{20.7, 156.3}, {82.0, 119.3}}, identifier: 'shareCell', label: 'Aperçu'
+                                              Other, 0x103948d20, {{20.7, 156.3}, {82.0, 119.3}}
+                                                Other, 0x103948e40, {{20.7, 245.3}, {82.0, 14.3}}
+                                                  StaticText, 0x103948f60, {{20.7, 245.3}, {82.0, 14.3}}, identifier: 'cellTitleLabel', label: 'Aperçu'
+                                                  StaticText, 0x103949080, {{20.7, 245.3}, {32.7, 30.3}}, identifier: 'cellTitleLabel', label: 'Apple Inc'
+                                                  Other, 0x1039491a0, {{20.7, 245.3}, {82.0, 14.3}}
+                                                Image, 0x1039492c0, {{29.3, 172.3}, {65.0, 65.0}}, identifier: 'activityImageView'
+                                            Cell, 0x1039493e0, {{109.7, 156.3}, {82.0, 119.3}}, identifier: 'shareCell', label: 'Plus'
+                                              Other, 0x103949500, {{109.7, 156.3}, {82.0, 119.3}}
+                                                Other, 0x103949620, {{109.7, 245.3}, {82.0, 14.3}}
+                                                  StaticText, 0x103949740, {{109.7, 245.3}, {82.0, 14.3}}, identifier: 'cellTitleLabel', label: 'Plus'
+                                                  StaticText, 0x103949860, {{109.7, 245.3}, {32.7, 30.3}}, identifier: 'cellTitleLabel', label: 'Apple Inc'
+                                                  Other, 0x103949980, {{109.7, 245.3}, {82.0, 14.3}}
+                                                Image, 0x103949aa0, {{118.3, 172.3}, {65.0, 65.0}}, identifier: 'activityImageView'
+                                          ScrollView, 0x103949bc0, {{20.7, 277.3}, {348.7, 135.3}}
+                                            Cell, 0x103949ce0, {{20.7, 277.3}, {82.0, 135.3}}, identifier: 'actionGroupCell', label: 'Copier'
+                                              Other, 0x103949e00, {{20.7, 277.3}, {82.0, 135.3}}
+                                                Other, 0x103949f20, {{20.7, 366.3}, {82.0, 14.3}}
+                                                  StaticText, 0x10394a040, {{20.7, 366.3}, {82.0, 14.3}}, identifier: 'cellTitleLabel', label: 'Copier'
+                                                  StaticText, 0x10394a160, {{20.7, 366.3}, {32.7, 30.3}}, identifier: 'cellTitleLabel', label: 'Apple Inc'
+                                                  Other, 0x10394a280, {{20.7, 366.3}, {82.0, 14.3}}
+                                                Other, 0x10394a3a0, {{28.3, 293.3}, {67.0, 67.0}}
+                                                Image, 0x10394a4c0, {{45.7, 308.7}, {32.0, 36.7}}, identifier: 'activityImageView', label: 'copier'
+                                            Cell, 0x10394a5e0, {{109.7, 277.3}, {82.0, 135.3}}, identifier: 'actionGroupCell', label: 'Annoter'
+                                              Other, 0x10394a700, {{109.7, 277.3}, {82.0, 135.3}}
+                                                Other, 0x10394a820, {{109.7, 366.3}, {82.0, 14.3}}
+                                                  StaticText, 0x10394a940, {{109.7, 366.3}, {82.0, 14.3}}, identifier: 'cellTitleLabel', label: 'Annoter'
+                                                  StaticText, 0x10394aa60, {{109.7, 366.3}, {32.7, 30.3}}, identifier: 'cellTitleLabel', label: 'Apple Inc'
+                                                  Other, 0x10394ab80, {{109.7, 366.3}, {82.0, 14.3}}
+                                                Other, 0x10394aca0, {{117.3, 293.3}, {67.0, 67.0}}
+                                                Image, 0x10394adc0, {{134.7, 311.7}, {32.0, 30.7}}, identifier: 'activityImageView', label: 'Annotation'
+                                            Cell, 0x10394aee0, {{198.7, 277.3}, {82.0, 135.3}}, identifier: 'actionGroupCell', label: 'Imprimer'
+                                              Other, 0x10394b000, {{198.7, 277.3}, {82.0, 135.3}}
+                                                Other, 0x10394b120, {{198.7, 366.3}, {82.0, 14.3}}
+                                                  StaticText, 0x10394b240, {{198.7, 366.3}, {82.0, 14.3}}, identifier: 'cellTitleLabel', label: 'Imprimer'
+                                                  StaticText, 0x10394b360, {{198.7, 366.3}, {32.7, 30.3}}, identifier: 'cellTitleLabel', label: 'Apple Inc'
+                                                  Other, 0x10394b480, {{198.7, 366.3}, {82.0, 14.3}}
+                                                Other, 0x10394b5a0, {{206.3, 293.3}, {67.0, 67.0}}
+                                                Image, 0x10394b6c0, {{223.7, 311.3}, {32.0, 32.0}}, identifier: 'activityImageView', label: 'imprimer'
+                                            Cell, 0x10394b7e0, {{287.7, 277.3}, {82.0, 135.3}}, identifier: 'actionGroupCell', label: 'Ajouter des tags'
+                                              Other, 0x10394b900, {{287.7, 277.3}, {82.0, 135.3}}
+                                                Other, 0x10394ba20, {{287.7, 366.3}, {82.0, 30.3}}
+                                                  StaticText, 0x10394bb40, {{287.7, 366.3}, {82.0, 30.3}}, identifier: 'cellTitleLabel', label: 'Ajouter des tags'
+                                                  StaticText, 0x10394bc60, {{287.7, 366.3}, {32.7, 30.3}}, identifier: 'cellTitleLabel', label: 'Apple Inc'
+                                                  Other, 0x10394bd80, {{287.7, 366.3}, {82.0, 30.3}}
+                                                Other, 0x10394bea0, {{295.3, 293.3}, {67.0, 67.0}}
+                                                Image, 0x10394bfc0, {{307.0, 305.3}, {43.3, 43.0}}, identifier: 'activityImageView'
+                                          Other, 0x10394c0e0, {{28.3, 276.3}, {333.3, 1.0}}, identifier: 'collectionView.footerView'
+                                          Cell, 0x10394c200, {{16.0, 422.7}, {358.0, 50.3}}, identifier: 'actionGroupCell', label: 'Enregistrer dans Fichiers'
+                                            Other, 0x10394c320, {{16.0, 422.7}, {358.0, 50.3}}
+                                              Other, 0x10394c440, {{16.0, 422.7}, {358.0, 50.3}}
+                                            Other, 0x10394c560, {{16.0, 422.7}, {358.0, 50.3}}
+                                              Other, 0x10394c680, {{16.0, 422.7}, {358.0, 50.3}}
+                                              Other, 0x10394c7a0, {{32.0, 432.0}, {32.0, 32.0}}, identifier: 'imageStackView'
+                                                Image, 0x10394c8c0, {{32.0, 432.0}, {32.0, 32.0}}, identifier: 'activityImageView'
+                                              Other, 0x10394c9e0, {{32.0, 432.0}, {32.0, 32.0}}
+                                              Other, 0x10394cb00, {{72.0, 437.7}, {286.0, 20.3}}, identifier: 'titleStackView'
+                                                StaticText, 0x10394cc20, {{72.0, 437.7}, {286.0, 20.3}}, identifier: 'titleLabel', label: 'Enregistrer dans Fichiers'
+                                              Other, 0x10394cd40, {{72.0, 437.7}, {286.0, 20.3}}
+                                          Other, 0x10394ce60, {{16.0, 473.0}, {358.0, 74.3}}, identifier: 'collectionView.footerEditView'
+                                            Button, 0x10394cf80, {{109.0, 493.0}, {172.3, 34.3}}, identifier: 'editButton', label: 'Modifier les actions'
+                                              StaticText, 0x10394d0a0, {{121.0, 500.0}, {148.3, 20.3}}, label: 'Modifier les actions'
+                                        Other, 0x10394d1c0, {{28.3, 156.3}, {333.3, 1.0}}
+                                  Other, 0x10394d2e0, {{0.0, 48.0}, {390.0, 796.0}}
+                                    Other, 0x10394d400, {{0.0, 48.0}, {390.0, 796.0}}
+      Other, 0x10394d520, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x10394d640, {{-390.0, -844.0}, {1170.0, 2532.0}}
+        Other, 0x10394d760, {{0.0, 57.0}, {390.0, 787.0}}
+          Image, 0x10394d880, {{-150.0, -93.0}, {690.0, 1087.0}}
+          Other, 0x10394d9a0, {{0.0, 57.0}, {390.0, 787.0}}
+            Other, 0x10394dac0, {{0.0, 57.0}, {390.0, 787.0}}
+              Other, 0x10394dbe0, {{0.0, 57.0}, {390.0, 787.0}}
+                Other, 0x10394dd00, {{0.0, 57.0}, {390.0, 787.0}}
+                  Other, 0x10394de20, {{0.0, 57.0}, {390.0, 787.0}}
+                    Other, 0x10394df40, {{0.0, 57.0}, {390.0, 787.0}}
+                      Other, 0x10394e060, {{0.0, 57.0}, {390.0, 787.0}}
+                        Other, 0x10394e180, {{0.0, 57.0}, {390.0, 787.0}}
+                          Other, 0x10394e2a0, {{0.0, 57.0}, {390.0, 787.0}}
+                            Other, 0x10394e3c0, {{0.0, 57.0}, {390.0, 787.0}}
+                              Other, 0x10394e4e0, {{0.0, 57.0}, {390.0, 787.0}}
+                                Other, 0x10394e600, {{0.0, 57.0}, {390.0, 787.0}}
+                                  Other, 0x10394e720, {{0.0, 57.0}, {390.0, 787.0}}, identifier: 'Browse View (Picker)'
+                                    Other, 0x10394e840, {{0.0, 57.0}, {390.0, 787.0}}
+                                      Other, 0x10394e960, {{0.0, 57.0}, {390.0, 787.0}}
+                                        Other, 0x10394ea80, {{0.0, 57.0}, {390.0, 787.0}}
+                                          Other, 0x10394eba0, {{0.0, 57.0}, {390.0, 787.0}}
+                                          Other, 0x10394ecc0, {{0.0, 57.0}, {390.0, 787.0}}, identifier: 'DOC.browsingRoot Source: com.apple.FileProvider.LocalStorage, Title: Sur mon iPhone'
+                                            NavigationBar, 0x10394ede0, {{0.0, 73.0}, {390.0, 114.0}}, identifier: 'FullDocumentManagerViewControllerNavigationBar'
+                                              Button, 0x10394ef00, {{16.0, 73.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Sur mon iPhone'
+                                              Button, 0x10394f020, {{72.0, 84.7}, {54.3, 20.7}}, label: 'Halcya, Menu d’actions'
+                                              Button, 0x10394f140, {{201.7, 77.0}, {36.0, 36.0}}, identifier: 'OverflowBarButtonItem', label: 'Plus'
+                                              Button, 0x10394f260, {{257.7, 77.0}, {112.3, 36.0}}, label: 'Enregistrer'
+                                              SearchField, 0x10394f380, {{16.0, 128.0}, {358.0, 44.0}}, label: 'Rechercher', placeholderValue: 'Rechercher'
+                                                Image, 0x10394f4a0, {{28.0, 140.0}, {20.7, 19.3}}, identifier: 'magnifyingglass', label: 'Rechercher'
+                                            Other, 0x10394f5c0, {{0.0, 57.0}, {390.0, 787.0}}
+                                              Other, 0x10394f6e0, {{0.0, 57.0}, {390.0, 787.0}}
+                                                Other, 0x10394f800, {{0.0, 57.0}, {390.0, 787.0}}
+                                                  Other, 0x10394f920, {{0.0, 57.0}, {390.0, 787.0}}
+                                                    ScrollView, 0x10394fa40, {{0.0, 57.0}, {390.0, 787.0}}
+                                                      Other, 0x10394fb60, {{0.0, 57.0}, {390.0, 787.0}}
+                                                        Other, 0x10394fc80, {{0.0, 57.0}, {390.0, 179.8}}
+                                                      Other, 0x10394fda0, {{0.0, 57.0}, {390.0, 787.0}}
+                                                        Other, 0x10394fec0, {{0.0, 57.0}, {390.0, 179.8}}
+                                                          Image, 0x10394ffe0, {{-120.0, -175.0}, {630.0, 350.0}}, identifier: 'AdditionalDimmingOverlay'
+                                                          Other, 0x103950100, {{0.0, 57.0}, {390.0, 115.0}}
+                                                          Other, 0x103950220, {{0.0, 57.0}, {390.0, 179.8}}
+                                                            Other, 0x103950340, {{0.0, 57.0}, {390.0, 179.8}}
+                                                          Other, 0x103950460, {{0.0, 57.0}, {390.0, 179.8}}
+                                                            Other, 0x103950580, {{0.0, 57.0}, {390.0, 179.8}}
+                                                          Other, 0x1039506a0, {{0.0, 57.0}, {390.0, 179.8}}
+                                                            Other, 0x1039507c0, {{0.0, 57.0}, {390.0, 179.8}}
+                                                            Other, 0x1039508e0, {{0.0, 57.0}, {390.0, 179.8}}
+                                                      CollectionView, 0x103950a00, {{0.0, 57.0}, {390.0, 787.0}}, identifier: 'File View', value: Icon Mode
+                                                        Other, 0x103950b20, {{0.0, 57.0}, {390.0, 787.0}}
+                                                        Other, 0x103950c40, {{0.0, 57.0}, {390.0, 787.0}}
+                                                        Cell, 0x103950d60, {{10.0, 197.0}, {118.0, 189.7}}, identifier: 'capture, Folder', label: 'capture, 3 éléments'
+                                                          Other, 0x103950e80, {{10.0, 197.0}, {118.0, 189.7}}
+                                                          Other, 0x103950fa0, {{10.0, 197.0}, {118.0, 189.7}}
+                                                            Other, 0x1039510c0, {{27.0, 201.0}, {84.0, 84.0}}
+                                                              Image, 0x1039511e0, {{27.0, 201.0}, {84.0, 84.0}}
+                                                            Other, 0x103951300, {{13.0, 290.0}, {112.0, 55.7}}
+                                                              StaticText, 0x103951420, {{13.0, 290.0}, {112.0, 20.0}}, label: 'capture'
+                                                              StaticText, 0x103951540, {{13.0, 313.0}, {112.0, 14.3}}, label: '3 éléments'
+                                                              StaticText, 0x103951660, {{13.0, 331.3}, {112.0, 14.3}}
+                                                        Cell, 0x103951780, {{136.0, 197.0}, {118.0, 189.7}}, identifier: 'Copie de secours, Folder', label: 'Copie de secours, 1 élément'
+                                                          Other, 0x1039518a0, {{136.0, 197.0}, {118.0, 189.7}}
+                                                          Other, 0x1039519c0, {{136.0, 197.0}, {118.0, 189.7}}
+                                                            Other, 0x103951ae0, {{153.0, 201.0}, {84.0, 84.0}}
+                                                              Image, 0x103951c00, {{153.0, 201.0}, {84.0, 84.0}}
+                                                            Other, 0x103951d20, {{139.0, 290.0}, {112.0, 75.7}}
+                                                              StaticText, 0x103951e40, {{139.0, 290.0}, {112.0, 40.0}}, label: 'Copie de secours'
+                                                              StaticText, 0x103951f60, {{139.0, 333.0}, {112.0, 14.3}}, label: '1 élément'
+                                                              StaticText, 0x103952080, {{139.0, 351.3}, {112.0, 14.3}}
+                                                        Cell, 0x1039521a0, {{262.0, 197.0}, {118.0, 189.7}}, identifier: 'halcya-export-2026-11-26 2.json, json', label: 'halcya-export-2026-11-26 2.json, json, 00:52, 506 ko', Disabled
+                                                          Other, 0x1039522c0, {{262.0, 197.0}, {118.0, 189.7}}
+                                                          Other, 0x1039523e0, {{262.0, 197.0}, {118.0, 189.7}}
+                                                            Other, 0x103952500, {{279.0, 201.0}, {84.0, 84.0}}
+                                                              Image, 0x103952620, {{289.7, 201.0}, {63.0, 84.0}}
+                                                              Other, 0x103952740, {{289.7, 201.0}, {63.0, 84.0}}
+                                                            Other, 0x103952860, {{265.0, 290.0}, {112.0, 75.7}}
+                                                              StaticText, 0x103952980, {{265.0, 290.0}, {112.0, 40.0}}, label: 'halcya-export-2026-11-26 2.json'
+                                                              StaticText, 0x103952aa0, {{265.0, 333.0}, {112.0, 14.3}}, label: '00:52'
+                                                              StaticText, 0x103952bc0, {{265.0, 351.3}, {112.0, 14.3}}, label: '506 ko'
+                                                        Cell, 0x103952ce0, {{10.0, 394.7}, {118.0, 189.7}}, identifier: 'halcya-export-2026-11-26.json, json', label: 'halcya-export-2026-11-26.json, json, 00:51, 506 ko', Disabled
+                                                          Other, 0x103952e00, {{10.0, 394.7}, {118.0, 189.7}}
+                                                          Other, 0x103952f20, {{10.0, 394.7}, {118.0, 189.7}}
+                                                            Other, 0x103953040, {{27.0, 398.7}, {84.0, 84.0}}
+                                                              Image, 0x103953160, {{37.7, 398.7}, {63.0, 84.0}}
+                                                              Other, 0x103953280, {{37.7, 398.7}, {63.0, 84.0}}
+                                                            Other, 0x1039533a0, {{13.0, 487.7}, {112.0, 75.7}}
+                                                              StaticText, 0x1039534c0, {{13.0, 487.7}, {112.0, 40.0}}, label: 'halcya-export-2026-11-26.json'
+                                                              StaticText, 0x1039535e0, {{13.0, 530.7}, {112.0, 14.3}}, label: '00:51'
+                                                              StaticText, 0x103953700, {{13.0, 549.0}, {112.0, 14.3}}, label: '506 ko'
+                                                        Cell, 0x103953820, {{136.0, 394.7}, {118.0, 189.7}}, identifier: 'Halcya-rapport-2026-11-26, pdf', label: 'Halcya-rapport-2026-11-26, pdf, 00:52, 24 ko', Disabled
+                                                          Other, 0x103953940, {{136.0, 394.7}, {118.0, 189.7}}
+                                                          Other, 0x103953a60, {{136.0, 394.7}, {118.0, 189.7}}
+                                                            Other, 0x103953b80, {{153.0, 398.7}, {84.0, 84.0}}
+                                                              Image, 0x103953ca0, {{165.3, 398.7}, {59.7, 84.0}}
+                                                              Other, 0x103953dc0, {{165.3, 398.7}, {59.7, 84.0}}
+                                                            Other, 0x103953ee0, {{139.0, 487.7}, {112.0, 75.7}}
+                                                              StaticText, 0x103954000, {{139.0, 487.7}, {112.0, 40.0}}, label: 'Halcya-rapport-2026-11-26'
+                                                              StaticText, 0x103954120, {{139.0, 530.7}, {112.0, 14.3}}, label: '00:52'
+                                                              StaticText, 0x103954240, {{139.0, 549.0}, {112.0, 14.3}}, label: '24 ko'
+                                                        Other, 0x103954360, {{0.0, 708.0}, {390.0, 38.0}}
+                                                          Other, 0x103954480, {{0.0, 708.0}, {390.0, 38.0}}, identifier: 'DOCItemCollectionViewFooterViewIdentifier'
+                                                            StaticText, 0x1039545a0, {{154.7, 708.0}, {81.0, 18.0}}, label: '5 éléments'
+                                                        Other, 0x1039546c0, {{357.0, 187.0}, {30.0, 559.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                                          Other, 0x1039547e0, {{384.0, 293.7}, {3.0, 449.3}}
+                                                        Other, 0x103954900, {{357.0, 187.0}, {30.0, 559.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                                          Other, 0x103954a20, {{384.0, 293.7}, {3.0, 449.3}}
+                                                      Other, 0x103954b40, {{357.0, 187.0}, {30.0, 559.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                                        Other, 0x103954c60, {{384.0, 736.0}, {3.0, 7.0}}
+                                                      Other, 0x103954d80, {{41.3, 713.0}, {307.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                                        Other, 0x103954ea0, {{380.0, 740.0}, {7.0, 3.0}}
+                                                      Other, 0x103954fc0, {{357.0, 187.0}, {30.0, 559.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                                                        Other, 0x1039550e0, {{384.0, 736.0}, {3.0, 7.0}}
+                                                      Other, 0x103955200, {{41.3, 713.0}, {307.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                                        Other, 0x103955320, {{380.0, 740.0}, {7.0, 3.0}}
+                                            Other, 0x103955440, {{0.0, 57.0}, {390.0, 787.0}}
+                                              Other, 0x103955560, {{0.0, 57.0}, {390.0, 787.0}}
+                                          Other, 0x103955680, {{0.0, 746.0}, {390.0, 98.0}}
+                                            Other, 0x1039557a0, {{0.0, 746.0}, {390.0, 98.0}}
+                                            Other, 0x1039558c0, {{28.0, 746.0}, {334.0, 70.0}}
+                                              Other, 0x1039559e0, {{28.0, 746.0}, {334.0, 70.0}}
+                                                Other, 0x103955b00, {{28.0, 746.0}, {334.0, 70.0}}
+                                                  Other, 0x103955c20, {{28.0, 746.0}, {334.0, 70.0}}
+                                                    Other, 0x103955d40, {{28.0, 746.0}, {334.0, 70.0}}
+                                                      Other, 0x103955e60, {{28.0, 746.0}, {334.0, 70.0}}
+                                                        Other, 0x103955f80, {{28.0, 746.0}, {334.0, 70.0}}
+                                                    Other, 0x1039560a0, {{28.0, 746.0}, {334.0, 70.0}}
+                                                      Other, 0x1039561c0, {{28.0, 746.0}, {334.0, 70.0}}
+                                              Other, 0x1039562e0, {{48.0, 756.0}, {294.0, 50.0}}
+                                                Other, 0x103956400, {{48.0, 756.0}, {35.7, 50.0}}
+                                                  Image, 0x103956520, {{48.0, 756.0}, {35.7, 50.0}}
+                                                Other, 0x103956640, {{95.7, 761.7}, {200.0, 38.7}}
+                                                  StaticText, 0x103956760, {{95.7, 761.7}, {98.7, 15.7}}, label: 'Enregistrer sous'
+                                                  TextField, 0x103956880, {{95.7, 778.3}, {200.0, 22.0}}, identifier: 'DOCPicker.filenameTextField', value: Halcya-rapport-202...
+                                                Button, 0x1039569a0, {{307.7, 764.0}, {34.3, 34.3}}, label: 'circlebadge.2'
+                                    Other, 0x103956ac0, {{0.0, 57.0}, {390.0, 787.0}}
+                                      Other, 0x103956be0, {{0.0, 57.0}, {390.0, 787.0}}
+                    Other, 0x103956d00, {{0.0, 0.0}, {0.0, 0.0}}
+    Window, 0x103956e20, {{0.0, 0.0}, {390.0, 844.0}}
+      Other, 0x103956f40, {{0.0, 0.0}, {390.0, 844.0}}
+        Other, 0x103957060, {{0.0, 0.0}, {390.0, 844.0}}
+Path to element:
+ →Application, 0x103c31f80, pid: 9117, label: 'Halcya'
+Query chain:
+ →Find: Application 'fr.jpesquet.sante'
+  Output: {
+    Application, 0x10392add0, pid: 9117, label: 'Halcya'
+  }
+
+    t =    15.98s Tap "Enregistrer" Button
+    t =    15.98s     Wait for fr.jpesquet.sante to idle
+    t =    15.98s     Find the "Enregistrer" Button
+    t =    16.09s     Check for interrupting elements affecting "Enregistrer" Button
+    t =    16.18s     Synthesize event
+    t =    16.49s     Wait for fr.jpesquet.sante to idle
+    t =    16.50s Waiting 5.0s for Any (First Match) to exist
+    t =    17.54s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    17.54s         Checking existence of `Any (First Match)`
+    t =    17.65s Tap Any (First Match)
+    t =    17.65s     Wait for fr.jpesquet.sante to idle
+    t =    17.65s     Find the Any (First Match)
+    t =    17.74s     Check for interrupting elements affecting "Garder les deux" Button
+    t =    17.83s     Synthesize event
+    t =    18.14s     Wait for fr.jpesquet.sante to idle
+    t =    19.17s Checking `Expect predicate `exists == 0` for object "Enregistrer" Button`
+    t =    19.17s     Checking existence of `"Enregistrer" Button`
+    t =    19.25s Tear Down
+Test Case '-[HalcyaUITests.DonneesUITests testEnregistrerLeRapportDansFichiers]' passed (19.341 seconds).
+Test Suite 'DonneesUITests' passed at 2026-11-26 00:52:48.032.
+	 Executed 1 test, with 0 failures (0 unexpected) in 19.341 (19.343) seconds
+Test Suite 'HalcyaUITests.xctest' passed at 2026-11-26 00:52:48.032.
+	 Executed 1 test, with 0 failures (0 unexpected) in 19.341 (19.344) seconds
+Test Suite 'Selected tests' passed at 2026-11-26 00:52:48.033.
+	 Executed 1 test, with 0 failures (0 unexpected) in 19.341 (19.345) seconds
+2026-11-26 00:52:48.484 xcodebuild[51898:138027] [MT] IDETestOperationsObserverDebug: 22.310 elapsed -- Testing started completed.
+2026-11-26 00:52:48.484 xcodebuild[51898:138027] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-26 00:52:48.484 xcodebuild[51898:138027] [MT] IDETestOperationsObserverDebug: 22.310 sec, +22.310 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/HalcyaUITests-atmmjbvxuxtqipdmekmzfdemloal/Logs/Test/Test-HalcyaUITests-2026.11.26_00-52-25-+0000.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
