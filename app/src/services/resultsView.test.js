@@ -27,7 +27,7 @@ describe('Analyses sur le contrat (ORG-4, ORG-6)', () => {
     expect(v.weigh.map((x) => x.id)).toEqual(['short', 'medium'])
     expect(v.weigh[0].factors.map((x) => x.key)).toEqual(['sleep', 'steps', 'screen'])
     expect(v.lookOnly.map((x) => x.key)).toEqual(['hrv'])
-    expect(v.nextLock).toEqual({ label: 'long', window: '', daysLeft: 12 })
+    expect(v.nextLock).toEqual({ label: 'long', window: '', daysLeft: 12, have: 30, need: 42 })
   })
 
   it('POLISH-SIM-62 : ce qui a été comparé (facteurs distincts, délai le plus long prêt)', () => {

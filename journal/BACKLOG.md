@@ -976,7 +976,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       l'étape 4 relue (clair, sombre).
     - À étudier : calories reçues sans courbe (à joindre à la proposition « go courbes ») ; « Rien à éviter » au-dessus
       de « Fructanes −1,2 pt », 3e fois chez « sans technique » (proposition avec maquette, avec le reste de
-      POLISH-SIM-173) ; « vous notez vous-même » à vérifier sur l'émulateur ; jours déjà comptés du long terme.
+      POLISH-SIM-173) ; « vous notez vous-même » à vérifier sur l'émulateur ; ~~jours déjà comptés du long terme~~
+      (POLISH-SIM-177).
+    - [x] **POLISH-SIM-177 — « encore 11 jours » après 45 jours notés** — FAIT 26/11 23:30 : la ligne du prochain horizon
+      d'Objectifs dit aussi les jours déjà comptés : « Long terme (de 7 à 27 jours avant) : 45 jours sur 56 avec votre
+      digestion notée, encore 11. » (`resultsView.js`, `nextLock.have` / `need` ; `Recommendations.jsx`). Tests
+      `resultsView.test.js` et `Recommendations.test.jsx` d'abord ; capture `--history-days=25` (bien-être, « 25 jours
+      sur 35 … encore 10 ») relue.
     - [x] **POLISH-SIM-176 — Essai sans mesure : seule la veille se demandait** — FAIT 26/11 22:30 : quand la mesure
       ou la réponse manque, « c’était tenu ? » se demande pour hier, puis avant-hier, puis le jour d'avant (nommé :
       « Lundi, … »), une question à la fois (`trials.js`, `ASK_BACK_DAYS` = 3, `missingOld` « pour cette nuit-là » /
