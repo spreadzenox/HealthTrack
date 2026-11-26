@@ -976,8 +976,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       l'étape 4 relue (clair, sombre).
     - À étudier : calories reçues sans courbe (à joindre à la proposition « go courbes ») ; « Rien à éviter » au-dessus
       de « Fructanes −1,2 pt », 3e fois chez « sans technique » (proposition avec maquette, avec le reste de
-      POLISH-SIM-173) ; « vous notez vous-même » à vérifier sur l'émulateur ; ~~jours déjà comptés du long terme~~
-      (POLISH-SIM-177).
+      POLISH-SIM-173) ; ~~« vous notez vous-même » à vérifier sur l'émulateur~~ (écarté le 27/11 00:30, voir dessous) ;
+      ~~jours déjà comptés du long terme~~ (POLISH-SIM-177).
     - [x] **POLISH-SIM-177 — « encore 11 jours » après 45 jours notés** — FAIT 26/11 23:30 : la ligne du prochain horizon
       d'Objectifs dit aussi les jours déjà comptés : « Long terme (de 7 à 27 jours avant) : 45 jours sur 56 avec votre
       digestion notée, encore 11. » (`resultsView.js`, `nextLock.have` / `need` ; `Recommendations.jsx`). Tests
@@ -989,6 +989,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       « de ce jour-là ») ; au-delà, le jour reste inconnu. Le résultat de l'essai ne dépend pas de ces réponses (il suit
       le calendrier tiré au sort, POLISH-ESSAI-SANS) : elles allument les lanternes et le compte « Consigne tenue ».
       Tests `trials.test.js` et `Trial.test.jsx` d'abord.
+    - Écarté le 27/11 00:30 : « Pour l’instant, vous notez vous-même » au temps 3 sur un vrai téléphone. Les pas du
+      téléphone ne deviennent une tuile qu'avec l'accès Health Connect ou Santé donné au temps 2 (`autoTiles`,
+      `health === 'granted'`, POLISH-SIM-124) ; sans cet accès, rien n'est lu et l'écran dit « Activables dans Réglages ›
+      Sources : pas (votre téléphone), météo » : la phrase est juste sur l'émulateur comme dans l'outil. Les deux cas sont
+      déjà testés (`Onboarding.test.jsx` « sans montre ni météo », `Onboarding.sources.test.jsx` « accès donné sans
+      montre »). Aucun lancement d'émulateur nécessaire.
     - Écarté le 26/11 22:30 : « Jour 1 sur 7 » (Accueil) et « 0 sur 7 jours notés » (Objectifs) comptent déjà la même
       chose (`firstWeek.js` : jour en cours = jours notés + 1 tant qu'aujourd'hui n'est pas noté) ; après la note du
       jour, les deux disent 1 sur 7.
