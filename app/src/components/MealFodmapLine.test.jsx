@@ -16,24 +16,34 @@ describe('MealFodmapLine — FODMAP par sous-groupe sur la carte d’un repas (N
     render(<MealFodmapLine items={[{ ingredient: 'Ail, cru', quantity_g: 3 }]} />)
     expect(screen.getByText('Probablement riche en fructanes')).toBeTruthy()
   })
-  it('le chevron montre les grammes, le repère de départ et l’origine des teneurs', () => {
+  it('le chevron dit en mots simples si c’est un peu ou bien plus que ce qui gêne certaines personnes (25/11)', () => {
     render(<MealFodmapLine items={[{ ingredient: 'Pomme', quantity_g: 150 }]} />)
     fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
-    expect(screen.getByText(/Environ 0,75 g, pour un repère de 0,4 g par repas/)).toBeTruthy()
-    expect(screen.getByText(/hypothèse de départ : vos propres données priment/)).toBeTruthy()
+    expect(screen.getByText('Un peu plus que ce qui gêne certaines personnes.')).toBeTruthy()
+    expect(screen.getByTestId('meal-fodmap-note').textContent).toMatch(/vos repas et votre confort digestif diront ce qu’il en est pour vous\.$/)
+    // Les grammes restent, en petit, avec les sources (pour qui veut creuser).
+    expect(screen.getByTestId('meal-fodmap-sources').textContent).toMatch(/Sorbitol : environ 0,75 g, repère 0,4 g\. /)
+  })
+  it('bien plus que le repère (3 fois ou plus) : « Bien plus », sans gramme dans la phrase (25/11)', () => {
+    render(<MealFodmapLine items={[{ ingredient: 'Oignon, cru', quantity_g: 70 }]} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
+    expect(screen.getByText('Bien plus que ce qui gêne certaines personnes.')).toBeTruthy()
+    const list = screen.getByTestId('meal-fodmap').querySelector('.meal-fodmap-list').textContent
+    expect(list).not.toMatch(/\d|repère|mesures publiées/)
   })
   it('mesures publiées divergentes : une fourchette et les deux sources (N3d)', () => {
     render(<MealFodmapLine items={[{ ingredient: 'Oignon, cru', quantity_g: 70 }]} />)
     expect(screen.getByText('Riche en fructanes')).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
-    expect(screen.getByText(/1,4 à 4,4 g selon les mesures publiées, pour un repère de 0,3 g par repas/)).toBeTruthy()
+    expect(screen.getByTestId('meal-fodmap-sources').textContent).toMatch(/^Fructanes : 1,4 à 4,4 g selon les mesures, repère 0,3 g\. /)
     expect(screen.getByText(/Teneurs : Ferjančič 2024, Liljebo 2020\./)).toBeTruthy()
   })
   it('80 g de baguette : plus jamais dits pauvres, « probablement riche en fructanes » (N3d)', () => {
     render(<MealFodmapLine items={[{ ingredient: 'Pain blanc (par ex. : baguette, boule…)', quantity_g: 80 }]} />)
     expect(screen.getByText('Probablement riche en fructanes')).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
-    expect(screen.getByText(/0,11 à 0,82 g selon les mesures publiées/)).toBeTruthy()
+    expect(screen.getByText('Peut-être plus que ce qui gêne certaines personnes : les mesures varient.')).toBeTruthy()
+    expect(screen.getByTestId('meal-fodmap-sources').textContent).toMatch(/0,11 à 0,82 g selon les mesures/)
   })
   it('lentilles cuites : « probablement riche en GOS », source citée avec le calcul depuis le sec', () => {
     render(<MealFodmapLine items={[{ ingredient: 'Lentilles cuites', quantity_g: 150 }]} />)
@@ -46,10 +56,10 @@ describe('MealFodmapLine — FODMAP par sous-groupe sur la carte d’un repas (N
     fireEvent.click(screen.getByRole('button', { name: 'Afficher les détails' }))
     const note = screen.getByTestId('meal-fodmap-note').textContent
     expect(note).toBe('Certaines personnes digèrent mal les fructanes (blé, oignon, ail) ou les GOS (pois chiches, lentilles), '
-      + 'd’autres très bien. Le repère est une hypothèse de départ : vos propres données priment.')
+      + 'd’autres très bien : vos repas et votre confort digestif diront ce qu’il en est pour vous.')
     expect(note).not.toMatch(/Varney|Ferjančič|\d{4}/)
     const sources = screen.getByTestId('meal-fodmap-sources').textContent
-    expect(sources).toMatch(/^Repères : Varney 2017\. Teneurs : .*Ferjančič 2024.*\.$/)
+    expect(sources).toMatch(/Repères de départ : Varney 2017\. Teneurs : .*Ferjančič 2024.*\.$/)
     expect(screen.getByTestId('meal-fodmap').textContent).not.toMatch(/≈|·/)
   })
   it('plusieurs groupes : une phrase simple, les groupes derrière « Détails » (UPG-9)', () => {
