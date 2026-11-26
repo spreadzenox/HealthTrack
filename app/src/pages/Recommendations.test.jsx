@@ -74,7 +74,10 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(rows.map((li) => li.querySelector('.reco-family-label').textContent)).toEqual(['Sommeil', 'Activité', 'Alimentation'])
     // 7d-4 : une famille qui s'ouvre finit par l'icône chevron, plus par un « › » texte
     expect(rows[0].querySelector('.reco-family-label svg.reco-family-chevron')).not.toBeNull()
-    expect(rows[2].querySelector('.reco-family-chevron')).toBeNull()
+    // POLISH-SIM-170 : sans données, la carte dit quoi faire et mène où le faire
+    expect(rows[2].querySelector('a')).toHaveAttribute('href', '/food')
+    expect(rows[2].querySelector('.reco-family-action')).toHaveTextContent('Notez vos repas au moins un jour sur deux.')
+    expect(rows[0].querySelector('.reco-family-action')).toBeNull()
     expect(rows[0]).toHaveTextContent('Lien moyen')
     expect(rows[0].querySelectorAll('.reco-family-dot.is-on')).toHaveLength(2)
     expect(rows[1]).toHaveTextContent('Pas')
@@ -98,12 +101,12 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     </MemoryRouter>,
   )
 
-  it('REFONTE-6c : une famille qui a des facteurs comparés ouvre son détail ; sans donnée, pas de lien', async () => {
+  it('REFONTE-6c : une famille qui a des facteurs comparés ouvre son détail ; sans donnée, son action (POLISH-SIM-170)', async () => {
     renderAt('/recommendations/bien-etre', readyResults)
     const block = await screen.findByRole('region', { name: 'Par famille' })
     expect(within(block).getByRole('link', { name: /Sommeil/ })).toHaveAttribute('href', '/recommendations/bien-etre/famille/sleep')
     expect(within(block).getByRole('link', { name: /Activité/ })).toHaveAttribute('href', '/recommendations/bien-etre/famille/activity')
-    expect(within(block).queryByRole('link', { name: /Alimentation/ })).toBeNull()
+    expect(within(block).getByRole('link', { name: /Alimentation/ })).toHaveAttribute('href', '/food')
   })
 
   it('REFONTE-6c : le détail d’une famille : son lien net à tester, puis ses seuls facteurs, délai par délai', async () => {

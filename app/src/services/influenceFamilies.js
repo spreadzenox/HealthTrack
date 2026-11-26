@@ -17,6 +17,17 @@ export const LEVEL_WORDS = { 3: 'Lien fort', 2: 'Lien moyen', 1: 'Lien faible' }
 const NONE_WORD = 'Pas assez net pour l’instant'
 const NODATA_WORD = 'Pas assez de données'
 
+/**
+ * POLISH-SIM-170 (« Stressé et pressé », J45 : « Pas assez de données. OK, mais je fais quoi ? ») : une famille toujours
+ * montrée qui n'a aucun facteur comparé dit ce qui manque et mène où le donner. « Un jour sur deux » :
+ * FACTOR_MIN_COVERAGE de services/analysisResults.js.
+ */
+export const NODATA_ACTIONS = {
+  sleep: { text: 'Il faut vos nuits au moins un jour sur deux.', to: '/connectors' },
+  nutrition: { text: 'Notez vos repas au moins un jour sur deux.', to: '/food' },
+  activity: { text: 'Il faut vos pas au moins un jour sur deux.', to: '/connectors' },
+}
+
 export const FAMILIES = [
   { id: 'sleep', label: 'Sommeil', tone: 'night', always: true },
   { id: 'nutrition', label: 'Alimentation', tone: 'peach', always: true },
@@ -38,7 +49,7 @@ const levelOf = (effect) => (Math.abs(effect) >= STRONG_FROM ? 3 : Math.abs(effe
 
 /**
  * @param {object | null} outcome  OutcomeResult du contrat
- * @returns {{ id: string, label: string, tone: string, state: 'net'|'none'|'nodata', level: 0|1|2|3, word: string, lead: string|null }[]}
+ * @returns {{ id: string, label: string, tone: string, state: 'net'|'none'|'nodata', level: 0|1|2|3, word: string, lead: string|null, action: { text: string, to: string }|null }[]}
  */
 export function influenceFamilies(outcome) {
   if (!outcome || outcome.status === 'locked') return []
@@ -47,8 +58,9 @@ export function influenceFamilies(outcome) {
     const mine = factors.filter((f) => familyOf(f) === fam.id)
     const best = mine.filter((f) => f.net && !f.outOfScale).sort((a, b) => Math.abs(b.effect) - Math.abs(a.effect))[0]
     const base = { id: fam.id, label: fam.label, tone: fam.tone }
-    if (best) return { ...base, state: 'net', level: levelOf(best.effect), word: LEVEL_WORDS[levelOf(best.effect)], lead: best.label, strength: Math.abs(best.effect), always: fam.always }
-    return { ...base, state: mine.length ? 'none' : 'nodata', level: 0, word: mine.length ? NONE_WORD : NODATA_WORD, lead: null, strength: 0, always: fam.always }
+    if (best) return { ...base, state: 'net', level: levelOf(best.effect), word: LEVEL_WORDS[levelOf(best.effect)], lead: best.label, action: null, strength: Math.abs(best.effect), always: fam.always }
+    const action = mine.length ? null : (NODATA_ACTIONS[fam.id] ?? null)
+    return { ...base, state: mine.length ? 'none' : 'nodata', level: 0, word: mine.length ? NONE_WORD : NODATA_WORD, lead: null, action, strength: 0, always: fam.always }
   }).filter((r) => r.always || r.state === 'net')
   // Tri stable : la famille au lien le plus fort d'abord ; sans lien net, l'ordre de FAMILIES
   return rows.sort((a, b) => b.strength - a.strength).map(({ strength, always, ...r }) => r) // eslint-disable-line no-unused-vars

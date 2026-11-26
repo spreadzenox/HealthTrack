@@ -870,8 +870,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - Écartés, avec la raison, dans la synthèse : note « Douleur » estimée 2,4 (POLISH-NOTE-LOSANGE) ; essai sommeil
       gardé par la mise à jour (voulu) ; « Où en sont vos analyses » → « Objectifs » (nom du propriétaire) ; version 0.0.0.
     - À étudier : carte Confort digestif sous l'île de l'Accueil pour qui a l'objectif digestion (à vérifier en code) ;
-      détail FODMAP d'un repas déplié trop technique ; familles « Pas assez de données » sans action ; ordre de
-      grandeur des exemples du 28e jour (« Fructanes −3,5 pt »).
+      détail FODMAP d'un repas déplié trop technique ; ~~familles « Pas assez de données » sans action~~
+      (POLISH-SIM-170) ; ordre de grandeur des exemples du 28e jour (« Fructanes −3,5 pt »).
+    - [x] **POLISH-SIM-170 — Objectifs : « Pas assez de données » sans dire quoi faire** (J45, capture
+      `bien-etre-familles.png`) FAIT le 26/11 à 15:30 : `NODATA_ACTIONS` de `influenceFamilies.js` (nuits, repas, pas,
+      « au moins un jour sur deux » = `FACTOR_MIN_COVERAGE`) ; la carte mène à Sources ou à `/food`. Tests d'abord
+      (`influenceFamilies`, `Recommendations`) ; captures de l'outil des personas en clair et en sombre.
     - [x] **POLISH-SIM-163 — L'export CSV ne dit pas ce qu'il contient** (FAIT le 25/11 à 03:30, #1252 mergée à 04:30 ; « Tout mesurer » J14 :
       « sans savoir si cœur et oxygène sont dedans ») : après « Télécharger en CSV », la carte dit « 1 851 lignes, du
       10/09/2026 au 24/11/2026 : Cœur 198 · Température 198 · … » (`csvContents` de `services/csvExport.js`, même

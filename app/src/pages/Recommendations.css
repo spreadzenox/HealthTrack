@@ -921,6 +921,13 @@
   font-size: 0.85rem;
 }
 
+/* POLISH-SIM-170 : sous « Pas assez de données », ce qui manque et où le donner (la carte mène là) */
+.reco-family-action {
+  grid-column: 1 / -1;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
 .reco-family-dots {
   display: inline-flex;
   gap: 4px;
