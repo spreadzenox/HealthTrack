@@ -40,7 +40,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v921** (#1267, 25/11 18:31 UTC, APK 35,7 Mo) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1313.1313** (build du 24/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 25/11 04:31 UTC, anciennes builds expirées ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
+| Dernière version | release **v927** (#1275, 26/11 03:35 UTC, APK 35,7 Mo) ; test interne à chaque merge ; Alpha : la version du soir part à 23:45 (le cron de GitHub part 2 à 4 h en retard) | **1335.1335** (build du 25/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 26/11 03:33 UTC et validée, 1313.1313 expirée ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; plus aucun correctif propre à l'iPhone ; `overlay/` ne garde que les notes de Nouveautés de l'iPhone (FUSION-3 : reste `ios/` → `app/ios/`) |
 
@@ -64,6 +64,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 26/11 04:30 — [#1275 mergée, TestFlight 1335](runs/2026-11-26-0430-merge-1275.md) | 📓 | **#1275 mergée** : « Bien-être aujourd'hui » ne bouge plus sans nouvelle lecture ni note (captures Accueil relues sur Android et iPhone). TestFlight **1335.1335** (build de cette nuit) ajoutée à « Testeurs Halcya », validée par Apple, 1313 expirée. Release Android v927. Aucun build de Mac lancé. Rien à faire de votre côté |
 | 26/11 03:30 — [Bien-être stable, sans relire l'historique](runs/2026-11-26-0330-bien-etre-sans-cache.md) | 🔧 | La correction du run de 02:30 faisait relire toutes les notes de bien-être à chaque ouverture de l'Accueil (contrôle de vitesse rouge). Refaite : l'Accueil calcule toujours son chiffre de la même façon, il ne bouge plus sans nouvelle lecture ni note. Merge au run suivant après le build iPhone. Rien à faire de votre côté |
 | 26/11 02:30 — [Un seul chiffre de bien-être](runs/2026-11-26-0230-bien-etre-stable.md) | 🔧 | #1274 (notes de digestion gardées) mergée après le build iPhone vert. POLISH-SIM-80 : le chiffre « Bien-être aujourd'hui » de l'Accueil pouvait passer de 3 à 2,9 puis à 3 sans saisie, selon qu'un autre écran avait déjà fait le calcul complet ; 1re version refaite au run suivant (trop de lectures à l'ouverture). Rien à faire de votre côté |
 | 26/11 01:30 — [Notes de digestion gardées](runs/2026-11-26-0130-notes-digestion-gardees.md) | 🔧 | POLISH-SIM-76 et 93 : sans l'objectif « Confort digestif », Objectifs dit « Vos notes de digestion (N jours) sont gardées » et où rallumer l'objectif ; le chemin indiqué par la page Confort digestif nommait un réglage disparu (« Ce qui vous amène » → « Vos objectifs »). Trois vieux défauts du Journal et de l'objectif sport soldés sans objet. Mergée à 02:30 (#1274). Rien à faire de votre côté |
