@@ -22,7 +22,8 @@ validée (inchangé ; build du soir à 21:20) · **Parité** : 70 % (33/47), inc
 - PR ouverte en brouillon puis passée prête : un seul build iPhone (fichiers de `app/public/`).
 
 ## Suite proposée
-1. Merger cette PR au run suivant, une fois le build iPhone et les checks verts.
+1. Fait dans ce run : **#1285 mergée** à 12:12 (16 checks verts, dont le build iPhone de 26 min) ; Build & Release
+   vert, release **v931** (APK 35,7 Mo). Partira ce soir sur TestFlight et sur Alpha.
 2. FUSION-4 : préparer la mission d'archivage de l'ancien dépôt quand ses builds TestFlight sont expirées.
 3. Ce soir : build iPhone et TestFlight (21:20), Alpha à 23:45 ; soumission bêta au premier run qui voit la build traitée.
 
