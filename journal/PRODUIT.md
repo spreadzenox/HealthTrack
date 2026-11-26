@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **26/11 16:30** — **POLISH-SIM-171** : l'Accueil montre la carte Confort digestif d'Objectifs (score des 7 derniers jours, tendance, ou jours restants) sous le bien-être du jour, seulement avec l'objectif digestion (brief § 4 : « les cartes des objectifs » sous l'île). Tests d'abord (`HomeGutObjective`, `Dashboard`), captures claire et sombre.
 - **26/11 15:30** — **POLISH-SIM-170** : Objectifs › Votre bien-être, une famille « Pas assez de données » (Sommeil, Alimentation, Activité) dit ce qui manque (au moins un jour sur deux, `FACTOR_MIN_COVERAGE`) et mène à Sources ou aux repas. Tests d'abord, captures de l'outil des personas (J45, notes rares) en clair et en sombre.
 - **26/11 14:30** — **CI-UBUNTU-26** : le job « Budget de lectures (perf) » passe à Playwright 1.65.1 (Ubuntu 26.04 prise en charge depuis la 1.61) et revient sur `ubuntu-latest` ; épinglage sur 24.04 retiré. Seul `tests.yml` change, aucun build de Mac.
 - **26/11 13:30** — **FUSION-5** : charte de `iphone/journal/README.md` remise au dépôt unique (§ 2 et § 6 renvoient à la charte de `journal/README.md`, règle des Nouveautés à jour), et la charte principale dit où regarder les captures de l'iPhone. Journal seulement, aucun build de Mac. Reste de la fusion : FUSION-3 (`ios/` → `app/ios/`) et l'archivage de l'ancien dépôt (FUSION-4).

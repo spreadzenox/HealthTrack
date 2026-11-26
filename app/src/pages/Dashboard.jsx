@@ -14,6 +14,7 @@ import { buildDailyJournal } from '../services/dailyJournal'
 import { localDateKey } from '../services/analysisEngine'
 import { GutCard } from '../components/TodayCards'
 import DigestBlock from '../components/DigestBlock'
+import HomeGutObjective from '../components/HomeGutObjective'
 import DayChecklist from '../components/DayChecklist'
 import YesterdayHabits from '../components/YesterdayHabits'
 import StoolPhotoLine from '../components/StoolPhotoLine'
@@ -249,6 +250,8 @@ export default function Dashboard({ view = 'home' }) {
           unlockReminder={unlockReminder}
           onDismissReminder={closeUnlockReminder} />
       )}
+      {/* Brief § 4 : sous l'île, les cartes des objectifs ; le confort digestif suit le bien-être du jour (constat du 25/11) */}
+      {home && !loading && !error && gutMode === 'show' && <HomeGutObjective />}
       {/* UPG-1 : un jour « avec » de l'essai, sa consigne remonte sous le bien-être du jour. */}
       {home && !loading && trial?.withToday && actLink}
       {/* AUJ-3 : vos données du jour, un bloc, l'écart à votre norme sur chaque mesure. */}

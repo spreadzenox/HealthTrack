@@ -869,9 +869,15 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       pour l'instant ») ou la carte se retire (brief § 4 : « Agir : 3 pistes à tester »). Test `Dashboard` d'abord.
     - Écartés, avec la raison, dans la synthèse : note « Douleur » estimée 2,4 (POLISH-NOTE-LOSANGE) ; essai sommeil
       gardé par la mise à jour (voulu) ; « Où en sont vos analyses » → « Objectifs » (nom du propriétaire) ; version 0.0.0.
-    - À étudier : carte Confort digestif sous l'île de l'Accueil pour qui a l'objectif digestion (à vérifier en code) ;
+    - À étudier : ~~carte Confort digestif sous l'île de l'Accueil pour qui a l'objectif digestion~~ (POLISH-SIM-171) ;
       détail FODMAP d'un repas déplié trop technique ; ~~familles « Pas assez de données » sans action~~
       (POLISH-SIM-170) ; ordre de grandeur des exemples du 28e jour (« Fructanes −3,5 pt »).
+    - [x] **POLISH-SIM-171 — Accueil : pas de carte Confort digestif sous l'île** (« Ventre, sans technique », capture
+      `accueil-sans-ventre.png` ; vérifié en code : seul `DigestBlock`, dans Ma journée) FAIT le 26/11 à 16:30 :
+      `components/HomeGutObjective.jsx` reprend `ObjectiveCard` d'Objectifs (exportée) pour la digestion, sous
+      `DayStatusCard`, avec `gutCardMode() === 'show'` seulement (brief § 4) ; elle lit le dernier `dayStates` gardé,
+      sans calcul (budget de lectures de l'Accueil). Tests d'abord (`HomeGutObjective`,
+      `Dashboard`) ; captures claire et sombre.
     - [x] **POLISH-SIM-170 — Objectifs : « Pas assez de données » sans dire quoi faire** (J45, capture
       `bien-etre-familles.png`) FAIT le 26/11 à 15:30 : `NODATA_ACTIONS` de `influenceFamilies.js` (nuits, repas, pas,
       « au moins un jour sur deux » = `FACTOR_MIN_COVERAGE`) ; la carte mène à Sources ou à `/food`. Tests d'abord

@@ -32,6 +32,11 @@ vi.mock('../components/DigestBlock', () => ({
   default: ({ onNote }) => <section data-testid="digest-block"><button type="button" onClick={onNote}>Noter ma digestion</button></section>,
 }))
 
+// Carte Confort digestif de l'Accueil : testée dans HomeGutObjective.test.jsx (elle lit l'analyse des jours)
+vi.mock('../components/HomeGutObjective', () => ({
+  default: () => <ul data-testid="home-gut-objective" />,
+}))
+
 vi.mock('../components/WellbeingCharts', () => ({
   default: () => <div data-testid="wellbeing-charts" />,
 }))
@@ -301,6 +306,23 @@ describe('Dashboard', () => {
     expect(screen.queryByTestId('digest-block')).toBeNull()
     expect(screen.queryByTestId('gut-card')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Digestion' })).toBeNull()
+    localStorage.removeItem('healthtrack_onboarding')
+  })
+
+  it('Accueil : la carte Confort digestif sous le bien-être, seulement avec l’objectif digestion (brief § 4)', async () => {
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['wellbeing', 'gut'], goalsVersion: 2 }))
+    const { unmount } = renderDashboard()
+    expect(await screen.findByTestId('home-gut-objective')).toBeInTheDocument()
+    unmount()
+    // Ma journée garde son bloc digestif ; la carte du score n'y est pas
+    const day = renderDashboard('day')
+    await loaded()
+    expect(screen.queryByTestId('home-gut-objective')).toBeNull()
+    day.unmount()
+    localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['wellbeing'], goalsVersion: 2 }))
+    renderDashboard()
+    await loaded()
+    expect(screen.queryByTestId('home-gut-objective')).toBeNull()
     localStorage.removeItem('healthtrack_onboarding')
   })
 
