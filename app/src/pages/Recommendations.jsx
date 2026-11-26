@@ -246,11 +246,13 @@ function Families({ outcome, families, base }) {
       <ul className="reco-families">
         {families.map((fam) => {
           // REFONTE-6c : une famille qui a des facteurs comparés ouvre son détail ; la carte entière est le lien
+          // POLISH-SIM-170 : sans facteur comparé, elle mène là où donner ce qui manque
           const open = fam.state !== 'nodata'
+          const to = open ? `${base}/famille/${fam.id}` : fam.action?.to
           const body = (
             <>
               <span className="reco-family-name">
-                <span className="reco-family-label">{fam.label}{open && <LineIcon name="chevron" size={16} className="reco-family-chevron" />}</span>
+                <span className="reco-family-label">{fam.label}{to && <LineIcon name="chevron" size={16} className="reco-family-chevron" />}</span>
                 {fam.lead && fam.lead !== fam.label && <span className="reco-family-lead">{fam.lead}</span>}
               </span>
               {fam.level > 0 && (
@@ -259,11 +261,12 @@ function Families({ outcome, families, base }) {
                 </span>
               )}
               <span className="reco-family-word">{fam.word}</span>
+              {fam.action && <span className="reco-family-action">{fam.action.text}</span>}
             </>
           )
           return (
-            <li key={fam.id} className={`today-card reco-family${fam.level ? '' : ' is-quiet'}${open ? ' is-link' : ''}`} data-tone={fam.tone} data-testid={`reco-family-${fam.id}`}>
-              {open ? <Link to={`${base}/famille/${fam.id}`} className="reco-family-link">{body}</Link> : body}
+            <li key={fam.id} className={`today-card reco-family${fam.level ? '' : ' is-quiet'}${to ? ' is-link' : ''}`} data-tone={fam.tone} data-testid={`reco-family-${fam.id}`}>
+              {to ? <Link to={to} className="reco-family-link">{body}</Link> : body}
             </li>
           )
         })}

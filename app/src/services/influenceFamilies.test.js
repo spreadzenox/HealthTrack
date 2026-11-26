@@ -48,6 +48,18 @@ describe('familles de ce qui va avec un objectif (refonte « Compagnon », étap
     // au-dessus de chiffres comme GOS −1,1 pt
     expect(rows[0].word).toBe('Pas assez net pour l’instant')
     expect(rows[2].word).toBe('Pas assez de données')
+    // POLISH-SIM-170 : une famille sans données dit ce qui manque et où le donner ; les autres n'ont pas d'action
+    expect(rows[2].action).toEqual({ text: 'Il faut vos pas au moins un jour sur deux.', to: '/connectors' })
+    expect(rows[0].action).toBeNull()
+  })
+
+  it('POLISH-SIM-170 : chaque famille toujours montrée a son action quand elle manque de données', () => {
+    const rows = influenceFamilies(outcome([f('hrv_ms', 'Variabilité cardiaque', 0.8, { theme: 'body', actionable: false })]))
+    expect(Object.fromEntries(rows.map((r) => [r.id, r.action]))).toEqual({
+      sleep: { text: 'Il faut vos nuits au moins un jour sur deux.', to: '/connectors' },
+      nutrition: { text: 'Notez vos repas au moins un jour sur deux.', to: '/food' },
+      activity: { text: 'Il faut vos pas au moins un jour sur deux.', to: '/connectors' },
+    })
   })
 
   it('habitudes et écrans : seulement avec un lien net', () => {
