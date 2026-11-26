@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import table from '../../src/data/ingredientsNutrition.json'
 import { buildIndex, fakeMealFromDescription, DEFAULT_MEAL } from './fakeMeal.mjs'
+import measurements from '../../src/data/fodmapMeasurements.json'
+import { estimateMealFodmap, highFodmapGroups } from '../../src/services/fodmapGroups.js'
 
 const index = buildIndex(Object.keys(table))
 
@@ -53,5 +55,16 @@ describe('fakeMealFromDescription (PERSONAS-OUTIL-2)', () => {
   it('le nom du plat est court, pas la description entière', () => {
     const meal = fakeMealFromDescription('200 g de saumon, riz et haricots verts avec une sauce au citron', index)
     expect(meal.dish).toBe('Saumon')
+  })
+
+  // PERSONAS-OUTIL-4 (personas du 26/11 08:30) : « pain » donnait « Pain pita », sans mesure de fructanes, donc
+  // aucune alerte ni facteur fructanes pour une persona qui mange du pain. Le pain courant est la baguette.
+  it('« pain », « baguette », « tartine » : le pain blanc courant, dont les fructanes sont mesurés', () => {
+    for (const word of ['pain', 'baguette', '2 tartines', 'Tartine beurrée']) {
+      const [{ ingredient }] = fakeMealFromDescription(word, index).ingredients
+      expect(measurements.foods[ingredient]?.fructans, `${word} → ${ingredient}`).toBeTruthy()
+    }
+    const meal = fakeMealFromDescription('baguette', index)
+    expect(highFodmapGroups(estimateMealFodmap(meal.ingredients, table, measurements))).toContain('fructans')
   })
 })

@@ -15,8 +15,10 @@ export const DEFAULT_MEAL = {
 
 const STOP = new Set(['un', 'une', 'des', 'de', 'du', 'la', 'le', 'les', 'au', 'aux', 'a', 'en', 'petit', 'petite', 'grand', 'grande', 'bol', 'verre', 'tasse', 'assiette', 'part', 'tranche', 'tranches'])
 const PORTION_G = 100
-// Mots courants dont le premier nom de la table n'est pas l'aliment voulu (« Tartine craquante extrudée »)
-const ALIAS = { tartine: 'pain', baguette: 'pain' }
+// Mots courants dont le premier nom de la table n'est pas l'aliment voulu (« Tartine craquante extrudée », « Pain
+// pita », sans mesure de fructanes) : le nom complet de l'aliment courant (PERSONAS-OUTIL-4)
+const BREAD = 'Pain blanc (par ex. : baguette, boule…)'
+const ALIAS = { pain: BREAD, tartine: BREAD, baguette: BREAD }
 
 export const norm = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 const singular = (w) => (w.length > 3 && /[sx]$/.test(w) ? w.slice(0, -1) : w)
@@ -45,7 +47,9 @@ export function buildIndex(names) {
 
 // Clés essayées pour un mot, de la plus exacte à la plus large
 function lookup(word, index) {
-  const w = ALIAS[norm(singular(word))] || word
+  const alias = ALIAS[norm(singular(word))]
+  if (alias && index.get(alias.toLowerCase().split(WORD)[0])?.includes(alias)) return alias
+  const w = word
   const keys = [w, singular(w), `${w}s`, `~${norm(w)}`, `~${norm(singular(w))}`, `~${norm(w)}s`]
   const key = keys.find((k) => index.has(k))
   return key ? index.get(key)[0] : null
