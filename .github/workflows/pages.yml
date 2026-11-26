@@ -4,6 +4,8 @@ name: Site — GitHub Pages
 # et de vente (VC-18, /conditions/) et une courte page d'accueil :
 #   https://spreadzenox.github.io/HealthTrack/confidentialite/
 # Source unique : app/public/privacypolicy.html (aussi embarquée dans l'app). Voir journal/PRODUIT.md (P19).
+# Depuis FUSION-4 (26/11), aussi les pages de l'iPhone (iphone/scripts/site.mjs), sous /HealthTrack/iphone/ :
+#   https://spreadzenox.github.io/HealthTrack/iphone/confidentialite/ , …/iphone/conditions/ , …/iphone/assistance/
 on:
   push:
     branches: [main]
@@ -12,6 +14,10 @@ on:
       - "app/public/conditions.html"
       - "app/scripts/site/**"
       - ".github/workflows/pages.yml"
+      - "app/public/confidentialite-iphone.html"
+      - "app/public/conditions-iphone.html"
+      - "iphone/site/**"
+      - "iphone/scripts/site.mjs"
   workflow_dispatch:
 
 permissions:
@@ -63,6 +69,10 @@ jobs:
       - name: Construire le site
         run: node app/scripts/site/build-site.mjs _site
 
+      # FUSION-4 : pages de l'iPhone (adresses de la fiche App Store), sans Android ni Google (directive 2.3.10)
+      - name: Construire le site de l'iPhone
+        run: node iphone/scripts/site.mjs _site/iphone
+
       # P28 : la vidéo filmée par la CI (workflow « Play — vidéo P28 », release pré-version « p28-video ») reste
       # publiée à chaque reconstruction du site, à https://spreadzenox.github.io/HealthTrack/p28/
       - name: Ajouter la vidéo P28 (si elle existe)
@@ -99,3 +109,4 @@ jobs:
       - name: Résumé
         run: |
           echo "Politique de confidentialité publiée : ${{ steps.deployment.outputs.page_url }}confidentialite/" >> "$GITHUB_STEP_SUMMARY"
+          echo "Pages de l'iPhone : ${{ steps.deployment.outputs.page_url }}iphone/confidentialite/ , iphone/conditions/ , iphone/assistance/" >> "$GITHUB_STEP_SUMMARY"
