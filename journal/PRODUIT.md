@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **26/11 18:30** — **POLISH-SIM-173** : dans la visite guidée, l'exemple du 28e jour ne fait plus passer un repas à l'oignon de calme à douleur : gêne le soir et le lendemain, « Fructanes −2,7 pt » au lieu de −3,5, et plus de « GOS +1,8 pt ». Dernier « À étudier » de « Ventre, sans technique » du 25/11. Test d'abord (`tourResults`), capture.
 - **26/11 17:30** — **POLISH-SIM-172** : dans les détails d'un repas, chaque groupe FODMAP dit « Bien plus », « Un peu plus » ou « Peut-être plus que ce qui gêne certaines personnes » au lieu des grammes ; grammes, repères et sources en petit dessous. Constat de « Ventre, sans technique » du 25/11. Tests d'abord (`MealFodmapLine`), capture.
 - **26/11 16:30** — **POLISH-SIM-171** : l'Accueil montre la carte Confort digestif d'Objectifs (score des 7 derniers jours, tendance, ou jours restants) sous le bien-être du jour, seulement avec l'objectif digestion (brief § 4 : « les cartes des objectifs » sous l'île). Tests d'abord (`HomeGutObjective`, `Dashboard`), captures claire et sombre.
 - **26/11 15:30** — **POLISH-SIM-170** : Objectifs › Votre bien-être, une famille « Pas assez de données » (Sommeil, Alimentation, Activité) dit ce qui manque (au moins un jour sur deux, `FACTOR_MIN_COVERAGE`) et mène à Sources ou aux repas. Tests d'abord, captures de l'outil des personas (J45, notes rares) en clair et en sombre.

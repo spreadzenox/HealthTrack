@@ -871,7 +871,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       gardé par la mise à jour (voulu) ; « Où en sont vos analyses » → « Objectifs » (nom du propriétaire) ; version 0.0.0.
     - À étudier : ~~carte Confort digestif sous l'île de l'Accueil pour qui a l'objectif digestion~~ (POLISH-SIM-171) ;
       ~~détail FODMAP d'un repas déplié trop technique~~ (POLISH-SIM-172) ; ~~familles « Pas assez de données » sans action~~
-      (POLISH-SIM-170) ; ordre de grandeur des exemples du 28e jour (« Fructanes −3,5 pt »).
+      (POLISH-SIM-170) ; ~~ordre de grandeur des exemples du 28e jour (« Fructanes −3,5 pt »)~~ (POLISH-SIM-173).
+    - [x] **POLISH-SIM-173 — Exemple du 28e jour : « Fructanes −3,5 pt », « GOS +1,8 pt »** FAIT le 26/11 à 18:30
+      (« Ventre, sans technique », capture `exemple-j28-points.png`) : les données fictives (`tourData.js`) donnaient
+      douleur deux soirs d'oignon sur trois ; maintenant gêne le soir d'oignon et le lendemain, jamais douleur.
+      Fructanes −2,7 pt (toujours net aux 5 dates × 4 configurations), GOS sous 0,5 pt. Test `tourResults.test.js`
+      (fructanes ≤ 3 pt, autres groupes FODMAP < 1 pt). Reste, à proposer avec maquette si un passage le redemande :
+      les mots « pt », « GOS », « FODMAP » du tableau « Ce qui va avec » (écran réel, pas seulement l'exemple).
     - [x] **POLISH-SIM-171 — Accueil : pas de carte Confort digestif sous l'île** (« Ventre, sans technique », capture
       `accueil-sans-ventre.png` ; vérifié en code : seul `DigestBlock`, dans Ma journée) FAIT le 26/11 à 16:30 :
       `components/HomeGutObjective.jsx` reprend `ObjectiveCard` d'Objectifs (exportée) pour la digestion, sous
