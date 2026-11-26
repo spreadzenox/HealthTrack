@@ -63,27 +63,29 @@ describe('loadWellbeingToday', () => {
     expect(r.state.low).toBeLessThanOrEqual(r.state.mean)
   })
 
-  it('POLISH-SIM-80 : sans cache, le même chiffre que le calcul complet, notes d’avant la caméra comprises', async () => {
+  it('POLISH-SIM-80 : le chiffre du jour ne dépend pas du cache de Tendances (il ne bouge pas sans saisie)', async () => {
+    vi.resetModules()
+    const peek = vi.fn()
+    vi.doMock('../analysisRunner', () => ({ peekAnalysis: peek }))
     const { loadWellbeingToday } = await import('./faceMoodData')
-    const { estimateStatesFromEntries } = await import('../method/stateSpace')
     const now = new Date(2026, 9, 21, 12)
     const burst = (d, h, valence) => ({
       type: 'face_burst', source: 'face_sense', at: new Date(2026, 9, d, h).toISOString(),
       payload: { trigger: 'unlock', frames: 3, valid: 3, values: { smile: 0.4, valence, arousal: 0 } },
     })
     const bursts = [20, 21].flatMap((d) => [8, 9, 10].map((h) => burst(d, h, d === 21 ? -0.3 : 0.2)))
-    // Trois semaines de notes avant la première lecture du visage, puis une note aujourd'hui
-    const notes = Array.from({ length: 19 }, (_, i) => ({
-      type: 'wellbeing', at: new Date(2026, 9, i + 1, 20).toISOString(), payload: { score: [4, 2, 5, 3][i % 4] },
-    }))
-    notes.push({ type: 'wellbeing', at: new Date(2026, 9, 21, 11).toISOString(), payload: { score: 2 } })
-    const all = [...bursts, ...notes]
+    const note = { type: 'wellbeing', at: new Date(2026, 9, 21, 11).toISOString(), payload: { score: 2 } }
+    const all = [...bursts, note]
     const list = async ({ type, since }) => all.filter((e) => e.type === type && (!since || e.at >= since))
-    const r = await loadWellbeingToday({ list, now })
-    const full = estimateStatesFromEntries(all, { now }).days.find((d) => d.date === '2026-10-21')
-    expect(r.state.mean).toBeCloseTo(full.wellbeing.mean, 6)
-    expect(r.state.low).toBeCloseTo(full.wellbeing.low, 6)
-    expect(r.state.high).toBeCloseTo(full.wellbeing.high, 6)
+    peek.mockReturnValue({ hit: false })
+    const cold = await loadWellbeingToday({ list, now })
+    const other = { mean: 4.6, low: 4.1, high: 5 }
+    peek.mockReturnValue({ hit: true, result: { days: [{ date: '2026-10-21', future: false, observed: { wellbeing: true }, wellbeing: other }] } })
+    const warm = await loadWellbeingToday({ list, now })
+    vi.doUnmock('../analysisRunner')
+    vi.resetModules()
+    expect(cold.state).not.toBeNull()
+    expect(warm.state).toEqual(cold.state)
   })
 
   it('lit aussi les selles (TS-1) depuis la première lecture du visage', async () => {

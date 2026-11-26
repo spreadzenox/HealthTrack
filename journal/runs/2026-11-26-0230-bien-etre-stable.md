@@ -26,6 +26,10 @@ partagé)
   `npm run build` vert ; `npm run visual -- --routes=/` sans erreur de page, capture `dashboard-1.png` relue.
 - Note de Nouveautés `2026-11-26-0230-bien-etre-stable.json` (code partagé : vaut pour les deux magasins).
 
+**Correction du run de 03:30** : faux pour la démo du contrôle de perf (2 056 enregistrements lus sur l'Accueil
+pour 1 500 autorisés, « Budget de lectures (perf) » rouge). Correction refaite sans lecture de plus : voir
+`2026-11-26-0330-bien-etre-sans-cache.md`.
+
 ## Suite proposée
 1. Merger la PR au run suivant si les checks (dont le build iPhone et le budget de lectures) sont verts.
 2. Vérifier le build du soir, TestFlight et l'Alpha ; soumission bêta et expiration au premier run qui voit la

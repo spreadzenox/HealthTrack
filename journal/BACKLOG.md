@@ -1791,9 +1791,15 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   (`todayWellbeingState`) : le calcul complet `dayStates` s'il est en cache, sinon un calcul de secours sur les notes
   lues depuis la première lecture du visage seulement. Les paramètres du modèle changeaient avec les notes d'avant la
   caméra : le chiffre bougeait selon qu'Objectifs ou Tendances avait déjà rempli le cache (puis qu'une écriture
-  l'invalidait). `loadWellbeingToday` donne maintenant toutes les notes au calcul de secours (le reste de l'estimation
-  inchangé) ; test « même chiffre que le calcul complet » (rouge avant : 2,07 contre 2,05). Budget de lectures de
-  l'Accueil inchangé sur la démo (caméra active dès le premier jour). La ligne « Journal » a disparu avec la refonte.
+  l'invalidait). **Corrigé le 26/11 03:30** : la 1re version (lire toutes les notes sur l'Accueil) dépassait le budget
+  de lectures (2 056 enregistrements pour 1 500 sur la démo de 3 ans ; « Budget de lectures (perf) » rouge sur #1275).
+  L'Accueil ne prend plus le cache : toujours le même calcul sur ses propres lectures, le chiffre ne bouge qu'avec les
+  données ; test « même chiffre avec ou sans cache » (rouge avant). Reste POLISH-SIM-80b. La ligne « Journal » a
+  disparu avec la refonte.
+- [ ] **POLISH-SIM-80b** (suite de 80) Le bien-être du jour de l'Accueil (notes depuis la première lecture du visage)
+  peut différer d'un dixième de celui de Tendances et d'Objectifs (toutes les notes). Piste : garder les paramètres du
+  modèle (`params` de `dayStates`) en mémoire locale et les réutiliser sur l'Accueil, sans relire l'historique (budget
+  D2). À faire seulement si une persona ou un testeur voit l'écart.
 - [x] **POLISH-SIM-81** (bug ; Sportif J1, balance) Tendances : toucher la pastille « Poids » mène à
   « Choisissez une courbe » avec « Pas » seul ; la courbe n'existe qu'en Mois. Garder la mesure choisie et passer à la
   période où elle a des points (`simulations/2026-11-14-0835-synthese.md`). **Fait le 14/11 09:35** : le menu « + »

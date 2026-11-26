@@ -8,19 +8,10 @@ import { FACE_BURST_TYPE } from '../faceBursts'
 import { GUT_TYPE } from '../today'
 import { STOOL_TYPE } from '../stool'
 import { localDateKey } from '../analysisEngine'
-import { peekAnalysis } from '../analysisRunner'
 import { estimateStatesFromEntries } from '../method/stateSpace'
 import { faceMoodEstimate } from './faceMood'
 import { faceMoodDays } from './faceMoodDays'
 import { wellbeingHistory } from './wellbeingHistory'
-
-/** Minuit (heure locale) du jour de la première lecture du visage, en ISO. */
-function firstBurstDay(bursts) {
-  const first = bursts.reduce((min, b) => (b.at < min ? b.at : min), bursts[0].at)
-  const day = new Date(first)
-  day.setHours(0, 0, 0, 0)
-  return day.toISOString()
-}
 
 export async function loadFaceMoodEntries({ list = listEntries, withStool = false, notesAlways = false } = {}) {
   const bursts = await list({ type: FACE_BURST_TYPE, limit: Infinity })
@@ -33,9 +24,12 @@ export async function loadFaceMoodEntries({ list = listEntries, withStool = fals
     ])
     return { bursts, notes: [...(wellbeing || []), ...(gut || [])] }
   }
+  const first = bursts.reduce((min, b) => (b.at < min ? b.at : min), bursts[0].at)
+  const sinceDay = new Date(first)
+  sinceDay.setHours(0, 0, 0, 0)
   // POLISH-SIM-88 : Tendances (notesAlways) lit aussi les notes d'avant la caméra, sinon un jour noté avant la
   // première lecture du visage dit « Aucune lecture du visage ce jour-là » sans montrer la note.
-  const since = notesAlways ? undefined : firstBurstDay(bursts)
+  const since = notesAlways ? undefined : sinceDay.toISOString()
   const [wellbeing, gut, stool] = await Promise.all([
     list({ type: 'wellbeing', since, limit: Infinity }),
     // Notes digestives et selles : observations du modèle à espace d'états (TS-1), lié au bien-être.
@@ -46,13 +40,13 @@ export async function loadFaceMoodEntries({ list = listEntries, withStool = fals
 }
 
 /**
- * TS-1 : estimation du bien-être du jour par le modèle à espace d'états (remplace VENTRE-BE-2). Le calcul complet de
- * Tendances (tâche `dayStates`) s'il est en cache pour ces données ; sinon, le même modèle sur les entrées déjà lues
- * par l'Accueil (depuis la première lecture du visage), sans relire la base. Seulement si le bien-être est observé
- * aujourd'hui (au moins 3 lectures ou une note) ; jamais l'attendu d'un jour sans donnée.
+ * TS-1 : estimation du bien-être du jour par le modèle à espace d'états (remplace VENTRE-BE-2), sur les entrées déjà
+ * lues par l'Accueil (depuis la première lecture du visage), sans relire la base. Seulement si le bien-être est observé
+ * aujourd'hui (au moins 3 lectures ou une note) ; jamais l'attendu d'un jour sans donnée. `cached` (résultat de la
+ * tâche `dayStates`) n'est plus passé par l'Accueil : POLISH-SIM-80, le chiffre changeait selon l'état du cache.
  * @returns {{ mean: number, low: number, high: number } | null}  échelle interne 0–5
  */
-export function todayWellbeingState(entries, now = new Date(), cached = peekAnalysis('dayStates', now)) {
+export function todayWellbeingState(entries, now = new Date(), cached = null) {
   try {
     const states = cached?.hit && cached.result ? cached.result : estimateStatesFromEntries(entries, { now, ahead: 0 })
     const today = localDateKey(now.toISOString())
@@ -69,17 +63,15 @@ export function todayWellbeingState(entries, now = new Date(), cached = peekAnal
  * @returns {Promise<null | { est: object | null, days: { date: string, note: number }[] }>}
  */
 export async function loadWellbeingToday({ list = listEntries, now = new Date() } = {}) {
-  // POLISH-SIM-80 : toutes les notes, comme le calcul complet de Tendances. Sinon, sans cache, le modèle estimait ses
-  // paramètres sans les notes d'avant la caméra et l'Accueil passait de 3 à 2,9 puis à 3 selon l'état du cache.
-  const { bursts, notes: allNotes } = await loadFaceMoodEntries({ list, withStool: true, notesAlways: true })
+  const { bursts, notes } = await loadFaceMoodEntries({ list, withStool: true })
   if (!bursts.length) return null
-  const sinceDay = firstBurstDay(bursts)
-  const notes = allNotes.filter((e) => typeof e?.at === 'string' && e.at >= sinceDay)
   const entries = [...bursts, ...notes]
   // AUJ-2 : la courbe du jour de l'Accueil, les mêmes points que la vue Jour de l'historique.
   return {
     est: faceMoodEstimate(entries, { now }),
-    state: todayWellbeingState([...bursts, ...allNotes], now),
+    // POLISH-SIM-80 : toujours le même calcul (pas le cache de Tendances, qui lit toutes les notes et va et vient avec
+    // les écritures) : le chiffre ne bouge qu'avec les données. Lire tout l'historique ici dépasserait le budget D2.
+    state: todayWellbeingState(entries, now),
     days: faceMoodDays(entries),
     today: wellbeingHistory(entries, { period: 'day', now }),
   }
