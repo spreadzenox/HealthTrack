@@ -20,10 +20,15 @@ conforme (dd430fbd…) · **Android** : main c7da489 vert (Tests, émulateur A56
   `site/site.test.mjs` verts. Tous les fichiers touchés sont hors des déclencheurs de `ios-build.yml` : **aucun build
   de Mac**. Aucune note de Nouveautés (rien de visible dans l'app).
 
+## Après le merge
+- **#1280 mergée** (14 checks verts, aucun build de Mac). « Build & Release » ne tourne pas (`iphone/**` et `journal/**`
+  ignorés) : la release reste **v928** (APK 35,7 Mo), rien ne change dans l'app Android.
+- « Fiche App Store — envoi » lancé sur main sans case cochée (run 45770706754, vert) : « Version 893 : fiche fr-FR
+  mise à jour (description, mots-clés, texte promotionnel, assistance) » et « App : nom, sous-titre et confidentialité
+  fr-FR mis à jour ». Numéro 893 inchangé, build 1244.1244 toujours attachée, rien soumis.
+
 ## Suite proposée
-1. Après le merge, lancer « Fiche App Store — envoi » sur main, sans case cochée : la version 893 (build 1244.1244
-   attachée, donc numéro inchangé) reçoit les nouvelles adresses avant PI2. Vérifier son résumé.
-2. Pages embarquées `app/public/confidentialite-iphone.html` et `conditions-iphone.html` : lien des tickets encore vers
+1. Pages embarquées `app/public/confidentialite-iphone.html` et `conditions-iphone.html` : lien des tickets encore vers
    le dépôt iOS ; à changer dans la prochaine PR qui lance de toute façon un build iPhone.
 
 ## Pour le propriétaire
