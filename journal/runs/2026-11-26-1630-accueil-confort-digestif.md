@@ -16,8 +16,12 @@ digestif n'existait que dans Objectifs ; sur l'Accueil, rien pour la digestion (
 
 ## Fait
 - `pages/Objectives.jsx` : `ObjectiveCard` exportée (inchangée).
-- `components/HomeGutObjective.jsx` : lit `dayStates` comme Objectifs et rend la carte digestion
-  (`objectiveCard('digestion', …)`) : score des 7 derniers jours et tendance, ou « Premier score dans N jours notés ».
+- `components/HomeGutObjective.jsx` : rend la carte digestion (`objectiveCard('digestion', …)`) : score des 7
+  derniers jours et tendance, ou « Premier score dans N jours notés ». Elle ne calcule rien : elle lit le dernier
+  `dayStates` gardé (`peekAnalysis`, sinon `lastAnalysis`), comme `useFirstWeekInputs`. Premier push : elle lançait
+  l'analyse, et le contrôle « Budget de lectures (perf) » de la PR a échoué (`/` : 16 803 enregistrements lus, max
+  1 500). Corrigé : `npm run perf -- --budget` local, `/` à 1 003 lectures, 0 dans le Worker. Conséquence : la carte
+  apparaît dès qu'Objectifs, Données ou l'îlot ont calculé l'analyse une fois (sinon rien, jamais un chiffre faux).
 - `pages/Dashboard.jsx` : la carte sous `DayStatusCard`, sur l'Accueil seulement, avec `gutCardMode() === 'show'`
   (objectif digestion choisi) ; Ma journée garde son bloc digestif.
 - Tests d'abord, rouges puis verts : `HomeGutObjective.test.jsx` (score, attente, sans données),
@@ -25,10 +29,12 @@ digestif n'existait que dans Objectifs ; sur l'Accueil, rien pour la digestion (
 - Nouveautés : `2026-11-26-1630-accueil-confort-digestif.json` (les deux magasins).
 
 ## Vérifications
-- `npm run test` : 4 715 verts ; `npm run lint` : 0 erreur ; `npm run build` vert.
+- `npm run perf -- --budget --runs=1 --cpu=1` : budget respecté (10 pages).
+- `npm run test` : 4 715 verts au premier push, + 2 tests (aucun calcul, rien sans cache) ; `npm run lint` : 0 erreur ; `npm run build` vert.
 - `npm run visual -- --routes=/ --onboarding=gut --now=14:00`, clair et `--dark` : île, bien-être du jour, carte
   Confort digestif (« Premier score dans 5 jours notés », jauge 9 sur 14), données du jour, Agir ; ordre du brief.
-  Capture sombre : [`accueil-confort-digestif-sombre`](captures/2026-11-26-1630-accueil-confort-digestif-sombre.png).
+  Captures : [`sombre`](captures/2026-11-26-1630-accueil-confort-digestif-sombre.png) (premier push),
+  [`clair`](captures/2026-11-26-1630-accueil-confort-digestif-clair.png) (`--routes=/recommendations,/`, cache seul).
 - PR en brouillon puis prête : un build iPhone (code embarqué changé), captures de l'iPhone à regarder avant merge.
 
 ## Suite proposée

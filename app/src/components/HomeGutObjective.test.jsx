@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import HomeGutObjective from './HomeGutObjective'
@@ -41,5 +41,20 @@ describe('Accueil : la carte Confort digestif sous l’île (brief § 4, constat
   it('sans aucune donnée : la carte attend ses 14 jours, comme dans Objectifs', async () => {
     show(null)
     expect(await screen.findByTestId('objective-digestion')).toHaveTextContent('Premier score dans 14 jours notés')
+  })
+
+  it('rien de calculé encore : aucune carte, l’Accueil ne lance pas l’analyse (budget de lectures)', async () => {
+    const { container } = render(<MemoryRouter><HomeGutObjective read={() => undefined} now={NOW} /></MemoryRouter>)
+    await new Promise((r) => setTimeout(r, 0))
+    expect(container.querySelector('[data-testid="objective-digestion"]')).toBeNull()
+  })
+
+  it('par défaut, lit le dernier résultat gardé sans rien calculer', async () => {
+    const runner = await import('../services/analysisRunner')
+    const spy = vi.spyOn(runner, 'getAnalysis')
+    render(<MemoryRouter><HomeGutObjective now={NOW} /></MemoryRouter>)
+    await new Promise((r) => setTimeout(r, 0))
+    expect(spy).not.toHaveBeenCalled()
+    spy.mockRestore()
   })
 })

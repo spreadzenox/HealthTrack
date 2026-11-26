@@ -875,7 +875,8 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **POLISH-SIM-171 — Accueil : pas de carte Confort digestif sous l'île** (« Ventre, sans technique », capture
       `accueil-sans-ventre.png` ; vérifié en code : seul `DigestBlock`, dans Ma journée) FAIT le 26/11 à 16:30 :
       `components/HomeGutObjective.jsx` reprend `ObjectiveCard` d'Objectifs (exportée) pour la digestion, sous
-      `DayStatusCard`, avec `gutCardMode() === 'show'` seulement (brief § 4). Tests d'abord (`HomeGutObjective`,
+      `DayStatusCard`, avec `gutCardMode() === 'show'` seulement (brief § 4) ; elle lit le dernier `dayStates` gardé,
+      sans calcul (budget de lectures de l'Accueil). Tests d'abord (`HomeGutObjective`,
       `Dashboard`) ; captures claire et sombre.
     - [x] **POLISH-SIM-170 — Objectifs : « Pas assez de données » sans dire quoi faire** (J45, capture
       `bien-etre-familles.png`) FAIT le 26/11 à 15:30 : `NODATA_ACTIONS` de `influenceFamilies.js` (nuits, repas, pas,
