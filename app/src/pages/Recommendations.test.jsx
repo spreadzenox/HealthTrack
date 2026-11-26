@@ -237,7 +237,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(within(weigh).queryByText('VFC')).toBeNull()
     expect(within(screen.getByRole('region', { name: 'À regarder, pas à changer' })).getByText('VFC')).toBeInTheDocument()
     // POLISH-SIM-23 : des jours notés, comme le compte à rebours
-    expect(screen.getByText(/Long terme \(/)).toHaveTextContent('Long terme (de 7 à 27 jours avant) : encore 12 jours avec votre bien-être noté ou lu.')
+    expect(screen.getByText(/Long terme \(/)).toHaveTextContent('Long terme (de 7 à 27 jours avant) : 30 jours sur 42 avec votre bien-être noté ou lu, encore 12.')
     // POLISH-SIM-23 : l'unité « pt » est dite une fois, sous le premier titre à barres
     const units = document.querySelectorAll('.reco-unit')
     expect(units).toHaveLength(1)
@@ -325,8 +325,8 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(pistes).toHaveTextContent('Aucun lien assez net pour l’instant sur ce que vous pouvez changer.')
     expect(within(pistes).getByTestId('reco-compared')).toHaveTextContent('3 facteurs comparés à votre bien-être, du jour même à 6 jours avant.')
     // le compte « encore N jours » est dit en tête, une seule fois
-    expect(pistes).toHaveTextContent('Long terme (de 7 à 27 jours avant) : encore 12 jours avec votre bien-être noté ou lu.')
-    expect(screen.getAllByText(/: encore/)).toHaveLength(1)
+    expect(pistes).toHaveTextContent('Long terme (de 7 à 27 jours avant) : 30 jours sur 42 avec votre bien-être noté ou lu, encore 12.')
+    expect(screen.getAllByText(/, encore/)).toHaveLength(1)
     // aucune barre tant qu'on ne les demande pas
     expect(screen.queryByRole('region', { name: 'Ce qui va avec votre bien-être' })).toBeNull()
     expect(screen.queryByRole('region', { name: 'À regarder, pas à changer' })).toBeNull()

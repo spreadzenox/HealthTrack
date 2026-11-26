@@ -391,8 +391,9 @@ function Results({ outcome, view, locked, families = [], base }) {
   const bars = !quiet || unsureOpen
   const nextLock = view.nextLock && (
     <p className="reco-next">
-      {/* POLISH-SIM-56 : dire ce qui est compté (jours avec ce résultat) et de quel délai il s'agit */}
-      {view.nextLock.label}{view.nextLock.window ? ` (${view.nextLock.window})` : ''} : encore <span className="mono">{view.nextLock.daysLeft}</span> jour{view.nextLock.daysLeft > 1 ? 's' : ''} {w.days}.
+      {/* POLISH-SIM-56 : dire ce qui est compté (jours avec ce résultat) et de quel délai il s'agit ;
+          passage du 26/11 20:30 : dire aussi les jours déjà comptés (« 45 jours que je note, et encore 11 ? ») */}
+      {view.nextLock.label}{view.nextLock.window ? ` (${view.nextLock.window})` : ''} : <span className="mono">{view.nextLock.have}</span> jour{view.nextLock.have > 1 ? 's' : ''} sur <span className="mono">{view.nextLock.need}</span> {w.days}, encore <span className="mono">{view.nextLock.daysLeft}</span>.
     </p>
   )
   return (
