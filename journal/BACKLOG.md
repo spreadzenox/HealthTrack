@@ -949,8 +949,16 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       d'abord ; Sources relu dans l'outil (« iPhone — Reçu »). Les configurations iPhone se jouent avec `--store=appstore`.
     - PROP-SIM-19 renforcée : 4e « Prendre soin de soi » qui cherche son poids ; ajouter à la proposition la masse
       grasse en courbe dans Tendances (reçue de la balance, absente de `trendsData.js`). Pas de code sans réponse.
-    - À étudier : fructanes absents des facteurs comparés et « pain » sans alerte (probablement l'analyse factice de
-      l'outil, à vérifier) ; éviction ou réintroduction introuvable sans piste nette ; Pilou au toucher et « Humeur
+    - ~~À étudier : fructanes absents des facteurs comparés et « pain » sans alerte~~ → **PERSONAS-OUTIL-4, fait le
+      26/11 à 19:30** : défaut de l'outil, pas de l'app. `fakeMeal.mjs` tirait « Pain pita » (premier nom « pain » de la
+      table, sans mesure de fructanes) ; « pain », « baguette », « tartine » donnent maintenant « Pain blanc (par ex. :
+      baguette, boule…) » (fructanes mesurés, ferjancic2024 et liljebo2020). Les repas de démo n'ont pas de fructanes
+      exprès (`demoData.mjs` 40-41 : la visite plante les siens), d'où l'absence du facteur. Test d'abord
+      (`fakeMeal.test.mjs` : chaque mot donne un pain mesuré, une baguette est « riche en fructanes ») ; outil rejoué,
+      J14, « baguette avec du beurre et un café » → « Probablement riche en fructanes : pain blanc »
+      ([capture](runs/captures/2026-11-26-1930-personas-outil-4-baguette.png)). Reste : la portion par défaut de
+      100 g par aliment (100 g de beurre) dans l'outil, sans effet sur ce constat.
+    - À étudier : éviction ou réintroduction introuvable sans piste nette ; Pilou au toucher et « Humeur
       de Pilou » sans explication après la visite ; rien à faire à J45 pour qui note peu (fonction nouvelle).
     - Écartés, avec la raison, dans la synthèse : « Rien à éviter » au-dessus de barres hachurées (POLISH-SIM-128) ;
       repas de midi à 08:34 (POLISH-SIM-122, voulu) ; note « Douleur » estimée (POLISH-NOTE-LOSANGE) ; « Où en sont
