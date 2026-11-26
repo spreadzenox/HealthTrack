@@ -381,7 +381,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     aucune réponse, rien sans habitude suivie (`yesterdayCatchUp`, 4 tests, composant 3 tests, test d'intégration
     dans `Dashboard.test.jsx`). Données : entrées `habit` ordinaires datées de la veille, rien à migrer. La note de
     bien-être d'hier n'est pas reposée ici : elle se modifie depuis Tendances › Jour (7a).
-  - [ ] **REFONTE-7a-2 — Restes de 7a** : captures sur historique presque vide, grand texte, 320 px, version Play.
+  - [x] **REFONTE-7a-2 — Restes de 7a** (**soldée le 26/11 05:30** : `iphone-16e-demo-clair-tendances-jour-veille` et `iphone-16e-vide-tendances-visite` de `captures/main` (build 1335) regardées : propres ; « Vos saisies » se voit dans la visite, le Jour précédent pris à 03:13 montre le 24/11, la journée finissant vers 4 h) : captures sur historique presque vide, grand texte, 320 px, version Play.
     Le plan de captures iPhone ne touche aucun jour de Tendances : « Vos saisies » n'y est jamais vu (ajouter une
     capture « Tendances › Jour › veille » à `captureMode.js`, comme `--click="Jour > Jour précédent"` côté Android). **Plan iPhone fait le 16/11 à 10:30 (en PR)** : `demo-clair-tendances-jour-veille` (`REVEALS` accepte une suite de boutons, trouvés par texte, libellé d'accessibilité ou motif). Captures Android regardées le 16/11 à 10:30 (Tendances › Jour › veille : `--history-days=2`, `--play --font-scale=1.5`, `--play --size=320x640`) : propres, aucune erreur JS ; à 320 px, les « … » des saisies passent à la ligne (lisible). Reste : regarder `demo-clair-tendances-jour-veille` et `vide-tendances-visite` sur la PR iPhone.
   - [x] **REFONTE-7d — Nunito et fond crème** (**mergée le 16/11 vers 12:50, #1038** ; **préparée le 16/11 08:30** :
@@ -1884,7 +1884,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   (1) · estimé avec les jours voisins » (`detailSource`, `noteChoice` de `dayFaceDetail`). Reste : plusieurs notes
   le même jour (seule la dernière est dite) ; le cas digestion à regarder en capture au prochain passage des
   personas. iPhone : code partagé, arrive au prochain suivi.
-- [ ] **POLISH-SIM-89** (Outil) Config 5 : faire arriver les pesées par Health Connect (aujourd'hui `source:
+- [x] **POLISH-SIM-89** (**soldée le 26/11 05:30** : déjà fait le 25/11 par PERSONAS-OUTIL-2, `personaData.mjs` range les pesées sous Health Connect au nom de « Withings », test `personaData.test.mjs`) (Outil) Config 5 : faire arriver les pesées par Health Connect (aujourd'hui `source:
   'withings'`, carte absente de la variante play) pour que Sources puisse les attribuer.
 - [x] **POLISH-SIM-91** (Sportif J45 ; 3e persona J45 ; **soldée le 25/11 23:30** : long terme pas net = fourchette et « pas assez net » sans chiffre (METHODE-BIAIS-4) ; plus grand que la note = « pas assez de données » (POLISH-SIM-16) ; rien de net = barres repliées (POLISH-SIM-69)) Analyses sans lien net : le bloc « Long terme » affiche
   « +2,3 pt », « −2,1 pt », « +1,9 pt » sur une note sur 5, sous « Rien n'est net pour l'instant ». Ne pas montrer
