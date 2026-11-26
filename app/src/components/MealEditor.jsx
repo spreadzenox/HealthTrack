@@ -15,6 +15,16 @@ const kgText = (g) => (g / 1000).toLocaleString(appLocale(), { maximumFractionDi
  * Liste d'ingrédients modifiable avant enregistrement : grammes, suppression, ajout et
  * remplacement par recherche dans la base, kcal par ingrédient et total.
  */
+/**
+ * POLISH-SIM-169 : au toucher, tout le nombre est sélectionné, pour que taper « 120 » remplace « 100 » au lieu de
+ * s'y ajouter (« 100 » + 20 → 10020). L'iPhone perd une sélection faite pendant le focus : refaite juste après.
+ */
+function selectAll(e) {
+  const el = e.currentTarget
+  el.select?.()
+  setTimeout(() => { if (document.activeElement === el) el.select?.() }, 0)
+}
+
 export default function MealEditor({ items, onChange, disabled = false }) {
   const searchId = useId()
   const [query, setQuery] = useState('')
@@ -101,6 +111,7 @@ export default function MealEditor({ items, onChange, disabled = false }) {
                   placeholder="?"
                   disabled={disabled}
                   onChange={(e) => update(i, setItemGrams(item, e.target.value))}
+                  onFocus={selectAll}
                   aria-label={`Grammes de ${item.ingredient}`}
                 />
                 <span className="mei-unit">g</span>

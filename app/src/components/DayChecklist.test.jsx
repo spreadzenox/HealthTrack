@@ -17,9 +17,9 @@ function show(props) {
 }
 
 describe('DayChecklist (refonte étape 3)', () => {
-  it('journée vide : « Encore 2 choses aujourd’hui », les trois cercles des repas et « Noter » le bien-être', () => {
+  it('journée vide : « Encore 4 choses aujourd’hui » (trois repas et le bien-être), les trois cercles des repas et « Noter » le bien-être', () => {
     const { props } = show()
-    expect(screen.getByText('Encore 2 choses aujourd’hui')).toBeInTheDocument()
+    expect(screen.getByText('Encore 4 choses aujourd’hui')).toBeInTheDocument()
     const meals = screen.getByRole('group', { name: 'Repas' })
     for (const label of ['Matin', 'Midi', 'Soir']) {
       expect(within(meals).getByRole('button', { name: `${label} : photographier le repas` })).toBeInTheDocument()
@@ -31,8 +31,16 @@ describe('DayChecklist (refonte étape 3)', () => {
   })
 
   it('une seule chose restante s’écrit au singulier', () => {
-    show({ entries: [note] })
+    show({ entries: [meal(8, 'Tartines'), meal(13, 'Salade'), meal(19, 'Soupe')], now: EVENING })
     expect(screen.getByText('Encore 1 chose aujourd’hui')).toBeInTheDocument()
+  })
+
+  it('un repas noté, c’est une chose de moins (POLISH-SIM-168)', () => {
+    const { again } = show({ entries: [] })
+    expect(screen.getByText('Encore 4 choses aujourd’hui')).toBeInTheDocument()
+    again({ entries: [meal(8, 'Tartines')] })
+    expect(screen.getByText('Encore 3 choses aujourd’hui')).toBeInTheDocument()
+    expect(within(screen.getByRole('group', { name: 'Repas' })).getByText('1 sur 3')).toBeInTheDocument()
   })
 
   it('un repas noté remplit son cercle, qui mène aux repas ; les autres ouvrent l’appareil photo', () => {
@@ -92,7 +100,7 @@ describe('DayChecklist (refonte étape 3)', () => {
   it('une ligne faite part de la liste et passe dans « Déjà noté », que l’on ouvre pour modifier', async () => {
     const { again, props } = show({ entries: [] })
     again({ entries: [note] })
-    expect(screen.getByRole('status')).toHaveTextContent('Bien-être : noté. Encore 1 chose aujourd’hui.')
+    expect(screen.getByRole('status')).toHaveTextContent('Bien-être : noté. Encore 3 choses aujourd’hui.')
     await waitFor(() => expect(screen.queryByRole('group', { name: 'Bien-être' })).not.toBeInTheDocument(), { timeout: 2000 })
     const toggle = screen.getByRole('button', { name: 'Déjà noté (1)' })
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
@@ -126,7 +134,7 @@ describe('DayChecklist : habitudes (refonte étape 4)', () => {
   it('une ligne miel par habitude, avec « Oui » et « Non » de même poids', () => {
     const onHabit = vi.fn()
     show({ habits, onHabit })
-    expect(screen.getByText('Encore 4 choses aujourd’hui')).toBeInTheDocument()
+    expect(screen.getByText('Encore 6 choses aujourd’hui')).toBeInTheDocument()
     const line = screen.getByRole('group', { name: 'Méditation' })
     expect(line).toHaveAttribute('data-tone', 'honey')
     const [oui, non] = within(line).getAllByRole('button')
@@ -146,7 +154,7 @@ describe('DayChecklist : habitudes (refonte étape 4)', () => {
     expect(within(first).getByText('Noté')).toBeInTheDocument()
     expect(first.className).not.toContain('is-leaving')
     expect(within(first).queryByRole('button', { name: 'Non' })).not.toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('Méditation : noté. Encore 3 choses aujourd’hui.')
+    expect(screen.getByRole('status')).toHaveTextContent('Méditation : noté. Encore 5 choses aujourd’hui.')
     await new Promise((r) => setTimeout(r, 1000))
     expect(screen.getByRole('group', { name: 'Méditation' })).toBeInTheDocument()
     const groups = screen.getAllByRole('group').map((g) => g.getAttribute('aria-label'))
@@ -161,7 +169,7 @@ describe('DayChecklist : habitudes (refonte étape 4)', () => {
     expect(line.className).toContain('is-leaving')
     expect(screen.getByRole('group', { name: 'Méditation' }).className).toContain('is-leaving')
     expect(within(line).getByText('Noté')).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('Lecture : noté. Encore 2 choses aujourd’hui.')
+    expect(screen.getByRole('status')).toHaveTextContent('Lecture : noté. Encore 4 choses aujourd’hui.')
     await waitFor(() => expect(screen.queryByRole('group', { name: 'Lecture' })).not.toBeInTheDocument(), { timeout: 2000 })
     expect(screen.queryByRole('group', { name: 'Méditation' })).not.toBeInTheDocument()
   })

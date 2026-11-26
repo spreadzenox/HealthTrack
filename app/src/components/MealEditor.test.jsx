@@ -29,6 +29,14 @@ describe('MealEditor', () => {
     expect(screen.getByText(/Total estimé/)).toHaveTextContent('Total estimé : ≈ 197 kcal, sans Pâtes alimentaires, cuites')
   })
 
+  it('sélectionne tout le nombre au toucher : ce qu’on tape le remplace (POLISH-SIM-169)', () => {
+    render(<Harness initial={[cheese]} />)
+    const input = screen.getByLabelText('Grammes de Abondance')
+    const select = vi.spyOn(input, 'select')
+    fireEvent.focus(input)
+    expect(select).toHaveBeenCalled()
+  })
+
   it('modifie les grammes à la saisie et avec les boutons − / +', () => {
     const onChange = vi.fn()
     render(<Harness initial={[cheese]} onChange={onChange} />)

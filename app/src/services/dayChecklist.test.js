@@ -52,7 +52,8 @@ describe('dayChecklist', () => {
   it('journée vide sans objectif digestion : repas et bien-être, jamais le ventre', () => {
     const c = dayChecklist([], { now: NOON, askGut: false })
     expect(c.tasks.map((t) => t.id)).toEqual(['meals', 'wellbeing'])
-    expect(c.remaining).toBe(2)
+    // trois repas et le bien-être : chaque repas compte pour une chose (POLISH-SIM-168)
+    expect(c.remaining).toBe(4)
     expect(c.allDone).toBe(false)
     expect(c.tasks[0].slots.map((s) => s.filled)).toEqual([false, false, false])
   })
@@ -61,7 +62,7 @@ describe('dayChecklist', () => {
     const before = dayChecklist([], { now: NOON, askGut: true })
     expect(before.tasks.map((t) => t.id)).toEqual(['meals', 'wellbeing', 'gut'])
     expect(before.tasks[2]).toMatchObject({ done: false, available: false })
-    expect(before.remaining).toBe(3)
+    expect(before.remaining).toBe(5)
     const after = dayChecklist([], { now: EVENING, askGut: true })
     expect(after.tasks[2]).toMatchObject({ done: false, available: true })
   })
@@ -141,7 +142,17 @@ describe('dayChecklist', () => {
   it('« déjà noté » compte aussi les repas d’une ligne encore ouverte', () => {
     const c = dayChecklist([meal(8)], { now: NOON, askGut: false })
     expect(c.noted).toHaveLength(1)
-    expect(c.remaining).toBe(2)
+    expect(c.remaining).toBe(3)
+  })
+
+  it('un repas noté, c’est une chose de moins, même si la ligne Repas reste ouverte (POLISH-SIM-168)', () => {
+    const before = dayChecklist([], { now: NOON, askGut: true })
+    const one = dayChecklist([meal(8)], { now: NOON, askGut: true })
+    const two = dayChecklist([meal(8), meal(12)], { now: NOON, askGut: true })
+    expect(one.tasks[0].done).toBe(false)
+    expect([before.remaining, one.remaining, two.remaining]).toEqual([5, 4, 3])
+    // deux repas dans le même créneau ne remplissent qu'un cercle : une seule chose de moins
+    expect(dayChecklist([meal(8), meal(9)], { now: NOON, askGut: true }).remaining).toBe(4)
   })
 })
 
@@ -152,7 +163,7 @@ describe('habitudes dans la checklist (refonte étape 4)', () => {
   it('ajoute une ligne par habitude suivie, entre le bien-être et la digestion', () => {
     const list = dayChecklist([], { now, askGut: true, habits })
     expect(list.tasks.map((t) => t.id)).toEqual(['meals', 'wellbeing', 'habit:meditation', 'habit:reading', 'gut'])
-    expect(list.remaining).toBe(5)
+    expect(list.remaining).toBe(7)
   })
 
   it('tient « non » pour une réponse : la ligne est faite, et rangée dans « Déjà noté »', () => {

@@ -22,6 +22,11 @@ const MEDITATE_THEN_MS = 2900
  * @param {{ entries: object[], tasks: { id: string, done: boolean }[], remaining: number, todayKey: string,
  *   now?: Date }} props
  */
+/** Un point par chose du compte : un par repas (cercle de la ligne Repas), un par autre ligne (POLISH-SIM-168). */
+const dotsOf = (tasks) => tasks.flatMap((t) => (t.id === 'meals' && t.slots
+  ? t.slots.map((s) => ({ id: `meals:${s.id}`, done: s.filled }))
+  : [{ id: t.id, done: t.done }]))
+
 export default function PilouBanner({ entries, tasks, remaining, todayKey, now }) {
   const name = useCompanionName()
   const hour = (now || new Date()).getHours()
@@ -68,7 +73,7 @@ export default function PilouBanner({ entries, tasks, remaining, todayKey, now }
           <p className="pilou-remaining">
             <span>{remainingText(remaining)}</span>
             <span className="day-dots" aria-hidden="true">
-              {tasks.map((t) => <span key={t.id} className={t.done ? 'day-dot' : 'day-dot is-todo'} />)}
+              {dotsOf(tasks).map((d) => <span key={d.id} className={d.done ? 'day-dot' : 'day-dot is-todo'} />)}
             </span>
           </p>
         )}

@@ -27,6 +27,14 @@ describe('PilouBanner', () => {
     expect(container.querySelector('.pilou-figure')).toHaveAttribute('aria-hidden', 'true')
   })
 
+  it('un point par chose du compte : un par repas, plein quand il est noté (POLISH-SIM-168)', () => {
+    const slots = [{ id: 'morning', filled: true }, { id: 'noon', filled: false }, { id: 'evening', filled: false }]
+    const { container } = show([], { tasks: [{ id: 'meals', done: false, slots, count: 1 }, { id: 'wellbeing', done: false }], remaining: 3 })
+    expect(screen.getByText('Encore 3 choses aujourd’hui')).toBeInTheDocument()
+    expect(container.querySelectorAll('.day-dot')).toHaveLength(4)
+    expect(container.querySelectorAll('.day-dot.is-todo')).toHaveLength(3)
+  })
+
   it('un repas noté le nourrit, avec son nom', () => {
     setCompanionName('Bulle')
     const { again } = show([])

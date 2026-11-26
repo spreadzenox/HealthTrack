@@ -906,13 +906,19 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `DayChecklist`, `Food`), captures `/ma-journee` → « Vos repas » en clair et sombre, `/food` direct relues.
   - **Passage des personas du 26/11 08:30** (run « idées », [`synthèse`](simulations/2026-11-26-0830-synthese.md) ;
     « Prendre soin de soi » J45, téléphone + balance, et « Ventre et données » J45, iPhone seul ; installations neuves) :
-    - [ ] **POLISH-SIM-168 — Ma journée : « Encore 3 choses aujourd'hui » ne bouge pas quand on note un repas**
+    - [x] **POLISH-SIM-168 — Ma journée : « Encore 3 choses aujourd'hui » ne bouge pas quand on note un repas**
       (J45, capture `ma-journee-3-choses.png`, « Repas 1 sur 3 ») : `dayChecklist.js` 123 compte des lignes ; la ligne
       Repas n'est faite qu'à 3 repas sur 3, et la digestion du soir compte avant 18 h. Compter les cercles de repas
       restants (un repas noté = une chose de moins), ou une phrase qui le dit. Tests `dayChecklist.test.js` d'abord ;
       bannière de Pilou et widget (`companion/world/widget.js`) dans la même PR.
-    - [ ] **POLISH-SIM-169 — Repas : taper dans le champ des grammes ajoute au nombre** (J45 : « 100 » + 20 → 5000 g
+      FAIT le 26/11 à 09:30 : `remaining` compte un repas manquant pour une chose (`dayChecklist.js`) ; la bannière
+      montre un point par repas (`PilouBanner.jsx`) ; le widget reçoit un libellé par repas restant (« Repas de midi »,
+      `widgetSync.js`), son titre baisse donc aussi, sans changement natif ; l'annonce du lecteur d'écran suit. La
+      digestion du soir reste comptée avant 18 h (à faire aujourd'hui, la ligne dit « À partir de 18 h »). Tests d'abord
+      (`dayChecklist`, `DayChecklist`, `PilouBanner`, `widgetSync`, `Dashboard`), captures `/ma-journee` clair et sombre.
+    - [x] **POLISH-SIM-169 — Repas : taper dans le champ des grammes ajoute au nombre** (J45 : « 100 » + 20 → 5000 g
       après correction) : `MealEditor.jsx` 94, sélectionner le contenu au toucher. Test d'abord.
+      FAIT le 26/11 à 09:30 : `onFocus` sélectionne le nombre (refait juste après pour l'iPhone) ; test d'abord.
     - [ ] **PERSONAS-OUTIL-3 — L'outil montre « Samsung Health » pour une configuration iPhone** : source par défaut
       selon la configuration tirée (Santé pour l'iPhone).
     - PROP-SIM-19 renforcée : 4e « Prendre soin de soi » qui cherche son poids ; ajouter à la proposition la masse

@@ -5,7 +5,7 @@
  * iPhone : pas encore de widget (WidgetKit), voir journal/sprint/LOT-MONDE.md ; ces appels n'y font rien.
  */
 import { registerPlugin } from '@capacitor/core'
-import { dayChecklist } from '../../services/dayChecklist'
+import { dayChecklist, mealSlotPhrase } from '../../services/dayChecklist'
 import { localDateKey } from '../../services/analysisEngine'
 import { worldDayKey } from './daylight.js'
 import { loadWorldContext, worldContextForDay, resetWorldContextCache } from './context.js'
@@ -25,13 +25,21 @@ const TASK_LABELS = { meals: 'Repas', wellbeing: 'Bien-être', gut: 'Digestion' 
 const labelOf = (task) => (task.habit ? task.habit.label : TASK_LABELS[task.id]) || null
 
 /**
+ * Libellés d'une ligne : un par repas (« Repas de midi »), pour que le compte du widget baisse à chaque repas noté,
+ * comme « Encore … choses » de Ma journée (POLISH-SIM-168). `all` : tous les créneaux, sinon ceux qui restent.
+ */
+const labelsOf = (task, all) => (task.id === 'meals'
+  ? task.slots.filter((s) => all || !s.filled).map((s) => mealSlotPhrase(s.id))
+  : [labelOf(task)]).filter(Boolean)
+
+/**
  * État du widget pour le jour en cours : les mêmes lignes que la checklist de Ma journée (repas, bien-être,
  * digestion avec son objectif, habitudes), dans le même ordre.
  */
 export function widgetDayState(entries, { now = new Date(), askGut = false, habits = [], context = {}, name = 'Pilou' } = {}) {
   const list = dayChecklist(entries, { now, askGut, habits })
-  const planned = list.tasks.map(labelOf).filter(Boolean)
-  const remaining = list.tasks.filter((t) => !t.done).map(labelOf).filter(Boolean)
+  const planned = list.tasks.flatMap((t) => labelsOf(t, true))
+  const remaining = list.tasks.filter((t) => !t.done).flatMap((t) => labelsOf(t, false))
   const today = localDateKey(now.toISOString())
   const meals = (entries || []).filter((e) => e?.type === 'food' && e.at && localDateKey(e.at) === today)
   const lastMeal = meals.reduce((max, e) => (max == null || e.at > max ? e.at : max), null)
