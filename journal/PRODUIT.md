@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **26/11 04:30** — Run de journal : **#1275 mergée** (POLISH-SIM-80). TestFlight 1335.1335 au groupe externe et à l'examen bêta, nettoyage des anciennes builds.
 - **26/11 03:30** — Run de code : **#1275 refaite** : sa 1re version faisait lire à l'Accueil toutes les notes de bien-être et dépassait le budget de lectures (2 056 pour 1 500, check rouge). L'Accueil ne prend plus le cache de Tendances : un seul calcul sur ses propres lectures, le chiffre ne bouge qu'avec les données (POLISH-SIM-80). Écart possible d'un dixième avec Tendances : POLISH-SIM-80b. Merge au run suivant après le build iPhone.
 - **26/11 02:30** — Run de code : #1274 mergée. **POLISH-SIM-80** : l'Accueil et le calcul complet de Tendances donnent le même bien-être du jour (1re version, refaite au run de 03:30 : budget de lectures dépassé). PR #1275.
 - **26/11 01:30** — Run de code : **POLISH-SIM-76 et 93** : sans l'objectif Confort digestif, Objectifs dit combien de jours de digestion sont notés et où rallumer l'objectif (Réglages › Paramètres › Vos objectifs) ; le bandeau de Confort digestif nommait encore « Ce qui vous amène », réglage disparu. POLISH-SIM-71b, 83 et 96 soldées sans objet (Journal et objectif sport retirés par la refonte). Mergée à 02:30 (#1274).
