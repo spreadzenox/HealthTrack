@@ -1785,8 +1785,21 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   `persona-browse` pose l'accord pour un jour > 1 quand la persona note ses repas.
 - [x] **POLISH-SIM-79** ✅ 14/11 08:35 (Outil) Matériel `apple-watch` (VFC et oxygène du sang, source « Apple Watch ») et
   `phone-scale` (config 5 : pas, calories, pesées) dans `personaData.mjs`, testés.
-- [ ] **POLISH-SIM-80** (à vérifier) Aujourd'hui : note de bien-être 3, puis 2,9, puis 3 sans saisie ; 4 lectures du
+- [x] **POLISH-SIM-80** (à vérifier) Aujourd'hui : note de bien-être 3, puis 2,9, puis 3 sans saisie ; 4 lectures du
   visage annoncées, aucune ligne Bien-être dans le Journal du jour.
+  **Fait le 26/11 02:30** : cause trouvée dans le code. Le chiffre de l'Accueil vient du modèle à espace d'états
+  (`todayWellbeingState`) : le calcul complet `dayStates` s'il est en cache, sinon un calcul de secours sur les notes
+  lues depuis la première lecture du visage seulement. Les paramètres du modèle changeaient avec les notes d'avant la
+  caméra : le chiffre bougeait selon qu'Objectifs ou Tendances avait déjà rempli le cache (puis qu'une écriture
+  l'invalidait). **Corrigé le 26/11 03:30** : la 1re version (lire toutes les notes sur l'Accueil) dépassait le budget
+  de lectures (2 056 enregistrements pour 1 500 sur la démo de 3 ans ; « Budget de lectures (perf) » rouge sur #1275).
+  L'Accueil ne prend plus le cache : toujours le même calcul sur ses propres lectures, le chiffre ne bouge qu'avec les
+  données ; test « même chiffre avec ou sans cache » (rouge avant). Reste POLISH-SIM-80b. La ligne « Journal » a
+  disparu avec la refonte.
+- [ ] **POLISH-SIM-80b** (suite de 80) Le bien-être du jour de l'Accueil (notes depuis la première lecture du visage)
+  peut différer d'un dixième de celui de Tendances et d'Objectifs (toutes les notes). Piste : garder les paramètres du
+  modèle (`params` de `dayStates`) en mémoire locale et les réutiliser sur l'Accueil, sans relire l'historique (budget
+  D2). À faire seulement si une persona ou un testeur voit l'écart.
 - [x] **POLISH-SIM-81** (bug ; Sportif J1, balance) Tendances : toucher la pastille « Poids » mène à
   « Choisissez une courbe » avec « Pas » seul ; la courbe n'existe qu'en Mois. Garder la mesure choisie et passer à la
   période où elle a des points (`simulations/2026-11-14-0835-synthese.md`). **Fait le 14/11 09:35** : le menu « + »
@@ -1911,7 +1924,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   (« 1 sur 4 », segments de `TEMPS`) ni d'explication de l'envoi à l'IA (`Onboarding.jsx`) ; la visite guidée
   (`tourData.js`, `tour.js`, `GuidedTour.jsx`) ne montre plus de cigarette, et « + 1 cigarette » n'est proposé
   qu'une fois le compteur activé (POLISH-SIM-42, `AddStrip.jsx`).
-- POLISH-SIM-80 et POLISH-SIM-88 (ouverts) : revus par une 2e persona le 14/11 20:35 (synthèse du jour).
+- POLISH-SIM-80 et POLISH-SIM-88 : revus par une 2e persona le 14/11 20:35 (synthèse du jour) ; tous deux soldés (88 le 24/11, 80 le 26/11).
 - [ ] **PROP-SIM-17** (proposition avec maquette, pas de code sans accord) Bilan digestif simple avant le 28e jour :
   jours calmes, de gêne, de douleur, et repas des jours de douleur, sans statistique. **Maquette faite le 14/11
   20:35** : `maquettes/bilan-digestif/README.md` (réponse attendue du propriétaire : oui, variante prudente ou non).

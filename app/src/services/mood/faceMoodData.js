@@ -8,7 +8,6 @@ import { FACE_BURST_TYPE } from '../faceBursts'
 import { GUT_TYPE } from '../today'
 import { STOOL_TYPE } from '../stool'
 import { localDateKey } from '../analysisEngine'
-import { peekAnalysis } from '../analysisRunner'
 import { estimateStatesFromEntries } from '../method/stateSpace'
 import { faceMoodEstimate } from './faceMood'
 import { faceMoodDays } from './faceMoodDays'
@@ -41,13 +40,13 @@ export async function loadFaceMoodEntries({ list = listEntries, withStool = fals
 }
 
 /**
- * TS-1 : estimation du bien-être du jour par le modèle à espace d'états (remplace VENTRE-BE-2). Le calcul complet de
- * Tendances (tâche `dayStates`) s'il est en cache pour ces données ; sinon, le même modèle sur les entrées déjà lues
- * par l'Accueil (depuis la première lecture du visage), sans relire la base. Seulement si le bien-être est observé
- * aujourd'hui (au moins 3 lectures ou une note) ; jamais l'attendu d'un jour sans donnée.
+ * TS-1 : estimation du bien-être du jour par le modèle à espace d'états (remplace VENTRE-BE-2), sur les entrées déjà
+ * lues par l'Accueil (depuis la première lecture du visage), sans relire la base. Seulement si le bien-être est observé
+ * aujourd'hui (au moins 3 lectures ou une note) ; jamais l'attendu d'un jour sans donnée. `cached` (résultat de la
+ * tâche `dayStates`) n'est plus passé par l'Accueil : POLISH-SIM-80, le chiffre changeait selon l'état du cache.
  * @returns {{ mean: number, low: number, high: number } | null}  échelle interne 0–5
  */
-export function todayWellbeingState(entries, now = new Date(), cached = peekAnalysis('dayStates', now)) {
+export function todayWellbeingState(entries, now = new Date(), cached = null) {
   try {
     const states = cached?.hit && cached.result ? cached.result : estimateStatesFromEntries(entries, { now, ahead: 0 })
     const today = localDateKey(now.toISOString())
@@ -70,6 +69,8 @@ export async function loadWellbeingToday({ list = listEntries, now = new Date() 
   // AUJ-2 : la courbe du jour de l'Accueil, les mêmes points que la vue Jour de l'historique.
   return {
     est: faceMoodEstimate(entries, { now }),
+    // POLISH-SIM-80 : toujours le même calcul (pas le cache de Tendances, qui lit toutes les notes et va et vient avec
+    // les écritures) : le chiffre ne bouge qu'avec les données. Lire tout l'historique ici dépasserait le budget D2.
     state: todayWellbeingState(entries, now),
     days: faceMoodDays(entries),
     today: wellbeingHistory(entries, { period: 'day', now }),
