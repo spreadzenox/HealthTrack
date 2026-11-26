@@ -9,7 +9,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import LineIcon from '../components/LineIcon'
 import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
-import { objectivesOverview, TREND_WORDS } from '../services/objectivesOverview'
+import { notedDays, objectivesOverview, TREND_WORDS } from '../services/objectivesOverview'
+import { IN_APP_SETTINGS } from '../config/distribution'
 import { gutCardMode } from '../settings/onboarding'
 import { isExampleMode } from '../storage/exampleMode'
 import { appLocale } from '../i18n/locale.js'
@@ -128,6 +129,8 @@ export default function Objectives({ read = readStates, readTrials = readTrialRo
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul de vos scores…</p></div>
       ) : (() => {
         const cards = objectivesOverview(states, { gut, now: now || new Date() })
+        // POLISH-SIM-76 et 93 : sans l'objectif digestion, les jours déjà notés restent gardés ; on dit où les retrouver
+        const gutKept = gut ? 0 : notedDays(states, 'digestion')
         return (
           <>
             {/* Lot VIE (étape 12) : Pilou guide discret, une phrase, aucun chiffre */}
@@ -135,6 +138,11 @@ export default function Objectives({ read = readStates, readTrials = readTrialRo
             <ul className="objectives-list">
               {cards.map((card) => <ObjectiveCard key={card.key} card={card} />)}
             </ul>
+            {gutKept > 0 && (
+              <p className="objectives-gut-hidden" data-testid="objectives-gut-hidden">
+                Vos notes de digestion ({days(gutKept)}) sont gardées. Pour les retrouver : {IN_APP_SETTINGS} › Paramètres › <Link to="/settings">Vos objectifs</Link>.
+              </p>
+            )}
           </>
         )
       })()}

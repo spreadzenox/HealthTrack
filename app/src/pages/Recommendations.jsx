@@ -604,7 +604,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       {/* Pendant l'exemple (« Voir un exemple »), la digestion fictive s'affiche : pas de bandeau « masqué » (POLISH-SIM-37b) */}
       {outcome === 'digestion' && !showGut && !isExampleMode() && (
         <p className="reco-intro" data-testid="gut-off">
-          Le suivi digestif est masqué. Pour le retrouver : {IN_APP_SETTINGS} › Paramètres › <Link to="/settings">Ce qui vous amène</Link>.
+          Le suivi digestif est masqué. Pour le retrouver : {IN_APP_SETTINGS} › Paramètres › <Link to="/settings">Vos objectifs</Link>.
         </p>
       )}
       {error && <div className="error-msg" role="alert">{error}</div>}

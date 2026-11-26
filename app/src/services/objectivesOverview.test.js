@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { objectiveCard, objectivesOverview, TREND_WORDS } from './objectivesOverview'
+import { notedDays, objectiveCard, objectivesOverview, TREND_WORDS } from './objectivesOverview'
 import { fromDisplay } from './mood/wellbeingScale'
 
 const NOW = new Date(2026, 10, 15, 12)
@@ -80,5 +80,13 @@ describe('objectivesOverview', () => {
   it('le bien-être toujours ; le confort digestif seulement avec l’objectif', () => {
     expect(objectivesOverview(null, { gut: false, now: NOW }).map((c) => c.key)).toEqual(['wellbeing'])
     expect(objectivesOverview(null, { gut: true, now: NOW }).map((c) => c.key)).toEqual(['wellbeing', 'digestion'])
+  })
+})
+
+describe('notedDays (POLISH-SIM-76 et 93)', () => {
+  it('compte les jours passés notés, jamais le jour à venir', () => {
+    expect(notedDays(states([4, null, 4], { digestion: [3, 3, null] }), 'digestion')).toBe(2)
+    expect(notedDays(states([4, null, 4]), 'wellbeing')).toBe(2)
+    expect(notedDays(null, 'digestion')).toBe(0)
   })
 })

@@ -75,6 +75,23 @@ describe('Objectifs, vue d’ensemble (refonte « Compagnon », étape 6a)', () 
     expect(screen.queryByTestId('objective-digestion')).toBeNull()
   })
 
+  it('POLISH-SIM-76 et 93 : sans l’objectif digestion mais avec des jours notés, une ligne dit où les retrouver', async () => {
+    goals(['wellbeing'])
+    show(states([4, 4, 4, 4], [3, null, 2, 3]))
+    const line = await screen.findByTestId('objectives-gut-hidden')
+    expect(line).toHaveTextContent('Vos notes de digestion (3 jours) sont gardées.')
+    expect(line).toHaveTextContent('Paramètres › Vos objectifs')
+    expect(line.querySelector('a')).toHaveAttribute('href', '/settings')
+    expect(screen.queryByTestId('objective-digestion')).toBeNull()
+  })
+
+  it('sans l’objectif digestion ni aucun jour noté : pas de ligne', async () => {
+    goals(['wellbeing'])
+    show(states([4, 4, 4]))
+    await screen.findByTestId('objective-wellbeing')
+    expect(screen.queryByTestId('objectives-gut-hidden')).toBeNull()
+  })
+
   it('avec l’objectif digestion : la carte attend 14 jours notés, sans le mot « ventre »', async () => {
     goals(['gut'])
     show(states(new Array(13).fill(4), new Array(13).fill(3)))

@@ -26,7 +26,7 @@ const mean = (list) => (list.length ? list.reduce((a, b) => a + b, 0) / list.len
  */
 export function objectiveCard(key, states, now = new Date()) {
   const need = FIRST_SCORE_DAY[key]
-  const noted = (states?.days || []).filter((d) => !d.future && d.observed?.[key]).length
+  const noted = notedDays(states, key)
   const { dates, today, series } = buildTrendSeries({ states, period: 'week', now })
   const byDate = new Map(series[key].filter((p) => !p.future).map((p) => [p.date, p]))
   const bars = dates.filter((d) => d <= today).map((date) => {
@@ -43,6 +43,11 @@ export function objectiveCard(key, states, now = new Date()) {
   const gap = before != null && recent != null ? recent - before : null
   const trend = gap == null ? null : gap >= TREND_STEP ? 'up' : gap <= -TREND_STEP ? 'down' : 'flat'
   return { ...base, state: 'score', score: mean(values.map((b) => b.value)), trend }
+}
+
+/** Jours passés où l'objectif a une note de la personne (toute la période calculée). */
+export function notedDays(states, key) {
+  return (states?.days || []).filter((d) => !d.future && d.observed?.[key]).length
 }
 
 /** Les cartes de l'onglet : le bien-être pour tout le monde, le confort digestif avec l'objectif. */
