@@ -904,6 +904,25 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       l'état consommé (`describeMeal`, `redoMeal`). Ouverte depuis Données (Nutrition › Tous vos repas, adresse
       directe), rien ne change. Tests d'abord (`TabBar`, `JournalTabs`, `MealPhotoButton`, `AddStrip`,
       `DayChecklist`, `Food`), captures `/ma-journee` → « Vos repas » en clair et sombre, `/food` direct relues.
+  - **Passage des personas du 26/11 08:30** (run « idées », [`synthèse`](simulations/2026-11-26-0830-synthese.md) ;
+    « Prendre soin de soi » J45, téléphone + balance, et « Ventre et données » J45, iPhone seul ; installations neuves) :
+    - [ ] **POLISH-SIM-168 — Ma journée : « Encore 3 choses aujourd'hui » ne bouge pas quand on note un repas**
+      (J45, capture `ma-journee-3-choses.png`, « Repas 1 sur 3 ») : `dayChecklist.js` 123 compte des lignes ; la ligne
+      Repas n'est faite qu'à 3 repas sur 3, et la digestion du soir compte avant 18 h. Compter les cercles de repas
+      restants (un repas noté = une chose de moins), ou une phrase qui le dit. Tests `dayChecklist.test.js` d'abord ;
+      bannière de Pilou et widget (`companion/world/widget.js`) dans la même PR.
+    - [ ] **POLISH-SIM-169 — Repas : taper dans le champ des grammes ajoute au nombre** (J45 : « 100 » + 20 → 5000 g
+      après correction) : `MealEditor.jsx` 94, sélectionner le contenu au toucher. Test d'abord.
+    - [ ] **PERSONAS-OUTIL-3 — L'outil montre « Samsung Health » pour une configuration iPhone** : source par défaut
+      selon la configuration tirée (Santé pour l'iPhone).
+    - PROP-SIM-19 renforcée : 4e « Prendre soin de soi » qui cherche son poids ; ajouter à la proposition la masse
+      grasse en courbe dans Tendances (reçue de la balance, absente de `trendsData.js`). Pas de code sans réponse.
+    - À étudier : fructanes absents des facteurs comparés et « pain » sans alerte (probablement l'analyse factice de
+      l'outil, à vérifier) ; éviction ou réintroduction introuvable sans piste nette ; Pilou au toucher et « Humeur
+      de Pilou » sans explication après la visite ; rien à faire à J45 pour qui note peu (fonction nouvelle).
+    - Écartés, avec la raison, dans la synthèse : « Rien à éviter » au-dessus de barres hachurées (POLISH-SIM-128) ;
+      repas de midi à 08:34 (POLISH-SIM-122, voulu) ; note « Douleur » estimée (POLISH-NOTE-LOSANGE) ; « Où en sont
+      vos analyses » → Objectifs (nom du propriétaire).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
