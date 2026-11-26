@@ -56,7 +56,7 @@ function Gauge({ noted, need }) {
   )
 }
 
-function ObjectiveCard({ card }) {
+export function ObjectiveCard({ card }) {
   const c = CARDS[card.key]
   return (
     <li>
