@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **26/11 10:30** — **PERSONAS-OUTIL-3** : dans l'outil des personas, une configuration iPhone (`--store=appstore`) reçoit ses mesures de Santé (« iPhone », « Apple Watch ») au lieu de Samsung Health ; test d'abord, Sources relu. Aucun code de l'app, aucun build de Mac.
 - **26/11 09:30** — **POLISH-SIM-168 et 169** : « Encore … choses » de Ma journée compte un repas pour une chose (bannière de Pilou : un point par repas ; widget : un libellé par repas restant) ; le champ des grammes d'un repas sélectionne le nombre au toucher. Tests d'abord, captures `/ma-journee` clair et sombre. Un build iPhone de PR (code partagé).
 - **26/11 08:30** — Run « idées » : personas « Prendre soin de soi » J45 (téléphone + balance) et « Ventre et données » J45 (iPhone seul). Deux défauts au BACKLOG (POLISH-SIM-168 : le compteur de Ma journée ne baisse pas pour un repas ; POLISH-SIM-169 : champ des grammes), PROP-SIM-19 renforcée (poids et masse grasse), PERSONAS-OUTIL-3. Aucun code, aucun build de Mac.
 - **26/11 07:30** — **FUSION-4, suite** : la fiche App Store, la description, les notes pour l'examen et les textes de `store/app-store/` donnent les adresses du site de ce dépôt (`/HealthTrack/iphone/…`) ; la page d'assistance renvoie aux tickets de ce dépôt. Test d'abord. Aucun build de Mac.
