@@ -59,15 +59,20 @@ export function keepForEquipment(entry, equipment) {
 
 /** App qui écrit dans Health Connect selon le matériel (les données de démo disent « Gadgetbridge »). */
 const SOURCE_NAME = { phone: 'Samsung Health', watch: 'Samsung Health', 'watch-hrv': 'Fitbit', huawei: 'Samsung Health', full: 'Withings', 'apple-watch': 'Apple Watch', 'phone-scale': 'Samsung Health' }
+/** iPhone (`--store=appstore`, PERSONAS-OUTIL-3) : ce que l'app Santé donne comme source (PERSONAS.md config. 2, 3, 9 à 11). */
+const IOS_SOURCE_NAME = { ...SOURCE_NAME, phone: 'iPhone', watch: 'Apple Watch', huawei: 'iPhone', 'phone-scale': 'iPhone' }
+/** Magasin joué : `play` (Android, défaut) ou `appstore` (iPhone). */
+export const STORES = ['play', 'appstore']
+const defaultSource = (equipment, store) => (store === 'appstore' ? IOS_SOURCE_NAME : SOURCE_NAME)[equipment]
 
-function withSourceName(entry, equipment, sourceName) {
+function withSourceName(entry, sourceName) {
   // PERSONAS-OUTIL-2 : la démo range les pesées sous la connexion Withings directe, absente de la variante play ;
   // une vraie balance les écrit dans Health Connect, au nom de son app (Sources la montre alors dans « Mes appareils »).
   if (SCALE_TYPES.has(entry.type) && entry.source === 'withings') {
     return { ...entry, source: 'health_connect', payload: { ...entry.payload, connector: 'health_connect', sourceName: 'Withings' } }
   }
   if (entry.source !== 'health_connect' || !entry.payload?.sourceName) return entry
-  return { ...entry, payload: { ...entry.payload, sourceName: sourceName || SOURCE_NAME[equipment] } }
+  return { ...entry, payload: { ...entry.payload, sourceName } }
 }
 
 /** SpO₂ de la nuit (POLISH-SIM-35) : ✓ pour la Galaxy Watch (config. 4) et le « tout mesurer », ≈ Huawei en direct ;
@@ -85,7 +90,7 @@ function spo2Entries({ from, now, equipment, sourceName }) {
     const value = SPO2_VALUES[n % SPO2_VALUES.length]
     out.push(huawei
       ? { type: 'heart_rate', source: 'huawei_watch', at: d.toISOString(), payload: { value, unit: '%', subtype: 'oxygenSaturation', during: 'sleep', samples: 1, connector: 'huawei_watch', sourceName: 'Montre Huawei' } }
-      : { type: 'heart_rate', source: 'health_connect', at: d.toISOString(), payload: { value, unit: 'percent', subtype: 'oxygenSaturation', connector: 'health_connect', sourceName: sourceName || SOURCE_NAME[equipment] } })
+      : { type: 'heart_rate', source: 'health_connect', at: d.toISOString(), payload: { value, unit: 'percent', subtype: 'oxygenSaturation', connector: 'health_connect', sourceName } })
   }
   return out
 }
@@ -108,7 +113,8 @@ function keepForNotes(entry, notes) {
 
 /**
  * `sourceName` (facultatif, `--source=`) : l'app qui écrit dans Health Connect sur le téléphone tiré (Pixel → « Google Fit »,
- * Amazfit → « Zepp », Xiaomi → « Mi Fitness »), sinon celle de `SOURCE_NAME` (POLISH-SIM-35).
+ * Amazfit → « Zepp », Xiaomi → « Mi Fitness »), sinon celle de `SOURCE_NAME` (POLISH-SIM-35), ou de `IOS_SOURCE_NAME` pour
+ * `store: 'appstore'` (iPhone : « iPhone », « Apple Watch », jamais Samsung Health ; PERSONAS-OUTIL-3).
  *
  * Jour d'usage : jour 1 = installation du jour (aucune saisie dans l'app, l'onboarding n'est pas fait ; une montre
  * apporte ses 30 derniers jours importés) ; jour N = N jours de données (aujourd'hui compris).
@@ -116,7 +122,9 @@ function keepForNotes(entry, notes) {
 /** Lecture du visage : `on` (défaut) ou `off` pour une persona qui n'a jamais activé la caméra (POLISH-SIM-65). */
 export const FACE = ['on', 'off']
 
-export function personaEntries(entries, { day, equipment, notes = 'full', goals = [], sourceName, face = 'on', now = new Date() }) {
+export function personaEntries(entries, { day, equipment, notes = 'full', goals = [], sourceName: chosen, face = 'on', store = 'play', now = new Date() }) {
+  if (!STORES.includes(store)) throw new Error(`Magasin inconnu : ${store} (attendu : ${STORES.join(', ')})`)
+  const sourceName = chosen || defaultSource(equipment, store)
   if (!NOTES.includes(notes)) throw new Error(`Profil de saisie inconnu : ${notes} (attendu : ${NOTES.join(', ')})`)
   if (!FACE.includes(face)) throw new Error(`Lecture du visage inconnue : ${face} (attendu : ${FACE.join(', ')})`)
   const start = (n) => { const d = new Date(now); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (n - 1)); return d }
@@ -127,7 +135,7 @@ export function personaEntries(entries, { day, equipment, notes = 'full', goals 
     if (day <= 1 && (APP_TYPES.has(e.type) || CONTEXT_TYPES.has(e.type))) return false
     if (face === 'off' && e.type === 'face_burst') return false
     return keepForEquipment(e, equipment) && keepForNotes(e, notes)
-  }).map((e) => withSourceName(e, equipment, sourceName))
+  }).map((e) => withSourceName(e, sourceName))
     .concat(spo2Entries({ from, now, equipment, sourceName }))
     .concat(day > 1 && goals.includes('cycle') ? cycleEntries({ from, now }) : [])
     .concat(day > 1 && notes === 'full' && goals.includes('gut') ? gutEntries(entries, { from, now }) : [])

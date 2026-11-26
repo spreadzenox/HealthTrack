@@ -17,6 +17,8 @@
  *                             à tirer pour une part des personas « téléphone seul » (défaut : on)
  *     [--source=Zepp]         app qui écrit dans Health Connect, selon le téléphone ou la montre tirés (Pixel : « Google Fit » ;
  *                             Amazfit : Zepp ; Xiaomi : Mi Fitness) ; défaut selon --equipment (Samsung Health, Fitbit…)
+ *     [--store=appstore]      configuration iPhone : build de l'App Store, mesures venues de Santé (« iPhone »,
+ *                             « Apple Watch », jamais Samsung Health ; PERSONAS-OUTIL-3). L'écran garde l'apparence web
  *
  * Gestes (GET, réponse JSON { shot, url } ; la capture est un PNG à lire) :
  *   /start                     capture de l'écran actuel
@@ -142,7 +144,7 @@ const page = await context.newPage()
 await page.goto(base, { waitUntil: 'load' })
 const sourceName = args.source ? String(args.source) : undefined
 const face = String(args.face || 'on')
-const entries = personaEntries(generateDemoEntries(), { day, equipment, notes, goals: legacy ? goals : [...goals, ...freshOnboarding({ goals }).goals], sourceName, face })
+const entries = personaEntries(generateDemoEntries(), { day, equipment, notes, goals: legacy ? goals : [...goals, ...freshOnboarding({ goals }).goals], sourceName, face, store: args.store === 'appstore' ? 'appstore' : 'play' })
   .concat(legacy && day > 1 ? [legacyTrial()] : [])
 await page.evaluate(async (list) => {
   await new Promise((res) => { const q = indexedDB.deleteDatabase('HealthTrack'); q.onsuccess = q.onerror = q.onblocked = () => res() })

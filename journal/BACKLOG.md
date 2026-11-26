@@ -919,8 +919,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **POLISH-SIM-169 — Repas : taper dans le champ des grammes ajoute au nombre** (J45 : « 100 » + 20 → 5000 g
       après correction) : `MealEditor.jsx` 94, sélectionner le contenu au toucher. Test d'abord.
       FAIT le 26/11 à 09:30 : `onFocus` sélectionne le nombre (refait juste après pour l'iPhone) ; test d'abord.
-    - [ ] **PERSONAS-OUTIL-3 — L'outil montre « Samsung Health » pour une configuration iPhone** : source par défaut
+    - [x] **PERSONAS-OUTIL-3 — L'outil montre « Samsung Health » pour une configuration iPhone** : source par défaut
       selon la configuration tirée (Santé pour l'iPhone).
+      FAIT le 26/11 à 10:30 : `--store=appstore` (déjà la build iPhone) donne aussi les noms de Santé (`personaData.mjs`,
+      `IOS_SOURCE_NAME` : « iPhone », « Apple Watch », Withings pour la balance ; `--source` garde la main) ; test
+      d'abord ; Sources relu dans l'outil (« iPhone — Reçu »). Les configurations iPhone se jouent avec `--store=appstore`.
     - PROP-SIM-19 renforcée : 4e « Prendre soin de soi » qui cherche son poids ; ajouter à la proposition la masse
       grasse en courbe dans Tendances (reçue de la balance, absente de `trendsData.js`). Pas de code sans réponse.
     - À étudier : fructanes absents des facteurs comparés et « pain » sans alerte (probablement l'analyse factice de

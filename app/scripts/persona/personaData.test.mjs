@@ -93,6 +93,18 @@ describe('personaEntries', () => {
     expect(missingWatchMetrics(watch.metrics)).not.toContain('oxygène du sang')
   })
 
+  it('PERSONAS-OUTIL-3 : sur iPhone (--store=appstore), les mesures viennent de Santé, jamais de Samsung Health', () => {
+    const names = (equipment, extra = {}) => new Set(personaEntries(demo, { day: 14, equipment, now, store: 'appstore', ...extra })
+      .filter((e) => e.source === 'health_connect').map((e) => e.payload?.sourceName))
+    expect([...names('phone')]).toEqual(['iPhone'])
+    expect([...names('phone-scale')]).toEqual(['iPhone', 'Withings'])
+    expect([...names('apple-watch')]).toEqual(['Apple Watch'])
+    expect([...names('watch')]).toEqual(['Apple Watch'])
+    expect([...names('phone', { sourceName: 'Garmin Connect' })]).toEqual(['Garmin Connect']) // --source garde la main
+    for (const eq of ['phone', 'watch', 'huawei', 'phone-scale']) expect(names(eq).has('Samsung Health')).toBe(false)
+    expect(() => personaEntries(demo, { day: 14, equipment: 'phone', now, store: 'nokia' })).toThrow(/Magasin inconnu/)
+  })
+
   it('--source : l’app qui écrit dans Health Connect suit le téléphone tiré (Pixel → Google Fit, Amazfit → Zepp)', () => {
     const names = new Set(personaEntries(demo, { day: 14, equipment: 'phone', now, sourceName: 'Google Fit' })
       .filter((e) => e.source === 'health_connect').map((e) => e.payload?.sourceName))
