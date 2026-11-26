@@ -76,10 +76,9 @@ jobs:
 
   perf-budget:
     name: Budget de lectures (perf)
-    # 15/11 : ubuntu-latest passe à Ubuntu 26.04, où Playwright 1.56.1 refuse d'installer Chromium
-    # (« Playwright does not support chromium on ubuntu26.04-x64 »). Épinglé sur 24.04 jusqu'à une version de
-    # Playwright qui la prend en charge (CI-UBUNTU-26 au BACKLOG).
-    runs-on: ubuntu-24.04
+    # 15/11 : ubuntu-latest passe à Ubuntu 26.04, où Playwright 1.56.1 refusait d'installer Chromium. 26/11 :
+    # Playwright 1.65.1 la prend en charge (comme 24.04) ; épinglage retiré (CI-UBUNTU-26).
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -92,7 +91,7 @@ jobs:
         run: |
           cd app
           npm ci
-          npm install -g playwright@1.56.1
+          npm install -g playwright@1.65.1
           playwright install chromium
           # 11/11 : apt (miroir Ubuntu d'Azure) tombait en panne DNS et rendait « Tests » rouge sans rapport avec le
           # code. L'image du runner a déjà les bibliothèques de Chromium : leur installation par apt est tentée,

@@ -1211,7 +1211,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   sur 3 ans de démo, contre 15 810 pour la vue Semaine. Voulu (contributions dès qu'un jour est montré), mais chaque
   tâche relit toutes les saisies : partager la lecture entre les deux tâches du Worker diviserait le coût par deux.
   Budget du garde-fou : `/tendances?vue=jour` à 34 500 (remplace `/journal`, devenu une redirection, en 7b).
-- [ ] **CI-UBUNTU-26** (15/11 23:30) : `ubuntu-latest` bascule vers Ubuntu 26.04, et Playwright 1.56.1 y refuse
+- [x] **CI-UBUNTU-26** (**FAIT 26/11 14:30** : Playwright 1.65.1 dans le job perf, Ubuntu 26.04 reconnue dans `playwright-core` depuis la 1.61 ; job remis sur `ubuntu-latest`, vert sur la PR) (15/11 23:30) : `ubuntu-latest` bascule vers Ubuntu 26.04, et Playwright 1.56.1 y refuse
   Chromium (« Playwright does not support chromium on ubuntu26.04-x64 ») : « Budget de lectures (perf) » rouge sur
   #1026 alors qu'il était vert sur main six minutes plus tôt. Fait : ce job épinglé sur `ubuntu-24.04`. Reste :
   passer à une version de Playwright qui prend 26.04 en charge puis retirer l'épinglage ; surveiller les autres jobs
