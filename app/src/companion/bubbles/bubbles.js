@@ -68,10 +68,13 @@ export function poppedMessage(bubble, done) {
   return 'C’est noté.'
 }
 
-/** Ligne du bandeau et des lecteurs d'écran : « 3 bulles à faire ». */
+/**
+ * Ligne du bandeau et des lecteurs d'écran : « Encore 3 choses aujourd’hui ». `n` est `remaining` de homeBubbles
+ * (chaque repas manquant compte), pour dire le même nombre avec les mêmes mots que Ma journée (POLISH-SIM-174).
+ */
 export function bubblesLeftText(n) {
   if (!n) return 'Plus rien à faire aujourd’hui'
-  return `${n} ${n > 1 ? 'bulles' : 'bulle'} à faire`
+  return `Encore ${n} ${n > 1 ? 'choses' : 'chose'} aujourd’hui`
 }
 
 /**

@@ -450,6 +450,15 @@ describe('Temps 4 : « Ce que vous noterez chaque jour »', () => {
     expect(screen.getByRole('textbox', { name: 'Ajouter une habitude' })).toBeInTheDocument()
   })
 
+  it('le champ d’une habitude se place au-dessus du bouton fixe quand on le touche (POLISH-SIM-175)', () => {
+    at('notes', { goals: ['wellbeing'] })
+    renderAt()
+    const field = screen.getByRole('textbox', { name: 'Ajouter une habitude' })
+    field.scrollIntoView = vi.fn()
+    fireEvent.focus(field)
+    expect(field.scrollIntoView).toHaveBeenCalledWith({ block: 'nearest' })
+  })
+
   it('tout décoché puis « C’est parti ! » : aucune habitude, la méditation ne revient pas', async () => {
     at('notes', { goals: ['wellbeing'] })
     renderAt()

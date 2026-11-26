@@ -457,7 +457,7 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
   }, [week?.state]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const label = message || (night ? NIGHT_LABEL(name)
-    : `${name} ${MOOD_PHRASES[mood.level]} · ${bubblesLeftText(list.bubbles.length)}`)
+    : `${name} ${MOOD_PHRASES[mood.level]} · ${bubblesLeftText(list.remaining)}`)
   const overlay = (stage) => (
     <BubblesLayer stage={stage} bubbles={list.bubbles} heldRef={heldRef} reduced={reduced || Boolean(stage?.reducedMotion)}
       night={night} onPress={press} popping={popping} positionsRef={positionsRef} />
@@ -506,7 +506,7 @@ export default function CompanionHome({ entries, askGut = false, habits = [], we
       {!use3d && <p className="cmp-island-label">{label}</p>}
       <ScrollBanner targetRef={stageRef} reduced={reduced}
         title={night ? NIGHT_LABEL(name) : `${name} ${MOOD_PHRASES[mood.level]}`}
-        sub={bubblesLeftText(list.bubbles.length)} dots={list.bubbles} />
+        sub={bubblesLeftText(list.remaining)} dots={list.bubbles} />
       <p className="visually-hidden" role="status">{message}</p>
 
       {week && <FirstWeekCard week={week} gut={askGut ? gut : null} name={name} onOpenGift={openTodayGift} />}
