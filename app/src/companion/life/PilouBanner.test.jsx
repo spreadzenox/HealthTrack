@@ -49,6 +49,13 @@ describe('PilouBanner', () => {
     expect(screen.getByText('Journée difficile ? Je reste près de vous.')).toBeInTheDocument()
   })
 
+  it('à 2 h du matin : la nuit, aux couleurs du soir, comme l’Accueil où Pilou dort', () => {
+    const { container } = show([], { now: new Date(2026, 10, 16, 2, 30) })
+    expect(screen.getByText('Bonne nuit. Le reste peut attendre demain.')).toBeInTheDocument()
+    expect(screen.queryByText(/Bonjour/)).not.toBeInTheDocument()
+    expect(container.querySelector('.pilou-banner')).toHaveClass('is-evening')
+  })
+
   it('après une absence : « Bon retour », sans compteur', () => {
     saveCompanion({ lastDay: '2026-11-13' })
     show([])

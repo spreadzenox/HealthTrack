@@ -17,6 +17,11 @@ export { EXPRESSIONS }
 export const NIGHT_FROM_HOUR = 21
 /** Bannière aux couleurs du soir (SPEC journée § 1 : mauve-pêche après 19 h). */
 export const EVENING_FROM_HOUR = 19
+/** Jusqu'à 5 h, c'est encore la nuit : Pilou dort sur l'Accueil (bubbles/night.js), la bannière le dit aussi. */
+export const NIGHT_UNTIL_HOUR = 5
+
+/** Soir ou nuit (couleurs du soir de la bannière) : dès 19 h et jusqu'à 5 h. */
+export const isLateHour = (hour) => hour >= EVENING_FROM_HOUR || hour < NIGHT_UNTIL_HOUR
 
 const n = (name) => name || DEFAULT_NAME
 
@@ -111,17 +116,19 @@ export function welcomeBackLine(daysAway) {
 
 /** Ce qu'il dit sans saisie récente, selon l'heure et ce qu'il reste à noter. */
 export function idleLine({ remaining, hour }) {
-  if (remaining === 0) return { expr: hour >= NIGHT_FROM_HOUR ? 'endormi' : 'content', move: 'none', text: hour >= NIGHT_FROM_HOUR ? 'Bonne nuit.' : 'Tout est noté. Merci !' }
+  const night = hour >= NIGHT_FROM_HOUR || hour < NIGHT_UNTIL_HOUR
+  if (remaining === 0) return { expr: night ? 'endormi' : 'content', move: 'none', text: night ? 'Bonne nuit.' : 'Tout est noté. Merci !' }
+  if (hour < NIGHT_UNTIL_HOUR) return { expr: 'endormi', move: 'none', text: 'Bonne nuit. Le reste peut attendre demain.' }
   if (hour < 11) return { expr: 'salut', move: 'none', text: 'Bonjour ! Je suis là quand vous voulez.' }
   if (hour >= EVENING_FROM_HOUR) return { expr: 'tranquille', move: 'none', text: 'Bonne soirée. Je suis là quand vous voulez.' }
   return { expr: 'tranquille', move: 'none', text: 'Je suis là quand vous voulez.' }
 }
 
 /**
- * Tout est noté (SPEC § 8). Avant 21 h : la fête sobre ; à partir de 21 h : le calme du soir, il s'endort.
+ * Tout est noté (SPEC § 8). Avant 21 h : la fête sobre ; à partir de 21 h et jusqu'à 5 h : le calme du soir, il s'endort.
  */
 export function finishedLine(hour, name) {
-  if (hour >= NIGHT_FROM_HOUR) {
+  if (hour >= NIGHT_FROM_HOUR || hour < NIGHT_UNTIL_HOUR) {
     return { expr: 'endormi', move: 'sleep', title: 'À demain.', text: `${n(name)} dort sur son îlot. Bonne nuit.` }
   }
   return {

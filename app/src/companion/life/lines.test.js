@@ -8,6 +8,7 @@ import {
   gutLine,
   habitLine,
   idleLine,
+  isLateHour,
   mealLine,
   reactionFor,
   undoLine,
@@ -101,6 +102,22 @@ describe('fin de journée et retour', () => {
   it('au repos, rien ne presse', () => {
     expect(idleLine({ remaining: 3, hour: 8 }).text).toBe('Bonjour ! Je suis là quand vous voulez.')
     expect(idleLine({ remaining: 0, hour: 22 }).expr).toBe('endormi')
+  })
+
+  it('après minuit, c’est encore la nuit, comme sur l’Accueil : ni « Bonjour » ni « Bonne soirée »', () => {
+    for (const hour of [0, 2, 4]) {
+      const line = idleLine({ remaining: 3, hour })
+      expect(line.expr).toBe('endormi')
+      expect(line.text).toBe('Bonne nuit. Le reste peut attendre demain.')
+      expect(idleLine({ remaining: 0, hour }).text).toBe('Bonne nuit.')
+    }
+    expect(idleLine({ remaining: 3, hour: 5 }).text).toBe('Bonjour ! Je suis là quand vous voulez.')
+    expect(finishedLine(2).expr).toBe('endormi')
+    expect(finishedLine(5).expr).toBe('rayonnant')
+    expect(isLateHour(2)).toBe(true)
+    expect(isLateHour(19)).toBe(true)
+    expect(isLateHour(5)).toBe(false)
+    expect(isLateHour(18)).toBe(false)
   })
 })
 

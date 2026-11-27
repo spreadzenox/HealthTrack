@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useCompanionName } from './useCompanionName'
 import PilouFigure from './PilouFigure'
 import { openDay } from './companionState'
-import { EVENING_FROM_HOUR, idleLine, remainingText, welcomeBackLine } from './lines'
+import { idleLine, isLateHour, remainingText, welcomeBackLine } from './lines'
 import { diffToday, loadSeen, pickReaction, saveSeen } from './reactions'
 import { emitEntry } from './emit'
 import './PilouBanner.css'
@@ -62,7 +62,7 @@ export default function PilouBanner({ entries, tasks, remaining, todayKey, now }
   const line = reaction ?? idleLine({ remaining, hour })
   const text = reaction?.then && phase === 1 ? reaction.then : line.text
   return (
-    <div className={`pilou-banner${hour >= EVENING_FROM_HOUR ? ' is-evening' : ''}`} data-testid="pilou-banner">
+    <div className={`pilou-banner${isLateHour(hour) ? ' is-evening' : ''}`} data-testid="pilou-banner">
       <span className="pilou-porthole">
         <PilouFigure key={`${line.expr}-${line.move}-${text}`} size={58} expr={line.expr} move={line.move} />
       </span>
