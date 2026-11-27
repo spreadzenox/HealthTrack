@@ -106,6 +106,20 @@ describe('familles de ce qui va avec un objectif (refonte « Compagnon », étap
     expect(familyDetail(outcome([f('steps', 'Pas', 0.4, { theme: 'activity' })]), 'nutrition')).toBeNull()
   })
 
+  it('POLISH-FODMAP-ABSENT : Alimentation nomme les groupes FODMAP pas comparés (aucun repas riche en eux)', () => {
+    const n = { theme: 'nutrition' }
+    const d = familyDetail(outcome(
+      [f('fodmap_lactose', 'Lactose', 0.2, n), f('fodmap_gos', 'GOS', 0.1, { ...n, net: false })],
+      [f('fodmap_fructose', 'Fructose en excès', 0.1, n), f('fodmap_sorbitol', 'Sorbitol', 0.1, n), f('fiber_g', 'Fibres', 0.1, n)],
+    ), 'nutrition')
+    expect(d.fodmapNotCompared).toEqual([
+      { id: 'fructans', label: 'Fructanes', hint: 'blé, oignon, ail' },
+      { id: 'mannitol', label: 'Mannitol', hint: 'champignons, pois mange-tout' },
+    ])
+    // Les autres familles n'en parlent pas
+    expect(familyDetail(outcome([f('sleepMinutes', 'Sommeil', 0.3)]), 'sleep').fodmapNotCompared).toEqual([])
+  })
+
   it('REFONTE-6c : un effet hors échelle reste dans les barres, jamais dans les liens nets', () => {
     const d = familyDetail(outcome([f('fiber_g', 'Fibres', 3, { theme: 'nutrition', outOfScale: true })]), 'nutrition')
     expect(d.horizons[0].factors).toHaveLength(1)

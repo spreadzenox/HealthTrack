@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **27/11 09:30** — **POLISH-FODMAP-ABSENT** : Votre confort digestif › Alimentation nomme les groupes FODMAP pas encore comparés (« trop peu de vos repas en sont riches : fructanes (blé, oignon, ail) et mannitol (…) ») ; avant, ils manquaient sans explication (« Ventre et données », passage de 08:30). « GOS » ne s'écrit plus « gOS » dans les listes. Test d'abord ; code partagé, l'iPhone suit dans la même PR.
 - **27/11 08:30** — Run « idées », personas : « Stressé et pressé » J1 et « Ventre et données » J45 (mise à jour), Android seul. Aucun nouveau défaut sûr ; PROP-SIM-20 relevée une 4ᵉ fois (nombre de repas par ligne ajouté à la proposition) ; un point à vérifier (fructanes absents d'Alimentation). [`synthèse`](simulations/2026-11-27-0830-synthese.md).
 - **27/11 07:30** — **POLISH-GUT-OFF-NOTE** : quand le suivi digestif est masqué, la page Votre confort digestif (atteinte depuis un essai, la réintroduction ou le bilan) n'invite plus à « Noter maintenant » ; le bandeau dit où le rallumer, les jours déjà notés restent comptés. Reste soldé du run de 06:30 ; test d'abord ; code partagé, l'iPhone suit dans la même PR.
 - **27/11 06:30** — **POLISH-AGIR-RETOUR** : la page Agir était la seule sous-page sans lien de retour ; elle a « ← Accueil » (l'onglet allumé), comme les pages d'Objectifs. Vu dans une revue de main ; test d'abord ; code partagé, l'iPhone suit dans la même PR.

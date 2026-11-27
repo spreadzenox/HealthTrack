@@ -978,6 +978,12 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       de « Fructanes −1,2 pt », 3e fois chez « sans technique » (proposition avec maquette, avec le reste de
       POLISH-SIM-173)~~ (PROP-SIM-20, maquette du 27/11 01:30) ; ~~« vous notez vous-même » à vérifier sur l'émulateur~~ (écarté le 27/11 00:30, voir dessous) ;
       ~~jours déjà comptés du long terme~~ (POLISH-SIM-177).
+    - [x] **POLISH-FODMAP-ABSENT — Alimentation tait les groupes FODMAP pas comparés** — FAIT 27/11 09:30 (passage
+      des personas de 08:30, « Ventre et données » J45) : un groupe sans repas au-dessus de son repère ne varie pas et
+      `fitOne` le laisse de côté (repas de démo sans blé, oignon, ail ni champignons). `familyDetail` rend
+      `fodmapNotCompared` ; une ligne « Pas encore comparés, trop peu de vos repas en sont riches : fructanes (blé,
+      oignon, ail) et mannitol (…) » dans le détail des chiffres, ou après les facteurs nommés sans barres. `listFr`
+      garde les sigles (« GOS », pas « gOS »). Tests d'abord ; captures `runs/captures/2026-11-27-0930-fodmap-pas-compares-*`.
     - [x] **POLISH-GUT-OFF-NOTE — Confort digestif masqué, « Noter maintenant » quand même** — FAIT 27/11 07:30
       (reste « à juger » de POLISH-AGIR-RETOUR) : la page reste joignable sans l'objectif (essai digestif, retour de la
       réintroduction, bilan `DigestBlock`) ; sous « Le suivi digestif est masqué », le compte à rebours proposait

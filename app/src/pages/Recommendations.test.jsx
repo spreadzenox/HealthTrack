@@ -181,6 +181,37 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(bars).not.toHaveTextContent('pt')
   })
 
+  it('POLISH-FODMAP-ABSENT : Alimentation nomme les groupes FODMAP pas comparés, avec ou sans barres', async () => {
+    const results = structuredClone(readyResults)
+    const dig = results.outcomes.digestion = structuredClone(readyResults.outcomes.wellbeing)
+    const n = (key, label) => ({ ...f(key, label, 0.2, { theme: 'nutrition', net: false }), outcome: 'digestion' })
+    dig.horizons.short.factors = [n('fodmap_fructose', 'Fructose en excès'), n('fodmap_sorbitol', 'Sorbitol'), n('fodmap_lactose', 'Lactose'), n('fodmap_mannitol', 'Mannitol')]
+    dig.horizons.medium.factors = []
+    const show = () => render(
+      <MemoryRouter initialEntries={['/recommendations/ventre/famille/nutrition']}>
+        <Routes>
+          <Route path="/recommendations/ventre/famille/:family" element={<Recommendations view="gut" read={async () => results} />} />
+          <Route path="*" element={<Where />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    const line = 'Pas encore comparés, trop peu de vos repas en sont riches : fructanes (blé, oignon, ail) et GOS (pois chiches, lentilles).'
+    const { unmount } = show()
+    await screen.findByRole('heading', { level: 2, name: 'Alimentation' })
+    const bars = screen.getByRole('region', { name: 'Ce qui a été comparé' })
+    expect(screen.queryByTestId('reco-family-fodmap-missing')).toBeNull()
+    fireEvent.click(within(bars).getByRole('button', { name: 'Afficher les détails' }))
+    expect(screen.getByTestId('reco-family-fodmap-missing')).toHaveTextContent(line)
+    unmount()
+    // Sans barres : à la suite des facteurs nommés (les sigles gardent leurs capitales)
+    dig.beatsPersistence = false
+    dig.horizons.short.factors.push(n('fodmap_gos', 'GOS'))
+    show()
+    await screen.findByRole('heading', { level: 2, name: 'Alimentation' })
+    expect(screen.getByTestId('reco-family-compared')).toHaveTextContent(': fructose en excès, sorbitol, lactose, mannitol et GOS.')
+    expect(screen.getByTestId('reco-family-fodmap-missing')).toHaveTextContent('Pas encore comparé, trop peu de vos repas en sont riches : fructanes (blé, oignon, ail).')
+  })
+
   it('REFONTE-6c : famille inconnue, sans facteur comparé ou avant les résultats : retour au détail de l’objectif', async () => {
     renderAt('/recommendations/bien-etre/famille/nutrition', readyResults)
     expect(await screen.findByRole('region', { name: 'Par famille' })).toBeInTheDocument()

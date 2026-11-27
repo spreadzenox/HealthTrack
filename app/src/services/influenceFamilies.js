@@ -10,6 +10,8 @@
  * - Sans lien net, la famille le dit avec les mots de la légende des barres hachurées (« pas assez net », POLISH-SIM-104) ;
  *   sans facteur comparé (trop peu de données), aussi.
  */
+import { FODMAP_GROUPS } from './fodmapChallenge'
+
 export const MEDIUM_FROM = 0.25
 export const STRONG_FROM = 0.5
 
@@ -71,7 +73,7 @@ export function influenceFamilies(outcome) {
  * Ses facteurs, délai prêt par délai prêt, et ses liens nets (un par facteur, au délai où il est le plus fort).
  * `bars` suit la règle de « Ce qui va avec » : les barres ne se montrent que si la méthode prévoit mieux que
  * « demain comme aujourd'hui ». Null pour une famille inconnue, avant les résultats ou sans facteur comparé.
- * @returns {{ id, label, tone, bars: boolean, count: number, names: string[], horizons: { id, label, window, factors: object[] }[], pistes: object[] } | null}
+ * @returns {{ id, label, tone, bars: boolean, count: number, names: string[], horizons: { id, label, window, factors: object[] }[], pistes: object[], fodmapNotCompared: { id, label, hint }[] } | null}
  */
 export function familyDetail(outcome, familyId) {
   const fam = FAMILIES.find((x) => x.id === familyId)
@@ -91,5 +93,11 @@ export function familyDetail(outcome, familyId) {
   const pistes = [...best.values()].sort((a, b) => Math.abs(b.effect) - Math.abs(a.effect))
   // POLISH-SIM-160 : les facteurs comparés par leur nom, une fois chacun, dans l'ordre où ils apparaissent
   const names = [...new Map(horizons.flatMap((h) => h.factors.map((f) => [f.key, f.label]))).values()]
-  return { id: fam.id, label: fam.label, tone: fam.tone, bars: outcome.beatsPersistence === true, count: names.length, names, horizons, pistes }
+  // POLISH-FODMAP-ABSENT (« Ventre et données », 27/11 : « fructanes et mannitol absents, pourquoi ? ») : un groupe
+  // FODMAP sans repas au-dessus de son repère ne varie pas, la méthode ne peut pas le comparer (fitOne) ; le dire.
+  const keys = new Set(horizons.flatMap((h) => h.factors.map((f) => f.key)))
+  const fodmapNotCompared = fam.id === 'nutrition'
+    ? FODMAP_GROUPS.filter((g) => !keys.has(`fodmap_${g.id}`)).map(({ id, label, hint }) => ({ id, label, hint }))
+    : []
+  return { id: fam.id, label: fam.label, tone: fam.tone, bars: outcome.beatsPersistence === true, count: names.length, names, horizons, pistes, fodmapNotCompared }
 }
