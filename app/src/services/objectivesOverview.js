@@ -2,7 +2,8 @@
  * Onglet Objectifs, vue d'ensemble (refonte « Compagnon », étape 6a ; brief § 4, SPEC comprendre § 6.1 et § 6.2).
  * Fonction pure. Une carte par objectif : le score sur 5 des 7 derniers jours, sa tendance en mots et 7 barres.
  * Les valeurs sont celles de Tendances (modèle à espace d'états, TS-1 : un même objet, une seule mesure). Avant
- * 7 jours notés (bien-être) ou 14 (confort digestif), la carte dit combien il en reste, sans score.
+ * 7 jours notés (bien-être) ou 14 (confort digestif), la carte dit combien il en reste, sans score ; avec moins de
+ * 3 jours notés dans la semaine, elle n'a pas de score non plus (« Pas assez de notes cette semaine »).
  */
 import { FIRST_SCORE_DAY } from '../config/firstResults'
 import { buildTrendSeries, TREND_MIN_POINTS } from './trendsData'
@@ -37,7 +38,9 @@ export function objectiveCard(key, states, now = new Date()) {
   const base = { key, noted, need, daysLeft: Math.max(0, need - noted), weekNoted, bars, score: null, trend: null }
   if (noted < need) return { ...base, state: 'waiting' }
   const values = bars.filter((b) => b.value != null)
-  if (values.length < TREND_MIN_POINTS) return { ...base, state: 'quiet' }
+  // POLISH-SEMAINE-NOTEE : le modèle estime aussi les jours sans note ; un score de la semaine demande au moins
+  // 3 jours notés dans la semaine (leçon 17), sinon il ne dirait que l'estimation du modèle.
+  if (values.length < TREND_MIN_POINTS || weekNoted < TREND_MIN_POINTS) return { ...base, state: 'quiet' }
   const before = mean(bars.slice(0, 4).filter((b) => b.value != null).map((b) => b.value))
   const recent = mean(bars.slice(4).filter((b) => b.value != null).map((b) => b.value))
   const gap = before != null && recent != null ? recent - before : null

@@ -53,8 +53,10 @@ export function tourSteps({ hc, face, gut }) {
     { route: '/ma-journee', anchor: '.day-checklist', title: 'Ma journée', text: 'Ce qui se note à la main chaque jour. Une ligne part quand c’est fait.', button: 'Suivant' },
     { route: DAY_ROUTE, title: 'Vos journées', text: 'Chacune de vos journées sera gardée ici.', button: `Exemple au jour ${W}` },
     { route: DAY_ROUTE, days: W, reveal: true, anchor: '.trends-detail', title: 'Une journée d’un coup d’œil', text: 'Touchez un jour pour revoir vos notes et vos repas.', button: 'Suivant' },
-    { route: '/recommendations/bien-etre', title: 'Objectifs', text: gut ? `Bien-être : un score après ${SW} jours notés, des pistes après ${W}. Digestion : ${SD} et ${D}.` : `Un premier score après ${SW} jours notés, vos pistes après ${W}.`, button: `Exemple au jour ${W}` },
-    { route: '/recommendations/bien-etre', days: W, reveal: true, anchor: '[aria-labelledby="reco-pistes-wellbeing"]', title: `Au jour ${W} : vos premières pistes`, text: 'Ce qui va avec vos bons et vos mauvais jours. Des pistes, pas des causes.', button: 'Suivant' },
+    // REFONTE-6a-2 : l'onglet Objectifs s'ouvre sur sa vue d'ensemble, la visite aussi ; le détail du bien-être ensuite
+    { route: '/recommendations', title: 'Objectifs', text: gut ? `Bien-être : un score après ${SW} jours notés, des pistes après ${W}. Digestion : ${SD} et ${D}.` : `Un premier score après ${SW} jours notés, vos pistes après ${W}.`, button: `Exemple au jour ${W}` },
+    { route: '/recommendations', days: W, reveal: true, anchor: '.objectives-list', title: `Au jour ${W} : vos scores`, text: 'Un score sur 5 par objectif. Touchez-en un pour voir ses pistes.', button: 'Suivant' },
+    { route: '/recommendations/bien-etre', days: W, anchor: '[aria-labelledby="reco-pistes-wellbeing"]', title: 'Vos premières pistes', text: 'Ce qui va avec vos bons et vos mauvais jours. Des pistes, pas des causes.', button: 'Suivant' },
     { route: '/recommendations/bien-etre', days: W, anchor: '[aria-labelledby="reco-weigh-wellbeing"]', title: 'Le détail de chaque piste', text: 'De combien chaque facteur joue sur votre bien-être, en points sur 5.', button: 'Suivant' },
   ]
   if (gut) {

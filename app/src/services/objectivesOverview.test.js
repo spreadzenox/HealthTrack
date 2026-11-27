@@ -76,6 +76,20 @@ describe('objectiveCard (refonte « Compagnon », étape 6a)', () => {
   })
 })
 
+describe('objectiveCard : semaine trop peu notée (POLISH-SEMAINE-NOTEE)', () => {
+  it('bien-être : un seul jour noté cette semaine, les autres estimés par le modèle : pas de score', () => {
+    const values = [...new Array(10).fill(4), null, null, null, null, null, null, 3]
+    const c = objectiveCard('wellbeing', states(values), NOW)
+    expect(c.bars.every((b) => b.value != null)).toBe(true)
+    expect(c).toMatchObject({ state: 'quiet', score: null, trend: null, weekNoted: 1 })
+  })
+
+  it('bien-être : trois jours notés cette semaine suffisent (leçon 17)', () => {
+    const values = [...new Array(10).fill(4), null, null, null, null, 3, 3, 3]
+    expect(objectiveCard('wellbeing', states(values), NOW)).toMatchObject({ state: 'score', weekNoted: 3 })
+  })
+})
+
 describe('objectivesOverview', () => {
   it('le bien-être toujours ; le confort digestif seulement avec l’objectif', () => {
     expect(objectivesOverview(null, { gut: false, now: NOW }).map((c) => c.key)).toEqual(['wellbeing'])

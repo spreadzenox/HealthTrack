@@ -263,9 +263,17 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [x] **REFONTE-6a-iOS** (15/11 14:15 : **#1014 mergée**, code v1088, 51 correctifs sans retouche, 15 checks
     verts, build sur simulateur verte) : Objectifs regardé sur iPhone 17 Pro (clair, sombre, sans donnée) et le
     détail du bien-être (pistes floutées et « Débloquer » : la période de lancement est finie sur iPhone).
-  - [ ] **REFONTE-6a-2 — Restes de 6a** : la visite guidée ne montre pas la vue d'ensemble (ses 3 étapes d'Objectifs
-    pointent sur le détail du bien-être) ; captures à 320 px et en grand texte ; état « pas assez de notes cette
-    semaine » jamais capturé ; fourchette du score non montrée (méta-leçon 4).
+  - [ ] **REFONTE-6a-2 — Restes de 6a** : ~~la visite guidée ne montre pas la vue d'ensemble (ses 3 étapes d'Objectifs
+    pointent sur le détail du bien-être)~~ (**fait le 27/11 19:30** : « Objectifs » s'ouvre sur `/recommendations`,
+    l'exemple du jour 14 y montre les cartes, « Au jour 14 : vos scores », puis « Vos premières pistes » sur le détail) ; captures à 320 px et en grand texte ; ~~état « pas assez de notes cette
+    semaine » jamais capturé~~ (**fait le 27/11 18:30**, `--wellbeing-gap=week --no-face`, clair, sombre, 320 px ; il
+    n'apparaissait jamais pour le bien-être : **POLISH-SEMAINE-NOTEE** ci-dessous) ; fourchette du score non montrée (méta-leçon 4).
+  - [x] **POLISH-SEMAINE-NOTEE** (27/11 18:30, PR en brouillon) : `objectiveCard` ne comptait que les barres qui ont une
+    valeur, et le modèle (TS-1) en donne une à chaque jour : avec un seul jour noté dans la semaine, Objectifs montrait
+    « 3,2 / 5 · Plutôt stable » et Pilou « Une semaine plutôt régulière ». Un score demande désormais aussi 3 jours
+    notés dans la semaine (`weekNoted`, leçon 17) ; sinon « Pas assez de notes cette semaine pour un score » et
+    Pilou « Notez votre bien-être quand vous voulez. ». Même règle pour la carte digestive de l'Accueil
+    (`HomeGutObjective`). La cérémonie du jour 7 (`!== 'waiting'`) n'en dépend pas. 2 tests (`objectivesOverview.test.js`).
   - [x] **REFONTE-6b — Les liens par famille** (15/11 13:35, Android) : bloc « Par famille » en tête des résultats
     du détail d'un objectif (`services/influenceFamilies.js`, `pages/Recommendations.jsx`) : Sommeil (avec « Écran
     tard le soir »), Alimentation, Activité, plus Habitudes et Écrans s'ils ont un lien net ; force du lien net le
@@ -311,8 +319,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     très autocorrélé) ; sous 5 %, la règle ± 2 erreurs types reste (Student : 1,6 à 2,2 %, mais puissance de 41 à
     28 % pour un effet d'un écart type) ; Agir allume
     l'onglet Accueil et l'écran d'un essai l'onglet Objectifs ; une piste finie est reproposée aussitôt ; captures
-    en sombre, à 320 px, « Plutôt oui », « Plutôt non », « Trop peu de jours ». (6c-1) un effet non net plus grand que 2 points (« Méditation −3,3 pt » à long
-    terme sur les données de démo) ne devrait pas s'afficher en chiffre (voir `outOfScale`, POLISH-SIM-16) ; le
+    en sombre, à 320 px, « Plutôt oui », « Plutôt non », « Trop peu de jours ». (6c-1) ~~un effet non net plus grand que 2 points (« Méditation −3,3 pt » à long
+    terme sur les données de démo) ne devrait pas s'afficher en chiffre (voir `outOfScale`, POLISH-SIM-16)~~ (**sans objet**, vu
+    le 27/11 18:30 : au long terme, une ligne pas nette dit « pas assez net » sans chiffre depuis METHODE-BIAIS-4) ; le
     détail de l'objectif répète ce que la famille montre (alléger « Ce qui va avec » quand 6c-2 sera là) ; captures
     à 320 px, en grand texte, confort digestif avec résultats ; moyenne de la famille (« 7 h 05 par nuit »).
   - [x] **REFONTE-6d** (seuils 7 et 14) — **code fait le 15/11 à 21:35, mergé le 16/11 à 00:41 (#1026, Android et iPhone, build iOS verte, captures iPhone regardées)** : `UNLOCK_DAYS.wellbeing.medium` 21 → 35, deux cas au banc (`bench.test.js`, effet fort à 21 et 28 jours, 400 jeux : 7,25 % et 6 % avant, ≤ 5 % après), visite guidée (« Un premier score après 7 jours notés, vos pistes après 14. » ; digestion « 14 et 28 ») et Premium à l'accueil (« Votre premier score arrive au 7e jour noté, vos pistes vers le 14e. ») ; « Voir un exemple » n'a pas de délai écrit, inchangé. Reste **REFONTE-6d-2** : capture de la visite guidée et du paywall d'accueil (le banc visuel ne sait pas les ouvrir), suivi iPhone vérifié par la build de la PR. — **banc fait le 15/11 à 20:35**
