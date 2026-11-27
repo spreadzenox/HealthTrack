@@ -42,9 +42,9 @@ export default function LaunchEndCard({ now }) {
         </button>
       </div>
       <p className="today-card-text">
-        {notice && 'Ensuite, le journal, les montres, le bien-être estimé et l’export restent gratuits.'}
+        {notice && 'Ensuite, vos notes et vos repas, les montres, le bien-être estimé et l’export restent gratuits.'}
         {extended && 'Gold est prolongé : vous n’avez rien à payer.'}
-        {ended && 'Rien n’est effacé : votre journal et vos mesures restent dans l’app.'}
+        {ended && 'Rien n’est effacé : vos notes, vos repas et vos mesures restent dans l’app.'}
       </p>
       <Link to="/premium" className="launch-end-link" onClick={close}>
         {dated ? 'Voir ce que comprend Gold' : 'Voir les formules'}

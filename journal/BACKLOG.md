@@ -997,6 +997,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       imports des montres, bien-être estimé, graphiques et export de vos données ». `pages/Premium.jsx`, test d'abord
       (`Premium.test.jsx`). Conditions (`public/conditions.html`) et fiche Play gardent « journal » au sens commun
       (« journal alimentaire ») : pas changées. PR en brouillon, à regrouper avec le correctif suivant (CI économe).
+    - [x] **POLISH-LAUNCH-JOURNAL — la carte de fin de Gold offert cite le Journal** — FAIT 27/11 13:30 (suite de
+      POLISH-PAYWALL-JOURNAL, même PR #1311) : la carte de l'Accueil (3 jours avant le 2/12) disait « Ensuite, le
+      journal, les montres, … restent gratuits » et, après la fin, « votre journal et vos mesures restent dans l'app ».
+      Maintenant « vos notes et vos repas, les montres, le bien-être estimé et l'export » et « vos notes, vos repas et
+      vos mesures ». `components/LaunchEndCard.jsx`, test d'abord. Carte absente de l'app iPhone (variante appstore).
     - [x] **POLISH-SIM-178 — « Enregistrer » descendait sous le doigt dans la fenêtre du bien-être** — FAIT 27/11 10:30
       (passage des personas de 08:30, « Stressé et pressé » J1) : la fenêtre était centrée ; au choix de la note, le
       miroir de Pilou et les précisions s'ouvraient et les boutons descendaient d'environ 200 px. La fenêtre est posée
