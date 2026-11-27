@@ -111,8 +111,33 @@ function parseGrams(value) {
   return Math.min(MAX_GRAMS, Math.max(0, Math.round(n)))
 }
 
-function quantityLabel(grams) {
-  return grams != null ? `${grams} g` : 'portion non précisée'
+const DRINK_START = /^(eau|bière|vin|cidre|champagne|jus|nectar|smoothie|boisson|café|thé|tisane|chicorée|chocolat chaud|cola|limonade|tonic|diabolo|citronnade|kombucha|kéfir|lait|panaché|pétillant|sangria|kir|cocktail|pastis|rhum|gin|vodka|whisky|liqueur|saké|apéritif|marsala|crème de cassis)(?!\p{L})/iu
+const NOT_DRINK = /poudre|feuille|moulu|concentré|cuisiné|gélifié|emprésuré|type yaourt|lait de coco|^chicorée (rouge|verte)/i
+
+/**
+ * POLISH-BOISSON-ML : boisson prête à boire, d'après son nom (Ciqual ne range pas les boissons par code net).
+ * Sirops et boissons « à diluer » restent en grammes, sauf la boisson déjà préparée.
+ */
+export function isDrink(name) {
+  const n = String(name ?? '').trim()
+  if (!DRINK_START.test(n) || NOT_DRINK.test(n)) return false
+  return !/à diluer/i.test(n) || /^boisson préparée/i.test(n)
+}
+
+/** Unité affichée : « ml » pour une boisson (1 ml ≈ 1 g, la valeur stockée reste `quantity_g`), sinon « g ». */
+export function quantityUnit(name) {
+  return isDrink(name) ? 'ml' : 'g'
+}
+
+/** Quantité à afficher d'un élément enregistré : un ancien « 250 g » d'une boisson se lit « 250 ml » (rien n'est réécrit). */
+export function displayQuantity(item) {
+  const q = item?.quantity
+  if (!q || !isDrink(item?.ingredient)) return q
+  return String(q).replace(/^(\s*\d+(?:[.,]\d+)?)\s*g\s*$/i, '$1 ml')
+}
+
+function quantityLabel(grams, name) {
+  return grams != null ? `${grams} ${quantityUnit(name)}` : 'portion non précisée'
 }
 
 /**
@@ -125,7 +150,7 @@ export function normalizeMealItem(raw) {
   const grams = parseGrams(raw?.quantity_g)
   const item = {
     ingredient: matched ?? original,
-    quantity: quantityLabel(grams),
+    quantity: quantityLabel(grams, matched ?? original),
     quantity_g: grams,
   }
   if (CONFIDENCES.has(raw?.confidence)) item.confidence = raw.confidence
@@ -136,7 +161,7 @@ export function normalizeMealItem(raw) {
 /** Nouvelles grammes saisies par l'utilisateur (chaîne ou nombre). */
 export function setItemGrams(item, value) {
   const grams = parseGrams(value)
-  return { ...item, quantity_g: grams, quantity: quantityLabel(grams) }
+  return { ...item, quantity_g: grams, quantity: quantityLabel(grams, item?.ingredient) }
 }
 
 /** Ce qui est enregistré pour chaque ingrédient (le signalement « absent de la base » reste à l'écran). */
@@ -175,7 +200,7 @@ export function mealUncounted(items) {
 
 /** Grammes lisibles dans un ancien libellé texte (« 150g », « 12,5 g »), sinon undefined. */
 function gramsFromLabel(label) {
-  const m = /^\s*(\d+(?:[.,]\d+)?)\s*g\s*$/i.exec(String(label ?? ''))
+  const m = /^\s*(\d+(?:[.,]\d+)?)\s*(?:g|ml)\s*$/i.exec(String(label ?? ''))
   return m ? parseGrams(m[1]) : undefined
 }
 

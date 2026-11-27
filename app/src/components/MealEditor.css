@@ -114,6 +114,9 @@
 .mei-unit {
   font-size: 0.9rem;
   color: var(--text-muted);
+  /* « g » et « ml » prennent la même place : les boutons + restent alignés d'une ligne à l'autre (POLISH-BOISSON-ML). */
+  min-width: 1.4em;
+  text-align: center;
 }
 
 /* Sur la ligne du nom, à droite : la rangée − g + ✕ tient dans 360 px (POL-PLAY-73). */
