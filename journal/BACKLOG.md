@@ -263,8 +263,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
   - [x] **REFONTE-6a-iOS** (15/11 14:15 : **#1014 mergée**, code v1088, 51 correctifs sans retouche, 15 checks
     verts, build sur simulateur verte) : Objectifs regardé sur iPhone 17 Pro (clair, sombre, sans donnée) et le
     détail du bien-être (pistes floutées et « Débloquer » : la période de lancement est finie sur iPhone).
-  - [ ] **REFONTE-6a-2 — Restes de 6a** : la visite guidée ne montre pas la vue d'ensemble (ses 3 étapes d'Objectifs
-    pointent sur le détail du bien-être) ; captures à 320 px et en grand texte ; ~~état « pas assez de notes cette
+  - [ ] **REFONTE-6a-2 — Restes de 6a** : ~~la visite guidée ne montre pas la vue d'ensemble (ses 3 étapes d'Objectifs
+    pointent sur le détail du bien-être)~~ (**fait le 27/11 19:30** : « Objectifs » s'ouvre sur `/recommendations`,
+    l'exemple du jour 14 y montre les cartes, « Au jour 14 : vos scores », puis « Vos premières pistes » sur le détail) ; captures à 320 px et en grand texte ; ~~état « pas assez de notes cette
     semaine » jamais capturé~~ (**fait le 27/11 18:30**, `--wellbeing-gap=week --no-face`, clair, sombre, 320 px ; il
     n'apparaissait jamais pour le bien-être : **POLISH-SEMAINE-NOTEE** ci-dessous) ; fourchette du score non montrée (méta-leçon 4).
   - [x] **POLISH-SEMAINE-NOTEE** (27/11 18:30, PR en brouillon) : `objectiveCard` ne comptait que les barres qui ont une

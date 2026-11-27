@@ -163,6 +163,20 @@ describe('visite guidée sur les vrais écrans (ACC-8)', () => {
     }
   })
 
+  it('Objectifs : la visite montre d’abord la vue d’ensemble, puis le détail du bien-être (REFONTE-6a-2)', () => {
+    for (const gut of [false, true]) {
+      const steps = tourSteps({ hc: true, face: false, gut })
+      const i = steps.findIndex((s) => s.title === 'Objectifs')
+      expect(steps[i].route).toBe('/recommendations')
+      expect(steps[i].days).toBeUndefined()
+      expect(steps[i + 1]).toMatchObject({ route: '/recommendations', days: 14, reveal: true, anchor: '.objectives-list', title: 'Au jour 14 : vos scores' })
+      expect(steps[i + 2]).toMatchObject({ route: '/recommendations/bien-etre', days: 14, anchor: '[aria-labelledby="reco-pistes-wellbeing"]' })
+      expect(steps[i + 2].reveal).toBeUndefined()
+      // « Voir un exemple » depuis Objectifs reprend la visite à la vue d'ensemble
+      expect(steps[startIndex(steps, '/recommendations')].title).toBe('Objectifs')
+    }
+  })
+
   it('étape Objectifs : le score et les pistes, chacun à son jour, pour chaque objectif (POLISH-SIM-15, REFONTE-6d)', () => {
     const analyses = (gut) => tourSteps({ hc: true, face: false, gut }).find((s) => s.title === 'Objectifs').text
     expect(analyses(false)).toBe('Un premier score après 7 jours notés, vos pistes après 14.')
