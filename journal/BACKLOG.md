@@ -1031,6 +1031,18 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - Écartés, avec la raison, dans la synthèse : pas de point « auj. » (POLISH-SIM-127) ; 14 et 28 jours (deux
       jalons dits ensemble) ; détail FODMAP déplié (POLISH-SIM-172) ; deux marques de digestion (POLISH-NOTE-LOSANGE) ;
       « Pilou a bien dîné » (SPEC journée § 3.2) ; « Inclus : … » ; formulaire ouvert descendu (non vérifié).
+  - **Passage des personas du 27/11 08:30** (run « idées », [`synthèse`](simulations/2026-11-27-0830-synthese.md) ;
+    « Stressé et pressé » J1, Android seul, et « Ventre et données » J45, Android seul, mise à jour) :
+    - Aucun nouveau défaut sûr. PROP-SIM-20 relevée une 4ᵉ fois (première « Ventre et données ») ; ajouté à la
+      proposition : le nombre de repas par ligne d'Alimentation.
+    - [ ] **À vérifier (petit)** : Objectifs › Confort digestif › Alimentation ne compare ni fructanes ni mannitol
+      pour cette persona, sans dire pourquoi. Repas de l'outil d'abord ; si l'app tait un groupe faute de repas, une
+      ligne « pas assez de repas pour comparer ».
+    - À étudier : moyenne de la digestion par semaine (avec « go courbes ») ; repas imposés à l'accueil pour le
+      bien-être seul (brief § 4) ; boutons de la fenêtre du bien-être qui descendent au choix de la note.
+    - Écartés, avec la raison, dans la synthèse : humeur de Pilou (POLISH-SIM-109) ; rappels absents en web ;
+      « Valider » puis « Continuer » ; repas « Midi » à 08:33 (POLISH-SIM-122) ; essai planté par l'outil ; écran
+      Gold et visite (brief § 3.4) ; deux marques (POLISH-NOTE-LOSANGE) ; PDF sans aperçu en web.
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
@@ -2076,7 +2088,7 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
   protéines et glucides à la saisie d'un repas ; objectif de protéines selon le poids. Complétée le 14/11 20:35
   (Sportif J45, Maigrir J1) : repère de calories par jour, « mangé / dépensé ». Maquette à faire.
 - [ ] **PROP-SIM-20** (proposition, pas de code sans accord ; « Ventre, sans technique » J45 trois fois : 20/11, 25/11,
-  26/11 20:30) Objectifs › Confort digestif › Alimentation dit « Rien à éviter pour l'instant » au-dessus de
+  26/11 20:30 ; « Ventre et données » J45 le 27/11 08:30, qui veut aussi le nombre de repas par ligne) Objectifs › Confort digestif › Alimentation dit « Rien à éviter pour l'instant » au-dessus de
   « Fructanes −1,2 pt » hachuré ; la persona ne sait pas si elle doit éviter l'oignon. **Maquette faite le 27/11
   01:30** : `maquettes/rien-a-eviter/README.md`. Option A (recommandée) : « Rien de sûr pour l'instant. Le plus
   marqué : les fructanes (blé, oignon, ail) … ça peut encore venir du hasard », carte « En avoir le cœur net » vers
