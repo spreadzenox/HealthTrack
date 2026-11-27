@@ -183,8 +183,8 @@ export default function Premium({ context = null, onClose = null }) {
       </div>
 
       <p className="paywall-free">
-        <strong>Toujours gratuit :</strong> journal, imports des montres, bien-être estimé, graphiques et export de vos
-        données.
+        <strong>Toujours gratuit :</strong> vos notes et vos repas, imports des montres, bien-être estimé, graphiques
+        et export de vos données.
       </p>
 
       {/* Période de lancement : tout est dit dans le titre et la phrase d'accueil, rien à répéter (POL-PLAY-39) */}

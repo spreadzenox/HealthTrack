@@ -81,6 +81,9 @@ describe('LaunchEndCard — carte de l’Accueil', () => {
     renderCard(FEND - DAY)
     expect(screen.getByRole('heading', { name: /^Gold offert jusqu’au \d+/ })).toBeInTheDocument()
     expect(screen.getByText(/restent gratuits/)).toBeInTheDocument()
+    // Le Journal n'existe plus depuis la refonte (POLISH-LAUNCH-JOURNAL)
+    expect(screen.getByText(/vos notes et vos repas/)).toBeInTheDocument()
+    expect(screen.queryByText(/journal/i)).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Voir ce que comprend Gold' })).toHaveAttribute('href', '/premium')
   })
 
@@ -149,6 +152,8 @@ describe('LaunchEndCard — après la fin', () => {
     renderCard()
     expect(screen.getByRole('heading', { name: 'Le test est terminé. Merci !' })).toBeInTheDocument()
     expect(screen.getByText(/Rien n’est effacé/)).toBeInTheDocument()
+    expect(screen.getByText(/vos notes, vos repas et vos mesures/)).toBeInTheDocument()
+    expect(screen.queryByText(/journal/i)).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Voir les formules' })).toHaveAttribute('href', '/premium')
   })
 

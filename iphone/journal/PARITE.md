@@ -16,6 +16,8 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+27/11 12:30 : POLISH-PAYWALL-JOURNAL (« Toujours gratuit » de la page Premium, `pages/Premium.jsx`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).
+27/11 13:30 : POLISH-LAUNCH-JOURNAL (`components/LaunchEndCard.jsx`) : carte propre à Google Play, jamais montrée dans l'app iPhone ; code partagé, aucun correctif ; parité inchangée (70 %).
 27/11 11:30 : POLISH-REGLAGES-DESC (ligne Paramètres de Réglages, `pages/More.jsx`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).
 27/11 10:30 : POLISH-SIM-178 (fenêtre du bien-être posée en bas, boutons à place fixe, `App.css`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).
 27/11 09:30 : POLISH-FODMAP-ABSENT (Alimentation nomme les groupes FODMAP pas comparés, `services/influenceFamilies.js`, `pages/Recommendations.jsx`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).
