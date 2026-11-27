@@ -31,6 +31,10 @@ d'ici là, ne l'envoyez pas : la routine le réécrit avec la nouvelle date.
 **Ensuite, 1 minute (P51)** : la Sécurité des données Google déclare maintenant « Infos de santé » pour la photo des
 selles, comme Apple. Actions → « Play — sécurité des données » → Run workflow (main).
 
+**⏱️ Heures de Mac de S48 (relevé partiel, 23/11 → 27/11 05:30) : 35,3 h, environ 8,3 h par jour** (23/11 8,6 h ;
+24/11 10,4 h ; 25/11 7,4 h ; 26/11 6,9 h). Builds de PR 30,6 h (103 jobs), builds du soir 4,2 h, TestFlight 0,5 h.
+Moins de la moitié de S47, toujours près de trois fois la cible de 3 h : la décision ci-dessous reste ouverte.
+
 **⚠️ Heures de Mac de la semaine S47 (bilan complet, 16 → 22/11) : 147,6 h, environ 21 h par jour pour une cible
 de 3 h.** Par jour : 16/11 52,3 h (sprint de la refonte, plusieurs PR en parallèle) ; 17/11 40,7 h ; 18/11 3,1 h
 (compte bloqué) ; 19/11 12,4 h ; 20/11 13,4 h ; 21/11 13,1 h ; 22/11 12,4 h. Depuis la CI économe (19/11) : environ
@@ -46,7 +50,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v927** (#1275, 26/11 03:35 UTC, APK 35,7 Mo) ; test interne à chaque merge ; Alpha : version du 25/11 partie le 26/11 à 04:25 UTC (cron de 23:45, parti avec 4 h 40 de retard) | **1335.1335** (build du 25/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 26/11 03:33 UTC et validée, 1313.1313 expirée ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
+| Dernière version | release **v927** (#1275, 26/11 03:35 UTC, APK 35,7 Mo) ; test interne à chaque merge ; Alpha : **101363** (version du 26/11) partie le 27/11 à 04:34 UTC (cron de 23:45, parti avec 4 h 50 de retard) | **1362.1362** (build du 26/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 27/11 04:31 UTC et validée, 1335.1335 expirée ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; plus aucun correctif propre à l'iPhone ; `overlay/` ne garde que les notes de Nouveautés de l'iPhone (FUSION-3 : reste `ios/` → `app/ios/`) |
 
@@ -71,6 +75,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 27/11 05:30 — [Examen bêta de 1362, 1335 expirée](runs/2026-11-27-0530-testflight-1362-examen.md) | 📓 | La build iPhone de cette nuit, **1362.1362**, est chez « Testeurs Halcya » : soumise à l'examen bêta d'Apple et validée en quelques minutes. L'ancienne, 1335.1335, est expirée ; 1244.1244 reste attachée à la version 893 pour votre soumission. Alpha du soir partie à 04:34 UTC : **101363** en test fermé. Heures de Mac de la semaine relevées (8,3 h par jour). Journal seulement, aucun build de Mac. Rien à faire de votre côté |
 | 27/11 04:30 — [TestFlight 1362, soumission bêta bloquée](runs/2026-11-27-0430-testflight-1362.md) | 📓 | La build iPhone de cette nuit, **1362.1362**, est sur TestFlight (02:57 UTC). Sa soumission à l'examen bêta pour « Testeurs Halcya » a été bloquée par les permissions de la session (rien n'est parti chez Apple) : le run suivant la refait, sinon l'orchestrateur devra l'autoriser. 1335.1335 reste chez les testeurs. Alpha du soir pas encore partie à 03:30 UTC. Journal seulement, aucun build de Mac. Rien à faire de votre côté |
 | 27/11 03:30 — [Tendances : un jour avec peu de lectures](runs/2026-11-27-0330-tendances-deux-lectures.md) | 🔧 | POLISH-VISAGE-1 : avec 2 lectures du visage dans la journée, l'Accueil disait 3,1 et Tendances › Jour 2,7 « d'après le visage », alors que ce 2,7 vient des jours voisins (le visage compte dès 3 lectures). La ligne le dit maintenant : « estimé avec les jours voisins (il faut 3 lectures) ». Vu en relisant toutes les pages de main. Build iPhone du soir, TestFlight et Alpha pas encore partis à 03:30. Un build iPhone pour la PR. Rien à faire de votre côté |
 | 27/11 02:30 — [Ma journée : la nuit après minuit](runs/2026-11-27-0230-pilou-nuit.md) | 🔧 | POLISH-NUIT-1 : de minuit à 5 h, Ma journée disait « Bonjour ! » avec Pilou qui salue, alors que l'Accueil le montre endormi. Elle dit maintenant « Bonne nuit. Le reste peut attendre demain. », Pilou endormi, aux couleurs du soir. Vu en relisant toutes les pages de main. Build iPhone du soir, TestFlight et Alpha pas encore partis à 02:30 (retard des tâches programmées de GitHub). Un build iPhone pour la PR. Rien à faire de votre côté |
