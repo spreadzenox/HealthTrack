@@ -978,14 +978,20 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       de « Fructanes −1,2 pt », 3e fois chez « sans technique » (proposition avec maquette, avec le reste de
       POLISH-SIM-173)~~ (PROP-SIM-20, maquette du 27/11 01:30) ; ~~« vous notez vous-même » à vérifier sur l'émulateur~~ (écarté le 27/11 00:30, voir dessous) ;
       ~~jours déjà comptés du long terme~~ (POLISH-SIM-177).
+    - [x] **POLISH-GUT-OFF-NOTE — Confort digestif masqué, « Noter maintenant » quand même** — FAIT 27/11 07:30
+      (reste « à juger » de POLISH-AGIR-RETOUR) : la page reste joignable sans l'objectif (essai digestif, retour de la
+      réintroduction, bilan `DigestBlock`) ; sous « Le suivi digestif est masqué », le compte à rebours proposait
+      « Noter maintenant » (ou « Ajouter une note ») et le rappel du soir. `Countdown` reçoit `canNote={!gutOff}` :
+      plus de bouton ni de rappel quand le suivi est masqué hors exemple ; progression et jours notés gardés. Test
+      `Recommendations.test.jsx` d'abord (rouge, puis vert) ; captures `runs/captures/2026-11-27-0730-ventre-masque-*`
+      (clair, sombre, version play, 2 jours d'historique).
     - [x] **POLISH-AGIR-RETOUR — Agir, seule sous-page sans lien de retour** — FAIT 27/11 06:30 (revue de main par
       `npm run visual -- --play --now=13:30`, hors personas) : Réintroduction (« ← Votre confort digestif »), les pages
       d'Objectifs (« ← Objectifs ») et la page d'un essai disent où revenir ; Agir, ouverte depuis l'Accueil (onglet
       allumé), n'avait rien. Ajout de « ← Accueil » (`act-back`, même style) ; test `Act.test.jsx` d'abord ; captures
       `runs/captures/2026-11-27-0630-agir-retour-*` (clair, sombre, vide). Vus sans défaut à corriger : Nutrition,
-      Sauvegarde, Sources, Réintroduction, Votre bien-être › Sommeil, Tendances › Jour. À juger plus tard : Votre
-      confort digestif, suivi masqué, garde « Noter maintenant » (la note s'enregistre quand même) à côté de « Le suivi
-      digestif est masqué ».
+      Sauvegarde, Sources, Réintroduction, Votre bien-être › Sommeil, Tendances › Jour. ~~À juger plus tard : Votre
+      confort digestif, suivi masqué, garde « Noter maintenant »~~ (POLISH-GUT-OFF-NOTE, 27/11 07:30).
     - [x] **POLISH-VISAGE-1 — Tendances › Jour : 2,7 « d'après le visage » quand l'Accueil dit 3,1 d'après les mêmes
       2 lectures** — FAIT 27/11 03:30 (revue de main par `npm run visual -- --now=10:30`, hors personas) : sous
       `FACE_MOOD_MIN_READINGS` (3) lectures, le modèle à espace d'états n'observe pas le jour (`faceMoodDays`) ; son
