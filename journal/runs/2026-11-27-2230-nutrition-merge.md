@@ -21,7 +21,10 @@ encore démarré à 22:45, comme la veille où il est parti à 03:52) · **Parit
 - Build iOS sur simulateur et captures : voir la ligne « Merge » ci-dessous.
 
 ## Merge
-(complété en fin de run)
+Ce compte rendu est poussé avant le build iOS, pour ne pas relancer un build macOS par un commit de journal après lui
+(CI économe). Le merge (squash) se fait dans ce run seulement si le build iOS est vert et les captures iPhone de
+Nutrition regardées ; sinon la PR reste ouverte et le run suivant la reprend. Le run suivant note dans son compte rendu
+le résultat (merge, release et taille de l'APK) d'après GitHub.
 
 ## Suite proposée
 1. Run de code suivant : POLISH-BOISSON-ML (test d'abord, captures de l'éditeur du repas).
