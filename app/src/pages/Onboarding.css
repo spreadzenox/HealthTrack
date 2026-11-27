@@ -626,10 +626,6 @@
   font-weight: 700;
 }
 
-.onb-body > .paywall-tag {
-  align-self: flex-start;
-}
-
 /* ACC-5 : mesures groupées par thème, couleur du thème ; « pas partagée » en pointillés */
 .onb-measures {
   display: grid;

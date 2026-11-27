@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-27",
+  "kind": "correctif",
+  "variants": ["play"],
+  "title": "Premier lancement : l'écran « Gold offert » plus sobre",
+  "items": [
+    "La petite étiquette « gold » au-dessus du titre disparaît : le titre et la carte disent déjà que Gold est offert pendant le test."
+  ]
+}
