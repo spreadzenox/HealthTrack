@@ -978,6 +978,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       de « Fructanes −1,2 pt », 3e fois chez « sans technique » (proposition avec maquette, avec le reste de
       POLISH-SIM-173)~~ (PROP-SIM-20, maquette du 27/11 01:30) ; ~~« vous notez vous-même » à vérifier sur l'émulateur~~ (écarté le 27/11 00:30, voir dessous) ;
       ~~jours déjà comptés du long terme~~ (POLISH-SIM-177).
+    - [x] **POLISH-NUIT-1 — Ma journée dit « Bonjour ! » à 2 h quand l'Accueil dit « Pilou dort »** — FAIT 27/11 02:30
+      (revue de main par `npm run visual` lancé à 02:30, hors personas) : la bannière de Pilou (`idleLine`, `lines.js`)
+      ne connaissait la nuit qu'à partir de 21 h ; de minuit à 5 h elle saluait (« Bonjour ! », Pilou qui fait coucou,
+      hublot abricot) alors que l'îlot de l'Accueil le montre endormi (`bubbles/night.js`, nuit jusqu'à 5 h). Jusqu'à
+      5 h (`NIGHT_UNTIL_HOUR`) : « Bonne nuit. Le reste peut attendre demain. », Pilou endormi, hublot du soir
+      (`isLateHour`) ; tout noté : « Bonne nuit. » et `finishedLine` « À demain. » au lieu de la fête. Tests
+      `lines.test.js` et `PilouBanner.test.jsx` d'abord. Code partagé : l'iPhone le reçoit dans la même PR.
     - [x] **POLISH-SIM-177 — « encore 11 jours » après 45 jours notés** — FAIT 26/11 23:30 : la ligne du prochain horizon
       d'Objectifs dit aussi les jours déjà comptés : « Long terme (de 7 à 27 jours avant) : 45 jours sur 56 avec votre
       digestion notée, encore 11. » (`resultsView.js`, `nextLock.have` / `need` ; `Recommendations.jsx`). Tests
