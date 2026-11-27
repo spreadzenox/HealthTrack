@@ -790,7 +790,6 @@ function NotesStep({ gut, habits, onHabits }) {
 function LaunchStep({ until }) {
   return (
     <>
-      <span className="paywall-tag">gold</span>
       <h1 className="onb-title">Gold est offert pendant le test</h1>
       <p className="onb-lead">
         Gold est la formule payante de Halcya, avec toutes les analyses. Comme l’app est encore en test, vous l’avez sans

@@ -179,6 +179,8 @@ describe('Nouvel accueil (ACC-9) : Gold pendant le test, abonnement sinon', () =
     // POLISH-SIM-18 : une persona peu technique ne savait pas ce qu'est « Gold » ni de quel « test » on parle.
     expect(screen.getByText(/Gold est la formule payante de Halcya/)).toBeInTheDocument()
     expect(screen.getByText(/l’app est encore en test/)).toBeInTheDocument()
+    // POLISH-GOLD-REDIT : « Gold » déjà dit par le titre, le texte et la carte ; plus de pastille « gold » au-dessus.
+    expect(document.querySelector('.paywall-tag')).toBeNull()
     fireEvent.click(cont())
     expect(await screen.findByText('Page Aujourd’hui')).toBeInTheDocument()
     expect(loadOnboarding().done).toBe(true)

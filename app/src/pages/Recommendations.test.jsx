@@ -51,7 +51,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     const card = await screen.findByTestId('reco-countdown-wellbeing')
     // POLISH-SIM-116 : le même palier qu'Objectifs et l'Accueil (premier score au 7e jour noté), puis les pistes
     expect(within(card).getByRole('heading')).toHaveTextContent('Premier score dans 2 jours notés')
-    expect(card.querySelector('.pistes-count')).toHaveTextContent('5/7 jours notés, pas forcément d’affilée')
+    expect(card.querySelector('.pistes-count')).toHaveTextContent('5 sur 7 jours notés, pas forcément d’affilée')
     expect(card).toHaveTextContent('Pistes au 14e jour noté.')
     expect(card).toHaveTextContent('Notez votre bien-être chaque jour : Halcya cherchera ensuite quels facteurs sont statistiquement liés à votre bien-être.')
     expect(within(card).getByRole('button', { name: 'Noter maintenant' })).toBeInTheDocument()
@@ -62,7 +62,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     renderPage({}, { outcomes: { wellbeing: lockedOutcome(9), digestion: lockedOutcome(0) } })
     const card = await screen.findByTestId('reco-countdown-wellbeing')
     expect(within(card).getByRole('heading')).toHaveTextContent('Vos pistes dans 5 jours notés')
-    expect(card.querySelector('.pistes-count')).toHaveTextContent('9/14 jours notés, pas forcément d’affilée')
+    expect(card.querySelector('.pistes-count')).toHaveTextContent('9 sur 14 jours notés, pas forcément d’affilée')
     expect(card).toHaveTextContent('Votre score est déjà dans Objectifs.')
     expect(card).not.toHaveTextContent('premiers résultats')
   })
@@ -397,8 +397,8 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     const card = await screen.findByTestId('reco-countdown-digestion')
     expect(card).toHaveTextContent('Premier score dans 11 jours notés')
     expect(card).toHaveTextContent('Pistes au 28e jour noté.')
-    // POLISH-SIM-32 : la fenêtre du compteur est dite
-    expect(card.querySelector('.pistes-count')).toHaveTextContent(/^\d+\/\d+ jours notés, pas forcément d’affilée$/)
+    // POLISH-SIM-32 : la fenêtre du compteur est dite ; POLISH-COMPTE-SUR : « 9 sur 14 », comme la carte d'Objectifs
+    expect(card.querySelector('.pistes-count')).toHaveTextContent(/^\d+ sur \d+ jours notés, pas forcément d’affilée$/)
     expect(card).toHaveTextContent('statistiquement liés à votre confort digestif')
     // POLISH-SIM-5 : on voit que la gêne notée compte (1 sur 5), sans « 4 jours de plus » ambigu
     expect(card).toHaveTextContent('Il faut aussi 5 jours avec une gêne ou une douleur notée : vous en avez 1.')

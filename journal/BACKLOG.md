@@ -234,10 +234,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     `Onboarding.jsx` (`splitMeasures`), test `Onboarding.sources.test.jsx`. Texte d'origine : les mesures par thème de l'ancien écran
     « Voici ce que Halcya recevra » s'affichent sous les 9 tuiles et les répètent en partie. À fondre : une tuile
     dit « reçu » ou « pas partagée » (proposition de la préparation), la liste par thème disparaît.
-  - [ ] **REFONTE-5b-3 — Captures manquantes de 5b** (27/11 15:30 : **320 px et grand texte (1,5) faits** sur les
-    4 temps en play : seul défaut, au temps 4 le champ « Ajouter une habitude… » coupait son texte ; la rangée passe à
-    la ligne (`Onboarding.css`, test `Onboarding.habitAdd.css.test.js`) ; reste la suite) : 320 px, grand texte, variante play avec visage et Gold,
-    carte Huawei, temps 1 en sombre regardé ; `npm run visual` complet.
+  - [x] **REFONTE-5b-3 — Captures manquantes de 5b** — FAIT 27/11 16:30 (15:30 : **320 px et grand texte (1,5)** sur les
+    4 temps en play : au temps 4 le champ « Ajouter une habitude… » coupait son texte ; la rangée passe à
+    la ligne, `Onboarding.css`, test `Onboarding.habitAdd.css.test.js`). 16:30 : temps 1 en sombre, visage en play
+    (`--onboarding=face --face=on`, clair et sombre), Gold offert (`--onboarding=premium --subscription=launch`),
+    carte « Montre Huawei trouvée » (`--onboarding=watch-huawei --devices` : sans `--devices`, la carte reste cachée,
+    comme voulu) et `npm run visual` complet, tous relus. Seul défaut : l'écran Gold disait « Gold » quatre fois ; la
+    pastille « gold » au-dessus du titre est retirée (**POLISH-GOLD-REDIT**, `Onboarding.jsx`, test
+    `Onboarding.face.test.jsx`). Captures `runs/captures/2026-11-27-1630-*.png`.
   - [ ] **REFONTE-5b-4 — Sans montre, l'activité à la main** : la SPEC fait passer « Séances de sport » dans ce qu'on
     note ; aucune saisie d'activité n'existe dans la checklist de Ma journée. À faire avec une étape de Ma journée,
     ou à laisser tomber sur décision du propriétaire.
@@ -278,9 +282,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     build simulateur verte, cette capture regardée (bloc « Par famille » visible), puis merge.
   - [ ] **REFONTE-6b-2 — Restes de 6b** : capture de la version Play sans abonnement (bloc masqué, testé) ;
     captures du niveau « Lien moyen », d'une ligne Écrans, du confort digestif avec résultats, à
-    320 px et en grand texte ; moyenne par famille (« 7 h 05 par nuit ») ; « Comment est calculé votre
-    bien-être ? » et « Comment c'est calculé » se suivent avec deux libellés proches ; les seuils 0,25 et 0,5 à
-    confronter au banc de 6d.
+    320 px et en grand texte ; moyenne par famille (« 7 h 05 par nuit ») ; ~~« Comment est calculé votre
+    bien-être ? » et « Comment c'est calculé » se suivent avec deux libellés proches~~ (**sans objet** : fait par
+    POLISH-SIM-121 le 20/11) ; les seuils 0,25 et 0,5 à confronter au banc de 6d. **27/11 17:30** : Objectifs, détail
+    du bien-être et du confort digestif capturés à 320 px en grande police (1,3, play, sans abonnement) : rien de
+    coupé ; un seul défaut, **POLISH-COMPTE-SUR** (fait) : la carte d'Objectifs disait « 9 sur 14 jours notés », le
+    détail et la carte digestive de l'Accueil « 9/14 » ; partout « 9 sur 14 » (`Recommendations.jsx`,
+    `DigestBlock.jsx`, tests `Recommendations.test.jsx`, `DigestBlock.test.jsx`).
   - [x] **REFONTE-6c-1 — Le détail d'une famille** (15/11 14:35, Android) : une famille qui a des facteurs comparés
     est un lien (`/recommendations/bien-etre/famille/:family`, `/recommendations/ventre/famille/:family`) ;
     `familyDetail()` dans `services/influenceFamilies.js` (ses liens nets, un par facteur ; ses facteurs par délai

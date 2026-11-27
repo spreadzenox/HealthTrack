@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-27",
+  "kind": "correctif",
+  "title": "Jours notés : le même compte partout",
+  "items": [
+    "Le compteur des jours notés s'écrit « 9 sur 14 » dans le détail d'un objectif et sur l'Accueil, comme sur la carte d'Objectifs, au lieu de « 9/14 »."
+  ]
+}
