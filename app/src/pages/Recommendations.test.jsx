@@ -525,3 +525,29 @@ describe('POLISH-SIM-120 : l’essai en cours se retrouve sous son objectif', ()
     expect(screen.queryByTestId('reco-trial')).toBeNull()
   })
 })
+
+describe('REFONTE-6b-2 : la valeur habituelle à côté de chaque famille', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('« Sommeil · 7 h 05 par nuit », les pas par jour ; rien pour une famille sans mesure', async () => {
+    const now = new Date()
+    const days = []
+    for (let n = 1; n <= 10; n++) {
+      const d = new Date(now.getTime() - n * 86_400_000)
+      const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      days.push({ dateKey, summary: { sleepMinutes: 425, steps: 8400, meals: 0 } })
+    }
+    renderPage({ readFamilyDays: async () => days }, readyResults)
+    const block = await screen.findByRole('region', { name: 'Par famille' })
+    expect(await within(block).findByTestId('reco-family-usual-sleep')).toHaveTextContent('· 7 h 05 par nuit')
+    expect(within(block).getByTestId('reco-family-usual-activity').textContent).toMatch(/8\s?400 pas par jour/)
+    expect(within(block).queryByTestId('reco-family-usual-nutrition')).toBeNull()
+    expect(screen.getByTestId('reco-family-sleep').querySelector('.reco-family-label')).toHaveTextContent(/^Sommeil\s·\s7 h 05 par nuit$/)
+  })
+
+  it('une lecture en échec n’affiche rien', async () => {
+    renderPage({ readFamilyDays: async () => { throw new Error('IndexedDB') } }, readyResults)
+    const block = await screen.findByRole('region', { name: 'Par famille' })
+    expect(within(block).queryByTestId(/reco-family-usual/)).toBeNull()
+  })
+})

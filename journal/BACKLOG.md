@@ -290,7 +290,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     build simulateur verte, cette capture regardée (bloc « Par famille » visible), puis merge.
   - [ ] **REFONTE-6b-2 — Restes de 6b** : capture de la version Play sans abonnement (bloc masqué, testé) ;
     captures du niveau « Lien moyen », d'une ligne Écrans, du confort digestif avec résultats, à
-    320 px et en grand texte ; moyenne par famille (« 7 h 05 par nuit ») ; ~~« Comment est calculé votre
+    320 px et en grand texte ; ~~moyenne par famille (« 7 h 05 par nuit »)~~ (**fait le 28/11 00:30** : `familyUsuals` dans `influenceFamilies.js`, « Sommeil · 7 h 38 par nuit », « Activité · 6 386 pas par jour » (médiane des 14 jours passés dès 7 jours, la même habitude que l'Accueil), « Alimentation · 18 repas en 14 jours » ; rien sans mesure ; tests service et page ; captures clair, sombre, police 1,3) ; ~~« Comment est calculé votre
     bien-être ? » et « Comment c'est calculé » se suivent avec deux libellés proches~~ (**sans objet** : fait par
     POLISH-SIM-121 le 20/11) ; les seuils 0,25 et 0,5 à confronter au banc de 6d. **27/11 17:30** : Objectifs, détail
     du bien-être et du confort digestif capturés à 320 px en grande police (1,3, play, sans abonnement) : rien de
@@ -1088,7 +1088,7 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     « Stressé et pressé » J1, Android seul, et « Ventre et données » J45, Android seul, mise à jour) :
     - Aucun nouveau défaut sûr. PROP-SIM-20 relevée une 4ᵉ fois (première « Ventre et données ») ; ajouté à la
       proposition : le nombre de repas par ligne d'Alimentation.
-    - [ ] **À vérifier (petit)** : Objectifs › Confort digestif › Alimentation ne compare ni fructanes ni mannitol
+    - [x] **À vérifier (petit)** (fait par POLISH-FODMAP-ABSENT, #1308, 27/11 09:30 ; coché le 28/11 00:30) : Objectifs › Confort digestif › Alimentation ne compare ni fructanes ni mannitol
       pour cette persona, sans dire pourquoi. Repas de l'outil d'abord ; si l'app tait un groupe faute de repas, une
       ligne « pas assez de repas pour comparer ».
     - À étudier : moyenne de la digestion par semaine (avec « go courbes ») ; repas imposés à l'accueil pour le

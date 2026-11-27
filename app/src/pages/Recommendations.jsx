@@ -33,7 +33,8 @@ import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
 import { isExampleMode } from '../storage/exampleMode'
 import { THEME_TONE, isRangeOnly, pistesTitles, resultsView } from '../services/resultsView'
-import { influenceFamilies, familyDetail } from '../services/influenceFamilies'
+import { influenceFamilies, familyDetail, familyUsuals } from '../services/influenceFamilies'
+import { buildDailyJournal } from '../services/dailyJournal'
 import { readGutNotes } from '../services/gutNotes'
 import { actSections, reintroLine } from '../services/act'
 import { FODMAP_CHALLENGE_TYPE, FODMAP_GROUPS } from '../services/fodmapChallenge'
@@ -238,7 +239,7 @@ function Unit({ w }) {
 }
 
 /** REFONTE-6b : la force du lien le plus net de chaque famille, en trois points et en mots. */
-function Families({ outcome, families, base }) {
+function Families({ outcome, families, base, usuals = {} }) {
   return (
     <section className="reco-block" aria-labelledby={`reco-families-${outcome}`}>
       <h3 id={`reco-families-${outcome}`} className="reco-section-title">Par famille</h3>
@@ -253,7 +254,12 @@ function Families({ outcome, families, base }) {
           const body = (
             <>
               <span className="reco-family-name">
-                <span className="reco-family-label">{fam.label}{to && <LineIcon name="chevron" size={16} className="reco-family-chevron" />}</span>
+                <span className="reco-family-label">
+                  {fam.label}
+                  {/* REFONTE-6b-2 : ce que vous faites d'habitude dans la famille (SPEC comprendre § 6.3) */}
+                  {usuals[fam.id] && <span className="reco-family-usual" data-testid={`reco-family-usual-${fam.id}`}>&nbsp;· {monoDigits(usuals[fam.id])}</span>}
+                  {to && <LineIcon name="chevron" size={16} className="reco-family-chevron" />}
+                </span>
                 {fam.lead && fam.lead !== fam.label && <span className="reco-family-lead">{fam.lead}</span>}
               </span>
               {fam.level > 0 && (
@@ -395,7 +401,7 @@ function FamilyDetail({ outcome, detail }) {
   )
 }
 
-function Results({ outcome, view, locked, families = [], base }) {
+function Results({ outcome, view, locked, families = [], base, usuals }) {
   const w = WORDS[outcome]
   const showWeigh = !locked && view.weigh && view.weigh.length > 0
   // POLISH-SIM-69 : rien de net, les barres hachurées étaient lues comme un résultat. Elles se replient, et le
@@ -412,7 +418,7 @@ function Results({ outcome, view, locked, families = [], base }) {
   )
   return (
     <>
-      {!locked && families.length > 0 && <Families outcome={outcome} families={families} base={base} />}
+      {!locked && families.length > 0 && <Families outcome={outcome} families={families} base={base} usuals={usuals} />}
       <section className="reco-block" aria-labelledby={`reco-pistes-${outcome}`}>
         <h3 id={`reco-pistes-${outcome}`} className="reco-section-title">Pistes à tester</h3>
         {view.pistes.length ? (
@@ -516,7 +522,22 @@ function HowItWorks({ wellbeing = false }) {
   )
 }
 
-export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults'), readGut = readGutNotes, readWellbeing = readWellbeingToday, readReintro = readReintroData, readTrials = readTrialRows }) {
+/**
+ * REFONTE-6b-2 : les jours qu'il faut pour la valeur habituelle des familles (services/influenceFamilies.js
+ * `familyUsuals`) : nuits, pas et repas des 15 derniers jours, une nuit de plus pour celle qui finit le premier jour.
+ */
+async function readFamilyDaysFromStorage(now = new Date()) {
+  const DAY = 86_400_000
+  const since = new Date(now.getTime() - 15 * DAY).toISOString()
+  const lists = await Promise.all([
+    listEntries({ type: 'sleep', since: new Date(now.getTime() - 16 * DAY).toISOString(), limit: Infinity }),
+    listEntries({ type: 'steps', since, limit: Infinity }),
+    listEntries({ type: 'food', since, limit: Infinity }),
+  ])
+  return buildDailyJournal(lists.flat())
+}
+
+export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults'), readGut = readGutNotes, readWellbeing = readWellbeingToday, readReintro = readReintroData, readTrials = readTrialRows, readFamilyDays = readFamilyDaysFromStorage }) {
   const outcome = view === 'gut' ? 'digestion' : 'wellbeing'
   const [results, setResults] = useState(() => peekAnalysis('analysisResults').result ?? null)
   const [error, setError] = useState(null)
@@ -530,6 +551,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const [wbToday, setWbToday] = useState([])
   const [reintro, setReintro] = useState(null)
   const [trial, setTrial] = useState(null)
+  const [usuals, setUsuals] = useState({})
   const { family } = useParams()
   const base = outcome === 'digestion' ? '/recommendations/ventre' : '/recommendations/bien-etre'
 
@@ -588,6 +610,18 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
     }
   }, [outcome, readTrials, revision])
 
+  // REFONTE-6b-2 : la valeur habituelle de chaque famille ; une lecture en échec n'affiche rien
+  useEffect(() => {
+    let alive = true
+    Promise.resolve()
+      .then(() => readFamilyDays())
+      .then((days) => alive && setUsuals(familyUsuals(days)))
+      .catch(() => alive && setUsuals({}))
+    return () => {
+      alive = false
+    }
+  }, [readFamilyDays, revision])
+
   const v = results ? resultsView(results.outcomes?.[outcome]) : { state: 'loading' }
   // Version Play sans abonnement (hors période de lancement) : les pistes restent floues, comme avant
   const locked = FEATURES.billing && !ent.premium
@@ -633,7 +667,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul des analyses…</p></div>
       )}
       {v.state === 'locked' && <Countdown outcome={outcome} view={v} onNote={onNote} onReminder={onReminder} notedToday={notedToday} canNote={!gutOff} />}
-      {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} families={influenceFamilies(results.outcomes?.[outcome])} base={base} />}
+      {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} families={influenceFamilies(results.outcomes?.[outcome])} base={base} usuals={usuals} />}
       {v.state !== 'loading' && <ReintroLink line={reintroText} />}
       {outcome === 'digestion' && v.state === 'results' && <DoctorReportCard />}
       <HowItWorks wellbeing={outcome === 'wellbeing'} />

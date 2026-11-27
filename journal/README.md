@@ -75,6 +75,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/11 00:30 — [Valeur habituelle par famille](runs/2026-11-28-0030-famille-habitude.md) | 🔧 | REFONTE-6b-2 : dans Objectifs, « Par famille » dit ce que vous faites d'habitude, « Sommeil · 7 h 38 par nuit », vos pas par jour, vos repas notés en 14 jours (le même chiffre que l'Accueil). Rien à faire de votre côté |
 | 27/11 23:30 — [Boissons en ml](runs/2026-11-27-2330-boissons-ml.md) | 🔧 | POLISH-BOISSON-ML : café, bière, jus ou lait s'écrivent en ml dans l'éditeur du repas (boutons « + 10 ml » compris) et dans vos repas déjà notés ; rien n'est réécrit dans vos données. Rien à faire de votre côté |
 | 27/11 22:30 — [Finir la PR Nutrition](runs/2026-11-27-2230-nutrition-merge.md) | 🔧 | La PR de 21:30 (« non mesuré » dans Vos apports) passe en « prête » pour son seul build iPhone, puis merge si tout est vert. Repéré dans le code : une boisson analysée s'affiche en grammes (« Bière 250 g ») ; « ml » au prochain run de code. Rien à faire de votre côté |
 | 27/11 21:30 — [Nutrition : « non mesuré »](runs/2026-11-27-2130-nutrition-non-mesure.md) | 🔧 | POLISH-NUTRI-ZERO : Vos apports écrivait « ≥ 0 g/j » avec « partiel » pour une teneur que Ciqual ne donne pour aucun de vos aliments (oméga-3, vitamine D selon les repas) ; elle dit « non mesuré » et ne compte plus dans les repères. PR en brouillon (CI économe), finie avec le correctif suivant pour un seul build iPhone. Rien à faire de votre côté |
