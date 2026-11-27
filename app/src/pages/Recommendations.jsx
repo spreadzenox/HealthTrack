@@ -136,7 +136,7 @@ const readTrialRows = () => listEntries({ type: TRIAL_TYPE, limit: Infinity })
  * bien-être, 14e pour la digestion) : jours restants jusqu'au score, puis le jour des pistes. Score passé : jours
  * restants jusqu'aux pistes, le score se lit dans Objectifs.
  */
-function Countdown({ outcome, view, onNote, onReminder, notedToday = [] }) {
+function Countdown({ outcome, view, onNote, onReminder, notedToday = [], canNote = true }) {
   const w = WORDS[outcome]
   const n = view.daysLeft
   const have = view.progress?.have
@@ -172,7 +172,8 @@ function Countdown({ outcome, view, onNote, onReminder, notedToday = [] }) {
           Il faut aussi <span className="mono">{view.symptoms.need}</span> jours avec une gêne ou une douleur notée : vous en avez <span className="mono">{view.symptoms.have}</span>.
         </p>
       )}
-      {notedToday.length > 0 ? (
+      {/* POLISH-GUT-OFF-NOTE : suivi masqué, on n'invite pas à noter (le bandeau dit où le rallumer) */}
+      {!canNote ? null : notedToday.length > 0 ? (
         <>
           <p className="reco-noted" role="status" data-testid="reco-noted-today">Noté aujourd’hui : {outcome === 'wellbeing' ? <span className="mono">{notedToday.join(', ')}</span> : notedToday.join(', ')}</p>
           <button type="button" className="reco-cta is-secondary" onClick={onNote}>Ajouter une note</button>
@@ -180,7 +181,7 @@ function Countdown({ outcome, view, onNote, onReminder, notedToday = [] }) {
       ) : (
         <button type="button" className="reco-cta" onClick={onNote}>Noter maintenant</button>
       )}
-      {outcome === 'wellbeing'
+      {!canNote ? null : outcome === 'wellbeing'
         ? onReminder && <button type="button" className="reco-cta is-secondary" onClick={onReminder}>Recevoir un rappel</button>
         : <GutEveningReminder />}
     </section>
@@ -582,6 +583,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const reintroText = outcome === 'digestion' && reintro && !isExampleMode()
     ? reintroLine(actSections({ ...reintro, pistes: results && !locked ? pistesTitles(results) : null }))
     : null
+  const gutOff = outcome === 'digestion' && !showGut && !isExampleMode()
   const objectiveTitle = outcome === 'digestion' ? 'Votre confort digestif' : 'Votre bien-être'
   const onNote = outcome === 'wellbeing' ? () => setNoteOpen(true) : () => navigate('/ma-journee', { state: { open: 'digestion' } })
   // La note qui vient d'être enregistrée ici se lit dans la carte, même si la relecture des notes échoue
@@ -606,7 +608,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       <p className="reco-back"><Link to="/recommendations">← Objectifs</Link></p>
       <h2 className="page-title">{objectiveTitle}</h2>
       {/* Pendant l'exemple (« Voir un exemple »), la digestion fictive s'affiche : pas de bandeau « masqué » (POLISH-SIM-37b) */}
-      {outcome === 'digestion' && !showGut && !isExampleMode() && (
+      {gutOff && (
         <p className="reco-intro" data-testid="gut-off">
           Le suivi digestif est masqué. Pour le retrouver : {IN_APP_SETTINGS} › Paramètres › <Link to="/settings">Vos objectifs</Link>.
         </p>
@@ -617,7 +619,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       {v.state === 'loading' && !error && (
         <div className="loading"><div className="spinner" aria-hidden /><p>Calcul des analyses…</p></div>
       )}
-      {v.state === 'locked' && <Countdown outcome={outcome} view={v} onNote={onNote} onReminder={onReminder} notedToday={notedToday} />}
+      {v.state === 'locked' && <Countdown outcome={outcome} view={v} onNote={onNote} onReminder={onReminder} notedToday={notedToday} canNote={!gutOff} />}
       {v.state === 'results' && <Results outcome={outcome} view={v} locked={locked} families={influenceFamilies(results.outcomes?.[outcome])} base={base} />}
       {v.state !== 'loading' && <ReintroLink line={reintroText} />}
       {outcome === 'digestion' && v.state === 'results' && <DoctorReportCard />}

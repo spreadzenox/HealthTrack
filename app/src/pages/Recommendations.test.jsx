@@ -400,6 +400,18 @@ describe('Exemple digestion sans l’objectif ventre (POLISH-SIM-37b)', () => {
     act(() => exitExampleMode())
     expect(await screen.findByTestId('gut-off')).toBeInTheDocument()
   })
+
+  it('POLISH-GUT-OFF-NOTE : suivi masqué, le compte à rebours n’invite plus à noter', async () => {
+    const { saveOnboarding } = await import('../settings/onboarding')
+    saveOnboarding({ goals: ['stress'] })
+    renderPage({ view: 'gut' }, readyResults)
+    const card = await screen.findByTestId('reco-countdown-digestion')
+    expect(screen.getByTestId('gut-off')).toBeInTheDocument()
+    expect(within(card).queryByRole('button', { name: 'Noter maintenant' })).not.toBeInTheDocument()
+    expect(within(card).queryByRole('button', { name: 'Ajouter une note' })).not.toBeInTheDocument()
+    // les jours déjà notés restent comptés
+    expect(card.querySelector('.pistes-count')).toHaveTextContent(/jours notés/)
+  })
 })
 
 describe('REFONTE-6e : la réintroduction guidée sous Confort digestif', () => {
