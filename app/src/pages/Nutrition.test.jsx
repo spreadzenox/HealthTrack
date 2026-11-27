@@ -109,6 +109,25 @@ describe('Nutrition page', () => {
     expect(container.querySelector('.nutrition-source').textContent).toMatch(/«\u00a0partiel\u00a0»/)
   })
 
+  it('teneur mesurée pour aucun aliment : « non mesuré », jamais « ≥ 0 » (POLISH-NUTRI-ZERO)', async () => {
+    loadNutritionEntries.mockResolvedValueOnce([
+      {
+        type: 'food',
+        at: yesterdayNoon(),
+        payload: { items: [{ ingredient: 'Abricot au sirop léger, appertisé, égoutté', quantity_g: 150 }] },
+      },
+    ])
+    const { container } = render(<MemoryRouter><Nutrition /></MemoryRouter>)
+    await screen.findByText(/1\s*jour\b/)
+    const vitD = [...container.querySelectorAll('.nutrition-bar-row')]
+      .find((r) => r.querySelector('.nutrition-bar-label').textContent.startsWith('Vitamine D'))
+    const value = vitD.querySelector('.nutrition-bar-value').textContent
+    expect(value).toMatch(/^non mesuré · obj\./)
+    expect(value).not.toMatch(/≥/)
+    expect(vitD.querySelector('.nutrition-partial-tag')).toBeNull()
+    expect(vitD.querySelector('[role="progressbar"]').getAttribute('aria-label')).toBe('Vitamine D : non mesuré dans vos aliments')
+  })
+
   it('jours incomplets : une seule ligne d’avertissement, sans compte de repères trompeur (D1)', async () => {
     loadNutritionEntries.mockResolvedValueOnce([
       { type: 'food', at: yesterdayNoon(), payload: { items: [{ ingredient: 'Abat, cuit (aliment moyen)', quantity_g: 200 }] } },
