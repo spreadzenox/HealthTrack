@@ -21,7 +21,7 @@ aliment mangé de la semaine, Données › Nutrition écrivait « Oméga-3 parti
 
 ## Vérifications
 - `npm run test` : 4 744 tests verts (44 ignorés, comme avant) ; `npm run lint` : 0 erreur avant et après ;
-  `npm run build` et `npm run visual` complet lancés (résultat dans la PR).
+  `npm run build` vert ; `npm run visual` complet vert (toutes les pages, aucune erreur JS).
 - Captures `--routes=/nutrition --history-days=2`, clair et sombre, relues : « Oméga-3 · non mesuré · obj. 2 g »,
   barre vide ; les autres lignes inchangées (Folates gardent « partiel · ≥ 52 µg/j »).
 - iPhone : code partagé seulement, aucun correctif à refaire ; build iOS au passage de la PR en « prête ».
