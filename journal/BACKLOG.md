@@ -978,6 +978,15 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       de « Fructanes −1,2 pt », 3e fois chez « sans technique » (proposition avec maquette, avec le reste de
       POLISH-SIM-173)~~ (PROP-SIM-20, maquette du 27/11 01:30) ; ~~« vous notez vous-même » à vérifier sur l'émulateur~~ (écarté le 27/11 00:30, voir dessous) ;
       ~~jours déjà comptés du long terme~~ (POLISH-SIM-177).
+    - [x] **POLISH-VISAGE-1 — Tendances › Jour : 2,7 « d'après le visage » quand l'Accueil dit 3,1 d'après les mêmes
+      2 lectures** — FAIT 27/11 03:30 (revue de main par `npm run visual -- --now=10:30`, hors personas) : sous
+      `FACE_MOOD_MIN_READINGS` (3) lectures, le modèle à espace d'états n'observe pas le jour (`faceMoodDays`) ; son
+      chiffre vient des jours voisins, mais `detailSource` écrivait « d'après le visage » dès une lecture (et « estimé
+      avec le visage » à côté d'une note). Maintenant : « estimé avec les jours voisins (il faut 3 lectures) », et
+      « vous avez noté 3 · estimé avec les jours voisins » sous 3 lectures. L'Accueil garde la médiane pondérée des
+      lectures du jour (« D'après 2 lectures du visage »), vraie elle aussi. Tests `trendsData.test.js` d'abord
+      (3 attentes qui supposaient le visage compté à 1 ou 2 lectures corrigées). Code partagé : l'iPhone suit.
+      Reste possible (pas fait, à juger) : un même chiffre sur l'Accueil et Tendances le jour où il y a 1 ou 2 lectures.
     - [x] **POLISH-NUIT-1 — Ma journée dit « Bonjour ! » à 2 h quand l'Accueil dit « Pilou dort »** — FAIT 27/11 02:30
       (revue de main par `npm run visual` lancé à 02:30, hors personas) : la bannière de Pilou (`idleLine`, `lines.js`)
       ne connaissait la nuit qu'à partir de 21 h ; de minuit à 5 h elle saluait (« Bonjour ! », Pilou qui fait coucou,

@@ -8,6 +8,7 @@
  */
 import { toDisplay } from './mood/wellbeingScale'
 import { GUT_SCORE } from './trendsDay'
+import { FACE_MOOD_MIN_READINGS } from './mood/faceMoodDays'
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
 
@@ -218,11 +219,15 @@ export function detailSource(key, { value, note = null, noteText = null, reading
     if (gut && gutScore != null && Math.round(value) !== gutScore) return `vous avez noté « ${gut} » (${gutScore}) · estimé avec les jours voisins`
     return gut ? `noté « ${gut} »` : observed ? 'noté' : 'estimé'
   }
+  // POLISH-VISAGE-1 : sous FACE_MOOD_MIN_READINGS lectures, le visage n'entre pas dans le chiffre du jour (le modèle
+  // n'observe pas ce jour-là) : le chiffre vient des jours voisins, jamais « d'après le visage ».
+  const faceCounts = readings >= FACE_MOOD_MIN_READINGS
   if (note != null) {
     if (Math.round(value * 10) === Math.round(note * 10)) return 'votre note'
     const n = noteText ?? String(Math.round(note * 10) / 10).replace('.', ',')
-    return `vous avez noté ${n} · estimé avec ${readings > 0 ? 'le visage' : 'les jours voisins'}`
+    return `vous avez noté ${n} · estimé avec ${faceCounts ? 'le visage' : 'les jours voisins'}`
   }
-  if (readings > 0) return 'd’après le visage'
+  if (faceCounts) return 'd’après le visage'
+  if (readings > 0) return `estimé avec les jours voisins (il faut ${FACE_MOOD_MIN_READINGS} lectures)`
   return observed ? 'noté' : 'estimé'
 }
