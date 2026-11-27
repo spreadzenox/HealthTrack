@@ -120,6 +120,15 @@ describe('Paywall (variante play, jalon 6c-3)', () => {
     expect(screen.getByText(/Toujours gratuit/)).toBeInTheDocument()
   })
 
+  it('« Toujours gratuit » ne nomme plus le Journal, retiré par la refonte (POLISH-PAYWALL-JOURNAL)', async () => {
+    billing.loadPlans.mockResolvedValue([])
+    renderPremium()
+    await screen.findByText(/ne propose pas encore de formule/)
+    const free = screen.getByText(/Toujours gratuit/).closest('p')
+    expect(free.textContent).not.toMatch(/journal/i)
+    expect(free.textContent).toMatch(/vos notes et vos repas/)
+  })
+
   it('achat : la formule choisie part vers Google Play, le droit revérifié par le relais s’affiche', async () => {
     billing.loadPlans.mockResolvedValue([YEAR, MONTH])
     billing.purchasePlan.mockResolvedValue({

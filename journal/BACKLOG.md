@@ -992,6 +992,11 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `fodmapNotCompared` ; une ligne « Pas encore comparés, trop peu de vos repas en sont riches : fructanes (blé,
       oignon, ail) et mannitol (…) » dans le détail des chiffres, ou après les facteurs nommés sans barres. `listFr`
       garde les sigles (« GOS », pas « gOS »). Tests d'abord ; captures `runs/captures/2026-11-27-0930-fodmap-pas-compares-*`.
+    - [x] **POLISH-PAYWALL-JOURNAL — « Toujours gratuit : journal » sur la page Premium** — FAIT 27/11 12:30 (« à
+      juger » du run de 11:30) : le Journal n'existe plus depuis la refonte ; la ligne dit « vos notes et vos repas,
+      imports des montres, bien-être estimé, graphiques et export de vos données ». `pages/Premium.jsx`, test d'abord
+      (`Premium.test.jsx`). Conditions (`public/conditions.html`) et fiche Play gardent « journal » au sens commun
+      (« journal alimentaire ») : pas changées. PR en brouillon, à regrouper avec le correctif suivant (CI économe).
     - [x] **POLISH-SIM-178 — « Enregistrer » descendait sous le doigt dans la fenêtre du bien-être** — FAIT 27/11 10:30
       (passage des personas de 08:30, « Stressé et pressé » J1) : la fenêtre était centrée ; au choix de la note, le
       miroir de Pilou et les précisions s'ouvraient et les boutons descendaient d'environ 200 px. La fenêtre est posée
