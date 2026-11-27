@@ -22,7 +22,8 @@
 - Captures relues : `captures/2026-11-27-1530-habitude-petit-ecran-320.png`, `-grande-police.png` (360 px, 1,5),
   `-dark.png` (412 px, sombre : une seule ligne). Temps 1 à 3 à 320 px et en grande police relus, sans défaut (le
   bouton collant « Continuer » coupe la capture pleine page, comme partout).
-- Suite complète, build et eslint : voir ci-dessous.
+- `npm run test` : 461 fichiers verts (3 ignorés), 4 739 tests ; `npm run build` vert ; eslint sans erreur sur le
+  fichier ajouté.
 - iPhone : aucun correctif `iphone/patches/` sur `Onboarding.css` ; code partagé.
 
 ## CI économe
