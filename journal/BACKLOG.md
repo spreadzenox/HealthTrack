@@ -228,7 +228,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     correctifs 45 et 52 s'appliquent encore, **23 et 55 sont à refaire** (23 : la ligne `SnapshotWelcome` s'ancrait
     sur `{step === 'tuto' …}`, devenu `{step === 'intro' …}` ; 55 : l'import de `checkPhoneUsageAccess` s'ancrait
     sur une ligne d'import retirée). Captures iPhone des 4 temps à regarder (« Santé » au temps 2).
-  - [ ] **REFONTE-5b-2 — Temps 3 trop long quand l'accès est donné** : les mesures par thème de l'ancien écran
+  - [x] **REFONTE-5b-2 — Temps 3 trop long quand l'accès est donné** — FAIT 27/11 14:30 : sous « Ce que Halcya a
+    trouvé », les mesures reçues tiennent en une ligne « Bien reçu : … » ; seules les mesures « en partie » ou « pas
+    partagée » gardent leur ligne (raison, couleur du thème), liste « Ce que vos appareils ne donnent pas » ;
+    `Onboarding.jsx` (`splitMeasures`), test `Onboarding.sources.test.jsx`. Texte d'origine : les mesures par thème de l'ancien écran
     « Voici ce que Halcya recevra » s'affichent sous les 9 tuiles et les répètent en partie. À fondre : une tuile
     dit « reçu » ou « pas partagée » (proposition de la préparation), la liste par thème disparaît.
   - [ ] **REFONTE-5b-3 — Captures manquantes de 5b** : 320 px, grand texte, variante play avec visage et Gold,

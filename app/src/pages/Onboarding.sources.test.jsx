@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 
 const hc = vi.hoisted(() => ({
@@ -242,9 +242,23 @@ describe('Nouvel accueil (ACC-5) : mesures par thème', () => {
     stored.entries = [sam('steps', { count: 8000 }), sam('heart_rate', { bpm: 70 })]
     saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'auto', watch: 'yes', health: 'granted', imported: true })
     renderAt()
-    expect(await screen.findByRole('region', { name: 'Corps' })).toBeInTheDocument()
+    expect(await screen.findByRole('list', { name: 'Ce que vos appareils ne donnent pas' })).toBeInTheDocument()
     expect(screen.getByText('votre montre la mesure, Samsung ne la partage avec aucune app')).toBeInTheDocument()
     expect(screen.getAllByText('pas partagée').length).toBeGreaterThan(0)
     expect(screen.getByText(/Pas mesuré par vos appareils : durée du sommeil/)).toBeInTheDocument()
+  })
+
+  it('REFONTE-5b-2 : ce qui est reçu tient en une ligne, sans répéter les tuiles ; seules les limites gardent leur ligne', async () => {
+    const sam = (type, payload = {}) => ({ type, source: 'health_connect', at: new Date(Date.now() - 86400000).toISOString(), payload: { sourceName: 'com.sec.android.app.shealth', ...payload } })
+    stored.entries = [sam('steps', { count: 8000 }), sam('heart_rate', { bpm: 70 })]
+    saveOnboarding({ flow: FLOW_VERSION, lastScreen: 'auto', watch: 'yes', health: 'granted', imported: true })
+    renderAt()
+    expect(await screen.findByText('Bien reçu : pas, fréquence cardiaque.')).toBeInTheDocument()
+    // plus de liste par thème qui répète les tuiles « Pas », « Sommeil »…
+    expect(screen.queryByRole('region', { name: 'Activité' })).toBeNull()
+    expect(screen.queryByText('reçu')).toBeNull()
+    const limits = screen.getByRole('list', { name: 'Ce que vos appareils ne donnent pas' })
+    expect(within(limits).getByText('Variabilité cardiaque')).toBeInTheDocument()
+    expect(within(limits).queryByText('Pas')).toBeNull()
   })
 })

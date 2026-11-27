@@ -473,6 +473,16 @@ function AutoStep({ watch, health, weather, screen, children }) {
 
 /* ───────────────────────── Ce qui a été trouvé (sous le temps 3, accès donné) ───────────────────────── */
 
+/** Mesures reçues sans réserve (une ligne) et mesures limitées (« en partie », « pas partagée », avec leur raison). */
+const splitMeasures = (m) => {
+  const all = m.groups.flatMap((g) => g.items)
+  return {
+    ...m,
+    received: all.filter((i) => i.status === 'received').map((i) => i.label),
+    limited: all.filter((i) => i.status !== 'received'),
+  }
+}
+
 const pct = (p) => (p && p.total ? Math.round((p.done / p.total) * 100) : 0)
 
 function FoundStep({ health, imported, onImported, installed, huawei }) {
@@ -512,7 +522,7 @@ function FoundStep({ health, imported, onImported, installed, huawei }) {
   const devices = entries ? foundDevices(entries, installed) : []
   // Apps installées dont on connaît les limites ; la montre Huawei seulement si elle est reliée ou à relier
   const appIds = (installed || []).filter((app) => !app.directWatch || huawei === 'pair').map((app) => app.id)
-  const measures = entries ? measureStatuses({ entries, appIds }) : null
+  const measures = entries ? splitMeasures(measureStatuses({ entries, appIds })) : null
   const sharedSource = facts?.length && facts.every((f) => f.source === facts[0].source) ? facts[0].source : null
 
   return (
@@ -547,20 +557,22 @@ function FoundStep({ health, imported, onImported, installed, huawei }) {
           ))}
         </ul>
       )}
-      {measures?.groups.map((g) => (
-        <section key={g.theme} className={`onb-measures onb-measures--${g.theme}`} aria-label={g.label}>
-          <h2 className="onb-leaves-group">{g.label}</h2>
-          <ul className="onb-measure-list">
-            {g.items.map((m) => (
-              <li key={m.id} className={`onb-measure is-${m.status}`}>
-                <span className="onb-measure-name">{m.label}</span>
-                <span className="onb-measure-status">{STATUS_LABEL[m.status]}</span>
-                {m.reason && <span className="onb-measure-reason">{m.reason}</span>}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+      {/* REFONTE-5b-2 : ce qui arrive tient en une ligne (les tuiles le disent déjà) ; seules les limites, avec leur
+          raison, gardent une ligne chacune, dans la couleur de leur thème. */}
+      {measures?.received.length > 0 && (
+        <p className="onb-fine onb-received">Bien reçu : {measures.received.map((l) => l.toLowerCase()).join(', ')}.</p>
+      )}
+      {measures?.limited.length > 0 && (
+        <ul className="onb-measure-list" aria-label="Ce que vos appareils ne donnent pas">
+          {measures.limited.map((m) => (
+            <li key={m.id} className={`onb-measure onb-measures--${m.theme} is-${m.status}`}>
+              <span className="onb-measure-name">{m.label}</span>
+              <span className="onb-measure-status">{STATUS_LABEL[m.status]}</span>
+              {m.reason && <span className="onb-measure-reason">{m.reason}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
       {measures?.groups.length > 0 && measures.notMeasured.length > 0 && (
         <p className="onb-fine">Pas mesuré par vos appareils : {measures.notMeasured.map((l) => l.toLowerCase()).join(', ')}.</p>
       )}
