@@ -24,7 +24,11 @@
 - Captures `--routes=/ --click="Bien-être"` puis `--click="Bien-être > Note 2 sur 5"`, clair et sombre, relues :
   « Enregistrer » est à la même hauteur (y ≈ 1700 sur 1830) avant et après le choix de la note ; la fenêtre monte
   sur l'îlot. `captures/2026-11-27-1030-bien-etre-bouton-fixe-{avant-note,clair,dark}.png`.
-- iPhone : aucun correctif `iphone/patches/` sur `App.css` ; code partagé seulement ; un build iOS pour la PR.
+- iPhone : aucun correctif `iphone/patches/` sur `App.css` ; code partagé seulement. Build iOS de la PR vert ; ses
+  captures (`captures/pr-1309`) ne montrent pas cette fenêtre ouverte : Accueil iPhone relu, intact. À voir sur
+  l'iPhone à la build du soir.
+- PR #1309 : tous les checks verts. Le job émulateur API 36 a dépassé ses 30 min (annulé, comme le 25/11) ;
+  relancé une fois, vert.
 
 ## Suite proposée
 1. Ce soir : build iPhone et TestFlight (21:20), Alpha à 23:45 ; soumission bêta de la build du soir au premier run
