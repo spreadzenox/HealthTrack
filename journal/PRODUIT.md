@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **27/11 17:30** — **POLISH-COMPTE-SUR** : le compteur des jours notés s'écrit « 9 sur 14 » dans le détail d'un objectif et dans la carte digestive de l'Accueil, comme sur la carte d'Objectifs (« 9/14 » avant). Test d'abord ; ajouté à la PR #1313, passée en « prête » (un build iPhone pour les deux).
 - **27/11 16:30** — **REFONTE-5b-3 (fini)** et **POLISH-GOLD-REDIT** : dernières captures de l'accueil relues (temps 1 en sombre, visage en play, Gold offert, montre Huawei, passage complet) ; l'écran « Gold offert » perd sa pastille « gold », qui répétait le titre. Test d'abord ; PR en brouillon, à regrouper avec le correctif suivant (un build iPhone).
 - **27/11 12:30** — **POLISH-PAYWALL-JOURNAL** : la page Premium ne cite plus le Journal (retiré par la refonte) dans « Toujours gratuit » : « vos notes et vos repas, imports des montres, bien-être estimé, graphiques et export de vos données ». Test d'abord ; code partagé, PR en brouillon à regrouper avec le correctif suivant (un seul build iPhone).
 - **27/11 15:30** — **REFONTE-5b-3 (en partie)** : captures de l'accueil à 320 px et en grande police ; au temps 4, le champ « Ajouter une habitude… » ne coupe plus son texte (le bouton passe dessous). Ajouté à la PR #1312, un seul build iPhone pour les deux.

@@ -27,14 +27,15 @@ describe('readGutNotes (POLISH-SIM-32)', () => {
 })
 
 describe('DigestBlock (AUJ-4)', () => {
-  it('avant les analyses : le compte à rebours, ce qu’elles cherchent, N/28 et « Noter ma digestion »', async () => {
+  it('avant les analyses : le compte à rebours, ce qu’elles cherchent, N sur 28 et « Noter ma digestion »', async () => {
     const onNote = vi.fn()
     wrap({ onNote, read: async () => [note(1), note(2), note(3, 'pain')] })
     expect(await screen.findByRole('heading', { name: 'Encore 25 jours notés avant vos pistes digestives' })).toBeInTheDocument()
     expect(screen.getByText(/cherchera quels facteurs sont statistiquement liés à votre confort digestif\./)).toBeInTheDocument()
-    expect(screen.getByText('3/28')).toBeInTheDocument()
+    expect(screen.getByText('3')).toBeInTheDocument()
     // POLISH-SIM-32 : quelle fenêtre ? Aucune : tous les jours notés comptent, d'affilée ou non
-    expect(screen.getByText('3/28').parentElement).toHaveTextContent('3/28 jours notés, pas forcément d’affilée')
+    // POLISH-COMPTE-SUR : « 3 sur 28 », comme la carte d'Objectifs
+    expect(screen.getByText('3').parentElement).toHaveTextContent('3 sur 28 jours notés, pas forcément d’affilée')
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '3')
     // POLISH-SIM-102, UPG-7 : les deux paliers nommés, comme dans Objectifs
     expect(screen.getByText('Premier score au 14e jour noté, pistes au 28e.')).toBeInTheDocument()

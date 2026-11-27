@@ -1,6 +1,6 @@
 /**
  * Bloc digestif de l'Accueil (AUJ-4, revue design du 07/11). Avant les analyses : « Vos analyses digestives arrivent
- * dans N jours », ce qu'elles chercheront, « N/28 jours notés, pas forcément d'affilée », un bouton « Noter ma digestion »
+ * dans N jours », ce qu'elles chercheront, « N sur 28 jours notés, pas forcément d'affilée » (POLISH-COMPTE-SUR : comme la carte d'Objectifs), un bouton « Noter ma digestion »
  * (le même geste que « Digestion » du bandeau d'ajout) et le rappel du soir. Les notes du jour se lisent sur un petit
  * graphique (une pastille par note, à son heure). Une fois les analyses prêtes : une ligne qui ouvre Analyses ›
  * Digestion (leçon 16 : les résultats n'ont qu'une maison), titrée selon l'état réel (POLISH-SIM-52). Ni délais, ni correction statistique, ni minimum ici.
@@ -140,7 +140,7 @@ export default function DigestBlock({ onNote, read = readGutNotes, summary: summ
             <div className="digest-progress-bar" style={{ width: `${(bar.days / bar.target) * 100}%` }} />
           </div>
           <p className="digest-count">
-            <span className="mono">{bar.days}/{bar.target}</span> jours notés, pas forcément d’affilée
+            <span className="mono">{bar.days}</span> sur <span className="mono">{bar.target}</span> jours notés, pas forcément d’affilée
           </p>
           {/* POLISH-SIM-102, UPG-7 : les deux paliers nommés, comme dans Objectifs ; POLISH-SIM-149 : le titre dit
               « pistes » comme ce palier et la visite */}

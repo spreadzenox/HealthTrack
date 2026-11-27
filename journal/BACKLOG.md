@@ -282,9 +282,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     build simulateur verte, cette capture regardée (bloc « Par famille » visible), puis merge.
   - [ ] **REFONTE-6b-2 — Restes de 6b** : capture de la version Play sans abonnement (bloc masqué, testé) ;
     captures du niveau « Lien moyen », d'une ligne Écrans, du confort digestif avec résultats, à
-    320 px et en grand texte ; moyenne par famille (« 7 h 05 par nuit ») ; « Comment est calculé votre
-    bien-être ? » et « Comment c'est calculé » se suivent avec deux libellés proches ; les seuils 0,25 et 0,5 à
-    confronter au banc de 6d.
+    320 px et en grand texte ; moyenne par famille (« 7 h 05 par nuit ») ; ~~« Comment est calculé votre
+    bien-être ? » et « Comment c'est calculé » se suivent avec deux libellés proches~~ (**sans objet** : fait par
+    POLISH-SIM-121 le 20/11) ; les seuils 0,25 et 0,5 à confronter au banc de 6d. **27/11 17:30** : Objectifs, détail
+    du bien-être et du confort digestif capturés à 320 px en grande police (1,3, play, sans abonnement) : rien de
+    coupé ; un seul défaut, **POLISH-COMPTE-SUR** (fait) : la carte d'Objectifs disait « 9 sur 14 jours notés », le
+    détail et la carte digestive de l'Accueil « 9/14 » ; partout « 9 sur 14 » (`Recommendations.jsx`,
+    `DigestBlock.jsx`, tests `Recommendations.test.jsx`, `DigestBlock.test.jsx`).
   - [x] **REFONTE-6c-1 — Le détail d'une famille** (15/11 14:35, Android) : une famille qui a des facteurs comparés
     est un lien (`/recommendations/bien-etre/famille/:family`, `/recommendations/ventre/famille/:family`) ;
     `familyDetail()` dans `services/influenceFamilies.js` (ses liens nets, un par facteur ; ses facteurs par délai

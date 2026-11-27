@@ -159,7 +159,7 @@ function Countdown({ outcome, view, onNote, onReminder, notedToday = [], canNote
             aria-valuenow={bar.have} aria-label="Jours notés">
             <div className="pistes-progress-bar" style={{ width: `${(bar.have / bar.need) * 100}%` }} />
           </div>
-          <p className="pistes-count"><span className="mono">{bar.have}/{bar.need}</span> jours notés, pas forcément d’affilée</p>
+          <p className="pistes-count"><span className="mono">{bar.have}</span> sur <span className="mono">{bar.need}</span> jours notés, pas forcément d’affilée</p>
         </>
       )}
       {bar && (
