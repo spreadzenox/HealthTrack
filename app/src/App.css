@@ -529,7 +529,9 @@
   z-index: 50;
   background: var(--scrim);
   display: flex;
-  align-items: center;
+  /* POLISH-SIM-178 : posée en bas, comme les feuilles de Ma journée ; elle grandit vers le haut quand les
+     précisions s'ouvrent, et « Enregistrer » reste sous le doigt. */
+  align-items: flex-end;
   justify-content: center;
   padding: calc(20px + var(--safe-top)) 16px calc(20px + var(--safe-bottom));
 }
@@ -783,6 +785,11 @@
   display: flex;
   gap: 10px;
   margin-top: 4px;
+  /* Toujours visibles si la fenêtre défile (petit écran, police agrandie) */
+  position: sticky;
+  bottom: 0;
+  padding-top: 8px;
+  background: var(--surface);
 }
 
 .wellbeing-modal-actions .btn {
