@@ -150,6 +150,8 @@ export default function Act({ read = readAct, now }) {
   const empty = !current.length && !kept.length && !proposedTrials.length && !fodmap.proposed.length && !done.length
   return (
     <section className="act-page" aria-labelledby="act-title">
+      {/* POLISH-AGIR-RETOUR : ouverte depuis l'Accueil (onglet allumé), comme les pages d'Objectifs qui disent où revenir */}
+      <p className="act-back"><Link to="/">← Accueil</Link></p>
       <h1 id="act-title" className="page-title">Agir</h1>
       {empty ? (
         <div className="today-card act-empty">

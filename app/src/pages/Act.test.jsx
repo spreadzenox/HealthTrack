@@ -20,6 +20,12 @@ describe('Agir (ORG-1, ORG-1b)', () => {
     expect(screen.getByRole('link', { name: 'Où en sont vos analyses' })).toHaveAttribute('href', '/recommendations')
   })
 
+  // POLISH-AGIR-RETOUR : comme les autres pages ouvertes depuis un onglet, Agir dit où revenir (l'onglet allumé est Accueil)
+  it('un lien « ← Accueil » en haut de la page', async () => {
+    wrap({ challenges: [], gut: [], pistes: null })
+    expect(await screen.findByRole('link', { name: '← Accueil' })).toHaveAttribute('href', '/')
+  })
+
   // POLISH-SIM-70 : avec l'objectif ventre, le lien ouvre l'analyse de la digestion, et l'état vide dit quoi noter
   it('état vide, objectif ventre : le lien ouvre Analyses › Digestion et la phrase parle de la digestion', async () => {
     localStorage.setItem('healthtrack_onboarding', JSON.stringify({ done: true, goals: ['gut'] }))
