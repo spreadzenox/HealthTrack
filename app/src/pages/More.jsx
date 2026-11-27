@@ -10,8 +10,9 @@ const ITEMS = [
   { to: '/connectors', icon: 'watch', title: 'Sources', desc: 'Montres, apps de santé, météo, lecture du visage' },
   { to: '/data', icon: 'folder', title: 'Sauvegarde', desc: 'Exporter et restaurer vos données' },
   { to: '/settings', icon: 'gear', title: 'Paramètres', desc: FEATURES.cigaretteSetting
-    ? 'Apparence, analyse des repas (IA), cigarettes, diagnostic'
-    : 'Apparence, analyse des repas (IA), abonnement' },
+    ? 'Apparence, Pilou, objectifs et habitudes, repas (IA), cigarettes, diagnostic'
+    // POLISH-REGLAGES-DESC : la page porte surtout Pilou, les objectifs et les habitudes (refonte)
+    : 'Apparence, Pilou, objectifs et habitudes, abonnement' },
   { to: '/nouveautes', icon: 'sparkle', title: 'Nouveautés', desc: 'Ce qui a changé dans l’application' },
   // Page statique (app/public), hors du routeur : aussi publiée par GitHub Pages et montrée par Health Connect
   // (sur iPhone, leurs versions propres : app Santé, iCloud, achats intégrés de l'App Store, sans montre Huawei)
