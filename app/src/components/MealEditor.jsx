@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { itemKcal, mealKcal, mealUncounted, searchIngredients, setItemGrams } from '../services/mealEditing'
+import { itemKcal, mealKcal, mealUncounted, quantityUnit, searchIngredients, setItemGrams } from '../services/mealEditing'
 import './MealEditor.css'
 import { frenchLigatures } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
@@ -46,7 +46,8 @@ export default function MealEditor({ items, onChange, disabled = false }) {
   const pick = (name) => {
     if (replaceIndex != null && items[replaceIndex]) {
       const { ingredient: _old, unknown: _u, confidence: _c, ...rest } = items[replaceIndex]
-      update(replaceIndex, { ...rest, ingredient: name })
+      const next = { ...rest, ingredient: name }
+      update(replaceIndex, rest.quantity_g != null ? setItemGrams(next, rest.quantity_g) : next)
     } else {
       onChange([...items, setItemGrams({ ingredient: name }, DEFAULT_G)])
     }
@@ -66,6 +67,8 @@ export default function MealEditor({ items, onChange, disabled = false }) {
       <ul className="meal-editor-list">
         {items.map((item, i) => {
           const kcal = itemKcal(item)
+          const unit = quantityUnit(item.ingredient)
+          const unitWord = unit === 'ml' ? 'Millilitres' : 'Grammes'
           return (
             <li key={i} className={`meal-editor-item${item.unknown ? ' is-unknown' : ''}`}>
               <div className="mei-head">
@@ -97,7 +100,7 @@ export default function MealEditor({ items, onChange, disabled = false }) {
                   className="mei-step"
                   onClick={() => nudge(i, -STEP_G)}
                   disabled={disabled || !item.quantity_g}
-                  aria-label={`Retirer ${STEP_G} g à ${item.ingredient}`}
+                  aria-label={`Retirer ${STEP_G} ${unit} à ${item.ingredient}`}
                 >
                   −
                 </button>
@@ -112,15 +115,15 @@ export default function MealEditor({ items, onChange, disabled = false }) {
                   disabled={disabled}
                   onChange={(e) => update(i, setItemGrams(item, e.target.value))}
                   onFocus={selectAll}
-                  aria-label={`Grammes de ${item.ingredient}`}
+                  aria-label={`${unitWord} de ${item.ingredient}`}
                 />
-                <span className="mei-unit">g</span>
+                <span className="mei-unit">{unit}</span>
                 <button
                   type="button"
                   className="mei-step"
                   onClick={() => nudge(i, STEP_G)}
                   disabled={disabled}
-                  aria-label={`Ajouter ${STEP_G} g à ${item.ingredient}`}
+                  aria-label={`Ajouter ${STEP_G} ${unit} à ${item.ingredient}`}
                 >
                   +
                 </button>

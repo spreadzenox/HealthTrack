@@ -126,4 +126,23 @@ describe('MealEditor', () => {
     fireEvent.change(screen.getByLabelText('Grammes de Abondance'), { target: { value: '1500' } })
     expect(screen.queryByText(/c’est bien ça/)).not.toBeInTheDocument()
   })
+
+  it('affiche une boisson en ml, boutons compris (POLISH-BOISSON-ML)', () => {
+    const onChange = vi.fn()
+    render(<Harness initial={[{ ingredient: 'Bière blanche', quantity: '250 g', quantity_g: 250 }]} onChange={onChange} />)
+    expect(screen.getByLabelText('Millilitres de Bière blanche')).toHaveValue(250)
+    expect(screen.getByText('ml')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter 10 ml à Bière blanche' }))
+    expect(onChange).toHaveBeenLastCalledWith([expect.objectContaining({ quantity_g: 260, quantity: '260 ml' })])
+    expect(screen.getByRole('button', { name: 'Retirer 10 ml à Bière blanche' })).toBeInTheDocument()
+  })
+
+  it('remplacer un aliment par une boisson réécrit l’unité du libellé', () => {
+    const onChange = vi.fn()
+    render(<Harness initial={[{ ...cheese, unknown: true, ingredient: 'Biere' }]} onChange={onChange} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Remplacer Biere' }))
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Bière blanche' } })
+    fireEvent.click(screen.getByRole('option', { name: 'Bière blanche' }))
+    expect(onChange).toHaveBeenLastCalledWith([expect.objectContaining({ ingredient: 'Bière blanche', quantity_g: 50, quantity: '50 ml' })])
+  })
 })

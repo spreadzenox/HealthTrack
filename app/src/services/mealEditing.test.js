@@ -10,6 +10,9 @@ import {
   itemsForEditing,
   atToLocalInput,
   localInputToAt,
+  isDrink,
+  quantityUnit,
+  displayQuantity,
 } from './mealEditing.js'
 
 describe('matchIngredientName', () => {
@@ -181,5 +184,47 @@ describe('heure du repas (champ datetime-local)', () => {
     expect(atToLocalInput('n’importe quoi')).toBe('')
     expect(localInputToAt('')).toBeNull()
     expect(localInputToAt('abc')).toBeNull()
+  })
+})
+
+describe('boissons en ml (POLISH-BOISSON-ML)', () => {
+  it('reconnaît les boissons prêtes à boire', () => {
+    for (const name of [
+      'Eau', 'Bière blanche', 'Vin rouge', 'Café', 'Thé vert, infusé, sans sucres ajoutés', 'Jus de pomme, pur jus',
+      'Lait demi-écrémé, UHT', 'Cola, sucré', 'Kombucha, préemballé', 'Boisson au soja, nature, non enrichie, préemballée',
+      'Lait fermenté ou yaourt à boire, aux fruits, sucré',
+      'Boisson préparée à partir de sirop à diluer type menthe, fraise, etc, sucré, dilué dans l\'eau',
+    ]) expect(isDrink(name), name).toBe(true)
+  })
+
+  it('laisse en grammes poudres, feuilles, sirops à diluer, yaourts et aliments', () => {
+    for (const name of [
+      'Thé, feuille', 'Café, moulu', 'Café, poudre soluble', 'Lait en poudre, entier', 'Sirop à diluer, sucré',
+      'Lait concentré sucré, entier', 'Lait de coco', 'Lait gélifié aromatisé, rayon frais',
+      'Lait fermenté type yaourt au bifidus, nature', 'Vin cuisiné (alcool évaporé)', 'Abondance', 'Poulet, rôti',
+      'Pâtes alimentaires, cuites', 'Chicorée rouge, crue', 'Vinaigre de vin', 'Gingembre, cru', '',
+    ]) expect(isDrink(name), name).toBe(false)
+    expect(quantityUnit('Abondance')).toBe('g')
+    expect(quantityUnit('Bière blanche')).toBe('ml')
+  })
+
+  it('écrit « ml » pour une boisson, la valeur stockée reste quantity_g', () => {
+    expect(normalizeMealItem({ ingredient: 'Bière blanche', quantity_g: 250 })).toMatchObject({ quantity_g: 250, quantity: '250 ml' })
+    expect(setItemGrams({ ingredient: 'Eau' }, '330')).toMatchObject({ quantity_g: 330, quantity: '330 ml' })
+    expect(setItemGrams({ ingredient: 'Abondance' }, '30')).toMatchObject({ quantity: '30 g' })
+  })
+
+  it('relit un ancien libellé « 250 ml » ou « 250 g » d’une boisson', () => {
+    expect(itemsForEditing([{ ingredient: 'Bière blanche', quantity: '250 ml' }])[0]).toMatchObject({ quantity_g: 250, quantity: '250 ml' })
+    expect(itemsForEditing([{ ingredient: 'Bière blanche', quantity: '250 g' }])[0]).toMatchObject({ quantity_g: 250, quantity: '250 ml' })
+  })
+})
+
+describe('displayQuantity (POLISH-BOISSON-ML)', () => {
+  it('lit un ancien « 150 g » de boisson en ml, sans toucher au reste', () => {
+    expect(displayQuantity({ ingredient: 'Café', quantity: '150 g', quantity_g: 150 })).toBe('150 ml')
+    expect(displayQuantity({ ingredient: 'Abondance', quantity: '50 g' })).toBe('50 g')
+    expect(displayQuantity({ ingredient: 'Café', quantity: '1 tasse' })).toBe('1 tasse')
+    expect(displayQuantity({ ingredient: 'Café' })).toBeUndefined()
   })
 })
