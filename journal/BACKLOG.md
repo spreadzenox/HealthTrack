@@ -984,6 +984,13 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       `fodmapNotCompared` ; une ligne « Pas encore comparés, trop peu de vos repas en sont riches : fructanes (blé,
       oignon, ail) et mannitol (…) » dans le détail des chiffres, ou après les facteurs nommés sans barres. `listFr`
       garde les sigles (« GOS », pas « gOS »). Tests d'abord ; captures `runs/captures/2026-11-27-0930-fodmap-pas-compares-*`.
+    - [x] **POLISH-SIM-178 — « Enregistrer » descendait sous le doigt dans la fenêtre du bien-être** — FAIT 27/11 10:30
+      (passage des personas de 08:30, « Stressé et pressé » J1) : la fenêtre était centrée ; au choix de la note, le
+      miroir de Pilou et les précisions s'ouvraient et les boutons descendaient d'environ 200 px. La fenêtre est posée
+      en bas de l'écran (`align-items: flex-end`, comme les feuilles de Ma journée) : elle grandit vers le haut et
+      « Annuler » / « Enregistrer » restent à la même place ; les boutons restent collés en bas si elle défile (petit
+      écran, police agrandie). Test CSS d'abord (`wellbeingSheetAnchor.test.js`) ; captures
+      `runs/captures/2026-11-27-1030-bien-etre-bouton-fixe-*`.
     - [x] **POLISH-GUT-OFF-NOTE — Confort digestif masqué, « Noter maintenant » quand même** — FAIT 27/11 07:30
       (reste « à juger » de POLISH-AGIR-RETOUR) : la page reste joignable sans l'objectif (essai digestif, retour de la
       réintroduction, bilan `DigestBlock`) ; sous « Le suivi digestif est masqué », le compte à rebours proposait
