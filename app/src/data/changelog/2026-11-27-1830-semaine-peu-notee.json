@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-27",
+  "kind": "correctif",
+  "title": "Objectifs : pas de score pour une semaine presque sans notes",
+  "items": [
+    "Avec moins de 3 jours notés dans les 7 derniers jours, la carte d'un objectif dit « Pas assez de notes cette semaine pour un score » au lieu d'un score tiré surtout des jours estimés."
+  ]
+}

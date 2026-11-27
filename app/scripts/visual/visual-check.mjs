@@ -37,6 +37,7 @@
  *                                          --trial-factor=habit --click="Méditation" : une habitude, tenue lue dans les
  *                                          réponses oui / non de Ma journée des jours passés (REFONTE-4b-3)
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
+ *                                          --wellbeing-gap=week : de J-9 à J-2 (Objectifs sans score de la semaine)
  *   npm run visual -- --routes=/tendances --history-days=2  # historique presque vide : seules les données des 2 derniers
  *                                          jours (aujourd'hui et hier) sont gardées (T3, captures à côté de la maquette)
  *   npm run visual -- --routes=/tendances?vue=jour --no-face --wellbeing-today  # sans caméra : la note seule en Jour
@@ -1304,7 +1305,9 @@ async function main() {
       // Saisie interrompue (vacances…) : pas de note de bien-être entre 9 et 4 jours avant aujourd'hui.
       const dayStart = (n) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - n); return d }
       const from = dayStart(9)
-      const to = dayStart(3)
+      // --wellbeing-gap=week : jusqu'à avant-hier compris, il ne reste qu'hier et aujourd'hui dans la semaine
+      // (Objectifs : « Pas assez de notes cette semaine pour un score », POLISH-SEMAINE-NOTEE)
+      const to = dayStart(args['wellbeing-gap'] === 'week' ? 1 : 3)
       entries = entries.filter((e) => e.type !== 'wellbeing' || new Date(e.at) < from || new Date(e.at) >= to)
     }
     if (args.trial) {
