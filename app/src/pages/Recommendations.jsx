@@ -65,7 +65,7 @@ const WORDS = {
 /** POLISH-SIM-62 : jusqu'où remontent les délais comparés (le plus long prêt). */
 /** POLISH-SIM-160 : « a, b et c », chaque nom commençant par une minuscule (les sigles gardent leurs capitales). */
 const listFr = (names) => {
-  const low = names.map((n) => n.charAt(0).toLocaleLowerCase('fr') + n.slice(1))
+  const low = names.map((n) => (/^\p{Lu}{2}/u.test(n) ? n : n.charAt(0).toLocaleLowerCase('fr') + n.slice(1)))
   return low.length > 1 ? `${low.slice(0, -1).join(', ')} et ${low[low.length - 1]}` : low[0]
 }
 const COMPARED_UP_TO = { short: 'à la veille', medium: 'à 6 jours avant', long: 'à 27 jours avant' }
@@ -319,6 +319,17 @@ const FAMILY_NONE = {
   digestion: 'Rien à éviter pour l’instant : aucun aliment ne va nettement avec une digestion moins bonne. Continuez à noter vos repas.',
 }
 
+/** POLISH-FODMAP-ABSENT : les groupes FODMAP que la méthode n'a pas pu comparer (aucun repas au-dessus du repère). */
+function FodmapNotCompared({ groups }) {
+  if (!groups?.length) return null
+  const many = groups.length > 1
+  return (
+    <p className="reco-next" data-testid="reco-family-fodmap-missing">
+      Pas encore comparé{many ? 's' : ''}, trop peu de vos repas en sont riches : {listFr(groups.map((g) => `${g.label} (${g.hint})`))}.
+    </p>
+  )
+}
+
 /**
  * REFONTE-6c : le détail d'une famille. Ses liens nets d'abord, puis tout ce qui a été comparé dans la famille.
  * POLISH-SIM-128 (« Ventre, sans technique ») : les lignes chiffrées (groupes, pt, fourchettes) derrière le chevron,
@@ -367,6 +378,7 @@ function FamilyDetail({ outcome, detail }) {
               {detail.horizons.some((h) => h.factors.some((f) => !f.net)) && (
                 <p className="reco-legend"><span className="reco-legend-unsure" aria-hidden="true" /> hachuré, chiffre en gris : pas assez net</p>
               )}
+              <FodmapNotCompared groups={detail.fodmapNotCompared} />
             </>
           )}
         </section>
@@ -378,6 +390,7 @@ function FamilyDetail({ outcome, detail }) {
           {detail.names?.length ? ` : ${listFr(detail.names)}.` : '.'}
         </p>
       )}
+      {!detail.bars && <FodmapNotCompared groups={detail.fodmapNotCompared} />}
     </>
   )
 }

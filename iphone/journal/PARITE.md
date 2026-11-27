@@ -16,6 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+27/11 09:30 : POLISH-FODMAP-ABSENT (Alimentation nomme les groupes FODMAP pas comparés, `services/influenceFamilies.js`, `pages/Recommendations.jsx`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).
 27/11 07:30 : POLISH-GUT-OFF-NOTE (suivi digestif masqué : plus de « Noter maintenant » sur Votre confort digestif, `pages/Recommendations.jsx`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).
 27/11 06:30 : POLISH-AGIR-RETOUR (lien « ← Accueil » en haut de la page Agir, `pages/Act.jsx`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).
 27/11 03:30 : POLISH-VISAGE-1 (ligne d'un jour de Tendances avec 1 ou 2 lectures du visage, `services/trendsData.js`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).
