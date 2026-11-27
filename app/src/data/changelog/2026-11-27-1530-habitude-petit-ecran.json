@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-27",
+  "kind": "correctif",
+  "title": "Premier lancement : ajouter une habitude sur un petit écran",
+  "items": [
+    "À la dernière étape de l'accueil, sur un petit téléphone ou avec une grande taille de texte, le champ « Ajouter une habitude… » ne coupe plus son texte : le bouton « Ajouter » passe dessous."
+  ]
+}

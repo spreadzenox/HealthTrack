@@ -785,6 +785,7 @@
 
 .onb-habit-add {
   display: flex;
+  flex-wrap: wrap; /* REFONTE-5b-3 : à 320 px ou en grande police, le bouton passe sous le champ */
   gap: 8px;
   margin-top: 10px;
 }
@@ -796,7 +797,7 @@
 }
 
 .onb-habit-input {
-  flex: 1;
+  flex: 999 1 13em; /* la place de « Ajouter une habitude… » avant de passer à la ligne */
   min-width: 0;
   min-height: var(--tap-min);
   padding: 0 14px;
@@ -822,7 +823,7 @@
 }
 
 .onb-habit-add .btn {
-  flex: 0 0 auto;
+  flex: 1 0 auto;
   width: auto;
   padding: 0 20px;
 }

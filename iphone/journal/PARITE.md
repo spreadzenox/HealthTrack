@@ -17,6 +17,7 @@ sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision «
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
 27/11 12:30 : POLISH-PAYWALL-JOURNAL (« Toujours gratuit » de la page Premium, `pages/Premium.jsx`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).
+27/11 15:30 : REFONTE-5b-3 (`pages/Onboarding.css`, temps 4 de l'accueil, champ d'habitude sur petit écran) : code partagé, aucun correctif iPhone ; parité inchangée (70 %).
 27/11 14:30 : REFONTE-5b-2 (`pages/Onboarding.jsx`, temps 3 de l'accueil) : code partagé, aucun correctif iPhone sur ce fichier ; même écran sur iPhone (app Santé) ; parité inchangée (70 %).
 27/11 13:30 : POLISH-LAUNCH-JOURNAL (`components/LaunchEndCard.jsx`) : carte propre à Google Play, jamais montrée dans l'app iPhone ; code partagé, aucun correctif ; parité inchangée (70 %).
 27/11 11:30 : POLISH-REGLAGES-DESC (ligne Paramètres de Réglages, `pages/More.jsx`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).

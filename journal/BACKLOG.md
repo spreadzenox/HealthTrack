@@ -234,7 +234,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     `Onboarding.jsx` (`splitMeasures`), test `Onboarding.sources.test.jsx`. Texte d'origine : les mesures par thème de l'ancien écran
     « Voici ce que Halcya recevra » s'affichent sous les 9 tuiles et les répètent en partie. À fondre : une tuile
     dit « reçu » ou « pas partagée » (proposition de la préparation), la liste par thème disparaît.
-  - [ ] **REFONTE-5b-3 — Captures manquantes de 5b** : 320 px, grand texte, variante play avec visage et Gold,
+  - [ ] **REFONTE-5b-3 — Captures manquantes de 5b** (27/11 15:30 : **320 px et grand texte (1,5) faits** sur les
+    4 temps en play : seul défaut, au temps 4 le champ « Ajouter une habitude… » coupait son texte ; la rangée passe à
+    la ligne (`Onboarding.css`, test `Onboarding.habitAdd.css.test.js`) ; reste la suite) : 320 px, grand texte, variante play avec visage et Gold,
     carte Huawei, temps 1 en sombre regardé ; `npm run visual` complet.
   - [ ] **REFONTE-5b-4 — Sans montre, l'activité à la main** : la SPEC fait passer « Séances de sport » dans ce qu'on
     note ; aucune saisie d'activité n'existe dans la checklist de Ma journée. À faire avec une étape de Ma journée,
