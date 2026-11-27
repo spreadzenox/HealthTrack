@@ -974,9 +974,9 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - [x] **POLISH-SIM-175 — Accueil en 4 temps, étape 4 : champ « Ajouter une habitude… » rogné par « C'est parti ! »** — FAIT 26/11 21:30 : le champ remonte au toucher (`scrollIntoView` + `scroll-margin-bottom`), vérifié dans Chromium
       (J1, capture `habitudes-champ-cache.png`) : marge basse de la page à la hauteur du bouton fixe. Capture de
       l'étape 4 relue (clair, sombre).
-    - À étudier : calories reçues sans courbe (à joindre à la proposition « go courbes ») ; « Rien à éviter » au-dessus
+    - À étudier : calories reçues sans courbe (à joindre à la proposition « go courbes ») ; ~~« Rien à éviter » au-dessus
       de « Fructanes −1,2 pt », 3e fois chez « sans technique » (proposition avec maquette, avec le reste de
-      POLISH-SIM-173) ; ~~« vous notez vous-même » à vérifier sur l'émulateur~~ (écarté le 27/11 00:30, voir dessous) ;
+      POLISH-SIM-173)~~ (PROP-SIM-20, maquette du 27/11 01:30) ; ~~« vous notez vous-même » à vérifier sur l'émulateur~~ (écarté le 27/11 00:30, voir dessous) ;
       ~~jours déjà comptés du long terme~~ (POLISH-SIM-177).
     - [x] **POLISH-SIM-177 — « encore 11 jours » après 45 jours notés** — FAIT 26/11 23:30 : la ligne du prochain horizon
       d'Objectifs dit aussi les jours déjà comptés : « Long terme (de 7 à 27 jours avant) : 45 jours sur 56 avec votre
@@ -2045,6 +2045,14 @@ textes exacts dans [`maquettes/accueil/`](maquettes/accueil/) (`TEXTES.md`, `maq
 - [ ] **PROP-SIM-18** (proposition, pas de code sans accord ; Sportif sans montre) Noter une séance à la main ;
   protéines et glucides à la saisie d'un repas ; objectif de protéines selon le poids. Complétée le 14/11 20:35
   (Sportif J45, Maigrir J1) : repère de calories par jour, « mangé / dépensé ». Maquette à faire.
+- [ ] **PROP-SIM-20** (proposition, pas de code sans accord ; « Ventre, sans technique » J45 trois fois : 20/11, 25/11,
+  26/11 20:30) Objectifs › Confort digestif › Alimentation dit « Rien à éviter pour l'instant » au-dessus de
+  « Fructanes −1,2 pt » hachuré ; la persona ne sait pas si elle doit éviter l'oignon. **Maquette faite le 27/11
+  01:30** : `maquettes/rien-a-eviter/README.md`. Option A (recommandée) : « Rien de sûr pour l'instant. Le plus
+  marqué : les fructanes (blé, oignon, ail) … ça peut encore venir du hasard », carte « En avoir le cœur net » vers
+  la réintroduction guidée du groupe (ou un essai), tableau en mots (« un peu moins bien, pas sûr ») ; option B :
+  verdict « Rien de sûr » seul. Solde aussi le reste de POLISH-SIM-173 (« pt », « GOS », « FODMAP » du tableau).
+  Réponse attendue : « PROP-SIM-20 A », « PROP-SIM-20 B » ou « non ».
 - [ ] **PROP-SIM-19** (proposition, pas de code sans accord ; Maigrir J1 deux fois, Sportif J1) Se peser en un geste
   depuis Aujourd'hui quand l'objectif « poids » est coché (la pesée à la main n'existe que dans Journal › Nutrition ›
   profil). Maquette à faire, avec PROP-SIM-18. **Maquette faite le 24/11 08:30** (sans PROP-SIM-18, qui reste à

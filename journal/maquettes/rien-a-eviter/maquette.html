@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette — « Rien à éviter » et un lien pas encore net (PROP-SIM-20)</title>
+<!--
+  Maquette statique d'une PROPOSITION (PROP-SIM-20, run du 27/11 01:30) : rien n'est codé dans l'app sans l'accord
+  du propriétaire. Données synthétiques (persona « Ventre, sans technique », J45).
+  Paramètres : ?state=avant|avant-ouvert|a|a-ouvert|b  ?theme=dark
+  Rendu : node journal/maquettes/rien-a-eviter/render.mjs (depuis la racine du dépôt, app/ installé).
+-->
+<link rel="stylesheet" href="../../../app/src/theme/tokens.css">
+<style>
+  @font-face { font-family: 'Nunito Variable'; font-weight: 200 1000;
+    src: url('../../../app/node_modules/@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'IBM Plex Mono'; font-weight: 400;
+    src: url('../../../app/node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-ink); font-family: var(--font-sans); }
+  .screen { width: 412px; min-height: 851px; margin: 0 auto; padding: 0 var(--gutter) 28px; position: relative; }
+  .mono { font-family: var(--font-mono); }
+  .top { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+  .top b { font-size: 22px; font-weight: 800; }
+  .gear { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--color-ink-2); opacity: .6; }
+  .back { color: var(--color-brand); font-weight: 700; font-size: 15px; margin: 10px 0 18px; }
+  h1 { font-size: 28px; font-weight: 800; margin: 0 0 14px; }
+  h3 { font-size: 18px; font-weight: 800; margin: 22px 0 8px; }
+  p { font-size: 16px; line-height: 1.45; margin: 0 0 10px; }
+  .muted { color: var(--color-ink-2); font-size: 14px; }
+  .row { display: flex; justify-content: space-between; align-items: center; }
+  .chev { width: 30px; height: 30px; border-radius: 50%; background: var(--color-border); display: flex; align-items: center;
+    justify-content: center; font-size: 14px; color: var(--color-ink-2); flex: none; }
+  .card { background: var(--color-surface, #fff); border-radius: var(--radius-card); padding: 16px 18px; margin: 4px 0 14px;
+    border: 1px solid var(--color-border); }
+  .card.peach { background: var(--peach-bg, #fdeee4); border-color: transparent; }
+  .card .title { font-weight: 800; font-size: 16px; margin-bottom: 6px; }
+  .card .link { display: inline-block; margin-top: 8px; font-weight: 800; color: var(--peach-label, #9a4a1a); }
+  .new { outline: 3px dashed var(--rose-label, #b0306a); outline-offset: 4px; border-radius: 12px; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 800; background: var(--rose-bg); color: var(--rose-label);
+    padding: 3px 8px; border-radius: 10px; margin-bottom: 6px; }
+  .h-title { font-weight: 800; font-size: 17px; margin: 16px 0 6px; }
+  .h-title span { font-weight: 400; font-size: 14px; color: var(--color-ink-2); }
+  .f { display: grid; grid-template-columns: 1fr 120px 56px; gap: 8px; align-items: center; padding: 10px 0;
+    border-bottom: 1px solid var(--color-border); }
+  .f b { font-size: 15px; display: block; }
+  .f small { font-size: 13px; color: var(--color-ink-2); }
+  .f .v { font-family: var(--font-mono); font-size: 13px; color: var(--color-ink-2); text-align: right; }
+  .f .plain { font-size: 13px; color: var(--color-ink-2); text-align: right; font-family: var(--font-sans); }
+  .bar { position: relative; height: 14px; }
+  .bar::before { content: ''; position: absolute; left: 0; right: 0; top: 6px; height: 2px; background: var(--color-border); }
+  .bar .zero { position: absolute; left: 60%; top: -2px; width: 2px; height: 18px; background: var(--color-ink-2); }
+  .bar .b { position: absolute; top: 2px; height: 10px; border-radius: 5px;
+    background: repeating-linear-gradient(135deg, var(--peach-label, #9a4a1a) 0 3px, transparent 3px 6px);
+    border: 1px solid var(--peach-label, #9a4a1a); }
+  .link-u { font-size: 14px; text-decoration: underline; color: var(--color-ink-2); margin-top: 22px; display: block; }
+</style>
+</head>
+<body>
+<div class="screen" id="s"></div>
+<script>
+  const q = new URLSearchParams(location.search)
+  if (q.get('theme') === 'dark') document.documentElement.dataset.theme = 'dark'
+  const state = q.get('state') || 'avant'
+  const head = `<div class="top"><b>Halcya</b><div class="gear"></div></div>
+    <div class="back">← Votre confort digestif</div><h1>Alimentation</h1>`
+  const plainCol = state.startsWith('a')
+  const fac = (name, sub, left, width, v, plain) => `<div class="f"><div><b>${name}</b><small>${sub}</small></div>
+    <div class="bar"><span class="b" style="left:${left}%;width:${width}%"></span><span class="zero"></span></div>
+    <div class="${plainCol ? 'plain' : 'v'}">${plainCol ? plain : v}</div></div>`
+  const table = `
+    ${plainCol
+      ? '<p class="muted new"><span class="tag">changé</span><br>À gauche du trait : plus de gêne ; à droite : plus de confort. Hachuré : pas sûr, le hasard peut suffire à l’expliquer.</p>'
+      : '<p class="muted">pt : points de votre note de confort digestif, sur 5 (Calme 5, Gêne 3, Douleur 1). + : plus de confort.</p><p class="muted">Chaque délai se lit à part : un même facteur peut aller dans un sens le jour même et dans l’autre ensuite.</p>'}
+    <div class="h-title">Court terme <span>le jour même et la veille</span></div>
+    ${fac('Fructanes', plainCol ? 'blé, oignon, ail' : 'pour 1 repas riche en fructanes (FODMAP : blé, oignon, ail) de plus', 30, 30, '−1,2 pt', 'un peu moins bien, pas sûr')}
+    ${fac('Fructose en excès', plainCol ? 'miel, mangue' : 'pour 1 repas riche en fructose en excès (FODMAP : miel, mangue) de plus', 58, 10, '+0,5 pt', 'presque pareil')}
+    ${fac('GOS', plainCol ? 'pois chiches, lentilles' : 'pour 1 repas riche en GOS (FODMAP : pois chiches, lentilles) de plus', 55, 6, '−0,2 pt', 'presque pareil')}
+    <p class="muted" style="margin-top:12px">… 6 autres facteurs, et les délais suivants.</p>`
+  let body = ''
+  if (state === 'avant' || state === 'avant-ouvert') {
+    body = `<p>Rien à éviter pour l’instant : aucun aliment ne va nettement avec une digestion moins bonne. Continuez à noter vos repas.</p>
+      <h3>Ce qui a été comparé</h3>
+      <div class="row"><span class="muted">9 facteurs comparés, délai par délai.</span><span class="chev">${state === 'avant' ? '⌄' : '⌃'}</span></div>
+      ${state === 'avant-ouvert' ? table : ''}
+      <span class="link-u">Comment c’est calculé</span>`
+  } else if (state === 'a' || state === 'a-ouvert') {
+    body = `<div class="new"><span class="tag">changé</span>
+      <p>Rien de sûr pour l’instant. Le plus marqué : <b>les fructanes (blé, oignon, ail)</b>, avec un peu plus de gêne, mais ça peut encore venir du hasard.</p></div>
+      <div class="card peach new"><span class="tag">nouveau</span><div class="title">En avoir le cœur net</div>
+        <p style="margin:0">Un test guidé d’une dizaine de jours : une portion de blé ou d’oignon, puis le double, puis le triple, en notant votre digestion.</p>
+        <span class="link">Vérifier les fructanes</span></div>
+      <h3>Ce qui a été comparé</h3>
+      <div class="row"><span class="muted">9 facteurs comparés, délai par délai.</span><span class="chev">${state === 'a' ? '⌄' : '⌃'}</span></div>
+      ${state === 'a-ouvert' ? table : ''}
+      <span class="link-u">Comment c’est calculé</span>`
+  } else {
+    body = `<div class="new"><span class="tag">changé</span>
+      <p>Rien de sûr pour l’instant : aucun aliment ne va nettement avec une digestion moins bonne. Les écarts du détail peuvent venir du hasard. Continuez à noter vos repas.</p></div>
+      <h3>Ce qui a été comparé</h3>
+      <div class="row"><span class="muted">9 facteurs comparés, délai par délai.</span><span class="chev">⌄</span></div>
+      <span class="link-u">Comment c’est calculé</span>`
+  }
+  document.getElementById('s').innerHTML = head + body
+</script>
+</body>
+</html>
