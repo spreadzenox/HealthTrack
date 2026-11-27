@@ -53,6 +53,8 @@ describe('More page', () => {
     expect(link).toHaveTextContent(/Cigarettes|cigarettes/)
     expect(link).toHaveTextContent(/diagnostic/i)
     expect(link).toHaveTextContent(/Apparence/)
+    expect(link).toHaveTextContent(/Pilou/)
+    expect(link).toHaveTextContent(/habitudes/)
   })
 
   it('describes Données by what it holds (backup and restore, no history any more)', () => {

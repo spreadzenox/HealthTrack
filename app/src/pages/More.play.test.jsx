@@ -17,4 +17,13 @@ describe('More page — variante play', () => {
     expect(link).not.toHaveTextContent(/diagnostic/i)
     expect(link).toHaveTextContent(/Apparence/)
   })
+
+  it('nomme Pilou, les objectifs et les habitudes, que la page Paramètres porte (POLISH-REGLAGES-DESC)', () => {
+    render(<MemoryRouter><More changelog={[]} /></MemoryRouter>)
+    const link = screen.getByRole('link', { name: /Paramètres/ })
+    expect(link).toHaveTextContent(/Pilou/)
+    expect(link).toHaveTextContent(/objectifs/i)
+    expect(link).toHaveTextContent(/habitudes/i)
+    expect(link).toHaveTextContent(/abonnement/i)
+  })
 })
