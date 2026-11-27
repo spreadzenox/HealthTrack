@@ -30,10 +30,14 @@ d87415a (#1309) vert (Tests, émulateur A56, Play — AAB, Build & Release) · *
   (trois lignes, rien de coupé).
 - iPhone : aucun correctif `iphone/patches/` sur `Premium.jsx` ; code partagé seulement.
 
+## #1310 mergée
+- Build iOS vert à 11:34 UTC, capture iPhone de Réglages relue (« Apparence, Pilou, objectifs et habitudes,
+  abonnement », sur deux lignes). Mergée en squash (1674cd9) ; Build & Release vert, release **v947** (APK 34 Mo).
+  Cette PR rebasée dessus (journal seulement en conflit).
+
 ## Suite proposée
-1. Merger #1310 une fois son build iOS vert (à jour sur main).
-2. Run de code suivant : ajouter son correctif à cette PR, la passer en « prête », un build iPhone, merger.
-3. Ce soir : build iPhone et TestFlight (21:20), Alpha à 23:45.
+1. Run de code suivant : ajouter son correctif à cette PR, la passer en « prête », un build iPhone, merger.
+2. Ce soir : build iPhone et TestFlight (21:20), Alpha à 23:45.
 
 ## Pour le propriétaire
 Rien de nouveau à faire. Toujours : recruter des testeurs (4 sur 12), PI2, P51.
