@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **27/11 21:30** — **POLISH-NUTRI-ZERO** : Données › Nutrition écrit « non mesuré · obj. 2 g » quand Ciqual ne donne la teneur pour aucun aliment mangé (avant : « Oméga-3 partiel · ≥ 0 g/j », relevé par « Prendre soin de soi » à 20:30) ; la ligne ne compte plus dans « N repères atteints sur M » ni dans la légende. Test d'abord ; code partagé, l'iPhone suit dans la même PR.
 - **27/11 19:30** — **REFONTE-6a-2 (visite guidée)** : les étapes d'Objectifs de la visite passent d'abord par la vue d'ensemble (« Au jour 14 : vos scores », les cartes des objectifs), puis par le détail du bien-être (« Vos premières pistes »). Test d'abord ; ajouté à la PR #1314, passée en « prête » (un build iPhone pour les deux).
 - **27/11 18:30** — **POLISH-SEMAINE-NOTEE** : la carte d'un objectif n'a plus de score quand la semaine compte moins de 3 jours notés (« Pas assez de notes cette semaine pour un score ») ; avant, les jours estimés par le modèle remplissaient la semaine et un seul jour noté donnait « 3,2 / 5, plutôt stable ». Test d'abord ; PR en brouillon (un build iPhone avec le correctif du run suivant).
 - **27/11 17:30** — **POLISH-COMPTE-SUR** : le compteur des jours notés s'écrit « 9 sur 14 » dans le détail d'un objectif et dans la carte digestive de l'Accueil, comme sur la carte d'Objectifs (« 9/14 » avant). Test d'abord ; ajouté à la PR #1313, passée en « prête » (un build iPhone pour les deux).

@@ -92,6 +92,8 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
     const limit = LOWER_IS_BETTER_NUTRIENTS.has(key)
     const pct = target > 0 ? Math.round((perDay / target) * 100) : 0
     const unknownShare = totals.unknown_share?.[key] ?? 0
+    // POLISH-NUTRI-ZERO : teneur mesurée pour aucun aliment mangé → « non mesuré », ni statut ni « ≥ 0 ».
+    const unmeasured = perDay === 0 && unknownShare >= PARTIAL_UNKNOWN_SHARE
     return {
       key,
       label: NUTRIENT_LABELS[key] || key,
@@ -101,8 +103,9 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
       limit,
       pct,
       barPct: Math.min(100, pct),
-      status: statusFor(pct, limit),
+      status: unmeasured ? 'unmeasured' : statusFor(pct, limit),
       unknownShare,
+      unmeasured,
       // Teneur non mesurée pour une part notable du poids mangé : la valeur est un minimum (N2b).
       partial: unknownShare >= PARTIAL_UNKNOWN_SHARE,
     }
@@ -137,15 +140,15 @@ export function compareRecentIntake(entries, profile, { days = RECENT_WINDOW_DAY
     windowDays: days,
     rows,
     groups,
-    partialCount: rows.filter((r) => r.partial).length,
+    partialCount: rows.filter((r) => r.partial && !r.unmeasured).length,
     reachedCount: rows.filter((r) => !r.limit && r.status === 'ok').length,
-    targetCount: rows.filter((r) => !r.limit).length,
+    targetCount: rows.filter((r) => !r.limit && !r.unmeasured).length,
     energyPerDay,
     energyTarget,
     likelyIncomplete,
     dayInProgress,
     // Statuts présents (légende sans entrée inutile)
-    statuses: [...new Set(rows.map((r) => r.status))].sort(),
+    statuses: [...new Set(rows.filter((r) => !r.unmeasured).map((r) => r.status))].sort(),
     periodLabel: `${fmt.format(start)} – ${fmt.format(now)}`,
   }
 }

@@ -160,6 +160,22 @@ describe('nutritionIntakeCompare', () => {
     expect(result.partialCount).toBeGreaterThanOrEqual(1)
   })
 
+  it('teneur mesurée pour aucun aliment : « non mesuré », hors légende et hors compte des repères (POLISH-NUTRI-ZERO)', () => {
+    const at = new Date(2026, 4, 20, 12).toISOString()
+    const result = compareRecentIntake([{
+      type: 'food',
+      at,
+      payload: { items: [{ ingredient: 'Abricot au sirop léger, appertisé, égoutté', quantity_g: 150 }] },
+    }], profile)
+    const vitD = result.rows.find((r) => r.key === 'vitamin_d_ug')
+    expect(vitD.unmeasured).toBe(true)
+    expect(vitD.status).toBe('unmeasured')
+    expect(result.statuses).not.toContain('unmeasured')
+    expect(result.targetCount).toBe(result.rows.filter((r) => !r.limit && !r.unmeasured).length)
+    // Mesurée (même à zéro) : jamais « non mesuré »
+    expect(result.rows.find((r) => r.key === 'protein_g').unmeasured).toBe(false)
+  })
+
   it('returns an empty comparison when no meal is logged', () => {
     const result = compareRecentIntake([], profile)
     expect(result.mealCount).toBe(0)

@@ -1098,9 +1098,14 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       Gold et visite (brief § 3.4) ; deux marques (POLISH-NOTE-LOSANGE) ; PDF sans aperçu en web.
   - **Passage des personas du 27/11 20:30** (run « idées », [`synthèse`](simulations/2026-11-27-2030-synthese.md) ;
     « Prendre soin de soi » J1, Android + Xiaomi, et « Ventre, sans technique » J1, iPhone + Apple Watch) :
-    - [ ] **POLISH-NUTRI-ZERO** (petit, sûr) : Données › Nutrition écrit « Vitamine D partiel · ≥ 0 µg/j » quand la
+    - [x] **POLISH-NUTRI-ZERO** (petit, sûr ; FAIT 27/11 21:30 : « non mesuré », hors légende, hors compte des repères et hors note « partiel », tests service et page) : Données › Nutrition écrit « Vitamine D partiel · ≥ 0 µg/j » quand la
       teneur n'est mesurée pour aucun aliment du jour (`Nutrition.jsx`, `NutrientBar`) ; écrire « non mesuré » à la
       place de « ≥ 0 ». Test d'abord, captures Nutrition.
+    - [ ] **POLISH-BOISSON-ML** (27/11 22:30, vérifié dans le code ; petit, sûr) : une boisson analysée s'affiche en
+      grammes dans l'éditeur du repas (« Bière 250 g ») : le relais demande `quantity_g` avec les repères « 1 verre
+      ≈ 200 ml » (`relay/src/prompts.js`), et `MealEditor.jsx` écrit toujours « g ». Proposition : unité « ml » pour les
+      aliments des groupes Ciqual des boissons (valeur stockée inchangée, 1 ml ≈ 1 g), boutons « Ajouter 10 ml ».
+      Test d'abord, captures de l'éditeur ; pas de migration.
     - PROP-SIM-19 relevée encore (pesée introuvable au jour 1) ; PROP-SIM-20 relevée par une 5ᵉ persona (exemple du
       jour 28 trop technique).
     - À étudier : rapport médecin rangé dans Sauvegarde ; boissons comptées en grammes (à vérifier hors outil).
