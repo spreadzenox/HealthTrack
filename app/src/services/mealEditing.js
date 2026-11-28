@@ -173,10 +173,16 @@ export function itemForStorage(item) {
 
 /** kcal estimées d'un élément, ou null si inconnu ou sans grammes. */
 export function itemKcal(item) {
+  const exact = itemKcalExact(item)
+  return exact == null ? null : Math.round(exact)
+}
+
+/** kcal non arrondies d'un élément : les totaux additionnent celles-ci et n'arrondissent qu'une fois. */
+function itemKcalExact(item) {
   const p100 = getNutritionTable()?.[item?.ingredient]
   const grams = Number(item?.quantity_g)
   if (!p100 || !Number.isFinite(grams) || item?.quantity_g == null) return null
-  return Math.round(((p100.energy_kcal || 0) * grams) / 100)
+  return ((p100.energy_kcal || 0) * grams) / 100
 }
 
 /** Ce que l'on montre d'un repas : le plat, sinon ses aliments, sinon « Repas ». */
@@ -188,9 +194,14 @@ export function mealTitle(e) {
   return p.description || 'Repas'
 }
 
-/** Total des kcal connues du repas. */
+/** Total des kcal connues du repas : somme exacte arrondie une fois, comme Nutrition (POLISH-KCAL-ARRONDI). */
 export function mealKcal(items) {
-  return (items || []).reduce((sum, it) => sum + (itemKcal(it) ?? 0), 0)
+  return Math.round(mealKcalExact(items))
+}
+
+/** Total non arrondi, pour additionner plusieurs repas sans cumuler les arrondis. */
+export function mealKcalExact(items) {
+  return (items || []).reduce((sum, it) => sum + (itemKcalExact(it) ?? 0), 0)
 }
 
 /** Aliments que `mealKcal` ne compte pas (absents de la base ou sans grammes), POLISH-SIM-48. */

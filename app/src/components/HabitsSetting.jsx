@@ -32,6 +32,8 @@ export default function HabitsSetting() {
       <label className="input-label" htmlFor="habit-custom">Une autre habitude</label>
       <input id="habit-custom" type="text" className="settings-input" value={name} maxLength={MAX_HABIT_LABEL}
         placeholder="Son nom" autoComplete="off" onChange={(e) => rename(e.target.value)} />
+      {/* Enregistrée à chaque lettre : sans ce retour, la persona croyait qu'il manquait un bouton (POLISH-HABITUDE-AJOUTEE) */}
+      <p className="habit-added" aria-live="polite">{customHabit(name) ? 'Ajoutée à Ma journée' : ''}</p>
       <p className="hint">
         Partez de ce que vous faites déjà : ce n’est pas une liste de bonnes résolutions. Ma journée vous demande oui
         ou non chaque jour. Retirer une habitude garde vos réponses.
