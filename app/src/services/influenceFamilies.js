@@ -227,9 +227,15 @@ function eveningSplit(sleepDays, byKey) {
   return { late: l, other: o, lateCount: late.length, otherCount: other.length, diff: l - o }
 }
 
+/** REFONTE-6c-8 : sous cet écart (minutes), la phrase dit « à peu près autant » plutôt qu'un chiffre de bruit. */
+export const EVENING_SENTENCE_MIN = 10
+
 /**
  * REFONTE-6c-5 : les mots sous les barres du sommeil. « pas d'écart » sous 1 min ; signe typographique « − ».
- * @returns {{ late: string, other: string, diff: string, note: string } | null}
+ * REFONTE-6c-8 (SPEC comprendre § 6.5, la carte : « Les soirs avec plus de 2 h d'écran, vous dormez 40 min de
+ * moins. ») : `sentence` dit l'écart en mots, avec la mesure « écran après 22 h » de l'app ; sous
+ * EVENING_SENTENCE_MIN minutes, « à peu près autant ». Une description, jamais un conseil (règle 6).
+ * @returns {{ late: string, other: string, diff: string, sentence: string, note: string } | null}
  */
 export function eveningsText(evenings) {
   if (!evenings) return null
@@ -239,6 +245,9 @@ export function eveningsText(evenings) {
     late: `Soirs avec écran après 22 h : ${formatDuration(late)}`,
     other: `Autres soirs : ${formatDuration(other)}`,
     diff: d === 0 ? 'pas d’écart' : `${d < 0 ? '−' : '+'}${formatDuration(Math.abs(d))}`,
+    sentence: `Les soirs avec écran après 22 h, vous dormez ${Math.abs(d) < EVENING_SENTENCE_MIN
+      ? 'à peu près autant que les autres soirs'
+      : `${formatDuration(Math.abs(d))} de ${d < 0 ? 'moins' : 'plus'}`}.`,
     note: `Observé sur ${lateCount + otherCount} nuits : un lien, pas une preuve.`,
   }
 }
