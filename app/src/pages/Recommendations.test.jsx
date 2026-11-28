@@ -563,10 +563,16 @@ describe('REFONTE-6b-2 : la valeur habituelle à côté de chaque famille', () =
     const { unmount } = at('/recommendations/bien-etre/famille/sleep', async () => days)
     expect(await screen.findByRole('heading', { level: 2, name: 'Sommeil' })).toBeInTheDocument()
     expect(await screen.findByTestId('reco-family-period')).toHaveTextContent('Vos 14 dernières nuits · d’habitude 7 h 05')
+    // REFONTE-6c-4 : les 14 barres, 10 mesurées, 4 vides, et le trait de l'habitude
+    const bars = screen.getByTestId('reco-family-bars')
+    expect(bars.querySelectorAll('.reco-family-bar')).toHaveLength(14)
+    expect(bars.querySelectorAll('.reco-family-bar.is-empty')).toHaveLength(4)
+    expect(bars.querySelector('.reco-family-usual-line')).not.toBeNull()
     unmount()
     at('/recommendations/bien-etre/famille/sleep', async () => [])
     expect(await screen.findByRole('heading', { level: 2, name: 'Sommeil' })).toBeInTheDocument()
     expect(screen.queryByTestId('reco-family-period')).toBeNull()
+    expect(screen.queryByTestId('reco-family-bars')).toBeNull()
   })
 
   it('une lecture en échec n’affiche rien', async () => {

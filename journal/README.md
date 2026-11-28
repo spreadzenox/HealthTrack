@@ -75,6 +75,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/11 02:30 — [Vos 14 jours en barres](runs/2026-11-28-0230-famille-barres.md) | 🔧 | REFONTE-6c-4 : sous « Vos 14 dernières nuits · d’habitude 7 h 38 », une barre par nuit (ou par jour de pas, de repas) et un trait pointillé pour votre habitude. Rien à faire de votre côté |
 | 28/11 01:30 — [Vos 14 derniers jours dans une famille](runs/2026-11-28-0130-famille-detail-habitude.md) | 🔧 | REFONTE-6c-3 : le détail du sommeil, de l'activité ou de l'alimentation commence par « Vos 14 dernières nuits · d’habitude 7 h 38 » (le même chiffre que l'Accueil). Rien à faire de votre côté |
 | 28/11 00:30 — [Valeur habituelle par famille](runs/2026-11-28-0030-famille-habitude.md) | 🔧 | REFONTE-6b-2 : dans Objectifs, « Par famille » dit ce que vous faites d'habitude, « Sommeil · 7 h 38 par nuit », vos pas par jour, vos repas notés en 14 jours (le même chiffre que l'Accueil). Rien à faire de votre côté |
 | 27/11 23:30 — [Boissons en ml](runs/2026-11-27-2330-boissons-ml.md) | 🔧 | POLISH-BOISSON-ML : café, bière, jus ou lait s'écrivent en ml dans l'éditeur du repas (boutons « + 10 ml » compris) et dans vos repas déjà notés ; rien n'est réécrit dans vos données. Rien à faire de votre côté |
