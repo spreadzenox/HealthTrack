@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-28",
+  "kind": "correctif",
+  "title": "Les mêmes kcal partout, et une habitude ajoutée qui se voit",
+  "items": [
+    "Un repas affiche maintenant le même total de kcal sur sa carte et dans Nutrition : il n'y a plus 1 kcal d'écart.",
+    "Dans Réglages, « Ajoutée à Ma journée » s'affiche sous l'habitude que vous écrivez vous-même."
+  ]
+}

@@ -1114,10 +1114,10 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
       « Valider » puis « Continuer » ; phases du sommeil (nouvelle vue).
   - **Passage des personas du 28/11 08:30** (run « idées », [`synthèse`](simulations/2026-11-28-0830-synthese.md) ;
     « Tout mesurer » J1, Android seul, et « Prendre soin de soi » J45, iPhone seul) :
-    - [ ] **POLISH-KCAL-ARRONDI** (petit, sûr) : un repas fait « ≈ 527 kcal » sur sa carte et « ≈ 526 kcal » dans
+    - [x] **POLISH-KCAL-ARRONDI** (fait le 28/11 09:30 : `mealKcal` = somme exacte arrondie une fois, totaux du jour aussi ; test 2 × 50 g d'Abondance = 393) (petit, sûr) : un repas fait « ≈ 527 kcal » sur sa carte et « ≈ 526 kcal » dans
       Données › Nutrition ; la carte additionne des kcal arrondies par aliment (`mealKcal` → `itemKcal`), Nutrition
       arrondit la somme. Un seul calcul (somme exacte arrondie une fois) partout. Test d'abord.
-    - [ ] **POLISH-HABITUDE-AJOUTEE** (petit, sûr) : Réglages › « Une autre habitude » enregistre à chaque lettre
+    - [x] **POLISH-HABITUDE-AJOUTEE** (fait le 28/11 09:30 : « Ajoutée à Ma journée », `aria-live`, sous le champ rempli ; captures clair et sombre) (petit, sûr) : Réglages › « Une autre habitude » enregistre à chaque lettre
       (`HabitsSetting.jsx`) sans aucun retour ; la persona abandonne. « Ajoutée à Ma journée » sous le champ rempli
       (`aria-live`). Test d'abord, captures Réglages.
     - PROP-SIM-19 relevée une 5ᵉ fois (pesée cachée, aucune confirmation) ; calories dépensées sans courbe (maquette

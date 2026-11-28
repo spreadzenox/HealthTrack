@@ -7,7 +7,7 @@
  */
 import { localDateKey } from './analysisEngine'
 import { isDaytimeHrv } from './hrv'
-import { mealKcal } from './mealEditing'
+import { mealKcalExact } from './mealEditing'
 import { getNutritionTable } from '../data/nutritionTable'
 import { appLocale, localeDate } from '../i18n/locale.js'
 import { activityTotal, addActivity, createActivityTotal } from './activityTotals'
@@ -139,7 +139,7 @@ function finalize(day) {
         : null,
       cigarettes: day.cigarettes,
       meals: day.meals,
-      mealKcal: day.mealKcal,
+      mealKcal: Math.round(day.mealKcal),
       mealKcalPending: day.mealKcalPending,
     },
   }
@@ -279,7 +279,7 @@ export function buildDailyJournal(entries) {
         break
       case 'food':
         day.meals += 1
-        day.mealKcal += mealKcal(p.items)
+        day.mealKcal += mealKcalExact(p.items)
         // Table Ciqual chargée à la demande : tant qu'elle manque, les kcal sont « en cours », pas absentes (POLISH-SIM-59)
         if (!getNutritionTable() && p.items?.length) day.mealKcalPending = true
         day.items.push(e)
@@ -345,10 +345,10 @@ export function groupMealsByDay(meals, { maxDays = Infinity } = {}) {
     if (!days.has(key)) days.set(key, { dateKey: key, meals: [], kcal: 0 })
     const day = days.get(key)
     day.meals.push(m)
-    day.kcal += mealKcal(m.payload?.items)
+    day.kcal += mealKcalExact(m.payload?.items)
   }
   return [...days.values()]
     .sort((a, b) => (a.dateKey < b.dateKey ? 1 : -1))
     .slice(0, maxDays)
-    .map((d) => ({ ...d, meals: d.meals.sort((a, b) => new Date(b.at) - new Date(a.at)) }))
+    .map((d) => ({ ...d, kcal: Math.round(d.kcal), meals: d.meals.sort((a, b) => new Date(b.at) - new Date(a.at)) }))
 }

@@ -33,6 +33,15 @@ describe('Réglages › Vos habitudes (refonte étape 4)', () => {
     expect(getHabits()).toEqual([{ id: 'reading', label: 'Lecture' }])
   })
 
+  it('dit que l’habitude libre est ajoutée à Ma journée (POLISH-HABITUDE-AJOUTEE)', () => {
+    render(<HabitsSetting />)
+    expect(screen.queryByText('Ajoutée à Ma journée')).not.toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('Une autre habitude'), { target: { value: 'Piano' } })
+    expect(screen.getByText('Ajoutée à Ma journée')).toHaveAttribute('aria-live', 'polite')
+    fireEvent.change(screen.getByLabelText('Une autre habitude'), { target: { value: '  ' } })
+    expect(screen.queryByText('Ajoutée à Ma journée')).not.toBeInTheDocument()
+  })
+
   it('retrouve l’habitude libre déjà suivie', () => {
     setHabits([{ id: 'custom:piano', label: 'Piano' }])
     render(<HabitsSetting />)

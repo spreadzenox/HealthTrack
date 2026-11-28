@@ -112,6 +112,13 @@ describe('kcal', () => {
     ])).toBe(590)
     expect(mealKcal([])).toBe(0)
   })
+  it('arrondit la somme exacte une seule fois, comme Nutrition (POLISH-KCAL-ARRONDI)', () => {
+    // 2 × 50 g d'Abondance = 393 kcal exactes ; la somme des arrondis donnerait 197 + 197 = 394
+    expect(mealKcal([
+      { ingredient: 'Abondance', quantity_g: 50 },
+      { ingredient: 'Abondance', quantity_g: 50 },
+    ])).toBe(393)
+  })
   it('nomme les aliments que le total ne compte pas (hors base ou sans grammes)', () => {
     expect(mealUncounted([
       { ingredient: 'Abondance', quantity_g: 100 },

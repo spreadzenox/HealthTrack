@@ -40,6 +40,15 @@
   color: var(--text-muted);
 }
 
+/* Réglages › habitude libre : retour discret, la ligne garde sa hauteur pour que rien ne saute (POLISH-HABITUDE-AJOUTEE). */
+.habit-added {
+  min-height: 1.3em;
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
 /* En-tête compact : la navigation est dans la barre d'onglets en bas. */
 .header {
   display: flex;
