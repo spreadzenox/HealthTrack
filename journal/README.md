@@ -50,7 +50,7 @@ En attendant, ce run-ci n'a lancé aucun build iPhone (journal seulement).
 
 | | Android (Google Play) | iPhone (App Store) |
 |---|---|---|
-| Dernière version | release **v927** (#1275, 26/11 03:35 UTC, APK 35,7 Mo) ; test interne à chaque merge ; Alpha : **101363** (version du 26/11) partie le 27/11 à 04:34 UTC (cron de 23:45, parti avec 4 h 50 de retard) | **1362.1362** (build du 26/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 27/11 04:31 UTC et validée, 1335.1335 expirée ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
+| Dernière version | release **v927** (#1275, 26/11 03:35 UTC, APK 35,7 Mo) ; test interne à chaque merge ; Alpha : **101363** (version du 26/11) partie le 27/11 à 04:34 UTC (cron de 23:45, parti avec 4 h 50 de retard) | **1381.1381** (build du 27/11 au soir) chez « Testeurs Halcya », soumise à l'examen bêta le 28/11 03:38 UTC et validée, 1362.1362 expirée le 28/11 06:31 UTC ; **1244.1244** (refonte) reste attachée à la version **893** pour votre soumission ; build du soir et TestFlight à 21:20 (même retard) |
 | Où l'installer | Play Store, test fermé | TestFlight : groupe interne et groupe « Testeurs Halcya » |
 | Parité des fonctions | référence | **70 %** (33 sur 47, [`PARITE.md`](../iphone/journal/PARITE.md)) ; plus aucun correctif propre à l'iPhone ; `overlay/` ne garde que les notes de Nouveautés de l'iPhone (FUSION-3 : reste `ios/` → `app/ios/`) |
 
@@ -75,6 +75,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/11 07:30 — [Tester « Pas d'écran après 22 h » sur le sommeil](runs/2026-11-28-0730-essai-sommeil.md) | 🔧 | REFONTE-6c-9 : quand vos nuits sont plus courtes après les soirs d'écran, Objectifs › Sommeil propose « Pas d'écran après 22 h » ; l'essai suit votre sommeil et se lit en durées. TestFlight : 1381.1381 chez les testeurs, 1362.1362 expirée. Rien à faire de votre côté |
 | 28/11 06:30 — [L'écart du sommeil en une phrase](runs/2026-11-28-0630-ecart-sommeil.md) | 🔧 | REFONTE-6c-8 : dans Objectifs › Sommeil, une phrase dit l'écart, par exemple « Les soirs avec écran après 22 h, vous dormez 40 min de moins. » ; sous 10 min, « à peu près autant ». Rien à faire de votre côté |
 | 28/11 05:30 — [L'essai « Pas d'écran après 22 h »](runs/2026-11-28-0530-essai-ecran-tard.md) | 🔧 | REFONTE-6c-7 : la piste de l'écran le soir se teste comme les autres, consigne « Pas d'écran après 22 h », chaque soir vérifié le lendemain matin par le temps d'écran. L'Alpha du 27/11 est bien partie. Rien à faire de votre côté |
 | 28/11 04:30 — [« Je teste » sur une piste](runs/2026-11-28-0430-je-teste.md) | 🔧 | REFONTE-6c-6 : dans le détail d'une famille, « Je teste » lance l'essai de la piste sans passer par Agir ; s'il est déjà en cours, la piste y mène. iPhone : la build 1381.1381 (soir du 27/11) est soumise à l'examen bêta des testeurs. Rien à faire de votre côté |

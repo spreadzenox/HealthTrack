@@ -26,7 +26,7 @@ import { nightlySleep } from '../radar'
 import { computeSleepRegularity } from '../sleepRegularity'
 import { STOOL_TYPE, stoolCounts } from '../stool'
 import { GUT_LEVELS, GUT_TYPE, SOURCE_LABELS, WHEN_TO_SEE_DOCTOR, entrySourceLabel } from '../today'
-import { TRIAL_TYPE, bilanWords, instruction, trialStatus } from '../trials'
+import { TRIAL_TYPE, bilanWords, instruction, sleepOutcome, trialOutcome, trialStatus } from '../trials'
 import { buildDailyJournal } from '../dailyJournal'
 import { outcomeSeries } from '../analysisResults'
 
@@ -38,14 +38,16 @@ export function reportTrials(list, now = new Date()) {
   const trials = (list || []).filter((e) => e?.type === TRIAL_TYPE && e.payload?.factor && !e.payload.removedAt)
   if (!trials.length) return []
   const summaries = new Map(buildDailyJournal(list).map((d) => [d.dateKey, d.summary]))
-  const series = outcomeSeries(list)
+  const series = { ...outcomeSeries(list), sleep: sleepOutcome(summaries) }
+  const OUTCOME_LABEL = { wellbeing: 'bien-être', digestion: 'confort digestif', sleep: 'sommeil' }
   return trials.map((e) => {
     const t = e.payload
-    const s = trialStatus(t, { summaries, outcome: series[t.factor.outcome === 'digestion' ? 'digestion' : 'wellbeing'], now })
+    const o = trialOutcome(t)
+    const s = trialStatus(t, { summaries, outcome: series[o], now })
     const state = !s.done ? 'en cours' : bilanWords(s).title.toLowerCase()
     return {
       label: t.factor.label,
-      outcome: t.factor.outcome === 'digestion' ? 'confort digestif' : 'bien-être',
+      outcome: OUTCOME_LABEL[o],
       instruction: instruction(t),
       startedAt: t.startedAt,
       state: t.kept ? `${state}, gardé comme habitude` : state,

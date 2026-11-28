@@ -138,6 +138,43 @@ const pts = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleStr
 const OUTCOME_WORDS = { wellbeing: 'de bien-être', digestion: 'de confort digestif' }
 
 /**
+ * REFONTE-6c-9 : le résultat que suit un essai. « sleep » (la piste « Pas d'écran après 22 h » proposée par le détail
+ * Sommeil, SPEC comprendre § 6.5 : « Ensuite, on regarde si votre sommeil change. ») ; un essai sans objectif noté
+ * compte pour le bien-être.
+ */
+export function trialOutcome(trial) {
+  const o = trial?.factor?.outcome
+  return o === 'digestion' || o === 'sleep' ? o : 'wellbeing'
+}
+
+/**
+ * REFONTE-6c-9 : la série du sommeil d'un essai, nuit par nuit (minutes, rangées au jour du réveil comme l'écran tard).
+ * Seules les nuits mesurées comptent : celles que le téléphone déduit de l'écran feraient de la consigne son propre
+ * résultat (règle 5).
+ * @param {Map<string, object>} summaries
+ */
+export function sleepOutcome(summaries) {
+  const out = new Map()
+  for (const [dk, s] of summaries ?? []) if (isNum(s?.sleepMinutes) && s.sleepMinutes > 0 && !s.sleepEstimated) out.set(dk, s.sleepMinutes)
+  return out
+}
+
+/** REFONTE-6c-9 : écart (minutes de sommeil en moins après les soirs d'écran tard) à partir duquel la piste se propose. */
+export const SLEEP_PISTE_MIN = 10
+
+/**
+ * REFONTE-6c-9 (SPEC comprendre § 6.5, carte « Piste à tester ») : « Pas d'écran après 22 h », proposée par le détail
+ * Sommeil quand les nuits qui suivent un soir d'écran tard sont plus courtes d'au moins SLEEP_PISTE_MIN minutes (le
+ * même seuil que la phrase « vous dormez … de moins » ; en dessous, elle dit « à peu près autant » et rien n'est
+ * proposé). Un essai tiré au sort vérifie ensuite ce que la description de 14 nuits ne prouve pas.
+ * @param {{ diff: number } | null} evenings  `familyBars(...).sleep.evenings`
+ */
+export function sleepScreenPiste(evenings) {
+  if (!evenings || !isNum(evenings.diff) || evenings.diff > -SLEEP_PISTE_MIN) return null
+  return { key: 'screen_late_minutes', label: 'Écran après 22 h', theme: 'sleep', outcome: 'sleep', effect: -1, center: null }
+}
+
+/**
  * Carte « Proposés par vos analyses » (maquette Agir validée, POLISH-AGIR-PROPOSE) : la consigne des jours « avec »
  * de l'essai qui démarrera (« Dormir au moins 7 h 30 ») et l'effet chiffré de la piste.
  */
@@ -179,7 +216,7 @@ function meanSd(xs) {
  * État d'un essai.
  * @param {object} trial      payload
  * @param {{ summaries: Map<string, object>, outcome: Map<string, number>, now?: Date }} data
- *   `outcome` : le résultat suivi (bien-être 0 à 5 ou confort digestif 1 à 5) par jour.
+ *   `outcome` : le résultat suivi (bien-être 0 à 5, confort digestif 1 à 5 ou sommeil en minutes) par jour.
  */
 export function trialStatus(trial, { summaries = new Map(), outcome = new Map(), now = new Date() } = {}) {
   const today = keyOfDate(now)
@@ -278,7 +315,7 @@ export function pilouSays(status, { started = false } = {}) {
  */
 export function homeTrial(rows, now = new Date(), { outcome = null } = {}) {
   // POLISH-SIM-120 : sous un objectif, ses seuls essais (un essai sans objectif noté compte pour le bien-être)
-  const ofOutcome = (e) => !outcome || (e.payload.factor?.outcome === 'digestion' ? 'digestion' : 'wellbeing') === outcome
+  const ofOutcome = (e) => !outcome || (trialOutcome(e.payload) === 'digestion' ? 'digestion' : 'wellbeing') === outcome
   const live = (rows ?? [])
     .filter((e) => e?.type === TRIAL_TYPE && Array.isArray(e.payload?.schedule) && e.payload.schedule.length && !e.payload.removedAt && !e.payload.kept)
     .filter(ofOutcome)

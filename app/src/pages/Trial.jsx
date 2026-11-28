@@ -9,7 +9,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { readTrialsData, saveTrial } from '../services/trialsData'
-import { bilanWords, instruction, lanterns, pilouSays, trialStatus, RESULT_MIN_EACH } from '../services/trials'
+import { bilanWords, instruction, lanterns, pilouSays, trialOutcome, trialStatus, RESULT_MIN_EACH } from '../services/trials'
+import { formatDuration } from '../utils/format'
 import { THEME_TONE } from '../services/resultsView'
 import { toDisplay } from '../services/mood/wellbeingScale'
 import { appLocale } from '../i18n/locale.js'
@@ -32,24 +33,27 @@ const tick = (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${fr(Math.abs(v))}`
  * resserré sur les valeurs reçues (graduations d'un demi-point), puis la piste « Écart » graduée (−1 / 0 / +1)
  * avec sa fourchette, dans le même dessin.
  */
-function valueDomain(values) {
-  if (!values.length) return { lo: 1, hi: 5, step: 1 }
-  let lo = Math.max(1, Math.floor((Math.min(...values) - 0.2) * 2) / 2)
-  let hi = Math.min(5, Math.ceil((Math.max(...values) + 0.2) * 2) / 2)
+function valueDomain(values, { min = 1, max = 5 } = {}) {
+  if (!values.length) return { lo: min, hi: Math.min(max, min + 4), step: 1 }
+  let lo = Math.max(min, Math.floor((Math.min(...values) - 0.2) * 2) / 2)
+  let hi = Math.min(max, Math.ceil((Math.max(...values) + 0.2) * 2) / 2)
   while (hi - lo < 1.5) {
-    if (lo > 1) lo -= 0.5
-    if (hi - lo < 1.5 && hi < 5) hi += 0.5
+    if (lo > min) lo -= 0.5
+    if (hi - lo < 1.5 && hi < max) hi += 0.5
   }
   return { lo, hi, step: hi - lo > 2 ? 1 : 0.5 }
 }
 
-function ResultChart({ result, scale, scaleDelta }) {
+function ResultChart({ result, unit }) {
+  const { scale, scaleDelta } = unit
+  // Les durées (« 7 h 30 ») en chasse fixe s'étalent : police du texte pour elles
+  const axis = unit.minutes ? 'trial-axis' : 'trial-axis mono'
   const W = 320
   const X0 = 56
   const X1 = W - 16
   const ROW = { with: 20, without: 50 }
   const shown = { with: result.with.map(scale), without: result.without.map(scale) }
-  const { lo, hi, step } = valueDomain([...shown.with, ...shown.without])
+  const { lo, hi, step } = valueDomain([...shown.with, ...shown.without], unit.bounds)
   const x = (v) => X0 + ((v - lo) / (hi - lo)) * (X1 - X0)
   const ticks = []
   for (let t = lo; t <= hi + 1e-9; t += step) ticks.push(Math.round(t * 2) / 2)
@@ -63,7 +67,7 @@ function ResultChart({ result, scale, scaleDelta }) {
       {ticks.map((t) => (
         <g key={t}>
           <line className="trial-chart-line" x1={x(t)} x2={x(t)} y1={6} y2={64} />
-          <text className="trial-axis mono" x={x(t)} y={80} textAnchor="middle">{fr(t)}</text>
+          <text className={axis} x={x(t)} y={80} textAnchor="middle">{unit.tick(t)}</text>
         </g>
       ))}
       {['with', 'without'].map((k) => {
@@ -88,18 +92,46 @@ function ResultChart({ result, scale, scaleDelta }) {
           </>
         )}
         {[-span, 0, span].map((t) => (
-          <text key={t} className="trial-axis mono" x={dx(t)} y={DY + 24} textAnchor="middle">{tick(t)}</text>
+          <text key={t} className={axis} x={dx(t)} y={DY + 24} textAnchor="middle">{unit.tickDelta(t)}</text>
         ))}
       </g>
     </svg>
   )
 }
 
-/** « Après 6 lendemains : +0,3 point, entre −0,2 et +0,9. » (maquette) */
-function diffSentence(result, scaleDelta) {
-  const d = scaleDelta(result.diff)
+/** « Après 6 lendemains : +0,3 point, entre −0,2 et +0,9. » (maquette) ; sommeil : « +25 min, entre −10 min et +1 h. » */
+function diffSentence(result, unit) {
   const n = result.with.length + result.without.length
-  return `Après ${n} lendemains : ${signed(d)} ${Math.abs(d) >= 2 ? 'points' : 'point'}, entre ${signed(scaleDelta(result.low))} et ${signed(scaleDelta(result.high))}.`
+  if (unit.minutes) {
+    const sd = (m) => (Math.round(m) === 0 ? '0 min' : `${m > 0 ? '+' : '−'}${formatDuration(Math.abs(m))}`)
+    return `Après ${n} lendemains : ${sd(result.diff)}, entre ${sd(result.low)} et ${sd(result.high)}.`
+  }
+  const d = unit.scaleDelta(result.diff)
+  return `Après ${n} lendemains : ${signed(d)} ${Math.abs(d) >= 2 ? 'points' : 'point'}, entre ${signed(unit.scaleDelta(result.low))} et ${signed(unit.scaleDelta(result.high))}.`
+}
+
+/**
+ * L'échelle du résultat suivi. Bien-être stocké de 0 à 5, affiché de 1 à 5 ; confort digestif déjà de 1 à 5.
+ * REFONTE-6c-9 : le sommeil (minutes) se dessine en heures, graduations « 7 h », « 7 h 30 », écart « +1 h ».
+ */
+const UNITS = {
+  wellbeing: { scale: (v) => toDisplay(v), scaleDelta: (d) => toDisplay(d) - toDisplay(0), tick: fr, tickDelta: tick },
+  digestion: { scale: (v) => v, scaleDelta: (d) => d, tick: fr, tickDelta: tick },
+  sleep: {
+    minutes: true,
+    scale: (v) => v / 60,
+    scaleDelta: (d) => d / 60,
+    bounds: { min: 0, max: 16 },
+    tick: (h) => formatDuration(Math.round(h * 60)),
+    tickDelta: (h) => (h === 0 ? '0' : `${h > 0 ? '+' : '−'}${formatDuration(Math.abs(Math.round(h * 60)))}`),
+  },
+}
+
+/** Où revenir et comment nommer le résultat suivi. */
+const BACK = {
+  wellbeing: { to: '/recommendations/bien-etre', label: 'Votre bien-être', what: 'votre bien-être', point: 'le lendemain d’un jour avec ou sans' },
+  digestion: { to: '/recommendations/ventre', label: 'Votre confort digestif', what: 'votre confort digestif', point: 'le lendemain d’un jour avec ou sans' },
+  sleep: { to: '/recommendations/bien-etre/famille/sleep', label: 'Sommeil', what: 'votre sommeil', point: 'la nuit qui suit un jour avec ou sans' },
 }
 
 export default function Trial({ read = readTrialsData, readTrialChanges = readChanges, now }) {
@@ -135,15 +167,14 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
   const { entry, data } = state
   const t = entry.payload
   const at = now || new Date()
-  const outcomeId = t.factor.outcome === 'digestion' ? 'digestion' : 'wellbeing'
+  const outcomeId = trialOutcome(t)
   const s = trialStatus(t, { summaries: data.summaries, outcome: data.outcomes[outcomeId] ?? new Map(), now: at })
-  // Bien-être stocké de 0 à 5 : affiché de 1 à 5 ; le confort digestif l'est déjà
-  const scale = outcomeId === 'wellbeing' ? (v) => toDisplay(v) : (v) => v
-  const scaleDelta = outcomeId === 'wellbeing' ? (d) => toDisplay(d) - toDisplay(0) : (d) => d
+  const unit = UNITS[outcomeId]
+  const back = BACK[outcomeId]
   // POLISH-ESSAI-ORDRE : la légende reprend la consigne (« ● dormir au moins 7 h 30 »), comme la maquette
   const consigne = instruction(t, true)
   const withLabel = consigne.charAt(0).toLowerCase() + consigne.slice(1)
-  const what = outcomeId === 'digestion' ? 'votre confort digestif' : 'votre bien-être'
+  const what = back.what
   // TS-2 : un changement durable du résultat suivi pendant l'essai fausse la comparaison ; on le dit
   const crossed = crossingChanges(changes?.[outcomeId], t.schedule[0].date, t.schedule[t.schedule.length - 1].date)
   const answer = (held) => saveTrial(entry.id, { ...t, answers: { ...t.answers, [s.ask.date]: held } })
@@ -167,9 +198,7 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
     <section className="act-page trial-page" data-tone={THEME_TONE[t.factor.theme] ?? 'stone'}>
       {/* POLISH-SIM-108 : l'essai est rangé sous Objectifs (onglet allumé) ; on revient à l'objectif qu'il suit */}
       <p className="act-back">
-        <Link to={outcomeId === 'digestion' ? '/recommendations/ventre' : '/recommendations/bien-etre'}>
-          ← {outcomeId === 'digestion' ? 'Votre confort digestif' : 'Votre bien-être'}
-        </Link>
+        <Link to={back.to}>← {back.label}</Link>
       </p>
       <h1 className="page-title">{instruction(t, true)}</h1>
       {!s.done && (
@@ -205,12 +234,12 @@ export default function Trial({ read = readTrialsData, readTrialChanges = readCh
         </h2>
         {bilan?.note && <p className="trial-bilan-note">{bilan.note}</p>}
         {/* POLISH-ESSAI-VIDE : axes Avec / Sans et piste Écart dès le premier jour, comme la maquette */}
-        <ResultChart result={s.result} scale={scale} scaleDelta={scaleDelta} />
-        {s.result.diff != null && <p className="act-card-detail trial-diff-text">{diffSentence(s.result, scaleDelta)}</p>}
+        <ResultChart result={s.result} unit={unit} />
+        {s.result.diff != null && <p className="act-card-detail trial-diff-text">{diffSentence(s.result, unit)}</p>}
         {s.result.diff == null && s.result.with.length + s.result.without.length > 0 && (
           <p className="act-card-detail">L’écart s’affiche dès {RESULT_MIN_EACH} lendemains de chaque sorte.</p>
         )}
-        <p className="act-card-detail">Chaque point : {what} le lendemain d’un jour avec ou sans.</p>
+        <p className="act-card-detail">Chaque point : {what} {back.point}.</p>
         {crossed.length > 0 && (
           <p className="trial-crossed" role="note">
             {what.charAt(0).toUpperCase() + what.slice(1)} a changé de niveau pendant l’essai : l’écart est à lire avec prudence.

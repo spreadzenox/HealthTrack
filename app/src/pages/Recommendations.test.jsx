@@ -4,7 +4,7 @@ import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Recommendations from './Recommendations'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
 import { startChallenge, defaultPlan } from '../services/fodmapChallenge'
-import { createTrial } from '../services/trials'
+import { createTrial, sleepScreenPiste } from '../services/trials'
 
 const f = (key, label, effect, { theme = 'sleep', actionable = true, net = true, horizon = 'short' } = {}) => ({
   key, label, theme, actionable, outcome: 'wellbeing', horizon, effect, low: effect - 0.15, high: effect + 0.15, net,
@@ -658,5 +658,55 @@ describe('REFONTE-6b-2 : la valeur habituelle à côté de chaque famille', () =
     renderPage({ readFamilyDays: async () => { throw new Error('IndexedDB') } }, readyResults)
     const block = await screen.findByRole('region', { name: 'Par famille' })
     expect(within(block).queryByTestId(/reco-family-usual/)).toBeNull()
+  })
+})
+
+describe('REFONTE-6c-9 (SPEC § 6.5) : « Pas d’écran après 22 h » proposée sous l’écart du sommeil', () => {
+  beforeEach(() => localStorage.clear())
+  const nights = (lateSleep) => {
+    const now = new Date()
+    const days = []
+    for (let n = 1; n <= 14; n++) {
+      const d = new Date(now.getTime() - n * 86_400_000)
+      const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      days.push({ dateKey, summary: { sleepMinutes: n <= 4 ? lateSleep : 440, lateScreenMinutes: n <= 4 ? 50 : 0 } })
+    }
+    return days
+  }
+  const renderSleep = (props) => {
+    render(
+      <MemoryRouter initialEntries={['/recommendations/bien-etre/famille/sleep']}>
+        <Routes>
+          <Route path="/recommendations/bien-etre/famille/:family" element={<Recommendations read={async () => readyResults} {...props} />} />
+          <Route path="/agir/essai/12" element={<p>Page de l’essai 12</p>} />
+        </Routes>
+      </MemoryRouter>,
+    )
+  }
+
+  it('40 min de moins : la carte propose l’essai, qui suit le sommeil et ouvre sa page', async () => {
+    const saved = []
+    renderSleep({ readFamilyDays: async () => nights(400), readTrials: async () => [], startTrial: async (p) => { saved.push(p); return 12 } })
+    const card = await screen.findByRole('region', { name: 'Une piste pour vos nuits' })
+    expect(card).toHaveTextContent('Pas d’écran après 22 h')
+    expect(card).toHaveTextContent('Ensuite, on regarde si votre sommeil change.')
+    expect(card).toHaveTextContent('5 soirs sans écran, 5 comme d’habitude, tirés au sort.')
+    fireEvent.click(within(card).getByRole('button', { name: 'Je teste' }))
+    expect(await screen.findByText('Page de l’essai 12')).toBeInTheDocument()
+    expect(saved).toHaveLength(1)
+    expect(saved[0]).toMatchObject({ direction: 'less', factor: { key: 'screen_late_minutes', outcome: 'sleep' } })
+  })
+
+  it('à peu près autant : rien n’est proposé', async () => {
+    renderSleep({ readFamilyDays: async () => nights(435), readTrials: async () => [] })
+    await screen.findByTestId('reco-family-evenings')
+    expect(screen.queryByRole('region', { name: 'Une piste pour vos nuits' })).toBeNull()
+  })
+
+  it('un essai sur le sommeil déjà en cours : « Essai en cours » y mène', async () => {
+    const payload = createTrial(sleepScreenPiste({ diff: -40 }), { now: new Date(Date.now() - 86_400_000) })
+    renderSleep({ readFamilyDays: async () => nights(400), readTrials: async () => [{ id: 5, type: 'trial', at: payload.startedAt, payload }] })
+    const card = await screen.findByRole('region', { name: 'Une piste pour vos nuits' })
+    expect(await within(card).findByRole('link', { name: 'Essai en cours' })).toHaveAttribute('href', '/agir/essai/5')
   })
 })
