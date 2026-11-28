@@ -43,6 +43,14 @@ const renderPage = (props, results) => render(
   </MemoryRouter>,
 )
 
+/** REFONTE-6c-3 : avec les familles, « Ce qui va avec » se replie ; l'ouvrir pour lire ses barres. */
+function openWeigh(name = 'Ce qui va avec votre bien-être') {
+  const weigh = screen.getByRole('region', { name })
+  const toggle = within(weigh).queryByRole('button', { name: 'Afficher les détails' })
+  if (toggle) fireEvent.click(toggle)
+  return weigh
+}
+
 describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
   beforeEach(() => localStorage.clear())
 
@@ -256,7 +264,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(within(pistes).getAllByRole('link', { name: 'Vérifier par un essai' })[0]).toHaveAttribute('href', '/agir')
     // titre neutre : la liste montre aussi ce qui va avec les bons jours ; valeurs en « pt » comme Tendances
     expect(screen.queryByRole('region', { name: /pèse/ })).toBeNull()
-    const weigh = screen.getByRole('region', { name: 'Ce qui va avec votre bien-être' })
+    const weigh = openWeigh()
     for (const v of weigh.querySelectorAll('.reco-effect-value')) expect(v.textContent).toMatch(/^[+−]?\d+,\d\u00a0pt$/)
     expect(weigh).toHaveTextContent('Court terme')
     expect(weigh).toHaveTextContent('Moyen terme')
@@ -286,6 +294,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     results.outcomes.wellbeing.horizons.short.factors.push(out)
     renderPage({}, results)
     await screen.findByRole('region', { name: 'Pistes à tester' })
+    openWeigh()
     const row = [...document.querySelectorAll('.reco-effect')].find((li) => li.textContent.startsWith('Lactose'))
     expect(row).toHaveTextContent('pas assez de données')
     expect(row.textContent).not.toMatch(/4,7|pt/)
@@ -307,6 +316,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     }
     renderPage({}, results)
     await screen.findByRole('region', { name: 'Pistes à tester' })
+    openWeigh()
     const rows = [...document.querySelectorAll('.reco-effect')]
     const lactose = rows.find((li) => li.textContent.startsWith('Lactose'))
     expect(lactose).toHaveTextContent('pas assez net')
@@ -322,12 +332,46 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(Number(longSleep.querySelector('.reco-effect-bar').style.right.match(/([\d.]+)%/)?.[1] ?? 100)).toBeLessThan(30)
   })
 
+  it('REFONTE-6c-3 : avec les familles, « Ce qui va avec » se replie sur une ligne ; le chevron l’ouvre', async () => {
+    renderPage({}, readyResults)
+    await screen.findByRole('region', { name: 'Par famille' })
+    const weigh = screen.getByRole('region', { name: 'Ce qui va avec votre bien-être' })
+    // les barres répétaient le détail des familles : repliées, avec ce qui a été comparé
+    expect(weigh.querySelector('.reco-effect')).toBeNull()
+    expect(within(weigh).getByTestId('reco-weigh-count')).toHaveTextContent(/^\d+ facteurs? comparés?, délai par délai\.$/)
+    // l'unité « pt » se dit là où il y a des barres : « À regarder » la garde tant que « Ce qui va avec » est replié
+    const look = screen.getByRole('region', { name: 'À regarder, pas à changer' })
+    expect(look.querySelector('.reco-unit')).not.toBeNull()
+    expect(document.querySelectorAll('.reco-unit')).toHaveLength(1)
+    const toggle = within(weigh).getByRole('button', { name: 'Afficher les détails' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(toggle)
+    expect(within(weigh).getByRole('button', { name: 'Masquer les détails' })).toHaveAttribute('aria-expanded', 'true')
+    expect(weigh.querySelector('.reco-effect')).not.toBeNull()
+    expect(document.querySelectorAll('.reco-unit')).toHaveLength(1)
+    expect(weigh).toContainElement(document.querySelector('.reco-unit'))
+  })
+
+  it('REFONTE-6c-3 : dans l’exemple de la visite guidée, « Ce qui va avec » reste ouvert', async () => {
+    const { enterExampleMode, exitExampleMode } = await import('../storage/exampleMode')
+    enterExampleMode([])
+    try {
+      renderPage({}, readyResults)
+      const weigh = await screen.findByRole('region', { name: 'Ce qui va avec votre bien-être' })
+      expect(weigh.querySelector('.reco-effect')).not.toBeNull()
+      expect(within(weigh).queryByRole('button', { name: 'Afficher les détails' })).toBeNull()
+    } finally {
+      exitExampleMode()
+    }
+  })
+
   it('POLISH-SIM-50 : un facteur qui change de sens selon le délai est dit une fois, sous la légende', async () => {
     const results = structuredClone(readyResults)
     results.outcomes.wellbeing.horizons.short.factors.push(f('fodmap_lactose', 'Lactose', -0.2, { theme: 'nutrition', net: false }))
     results.outcomes.wellbeing.horizons.medium.factors.push(f('fodmap_lactose', 'Lactose', 1.2, { theme: 'nutrition', net: false, horizon: 'medium' }))
     renderPage({}, results)
-    const weigh = await screen.findByRole('region', { name: 'Ce qui va avec votre bien-être' })
+    await screen.findByRole('region', { name: 'Ce qui va avec votre bien-être' })
+    const weigh = openWeigh()
     expect(weigh.querySelector('.reco-flipped')).toHaveTextContent('Lactose change de sens selon le délai : rien à en tirer pour l’instant.')
     expect(weigh.querySelector('.reco-legend')).toHaveTextContent('hachuré, chiffre en gris : pas assez net')
   })
@@ -412,6 +456,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     for (const hz of Object.values(gut.horizons)) for (const x of hz.factors) x.outcome = 'digestion'
     renderPage({ view: 'gut' }, { outcomes: { wellbeing: readyResults.outcomes.wellbeing, digestion: gut } })
     await screen.findByRole('region', { name: 'Ce qui va avec votre confort digestif' })
+    openWeigh('Ce qui va avec votre confort digestif')
     const units = document.querySelectorAll('.reco-unit')
     expect(units).toHaveLength(1)
     expect(units[0]).toHaveTextContent('pt : points de votre note de confort digestif, sur 5 (Calme 5, Gêne 3, Douleur 1). + : plus de confort.')
