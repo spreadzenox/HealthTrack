@@ -16,6 +16,7 @@ recompte ligne par ligne (l'ancien total, 48 %, datait du 31/10 et ne suivait pl
 sans objet (Android #612). 10/11 : ligne « Cycle » ajoutée (✅, décision « Ok cycle ») : 31 sur 46, toujours 67 %.
 13/11 : ligne « Taille du texte du système » ajoutée (✅, #499) : 32 sur 47, **68 %**. 13/11 11:00 : « Test fermé » ❌ → ✅ (TestFlight externe en
 place depuis le 9/11, ligne oubliée) ; « Anti-abus » ❌ → 🟡 : 33 sur 47, **70 %**.
+28/11 04:30 : REFONTE-6c-6 (« Je teste » dans le détail d'une famille, `pages/Recommendations.jsx`) : code partagé, aucun correctif iPhone ; parité inchangée (70 %).
 27/11 12:30 : POLISH-PAYWALL-JOURNAL (« Toujours gratuit » de la page Premium, `pages/Premium.jsx`) dans le code partagé, aucun correctif iPhone ; parité inchangée (70 %).
 27/11 15:30 : REFONTE-5b-3 (`pages/Onboarding.css`, temps 4 de l'accueil, champ d'habitude sur petit écran) : code partagé, aucun correctif iPhone ; parité inchangée (70 %).
 27/11 14:30 : REFONTE-5b-2 (`pages/Onboarding.jsx`, temps 3 de l'accueil) : code partagé, aucun correctif iPhone sur ce fichier ; même écran sur iPhone (app Santé) ; parité inchangée (70 %).

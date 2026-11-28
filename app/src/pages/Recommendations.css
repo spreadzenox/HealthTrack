@@ -670,6 +670,31 @@
   color: var(--tone-label, var(--accent));
 }
 
+/* REFONTE-6c-6 : « Je teste », le même bouton que « Commencer » d'Agir */
+.reco-piste-how {
+  color: var(--tone-text, var(--text-muted));
+}
+
+.reco-piste-start {
+  justify-self: start;
+  margin-top: 4px;
+  min-height: var(--tap-min);
+  padding: 8px 18px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--color-on-brand);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.reco-piste-start:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .reco-horizon {
   margin: 0 0 12px;
 }

@@ -41,7 +41,8 @@ import { FODMAP_CHALLENGE_TYPE, FODMAP_GROUPS } from '../services/fodmapChalleng
 import DetailsToggle from '../components/DetailsToggle'
 import LineIcon from '../components/LineIcon'
 import { listEntries } from '../storage/localHealthStorage'
-import { TRIAL_TYPE, homeTrial } from '../services/trials'
+import { TRIAL_DAYS, TRIAL_TYPE, createTrial, homeTrial, trialStatus } from '../services/trials'
+import { saveNewTrial } from '../services/trialsData'
 import { scoreToChoice } from '../services/mood/wellbeingScale'
 import { GUT_LEVELS, GUT_TYPE } from '../services/today'
 import { localDateKey } from '../services/analysisEngine'
@@ -297,9 +298,24 @@ function pistePlain(f) {
   return `Avec ${change}${hint ? ` (${hint})` : ''}, ${subject} plutôt ${f.effect > 0 ? 'mieux' : 'moins bien'}.`
 }
 
-/** Une piste : le lien net en clair, son chiffre sur demande, et le chemin vers l'essai (ou vers l'abonnement tant que c'est flouté). */
-function PisteCard({ f, locked = false }) {
+/**
+ * Une piste : le lien net en clair, son chiffre sur demande, et le chemin vers l'essai (ou vers l'abonnement tant que c'est flouté).
+ * REFONTE-6c-6 (SPEC comprendre § 6.5) : dans le détail d'une famille (`onTry`), « Je teste » lance l'essai ici même ;
+ * s'il est déjà en cours (`trialId`), le lien y mène. Les groupes FODMAP passent par la réintroduction guidée.
+ */
+function PisteCard({ f, locked = false, onTry = null, trialId = null }) {
   const [open, setOpen] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const tryHere = !locked && onTry && !f.key.startsWith('fodmap_')
+  const start = async () => {
+    if (busy) return
+    setBusy(true)
+    try {
+      await onTry(f)
+    } catch {
+      setBusy(false)
+    }
+  }
   return (
     <li className="today-card reco-piste" data-tone={THEME_TONE[f.theme] ?? 'stone'}>
       <span className={`reco-piste-title${locked ? ' is-locked' : ''}`}>
@@ -312,9 +328,14 @@ function PisteCard({ f, locked = false }) {
         </span>
       )}
       {!locked && <DetailsToggle on={open} onToggle={() => setOpen((v) => !v)} />}
+      {tryHere && trialId == null && <span className="reco-piste-text reco-piste-how">{TRIAL_DAYS / 2} jours avec, {TRIAL_DAYS / 2} jours sans, tirés au sort.</span>}
       {locked
         ? <Link to="/premium" className="reco-piste-try">Débloquer</Link>
-        : <Link to="/agir" className="reco-piste-try">Vérifier par un essai</Link>}
+        : tryHere
+          ? trialId != null
+            ? <Link to={`/agir/essai/${trialId}`} className="reco-piste-try">Essai en cours</Link>
+            : <button type="button" className="reco-piste-start" onClick={start} disabled={busy}>Je teste</button>
+          : <Link to="/agir" className="reco-piste-try">Vérifier par un essai</Link>}
     </li>
   )
 }
@@ -380,7 +401,7 @@ function FamilyBars({ bars }) {
   )
 }
 
-function FamilyDetail({ outcome, detail }) {
+function FamilyDetail({ outcome, detail, onTry = null, liveTrials = new Map() }) {
   const w = WORDS[outcome]
   const many = detail.pistes.length > 1
   const [open, setOpen] = useState(false)
@@ -390,7 +411,7 @@ function FamilyDetail({ outcome, detail }) {
       {detail.pistes.length > 0 ? (
         <section className="reco-block" aria-labelledby="reco-family-pistes">
           <h3 id="reco-family-pistes" className="reco-section-title">{many ? 'Pistes à tester' : 'Piste à tester'}</h3>
-          <ul className="reco-pistes">{detail.pistes.map((f) => <PisteCard key={f.key} f={f} />)}</ul>
+          <ul className="reco-pistes">{detail.pistes.map((f) => <PisteCard key={f.key} f={f} onTry={onTry} trialId={liveTrials.get(f.key) ?? null} />)}</ul>
           {/* Lot VIE (étape 12) : Pilou attend discrètement à côté de la piste (SPEC comprendre § 6.5) */}
           <PilouWaiting />
         </section>
@@ -578,7 +599,7 @@ async function readFamilyDaysFromStorage(now = new Date()) {
   return buildDailyJournal(lists.flat())
 }
 
-export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults'), readGut = readGutNotes, readWellbeing = readWellbeingToday, readReintro = readReintroData, readTrials = readTrialRows, readFamilyDays = readFamilyDaysFromStorage }) {
+export default function Recommendations({ view = 'wellbeing', read = () => getAnalysis('analysisResults'), readGut = readGutNotes, readWellbeing = readWellbeingToday, readReintro = readReintroData, readTrials = readTrialRows, readFamilyDays = readFamilyDaysFromStorage, startTrial = saveNewTrial }) {
   const outcome = view === 'gut' ? 'digestion' : 'wellbeing'
   const [results, setResults] = useState(() => peekAnalysis('analysisResults').result ?? null)
   const [error, setError] = useState(null)
@@ -592,6 +613,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const [wbToday, setWbToday] = useState([])
   const [reintro, setReintro] = useState(null)
   const [trial, setTrial] = useState(null)
+  const [trialRows, setTrialRows] = useState([])
   const [familyDays, setFamilyDays] = useState(null)
   const usuals = useMemo(() => familyUsuals(familyDays), [familyDays])
   const periods = useMemo(() => familyPeriods(familyDays), [familyDays])
@@ -647,8 +669,16 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
     let alive = true
     Promise.resolve()
       .then(readTrials)
-      .then((rows) => alive && setTrial(homeTrial(rows, new Date(), { outcome })))
-      .catch(() => alive && setTrial(null))
+      .then((rows) => {
+        if (!alive) return
+        setTrial(homeTrial(rows, new Date(), { outcome }))
+        setTrialRows(Array.isArray(rows) ? rows : [])
+      })
+      .catch(() => {
+        if (!alive) return
+        setTrial(null)
+        setTrialRows([])
+      })
     return () => {
       alive = false
     }
@@ -681,6 +711,16 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const notedToday = outcome === 'digestion' ? gutToday : wbToday.length ? wbToday : noted != null ? [`${noted}/5`] : []
   const onReminder = outcome === 'wellbeing' && eveningNotePlugin() ? () => setNoteOpen('reminder') : null
 
+  // REFONTE-6c-6 : les essais en cours ou gardés en habitude, par facteur (comme Agir, un seul à la fois par piste)
+  const liveTrials = new Map(trialRows
+    .filter((e) => e?.type === TRIAL_TYPE && e.payload?.factor?.key && !e.payload.removedAt)
+    .filter((e) => e.payload.kept || !trialStatus(e.payload).done)
+    .map((e) => [e.payload.factor.key, e.id]))
+  const onTry = async (f) => {
+    const id = await startTrial(createTrial({ ...f, outcome }, { now: new Date() }))
+    navigate(`/agir/essai/${id}`, { state: { started: true } })
+  }
+
   if (family && !detail && (v.state !== 'loading' || error)) return <Navigate to={base} replace />
   if (detail) {
     return (
@@ -690,7 +730,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
         {/* REFONTE-6c-3 (SPEC comprendre § 6.5) : ce que la personne fait d'habitude dans cette famille */}
         {periods[detail.id] && <p className="reco-family-period" data-testid="reco-family-period">{monoDigits(periods[detail.id])}</p>}
         <FamilyBars bars={bars[detail.id]} />
-        <FamilyDetail outcome={outcome} detail={detail} />
+        <FamilyDetail outcome={outcome} detail={detail} onTry={onTry} liveTrials={liveTrials} />
         <HowItWorks />
       </section>
     )
