@@ -392,6 +392,8 @@ function FamilyBars({ bars }) {
       </div>
       {words && (
         <div className="reco-family-evenings" data-testid="reco-family-evenings">
+          {/* REFONTE-6c-8 (SPEC § 6.5, la carte) : l'écart en une phrase, puis la légende des deux traits */}
+          <p className="reco-family-evenings-sentence" data-testid="reco-family-evenings-sentence">{monoDigits(words.sentence)}</p>
           <p className="reco-family-evening is-other"><span className="reco-family-key" aria-hidden="true" /><span>{monoDigits(words.other)}</span></p>
           <p className="reco-family-evening is-late"><span className="reco-family-key" aria-hidden="true" /><span>{monoDigits(words.late)} <strong>{monoDigits(words.diff)}</strong></span></p>
           <p className="reco-unit">{monoDigits(words.note)}</p>

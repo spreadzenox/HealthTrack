@@ -646,6 +646,8 @@ describe('REFONTE-6b-2 : la valeur habituelle à côté de chaque famille', () =
     expect(ev).toHaveTextContent('Autres soirs : 7 h 20')
     expect(ev).toHaveTextContent('Soirs avec écran après 22 h : 6 h 40 −40 min')
     expect(ev).toHaveTextContent('Observé sur 14 nuits : un lien, pas une preuve.')
+    // REFONTE-6c-8 : la carte dit l'écart en une phrase, au-dessus de la légende
+    expect(screen.getByTestId('reco-family-evenings-sentence')).toHaveTextContent('Les soirs avec écran après 22 h, vous dormez 40 min de moins.')
     const bars = screen.getByTestId('reco-family-bars')
     expect(bars.querySelectorAll('.reco-family-bar-col.is-late')).toHaveLength(4)
     expect(bars.querySelectorAll('.reco-family-mean-line')).toHaveLength(2)

@@ -1005,6 +1005,12 @@
 
 .reco-family-evenings { margin: 0 0 20px; }
 
+.reco-family-evenings-sentence {
+  margin: 16px 0 10px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
 .reco-family-evening {
   display: flex;
   align-items: center;

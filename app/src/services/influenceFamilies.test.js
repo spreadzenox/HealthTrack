@@ -220,11 +220,20 @@ describe('REFONTE-6b-2 : la valeur habituelle de chaque famille (SPEC comprendre
       late: 'Soirs avec écran après 22 h : 6 h 40',
       other: 'Autres soirs : 7 h 20',
       diff: '−40 min',
+      sentence: 'Les soirs avec écran après 22 h, vous dormez 40 min de moins.',
       note: 'Observé sur 13 nuits : un lien, pas une preuve.',
     })
     expect(eveningsText({ late: 450, other: 440, lateCount: 3, otherCount: 3, diff: 10 }).diff).toBe('+10 min')
     expect(eveningsText({ late: 440, other: 440, lateCount: 3, otherCount: 3, diff: 0 }).diff).toBe('pas d’écart')
     expect(eveningsText(null)).toBeNull()
+  })
+
+  it('REFONTE-6c-8 (SPEC § 6.5, la carte) : l’écart en une phrase, « à peu près autant » sous 10 min', () => {
+    const t = (diff) => eveningsText({ late: 440 + diff, other: 440, lateCount: 4, otherCount: 9, diff }).sentence
+    expect(t(-75)).toBe('Les soirs avec écran après 22 h, vous dormez 1 h 15 de moins.')
+    expect(t(25)).toBe('Les soirs avec écran après 22 h, vous dormez 25 min de plus.')
+    expect(t(-9)).toBe('Les soirs avec écran après 22 h, vous dormez à peu près autant que les autres soirs.')
+    expect(t(0)).toBe('Les soirs avec écran après 22 h, vous dormez à peu près autant que les autres soirs.')
   })
 
   it('pas de barres sans la ligne d’en-tête (rien sans mesure)', () => {
