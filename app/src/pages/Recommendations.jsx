@@ -33,7 +33,7 @@ import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
 import { isExampleMode } from '../storage/exampleMode'
 import { THEME_TONE, isRangeOnly, pistesTitles, resultsView } from '../services/resultsView'
-import { influenceFamilies, familyDetail, familyUsuals, familyPeriods, familyBars } from '../services/influenceFamilies'
+import { influenceFamilies, familyDetail, familyUsuals, familyPeriods, familyBars, eveningsText } from '../services/influenceFamilies'
 import { buildDailyJournal } from '../services/dailyJournal'
 import { readGutNotes } from '../services/gutNotes'
 import { actSections, reintroLine } from '../services/act'
@@ -351,13 +351,32 @@ function FamilyBars({ bars }) {
   const max = Math.max(...bars.days.map((d) => d.value ?? 0), bars.usual ?? 0)
   if (!(max > 0)) return null
   const pct = (v) => `${Math.max(6, (v / max) * 100)}%`
+  // REFONTE-6c-5 : avec assez de nuits de chaque côté, les deux moyennes remplacent le trait de l'habitude
+  const ev = bars.evenings
+  const words = eveningsText(ev)
   return (
-    <div className="reco-family-bars" data-testid="reco-family-bars" aria-hidden="true">
-      {bars.days.map((d) => (
-        <span key={d.dateKey} className={`reco-family-bar${d.value ? '' : ' is-empty'}`} style={d.value ? { height: pct(d.value) } : undefined} />
-      ))}
-      {bars.usual != null && <span className="reco-family-usual-line" style={{ bottom: pct(bars.usual) }} />}
-    </div>
+    <>
+      <div className={`reco-family-bars${ev ? ' has-split' : ''}`} data-testid="reco-family-bars" aria-hidden="true">
+        {bars.days.map((d) => (
+          <span key={d.dateKey} className={`reco-family-bar-col${d.late ? ' is-late' : ''}`}>
+            <span className={`reco-family-bar${d.value ? '' : ' is-empty'}`} style={d.value ? { height: pct(d.value) } : undefined} />
+          </span>
+        ))}
+        {ev ? (
+          <>
+            <span className="reco-family-mean-line" style={{ bottom: pct(ev.other) }} />
+            <span className="reco-family-mean-line is-late" style={{ bottom: pct(ev.late) }} />
+          </>
+        ) : bars.usual != null && <span className="reco-family-usual-line" style={{ bottom: pct(bars.usual) }} />}
+      </div>
+      {words && (
+        <div className="reco-family-evenings" data-testid="reco-family-evenings">
+          <p className="reco-family-evening is-other"><span className="reco-family-key" aria-hidden="true" /><span>{monoDigits(words.other)}</span></p>
+          <p className="reco-family-evening is-late"><span className="reco-family-key" aria-hidden="true" /><span>{monoDigits(words.late)} <strong>{monoDigits(words.diff)}</strong></span></p>
+          <p className="reco-unit">{monoDigits(words.note)}</p>
+        </div>
+      )}
+    </>
   )
 }
 
@@ -544,7 +563,7 @@ function HowItWorks({ wellbeing = false }) {
 
 /**
  * REFONTE-6b-2 : les jours qu'il faut pour la valeur habituelle des familles (services/influenceFamilies.js
- * `familyUsuals`) : nuits, pas et repas des 15 derniers jours, une nuit de plus pour celle qui finit le premier jour.
+ * `familyUsuals`) : nuits, pas, repas et temps d'écran des 15 derniers jours, une nuit de plus pour celle qui finit le premier jour.
  */
 async function readFamilyDaysFromStorage(now = new Date()) {
   const DAY = 86_400_000
@@ -553,6 +572,8 @@ async function readFamilyDaysFromStorage(now = new Date()) {
     listEntries({ type: 'sleep', since: new Date(now.getTime() - 16 * DAY).toISOString(), limit: Infinity }),
     listEntries({ type: 'steps', since, limit: Infinity }),
     listEntries({ type: 'food', since, limit: Infinity }),
+    // REFONTE-6c-5 : l'écran tard de chaque soir, pour les points et les deux moyennes du sommeil
+    listEntries({ type: 'phone_usage', since, limit: Infinity }),
   ])
   return buildDailyJournal(lists.flat())
 }

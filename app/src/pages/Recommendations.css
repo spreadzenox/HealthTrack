@@ -937,11 +937,64 @@
   margin: -8px 0 20px;
 }
 
-.reco-family-bar {
+.reco-family-bar-col {
+  position: relative;
   flex: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.reco-family-bar {
+  width: 100%;
   border-radius: 5px 5px 2px 2px;
   background: var(--tone-label, var(--accent));
 }
+
+/* REFONTE-6c-5 (SPEC § 6.5) : point ambre sous les nuits qui suivent un soir d'écran tard */
+.reco-family-bars.has-split { margin-bottom: 12px; }
+.reco-family-bar-col.is-late::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--accent-amber);
+}
+
+/* Avec les deux moyennes, les barres pâlissent pour laisser lire les traits */
+.reco-family-bars.has-split .reco-family-bar { opacity: 0.45; }
+
+.reco-family-mean-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 2px solid var(--text);
+  pointer-events: none;
+}
+
+.reco-family-mean-line.is-late { border-top: 2px dashed var(--accent-amber); }
+
+.reco-family-evenings { margin: 0 0 20px; }
+
+.reco-family-evening {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 4px;
+  font-size: 0.92rem;
+}
+
+.reco-family-key {
+  flex: none;
+  width: 18px;
+  border-top: 2px solid var(--text);
+}
+
+.reco-family-evening.is-late .reco-family-key { border-top: 2px dashed var(--accent-amber); }
 
 .reco-family-bar.is-empty {
   height: 4px;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { influenceFamilies, familyOf, familyDetail, familyUsuals, familyPeriods, familyBars, LEVEL_WORDS } from './influenceFamilies'
+import { influenceFamilies, familyOf, familyDetail, familyUsuals, familyPeriods, familyBars, eveningsText, LEVEL_WORDS } from './influenceFamilies'
 
 const f = (key, label, effect, { theme = 'sleep', actionable = true, net = true, outOfScale = false } = {}) => ({ key, label, theme, actionable, effect, net, outOfScale })
 const h = (id, status, factors = []) => ({ id, status, factors })
@@ -187,6 +187,44 @@ describe('REFONTE-6b-2 : la valeur habituelle de chaque famille (SPEC comprendre
     expect(b.nutrition.days[13]).toEqual({ dateKey: days[14].dateKey, value: 2 })
     expect(b.nutrition.days[0].value).toBe(1)
     expect(b.nutrition.usual).toBeNull()
+  })
+
+  it('REFONTE-6c-5 (SPEC § 6.5) : point sur les soirs d’écran tard, et les deux moyennes dès 3 nuits de chaque côté', () => {
+    const days = []
+    // nuits 1 à 4 : écran tard (≥ 30 min après 22 h), 6 h 40 ; nuits 5 à 12 : 7 h 20 ; 13 : écran inconnu ; 14 : 10 min
+    for (let n = 1; n <= 14; n++) {
+      const late = n <= 4 ? 45 : n === 13 ? undefined : n === 14 ? 10 : 0
+      days.push(day(n, { sleepMinutes: n <= 4 ? 400 : 440, ...(late === undefined ? {} : { lateScreenMinutes: late }) }))
+    }
+    const b = familyBars(days, now).sleep
+    expect(b.days[13].late).toBe(true)
+    expect(b.days[0].late).toBe(false)
+    expect('late' in b.days[1]).toBe(false)
+    expect(b.evenings).toEqual({ late: 400, other: 440, lateCount: 4, otherCount: 9, diff: -40 })
+  })
+
+  it('REFONTE-6c-5 : pas de moyennes sous 3 nuits d’un côté, ni sur une nuit estimée par le téléphone (lien circulaire)', () => {
+    const days = []
+    for (let n = 1; n <= 14; n++) {
+      days.push(day(n, { sleepMinutes: 420, sleepEstimated: n <= 3, lateScreenMinutes: n <= 4 ? 60 : 0 }))
+    }
+    const b = familyBars(days, now).sleep
+    // nuits 1 à 3 estimées par le téléphone : seule la nuit 4 reste parmi les soirs d'écran tard
+    expect(b.evenings).toBeNull()
+    expect(b.days[13].late).toBe(true)
+    expect(familyBars(days, now).activity).toBeUndefined()
+  })
+
+  it('REFONTE-6c-5 : la phrase des deux moyennes', () => {
+    expect(eveningsText({ late: 400, other: 440, lateCount: 4, otherCount: 9, diff: -40 })).toEqual({
+      late: 'Soirs avec écran après 22 h : 6 h 40',
+      other: 'Autres soirs : 7 h 20',
+      diff: '−40 min',
+      note: 'Observé sur 13 nuits : un lien, pas une preuve.',
+    })
+    expect(eveningsText({ late: 450, other: 440, lateCount: 3, otherCount: 3, diff: 10 }).diff).toBe('+10 min')
+    expect(eveningsText({ late: 440, other: 440, lateCount: 3, otherCount: 3, diff: 0 }).diff).toBe('pas d’écart')
+    expect(eveningsText(null)).toBeNull()
   })
 
   it('pas de barres sans la ligne d’en-tête (rien sans mesure)', () => {

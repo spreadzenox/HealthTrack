@@ -13,6 +13,7 @@
 import { FODMAP_GROUPS } from './fodmapChallenge'
 import { localDateKey } from './analysisEngine'
 import { DEVIATION_MIN_PAST_DAYS, DEVIATION_WINDOW_DAYS } from './dayDeviations'
+import { AUTO_LATE_SCREEN_MIN } from './behaviorTags'
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
 
@@ -187,8 +188,57 @@ export function familyBars(days, now = new Date()) {
     return { dateKey, value: isNum(v) ? v : null }
   })
   const out = {}
-  if (sleep != null) out.sleep = { days: series('sleepMinutes', 1), usual: sleep }
+  if (sleep != null) {
+    const sleepDays = series('sleepMinutes', 1)
+    out.sleep = { days: sleepDays, usual: sleep, evenings: eveningSplit(sleepDays, byKey) }
+  }
   if (steps != null) out.activity = { days: series('steps', 1), usual: steps }
   if (meals > 0) out.nutrition = { days: series('meals', 0), usual: null }
   return out
+}
+
+/** REFONTE-6c-5 : nuits mesurées qu'il faut de chaque côté pour écrire les deux moyennes (comme le bilan, SPEC § 7). */
+export const EVENING_SPLIT_MIN = 3
+
+/**
+ * REFONTE-6c-5 (SPEC comprendre § 6.5 : point ambre sur les soirs d'écran, puis « deux moyennes se tracent ») : marque
+ * chaque nuit dont la soirée a eu de l'écran tard (`late`, absent quand l'écran n'est pas connu) et compare la moyenne
+ * des nuits qui suivent ces soirs à celle des autres nuits. « Écran tard » est la mesure qui existe déjà dans l'app
+ * (au moins AUTO_LATE_SCREEN_MIN minutes entre 22 h et 4 h, rangées au jour du réveil comme la nuit), plutôt que les
+ * « 2 h d'écran » de la maquette : un même objet, une seule mesure, et c'est ce que la piste « pas d'écran après 22 h »
+ * fera changer. Les nuits estimées par le téléphone ne comptent pas dans les moyennes : elles sont déduites de l'écran
+ * lui-même (lien circulaire, règle 5). Une description sur 14 nuits, jamais une preuve.
+ */
+function eveningSplit(sleepDays, byKey) {
+  const late = []
+  const other = []
+  for (const d of sleepDays) {
+    const s = byKey.get(d.dateKey)
+    const mins = s?.lateScreenMinutes
+    if (!isNum(mins)) continue
+    d.late = mins >= AUTO_LATE_SCREEN_MIN
+    if (d.value == null || !(d.value > 0) || s.sleepEstimated) continue
+    ;(d.late ? late : other).push(d.value)
+  }
+  if (late.length < EVENING_SPLIT_MIN || other.length < EVENING_SPLIT_MIN) return null
+  const mean = (a) => Math.round(a.reduce((x, y) => x + y, 0) / a.length)
+  const l = mean(late)
+  const o = mean(other)
+  return { late: l, other: o, lateCount: late.length, otherCount: other.length, diff: l - o }
+}
+
+/**
+ * REFONTE-6c-5 : les mots sous les barres du sommeil. « pas d'écart » sous 1 min ; signe typographique « − ».
+ * @returns {{ late: string, other: string, diff: string, note: string } | null}
+ */
+export function eveningsText(evenings) {
+  if (!evenings) return null
+  const { late, other, lateCount, otherCount, diff } = evenings
+  const d = Math.round(diff)
+  return {
+    late: `Soirs avec écran après 22 h : ${formatDuration(late)}`,
+    other: `Autres soirs : ${formatDuration(other)}`,
+    diff: d === 0 ? 'pas d’écart' : `${d < 0 ? '−' : '+'}${formatDuration(Math.abs(d))}`,
+    note: `Observé sur ${lateCount + otherCount} nuits : un lien, pas une preuve.`,
+  }
 }

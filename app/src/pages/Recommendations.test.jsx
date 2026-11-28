@@ -575,6 +575,31 @@ describe('REFONTE-6b-2 : la valeur habituelle à côté de chaque famille', () =
     expect(screen.queryByTestId('reco-family-bars')).toBeNull()
   })
 
+  it('REFONTE-6c-5 (SPEC § 6.5) : points sur les soirs d’écran tard et les deux moyennes du sommeil', async () => {
+    const now = new Date()
+    const days = []
+    for (let n = 1; n <= 14; n++) {
+      const d = new Date(now.getTime() - n * 86_400_000)
+      const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      days.push({ dateKey, summary: { sleepMinutes: n <= 4 ? 400 : 440, lateScreenMinutes: n <= 4 ? 50 : 0 } })
+    }
+    render(
+      <MemoryRouter initialEntries={['/recommendations/bien-etre/famille/sleep']}>
+        <Routes>
+          <Route path="/recommendations/bien-etre/famille/:family" element={<Recommendations read={async () => readyResults} readFamilyDays={async () => days} />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    const ev = await screen.findByTestId('reco-family-evenings')
+    expect(ev).toHaveTextContent('Autres soirs : 7 h 20')
+    expect(ev).toHaveTextContent('Soirs avec écran après 22 h : 6 h 40 −40 min')
+    expect(ev).toHaveTextContent('Observé sur 14 nuits : un lien, pas une preuve.')
+    const bars = screen.getByTestId('reco-family-bars')
+    expect(bars.querySelectorAll('.reco-family-bar-col.is-late')).toHaveLength(4)
+    expect(bars.querySelectorAll('.reco-family-mean-line')).toHaveLength(2)
+    expect(bars.querySelector('.reco-family-usual-line')).toBeNull()
+  })
+
   it('une lecture en échec n’affiche rien', async () => {
     renderPage({ readFamilyDays: async () => { throw new Error('IndexedDB') } }, readyResults)
     const block = await screen.findByRole('region', { name: 'Par famille' })
