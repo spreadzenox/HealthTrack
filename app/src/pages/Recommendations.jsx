@@ -445,7 +445,9 @@ function FamilyDetail({ outcome, detail, onTry = null, liveTrials = new Map() })
   const w = WORDS[outcome]
   const many = detail.pistes.length > 1
   const [open, setOpen] = useState(false)
-  const none = detail.id === 'nutrition' ? FAMILY_NONE[outcome] : 'Aucun lien assez net pour l’instant dans cette famille.'
+  // POLISH-6c-9-a : dire de quel lien il s'agit. Sous « Une piste pour vos nuits » (piste lue sur le sommeil),
+  // « aucun lien dans cette famille » se lisait comme une contradiction ; ici, c'est le lien avec l'objectif.
+  const none = detail.id === 'nutrition' ? FAMILY_NONE[outcome] : `Aucun lien assez net pour l’instant avec ${w.what}.`
   return (
     <>
       {detail.pistes.length > 0 ? (

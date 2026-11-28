@@ -420,6 +420,7 @@ digestive (`digestionOwn`) ; aucune entrée de l'estimateur du bien-être n'est 
 
 ## 5. Historique
 
+- **28/11 11:30** — Run de code : POLISH-6c-9-a, la ligne sans piste du détail d'une famille dit « Aucun lien assez net pour l'instant avec votre bien-être. » (ou « … votre confort digestif. ») au lieu de « … dans cette famille. », qui contredisait la piste des nuits juste au-dessus. Test d'abord.
 - **28/11 10:30** — Run de code : fin de la SPEC comprendre § 6.5 (Objectifs › Sommeil) : les 14 barres montent une à une, puis les deux moyennes se tracent (rien ne bouge avec « réduire les animations ») ; Pilou attend sous la carte « Une piste pour vos nuits ». Tests d'abord.
 - **28/11 09:30** — Run de code : POLISH-KCAL-ARRONDI (une seule somme exacte, arrondie une fois : carte du repas, Nutrition et totaux du jour d'accord) et POLISH-HABITUDE-AJOUTEE (« Ajoutée à Ma journée » sous l'habitude libre). Tests d'abord.
 - **28/11 08:30** — Run « idées », personas : « Tout mesurer » J1 (Android seul) et « Prendre soin de soi » J45 (iPhone seul). Deux petits défauts sûrs : POLISH-KCAL-ARRONDI (527 kcal sur la carte du repas, 526 dans Nutrition) et POLISH-HABITUDE-AJOUTEE (habitude libre enregistrée sans aucun retour) ; PROP-SIM-19 relevée une 5ᵉ fois ; calories dépensées sans courbe (« go courbes »). [`synthèse`](simulations/2026-11-28-0830-synthese.md).
