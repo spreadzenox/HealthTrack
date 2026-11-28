@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { influenceFamilies, familyOf, familyDetail, familyUsuals, LEVEL_WORDS } from './influenceFamilies'
+import { influenceFamilies, familyOf, familyDetail, familyUsuals, familyPeriods, LEVEL_WORDS } from './influenceFamilies'
 
 const f = (key, label, effect, { theme = 'sleep', actionable = true, net = true, outOfScale = false } = {}) => ({ key, label, theme, actionable, effect, net, outOfScale })
 const h = (id, status, factors = []) => ({ id, status, factors })
@@ -156,5 +156,17 @@ describe('REFONTE-6b-2 : la valeur habituelle de chaque famille (SPEC comprendre
 
   it('un seul repas : au singulier', () => {
     expect(familyUsuals([day(2, { meals: 1 })], now)).toEqual({ nutrition: '1 repas en 14 jours' })
+  })
+
+  it('REFONTE-6c-3 (SPEC § 6.5, « Vos 14 dernières nuits · en moyenne 7 h 05 ») : la ligne d’en-tête du détail d’une famille', () => {
+    const days = []
+    for (let n = 1; n <= 14; n++) days.push(day(n, { sleepMinutes: n <= 7 ? 420 : 430, steps: 8000 + n * 10, meals: n % 2 }))
+    days.push(day(0, { sleepMinutes: 300, steps: 500, meals: 2 }))
+    const p = familyPeriods(days, now)
+    expect(p.sleep).toBe('Vos 14 dernières nuits · d’habitude 7 h 05')
+    expect(p.activity).toMatch(/^Vos 14 derniers jours · d’habitude 8\s?075 pas par jour$/)
+    expect(p.nutrition).toBe('Vos 14 derniers jours · 9 repas notés')
+    expect(familyPeriods([day(2, { meals: 1 })], now)).toEqual({ nutrition: 'Vos 14 derniers jours · 1 repas noté' })
+    expect(familyPeriods(null, now)).toEqual({})
   })
 })
