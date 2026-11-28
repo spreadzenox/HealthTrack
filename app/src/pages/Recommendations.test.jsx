@@ -155,7 +155,7 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     renderAt('/recommendations/bien-etre/famille/sleep', results)
     await screen.findByRole('heading', { level: 2, name: 'Sommeil' })
     expect(screen.queryByRole('region', { name: 'Piste à tester' })).toBeNull()
-    expect(screen.getByTestId('reco-family-none')).toHaveTextContent('Aucun lien assez net pour l’instant dans cette famille.')
+    expect(screen.getByTestId('reco-family-none')).toHaveTextContent('Aucun lien assez net pour l’instant avec votre bien-être.')
     expect(screen.getByRole('region', { name: 'Ce qui a été comparé' })).toBeInTheDocument()
   })
 
@@ -700,6 +700,22 @@ describe('REFONTE-6c-9 (SPEC § 6.5) : « Pas d’écran après 22 h » proposé
     expect(await screen.findByText('Page de l’essai 12')).toBeInTheDocument()
     expect(saved).toHaveLength(1)
     expect(saved[0]).toMatchObject({ direction: 'less', factor: { key: 'screen_late_minutes', outcome: 'sleep' } })
+  })
+
+  it('POLISH-6c-9-a : sous la piste des nuits, la ligne « rien de net » dit qu’elle parle du bien-être', async () => {
+    const results = structuredClone(readyResults)
+    results.outcomes.wellbeing.horizons.short.factors[0].net = false
+    render(
+      <MemoryRouter initialEntries={['/recommendations/bien-etre/famille/sleep']}>
+        <Routes>
+          <Route path="/recommendations/bien-etre/famille/:family" element={<Recommendations read={async () => results} readFamilyDays={async () => nights(400)} readTrials={async () => []} />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    await screen.findByRole('region', { name: 'Une piste pour vos nuits' })
+    const none = screen.getByTestId('reco-family-none')
+    expect(none).toHaveTextContent('Aucun lien assez net pour l’instant avec votre bien-être.')
+    expect(none).not.toHaveTextContent('dans cette famille')
   })
 
   it('à peu près autant : rien n’est proposé', async () => {
