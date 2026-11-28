@@ -1112,6 +1112,20 @@ Idées détaillées, sources et notation impact × faisabilité : **`IDEES.md`**
     - Écartés, avec la raison, dans la synthèse : jalons 7, 14 et 28 jours (brief § 3.5) ; analyse factice de
       l'outil ; « Aucune lecture du visage » non vérifié ; icône photo de « Selles » (voulue) ; visite guidée ;
       « Valider » puis « Continuer » ; phases du sommeil (nouvelle vue).
+  - **Passage des personas du 28/11 08:30** (run « idées », [`synthèse`](simulations/2026-11-28-0830-synthese.md) ;
+    « Tout mesurer » J1, Android seul, et « Prendre soin de soi » J45, iPhone seul) :
+    - [ ] **POLISH-KCAL-ARRONDI** (petit, sûr) : un repas fait « ≈ 527 kcal » sur sa carte et « ≈ 526 kcal » dans
+      Données › Nutrition ; la carte additionne des kcal arrondies par aliment (`mealKcal` → `itemKcal`), Nutrition
+      arrondit la somme. Un seul calcul (somme exacte arrondie une fois) partout. Test d'abord.
+    - [ ] **POLISH-HABITUDE-AJOUTEE** (petit, sûr) : Réglages › « Une autre habitude » enregistre à chaque lettre
+      (`HabitsSetting.jsx`) sans aucun retour ; la persona abandonne. « Ajoutée à Ma journée » sous le champ rempli
+      (`aria-live`). Test d'abord, captures Réglages.
+    - PROP-SIM-19 relevée une 5ᵉ fois (pesée cachée, aucune confirmation) ; calories dépensées sans courbe (maquette
+      `tendances-courbes/`).
+    - À vérifier : ronds de progression de Ma journée remplis dans le désordre (2 personas, sans capture) ; sommeil
+      de l'iPhone seul (horaires de coucher de Santé) ; « Où en sont vos analyses » quand rien n'est net à J45.
+    - Écartés dans la synthèse : Health Connect dans la version web ; heure de « Midi » (voulue) ; jalons 7, 14,
+      28 jours ; point « auj. » partiel ; objectif poids (hors brief).
 - **Sprint du 16/11 20:20 au 17/11 03:00 (étapes 8 à 15 en parallèle, `sprint/SPRINT.md`) — état relevé par
   l'intégrateur le 17/11 à 02:30 d'après `sprint/LOT-*.md` des branches `claude/sprint-*`** : #1047 (PHOTO, relais),
   #1048 (MONDE) et #1053 (SCÈNE) sur main, puis #1062 (SCÈNE 2, f135f54) #1056 (BULLES, ed1fa08, 23:52) et #1060 (VIE, 42072c6, 00:16) et #1050 (PHOTO, dedb890, 00:26), puis #1057 (MONDE, ae8e213, 00:40) et #1058 (PILOU, 99c1de6, 00:58), puis #1052 (STUDIO, 5e749d3, 01:22, v774) et #1066 (BULLES 2, 82c3f2c, 01:30). Tests de main verts (un rouge isolé sur 99c1de6 : `Dashboard.test.jsx` « Méditation · oui, changer la réponse » introuvable, vert aux commits suivants : à surveiller, POLISH-FLAKY ci-dessous). Puis #1067 (VIE 5, 929d5ec, 02:07) et #1070 (SCÈNE 4, assemblage, 930dcdd, 02:09, v777, APK 35 331 266 octets) ; #1065 fermée (contenue dans #1070). Lots finis : PHOTO, MONDE, BULLES, VIE, SCÈNE. Puis #1071 (PILOU 3, 9b785e3, 02:38). En PR à 02:40 : #1072 (STUDIO 4), tous checks verts sauf « Build iOS (simulateur) et captures », en cours.
