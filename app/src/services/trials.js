@@ -17,6 +17,8 @@
  */
 import { formatDuration } from '../utils/format'
 import { appLocale } from '../i18n/locale.js'
+import { AUTO_LATE_SCREEN_MIN } from './behaviorTags'
+import { LATE_END_H } from './phoneUsage'
 
 export const TRIAL_TYPE = 'trial'
 export const TRIAL_SOURCE = 'app_trial'
@@ -44,6 +46,10 @@ const MEASURED = {
   sleepMinutes: { field: 'sleepMinutes', fmt: (v) => formatDuration(v), missing: 'Nous n’avons pas reçu vos données de sommeil pour hier soir.', missingOld: 'Nous n’avons pas reçu vos données de sommeil pour cette nuit-là.', more: 'Dormir au moins', less: 'Dormir moins de', round: 5 },
   steps: { field: 'steps', fmt: (v) => `${n0(v)} pas`, missing: 'Nous n’avons pas reçu vos pas d’hier.', missingOld: 'Nous n’avons pas reçu vos pas de ce jour-là.', more: 'Faire au moins', less: 'Faire moins de', round: 100 },
   screen_minutes: { field: 'screenMinutes', fmt: (v) => formatDuration(v), missing: 'Nous n’avons pas reçu votre temps d’écran d’hier.', missingOld: 'Nous n’avons pas reçu votre temps d’écran de ce jour-là.', more: 'Au moins', less: 'Moins de', suffix: ' d’écran', round: 5 },
+  // REFONTE-6c-7 (SPEC comprendre § 6.5 et § 7) : « Pas d'écran après 22 h ». Un soir se juge sur la mesure « écran
+  // tard » de l'app (au moins AUTO_LATE_SCREEN_MIN minutes entre 22 h et 4 h), la même que les points ambre du détail
+  // Sommeil et les pistes : un même objet, une seule mesure. Elle est rangée au jour du réveil (`nextDay`).
+  screen_late_minutes: { field: 'lateScreenMinutes', nextDay: true, fixed: AUTO_LATE_SCREEN_MIN, text: { less: 'Pas d’écran après 22 h', more: 'Écran après 22 h permis' }, missing: 'Nous n’avons pas reçu votre temps d’écran d’hier soir.', missingOld: 'Nous n’avons pas reçu votre temps d’écran de ce soir-là.' },
 }
 
 /** REFONTE-4b-3 : facteur « habitude » (habit_<id> d'Analyses), lu dans les réponses oui / non de Ma journée. */
@@ -75,11 +81,19 @@ export function createTrial(factor, { now = new Date(), rng = Math.random } = {}
   const direction = factor.effect >= 0 ? 'more' : 'less'
   const m = MEASURED[factor.key]
   const change = Math.abs(factor.usualChange?.amount ?? 0)
+  if (m?.fixed != null) return { ...base(factor, direction, change, flags, start, now), threshold: m.fixed }
   const threshold = m && isNum(factor.center) ? (direction === 'more' ? factor.center + change : factor.center - change) : null
+  return {
+    ...base(factor, direction, change, flags, start, now),
+    threshold: isNum(threshold) ? Math.max(0, Math.round(threshold / (m.round ?? 1)) * (m.round ?? 1)) : null,
+  }
+}
+
+function base(factor, direction, change, flags, start, now) {
   return {
     factor: { key: factor.key, label: factor.label, theme: factor.theme, outcome: factor.outcome, effect: factor.effect, center: factor.center ?? null, change },
     direction,
-    threshold: isNum(threshold) ? Math.max(0, Math.round(threshold / (m.round ?? 1)) * (m.round ?? 1)) : null,
+    threshold: null,
     schedule: flags.map((w, i) => ({ date: addDays(start, i), with: w })),
     answers: {},
     startedAt: now.toISOString(),
@@ -90,10 +104,27 @@ export function createTrial(factor, { now = new Date(), rng = Math.random } = {}
   }
 }
 
+/**
+ * REFONTE-6c-7 (SPEC § 7 : la lanterne s'allume « le lendemain matin, à l'ouverture, quand le temps d'écran
+ * confirme ») : la journée en cours n'est pas encore une entrée `phone_usage` (seules les journées terminées le
+ * deviennent), mais son écran tard, celui de la veille au soir, est complet dès LATE_END_H heures. Rend une copie.
+ * @param {Map<string, object>} summaries
+ * @param {{ date: string, lateScreenMinutes: number } | null} today  `today` des réglages du temps d'écran
+ */
+export function withTodayLateScreen(summaries, today, now = new Date()) {
+  const out = new Map(summaries)
+  if (!today || today.date !== keyOfDate(now) || now.getHours() < LATE_END_H || !isNum(today.lateScreenMinutes)) return out
+  const cur = out.get(today.date)
+  if (isNum(cur?.lateScreenMinutes)) return out
+  out.set(today.date, { ...cur, lateScreenMinutes: today.lateScreenMinutes })
+  return out
+}
+
 /** La consigne d'un jour « avec » (« Dormir au moins 7 h 40 ») ; « sans » : comme d'habitude. */
 export function instruction(trial, withDay = true) {
   if (!withDay) return 'Comme d’habitude'
   const m = MEASURED[trial.factor.key]
+  if (m?.text) return m.text[trial.direction]
   if (m && isNum(trial.threshold)) return `${trial.direction === 'more' ? m.more : m.less} ${m.fmt(trial.threshold)}${m.suffix ?? ''}`
   const what = trial.factor.label.toLowerCase()
   // Une habitude se fait ou non : « Méditation », « Pas d’étirements »
@@ -131,7 +162,7 @@ function heldFromData(trial, day, summaries) {
   }
   const m = MEASURED[trial.factor.key]
   if (!m || !isNum(trial.threshold)) return null
-  const v = summaries.get(day.date)?.[m.field]
+  const v = summaries.get(m.nextDay ? addDays(day.date, 1) : day.date)?.[m.field]
   if (!isNum(v)) return null
   const above = trial.direction === 'more' ? v >= trial.threshold : v < trial.threshold
   return day.with ? above : !above

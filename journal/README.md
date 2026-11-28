@@ -75,6 +75,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/11 05:30 — [L'essai « Pas d'écran après 22 h »](runs/2026-11-28-0530-essai-ecran-tard.md) | 🔧 | REFONTE-6c-7 : la piste de l'écran le soir se teste comme les autres, consigne « Pas d'écran après 22 h », chaque soir vérifié le lendemain matin par le temps d'écran. L'Alpha du 27/11 est bien partie. Rien à faire de votre côté |
 | 28/11 04:30 — [« Je teste » sur une piste](runs/2026-11-28-0430-je-teste.md) | 🔧 | REFONTE-6c-6 : dans le détail d'une famille, « Je teste » lance l'essai de la piste sans passer par Agir ; s'il est déjà en cours, la piste y mène. iPhone : la build 1381.1381 (soir du 27/11) est soumise à l'examen bêta des testeurs. Rien à faire de votre côté |
 | 28/11 03:30 — [Soirs d'écran tard](runs/2026-11-28-0330-soirs-ecran.md) | 🔧 | REFONTE-6c-5 : dans le détail du sommeil, un point sous les nuits qui suivent un soir d'écran après 22 h, et votre sommeil ces nuits-là comparé aux autres (« un lien, pas une preuve »). Rien à faire de votre côté |
 | 28/11 02:30 — [Vos 14 jours en barres](runs/2026-11-28-0230-famille-barres.md) | 🔧 | REFONTE-6c-4 : sous « Vos 14 dernières nuits · d’habitude 7 h 38 », une barre par nuit (ou par jour de pas, de repas) et un trait pointillé pour votre habitude. Rien à faire de votre côté |

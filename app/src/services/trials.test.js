@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, homeActIdle, lanterns, pilouSays, morningLantern } from './trials'
+import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, homeActIdle, lanterns, pilouSays, morningLantern, withTodayLateScreen } from './trials'
 
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30, unit: 'min', text: '30 min de sommeil de plus' } }
 const START = new Date(2026, 10, 1, 9)
@@ -317,5 +317,52 @@ describe('LANT-3 : la lanterne du matin sur l’îlot', () => {
     const last = { ...t10, schedule: days.map((d, i) => ({ ...d, with: i === 9 })) }
     const summaries = new Map([['2026-11-10', { sleepMinutes: 470 }]])
     expect(morningLantern([row(7, last)], { summaries, now: new Date(2026, 10, 11, 8) })).toMatchObject({ date: '2026-11-10' })
+  })
+})
+
+describe('REFONTE-6c-7 (SPEC comprendre § 6.5 et § 7) : la piste « Écran tard » se teste soir par soir', () => {
+  const late = { key: 'screen_late_minutes', label: 'Écran tard (veille au soir, 22 h–4 h)', theme: 'context', outcome: 'wellbeing', effect: -0.5, center: 45, usualChange: { amount: 30, unit: 'min', text: '30 min d’écran le soir de plus' } }
+  const sched = [...Array(4)].map((_, i) => ({ date: `2026-11-0${i + 1}`, with: i % 2 === 0 }))
+
+  it('la consigne : « Pas d’écran après 22 h », la même mesure que le reste de l’app (moins de 30 min)', () => {
+    const t = createTrial(late, { now: START })
+    expect(instruction(t)).toBe('Pas d’écran après 22 h')
+    expect(instruction(t, false)).toBe('Comme d’habitude')
+    expect(t.threshold).toBe(30)
+    expect(proposal(late).title).toBe('Pas d’écran après 22 h')
+    expect(instruction(createTrial({ ...late, effect: 0.3 }, { now: START }))).toBe('Écran après 22 h permis')
+  })
+
+  it('la tenue d’un soir se lit au résumé du lendemain (écran de 22 h à 4 h rangé au jour du réveil)', () => {
+    const t = { ...createTrial(late, { now: START }), schedule: sched }
+    // soir du 1er (avec) : 10 min → tenu ; soir du 2 (sans) : 50 min → tenu (comme d'habitude) ; soir du 3 (avec) : 40 min → pas tenu
+    const summaries = new Map([['2026-11-02', { lateScreenMinutes: 10 }], ['2026-11-03', { lateScreenMinutes: 50 }], ['2026-11-04', { lateScreenMinutes: 40 }]])
+    const s = trialStatus(t, { summaries, now: new Date(2026, 10, 4, 10) })
+    expect(s.calendar.map((d) => d.held)).toEqual([true, true, false, null])
+    expect(s.ask).toBeNull()
+  })
+
+  it('sans écran mesuré : « Hier soir, pas d’écran après 22 h ? » se demande le matin', () => {
+    const t = { ...createTrial(late, { now: START }), schedule: sched }
+    const s = trialStatus(t, { summaries: new Map([['2026-11-02', { lateScreenMinutes: 0 }], ['2026-11-03', { lateScreenMinutes: 0 }]]), now: new Date(2026, 10, 4, 10) })
+    expect(s.ask).toMatchObject({ date: '2026-11-03', question: 'Hier, pas d’écran après 22 h : c’était tenu ?', missing: 'Nous n’avons pas reçu votre temps d’écran d’hier soir.' })
+  })
+})
+
+describe('REFONTE-6c-7 : le soir d’hier se confirme dès ce matin', () => {
+  it('l’écran tard de la journée en cours (réglages du téléphone) complète le résumé du jour, une fois 4 h passées', () => {
+    const summaries = new Map([['2026-11-03', { lateScreenMinutes: 50 }]])
+    const today = { date: '2026-11-04', screenMinutes: 12, lateScreenMinutes: 5 }
+    const out = withTodayLateScreen(summaries, today, new Date(2026, 10, 4, 8))
+    expect(out.get('2026-11-04')).toEqual({ lateScreenMinutes: 5 })
+    expect(out.get('2026-11-03')).toEqual({ lateScreenMinutes: 50 })
+    // avant 4 h, la soirée n'est pas finie : rien
+    expect(withTodayLateScreen(summaries, today, new Date(2026, 10, 4, 2)).get('2026-11-04')).toBeUndefined()
+    // une journée d'un autre jour, ou sans mesure : rien
+    expect(withTodayLateScreen(summaries, { ...today, date: '2026-11-03' }, new Date(2026, 10, 4, 8)).get('2026-11-04')).toBeUndefined()
+    expect(withTodayLateScreen(summaries, null, new Date(2026, 10, 4, 8)).get('2026-11-04')).toBeUndefined()
+    // une entrée déjà enregistrée garde sa valeur
+    const kept = withTodayLateScreen(new Map([['2026-11-04', { steps: 300, lateScreenMinutes: 70 }]]), today, new Date(2026, 10, 4, 8))
+    expect(kept.get('2026-11-04')).toEqual({ steps: 300, lateScreenMinutes: 70 })
   })
 })
