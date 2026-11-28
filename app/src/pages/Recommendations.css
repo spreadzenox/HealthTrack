@@ -1134,3 +1134,54 @@
 .reco-family-compared-row .reco-next {
   margin: 0;
 }
+
+/*
+ * Reste de la SPEC comprendre § 6.5 : les barres montent une à une (45 ms d'écart, 400 ms en sortie douce) ; avec
+ * les deux moyennes, les barres pâlissent ensuite et les deux traits se tracent de gauche à droite (1 s). Rien ne
+ * bouge pour qui a demandé de réduire les animations : l'état final s'affiche d'emblée.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .reco-family-bar {
+    transform-origin: bottom;
+    animation: reco-bar-rise 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i, 0) * 45ms);
+  }
+
+  .reco-family-bar-col.is-late::after {
+    animation: reco-fade-in 300ms ease-out both;
+    animation-delay: calc(var(--i, 0) * 45ms + 200ms);
+  }
+
+  .reco-family-bars.has-split .reco-family-bar {
+    animation:
+      reco-bar-rise 400ms cubic-bezier(0.22, 1, 0.36, 1) both,
+      reco-bar-pale 300ms ease-out 1000ms both;
+    animation-delay: calc(var(--i, 0) * 45ms), 1000ms;
+  }
+
+  .reco-family-mean-line {
+    transform-origin: left;
+    animation: reco-line-draw 1000ms cubic-bezier(0.65, 0, 0.35, 1) 1100ms both;
+  }
+
+  .reco-family-usual-line { animation: reco-fade-in 300ms ease-out 700ms both; }
+}
+
+@keyframes reco-bar-rise {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes reco-bar-pale {
+  from { opacity: 1; }
+  to { opacity: 0.45; }
+}
+
+@keyframes reco-line-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes reco-fade-in {
+  from { opacity: 0; }
+}
