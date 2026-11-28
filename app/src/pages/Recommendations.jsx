@@ -33,7 +33,7 @@ import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
 import { isExampleMode } from '../storage/exampleMode'
 import { THEME_TONE, isRangeOnly, pistesTitles, resultsView } from '../services/resultsView'
-import { influenceFamilies, familyDetail, familyUsuals, familyPeriods } from '../services/influenceFamilies'
+import { influenceFamilies, familyDetail, familyUsuals, familyPeriods, familyBars } from '../services/influenceFamilies'
 import { buildDailyJournal } from '../services/dailyJournal'
 import { readGutNotes } from '../services/gutNotes'
 import { actSections, reintroLine } from '../services/act'
@@ -341,6 +341,26 @@ function FodmapNotCompared({ groups }) {
  * POLISH-SIM-128 (« Ventre, sans technique ») : les lignes chiffrées (groupes, pt, fourchettes) derrière le chevron,
  * et, quand plusieurs délais sont montrés, une phrase qui dit qu'ils se lisent séparément.
  */
+/**
+ * REFONTE-6c-4 (SPEC comprendre § 6.5) : les 14 jours de la famille en barres, sous la ligne d'en-tête qui les dit en
+ * mots (les barres sont donc décoratives pour le lecteur d'écran). Le trait pointillé est la valeur habituelle de
+ * l'en-tête ; aucune couleur de jugement (règle 6).
+ */
+function FamilyBars({ bars }) {
+  if (!bars) return null
+  const max = Math.max(...bars.days.map((d) => d.value ?? 0), bars.usual ?? 0)
+  if (!(max > 0)) return null
+  const pct = (v) => `${Math.max(6, (v / max) * 100)}%`
+  return (
+    <div className="reco-family-bars" data-testid="reco-family-bars" aria-hidden="true">
+      {bars.days.map((d) => (
+        <span key={d.dateKey} className={`reco-family-bar${d.value ? '' : ' is-empty'}`} style={d.value ? { height: pct(d.value) } : undefined} />
+      ))}
+      {bars.usual != null && <span className="reco-family-usual-line" style={{ bottom: pct(bars.usual) }} />}
+    </div>
+  )
+}
+
 function FamilyDetail({ outcome, detail }) {
   const w = WORDS[outcome]
   const many = detail.pistes.length > 1
@@ -554,6 +574,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const [familyDays, setFamilyDays] = useState(null)
   const usuals = useMemo(() => familyUsuals(familyDays), [familyDays])
   const periods = useMemo(() => familyPeriods(familyDays), [familyDays])
+  const bars = useMemo(() => familyBars(familyDays), [familyDays])
   const { family } = useParams()
   const base = outcome === 'digestion' ? '/recommendations/ventre' : '/recommendations/bien-etre'
 
@@ -647,6 +668,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
         <h2 className="page-title">{detail.label}</h2>
         {/* REFONTE-6c-3 (SPEC comprendre § 6.5) : ce que la personne fait d'habitude dans cette famille */}
         {periods[detail.id] && <p className="reco-family-period" data-testid="reco-family-period">{monoDigits(periods[detail.id])}</p>}
+        <FamilyBars bars={bars[detail.id]} />
         <FamilyDetail outcome={outcome} detail={detail} />
         <HowItWorks />
       </section>

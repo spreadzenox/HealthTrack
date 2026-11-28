@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { influenceFamilies, familyOf, familyDetail, familyUsuals, familyPeriods, LEVEL_WORDS } from './influenceFamilies'
+import { influenceFamilies, familyOf, familyDetail, familyUsuals, familyPeriods, familyBars, LEVEL_WORDS } from './influenceFamilies'
 
 const f = (key, label, effect, { theme = 'sleep', actionable = true, net = true, outOfScale = false } = {}) => ({ key, label, theme, actionable, effect, net, outOfScale })
 const h = (id, status, factors = []) => ({ id, status, factors })
@@ -168,5 +168,29 @@ describe('REFONTE-6b-2 : la valeur habituelle de chaque famille (SPEC comprendre
     expect(p.nutrition).toBe('Vos 14 derniers jours · 9 repas notés')
     expect(familyPeriods([day(2, { meals: 1 })], now)).toEqual({ nutrition: 'Vos 14 derniers jours · 1 repas noté' })
     expect(familyPeriods(null, now)).toEqual({})
+  })
+
+  it('REFONTE-6c-4 (SPEC § 6.5, « Barres des 14 nuits ») : une barre par jour, de la plus ancienne à la plus récente', () => {
+    const days = []
+    for (let n = 1; n <= 14; n++) days.push(day(n, { sleepMinutes: n === 3 ? null : 400 + n, steps: 8000 + n, meals: n % 2 }))
+    days.push(day(0, { sleepMinutes: 300, steps: 500, meals: 2 }))
+    const b = familyBars(days, now)
+    // sommeil et pas : les 14 jours passés, comme la valeur habituelle ; aujourd'hui n'est pas fini
+    expect(b.sleep.days).toHaveLength(14)
+    expect(b.sleep.days[0]).toEqual({ dateKey: days[13].dateKey, value: 414 })
+    expect(b.sleep.days[13]).toEqual({ dateKey: days[0].dateKey, value: 401 })
+    expect(b.sleep.days[11].value).toBeNull()
+    expect(b.sleep.usual).toBe(408)
+    expect(b.activity.days.map((d) => d.value)[13]).toBe(8001)
+    // repas : 13 jours passés et aujourd'hui, comme « 9 repas notés »
+    expect(b.nutrition.days).toHaveLength(14)
+    expect(b.nutrition.days[13]).toEqual({ dateKey: days[14].dateKey, value: 2 })
+    expect(b.nutrition.days[0].value).toBe(1)
+    expect(b.nutrition.usual).toBeNull()
+  })
+
+  it('pas de barres sans la ligne d’en-tête (rien sans mesure)', () => {
+    expect(familyBars([day(2, { meals: 1 })], now)).toEqual({ nutrition: { days: expect.any(Array), usual: null } })
+    expect(Object.keys(familyBars(null, now))).toEqual([])
   })
 })

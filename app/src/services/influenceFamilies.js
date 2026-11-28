@@ -139,7 +139,7 @@ function usualValues(days, now) {
   const meals = list
     .filter((d) => d.dateKey >= mealsFrom && d.dateKey <= today)
     .reduce((n, d) => n + (isNum(d.summary?.meals) ? d.summary.meals : 0), 0)
-  return { sleep: usual('sleepMinutes'), steps: usual('steps'), meals }
+  return { sleep: usual('sleepMinutes'), steps: usual('steps'), meals, list }
 }
 
 const stepsText = (steps) => `${Math.round(steps).toLocaleString(appLocale())} pas par jour`
@@ -166,5 +166,29 @@ export function familyPeriods(days, now = new Date()) {
   if (sleep != null) out.sleep = `Vos ${n} dernières nuits · d’habitude ${formatDuration(sleep)}`
   if (steps != null) out.activity = `Vos ${n} derniers jours · d’habitude ${stepsText(steps)}`
   if (meals > 0) out.nutrition = `Vos ${n} derniers jours · ${meals} repas noté${meals > 1 ? 's' : ''}`
+  return out
+}
+
+/**
+ * REFONTE-6c-4 (SPEC comprendre § 6.5 : « Barres des 14 nuits ») : une valeur par jour sous la ligne d'en-tête, de la
+ * plus ancienne à la plus récente, sur les mêmes jours que familyPeriods (sommeil et pas : les 14 jours passés ;
+ * repas : 13 jours passés et aujourd'hui). `usual` est la médiane déjà écrite dans l'en-tête (null pour les repas).
+ * Une famille n'a de barres que si elle a sa ligne d'en-tête. Un jour sans mesure vaut null.
+ * @returns {{ sleep?: Bars, activity?: Bars, nutrition?: Bars }}  Bars = { days: { dateKey, value }[], usual }
+ */
+export function familyBars(days, now = new Date()) {
+  const { sleep, steps, meals, list } = usualValues(days, now)
+  const DAY = 86_400_000
+  const n = DEVIATION_WINDOW_DAYS
+  const byKey = new Map(list.map((d) => [d.dateKey, d.summary]))
+  const series = (field, lastOffset) => Array.from({ length: n }, (_, i) => {
+    const dateKey = localDateKey(new Date(now.getTime() - (n - 1 - i + lastOffset) * DAY).toISOString())
+    const v = byKey.get(dateKey)?.[field]
+    return { dateKey, value: isNum(v) ? v : null }
+  })
+  const out = {}
+  if (sleep != null) out.sleep = { days: series('sleepMinutes', 1), usual: sleep }
+  if (steps != null) out.activity = { days: series('steps', 1), usual: steps }
+  if (meals > 0) out.nutrition = { days: series('meals', 0), usual: null }
   return out
 }
