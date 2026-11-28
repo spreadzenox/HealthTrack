@@ -365,7 +365,8 @@ function FodmapNotCompared({ groups }) {
 /**
  * REFONTE-6c-4 (SPEC comprendre § 6.5) : les 14 jours de la famille en barres, sous la ligne d'en-tête qui les dit en
  * mots (les barres sont donc décoratives pour le lecteur d'écran). Le trait pointillé est la valeur habituelle de
- * l'en-tête ; aucune couleur de jugement (règle 6).
+ * l'en-tête ; aucune couleur de jugement (règle 6). Animation (CSS, sauf « réduire les animations ») : les barres
+ * montent une à une (`--i`, 45 ms d'écart), puis pâlissent et les deux moyennes se tracent.
  */
 function FamilyBars({ bars }) {
   if (!bars) return null
@@ -378,8 +379,8 @@ function FamilyBars({ bars }) {
   return (
     <>
       <div className={`reco-family-bars${ev ? ' has-split' : ''}`} data-testid="reco-family-bars" aria-hidden="true">
-        {bars.days.map((d) => (
-          <span key={d.dateKey} className={`reco-family-bar-col${d.late ? ' is-late' : ''}`}>
+        {bars.days.map((d, i) => (
+          <span key={d.dateKey} className={`reco-family-bar-col${d.late ? ' is-late' : ''}`} style={{ '--i': i }}>
             <span className={`reco-family-bar${d.value ? '' : ' is-empty'}`} style={d.value ? { height: pct(d.value) } : undefined} />
           </span>
         ))}
@@ -434,6 +435,8 @@ function SleepPisteCard({ evenings, onTry, trialId = null }) {
             : <button type="button" className="reco-piste-start" onClick={start} disabled={busy}>Je teste</button>}
         </li>
       </ul>
+      {/* SPEC § 6.5 : Pilou attend à côté de la piste, comme sous les pistes des autres familles */}
+      <PilouWaiting />
     </section>
   )
 }

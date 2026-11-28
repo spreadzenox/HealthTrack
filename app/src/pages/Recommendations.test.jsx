@@ -652,6 +652,9 @@ describe('REFONTE-6b-2 : la valeur habituelle à côté de chaque famille', () =
     expect(bars.querySelectorAll('.reco-family-bar-col.is-late')).toHaveLength(4)
     expect(bars.querySelectorAll('.reco-family-mean-line')).toHaveLength(2)
     expect(bars.querySelector('.reco-family-usual-line')).toBeNull()
+    // Reste de la SPEC § 6.5 : les barres montent une à une (rang de chaque colonne pour le décalage de 45 ms)
+    const cols = [...bars.querySelectorAll('.reco-family-bar-col')]
+    expect(cols.map((c) => c.style.getPropertyValue('--i'))).toEqual(cols.map((_, i) => String(i)))
   })
 
   it('une lecture en échec n’affiche rien', async () => {
@@ -691,6 +694,8 @@ describe('REFONTE-6c-9 (SPEC § 6.5) : « Pas d’écran après 22 h » proposé
     expect(card).toHaveTextContent('Pas d’écran après 22 h')
     expect(card).toHaveTextContent('Ensuite, on regarde si votre sommeil change.')
     expect(card).toHaveTextContent('5 soirs sans écran, 5 comme d’habitude, tirés au sort.')
+    // SPEC § 6.5 : Pilou attend à côté de la piste, comme sous les pistes des autres familles
+    expect(within(card).getByTestId('pilou-waiting')).toBeInTheDocument()
     fireEvent.click(within(card).getByRole('button', { name: 'Je teste' }))
     expect(await screen.findByText('Page de l’essai 12')).toBeInTheDocument()
     expect(saved).toHaveLength(1)
