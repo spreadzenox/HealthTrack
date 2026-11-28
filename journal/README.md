@@ -31,9 +31,10 @@ d'ici là, ne l'envoyez pas : la routine le réécrit avec la nouvelle date.
 **Ensuite, 1 minute (P51)** : la Sécurité des données Google déclare maintenant « Infos de santé » pour la photo des
 selles, comme Apple. Actions → « Play — sécurité des données » → Run workflow (main).
 
-**⏱️ Heures de Mac de S48 (relevé partiel, 23/11 → 27/11 05:30) : 35,3 h, environ 8,3 h par jour** (23/11 8,6 h ;
-24/11 10,4 h ; 25/11 7,4 h ; 26/11 6,9 h). Builds de PR 30,6 h (103 jobs), builds du soir 4,2 h, TestFlight 0,5 h.
-Moins de la moitié de S47, toujours près de trois fois la cible de 3 h : la décision ci-dessous reste ouverte.
+**⏱️ Heures de Mac de S48 (relevé partiel, 23/11 → 28/11 08:40) : 46,6 h, environ 8,5 h par jour** (23/11 8,6 h ;
+24/11 10,4 h ; 25/11 7,4 h ; 26/11 6,9 h ; 27/11 8,6 h ; 28/11 4,6 h à 08:40). Builds de PR 40,9 h, builds du soir et
+TestFlight 5,5 h. Moins de la moitié de S47, toujours près de trois fois la cible de 3 h : la décision ci-dessous
+reste ouverte.
 
 **⚠️ Heures de Mac de la semaine S47 (bilan complet, 16 → 22/11) : 147,6 h, environ 21 h par jour pour une cible
 de 3 h.** Par jour : 16/11 52,3 h (sprint de la refonte, plusieurs PR en parallèle) ; 17/11 40,7 h ; 18/11 3,1 h
@@ -65,7 +66,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 - **Courbes de la montre dans Tendances** (cœur, oxygène la nuit, phases du sommeil, et les calories du téléphone, reçues sans courbe ; maquette du 19/11, [`maquettes/tendances-courbes/`](maquettes/tendances-courbes/README.md)) : trois personas les cherchent sans les trouver. Répondez « go courbes », « go phases » ou « non ».
 - **Rituel du soir (LANT-4, 25/11)** : pendant un essai « pas d'écran après 22 h », Pilou range son téléphone dans un tiroir et s'endort. Maquette en 2D dans une feuille, [`maquettes/rituel-soir/`](maquettes/rituel-soir/README.md) (la 3D sur l'îlot demanderait 2,5 fois le budget de triangles). Répondez « rituel 2D », « rituel 3D » ou « pas de rituel ».
 - **PROP-SIM-20** (27/11, nouveau) : Objectifs › Confort digestif › Alimentation dit « Rien à éviter » juste au-dessus de « Fructanes −1,2 pt » ; 3 personas « sans technique » ne savent plus si elles doivent éviter l'oignon, et le 27/11 08:30 une 4ᵉ, « Ventre et données », qui veut aussi savoir sur combien de repas repose chaque ligne. Maquette dans [`maquettes/rien-a-eviter/README.md`](maquettes/rien-a-eviter/README.md) : A, « Rien de sûr pour l'instant », le plus marqué nommé avec « ça peut venir du hasard » et un lien vers la réintroduction guidée ; B, le verdict corrigé seul. Répondez « PROP-SIM-20 A », « PROP-SIM-20 B » ou « non ».
-- **PROP-SIM-19** (poids, 24/11 ; 26/11 : 4ᵉ persona « Prendre soin de soi » de suite qui le cherche, et la masse grasse de la balance n'a pas de courbe) : maquette dans [`maquettes/poids/README.md`](maquettes/poids/README.md) ; répondez « PROP-SIM-19 oui », « saisie seulement » ou « non ». Aussi en attente : PROP-SIM-17 (bilan digestif avant le 28e jour).
+- **PROP-SIM-19** (poids, 24/11 ; 26/11 : 4ᵉ persona « Prendre soin de soi » de suite qui le cherche, et la masse grasse de la balance n'a pas de courbe ; 28/11 : 5ᵉ, au 45ᵉ jour, et rien ne confirme la pesée) : maquette dans [`maquettes/poids/README.md`](maquettes/poids/README.md) ; répondez « PROP-SIM-19 oui », « saisie seulement » ou « non ». Aussi en attente : PROP-SIM-17 (bilan digestif avant le 28e jour).
 - **P32** (pays de vente) : le jour de la production, 2 min, geste exact dans [`PRODUIT.md`](PRODUIT.md) §4.
 - **iPhone** : la décision sur la licence des poids du visage (DEM-IOS-9 du backlog) ; les essais sur l'iPhone 12.
 
@@ -75,6 +76,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/11 08:30 — [Personas du matin](runs/2026-11-28-0830-personas-matin.md) | 💡 | « Tout mesurer » au 1er jour (Android seul) et « Prendre soin de soi » au 45e jour (iPhone seul). Deux petits défauts à corriger : le même repas fait 527 kcal sur sa carte et 526 dans Nutrition ; une habitude à soi s'enregistre sans que rien ne le dise. La pesée cachée relevée une 5ᵉ fois (PROP-SIM-19) et les calories dépensées cherchées sans courbe (« go courbes »). Rien à faire de votre côté |
 | 28/11 07:30 — [Tester « Pas d'écran après 22 h » sur le sommeil](runs/2026-11-28-0730-essai-sommeil.md) | 🔧 | REFONTE-6c-9 : quand vos nuits sont plus courtes après les soirs d'écran, Objectifs › Sommeil propose « Pas d'écran après 22 h » ; l'essai suit votre sommeil et se lit en durées. TestFlight : 1381.1381 chez les testeurs, 1362.1362 expirée. Rien à faire de votre côté |
 | 28/11 06:30 — [L'écart du sommeil en une phrase](runs/2026-11-28-0630-ecart-sommeil.md) | 🔧 | REFONTE-6c-8 : dans Objectifs › Sommeil, une phrase dit l'écart, par exemple « Les soirs avec écran après 22 h, vous dormez 40 min de moins. » ; sous 10 min, « à peu près autant ». Rien à faire de votre côté |
 | 28/11 05:30 — [L'essai « Pas d'écran après 22 h »](runs/2026-11-28-0530-essai-ecran-tard.md) | 🔧 | REFONTE-6c-7 : la piste de l'écran le soir se teste comme les autres, consigne « Pas d'écran après 22 h », chaque soir vérifié le lendemain matin par le temps d'écran. L'Alpha du 27/11 est bien partie. Rien à faire de votre côté |
