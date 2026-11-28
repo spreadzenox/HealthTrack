@@ -105,6 +105,8 @@ function finalize(day) {
       watchSleepScore: day._sleepScore != null ? Math.round(day._sleepScore) : null,
       sleepHr: day._sleepHr != null ? Math.round(day._sleepHr) : null,
       screenMinutes: isNum(day._phone?.screenMinutes) ? day._phone.screenMinutes : null,
+      // Écran entre 22 h la veille et 4 h, rangé au jour du réveil comme la nuit (REFONTE-6c-5)
+      lateScreenMinutes: isNum(day._phone?.lateScreenMinutes) ? day._phone.lateScreenMinutes : null,
       socialMinutes: day._apps ? (isNum(day._apps.minutes?.social) ? day._apps.minutes.social : 0) : null,
       steps: dailyTotal(day, 'steps'),
       burnedKcal: isNum(dailyTotal(day, 'calories')) ? Math.round(dailyTotal(day, 'calories')) : null,
