@@ -37,7 +37,10 @@
  *                                          --trial-factor=habit --click="Méditation" : une habitude, tenue lue dans les
  *                                          réponses oui / non de Ma journée des jours passés (REFONTE-4b-3) ;
  *                                          --trial-factor=late-screen --click="Pas d’écran" : « Pas d'écran après 22 h »,
- *                                          tenue lue dans l'écran tard du lendemain (REFONTE-6c-7)
+ *                                          tenue lue dans l'écran tard du lendemain (REFONTE-6c-7) ;
+ *                                          --trial-factor=sleep-screen : la même consigne, qui suit le sommeil (REFONTE-6c-9)
+ *   npm run visual -- --routes=/recommendations/bien-etre/famille/sleep --screen-sleep  # nuits de 45 min plus courtes
+ *                                          après un soir d'écran tard : l'écart et la carte « Une piste pour vos nuits »
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *                                          --wellbeing-gap=week : de J-9 à J-2 (Objectifs sans score de la semaine)
  *   npm run visual -- --routes=/tendances --history-days=2  # historique presque vide : seules les données des 2 derniers
@@ -1312,6 +1315,14 @@ async function main() {
       const to = dayStart(args['wellbeing-gap'] === 'week' ? 1 : 3)
       entries = entries.filter((e) => e.type !== 'wellbeing' || new Date(e.at) < from || new Date(e.at) >= to)
     }
+    if (args['screen-sleep']) {
+      // REFONTE-6c-9 : la nuit rangée au même jour qu'un écran tard (≥ 30 min entre 22 h et 4 h) dure 45 min de moins
+      const late = new Set(entries.filter((e) => e.type === 'phone_usage' && e.payload.lateScreenMinutes >= 30).map((e) => e.payload.date))
+      const key = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      for (const e of entries) {
+        if (e.type === 'sleep' && e.payload.endDate && late.has(key(new Date(e.payload.endDate)))) e.payload.durationMinutes -= 45
+      }
+    }
     if (args.trial) {
       // Essai du sommeil commencé il y a N − 1 jours (jour N sur 10), tirage fixe 5 avec / 5 sans (REFONTE-6c-2) ;
       // --trial=12 : l'essai est fini, la page montre son bilan
@@ -1325,7 +1336,9 @@ async function main() {
       // --trial-factor=habit : « Méditation », répondue « Oui » les jours avec passés (sauf le 2e), « Non » les autres
       const habit = args['trial-factor'] === 'habit'
       // --trial-factor=late-screen : « Pas d'écran après 22 h », tenue lue dans l'écran tard des données de démo (REFONTE-6c-7)
-      const lateScreen = args['trial-factor'] === 'late-screen'
+      // --trial-factor=sleep-screen : la même consigne, proposée par le détail Sommeil, qui suit le sommeil (REFONTE-6c-9)
+      const sleepScreen = args['trial-factor'] === 'sleep-screen'
+      const lateScreen = args['trial-factor'] === 'late-screen' || sleepScreen
       if (habit) {
         schedule.filter((d) => d.date < key(new Date())).forEach((d, i) => entries.push({ type: 'habit', source: 'app_habit',
           at: new Date(`${d.date}T12:01:00`).toISOString(), payload: { habit: 'meditation', label: 'Méditation', done: d.with && i !== 3 } }))
@@ -1333,6 +1346,8 @@ async function main() {
       entries.push({ type: 'trial', source: 'app_trial', at: start.toISOString(), payload: {
         factor: alcohol
           ? { key: 'alcohol', label: 'Alcool', theme: 'nutrition', outcome: 'wellbeing', effect: -0.3, center: null, change: 0 }
+          : sleepScreen
+            ? { key: 'screen_late_minutes', label: 'Écran après 22 h', theme: 'sleep', outcome: 'sleep', effect: -1, center: null, change: 0 }
           : lateScreen
             ? { key: 'screen_late_minutes', label: 'Écran tard (veille au soir, 22 h–4 h)', theme: 'context', outcome: 'wellbeing', effect: -0.5, center: 45, change: 30 }
           : habit

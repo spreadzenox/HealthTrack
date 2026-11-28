@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import Trial from './Trial'
-import { createTrial } from '../services/trials'
+import { createTrial, sleepScreenPiste } from '../services/trials'
 
 vi.mock('../services/trialsData', async (orig) => ({ ...(await orig()), saveTrial: vi.fn(async () => {}) }))
 import { saveTrial } from '../services/trialsData'
@@ -234,3 +234,29 @@ describe('Un essai (ORG-8)', () => {
   })
 })
 
+
+describe('REFONTE-6c-9 : un essai qui suit le sommeil', () => {
+  const piste = sleepScreenPiste({ late: 380, other: 420, lateCount: 4, otherCount: 9, diff: -40 })
+  const sleepTrial = { ...createTrial(piste, { now: new Date(2026, 10, 1, 9) }), schedule: [...Array(10)].map((_, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, with: i % 2 === 0 })) }
+  const nights = new Map([['2026-11-02', 470], ['2026-11-03', 400], ['2026-11-04', 460], ['2026-11-05', 410], ['2026-11-06', 480], ['2026-11-07', 395]])
+  const renderSleep = (now) => render(
+    <MemoryRouter initialEntries={['/agir/essai/9']}>
+      <Routes>
+        <Route path="/agir/essai/:id" element={<Trial now={now} readTrialChanges={async () => null} read={async () => ({
+          trials: [{ id: 9, type: 'trial', payload: sleepTrial }],
+          summaries: new Map([...nights].map(([dk, m]) => [dk, { sleepMinutes: m, lateScreenMinutes: 0 }])),
+          outcomes: { wellbeing: new Map([['2026-11-02', 4]]), digestion: new Map(), sleep: nights },
+        })} />} />
+      </Routes>
+    </MemoryRouter>,
+  )
+
+  it('le résultat se lit en durée de sommeil, et le retour mène au détail Sommeil', async () => {
+    renderSleep(new Date(2026, 10, 7, 10))
+    expect(await screen.findByRole('heading', { level: 1, name: 'Pas d’écran après 22 h' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '← Sommeil' })).toHaveAttribute('href', '/recommendations/bien-etre/famille/sleep')
+    expect(screen.getByText(line('Chaque point : votre sommeil la nuit qui suit un jour avec ou sans.'))).toBeInTheDocument()
+    expect(screen.getByText(/^Après 6 lendemains : \+1 h 08, entre/)).toBeInTheDocument()
+    expect(document.querySelector('.trial-chart')).toHaveTextContent('7 h')
+  })
+})

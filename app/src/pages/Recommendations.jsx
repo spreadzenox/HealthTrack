@@ -41,7 +41,7 @@ import { FODMAP_CHALLENGE_TYPE, FODMAP_GROUPS } from '../services/fodmapChalleng
 import DetailsToggle from '../components/DetailsToggle'
 import LineIcon from '../components/LineIcon'
 import { listEntries } from '../storage/localHealthStorage'
-import { TRIAL_DAYS, TRIAL_TYPE, createTrial, homeTrial, trialStatus } from '../services/trials'
+import { TRIAL_DAYS, TRIAL_TYPE, createTrial, homeTrial, trialStatus, trialOutcome, sleepScreenPiste } from '../services/trials'
 import { saveNewTrial } from '../services/trialsData'
 import { scoreToChoice } from '../services/mood/wellbeingScale'
 import { GUT_LEVELS, GUT_TYPE } from '../services/today'
@@ -403,6 +403,41 @@ function FamilyBars({ bars }) {
   )
 }
 
+/**
+ * REFONTE-6c-9 (SPEC comprendre § 6.5, carte « Piste à tester ») : sous l'écart du sommeil, « Pas d'écran après
+ * 22 h », quand les nuits qui suivent un soir d'écran tard sont nettement plus courtes. L'essai suit le sommeil (la
+ * nuit qui suit chaque soir), tiré au sort comme les autres ; s'il est déjà en cours, le lien y mène.
+ */
+function SleepPisteCard({ evenings, onTry, trialId = null }) {
+  const [busy, setBusy] = useState(false)
+  const piste = sleepScreenPiste(evenings)
+  if (!piste) return null
+  const start = async () => {
+    if (busy) return
+    setBusy(true)
+    try {
+      await onTry(piste)
+    } catch {
+      setBusy(false)
+    }
+  }
+  return (
+    <section className="reco-block" aria-labelledby="reco-sleep-piste">
+      <h3 id="reco-sleep-piste" className="reco-section-title">Une piste pour vos nuits</h3>
+      <ul className="reco-pistes">
+        <li className="today-card reco-piste" data-tone={THEME_TONE.sleep ?? 'stone'} data-testid="reco-sleep-piste">
+          <span className="reco-piste-title">Pas d’écran après 22 h</span>
+          <span className="reco-piste-text">Ensuite, on regarde si votre sommeil change.</span>
+          {trialId == null && <span className="reco-piste-text reco-piste-how">{TRIAL_DAYS / 2} soirs sans écran, {TRIAL_DAYS / 2} comme d’habitude, tirés au sort.</span>}
+          {trialId != null
+            ? <Link to={`/agir/essai/${trialId}`} className="reco-piste-try">Essai en cours</Link>
+            : <button type="button" className="reco-piste-start" onClick={start} disabled={busy}>Je teste</button>}
+        </li>
+      </ul>
+    </section>
+  )
+}
+
 function FamilyDetail({ outcome, detail, onTry = null, liveTrials = new Map() }) {
   const w = WORDS[outcome]
   const many = detail.pistes.length > 1
@@ -714,10 +749,16 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const onReminder = outcome === 'wellbeing' && eveningNotePlugin() ? () => setNoteOpen('reminder') : null
 
   // REFONTE-6c-6 : les essais en cours ou gardés en habitude, par facteur (comme Agir, un seul à la fois par piste)
-  const liveTrials = new Map(trialRows
+  const busyTrials = trialRows
     .filter((e) => e?.type === TRIAL_TYPE && e.payload?.factor?.key && !e.payload.removedAt)
     .filter((e) => e.payload.kept || !trialStatus(e.payload).done)
-    .map((e) => [e.payload.factor.key, e.id]))
+  // REFONTE-6c-9 : l'essai sur le sommeil (carte sous l'écart des nuits) se compte à part des pistes du bien-être
+  const liveTrials = new Map(busyTrials.filter((e) => trialOutcome(e.payload) !== 'sleep').map((e) => [e.payload.factor.key, e.id]))
+  const sleepTrialId = busyTrials.find((e) => trialOutcome(e.payload) === 'sleep')?.id ?? null
+  const onTrySleep = async (piste) => {
+    const id = await startTrial(createTrial(piste, { now: new Date() }))
+    navigate(`/agir/essai/${id}`, { state: { started: true } })
+  }
   const onTry = async (f) => {
     const id = await startTrial(createTrial({ ...f, outcome }, { now: new Date() }))
     navigate(`/agir/essai/${id}`, { state: { started: true } })
@@ -732,6 +773,7 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
         {/* REFONTE-6c-3 (SPEC comprendre § 6.5) : ce que la personne fait d'habitude dans cette famille */}
         {periods[detail.id] && <p className="reco-family-period" data-testid="reco-family-period">{monoDigits(periods[detail.id])}</p>}
         <FamilyBars bars={bars[detail.id]} />
+        {detail.id === 'sleep' && outcome === 'wellbeing' && <SleepPisteCard evenings={bars.sleep?.evenings} onTry={onTrySleep} trialId={sleepTrialId} />}
         <FamilyDetail outcome={outcome} detail={detail} onTry={onTry} liveTrials={liveTrials} />
         <HowItWorks />
       </section>

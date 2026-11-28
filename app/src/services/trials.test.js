@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, homeActIdle, lanterns, pilouSays, morningLantern, withTodayLateScreen } from './trials'
+import { createTrial, instruction, trialStatus, habitStatus, bilanWords, proposal, TRIAL_DAYS, homeTrial, homeActIdle, lanterns, pilouSays, morningLantern, withTodayLateScreen, trialOutcome, sleepOutcome, sleepScreenPiste, SLEEP_PISTE_MIN } from './trials'
 
 const sleep = { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, usualChange: { amount: 30, unit: 'min', text: '30 min de sommeil de plus' } }
 const START = new Date(2026, 10, 1, 9)
@@ -364,5 +364,49 @@ describe('REFONTE-6c-7 : le soir d’hier se confirme dès ce matin', () => {
     // une entrée déjà enregistrée garde sa valeur
     const kept = withTodayLateScreen(new Map([['2026-11-04', { steps: 300, lateScreenMinutes: 70 }]]), today, new Date(2026, 10, 4, 8))
     expect(kept.get('2026-11-04')).toEqual({ steps: 300, lateScreenMinutes: 70 })
+  })
+})
+
+describe('REFONTE-6c-9 (SPEC comprendre § 6.5) : la piste « Pas d’écran après 22 h » proposée par l’écart du sommeil', () => {
+  const ev = (diff) => ({ late: 420 + diff, other: 420, lateCount: 4, otherCount: 9, diff })
+
+  it('proposée seulement quand les soirs d’écran tard vont avec au moins 10 min de sommeil en moins', () => {
+    expect(SLEEP_PISTE_MIN).toBe(10)
+    expect(sleepScreenPiste(null)).toBeNull()
+    expect(sleepScreenPiste(ev(-9))).toBeNull()
+    expect(sleepScreenPiste(ev(25))).toBeNull()
+    const f = sleepScreenPiste(ev(-40))
+    expect(f).toMatchObject({ key: 'screen_late_minutes', outcome: 'sleep', theme: 'sleep' })
+    const t = createTrial(f, { now: START })
+    expect(instruction(t)).toBe('Pas d’écran après 22 h')
+    expect(t.direction).toBe('less')
+    expect(trialOutcome(t)).toBe('sleep')
+  })
+
+  it('le résultat suivi : les nuits mesurées, jamais celles que le téléphone déduit de l’écran (règle 5)', () => {
+    const summaries = new Map([
+      ['2026-11-02', { sleepMinutes: 450 }],
+      ['2026-11-03', { sleepMinutes: 380, sleepEstimated: true }],
+      ['2026-11-04', { sleepMinutes: 0 }],
+      ['2026-11-05', { steps: 4000 }],
+    ])
+    expect([...sleepOutcome(summaries)]).toEqual([['2026-11-02', 450]])
+  })
+
+  it('le bilan compare la nuit qui suit chaque soir avec ou sans écran', () => {
+    const t = { ...createTrial(sleepScreenPiste(ev(-40)), { now: START }), schedule: [...Array(6)].map((_, i) => ({ date: `2026-11-0${i + 1}`, with: i % 2 === 0 })) }
+    const nights = [470, 400, 460, 410, 480, 395]
+    const summaries = new Map(nights.map((m, i) => [`2026-11-0${i + 2}`, { sleepMinutes: m }]))
+    const s = trialStatus(t, { summaries, outcome: sleepOutcome(summaries), now: new Date(2026, 10, 8, 10) })
+    expect(s.result.with).toEqual([470, 460, 480])
+    expect(s.result.diff).toBeCloseTo(470 - 401.67, 1)
+  })
+
+  it('un essai sur le sommeil se range sous « Votre bien-être », où vit la famille Sommeil', () => {
+    expect(trialOutcome({ factor: { outcome: 'digestion' } })).toBe('digestion')
+    expect(trialOutcome({ factor: {} })).toBe('wellbeing')
+    const t = createTrial(sleepScreenPiste(ev(-40)), { now: START })
+    expect(homeTrial([{ id: 7, type: 'trial', payload: t }], START, { outcome: 'wellbeing' })?.to).toBe('/agir/essai/7')
+    expect(homeTrial([{ id: 7, type: 'trial', payload: t }], START, { outcome: 'digestion' })).toBeNull()
   })
 })

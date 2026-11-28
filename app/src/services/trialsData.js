@@ -1,12 +1,12 @@
 /**
  * Lecture des données d'Agir (ORG-8) : essais enregistrés, résumés des 45 derniers jours (tenue d'après la montre et
- * le téléphone) et séries des résultats (bien-être, confort digestif) pour les lendemains. Rien n'est calculé ailleurs
+ * le téléphone) et séries des résultats (bien-être, confort digestif, sommeil) pour les lendemains. Rien n'est calculé ailleurs
  * que sur le téléphone.
  */
 import { createEntry, listEntries, updateEntry } from '../storage/localHealthStorage'
 import { buildDailyJournal } from './dailyJournal'
 import { outcomeSeries } from './analysisResults'
-import { TRIAL_SOURCE, TRIAL_TYPE, withTodayLateScreen } from './trials'
+import { TRIAL_SOURCE, TRIAL_TYPE, sleepOutcome, withTodayLateScreen } from './trials'
 import { getPhoneUsageSettings } from './phoneUsageSync'
 import { HABIT_TYPE, habitDays } from './habits'
 
@@ -30,7 +30,8 @@ export async function readTrialsData(now = new Date()) {
   // REFONTE-4b-3 : les réponses oui / non de Ma journée, pour les essais sur une habitude
   for (const [dk, answers] of habitDays(habits)) summaries.set(dk, { ...summaries.get(dk), habits: answers })
   const series = outcomeSeries([...wellbeing, ...faces, ...gut])
-  return { trials, summaries, outcomes: { wellbeing: series.wellbeing, digestion: series.digestion } }
+  // REFONTE-6c-9 : un essai proposé par le détail Sommeil suit les nuits mesurées
+  return { trials, summaries, outcomes: { wellbeing: series.wellbeing, digestion: series.digestion, sleep: sleepOutcome(summaries) } }
 }
 
 export async function saveNewTrial(payload) {
