@@ -122,7 +122,8 @@ describe('Analyses sur le contrat de la méthode (ORG-4, ORG-6)', () => {
     expect(piste).not.toHaveTextContent('point sur 5')
     fireEvent.click(within(piste).getByRole('button', { name: 'Afficher les détails' }))
     expect(piste).toHaveTextContent('+0,4 point sur 5 pour 50 min de sommeil de plus (court terme)')
-    expect(within(piste).getByRole('link', { name: 'Vérifier par un essai' })).toHaveAttribute('href', '/agir')
+    // REFONTE-6c-6 : l'essai se lance ici même
+    expect(within(piste).getByRole('button', { name: 'Je teste' })).toBeInTheDocument()
     const bars = screen.getByRole('region', { name: 'Ce qui a été comparé' })
     // POLISH-SIM-128 : les lignes chiffrées derrière le chevron
     expect(bars).not.toHaveTextContent('Écran tard le soir')
@@ -523,6 +524,57 @@ describe('POLISH-SIM-120 : l’essai en cours se retrouve sous son objectif', ()
     renderPage({ readTrials: async () => { throw new Error('x') } }, readyResults)
     await screen.findByText('Par famille')
     expect(screen.queryByTestId('reco-trial')).toBeNull()
+  })
+})
+
+describe('REFONTE-6c-6 : « Je teste » lance l’essai depuis le détail d’une famille (SPEC comprendre § 6.5)', () => {
+  beforeEach(() => localStorage.clear())
+  function WhereState() {
+    const loc = useLocation()
+    return <p data-testid="where">{loc.pathname} {loc.state?.started ? 'started' : ''}</p>
+  }
+  const renderFamily = (props) => render(
+    <MemoryRouter initialEntries={['/recommendations/bien-etre/famille/sleep']}>
+      <Routes>
+        <Route path="/recommendations/bien-etre/famille/:family" element={<Recommendations read={async () => readyResults} {...props} />} />
+        <Route path="*" element={<WhereState />} />
+      </Routes>
+    </MemoryRouter>,
+  )
+
+  it('« Je teste » enregistre un essai de 5 jours avec et 5 sans sur la piste, puis ouvre sa page', async () => {
+    const saved = []
+    renderFamily({ readTrials: async () => [], startTrial: async (payload) => { saved.push(payload); return 42 } })
+    const piste = await screen.findByRole('region', { name: 'Piste à tester' })
+    expect(piste).toHaveTextContent('5 jours avec, 5 jours sans, tirés au sort.')
+    expect(within(piste).queryByRole('link', { name: 'Vérifier par un essai' })).toBeNull()
+    fireEvent.click(within(piste).getByRole('button', { name: 'Je teste' }))
+    expect(await screen.findByTestId('where')).toHaveTextContent('/agir/essai/42 started')
+    expect(saved).toHaveLength(1)
+    expect(saved[0].factor).toMatchObject({ key: 'sleepMinutes', outcome: 'wellbeing' })
+    expect(saved[0].schedule.filter((d) => d.with)).toHaveLength(5)
+    expect(saved[0].schedule).toHaveLength(10)
+  })
+
+  it('un essai déjà en cours sur la piste : « Essai en cours » mène à sa page, sans second essai', async () => {
+    const payload = createTrial({ ...readyResults.outcomes.wellbeing.horizons.short.factors[0] }, { now: new Date(Date.now() - 86_400_000) })
+    renderFamily({ readTrials: async () => [{ id: 9, type: 'trial', at: payload.startedAt, payload }] })
+    const piste = await screen.findByRole('region', { name: 'Piste à tester' })
+    const link = await within(piste).findByRole('link', { name: 'Essai en cours' })
+    expect(link).toHaveAttribute('href', '/agir/essai/9')
+    expect(within(piste).queryByRole('button', { name: 'Je teste' })).toBeNull()
+  })
+
+  it('un double toucher ne crée qu’un essai', async () => {
+    const saved = []
+    let release
+    renderFamily({ readTrials: async () => [], startTrial: (payload) => { saved.push(payload); return new Promise((r) => { release = () => r(3) }) } })
+    const piste = await screen.findByRole('region', { name: 'Piste à tester' })
+    const btn = within(piste).getByRole('button', { name: 'Je teste' })
+    fireEvent.click(btn)
+    fireEvent.click(btn)
+    await act(async () => release())
+    expect(saved).toHaveLength(1)
   })
 })
 
