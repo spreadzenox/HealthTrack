@@ -545,6 +545,30 @@ describe('REFONTE-6b-2 : la valeur habituelle à côté de chaque famille', () =
     expect(screen.getByTestId('reco-family-sleep').querySelector('.reco-family-label')).toHaveTextContent(/^Sommeil\s·\s7 h 05 par nuit$/)
   })
 
+  it('REFONTE-6c-3 : le détail d’une famille dit ses 14 derniers jours sous le titre ; rien sans mesure', async () => {
+    const now = new Date()
+    const days = []
+    for (let n = 1; n <= 10; n++) {
+      const d = new Date(now.getTime() - n * 86_400_000)
+      const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      days.push({ dateKey, summary: { sleepMinutes: 425, steps: 8400, meals: 0 } })
+    }
+    const at = (path, readFamilyDays) => render(
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route path="/recommendations/bien-etre/famille/:family" element={<Recommendations read={async () => readyResults} readFamilyDays={readFamilyDays} />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    const { unmount } = at('/recommendations/bien-etre/famille/sleep', async () => days)
+    expect(await screen.findByRole('heading', { level: 2, name: 'Sommeil' })).toBeInTheDocument()
+    expect(await screen.findByTestId('reco-family-period')).toHaveTextContent('Vos 14 dernières nuits · d’habitude 7 h 05')
+    unmount()
+    at('/recommendations/bien-etre/famille/sleep', async () => [])
+    expect(await screen.findByRole('heading', { level: 2, name: 'Sommeil' })).toBeInTheDocument()
+    expect(screen.queryByTestId('reco-family-period')).toBeNull()
+  })
+
   it('une lecture en échec n’affiche rien', async () => {
     renderPage({ readFamilyDays: async () => { throw new Error('IndexedDB') } }, readyResults)
     const block = await screen.findByRole('region', { name: 'Par famille' })

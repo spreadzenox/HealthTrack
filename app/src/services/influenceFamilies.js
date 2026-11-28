@@ -123,7 +123,8 @@ const median = (values) => {
  * @param {{ dateKey: string, summary: object }[] | null} days  sortie de buildDailyJournal
  * @returns {{ sleep?: string, activity?: string, nutrition?: string }}
  */
-export function familyUsuals(days, now = new Date()) {
+// Les valeurs brutes communes à familyUsuals et familyPeriods
+function usualValues(days, now) {
   const DAY = 86_400_000
   const today = localDateKey(now.toISOString())
   const from = localDateKey(new Date(now.getTime() - DEVIATION_WINDOW_DAYS * DAY).toISOString())
@@ -132,16 +133,38 @@ export function familyUsuals(days, now = new Date()) {
   const past = list.filter((d) => d.dateKey >= from && d.dateKey < today)
   const usual = (field) => {
     const values = past.map((d) => d.summary?.[field]).filter(isNum)
-    return values.length >= DEVIATION_MIN_PAST_DAYS ? median(values) : null
+    const m = values.length >= DEVIATION_MIN_PAST_DAYS ? median(values) : null
+    return m != null && m > 0 ? m : null
   }
-  const out = {}
-  const sleep = usual('sleepMinutes')
-  if (sleep != null && sleep > 0) out.sleep = `${formatDuration(sleep)} par nuit`
-  const steps = usual('steps')
-  if (steps != null && steps > 0) out.activity = `${Math.round(steps).toLocaleString(appLocale())} pas par jour`
   const meals = list
     .filter((d) => d.dateKey >= mealsFrom && d.dateKey <= today)
     .reduce((n, d) => n + (isNum(d.summary?.meals) ? d.summary.meals : 0), 0)
+  return { sleep: usual('sleepMinutes'), steps: usual('steps'), meals }
+}
+
+const stepsText = (steps) => `${Math.round(steps).toLocaleString(appLocale())} pas par jour`
+
+export function familyUsuals(days, now = new Date()) {
+  const { sleep, steps, meals } = usualValues(days, now)
+  const out = {}
+  if (sleep != null) out.sleep = `${formatDuration(sleep)} par nuit`
+  if (steps != null) out.activity = stepsText(steps)
   if (meals > 0) out.nutrition = `${meals} repas en ${DEVIATION_WINDOW_DAYS} jours`
+  return out
+}
+
+/**
+ * REFONTE-6c-3 (SPEC comprendre § 6.5 : « Vos 14 dernières nuits · en moyenne 7 h 05 ») : la ligne sous le titre du
+ * détail d'une famille. Les mêmes chiffres que familyUsuals ; « d'habitude » plutôt que « en moyenne », puisque c'est
+ * la médiane, comme sur l'Accueil. Rien sans mesure.
+ * @returns {{ sleep?: string, activity?: string, nutrition?: string }}
+ */
+export function familyPeriods(days, now = new Date()) {
+  const { sleep, steps, meals } = usualValues(days, now)
+  const n = DEVIATION_WINDOW_DAYS
+  const out = {}
+  if (sleep != null) out.sleep = `Vos ${n} dernières nuits · d’habitude ${formatDuration(sleep)}`
+  if (steps != null) out.activity = `Vos ${n} derniers jours · d’habitude ${stepsText(steps)}`
+  if (meals > 0) out.nutrition = `Vos ${n} derniers jours · ${meals} repas noté${meals > 1 ? 's' : ''}`
   return out
 }

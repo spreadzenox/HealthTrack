@@ -24,7 +24,7 @@ import PilouFigure from '../companion/life/PilouFigure'
 import PilouWaiting from '../companion/life/PilouWaiting'
 import Cairn from '../companion/life/Cairn'
 import SeeExample from '../components/SeeExample'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import DoctorReportCard from '../components/DoctorReportCard'
 import WellbeingPrompt from '../components/WellbeingPrompt'
@@ -33,7 +33,7 @@ import { getAnalysis, peekAnalysis } from '../services/analysisRunner'
 import { PISTES_SUMMARY_KEY } from '../services/pistesSummary'
 import { isExampleMode } from '../storage/exampleMode'
 import { THEME_TONE, isRangeOnly, pistesTitles, resultsView } from '../services/resultsView'
-import { influenceFamilies, familyDetail, familyUsuals } from '../services/influenceFamilies'
+import { influenceFamilies, familyDetail, familyUsuals, familyPeriods } from '../services/influenceFamilies'
 import { buildDailyJournal } from '../services/dailyJournal'
 import { readGutNotes } from '../services/gutNotes'
 import { actSections, reintroLine } from '../services/act'
@@ -551,7 +551,9 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
   const [wbToday, setWbToday] = useState([])
   const [reintro, setReintro] = useState(null)
   const [trial, setTrial] = useState(null)
-  const [usuals, setUsuals] = useState({})
+  const [familyDays, setFamilyDays] = useState(null)
+  const usuals = useMemo(() => familyUsuals(familyDays), [familyDays])
+  const periods = useMemo(() => familyPeriods(familyDays), [familyDays])
   const { family } = useParams()
   const base = outcome === 'digestion' ? '/recommendations/ventre' : '/recommendations/bien-etre'
 
@@ -615,8 +617,8 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
     let alive = true
     Promise.resolve()
       .then(() => readFamilyDays())
-      .then((days) => alive && setUsuals(familyUsuals(days)))
-      .catch(() => alive && setUsuals({}))
+      .then((days) => alive && setFamilyDays(days))
+      .catch(() => alive && setFamilyDays(null))
     return () => {
       alive = false
     }
@@ -643,6 +645,8 @@ export default function Recommendations({ view = 'wellbeing', read = () => getAn
       <section className="reco-page" data-tone={detail.tone}>
         <p className="reco-back"><Link to={base}>← {objectiveTitle}</Link></p>
         <h2 className="page-title">{detail.label}</h2>
+        {/* REFONTE-6c-3 (SPEC comprendre § 6.5) : ce que la personne fait d'habitude dans cette famille */}
+        {periods[detail.id] && <p className="reco-family-period" data-testid="reco-family-period">{monoDigits(periods[detail.id])}</p>}
         <FamilyDetail outcome={outcome} detail={detail} />
         <HowItWorks />
       </section>

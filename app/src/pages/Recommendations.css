@@ -921,6 +921,13 @@
 }
 
 /* REFONTE-6b-2 : « Sommeil · 7 h 05 par nuit », la valeur habituelle en texte courant à côté du nom */
+/* REFONTE-6c-3 (SPEC comprendre § 6.5) : sous le titre du détail d'une famille, une ligne de texte, pas un encadré */
+.reco-family-period {
+  margin: -8px 0 20px;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
 .reco-family-usual {
   font-weight: 400;
   font-size: 0.88rem;
