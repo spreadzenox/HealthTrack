@@ -35,7 +35,9 @@
  *                                          sur 14 (tirage fixe), sur les données de démo (POLISH-ESSAI-AXES) ;
  *                                          --trial-factor=alcohol --click="alcool" : facteur sans mesure ;
  *                                          --trial-factor=habit --click="Méditation" : une habitude, tenue lue dans les
- *                                          réponses oui / non de Ma journée des jours passés (REFONTE-4b-3)
+ *                                          réponses oui / non de Ma journée des jours passés (REFONTE-4b-3) ;
+ *                                          --trial-factor=late-screen --click="Pas d’écran" : « Pas d'écran après 22 h »,
+ *                                          tenue lue dans l'écran tard du lendemain (REFONTE-6c-7)
  *   npm run visual -- --wellbeing-gap      # aucune note de bien-être de J-9 à J-4 (saisie interrompue)
  *                                          --wellbeing-gap=week : de J-9 à J-2 (Objectifs sans score de la semaine)
  *   npm run visual -- --routes=/tendances --history-days=2  # historique presque vide : seules les données des 2 derniers
@@ -1322,6 +1324,8 @@ async function main() {
       const alcohol = args['trial-factor'] === 'alcohol'
       // --trial-factor=habit : « Méditation », répondue « Oui » les jours avec passés (sauf le 2e), « Non » les autres
       const habit = args['trial-factor'] === 'habit'
+      // --trial-factor=late-screen : « Pas d'écran après 22 h », tenue lue dans l'écran tard des données de démo (REFONTE-6c-7)
+      const lateScreen = args['trial-factor'] === 'late-screen'
       if (habit) {
         schedule.filter((d) => d.date < key(new Date())).forEach((d, i) => entries.push({ type: 'habit', source: 'app_habit',
           at: new Date(`${d.date}T12:01:00`).toISOString(), payload: { habit: 'meditation', label: 'Méditation', done: d.with && i !== 3 } }))
@@ -1329,10 +1333,12 @@ async function main() {
       entries.push({ type: 'trial', source: 'app_trial', at: start.toISOString(), payload: {
         factor: alcohol
           ? { key: 'alcohol', label: 'Alcool', theme: 'nutrition', outcome: 'wellbeing', effect: -0.3, center: null, change: 0 }
+          : lateScreen
+            ? { key: 'screen_late_minutes', label: 'Écran tard (veille au soir, 22 h–4 h)', theme: 'context', outcome: 'wellbeing', effect: -0.5, center: 45, change: 30 }
           : habit
             ? { key: 'habit_meditation', label: 'Méditation', theme: 'habit', outcome: 'wellbeing', effect: 0.6, center: 0.4, change: 1 }
             : { key: 'sleepMinutes', label: 'Sommeil', theme: 'sleep', outcome: 'wellbeing', effect: 0.4, center: 420, change: 30 },
-        direction: alcohol ? 'less' : 'more', threshold: alcohol || habit ? null : 450, schedule, answers: {}, startedAt: start.toISOString(), endedAt: null,
+        direction: alcohol || lateScreen ? 'less' : 'more', threshold: lateScreen ? 30 : alcohol || habit ? null : 450, schedule, answers: {}, startedAt: start.toISOString(), endedAt: null,
         kept: false, removedAt: null, nudgedAt: null,
       } })
     }

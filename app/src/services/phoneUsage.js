@@ -27,7 +27,7 @@ export const MIN_SLEEP_MIN = 3 * 60
 export const MAX_SLEEP_MIN = 14 * 60
 /** Écran tard : 22:00 la veille → 04:00. */
 const LATE_START_H = 22
-const LATE_END_H = 4
+export const LATE_END_H = 4
 
 function dayStart(dateKey) {
   const [y, m, d] = dateKey.split('-').map(Number)

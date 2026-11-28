@@ -6,7 +6,8 @@
 import { createEntry, listEntries, updateEntry } from '../storage/localHealthStorage'
 import { buildDailyJournal } from './dailyJournal'
 import { outcomeSeries } from './analysisResults'
-import { TRIAL_SOURCE, TRIAL_TYPE } from './trials'
+import { TRIAL_SOURCE, TRIAL_TYPE, withTodayLateScreen } from './trials'
+import { getPhoneUsageSettings } from './phoneUsageSync'
 import { HABIT_TYPE, habitDays } from './habits'
 
 const DAY_MS = 86_400_000
@@ -24,7 +25,8 @@ export async function readTrialsData(now = new Date()) {
     listEntries({ type: 'gut', since, limit: Infinity }),
     listEntries({ type: HABIT_TYPE, since, limit: Infinity }),
   ])
-  const summaries = new Map(buildDailyJournal([...sleep, ...steps, ...phone]).map((d) => [d.dateKey, d.summary]))
+  // REFONTE-6c-7 : l'écran tard d'hier soir se lit dès ce matin (journée en cours, pas encore une entrée)
+  const summaries = withTodayLateScreen(new Map(buildDailyJournal([...sleep, ...steps, ...phone]).map((d) => [d.dateKey, d.summary])), getPhoneUsageSettings().today, now)
   // REFONTE-4b-3 : les réponses oui / non de Ma journée, pour les essais sur une habitude
   for (const [dk, answers] of habitDays(habits)) summaries.set(dk, { ...summaries.get(dk), habits: answers })
   const series = outcomeSeries([...wellbeing, ...faces, ...gut])
