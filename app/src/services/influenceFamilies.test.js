@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { influenceFamilies, familyOf, familyDetail, LEVEL_WORDS } from './influenceFamilies'
+import { influenceFamilies, familyOf, familyDetail, familyUsuals, LEVEL_WORDS } from './influenceFamilies'
 
 const f = (key, label, effect, { theme = 'sleep', actionable = true, net = true, outOfScale = false } = {}) => ({ key, label, theme, actionable, effect, net, outOfScale })
 const h = (id, status, factors = []) => ({ id, status, factors })
@@ -124,5 +124,37 @@ describe('familles de ce qui va avec un objectif (refonte « Compagnon », étap
     const d = familyDetail(outcome([f('fiber_g', 'Fibres', 3, { theme: 'nutrition', outOfScale: true })]), 'nutrition')
     expect(d.horizons[0].factors).toHaveLength(1)
     expect(d.pistes).toEqual([])
+  })
+})
+
+describe('REFONTE-6b-2 : la valeur habituelle de chaque famille (SPEC comprendre § 6.3, « Sommeil · 7 h 05 par nuit »)', () => {
+  const now = new Date('2026-07-20T10:00:00')
+  const day = (n, summary) => {
+    const d = new Date(now.getTime() - n * 86_400_000)
+    const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    return { dateKey, summary }
+  }
+
+  it('sommeil et pas : la médiane des 14 jours passés (la même habitude que l’Accueil), repas : le compte sur 14 jours', () => {
+    const days = []
+    for (let n = 1; n <= 14; n++) days.push(day(n, { sleepMinutes: n <= 7 ? 420 : 430, steps: 8000 + n * 10, meals: n % 2 }))
+    days.push(day(0, { sleepMinutes: 300, steps: 500, meals: 2 }))
+    const u = familyUsuals(days, now)
+    expect(u.sleep).toBe('7 h 05 par nuit')
+    expect(u.activity).toMatch(/^8\s?075 pas par jour$/)
+    // aujourd'hui compte pour les repas (13 jours passés + aujourd'hui) : 7 impairs entre 1 et 13, plus 2
+    expect(u.nutrition).toBe('9 repas en 14 jours')
+  })
+
+  it('rien sans 7 jours de mesure, ni sans repas ; les jours plus anciens que 14 jours sont ignorés', () => {
+    const days = []
+    for (let n = 1; n <= 6; n++) days.push(day(n, { sleepMinutes: 420, steps: 8000, meals: 0 }))
+    for (let n = 15; n <= 30; n++) days.push(day(n, { sleepMinutes: 420, steps: 8000, meals: 3 }))
+    expect(familyUsuals(days, now)).toEqual({})
+    expect(familyUsuals(null, now)).toEqual({})
+  })
+
+  it('un seul repas : au singulier', () => {
+    expect(familyUsuals([day(2, { meals: 1 })], now)).toEqual({ nutrition: '1 repas en 14 jours' })
   })
 })

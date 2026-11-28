@@ -916,6 +916,16 @@
   color: var(--text-muted);
 }
 
+.reco-family-label {
+  flex-wrap: wrap;
+}
+
+/* REFONTE-6b-2 : « Sommeil · 7 h 05 par nuit », la valeur habituelle en texte courant à côté du nom */
+.reco-family-usual {
+  font-weight: 400;
+  font-size: 0.88rem;
+}
+
 .reco-family-lead {
   font-weight: 400;
   font-size: 0.85rem;

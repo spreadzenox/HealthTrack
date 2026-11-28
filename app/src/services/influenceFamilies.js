@@ -11,6 +11,10 @@
  *   sans facteur comparé (trop peu de données), aussi.
  */
 import { FODMAP_GROUPS } from './fodmapChallenge'
+import { localDateKey } from './analysisEngine'
+import { DEVIATION_MIN_PAST_DAYS, DEVIATION_WINDOW_DAYS } from './dayDeviations'
+import { formatDuration } from '../utils/format'
+import { appLocale } from '../i18n/locale.js'
 
 export const MEDIUM_FROM = 0.25
 export const STRONG_FROM = 0.5
@@ -100,4 +104,44 @@ export function familyDetail(outcome, familyId) {
     ? FODMAP_GROUPS.filter((g) => !keys.has(`fodmap_${g.id}`)).map(({ id, label, hint }) => ({ id, label, hint }))
     : []
   return { id: fam.id, label: fam.label, tone: fam.tone, bars: outcome.beatsPersistence === true, count: names.length, names, horizons, pistes, fodmapNotCompared }
+}
+
+const isNum = (v) => typeof v === 'number' && Number.isFinite(v)
+const median = (values) => {
+  const s = [...values].sort((a, b) => a - b)
+  const n = s.length
+  return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2
+}
+
+/**
+ * REFONTE-6b-2 (SPEC comprendre § 6.3 : « Sommeil · 7 h 05 par nuit », « Alimentation · 19 repas », « Activité ·
+ * 8 400 pas par jour ») : ce que la personne fait d'habitude dans chaque famille, à côté de la force du lien.
+ * Sommeil et pas : la médiane des 14 jours passés, dès 7 jours de mesure, comme « d'habitude » sur l'Accueil
+ * (services/dayDeviations.js), pour que les deux écrans disent le même chiffre ; aujourd'hui n'est pas compté (pas
+ * encore fini). Repas : le nombre noté sur les 14 derniers jours, aujourd'hui compris. Une description, jamais une
+ * norme (règle 6) : aucun repère, aucune couleur.
+ * @param {{ dateKey: string, summary: object }[] | null} days  sortie de buildDailyJournal
+ * @returns {{ sleep?: string, activity?: string, nutrition?: string }}
+ */
+export function familyUsuals(days, now = new Date()) {
+  const DAY = 86_400_000
+  const today = localDateKey(now.toISOString())
+  const from = localDateKey(new Date(now.getTime() - DEVIATION_WINDOW_DAYS * DAY).toISOString())
+  const mealsFrom = localDateKey(new Date(now.getTime() - (DEVIATION_WINDOW_DAYS - 1) * DAY).toISOString())
+  const list = Array.isArray(days) ? days.filter((d) => d?.dateKey) : []
+  const past = list.filter((d) => d.dateKey >= from && d.dateKey < today)
+  const usual = (field) => {
+    const values = past.map((d) => d.summary?.[field]).filter(isNum)
+    return values.length >= DEVIATION_MIN_PAST_DAYS ? median(values) : null
+  }
+  const out = {}
+  const sleep = usual('sleepMinutes')
+  if (sleep != null && sleep > 0) out.sleep = `${formatDuration(sleep)} par nuit`
+  const steps = usual('steps')
+  if (steps != null && steps > 0) out.activity = `${Math.round(steps).toLocaleString(appLocale())} pas par jour`
+  const meals = list
+    .filter((d) => d.dateKey >= mealsFrom && d.dateKey <= today)
+    .reduce((n, d) => n + (isNum(d.summary?.meals) ? d.summary.meals : 0), 0)
+  if (meals > 0) out.nutrition = `${meals} repas en ${DEVIATION_WINDOW_DAYS} jours`
+  return out
 }
