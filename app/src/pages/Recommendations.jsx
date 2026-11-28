@@ -15,6 +15,8 @@
  * REFONTE-6c : une famille qui a des facteurs comparés ouvre son détail (`…/famille/:family`) : son lien net « à
  * tester », puis ses seuls facteurs, délai par délai. Sans abonnement (pistes floutées) ou sans facteur, on revient
  * au détail de l'objectif.
+ * REFONTE-6c-3 : sous « Par famille », « Ce qui va avec » se replie sur « N facteurs comparés, délai par délai » et
+ * un chevron (les familles montrent déjà ces liens) ; ouvert dans l'exemple de la visite guidée.
  * REFONTE-6e : sous Confort digestif, une ligne « Réintroduction guidée » quand un test existe ou qu'une analyse
  * digestive cite un groupe FODMAP (services/act.js) ; la page de la réintroduction revient ici.
  * Retirés : l'historique, « Sur quelques semaines », « Autres liens repérés », « Bientôt » et l'analyse « dans les
@@ -511,6 +513,13 @@ function Results({ outcome, view, locked, families = [], base, usuals }) {
   const [unsureOpen, setUnsureOpen] = useState(false)
   const quiet = showWeigh && view.weighNothingNet && !view.pistes.length && view.lookOnly.every((x) => !x.net)
   const bars = !quiet || unsureOpen
+  // REFONTE-6c-3 : avec « Par famille » au-dessus, les barres de « Ce qui va avec » répétaient le détail de chaque
+  // famille. Elles se replient sur une ligne, comme dans le détail d'une famille. Ouvertes d'emblée quand on les a
+  // demandées (« Voir les liens pas encore nets ») et dans l'exemple de la visite guidée, qui les montre.
+  const foldable = !quiet && families.length > 0 && !isExampleMode()
+  const [weighOpen, setWeighOpen] = useState(false)
+  const weighShown = !foldable || weighOpen
+  const weighCount = showWeigh ? new Set(view.weigh.flatMap((h) => h.factors.map((f) => f.key))).size : 0
   const nextLock = view.nextLock && (
     <p className="reco-next">
       {/* POLISH-SIM-56 : dire ce qui est compté (jours avec ce résultat) et de quel délai il s'agit ;
@@ -546,28 +555,40 @@ function Results({ outcome, view, locked, families = [], base, usuals }) {
       {showWeigh && bars && (
         <section className="reco-block" aria-labelledby={`reco-weigh-${outcome}`}>
           <h3 id={`reco-weigh-${outcome}`} className="reco-section-title">{w.weigh}</h3>
-          <Unit w={w} />
-          {view.weighNothingNet && (
-            <p className="reco-unsure-all">Rien n’est net pour l’instant (barres hachurées, chiffres en gris) : ces chiffres bougeront avec vos prochains jours notés.</p>
-          )}
-          {view.weigh.map((h) => (
-            <div key={h.id} className="reco-horizon">
-              <p className="reco-horizon-title">{h.label} <span className="reco-horizon-window">{h.window}</span></p>
-              <EffectList factors={h.factors} />
+          {foldable && (
+            <div className="reco-family-compared-row">
+              <p className="reco-next" data-testid="reco-weigh-count">
+                <span className="mono">{weighCount}</span> facteur{weighCount > 1 ? 's comparés' : ' comparé'}, délai par délai.
+              </p>
+              <DetailsToggle on={weighOpen} onToggle={() => setWeighOpen((v) => !v)} />
             </div>
-          ))}
-          {!view.weighNothingNet && (
-            <p className="reco-legend"><span className="reco-legend-unsure" aria-hidden="true" /> hachuré, chiffre en gris : pas assez net</p>
           )}
-          {view.flipped?.map((label) => (
-            <p key={label} className="reco-flipped">{label} change de sens selon le délai : rien à en tirer pour l’instant.</p>
-          ))}
+          {weighShown && (
+            <>
+              <Unit w={w} />
+              {view.weighNothingNet && (
+                <p className="reco-unsure-all">Rien n’est net pour l’instant (barres hachurées, chiffres en gris) : ces chiffres bougeront avec vos prochains jours notés.</p>
+              )}
+              {view.weigh.map((h) => (
+                <div key={h.id} className="reco-horizon">
+                  <p className="reco-horizon-title">{h.label} <span className="reco-horizon-window">{h.window}</span></p>
+                  <EffectList factors={h.factors} />
+                </div>
+              ))}
+              {!view.weighNothingNet && (
+                <p className="reco-legend"><span className="reco-legend-unsure" aria-hidden="true" /> hachuré, chiffre en gris : pas assez net</p>
+              )}
+              {view.flipped?.map((label) => (
+                <p key={label} className="reco-flipped">{label} change de sens selon le délai : rien à en tirer pour l’instant.</p>
+              ))}
+            </>
+          )}
         </section>
       )}
       {!locked && bars && view.lookOnly.length > 0 && (
         <section className="reco-block" aria-labelledby={`reco-look-${outcome}`}>
           <h3 id={`reco-look-${outcome}`} className="reco-section-title">À regarder, pas à changer</h3>
-          {!showWeigh && <Unit w={w} />}
+          {!(showWeigh && weighShown) && <Unit w={w} />}
           <EffectList factors={view.lookOnly} />
         </section>
       )}

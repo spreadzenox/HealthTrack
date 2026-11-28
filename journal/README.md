@@ -76,6 +76,7 @@ puis la fin de FUSION-3 et les restes de la refonte.
 
 | Run | Type | Résultat |
 |---|---|---|
+| 28/11 12:30 — [« Ce qui va avec » replié](runs/2026-11-28-1230-ce-qui-va-avec-replie.md) | 🔧 | Fin de REFONTE-6c-3 : dans Votre bien-être et Votre confort digestif, sous vos familles, « Ce qui va avec » tient sur une ligne, « 11 facteurs comparés, délai par délai », et le chevron rouvre les barres (elles répétaient le détail des familles). Rien à faire de votre côté |
 | 28/11 11:30 — [« Aucun lien » dit avec quoi](runs/2026-11-28-1130-lien-bien-etre.md) | 🔧 | POLISH-6c-9-a : dans Objectifs › Sommeil, sous la piste « Pas d'écran après 22 h », la ligne « Aucun lien assez net pour l'instant » dit maintenant « avec votre bien-être » et ne semble plus contredire la piste (même chose côté digestion). Rien à faire de votre côté |
 | 28/11 10:30 — [Vos nuits s'animent](runs/2026-11-28-1030-barres-animees.md) | 🔧 | Fin de la SPEC § 6.5 : dans Objectifs › Sommeil, les barres de vos 14 nuits montent une à une puis les deux moyennes se tracent (rien ne bouge si le téléphone réduit les animations) ; Pilou attend à côté de la piste « Pas d'écran après 22 h ». Rien à faire de votre côté |
 | 28/11 09:30 — [Mêmes kcal partout, habitude ajoutée visible](runs/2026-11-28-0930-kcal-habitude.md) | 🔧 | Les deux défauts des personas du matin : un repas a le même total de kcal sur sa carte et dans Nutrition (une seule somme, arrondie une fois) ; dans Réglages, « Ajoutée à Ma journée » s'affiche sous l'habitude que vous écrivez. Rien à faire de votre côté |
